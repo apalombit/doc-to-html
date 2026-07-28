@@ -23,6 +23,8 @@ below the model is tested, and the model is not.
 | `render.py` | **implemented** | IR → self-contained HTML, tolerates partial IR, content-driven column alignment |
 | `checkpoints.py` | **implemented** | `Question`/`Answer`, `NullHandler`, `ScriptedHandler` |
 | `config.py` | **implemented** | Every `.env.example` variable, with a code default and recorded provenance; the only reader of the environment |
+| `acceptance.py` | **implemented** | What "structurally correct" means, in one place. Used by the harness and the bake-off |
+| `bakeoff.py` | **implemented** | Opt-in measurement of real models. Never run — no model has been pulled |
 | `cli.py` | **partial** | `render`, `config` and `convert` work end to end; `--review` exits cleanly |
 | `preprocess.py` | **implemented** | Page-quad detection, perspective warp, deskew, illumination flattening, cropping, slice planning. Slice *stitching* is not built |
 | `engines/base.py` | **implemented** | `VisionEngine` and `BoxEngine` Protocols — the seam everything else depends on |
@@ -91,14 +93,20 @@ Recorded here so it is not "fixed" later.
 
 ## Open questions, deliberately unanswered
 
-- **Whether tesseract earns a place.** The first slice runs vision-only and is
+The first three now have somewhere to be answered rather than argued:
+`python -m doc_to_html.bakeoff`. Nobody has run it, because no model has been
+pulled on this machine. **Every number below is still an estimate.**
+
+- **Whether tesseract earns a place.** The slice runs vision-only and is
   therefore the control condition. Its accuracy is the number tesseract has to
   beat.
 - **Which model wins.** `qwen3-vl:2b` at 1.9 GB would let the extraction and
   audit models stay resident together; `qwen3-vl:4b` is likely more accurate.
   Measurement, not argument, settles this.
 - **Whether the refinement loop's latency is tolerable.** Roughly 90s for a
-  first round on an 8 GB M1, plus an audit pass per page.
+  first round on an 8 GB M1, plus an audit pass per page — a guess, not a
+  measurement. A conversion makes one layout pass plus one per Zone, which is
+  3 to 11 passes per fixture.
 - **Multi-page.** A Conversion is strictly one Source Image; admitting page 2
   means growing the IR a `pages` array and revising every fixture.
 
@@ -124,8 +132,27 @@ calls leak into Extractors.
 
 ```bash
 uv venv && uv pip install -e '.[dev]'
-pytest                                    # 61 tests, no model needed
+pytest                        # 273 tests, no model, no Ollama, no network
+mypy                          # strict, over src/
+
+doc-to-html config            # what resolved, and from where
 doc-to-html render tests/fixtures/invoice_0001.expected.json -o out.html
+doc-to-html convert example/invoice.png -o out.html   # needs Ollama
+```
+
+Two generated artifacts are committed and have tools that rewrite them. Both are
+checked by the suite, so drift is caught rather than discovered:
+
+```bash
+python tools/write_expected_ir.py    # tests/fixtures/*.expected.json
+python tools/record_responses.py     # tests/responses/
+```
+
+The bake-off needs a running Ollama with the models pulled, and is the only thing
+here that does:
+
+```bash
+python -m doc_to_html.bakeoff --fixtures invoice_0001 --models qwen3-vl:4b
 ```
 
 Python is pinned to 3.12 via `.python-version`. All declared dependencies

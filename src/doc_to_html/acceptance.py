@@ -37,9 +37,15 @@ class Mismatch:
     actual: str
 
     def __str__(self) -> str:
-        return (
+        """One line, always.
+
+        Whitespace is collapsed because some of what lands in `actual` arrives from
+        elsewhere — a Pydantic validation error runs to four lines — and a report
+        that promises one finding per line has to keep that promise.
+        """
+        return " ".join(
             f"{self.where}: {self.field} expected {self.expected}, "
-            f"got {self.actual}"
+            f"got {self.actual}".split()
         )
 
 

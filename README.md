@@ -5,8 +5,12 @@ that carries the same content and the same structure. An invoice and an
 inventory sheet are the same kind of input: the system never classifies
 documents.
 
-**Status:** scaffold. The back half — IR, Probes, renderer — is implemented and
-tested. No vision model is wired yet.
+**Status:** the whole path is connected and no model has ever run down it. A
+Source Image is rectified, laid out, extracted Zone by Zone, checked by Probes
+and rendered. All five acceptance fixtures convert against recorded responses,
+and photographs distorted by known amounts come back straight. What is untested
+is the only thing a model does: read a page. `python -m doc_to_html.bakeoff` is
+where that gets measured, and nobody has run it.
 
 ## What it aims at
 
@@ -59,16 +63,28 @@ Layout: `src/doc_to_html/`
 | `probes.py` | arithmetic checks, type-agnostic |
 | `render.py` | IR → HTML. Tolerates a partial IR |
 | `checkpoints.py` | where a human is asked; `NullHandler` for unattended runs |
+| `wire.py` | what a model is asked for, and how it becomes IR |
+| `acceptance.py` | what "structurally correct" means, in one place |
+| `bakeoff.py` | opt-in measurement of real models |
 | `cli.py` | thin wrapper over the library |
 
-## Try the back half
+## Try it
 
-The renderer and Probes need no model, so the fixtures exercise them today:
+The suite replaces exactly one thing — the call to Ollama — with responses
+recorded in `tests/responses/`. Everything else is the code that ships:
 
 ```bash
 uv venv && uv pip install -e '.[dev]'
-pytest
+pytest                        # 273 tests, no model, no Ollama, no network
 doc-to-html render tests/fixtures/invoice_0001.expected.json -o out.html
+```
+
+With Ollama running and a model pulled, the front half works too:
+
+```bash
+doc-to-html config                                    # what resolved, and from where
+doc-to-html convert example/invoice.png -o out.html
+python -m doc_to_html.bakeoff --fixtures invoice_0001 # measure a model
 ```
 
 Five documents in [`example/`](example/) have hand-authored expected IR in
