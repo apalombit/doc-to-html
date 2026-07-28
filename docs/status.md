@@ -15,6 +15,10 @@ and column instruction, and the mapper rejects what they return. See "What the
 first bake-off found" — that gap between the two is the whole reason both the
 acceptance harness and the bake-off exist.
 
+**Currently being worked on:** `docs/specs/0001-one-image-at-a-time.md` (issue #10)
+— getting `example/invoice.png` to convert correctly against a real model, one image
+at a time. Everything below describes the ground it stands on.
+
 ## Module state
 
 | Module | State | Notes |

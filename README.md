@@ -27,6 +27,8 @@ Output is one self-contained HTML file with the IR embedded in it as JSON.
   Ladder, Correction. Worth reading first; the code assumes these words.
 - **[docs/status.md](docs/status.md)** — what is built, what is stubbed, what is
   missing, and what was rejected.
+- **[docs/specs/](docs/specs/)** — the piece of work currently in flight, with its
+  measured numbers. Start here if you are picking the project up.
 - **[docs/adr/](docs/adr/)** — four decisions that look arbitrary without their
   reasons:
   - [0001](docs/adr/0001-no-document-types.md) — no document types
