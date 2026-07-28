@@ -1,0 +1,18 @@
+{
+  "blocks": [
+    {
+      "kind": "paragraph",
+      "lines": [
+        "For your convenience, you may deposit the final amount at one of our banks"
+      ]
+    },
+    {
+      "kind": "paragraph",
+      "lines": [
+        "Alpha Bank - MO123456789456123",
+        "Beta Bank - MO123456789456123",
+        "Gamma Bank - MO123456789456123"
+      ]
+    }
+  ]
+}

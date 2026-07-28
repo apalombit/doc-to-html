@@ -1,0 +1,16 @@
+{
+  "blocks": [
+    {
+      "kind": "heading",
+      "lines": [
+        "Why semantic HTML matters"
+      ]
+    },
+    {
+      "kind": "paragraph",
+      "lines": [
+        "May 9, 2026 · by Jane Author"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "rows": [
+    {
+      "role": "header",
+      "cells": [
+        "Payment Method",
+        "Check #"
+      ]
+    },
+    {
+      "role": "data",
+      "cells": [
+        "Check",
+        "1000"
+      ]
+    }
+  ]
+}

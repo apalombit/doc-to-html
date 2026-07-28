@@ -1,0 +1,112 @@
+{
+  "zones": [
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 0,
+      "left": 0.096,
+      "top": 0.062,
+      "right": 0.43,
+      "bottom": 0.096,
+      "title": "",
+      "graphic": ""
+    },
+    {
+      "kind": "list",
+      "role": "header",
+      "band": 1,
+      "column": 0,
+      "left": 0.096,
+      "top": 0.125,
+      "right": 0.365,
+      "bottom": 0.146,
+      "title": "",
+      "graphic": ""
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 2,
+      "column": 0,
+      "left": 0.096,
+      "top": 0.235,
+      "right": 0.495,
+      "bottom": 0.262,
+      "title": "",
+      "graphic": ""
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 3,
+      "column": 0,
+      "left": 0.096,
+      "top": 0.355,
+      "right": 0.58,
+      "bottom": 0.465,
+      "title": "Introduction",
+      "graphic": ""
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 3,
+      "column": 1,
+      "left": 0.598,
+      "top": 0.335,
+      "right": 0.927,
+      "bottom": 0.487,
+      "title": "TL;DR",
+      "graphic": ""
+    },
+    {
+      "kind": "list",
+      "role": "body",
+      "band": 4,
+      "column": 0,
+      "left": 0.096,
+      "top": 0.485,
+      "right": 0.56,
+      "bottom": 0.595,
+      "title": "Benefits",
+      "graphic": ""
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 5,
+      "column": 0,
+      "left": 0.096,
+      "top": 0.62,
+      "right": 0.84,
+      "bottom": 0.7,
+      "title": "",
+      "graphic": ""
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 6,
+      "column": 0,
+      "left": 0.096,
+      "top": 0.755,
+      "right": 0.285,
+      "bottom": 0.775,
+      "title": "",
+      "graphic": ""
+    },
+    {
+      "kind": "prose",
+      "role": "footer",
+      "band": 7,
+      "column": 0,
+      "left": 0.096,
+      "top": 0.86,
+      "right": 0.425,
+      "bottom": 0.91,
+      "title": "",
+      "graphic": ""
+    }
+  ]
+}

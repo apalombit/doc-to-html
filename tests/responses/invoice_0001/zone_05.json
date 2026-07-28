@@ -1,0 +1,39 @@
+{
+  "rows": [
+    {
+      "role": "header",
+      "cells": [
+        "Item",
+        "Price"
+      ]
+    },
+    {
+      "role": "data",
+      "cells": [
+        "Website design",
+        "$300.00"
+      ]
+    },
+    {
+      "role": "data",
+      "cells": [
+        "Hosting (3 months)",
+        "$75.00"
+      ]
+    },
+    {
+      "role": "data",
+      "cells": [
+        "Domain name (1 year)",
+        "$10.00"
+      ]
+    },
+    {
+      "role": "summary",
+      "cells": [
+        "",
+        "Total: $385.00"
+      ]
+    }
+  ]
+}

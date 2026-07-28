@@ -15,13 +15,13 @@ from typing import Protocol
 
 from .engines.base import VisionEngine
 from .ir import Kind, Zone
-from .preprocess import MODEL_INPUT_LONG_EDGE, slice_points
+from .preprocess import MODEL_INPUT_LONG_EDGE, ImageArray, slice_points
 
 
 class Extractor(Protocol):
     kind: Kind
 
-    def extract(self, image: object, zone: Zone, engine: VisionEngine,
+    def extract(self, image: ImageArray, zone: Zone, engine: VisionEngine,
                 hint: str | None = None) -> Zone: ...
 
 
@@ -37,7 +37,7 @@ class TableExtractor:
 
     kind = Kind.TABLE
 
-    def extract(self, image: object, zone: Zone, engine: VisionEngine,
+    def extract(self, image: ImageArray, zone: Zone, engine: VisionEngine,
                 hint: str | None = None) -> Zone:
         raise NotImplementedError("table extraction not yet wired")
 
@@ -61,7 +61,7 @@ class PairsExtractor:
 
     kind = Kind.PAIRS
 
-    def extract(self, image: object, zone: Zone, engine: VisionEngine,
+    def extract(self, image: ImageArray, zone: Zone, engine: VisionEngine,
                 hint: str | None = None) -> Zone:
         raise NotImplementedError("pairs extraction not yet wired")
 
@@ -71,7 +71,7 @@ class ProseExtractor:
 
     kind = Kind.PROSE
 
-    def extract(self, image: object, zone: Zone, engine: VisionEngine,
+    def extract(self, image: ImageArray, zone: Zone, engine: VisionEngine,
                 hint: str | None = None) -> Zone:
         raise NotImplementedError("prose extraction not yet wired")
 
@@ -79,7 +79,7 @@ class ProseExtractor:
 class ListExtractor:
     kind = Kind.LIST
 
-    def extract(self, image: object, zone: Zone, engine: VisionEngine,
+    def extract(self, image: ImageArray, zone: Zone, engine: VisionEngine,
                 hint: str | None = None) -> Zone:
         raise NotImplementedError("list extraction not yet wired")
 
@@ -94,7 +94,7 @@ class FigureExtractor:
 
     kind = Kind.FIGURE
 
-    def extract(self, image: object, zone: Zone, engine: VisionEngine,
+    def extract(self, image: ImageArray, zone: Zone, engine: VisionEngine,
                 hint: str | None = None) -> Zone:
         raise NotImplementedError("figure handling not yet wired")
 

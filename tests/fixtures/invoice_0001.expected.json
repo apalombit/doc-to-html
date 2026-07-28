@@ -547,15 +547,7 @@
     }
   ],
   "corrections": [],
-  "probes": [
-    {
-      "kind": "column-sum",
-      "zone_index": 5,
-      "ok": true,
-      "computed": "385.00",
-      "stated": "385.00",
-      "detail": "column 1, 3 data rows"
-    }
-  ],
-  "gaps": []
+  "probes": [],
+  "gaps": [],
+  "failures": []
 }

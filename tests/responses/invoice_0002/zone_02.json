@@ -1,0 +1,13 @@
+{
+  "blocks": [
+    {
+      "kind": "address",
+      "lines": [
+        "Acme Corporation",
+        "Software Development",
+        "Field 3, Moon",
+        "info@acme.com"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "blocks": [
+    {
+      "kind": "item",
+      "lines": [
+        "Screen readers can navigate the document structure"
+      ]
+    },
+    {
+      "kind": "item",
+      "lines": [
+        "Search engines understand content hierarchy"
+      ]
+    },
+    {
+      "kind": "item",
+      "lines": [
+        "CSS and JavaScript can target meaningful regions"
+      ]
+    }
+  ]
+}

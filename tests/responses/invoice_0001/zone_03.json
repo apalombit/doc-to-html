@@ -1,0 +1,12 @@
+{
+  "blocks": [
+    {
+      "kind": "address",
+      "lines": [
+        "Acme Corp.",
+        "John Doe",
+        "john@example.com"
+      ]
+    }
+  ]
+}

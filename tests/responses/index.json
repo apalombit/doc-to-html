@@ -1,0 +1,49 @@
+{
+  "invoice_0001": [
+    "layout.json",
+    "zone_00.json",
+    "zone_01.json",
+    "zone_02.json",
+    "zone_03.json",
+    "zone_04.json",
+    "zone_05.json"
+  ],
+  "invoice_0002": [
+    "layout.json",
+    "zone_00.json",
+    "zone_01.json",
+    "zone_02.json",
+    "zone_03.json",
+    "zone_04.json",
+    "zone_05.json",
+    "zone_06.json",
+    "zone_07.json",
+    "zone_08.json",
+    "zone_09.json"
+  ],
+  "sample_table_0003": [
+    "layout.json",
+    "zone_00.json",
+    "zone_01.json"
+  ],
+  "sample_css_0004": [
+    "layout.json",
+    "zone_00.json",
+    "zone_01.json",
+    "zone_02.json",
+    "zone_03.json",
+    "zone_04.json"
+  ],
+  "sample_semantic_0005": [
+    "layout.json",
+    "zone_00.json",
+    "zone_01.json",
+    "zone_02.json",
+    "zone_03.json",
+    "zone_04.json",
+    "zone_05.json",
+    "zone_06.json",
+    "zone_07.json",
+    "zone_08.json"
+  ]
+}

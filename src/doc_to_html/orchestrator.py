@@ -22,8 +22,8 @@ from .config import Settings, load
 from .engines.base import VisionEngine
 from .engines.ollama import OllamaEngine
 from .extractors import for_kind
-from .ir import Document, Gap
-from .preprocess import rectify
+from .ir import Document, Failure
+from .preprocess import Rectified, rectify
 from .render import render
 
 MAX_ROUNDS = 5
@@ -152,29 +152,62 @@ class Conversion:
         )
         return answer.note or None
 
-    def _layout(self, rectified: object, document: Document) -> None:
-        """Detect Zones — Band, column, Kind, Role, bbox — on a downscaled page."""
-        raise NotImplementedError("layout pass not yet wired")
+    def _layout(self, rectified: Rectified, document: Document) -> None:
+        """Detect Zones — Band, column, Kind, Role, bbox — on a downscaled page.
 
-    def _extract(self, rectified: object, document: Document) -> None:
-        """Fill each incomplete Zone from a full-resolution crop of it."""
-        for zone in document.zones:
+        Run once per Conversion, not once per round. A later round refines what
+        is *in* the Zones; re-detecting them would discard everything extracted
+        so far in exchange for a near-identical answer from a near-deterministic
+        model.
+        """
+        if document.zones:
+            return
+        document.zones = self.engines.layout.detect_zones(
+            rectified.image, document.hint
+        )
+
+    def _extract(self, rectified: Rectified, document: Document) -> None:
+        """Fill each incomplete Zone from a full-resolution crop of it.
+
+        Partial output is the useful output. A Zone that cannot be read is
+        recorded as a Failure and left incomplete — it renders as a skeleton,
+        which is unmistakably "this did not work" in a way that silently absent
+        content is not — and the remaining Zones are still extracted.
+        """
+        document.failures = []
+        for index, zone in enumerate(document.zones):
             if zone.complete:
                 continue
-            for_kind(zone.kind).extract(rectified, zone, self.engines.extract,
-                                        document.hint)
+            try:
+                for_kind(zone.kind).extract(
+                    rectified.image, zone, self.engines.extract, document.hint
+                )
+            except Exception as error:
+                document.failures.append(
+                    Failure(
+                        zone_index=index,
+                        kind=zone.kind.value,
+                        reason=f"{type(error).__name__}: {error}",
+                    )
+                )
 
-    def _audit(self, rectified: object, document: Document) -> None:
+    def _audit(self, rectified: Rectified, document: Document) -> None:
         """Find content no Zone covers.
 
         Every other safeguard catches content that is *wrong*. This is the only
         one that catches content that is *absent* — a failure which otherwise
         leaves the IR internally consistent and every Probe passing.
-        """
-        uncovered = self.engines.audit.audit_coverage(rectified, document.zones)
-        document.gaps = [Gap(bbox=bbox) for bbox in uncovered]
 
-    def _climb_ladders(self, rectified: object, document: Document) -> None:
+        Not run yet, and deliberately not faked: an audit is only worth anything
+        from a *different model family*, because asking the model that missed a
+        block whether it missed a block shares the blind spot that caused the
+        miss. Until a second family is wired, content the layout pass never saw
+        goes unnoticed. That is the known blind spot of the vision-only slice and
+        the strongest argument for building this next.
+        """
+        return
+
+    def _climb_ladders(self, rectified: Rectified, document: Document) -> None:
         """Advance every unresolved item one Rung.
 
         Probe findings are used here to decide *which* cells to look at again,
@@ -182,9 +215,13 @@ class Conversion:
         a prompt: a failed Probe cannot distinguish a misread line item from a
         misread total, so supplying the expected value would force agreement
         with whichever number happened to be wrong. See docs/adr/0004.
+
+        Nothing to climb yet. Only one Engine reads each cell in this slice, so
+        no two readings can disagree, so no cell is ever Disputed. Escalation
+        arrives with a second Engine and not before.
         """
         _implicated = probe_module.implicated_zones(document.probes)
-        raise NotImplementedError("ladder not yet wired")
+        return
 
     def _ask_convergence(self, document: Document) -> Answer:
         """Show a Draft beside the Source Image and ask whether it is converging."""
@@ -198,8 +235,17 @@ class Conversion:
         )
 
     def _apply(self, answer: Answer, document: Document) -> None:
-        """Fold a structured answer into the IR; carry a note into the next prompt."""
-        raise NotImplementedError("feedback application not yet wired")
+        """Fold a structured answer into the IR; carry a note into the next prompt.
+
+        A note is appended to the Hint rather than interpreted. That is the whole
+        of it for now: interpreting prose is a later milestone, and when it
+        arrives its job is to map prose onto the structured `choice` values, not
+        to edit the IR.
+        """
+        if answer.note:
+            document.hint = (
+                f"{document.hint}\n{answer.note}" if document.hint else answer.note
+            )
 
 
 def convert(source: Path | str, *, handler: CheckpointHandler | None = None,

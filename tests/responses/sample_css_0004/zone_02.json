@@ -1,0 +1,10 @@
+{
+  "blocks": [
+    {
+      "kind": "paragraph",
+      "lines": [
+        "This document demonstrates inline <style> blocks with typography, layout, and components."
+      ]
+    }
+  ]
+}

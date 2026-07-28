@@ -1,0 +1,28 @@
+{
+  "zones": [
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 0,
+      "left": 0.026,
+      "top": 0.025,
+      "right": 0.31,
+      "bottom": 0.075,
+      "title": "",
+      "graphic": ""
+    },
+    {
+      "kind": "table",
+      "role": "body",
+      "band": 1,
+      "column": 0,
+      "left": 0.02,
+      "top": 0.11,
+      "right": 0.98,
+      "bottom": 0.97,
+      "title": "Population and GDP (millions of USD)",
+      "graphic": ""
+    }
+  ]
+}

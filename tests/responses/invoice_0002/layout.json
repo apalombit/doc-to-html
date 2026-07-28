@@ -1,0 +1,124 @@
+{
+  "zones": [
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 0,
+      "left": 0.014,
+      "top": 0.045,
+      "right": 0.23,
+      "bottom": 0.11,
+      "title": "",
+      "graphic": ""
+    },
+    {
+      "kind": "figure",
+      "role": "header",
+      "band": 0,
+      "column": 1,
+      "left": 0.676,
+      "top": 0.024,
+      "right": 0.742,
+      "bottom": 0.122,
+      "title": "",
+      "graphic": "logo"
+    },
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 2,
+      "left": 0.75,
+      "top": 0.028,
+      "right": 0.9,
+      "bottom": 0.135,
+      "title": "",
+      "graphic": ""
+    },
+    {
+      "kind": "pairs",
+      "role": "header",
+      "band": 1,
+      "column": 0,
+      "left": 0.014,
+      "top": 0.128,
+      "right": 0.3,
+      "bottom": 0.155,
+      "title": "",
+      "graphic": ""
+    },
+    {
+      "kind": "pairs",
+      "role": "body",
+      "band": 2,
+      "column": 0,
+      "left": 0.015,
+      "top": 0.168,
+      "right": 0.405,
+      "bottom": 0.455,
+      "title": "Company Details",
+      "graphic": ""
+    },
+    {
+      "kind": "pairs",
+      "role": "body",
+      "band": 2,
+      "column": 1,
+      "left": 0.43,
+      "top": 0.168,
+      "right": 0.985,
+      "bottom": 0.455,
+      "title": "Customer Details",
+      "graphic": ""
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 3,
+      "column": 0,
+      "left": 0.015,
+      "top": 0.487,
+      "right": 0.985,
+      "bottom": 0.545,
+      "title": "Services / Products",
+      "graphic": ""
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 4,
+      "column": 0,
+      "left": 0.015,
+      "top": 0.6,
+      "right": 0.573,
+      "bottom": 0.77,
+      "title": "Comments / Notes",
+      "graphic": ""
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 4,
+      "column": 1,
+      "left": 0.598,
+      "top": 0.6,
+      "right": 0.985,
+      "bottom": 0.865,
+      "title": "Payment Method",
+      "graphic": ""
+    },
+    {
+      "kind": "prose",
+      "role": "footer",
+      "band": 5,
+      "column": 0,
+      "left": 0.015,
+      "top": 0.895,
+      "right": 0.3,
+      "bottom": 0.975,
+      "title": "",
+      "graphic": ""
+    }
+  ]
+}

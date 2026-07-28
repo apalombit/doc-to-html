@@ -469,5 +469,6 @@
   ],
   "corrections": [],
   "probes": [],
-  "gaps": []
+  "gaps": [],
+  "failures": []
 }

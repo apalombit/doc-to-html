@@ -126,6 +126,11 @@ def _findings(document: Document) -> str:
         for g in document.gaps
         if not g.resolved
     ]
+    items += [
+        f"Region {f.zone_index} (<code>{html.escape(f.kind)}</code>) could not "
+        f"be read: {html.escape(f.reason)}"
+        for f in document.failures
+    ]
     if not items:
         return ""
     return (

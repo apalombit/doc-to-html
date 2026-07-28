@@ -1,0 +1,10 @@
+{
+  "blocks": [
+    {
+      "kind": "paragraph",
+      "lines": [
+        "Modern HTML5 introduced semantic elements like <article>, <section>, and <nav> that describe the meaning of content rather than its appearance."
+      ]
+    }
+  ]
+}

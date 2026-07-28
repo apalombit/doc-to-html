@@ -234,6 +234,22 @@ class Gap:
 
 
 @dataclass
+class Failure:
+    """A Zone an Extractor could not fill, recorded rather than raised.
+
+    Throwing away five Zones that extracted correctly because a sixth did not
+    would destroy the evidence a run exists to produce. So the Zone stays
+    incomplete, renders as a skeleton, and its reason is recorded here — which is
+    what makes a skeleton in the render traceable to what went wrong rather than
+    merely visible.
+    """
+
+    zone_index: int
+    kind: str
+    reason: str
+
+
+@dataclass
 class Source:
     """Provenance of the pixels."""
 
@@ -259,6 +275,7 @@ class Document:
     corrections: list[Correction] = field(default_factory=list)
     probes: list[ProbeResult] = field(default_factory=list)
     gaps: list[Gap] = field(default_factory=list)
+    failures: list[Failure] = field(default_factory=list)
 
     def bands(self) -> list[list[Zone]]:
         """Zones grouped into Bands and ordered for rendering."""
@@ -358,6 +375,7 @@ def _decode_document(data: dict[str, Any]) -> Document:
             Gap(bbox=BBox(**g["bbox"]), note=g.get("note"), resolved=g.get("resolved", False))
             for g in data.get("gaps", [])
         ],
+        failures=[Failure(**f) for f in data.get("failures", [])],
     )
 
 

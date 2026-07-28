@@ -1,0 +1,28 @@
+{
+  "blocks": [
+    {
+      "kind": "item",
+      "lines": [
+        "Home"
+      ]
+    },
+    {
+      "kind": "item",
+      "lines": [
+        "Archive"
+      ]
+    },
+    {
+      "kind": "item",
+      "lines": [
+        "About"
+      ]
+    },
+    {
+      "kind": "item",
+      "lines": [
+        "Contact"
+      ]
+    }
+  ]
+}

@@ -11,6 +11,7 @@ from __future__ import annotations
 from typing import Protocol, runtime_checkable
 
 from ..ir import BBox, Reading, Zone
+from ..preprocess import ImageArray
 
 
 @runtime_checkable
@@ -20,22 +21,25 @@ class VisionEngine(Protocol):
     name: str
     model: str
 
-    def detect_zones(self, image: object, hint: str | None = None) -> list[Zone]:
+    def detect_zones(self, image: ImageArray,
+                     hint: str | None = None) -> list[Zone]:
         """Zones with Band, column, Kind, Role and bbox — no contents.
 
         Run on a downscaled page: a coarse task that small models handle well.
         """
         ...
 
-    def extract_zone(self, image: object, zone: Zone, hint: str | None = None) -> Zone:
+    def extract_zone(self, image: ImageArray, zone: Zone,
+                     hint: str | None = None) -> Zone:
         """Fill in a Zone's contents from a full-resolution crop of it."""
         ...
 
-    def read_cell(self, image: object, bbox: BBox, hint: str | None = None) -> Reading:
+    def read_cell(self, image: ImageArray, bbox: BBox,
+                  hint: str | None = None) -> Reading:
         """Re-read one cell from an upscaled crop. A rung on the Ladder."""
         ...
 
-    def audit_coverage(self, image: object, zones: list[Zone]) -> list[BBox]:
+    def audit_coverage(self, image: ImageArray, zones: list[Zone]) -> list[BBox]:
         """Regions carrying content that no Zone covers.
 
         Run by a *different model family* from the one that produced the layout.
@@ -56,4 +60,4 @@ class BoxEngine(Protocol):
 
     name: str
 
-    def word_boxes(self, image: object) -> list[tuple[BBox, str]]: ...
+    def word_boxes(self, image: ImageArray) -> list[tuple[BBox, str]]: ...

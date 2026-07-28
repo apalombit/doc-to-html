@@ -106,6 +106,10 @@ _Avoid_: Completeness check, validation, sanity check
 A region of the Rectified Image carrying content that no Zone covers. A Gap is a finding of the Coverage Audit and enters the Ladder like any other unresolved item.
 _Avoid_: Missing region, hole, uncovered area
 
+**Failure**:
+A Zone an Extractor could not fill, recorded in the IR rather than raised. The Zone stays incomplete and renders as a skeleton, the Conversion continues, and the reason is kept — which is what makes a skeleton traceable to what went wrong rather than merely visible. Distinct from a Gap: a Gap is content no Zone covers, a Failure is a Zone whose content could not be read.
+_Avoid_: Error, exception, incomplete zone
+
 **Hint**:
 Free prose supplied by the human at the opening Checkpoint, stored in the IR and appended verbatim to every prompt. A Hint changes what a model is told and never what the code does — it is not a document type, and nothing branches on it.
 _Avoid_: Type, class, category, document kind

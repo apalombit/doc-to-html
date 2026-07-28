@@ -1,0 +1,10 @@
+{
+  "blocks": [
+    {
+      "kind": "paragraph",
+      "lines": [
+        "Cards are reusable layout containers. Edit the CSS in the <head> to customize."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "zones": [
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 0,
+      "left": 0.043,
+      "top": 0.062,
+      "right": 0.313,
+      "bottom": 0.14,
+      "title": "",
+      "graphic": ""
+    },
+    {
+      "kind": "figure",
+      "role": "header",
+      "band": 0,
+      "column": 1,
+      "left": 0.323,
+      "top": 0.082,
+      "right": 0.376,
+      "bottom": 0.132,
+      "title": "",
+      "graphic": "badge"
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 1,
+      "column": 0,
+      "left": 0.043,
+      "top": 0.208,
+      "right": 0.905,
+      "bottom": 0.245,
+      "title": "",
+      "graphic": ""
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 2,
+      "column": 0,
+      "left": 0.043,
+      "top": 0.283,
+      "right": 0.957,
+      "bottom": 0.588,
+      "title": "Card heading",
+      "graphic": ""
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 3,
+      "column": 0,
+      "left": 0.043,
+      "top": 0.62,
+      "right": 0.957,
+      "bottom": 0.93,
+      "title": "Another card",
+      "graphic": ""
+    }
+  ]
+}

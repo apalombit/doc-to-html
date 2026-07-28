@@ -4,27 +4,30 @@ Snapshot of what exists, what does not, and what is known to be missing. Updated
 at checkpoints; `CONTEXT.md` holds the vocabulary and `docs/adr/` the decisions,
 neither of which belongs here.
 
-**As of the first checkpoint commit: the back half is real, the front half is
-stubs.** No Source Image has ever been converted. Everything below the Engines —
-the IR, the Probes, the renderer — is implemented and covered by 61 tests that
-run offline with no model installed.
+**The spine is connected; the Extractors are not.** A Source Image now converts:
+it is loaded, laid out by a vision Engine, mapped into Zones and rendered as one
+self-contained HTML file with the IR embedded. Every Zone comes back incomplete
+and renders as a skeleton, because no Extractor is wired yet. The suite runs
+offline against recorded responses with no model installed.
 
 ## Module state
 
 | Module | State | Notes |
 | --- | --- | --- |
-| `ir.py` | **implemented** | Bands, Kind/Role, Row Roles, Title, Corrections, versioning, JSON round-trip |
+| `ir.py` | **implemented** | Bands, Kind/Role, Row Roles, Title, Corrections, Failures, versioning, JSON round-trip |
+| `wire.py` | **implemented** | Wire schemas for all five passes; layout mapping with geometric validation |
+| `engines/transport.py` | **implemented** | The one call to Ollama, and the suite's only fake |
 | `probes.py` | **implemented** | column-sum, row-product, number parsing across both decimal conventions |
 | `render.py` | **implemented** | IR → self-contained HTML, tolerates partial IR, content-driven column alignment |
 | `checkpoints.py` | **implemented** | `Question`/`Answer`, `NullHandler`, `ScriptedHandler` |
 | `config.py` | **implemented** | Every `.env.example` variable, with a code default and recorded provenance; the only reader of the environment |
 | `cli.py` | **partial** | `render` and `config` work end to end; `convert` reaches unimplemented code; `--review` exits cleanly |
-| `preprocess.py` | **stub** | `slice_points()` implemented and tested; `rectify()` raises |
+| `preprocess.py` | **partial** | Loading, resizing, cropping, PNG encoding and `slice_points()` are real; `rectify()` geometry is a pass-through |
 | `engines/base.py` | **implemented** | `VisionEngine` and `BoxEngine` Protocols — the seam everything else depends on |
-| `engines/ollama.py` | **stub** | all four methods raise |
+| `engines/ollama.py` | **partial** | `detect_zones` and the truncation retry are real; `extract_zone`, `read_cell` and `audit_coverage` raise |
 | `engines/tesseract.py` | **stub** | deliberately — see "Open questions" |
-| `extractors.py` | **stub** | all five registered, all raise |
-| `orchestrator.py` | **stub** | Ladder, Rungs and the round loop are written; layout, ladder and feedback raise |
+| `extractors.py` | **stub** | all five registered, all raise; each raise is caught and recorded as a Failure |
+| `orchestrator.py` | **partial** | Layout, extraction with the failure contract, and Probes run; the Coverage Audit and the Ladder are deliberate no-ops for this slice |
 
 ## Fixtures
 

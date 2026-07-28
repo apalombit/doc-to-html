@@ -1,0 +1,164 @@
+{
+  "rows": [
+    {
+      "role": "header",
+      "cells": [
+        "Country",
+        "ISO",
+        "Population",
+        "GDP (USD M)",
+        "Currency"
+      ]
+    },
+    {
+      "role": "data",
+      "cells": [
+        "United States",
+        "USA",
+        "331,900,000",
+        "19,485,394",
+        "USD"
+      ]
+    },
+    {
+      "role": "data",
+      "cells": [
+        "China",
+        "CHN",
+        "1,412,000,000",
+        "14,722,801",
+        "CNY"
+      ]
+    },
+    {
+      "role": "data",
+      "cells": [
+        "Japan",
+        "JPN",
+        "125,700,000",
+        "4,937,422",
+        "JPY"
+      ]
+    },
+    {
+      "role": "data",
+      "cells": [
+        "Germany",
+        "DEU",
+        "83,240,000",
+        "4,223,116",
+        "EUR"
+      ]
+    },
+    {
+      "role": "data",
+      "cells": [
+        "India",
+        "IND",
+        "1,408,000,000",
+        "3,173,398",
+        "INR"
+      ]
+    },
+    {
+      "role": "data",
+      "cells": [
+        "United Kingdom",
+        "GBR",
+        "67,330,000",
+        "3,070,667",
+        "GBP"
+      ]
+    },
+    {
+      "role": "data",
+      "cells": [
+        "France",
+        "FRA",
+        "67,750,000",
+        "2,937,473",
+        "EUR"
+      ]
+    },
+    {
+      "role": "data",
+      "cells": [
+        "Italy",
+        "ITA",
+        "59,110,000",
+        "2,099,880",
+        "EUR"
+      ]
+    },
+    {
+      "role": "data",
+      "cells": [
+        "Canada",
+        "CAN",
+        "38,250,000",
+        "1,988,336",
+        "CAD"
+      ]
+    },
+    {
+      "role": "data",
+      "cells": [
+        "South Korea",
+        "KOR",
+        "51,740,000",
+        "1,810,966",
+        "KRW"
+      ]
+    },
+    {
+      "role": "data",
+      "cells": [
+        "Russia",
+        "RUS",
+        "143,400,000",
+        "1,775,800",
+        "RUB"
+      ]
+    },
+    {
+      "role": "data",
+      "cells": [
+        "Brazil",
+        "BRA",
+        "214,300,000",
+        "1,608,981",
+        "BRL"
+      ]
+    },
+    {
+      "role": "data",
+      "cells": [
+        "Australia",
+        "AUS",
+        "25,690,000",
+        "1,542,660",
+        "AUD"
+      ]
+    },
+    {
+      "role": "data",
+      "cells": [
+        "Spain",
+        "ESP",
+        "47,420,000",
+        "1,425,865",
+        "EUR"
+      ]
+    },
+    {
+      "role": "data",
+      "cells": [
+        "Mexico",
+        "MEX",
+        "130,300,000",
+        "1,293,490",
+        "MXN"
+      ]
+    }
+  ]
+}

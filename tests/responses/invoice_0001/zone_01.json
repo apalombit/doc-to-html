@@ -1,0 +1,16 @@
+{
+  "pairs": [
+    {
+      "label": "Invoice #",
+      "value": "123"
+    },
+    {
+      "label": "Created",
+      "value": "January 1, 2023"
+    },
+    {
+      "label": "Due",
+      "value": "February 1, 2023"
+    }
+  ]
+}
