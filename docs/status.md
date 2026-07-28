@@ -4,11 +4,13 @@ Snapshot of what exists, what does not, and what is known to be missing. Updated
 at checkpoints; `CONTEXT.md` holds the vocabulary and `docs/adr/` the decisions,
 neither of which belongs here.
 
-**The spine is connected; the Extractors are not.** A Source Image now converts:
-it is loaded, laid out by a vision Engine, mapped into Zones and rendered as one
-self-contained HTML file with the IR embedded. Every Zone comes back incomplete
-and renders as a skeleton, because no Extractor is wired yet. The suite runs
-offline against recorded responses with no model installed.
+**The whole path is connected and no model has ever run down it.** A Source Image
+is rectified, laid out by a vision Engine, extracted Zone by Zone, checked by
+Probes and rendered as one self-contained HTML file with the IR embedded. All
+five fixtures convert with no Failures, and photographs distorted by known
+amounts come back straight. The suite runs offline against recorded responses
+with no model installed — which is exactly why the bake-off exists: everything
+below the model is tested, and the model is not.
 
 ## Module state
 
@@ -21,12 +23,12 @@ offline against recorded responses with no model installed.
 | `render.py` | **implemented** | IR → self-contained HTML, tolerates partial IR, content-driven column alignment |
 | `checkpoints.py` | **implemented** | `Question`/`Answer`, `NullHandler`, `ScriptedHandler` |
 | `config.py` | **implemented** | Every `.env.example` variable, with a code default and recorded provenance; the only reader of the environment |
-| `cli.py` | **partial** | `render` and `config` work end to end; `convert` reaches unimplemented code; `--review` exits cleanly |
-| `preprocess.py` | **partial** | Loading, resizing, cropping, PNG encoding and `slice_points()` are real; `rectify()` geometry is a pass-through |
+| `cli.py` | **partial** | `render`, `config` and `convert` work end to end; `--review` exits cleanly |
+| `preprocess.py` | **implemented** | Page-quad detection, perspective warp, deskew, illumination flattening, cropping, slice planning. Slice *stitching* is not built |
 | `engines/base.py` | **implemented** | `VisionEngine` and `BoxEngine` Protocols — the seam everything else depends on |
-| `engines/ollama.py` | **partial** | `detect_zones` and the truncation retry are real; `extract_zone`, `read_cell` and `audit_coverage` raise |
+| `engines/ollama.py` | **partial** | `detect_zones` and `extract_zone` for all five Kinds are real, with the truncation retry; `read_cell` and `audit_coverage` raise |
 | `engines/tesseract.py` | **stub** | deliberately — see "Open questions" |
-| `extractors.py` | **stub** | all five registered, all raise; each raise is caught and recorded as a Failure |
+| `extractors.py` | **implemented** | All five crop their Zone and hand it to the Engine; only `TableExtractor.stitch` raises |
 | `orchestrator.py` | **partial** | Layout, extraction with the failure contract, and Probes run; the Coverage Audit and the Ladder are deliberate no-ops for this slice |
 
 ## Fixtures
@@ -58,12 +60,30 @@ cloud host needs no code change. Nobody has run a Conversion against it.
 
 **Rectification is untestable against the fixture set.** All five sources are
 white documents filling a white frame, so no page quadrilateral exists to
-detect and the documented fallback is what fires. Seam 2 — synthetically skewed
-images — carries the rectifier's correctness alone.
+detect and the documented fallback is what fires. Seam 2 —
+`tests/test_rectification.py`, which distorts a fixture by known amounts —
+carries the rectifier's correctness alone. Landmarks come back within 8px of
+where they sit in the undistorted rectification, on an 862px-wide page.
 
-**No photographs, no skew, no multi-page, no handwriting** in the fixtures.
-Those arrive with the synthetic corpus generator, which depends on the slice
-existing first.
+**Orientation is not corrected, only tilt.** A page photographed sideways or
+upside down stays that way. Telling 90° from 270° means knowing which way up the
+text runs, which means reading it — an Engine's job, and a rectifier that guesses
+wrong ruins every coordinate in the IR. Deliberately narrower than the ticket
+asked for.
+
+**Nothing tells an operator their photograph was not warped.** `Rectified.warped`
+records it and only tests read it. An unwarped photograph of a page shot at an
+angle explains a bad render, and the render does not say so.
+
+**No real photographs, no multi-page, no handwriting** in the fixtures. The
+distortions Seam 2 uses are synthetic: geometry, not paper texture, camera noise
+or focus. Real photographs arrive with the synthetic corpus generator, which
+depends on the slice existing first.
+
+**Extracted cells carry no bounding box.** The extraction schemas are flat and
+ask for text, not per-cell geometry, so `Cell.bbox` is None for everything a
+model read. Corrections anchor to cell geometry, which nothing in this slice
+creates — but a Correction UI needs this before it can work.
 
 **`Structural Fidelity` is a glossary term with no code referent.** This is
 correct: it names a standard that lives in `docs/adr/0002`, not a code concept.

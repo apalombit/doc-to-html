@@ -20,7 +20,7 @@ from typing import Any
 IR_VERSION = 1
 """Bump when the shape below changes incompatibly. Written into every IR."""
 
-RECTIFIER_VERSION = 1
+RECTIFIER_VERSION = 2
 """Bump when rectification changes geometrically.
 
 Corrections are anchored to coordinates in the rectified space. If rectification

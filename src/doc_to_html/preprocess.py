@@ -49,6 +49,14 @@ class Rectified:
 
     source: Source
 
+    warped: bool = False
+    """Whether a page quadrilateral was found and the page flattened to it.
+
+    False means the image was used as-is, which is the normal answer for a scan or
+    a screenshot. Worth knowing when a render comes out badly: an unwarped
+    photograph of a page shot at an angle explains a great deal.
+    """
+
 
 def sha256_of(path: Path) -> str:
     digest = hashlib.sha256()
@@ -115,23 +123,249 @@ def crop(image: ImageArray, bbox: BBox, *, pad: float = 0.01) -> ImageArray:
     return np.ascontiguousarray(image[top:bottom, left:right])
 
 
+DETECT_LONG_EDGE = 800
+"""Page edges are a coarse feature. Finding them on a small copy is faster and
+less distracted by the texture of the paper."""
+
+MIN_PAGE_AREA = 0.25
+"""A quadrilateral covering less than this much of the frame is not the page.
+
+Photographs of documents are framed on the document. A small quadrilateral is a
+panel, a photograph within the page, or a shadow — warping to it would crop the
+document to one of its own parts.
+"""
+
+MAX_PAGE_AREA = 0.97
+"""A quadrilateral covering more than this much of the frame is the frame.
+
+This is what sends a clean screenshot down the fallback path: a white document
+filling a white image has no page edge to find, and the largest contour is the
+image border. Warping to the border is a no-op with rounding error attached.
+"""
+
+MAX_DESKEW_DEGREES = 15.0
+"""Beyond this, the estimate is not skew.
+
+A page photographed sideways is a rotation of about 90 degrees, and correcting it
+means knowing which way up the text runs — which means reading the text. That is
+an Engine's job, not the rectifier's, and guessing between 90 and 270 degrees
+would be a coin flip that destroys every coordinate downstream.
+"""
+
+
+def _ink(gray: ImageArray) -> ImageArray:
+    """Dark pixels, as a binary mask. Deterministic: Otsu, no sampling."""
+    cv2 = _cv2()
+    _, mask = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+    binary: ImageArray = mask
+    return binary
+
+
+def _order_corners(quad: ImageArray) -> ImageArray:
+    """Corners as top-left, top-right, bottom-right, bottom-left.
+
+    By sum and difference of coordinates rather than by angle, which keeps the
+    ordering stable for the near-rectangles this is used on.
+    """
+    points = quad.reshape(4, 2).astype(np.float32)
+    by_sum = points.sum(axis=1)
+    by_diff = (points[:, 0] - points[:, 1])
+    return np.array(
+        [
+            points[np.argmin(by_sum)],
+            points[np.argmax(by_diff)],
+            points[np.argmax(by_sum)],
+            points[np.argmin(by_diff)],
+        ],
+        dtype=np.float32,
+    )
+
+
+def find_page_quad(image: ImageArray) -> ImageArray | None:
+    """The page's four corners in full-resolution coordinates, or None.
+
+    None is a legitimate and common answer — a scan or a screenshot has no page
+    edge in it — and it is the answer that matters most, because the alternative
+    to admitting it is a confident warp to something that is not the page.
+    """
+    cv2 = _cv2()
+    small = resize_long_edge(image, DETECT_LONG_EDGE)
+    scale = max(image.shape[:2]) / max(small.shape[:2])
+
+    gray = cv2.cvtColor(small, cv2.COLOR_BGR2GRAY)
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    edges = cv2.Canny(blurred, 50, 150)
+    edges = cv2.dilate(edges, np.ones((3, 3), np.uint8), iterations=2)
+
+    contours, _ = cv2.findContours(edges, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    frame_area = float(small.shape[0] * small.shape[1])
+
+    for contour in sorted(contours, key=cv2.contourArea, reverse=True)[:8]:
+        perimeter = cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, 0.02 * perimeter, True)
+        if len(approx) != 4 or not cv2.isContourConvex(approx):
+            continue
+        share = cv2.contourArea(approx) / frame_area
+        if not MIN_PAGE_AREA <= share <= MAX_PAGE_AREA:
+            continue
+        found: ImageArray = _order_corners(approx) * scale
+        return found
+    return None
+
+
+def warp_to_quad(image: ImageArray, quad: ImageArray) -> ImageArray:
+    """Flatten the page, sizing the output from the quadrilateral's own edges."""
+    cv2 = _cv2()
+    top_left, top_right, bottom_right, bottom_left = quad
+    width = int(round(max(
+        float(np.linalg.norm(top_right - top_left)),
+        float(np.linalg.norm(bottom_right - bottom_left)),
+    )))
+    height = int(round(max(
+        float(np.linalg.norm(bottom_left - top_left)),
+        float(np.linalg.norm(bottom_right - top_right)),
+    )))
+    if width < 2 or height < 2:
+        raise RectifyError(f"page quadrilateral is degenerate: {quad.tolist()}")
+
+    target = np.array(
+        [[0, 0], [width - 1, 0], [width - 1, height - 1], [0, height - 1]],
+        dtype=np.float32,
+    )
+    matrix = cv2.getPerspectiveTransform(quad, target)
+    warped: ImageArray = cv2.warpPerspective(image, matrix, (width, height))
+    return warped
+
+
+DESKEW_STEP_DEGREES = 0.5
+"""How finely candidate angles are tried. Half a degree over a 3000px page moves
+its far edge by 25px, which is finer than any Zone boundary the layout pass
+draws."""
+
+DESKEW_MARGIN = 1.05
+"""How much better than level a candidate must score to be worth rotating to.
+
+A page of text has a decisive best angle. Without a margin, image noise picks a
+fractional angle on a perfectly straight page, and rotating costs a resampling
+blur while moving every coordinate.
+"""
+
+
+def _line_sharpness(mask: ImageArray, angle: float) -> float:
+    """How crisply the ink stacks into horizontal lines at this angle.
+
+    Rows of text produce a row-sum profile of tall peaks and empty troughs, so its
+    variance peaks when the lines are level. This is the classic projection-profile
+    estimate, used in preference to the minimum-area rectangle around the ink:
+    that rectangle is dominated by the overall shape of the page's margins, and it
+    reports a two-degree tilt on documents that are perfectly straight.
+    """
+    cv2 = _cv2()
+    if angle:
+        height, width = mask.shape[:2]
+        matrix = cv2.getRotationMatrix2D((width / 2, height / 2), angle, 1.0)
+        mask = cv2.warpAffine(mask, matrix, (width, height), flags=cv2.INTER_NEAREST)
+    profile = mask.sum(axis=1, dtype=np.float64)
+    return float(profile.var())
+
+
+def skew_angle(image: ImageArray) -> float:
+    """The angle the text sits at, in degrees, or 0.0 when it cannot be told.
+
+    Bounded to small angles by MAX_DESKEW_DEGREES: this corrects a tilt, never an
+    orientation.
+    """
+    cv2 = _cv2()
+    small = resize_long_edge(image, DETECT_LONG_EDGE)
+    mask = _ink(cv2.cvtColor(small, cv2.COLOR_BGR2GRAY))
+    if cv2.countNonZero(mask) < 50:
+        return 0.0
+
+    level = _line_sharpness(mask, 0.0)
+    if level <= 0:
+        return 0.0
+
+    steps = int(MAX_DESKEW_DEGREES / DESKEW_STEP_DEGREES)
+    candidates = [step * DESKEW_STEP_DEGREES for step in range(-steps, steps + 1)]
+    best = max(candidates, key=lambda angle: _line_sharpness(mask, angle))
+    if best == 0.0 or _line_sharpness(mask, best) < level * DESKEW_MARGIN:
+        return 0.0
+    return best
+
+
+def deskew(image: ImageArray) -> ImageArray:
+    """Rotate a small tilt out of the page, about its centre."""
+    cv2 = _cv2()
+    angle = skew_angle(image)
+    if abs(angle) < 0.25:
+        # Below this, rotating costs a resampling blur and buys nothing.
+        return image
+
+    height, width = image.shape[:2]
+    matrix = cv2.getRotationMatrix2D((width / 2, height / 2), angle, 1.0)
+    rotated: ImageArray = cv2.warpAffine(
+        image, matrix, (width, height),
+        flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE,
+    )
+    return rotated
+
+
+def equalise(image: ImageArray) -> ImageArray:
+    """Flatten shadows and uneven lighting, leaving colour alone.
+
+    Two steps, and the order matters. First the illumination field is estimated by
+    closing the lightness channel with a kernel larger than any glyph — that
+    removes the text and leaves the paper — and the lightness is divided by it.
+    That is what actually flattens a shadow: CLAHE alone is a local contrast
+    stretch and leaves a gradient across the page almost untouched, which is worth
+    knowing because it is the obvious thing to reach for. CLAHE then follows, to
+    recover contrast in whatever the division left flat but faint.
+
+    Lightness only. Equalising the colour channels would shift the hues a Mark is
+    recognised by, and nothing downstream is allowed to read colour anyway — see
+    docs/adr/0002.
+    """
+    cv2 = _cv2()
+    lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+    lightness, a_channel, b_channel = cv2.split(lab)
+
+    span = max(15, min(lightness.shape[:2]) // 20 | 1)
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (span, span))
+    illumination = cv2.GaussianBlur(
+        cv2.morphologyEx(lightness, cv2.MORPH_CLOSE, kernel), (0, 0), span / 3
+    )
+    flattened = cv2.divide(lightness, illumination, scale=255)
+    flattened = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8)).apply(flattened)
+
+    merged: ImageArray = cv2.cvtColor(
+        cv2.merge((flattened, a_channel, b_channel)), cv2.COLOR_LAB2BGR
+    )
+    return merged
+
+
 def rectify(path: Path) -> Rectified:
-    """Detect the page, correct perspective, fix orientation, equalise intensity.
+    """Detect the page, flatten it, straighten it, even out the light.
 
     Steps, in order:
       1. find the page quadrilateral (contour detection on a downscaled copy)
       2. perspective-warp it to a flat rectangle
-      3. correct orientation to portrait/landscape as the content implies
+      3. rotate a residual tilt out of the text
       4. equalise intensity (CLAHE) to flatten shadows and uneven lighting
       5. resize so the long edge is at most TARGET_LONG_EDGE
 
     A page whose quadrilateral cannot be found is used as-is rather than guessed
     at — a bad warp is worse than no warp, because it silently distorts every
-    coordinate downstream.
+    coordinate downstream. All five of the project's fixtures take that path: a
+    white document filling a white frame has no page edge in it, so nobody should
+    read a passing end-to-end test as evidence that the geometry here works.
 
-    Steps 1-4 are not yet wired: the image is loaded and resized, and geometry is
-    a pass-through. Nobody should read a passing end-to-end test as evidence that
-    rectification works.
+    Step 3 corrects a tilt and not an orientation. A page photographed sideways or
+    upside down stays that way, because telling 90 degrees from 270 means reading
+    the text, and a rectifier that guesses wrong ruins every coordinate in the IR.
+
+    Every step is deterministic. Corrections are anchored in this coordinate
+    space, so the same Source Image must always produce the same pixels — which is
+    also why changing anything here means bumping RECTIFIER_VERSION in ir.py.
     """
     if not path.is_file():
         raise RectifyError(f"no such Source Image: {path}")
@@ -142,9 +376,14 @@ def rectify(path: Path) -> Rectified:
         raise RectifyError(f"OpenCV could not decode {path}")
 
     height, width = image.shape[:2]
-    rectified = resize_long_edge(image, TARGET_LONG_EDGE)
+
+    quad = find_page_quad(image)
+    flattened = image if quad is None else warp_to_quad(image, quad)
+    rectified = resize_long_edge(equalise(deskew(flattened)), TARGET_LONG_EDGE)
+
     return Rectified(
         image=rectified,
+        warped=quad is not None,
         source=Source(
             path=str(path),
             sha256=sha256_of(path),
