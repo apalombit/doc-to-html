@@ -1,8 +1,50 @@
 # Structure, not geometry: the last three mismatches on `invoice.png`
 
-**Status:** open. Continues `0001-one-image-at-a-time.md`, which holds the run
-history, the measured numbers, and everything already tried and rejected. Read
-this file for *what is wrong now*; read 0001 for *how we got here*.
+**Status:** open, at **2 mismatches**. Continues `0001-one-image-at-a-time.md`,
+which holds the run history, the measured numbers, and everything already tried
+and rejected. Read this file for *what is wrong now*; read 0001 for *how we got
+here*.
+
+## Where runs 14 and 15 got to — read this first
+
+`debug/runs/14-join-split-heading/` and `15-…-repeat`, `qwen3-vl:4b`,
+`DTH_LAYOUT_LONG_EDGE=384`, ~175s. **2 mismatches**, the same two both times:
+
+```
+zone 1: kind expected pairs, got prose
+zone 4: kind expected table, got pairs
+```
+
+The header split is **fixed**, and not in the prompt: `wire._join_split_heading`
+puts back together a heading row the model still returns one cell per row. Zone
+5's Row Roles are `[header, data, data, data, summary]`, `Price` sits on `Item`'s
+row, and the column-sum Probe reconciles at 385.00.
+
+**Both remaining defects are Kinds from the layout pass, and the section below
+says why no further prompt wording will move them.**
+
+### The layout Kind block is frozen
+
+Three attempts to change which Kind a Zone gets, each aimed at nothing else, each
+leaving the layout unmappable for a reason in a *different* part of the answer:
+
+| Run | Edit to the Kind definitions | Result |
+|---|---|---|
+| 11 | "the heading row names **the columns**" | Kind fixed — Zone 4 came back `table` — and each table returned **once per column**, byte-identical boxes. Rejected. |
+| 12 | same idea, without the word "columns" | all seven Zones in `band 0`, both tables merged into one box. Rejected. |
+| 16 | five words added to `prose` alone, one line, **no growth** | four Zones in `band 0`, column order `[0,1,2,3]` against lefts `0.05, 0.75, 0.05, 0.75`. Rejected. |
+
+Six runs separate cleanly. Runs 11, 12 and 16 touched this block: all three
+rejected. Runs 13, 14 and 15 did not: all three mapped.
+
+So the variable is **not length** — run 16 grew nothing. The layout pass is at
+capacity, and asking it to classify more carefully is paid for out of the Band
+and column instruction further down. Run 11 also proves the model *can* be told:
+the Kind was fixed there. The prompt simply cannot hold both jobs.
+
+`tests/test_pairs_and_prose.py` now pins the Kind block verbatim as a tripwire.
+**The next edit there should be deleting that test as part of splitting the
+pass** — not another wording.
 
 ## Where run 10 got to
 
@@ -98,22 +140,32 @@ first, because they are cheap and specific; do not close the geometry question.
 
 ## What to fix, in order
 
-1. **Zone 4's Kind — the mislabelled Zone.** A shaded row of short headings above
-   rows of values is a `table` header, not a label-value pair. Prompt-level, in
-   `LAYOUT_PROMPT`'s `table`/`pairs` definitions.
+**Superseded by the two sections above.** Kept because the reasoning is still
+sound and only the remedies changed; the numbering is referred to elsewhere.
 
-2. **The header split.** A header row spans all of the table's columns and is one
-   row. Prompt-level, in `TABLE_PROMPT`.
+1. ~~**Zone 4's Kind**, prompt-level in `LAYOUT_PROMPT`.~~ **Still open, and not
+   prompt-level.** Three measured attempts rejected — the Kind block is frozen.
+   This now needs the same split of classification from geometry as item 4, and
+   is the stronger reason to do it: item 4 was about *boxes*, and this is a
+   second, independent defect with the same cause.
 
-   **Do 1 and 2 together.** Fixing 1 alone will likely relocate the bug rather than
-   remove it: once Zone 4 is a `table`, its header is the same wide two-column
-   header that Zone 5 already splits.
+2. ~~**The header split**, prompt-level in `TABLE_PROMPT`.~~ **Done**, in
+   `wire._join_split_heading` rather than the prompt. Runs 14 and 15.
 
-3. **Zone 1's Kind** (`prose` where the invoice details are `pairs`). Left last
-   because it is one field on one Zone and costs nothing downstream — the text is
-   read correctly either way.
+   The instruction to "do 1 and 2 together" was written on the expectation that
+   fixing 1 would relocate the bug into Zone 4's header. It would not have: the
+   join is in the mapper and applies to any `table` Zone, so whenever Zone 4 does
+   become a `table`, its header is already covered.
 
-4. **The boxes.** Not before 1–3, and not by more prompt tuning of the same shape.
+3. **Zone 1's Kind** (`prose` where the invoice details are `pairs`). **Still
+   open.** Attempted in run 16 and rejected. Note the diagnosis this spec
+   implied is wrong: the block is not unclear about `pairs`, whose example
+   `"Invoice No: 12"` is near-identical to the page's `Invoice #: 123`. It is
+   right-aligned and three lines, so it reads as an **address**, which `prose`
+   claims. Still costs nothing downstream — the text is read correctly either
+   way.
+
+4. **The boxes.** Not by more prompt tuning of the same shape.
    The frozen-across-resolutions result says the layout pass is not measuring the
    top of the page, so asking it more politely will not help. Two options worth
    weighing when the time comes, neither yet tried:
@@ -123,17 +175,36 @@ first, because they are cheap and specific; do not close the geometry question.
      reverse) is evidence the two jobs do not belong in one prompt;
    - deriving Bands from geometry, which stays **closed** until IoU improves.
 
-## Open question: a second VLM call for structure
+## Closed question: a second VLM call for structure
 
-Worth deciding before implementing 1 and 2. Both fixes assume one pass can be
-talked into reading a wide header correctly. If two rounds of prompt work do not
-move it, the alternative is a **dedicated pass that answers only "how many columns
-does this table have, and where are their boundaries?"**, with the row reading done
-against that answer.
+This asked whether a **dedicated pass answering "how many columns does this table
+have"** should read the wide header. **It should not, and the reason retires the
+question rather than deferring it.**
 
-That is a real design change — a new pass, a new schema, more latency on a document
-already at 176s — so it needs a failed prompt attempt behind it first, not a guess.
-Record the attempt either way, per 0001's standing rule.
+The column count was never wrong. The model returns `["Item", ""]` — *two* cells
+for a two-column table. It has read the shape correctly and only misplaced the
+line break. A pass asking how many columns there are would answer a question
+nobody got wrong, and cost a whole extra VLM call on a document already at ~175s.
+
+What was actually wrong is row segmentation, and that is repairable exactly:
+`wire._join_split_heading` joins two adjacent `header` rows of equal width that
+are never both filled at the same position. Every string keeps the column it
+arrived in — nothing invented, nothing dropped. Header rows only, because data
+rows bind correctly; no position filled twice, because two headings competing for
+one column are not one row split in two, and that case still fails loudly.
+
+Rejected on the way, with costs:
+
+- **`TABLE_PROMPT` told a heading row spanning all columns is one row** (run 13).
+  No effect on the split, and it provoked a row with no cells at all: 3
+  mismatches → 5. Reverted.
+- The three layout attempts in "The layout Kind block is frozen" above.
+
+One caveat worth a reviewer's eye: this puts a structural repair in `wire.py`,
+which `engines/lenient.py` records a decision to keep strict. That decision was
+about tolerating *malformed JSON* for one cloud model; this normalises
+well-formed, schema-valid input under a precondition that makes it lossless. A
+different question — but a judgment call, not a settled one.
 
 ## Standing rule, carried over from 0001
 
@@ -145,12 +216,30 @@ the change was made.
 
 ## Acceptance
 
-- [ ] Zone 4 is a `table`, and its header is one row
-- [ ] Zone 5's Row Roles are `[header, data, data, data, summary]`
-- [ ] The Probe still reconciles at 385.00, and every string is still read correctly
-- [ ] Whatever was tried and rejected is recorded here with its cost
-- [ ] The offline suite still passes; recorded responses are ground truth and are
-      not regenerated to match a model's output
+- [ ] Zone 4 is a `table` — **open**, and blocked on splitting the layout pass
+      rather than on wording. Its header is covered the moment it is a `table`.
+- [x] Zone 5's Row Roles are `[header, data, data, data, summary]` — runs 14, 15
+- [x] The Probe still reconciles at 385.00, and every string is still read
+      correctly — runs 14, 15
+- [x] Whatever was tried and rejected is recorded here with its cost — runs 11,
+      12, 13, 16
+- [x] The offline suite still passes; recorded responses are ground truth and are
+      not regenerated to match a model's output — 314 tests, mypy clean
+
+Zone 1's Kind was not in the original list and remains open, for the same reason
+as Zone 4.
+
+## Not measured, and worth knowing
+
+Every run here is `invoice_0001` alone. `_join_split_heading` and the reverted
+prompt attempts apply to **every** document, and their effect on fixtures
+0002–0005 has never been measured — as was true of runs 01–10 before them. The
+offline suite cannot cover it: `tests/responses/` is frozen ground truth recorded
+under an older prompt and is never re-run against the current one.
+
+`tools/iterate.sh` now takes `FIXTURE=all` or a comma-separated set, so the sweep
+is one command when it is wanted. The likeliest casualties of a `table`/`pairs`
+change are 0002 (dense Pairs) and 0003 (a 15-row table).
 
 ## How to run it
 

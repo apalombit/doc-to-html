@@ -8,7 +8,6 @@ attract no Probe at all.
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
 
 import pytest
@@ -192,37 +191,51 @@ class TestThePromptSaysWhatTheMappingCannotEnforce:
         assert "summarise" in PROSE_PROMPT
         assert "empty list" in PROSE_PROMPT
 
-    def test_the_kind_definitions_stay_as_short_as_they_are(self) -> None:
-        """Enlarging them is measured, twice, to break something else.
+    def test_the_kind_definitions_are_frozen_pending_a_split_of_the_pass(
+        self,
+    ) -> None:
+        """Editing this block breaks Band numbering, measured three times.
 
-        Runs 11 and 12 both added a sentence here separating `pairs` from a
-        two-column `table` by which way the binding runs — a heading names what
-        is *below* it, a label what is *beside* it. Both times the Kind was
-        fixed and the layout was rejected anyway, for a defect in a different
-        part of the answer: run 11 returned each table once per column, run 12
-        put all seven Zones in band 0 and merged both tables into one box.
-        Neither wording says anything about Bands. Text added here appears to
-        cost attention paid to the Band and column instruction further down.
+        Three attempts, each aimed only at which Kind a Zone gets, each of which
+        left the layout unmappable for a reason in a different part of the
+        answer:
 
-        So this pins the size, not the words: the two definitions stay one line
-        and five lines. If a future change needs them longer, that is the
-        signal to split the pass rather than to keep writing — see
-        docs/specs/0002-structure-not-geometry.md.
+        - run 11 added "the heading row names the columns" — the Kind was fixed,
+          Zone 4 came back `table`, and the model returned each table once per
+          column at byte-identical boxes.
+        - run 12 said the same thing without the word "columns" — all seven
+          Zones landed in band 0 and both tables merged into one box.
+        - run 16 added five words to `prose` alone, one line, no growth — four
+          Zones in band 0, column order [0, 1, 2, 3] against lefts 0.05, 0.75,
+          0.05, 0.75.
+
+        The six runs separate cleanly: 11, 12 and 16 touched this block and all
+        three were rejected; 13, 14 and 15 did not and all three mapped. So the
+        variable is not how *long* these definitions are — run 16 grew nothing —
+        it is that this pass is at capacity, and asking it to classify more
+        carefully is paid for out of the Band and column instruction further
+        down.
+
+        That is the evidence 0002 asked for before splitting the pass, so this
+        is a tripwire rather than a style rule: the next edit here should be
+        deleting this test as part of separating classification from geometry,
+        not another wording. See docs/specs/0002-structure-not-geometry.md.
         """
         from doc_to_html.engines.ollama import LAYOUT_PROMPT
 
         block = LAYOUT_PROMPT.split("kind — one of:")[1].split("role — one of:")[0]
-        entries: dict[str, int] = {}
-        current = ""
-        for line in block.splitlines():
-            if not line.strip():
-                continue
-            # An entry opens at exactly two spaces; its continuations are deeper.
-            if re.match(r"^ {2}\S", line):
-                current = line.split()[0]
-            entries[current] = entries.get(current, 0) + 1
-        assert entries["table"] == 5
-        assert entries["pairs"] == 1
+        assert " ".join(block.split()) == (
+            "table a grid of rows and columns under a heading row. Two grids "
+            "stacked one above the other are two regions, not one, whenever "
+            "each has its own heading row — even if their columns line up and "
+            "only a small gap separates them. A grid with a heading row is a "
+            "table even if only one row of values follows it "
+            "pairs label and value lines with no heading row, such as "
+            '"Invoice No: 12" '
+            "prose headings, paragraphs, addresses, free text "
+            "list bulleted or numbered items, or a row of navigation links "
+            "figure a logo, chart, stamp, signature or badge"
+        )
 
 
 class TestAFailureStillDoesNotSpread:
