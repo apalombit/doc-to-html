@@ -13,12 +13,10 @@ from pathlib import Path
 import pytest
 
 from doc_to_html.ir import Document, Kind, Reading, Role, Zone
-from doc_to_html.orchestrator import convert
 from doc_to_html.render import render
 from doc_to_html.wire import FigureResponse, contents_into, schema_of
 
-from .replay import ReplayTransport, recorded_for
-from .test_tracer_bullet import engines_replaying
+from .replay import convert_replaying, recorded_for
 
 REPO = Path(__file__).resolve().parent.parent
 CARDS = REPO / "example" / "sample-css.png"
@@ -27,8 +25,7 @@ INVOICE2 = REPO / "example" / "invoice2.png"
 
 
 def converted(image: Path, fixture: str) -> Document:
-    transport = ReplayTransport(recorded_for(fixture))
-    return convert(image, engines=engines_replaying(transport))
+    return convert_replaying(image, recorded_for(fixture))
 
 
 def fill(kind: Kind, payload: str, **zone_args: object) -> Zone:

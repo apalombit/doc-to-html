@@ -36,9 +36,19 @@ the reading, and a mapper that reached for it would need an Engine to test.
 """
 
 GRAPHIC_KINDS = ("logo", "chart", "signature", "stamp", "badge")
-"""What a figure may be. `stamp`, `signature` and `badge` are Marks: their text
-is document content and is captured. A logo is a Graphic and its wordmark is
-part of the artwork, so it is not."""
+"""What a figure may be. The closed set, and the only values `Zone.graphic_kind`
+may take."""
+
+MARKS = frozenset({"signature", "stamp", "badge"})
+"""Which of those are Marks rather than Graphics.
+
+A Mark carries document meaning, so its text is captured and it renders as itself.
+A Graphic — a logo, a chart's plotted area — is a placeholder holding its position,
+and a logo's wordmark is part of the artwork rather than content.
+
+One set, imported by the renderer, because the two lists drifting apart is how a
+graphic kind ends up handled by code that can never receive it.
+"""
 
 
 class MappingError(ValueError):

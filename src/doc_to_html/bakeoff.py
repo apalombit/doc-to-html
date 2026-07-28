@@ -54,7 +54,25 @@ ACCEPTANCE_SET = Path("tests/fixtures")
 """Where the committed expected IR lives. Each file names its own Source Image."""
 
 CANDIDATES = ("qwen3-vl:4b", "qwen3-vl:2b", "granite3.2-vision:latest")
-"""The models the open questions are about. Override with --models."""
+"""The models `docs/status.md` has open questions about.
+
+Measured alongside whatever is configured, because the questions are about these
+specific models and a configuration that happens not to name one of them would
+otherwise leave its question unanswered.
+"""
+
+
+def models_to_measure(settings: Settings) -> list[str]:
+    """Every configured model, then the candidates, in order and without repeats.
+
+    The configured models come first because they are what a Conversion would
+    actually use, and a bake-off whose first answer is about a model nobody has
+    selected buries the useful number.
+    """
+    return list(dict.fromkeys(
+        [settings.layout_model, settings.extract_model, settings.audit_model]
+        + list(CANDIDATES)
+    ))
 
 
 @dataclass(frozen=True)
@@ -70,28 +88,29 @@ class TimingTransport:
     """Wraps the real transport and times each call.
 
     A wrapper rather than instrumentation inside the Engine: the transport seam
-    already exists, so measurement costs nothing in the code that ships. The pass
-    is read off the schema's title, which keeps the Transport protocol as narrow
-    as it was.
+    already exists, so measurement costs nothing in the code that ships.
+
+    The pass name comes from the Engine rather than from the schema's title,
+    because `prose` and `list` share one schema — reading the title reports both as
+    "Blocks" and quietly averages two different jobs together.
     """
 
     inner: Transport
     timings: list[PassTiming] = field(default_factory=list)
 
-    def __call__(self, *, model: str, prompt: str, images: list[bytes],
-                 schema: dict[str, Any], num_ctx: int) -> Response:
+    def __call__(self, *, model: str, pass_name: str, prompt: str,
+                 images: list[bytes], schema: dict[str, Any],
+                 num_ctx: int) -> Response:
         started = time.perf_counter()
         try:
             return self.inner(
-                model=model, prompt=prompt, images=images,
+                model=model, pass_name=pass_name, prompt=prompt, images=images,
                 schema=schema, num_ctx=num_ctx,
             )
         finally:
             self.timings.append(
-                PassTiming(
-                    pass_name=str(schema.get("title", "?")).replace("Response", ""),
-                    seconds=time.perf_counter() - started,
-                )
+                PassTiming(pass_name=pass_name,
+                           seconds=time.perf_counter() - started)
             )
 
 
@@ -103,6 +122,7 @@ class Attempt:
     model: str
     timings: list[PassTiming] = field(default_factory=list)
     mismatches: list[Mismatch] = field(default_factory=list)
+    caveats: list[str] = field(default_factory=list)
     resident_mb: float | None = None
     error: str | None = None
 
@@ -141,30 +161,38 @@ ResidentFor = Callable[[str], "float | None"]
 
 
 def ollama_resident_for(settings: Settings) -> ResidentFor:
-    """Ask Ollama what it currently has loaded.
+    """Ask Ollama how much memory *this* model occupies, or None.
 
-    The constraint being tested is an 8 GB ceiling, so this is the number that
-    decides whether two models could ever be resident at once. Best-effort: an
-    older Ollama will not answer, and that is not a reason to lose a run.
+    The constraint being tested is an 8 GB ceiling, so this is the number the whole
+    "could 2b and an audit model share memory" question rests on. Two things it has
+    to get right, both of which are easy to get wrong:
 
-    Injectable, and injected by the suite, because this is a second route to the
-    server. The transport is meant to be the only one, and the suite asserts it.
+    It matches the loaded model by name. Ollama keeps recently used models resident,
+    so the largest thing loaded is routinely a *previous* candidate — reporting that
+    attributes an evicted 4B model's footprint to the 2B one being measured.
+
+    It prefers `size_vram` over `size`. What matters is what is resident, not what
+    the weights occupy on disk once mapped.
+
+    Best-effort: an older Ollama will not answer, and that is not a reason to lose a
+    run. Injectable, and injected by the suite, because this is a second route to
+    the server — the transport is meant to be the only one, and the suite asserts it.
     """
     def measure(model: str) -> float | None:
         try:
             import ollama
 
             client = ollama.Client(
-                **OllamaEngine(
-                    model=model,
-                    host=settings.ollama_host,
-                    api_key=settings.ollama_api_key,
-                ).client_kwargs()
+                **OllamaEngine.from_settings(settings, model).client_kwargs()
             )
-            sizes = [getattr(loaded, "size", 0) or 0 for loaded in client.ps().models]
-            return max(sizes) / 1e6 if sizes else None
+            for loaded in client.ps().models:
+                if getattr(loaded, "model", None) != model:
+                    continue
+                resident = getattr(loaded, "size_vram", 0) or getattr(loaded, "size", 0)
+                return float(resident) / 1e6 if resident else None
         except Exception:
             return None
+        return None
 
     return measure
 
@@ -178,14 +206,7 @@ def engines_for(model: str, settings: Settings,
     vision models cannot stay resident in 8 GB.
     """
     def engine() -> OllamaEngine:
-        return OllamaEngine(
-            model=model,
-            host=settings.ollama_host,
-            api_key=settings.ollama_api_key,
-            num_ctx=settings.num_ctx,
-            timeout_s=settings.timeout_s,
-            transport=transport,
-        )
+        return OllamaEngine.from_settings(settings, model, transport=transport)
 
     return EngineSet(layout=engine(), extract=engine(), audit=engine())
 
@@ -197,12 +218,7 @@ TransportFor = Callable[[str, str], Transport]
 def ollama_transport_for(settings: Settings) -> TransportFor:
     def build(model: str, fixture: str) -> Transport:
         return OllamaTransport(
-            OllamaEngine(
-                model=model,
-                host=settings.ollama_host,
-                api_key=settings.ollama_api_key,
-                timeout_s=settings.timeout_s,
-            ).client_kwargs()
+            OllamaEngine.from_settings(settings, model).client_kwargs()
         )
 
     return build
@@ -236,6 +252,11 @@ def run(models: Iterable[str], acceptance: dict[str, tuple[Path, Document]],
                         Mismatch(f"zone {failure.zone_index}", "extraction",
                                  "content", failure.reason)
                     )
+                # Caveats deliberately do not count against a model. A table too
+                # tall for the model's input was read at reduced resolution because
+                # slice stitching is not built, which is this project's limitation
+                # and not the model's.
+                attempt.caveats = [c.note for c in actual.caveats]
             except Exception as error:
                 attempt.error = f"{type(error).__name__}: {error}"
             attempt.timings = timing.timings
@@ -291,6 +312,22 @@ def report(attempts: list[Attempt]) -> str:
     for attempt in attempts:
         by_model.setdefault(attempt.model, []).append(attempt)
 
+    per_pass_rows = []
+    for model, group in by_model.items():
+        by_pass: dict[str, list[float]] = {}
+        for attempt in group:
+            for timing in attempt.timings:
+                by_pass.setdefault(timing.pass_name, []).append(timing.seconds)
+        for pass_name, seconds in by_pass.items():
+            per_pass_rows.append([
+                model, pass_name, str(len(seconds)),
+                f"{sum(seconds) / len(seconds):.1f}",
+                f"{max(seconds):.1f}",
+            ])
+    per_pass = _table(
+        ["model", "pass", "calls", "mean s", "worst s"], per_pass_rows
+    )
+
     summary = _table(
         ["model", "documents", "matched", "mean s", "resident MB"],
         [
@@ -317,9 +354,17 @@ def report(attempts: list[Attempt]) -> str:
         if attempt.mismatches or attempt.error
     ]
 
+    caveats = [
+        f"  - {attempt.model} / {attempt.fixture}: {note}"
+        for attempt in attempts
+        for note in attempt.caveats
+    ]
+
     return "\n\n".join(
-        ["Per document", per_document, "Per model", summary]
+        ["Per document", per_document, "Per pass", per_pass, "Per model", summary]
         + (["What did not match", "".join(details).strip()] if details else [])
+        + (["Read with a caveat (this project's limitation, not the model's)",
+            "\n".join(caveats)] if caveats else [])
     )
 
 
@@ -328,8 +373,9 @@ def main(argv: list[str] | None = None) -> int:
         prog="python -m doc_to_html.bakeoff",
         description="Measure real models against the acceptance set. Needs Ollama.",
     )
-    parser.add_argument("--models", default=",".join(CANDIDATES),
-                       help="comma-separated model names")
+    parser.add_argument("--models", default="",
+                       help="comma-separated model names; default is every "
+                            "configured model plus the open questions' candidates")
     parser.add_argument("--fixtures", default="",
                        help="comma-separated fixture names; default is all")
     parser.add_argument("--root", type=Path, default=Path.cwd(),
@@ -347,7 +393,10 @@ def main(argv: list[str] | None = None) -> int:
             raise SystemExit(f"unknown fixture(s): {', '.join(missing)}")
         acceptance = {name: acceptance[name] for name in wanted}
 
-    models = [model.strip() for model in args.models.split(",") if model.strip()]
+    models = (
+        [model.strip() for model in args.models.split(",") if model.strip()]
+        or models_to_measure(settings)
+    )
     print(
         f"{len(models)} model(s) over {len(acceptance)} document(s) "
         f"against {settings.ollama_host}\n",

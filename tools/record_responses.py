@@ -11,7 +11,7 @@ installed and no network.
 below the model — the wire schemas, the parser, the mapping and its validation,
 every Extractor, Probes, assembly and the renderer — against known-correct
 input. It says nothing whatever about whether a real model reads a page
-correctly. That is the bake-off's job (`tools/bakeoff.py`), and the reason the
+correctly. That is the bake-off's job (`python -m doc_to_html.bakeoff`), and the reason the
 acceptance harness and the bake-off both exist.
 
 Deriving these from the ground truth rather than from a live model is deliberate:
@@ -42,13 +42,11 @@ from doc_to_html.wire import (  # noqa: E402
     WireZone,
 )
 
-FIXTURES = {
-    "invoice_0001": "invoice_0001",
-    "invoice_0002": "invoice_0002",
-    "sample_table_0003": "sample_table_0003",
-    "sample_css_0004": "sample_css_0004",
-    "sample_semantic_0005": "sample_semantic_0005",
-}
+from tests.fixtures import BUILDERS  # noqa: E402
+
+# `tests.fixtures.BUILDERS` is the single list of what the acceptance set is.
+# A second copy here is how a sixth fixture ends up recorded by one tool and not
+# the other.
 
 
 def layout_of(document: Document) -> LayoutResponse:
@@ -106,9 +104,8 @@ def contents_of(zone: Zone) -> object:
     )
 
 
-def record(name: str, module: str, out: Path) -> None:
-    build = __import__(f"tests.fixtures.{module}", fromlist=["build"]).build
-    document: Document = build()
+def record(name: str, out: Path) -> None:
+    document: Document = BUILDERS[name]()
 
     directory = out / name
     directory.mkdir(parents=True, exist_ok=True)
@@ -128,12 +125,12 @@ def record(name: str, module: str, out: Path) -> None:
 
 def main() -> int:
     out = REPO / "tests" / "responses"
-    for name, module in FIXTURES.items():
-        record(name, module, out)
+    for name in BUILDERS:
+        record(name, out)
 
     summary = {
         name: sorted(p.name for p in (out / name).glob("*.json"))
-        for name in FIXTURES
+        for name in BUILDERS
     }
     (out / "index.json").write_text(json.dumps(summary, indent=2) + "\n")
     return 0

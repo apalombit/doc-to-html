@@ -16,7 +16,7 @@ below the model is tested, and the model is not.
 
 | Module | State | Notes |
 | --- | --- | --- |
-| `ir.py` | **implemented** | Bands, Kind/Role, Row Roles, Title, Corrections, Failures, versioning, JSON round-trip |
+| `ir.py` | **implemented** | Bands, Kind/Role, Row Roles, Title, Corrections, Failures, Caveats, versioning, JSON round-trip |
 | `wire.py` | **implemented** | Wire schemas for all five passes; layout mapping with geometric validation |
 | `engines/transport.py` | **implemented** | The one call to Ollama, and the suite's only fake |
 | `probes.py` | **implemented** | column-sum, row-product, number parsing across both decimal conventions |
@@ -72,6 +72,19 @@ upside down stays that way. Telling 90° from 270° means knowing which way up t
 text runs, which means reading it — an Engine's job, and a rectifier that guesses
 wrong ruins every coordinate in the IR. Deliberately narrower than the ticket
 asked for.
+
+**`TARGET_LONG_EDGE` is a ceiling, not a target.** The ticket said "the long edge
+resized to the working resolution"; `resize_long_edge` never enlarges, so the five
+fixtures stay at their own size and only a photograph bigger than 3508px is
+scaled. Enlarging adds no detail and multiplies the cost of every crop taken from
+it. A deliberate reading of "working resolution" as a cap, pinned by
+`test_a_small_screenshot_is_not_enlarged`.
+
+**No graphic kind covers a handwritten annotation.** `CONTEXT.md`'s **Mark** entry
+names one as an example, but `wire.GRAPHIC_KINDS` offers only `logo`, `chart`,
+`signature`, `stamp` and `badge`, so a model has nowhere to report one. Adding a
+value is cheap; deciding what to call it without colliding with the glossary's
+`_Avoid_` list for Mark is the part that needs a moment's thought.
 
 **Nothing tells an operator their photograph was not warped.** `Rectified.warped`
 records it and only tests read it. An unwarped photograph of a page shot at an

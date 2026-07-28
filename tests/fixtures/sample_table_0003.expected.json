@@ -1485,5 +1485,6 @@
   "corrections": [],
   "probes": [],
   "gaps": [],
-  "failures": []
+  "failures": [],
+  "caveats": []
 }

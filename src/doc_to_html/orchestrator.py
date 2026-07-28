@@ -22,7 +22,7 @@ from .config import Settings, load
 from .engines.base import VisionEngine
 from .engines.ollama import OllamaEngine
 from .extractors import for_kind, resolution_caveat
-from .ir import Document, Failure
+from .ir import Caveat, Document, Failure
 from .preprocess import Rectified, rectify
 from .render import render
 
@@ -78,20 +78,10 @@ def default_engines(settings: Settings | None = None) -> EngineSet:
     here. See `config` and `.env.example`.
     """
     resolved = settings or load()
-
-    def engine(model: str) -> OllamaEngine:
-        return OllamaEngine(
-            model=model,
-            host=resolved.ollama_host,
-            api_key=resolved.ollama_api_key,
-            num_ctx=resolved.num_ctx,
-            timeout_s=resolved.timeout_s,
-        )
-
     return EngineSet(
-        layout=engine(resolved.layout_model),
-        extract=engine(resolved.extract_model),
-        audit=engine(resolved.audit_model),
+        layout=OllamaEngine.from_settings(resolved, resolved.layout_model),
+        extract=OllamaEngine.from_settings(resolved, resolved.extract_model),
+        audit=OllamaEngine.from_settings(resolved, resolved.audit_model),
     )
 
 
@@ -174,11 +164,14 @@ class Conversion:
         which is unmistakably "this did not work" in a way that silently absent
         content is not — and the remaining Zones are still extracted.
 
-        A Zone that *was* read but only at reduced resolution is recorded too.
-        It keeps its content, because degraded content beats none; the caveat
-        exists so nobody mistakes it for an ordinary reading.
+        A Zone that *was* read but only at reduced resolution gets a Caveat
+        instead, which is a different thing and not a milder Failure: it keeps its
+        content, because degraded content beats none, and calling it a failure
+        would have the render say a Zone could not be read directly above the
+        content it read.
         """
         document.failures = []
+        document.caveats = []
         for index, zone in enumerate(document.zones):
             if zone.complete:
                 continue
@@ -196,10 +189,10 @@ class Conversion:
                 )
                 continue
 
-            caveat = resolution_caveat(rectified.image, zone)
-            if caveat is not None:
-                document.failures.append(
-                    Failure(zone_index=index, kind=zone.kind.value, reason=caveat)
+            note = resolution_caveat(rectified.image, zone)
+            if note is not None:
+                document.caveats.append(
+                    Caveat(zone_index=index, kind=zone.kind.value, note=note)
                 )
 
     def _audit(self, rectified: Rectified, document: Document) -> None:
@@ -231,7 +224,6 @@ class Conversion:
         no two readings can disagree, so no cell is ever Disputed. Escalation
         arrives with a second Engine and not before.
         """
-        _implicated = probe_module.implicated_zones(document.probes)
         return
 
     def _ask_convergence(self, document: Document) -> Answer:

@@ -110,6 +110,10 @@ _Avoid_: Missing region, hole, uncovered area
 A Zone an Extractor could not fill, recorded in the IR rather than raised. The Zone stays incomplete and renders as a skeleton, the Conversion continues, and the reason is kept — which is what makes a skeleton traceable to what went wrong rather than merely visible. Distinct from a Gap: a Gap is content no Zone covers, a Failure is a Zone whose content could not be read.
 _Avoid_: Error, exception, incomplete zone
 
+**Caveat**:
+Something an operator should know about *how* a Zone was read, on a Zone that was read. The Zone is complete and keeps its content, because degraded content beats none; the Caveat exists so nobody mistakes it for an ordinary reading. A table too tall to fit the model's input, read whole at reduced resolution instead of in stitched Slices, carries one. The opposite of a Failure rather than a milder version of it: a Failure has no content and a skeleton, a Caveat has content and a note.
+_Avoid_: Warning, degraded failure, partial failure
+
 **Hint**:
 Free prose supplied by the human at the opening Checkpoint, stored in the IR and appended verbatim to every prompt. A Hint changes what a model is told and never what the code does — it is not a document type, and nothing branches on it.
 _Avoid_: Type, class, category, document kind

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import time
 from pathlib import Path
 
 from . import config
@@ -52,9 +53,20 @@ def main(argv: list[str] | None = None) -> int:
         print("interactive review is not yet wired", file=sys.stderr)
         return 2
 
+    started = time.perf_counter()
     document = convert(args.image)
     args.out.write_text(render(document))
-    print(f"wrote {args.out}", file=sys.stderr)
+
+    # How long it took is part of the answer: an operator with a stack of
+    # documents needs to know whether this is practical before starting.
+    elapsed = time.perf_counter() - started
+    zones = len(document.zones)
+    unread = len(document.failures)
+    print(
+        f"wrote {args.out} — {zones} Zones in {elapsed:.1f}s"
+        + (f", {unread} could not be read" if unread else ""),
+        file=sys.stderr,
+    )
     return 0
 
 

@@ -16,7 +16,7 @@ by `config`, so there is one place to look when a setting does not take effect.
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 from ..config import (
@@ -24,6 +24,7 @@ from ..config import (
     DEFAULT_NUM_CTX,
     DEFAULT_OLLAMA_HOST,
     DEFAULT_TIMEOUT_S,
+    Settings,
 )
 from ..ir import BBox, Kind, Reading, Zone
 from ..preprocess import MODEL_INPUT_LONG_EDGE, ImageArray, resize_long_edge, to_png
@@ -211,8 +212,25 @@ class OllamaEngine:
     """Injected by the suite. `None` means talk to a real Ollama."""
 
     name: str = "ollama"
-    calls: list[str] = field(default_factory=list)
-    """Which pass ran, in order. The bake-off times these; nothing branches on it."""
+
+    @classmethod
+    def from_settings(cls, settings: Settings, model: str,
+                      transport: Transport | None = None) -> OllamaEngine:
+        """Build an Engine from resolved configuration.
+
+        One constructor for every caller — the Orchestrator, the bake-off and any
+        future one — because host, key, context and timeout travelling together
+        from `Settings` into an Engine is one decision, and three copies of it is
+        three places for a new setting to be forgotten.
+        """
+        return cls(
+            model=model,
+            host=settings.ollama_host,
+            api_key=settings.ollama_api_key,
+            num_ctx=settings.num_ctx,
+            timeout_s=settings.timeout_s,
+            transport=transport,
+        )
 
     def client_kwargs(self) -> dict[str, Any]:
         """What the Ollama client is constructed with.
@@ -255,9 +273,9 @@ class OllamaEngine:
 
         budget = self.num_ctx
         for attempt in (1, 2):
-            self.calls.append(pass_name)
             reply = transport(
                 model=self.model,
+                pass_name=pass_name,
                 prompt=prompt,
                 images=[page],
                 schema=schema,

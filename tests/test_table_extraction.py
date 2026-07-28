@@ -15,12 +15,18 @@ import pytest
 from PIL import Image
 
 from doc_to_html.ir import Document, Kind, RowRole, Zone
-from doc_to_html.orchestrator import convert
 from doc_to_html.render import render
 from doc_to_html.wire import MappingError, TableResponse, contents_into
 
-from .replay import Call, ReplayTransport, recorded_for, text, wired_zones
-from .test_tracer_bullet import engines_replaying
+from .fixtures import BUILDERS
+from .replay import (
+    Call,
+    ReplayTransport,
+    convert_recording,
+    recorded_for,
+    text,
+    wired_zones,
+)
 
 REPO = Path(__file__).resolve().parent.parent
 INVOICE = REPO / "example" / "invoice.png"
@@ -28,8 +34,7 @@ STATISTICS = REPO / "example" / "sample-table.png"
 
 
 def convert_with(image: Path, replies: list[object]) -> tuple[Document, ReplayTransport]:
-    transport = ReplayTransport(replies)  # type: ignore[arg-type]
-    return convert(image, engines=engines_replaying(transport)), transport
+    return convert_recording(image, replies)  # type: ignore[arg-type]
 
 
 def table_calls(transport: ReplayTransport) -> list[Call]:
@@ -271,6 +276,25 @@ class TestAZoneTooDenseToReadWhole:
         """Degraded content beats none, so a flagged Zone stays complete and the
         caveat rides alongside it rather than replacing it."""
         assert invoice[0].zones[5].complete
+
+    def test_a_caveat_is_not_a_failure(self) -> None:
+        """They were one type once, and the render said so out loud: "Zone 5
+        (table) could not be read: read at reduced resolution" — directly above
+        the table it had read. A Failure has no content and a skeleton; a Caveat
+        has content and a note."""
+        from doc_to_html.ir import Caveat
+
+        document = BUILDERS["invoice_0001"]()
+        document.caveats = [
+            Caveat(zone_index=5, kind="table",
+                   note="read at reduced resolution: 4000px tall")
+        ]
+        html = render(document)
+
+        assert "could not be read" not in html
+        assert "read at reduced resolution" in html
+        assert 'class="skeleton"' not in html
+        assert "Total: $385.00" in html
 
     def test_slices_are_planned_with_an_overlap(self) -> None:
         """The overlap is what makes slicing safe, and doubles as a consistency

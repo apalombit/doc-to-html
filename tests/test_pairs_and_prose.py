@@ -13,20 +13,17 @@ from pathlib import Path
 import pytest
 
 from doc_to_html.ir import Document, Kind, Reading, Zone
-from doc_to_html.orchestrator import convert
 from doc_to_html.render import render
 from doc_to_html.wire import MappingError, contents_into
 
-from .replay import ReplayTransport, recorded_for, text, wired_zones
-from .test_tracer_bullet import engines_replaying
+from .replay import convert_replaying, recorded_for, text, wired_zones
 
 REPO = Path(__file__).resolve().parent.parent
 INVOICE2 = REPO / "example" / "invoice2.png"
 
 @pytest.fixture
 def invoice2() -> Document:
-    transport = ReplayTransport(recorded_for("invoice_0002"))
-    return convert(INVOICE2, engines=engines_replaying(transport))
+    return convert_replaying(INVOICE2, recorded_for("invoice_0002"))
 
 
 def fill(kind: Kind, payload: str, *, title: str | None = None) -> Zone:
@@ -201,8 +198,7 @@ class TestAFailureStillDoesNotSpread:
         replies[wired_zones("invoice_0002").index(4) + 1] = text(
             '{"pairs": [{"label": "", "value": "x"}]}'
         )
-        transport = ReplayTransport(replies)
-        document = convert(INVOICE2, engines=engines_replaying(transport))
+        document = convert_replaying(INVOICE2, replies)
 
         assert not document.zones[4].complete
         assert len(document.zones[5].pairs) == 6

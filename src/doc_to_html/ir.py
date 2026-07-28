@@ -143,7 +143,8 @@ class Block:
     """A unit of content inside a non-table Zone."""
 
     kind: str
-    """One of: heading, paragraph, address, item, caption, mark."""
+    """One of: heading, paragraph, address, item, caption, quote, attribution,
+    mark. The closed set a model may return is `wire.WireBlock.kind`."""
 
     lines: list[Cell] = field(default_factory=list)
 
@@ -182,7 +183,10 @@ class Zone:
     """Populated when kind is PROSE, LIST, or FIGURE (a caption, if any)."""
 
     graphic_kind: str | None = None
-    """For FIGURE Zones: logo, chart, rule, signature, stamp."""
+    """For FIGURE Zones, one of `wire.GRAPHIC_KINDS`.
+
+    A decorative rule is not among them: a Separator produces no Zone at all.
+    """
 
     complete: bool = False
     """False while a Zone is detected but not yet extracted.
@@ -250,6 +254,21 @@ class Failure:
 
 
 @dataclass
+class Caveat:
+    """Something worth knowing about *how* a Zone was read, on one that was read.
+
+    The opposite of a Failure rather than a milder version of it: a Failure has no
+    content and renders a skeleton, a Caveat has content and a note. Keeping them
+    apart is what stops a render saying a Zone "could not be read" directly above
+    the content it read.
+    """
+
+    zone_index: int
+    kind: str
+    note: str
+
+
+@dataclass
 class Source:
     """Provenance of the pixels."""
 
@@ -276,6 +295,7 @@ class Document:
     probes: list[ProbeResult] = field(default_factory=list)
     gaps: list[Gap] = field(default_factory=list)
     failures: list[Failure] = field(default_factory=list)
+    caveats: list[Caveat] = field(default_factory=list)
 
     def bands(self) -> list[list[Zone]]:
         """Zones grouped into Bands and ordered for rendering."""
@@ -376,6 +396,7 @@ def _decode_document(data: dict[str, Any]) -> Document:
             for g in data.get("gaps", [])
         ],
         failures=[Failure(**f) for f in data.get("failures", [])],
+        caveats=[Caveat(**c) for c in data.get("caveats", [])],
     )
 
 

@@ -23,7 +23,7 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Mapping
+from typing import Callable, Mapping, TypeVar
 
 DEFAULT_OLLAMA_HOST = "http://localhost:11434"
 DEFAULT_LAYOUT_MODEL = "qwen3-vl:4b"
@@ -99,13 +99,21 @@ def read_dotenv(path: Path) -> dict[str, str]:
     return values
 
 
-def _number(setting: Setting, cast: type[int] | type[float]) -> int | float:
+T = TypeVar("T", int, float)
+
+
+def _number(setting: Setting, cast: Callable[[str], T]) -> T:
+    """Parse a numeric setting, naming the variable and its source if it will not.
+
+    Generic in the target type so callers do not re-cast what was just cast —
+    `int(_number(s, int))` reads as though the parse were untrustworthy.
+    """
     try:
         return cast(setting.value)
     except ValueError as error:
         raise ConfigError(
             f"{setting.name}={setting.value!r} from {setting.source} "
-            f"is not a {cast.__name__}"
+            f"is not a {getattr(cast, '__name__', cast)}"
         ) from error
 
 
@@ -153,8 +161,8 @@ def load(
         layout_model=origins["DTH_LAYOUT_MODEL"].value,
         extract_model=origins["DTH_EXTRACT_MODEL"].value,
         audit_model=origins["DTH_AUDIT_MODEL"].value,
-        num_ctx=int(_number(origins["DTH_NUM_CTX"], int)),
-        timeout_s=float(_number(origins["DTH_TIMEOUT_S"], float)),
+        num_ctx=_number(origins["DTH_NUM_CTX"], int),
+        timeout_s=_number(origins["DTH_TIMEOUT_S"], float),
         log_level=origins["DTH_LOG_LEVEL"].value,
         origins=origins,
     )

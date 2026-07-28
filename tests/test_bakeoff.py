@@ -119,12 +119,36 @@ class TestWhatARunProduces:
         )
         invoice = next(a for a in attempts if a.fixture == "invoice_0001")
         assert [t.pass_name for t in invoice.timings] == [
-            "Layout", "Figure", "Pairs", "Blocks", "Blocks", "Table", "Table"
+            "layout", "figure", "pairs", "prose", "prose", "table", "table"
         ]
         assert all(t.seconds >= 0 for t in invoice.timings)
         assert invoice.seconds == pytest.approx(
             sum(t.seconds for t in invoice.timings)
         )
+
+    def test_a_caveat_does_not_count_against_the_model(
+        self, acceptance: dict[str, object]
+    ) -> None:
+        """A table read at reduced resolution is this project's limitation — slice
+        stitching is not built — and charging the model for it would make a model
+        look worse for a document nobody could read whole."""
+        from doc_to_html.ir import Caveat
+
+        import doc_to_html.orchestrator as orchestrator
+
+        real = orchestrator.resolution_caveat
+        try:
+            orchestrator.resolution_caveat = lambda image, zone: "read at reduced resolution: test"  # type: ignore[assignment]
+            attempts = run(
+                ["model-a"], {"invoice_0001": acceptance["invoice_0001"]},  # type: ignore[arg-type,dict-item]
+                Settings(), transport_for=replaying, resident_for=sized,
+            )
+        finally:
+            orchestrator.resolution_caveat = real  # type: ignore[assignment]
+
+        assert attempts[0].verdict == "match"
+        assert attempts[0].caveats
+        assert Caveat  # the concept exists in the IR, distinct from Failure
 
     def test_a_failed_extraction_counts_against_the_model(
         self, acceptance: dict[str, object]
@@ -164,16 +188,20 @@ class TestTiming:
 
         timing = TimingTransport(inner=explode)  # type: ignore[arg-type]
         with pytest.raises(RuntimeError):
-            timing(model="m", prompt="p", images=[], schema={"title": "TableResponse"},
-                   num_ctx=1)
-        assert [t.pass_name for t in timing.timings] == ["Table"]
+            timing(model="m", pass_name="table", prompt="p", images=[],
+                   schema={}, num_ctx=1)
+        assert [t.pass_name for t in timing.timings] == ["table"]
 
-    def test_an_unnamed_schema_does_not_break_the_report(self) -> None:
+    def test_prose_and_list_are_timed_apart(self) -> None:
+        """They share one wire schema, so reading the schema's title reports both
+        as "Blocks" and averages two different jobs together."""
         timing = TimingTransport(
             inner=lambda **kwargs: Response(content="{}", truncated=False)  # type: ignore[arg-type]
         )
-        timing(model="m", prompt="p", images=[], schema={}, num_ctx=1)
-        assert timing.timings[0].pass_name == "?"
+        for name in ("prose", "list"):
+            timing(model="m", pass_name=name, prompt="p", images=[],
+                   schema={"title": "BlocksResponse"}, num_ctx=1)
+        assert [t.pass_name for t in timing.timings] == ["prose", "list"]
 
 
 class TestTheReportIsSomethingToActOn:
@@ -181,22 +209,29 @@ class TestTheReportIsSomethingToActOn:
         return [
             Attempt(
                 fixture="invoice_0001", model="qwen3-vl:4b",
-                timings=[PassTiming("Layout", 12.0), PassTiming("Table", 31.0)],
+                timings=[PassTiming("layout", 12.0), PassTiming("table", 31.0)],
                 resident_mb=3300.0,
             ),
             Attempt(
                 fixture="invoice_0001", model="qwen3-vl:2b",
-                timings=[PassTiming("Layout", 5.0), PassTiming("Table", 9.0)],
+                timings=[PassTiming("layout", 5.0), PassTiming("table", 9.0)],
                 mismatches=[Mismatch("zone 4", "kind", "table", "pairs")],
                 resident_mb=1900.0,
             ),
         ]
 
+    def test_it_shows_latency_per_pass_as_well_as_per_document(self) -> None:
+        """"Reports per-pass latency" means in the table a human reads, not only
+        behind --json."""
+        text = report(self.attempts())
+        assert "Per pass" in text
+        assert "layout" in text and "table" in text
+
     def test_it_shows_latency_per_document_and_per_model(self) -> None:
         text = report(self.attempts())
         assert "Per document" in text and "Per model" in text
         assert "43.0" in text  # the 4B model's total on this document
-        assert "Table 31.0s" in text  # its slowest pass, named
+        assert "table 31.0s" in text  # its slowest pass, named
 
     def test_it_shows_resident_memory_because_the_ceiling_is_8gb(self) -> None:
         text = report(self.attempts())
@@ -214,7 +249,7 @@ class TestTheReportIsSomethingToActOn:
 
     def test_unknown_resident_memory_is_labelled_not_blank(self) -> None:
         text = report([Attempt(fixture="f", model="m",
-                               timings=[PassTiming("Layout", 1.0)])])
+                               timings=[PassTiming("layout", 1.0)])])
         assert "unknown" in text
 
     def test_an_empty_run_says_so_rather_than_printing_a_bare_table(self) -> None:
@@ -226,6 +261,18 @@ class TestTheCommandLine:
         """Discovering a typo after loading a 3 GB model is a poor trade."""
         with pytest.raises(SystemExit, match="unknown fixture"):
             main(["--fixtures", "invoice_0003", "--root", str(REPO)])
+
+    def test_the_configured_models_are_measured_too(self) -> None:
+        """"Runs each configured vision model" — a configuration naming a model
+        the candidates omit must still get measured."""
+        from doc_to_html.bakeoff import models_to_measure
+
+        settings = Settings(layout_model="house-model", extract_model="house-model",
+                            audit_model="granite3.2-vision:latest")
+        models = models_to_measure(settings)
+        assert models[0] == "house-model"
+        assert set(CANDIDATES) <= set(models)
+        assert len(models) == len(set(models))
 
     def test_the_candidates_cover_the_open_questions(self) -> None:
         """Both extraction candidates and the audit model, which is measured as a

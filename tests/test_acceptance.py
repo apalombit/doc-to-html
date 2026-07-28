@@ -16,11 +16,9 @@ import pytest
 
 from doc_to_html.acceptance import Mismatch, compare, report
 from doc_to_html.ir import Document, Kind, Role, RowRole
-from doc_to_html.orchestrator import convert
 
 from .fixtures import BUILDERS, IMAGES
-from .replay import ReplayTransport, recorded_for
-from .test_tracer_bullet import engines_replaying
+from .replay import convert_fixture
 
 REPO = Path(__file__).resolve().parent.parent
 
@@ -42,8 +40,7 @@ attract one that fails.
 
 
 def converted(fixture: str) -> Document:
-    transport = ReplayTransport(recorded_for(fixture))
-    return convert(REPO / IMAGES[fixture], engines=engines_replaying(transport))
+    return convert_fixture(fixture, REPO)
 
 
 @pytest.mark.parametrize("fixture", list(BUILDERS))

@@ -20,6 +20,7 @@ from typing import Any
 
 from .ir import Block, Cell, CellState, Document, Kind, Pair, Role, RowRole, Zone
 from .probes import is_numeric
+from .wire import MARKS
 
 STYLESHEET = """
 :root { --ink:#1a1a1a; --muted:#666; --rule:#e0e0e0; --shade:#f4f4f4;
@@ -127,9 +128,14 @@ def _findings(document: Document) -> str:
         if not g.resolved
     ]
     items += [
-        f"Region {f.zone_index} (<code>{html.escape(f.kind)}</code>) could not "
+        f"Zone {f.zone_index} (<code>{html.escape(f.kind)}</code>) could not "
         f"be read: {html.escape(f.reason)}"
         for f in document.failures
+    ]
+    items += [
+        f"Zone {c.zone_index} (<code>{html.escape(c.kind)}</code>) "
+        f"{html.escape(c.note)}"
+        for c in document.caveats
     ]
     if not items:
         return ""
@@ -248,7 +254,7 @@ def _figure(zone: Zone, document: Document) -> str:
     axis labels are document text and are captured as a caption.
     """
     kind = zone.graphic_kind or "figure"
-    if kind in {"stamp", "signature", "annotation", "badge"}:
+    if kind in MARKS:
         # A Mark with no text — an illegible signature — falls back to naming
         # itself. That it is there is the finding, and an empty box states it
         # less clearly than the word does.

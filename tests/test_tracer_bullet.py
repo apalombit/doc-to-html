@@ -14,28 +14,23 @@ from pathlib import Path
 
 import pytest
 
-from doc_to_html.config import Settings
 from doc_to_html.engines.ollama import OllamaEngine, TruncatedResponse, with_hint
 from doc_to_html.ir import Document, Kind, Role
-from doc_to_html.orchestrator import Conversion, EngineSet, convert
+from doc_to_html.orchestrator import Conversion, convert
 from doc_to_html.preprocess import RectifyError, rectify
 from doc_to_html.render import render
 from doc_to_html.wire import LayoutResponse, MappingError, schema_of, zones_from_layout
 
-from .replay import Call, ReplayTransport, layout_only, text
+from .replay import (
+    Call,
+    ReplayTransport,
+    engines_replaying,
+    layout_only,
+    text,
+)
 
 REPO = Path(__file__).resolve().parent.parent
 INVOICE = REPO / "example" / "invoice.png"
-
-
-def engines_replaying(transport: ReplayTransport) -> EngineSet:
-    """An EngineSet whose only difference from production is the transport."""
-    settings = Settings()
-    return EngineSet(
-        layout=OllamaEngine(model=settings.layout_model, transport=transport),
-        extract=OllamaEngine(model=settings.extract_model, transport=transport),
-        audit=OllamaEngine(model=settings.audit_model, transport=transport),
-    )
 
 
 def convert_invoice(transport: ReplayTransport) -> Document:

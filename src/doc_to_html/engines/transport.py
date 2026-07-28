@@ -33,6 +33,7 @@ class Transport(Protocol):
         self,
         *,
         model: str,
+        pass_name: str,
         prompt: str,
         images: list[bytes],
         schema: dict[str, Any],
@@ -48,6 +49,11 @@ class OllamaTransport:
     decoding, so the response cannot be syntactically invalid JSON or carry a
     field the schema does not describe. Parsing around malformed output is a code
     path this deliberately removes rather than defends.
+
+    `pass_name` is carried but not used here. It is what a measuring wrapper needs
+    and cannot otherwise know: `prose` and `list` share one schema, so the schema's
+    title cannot tell them apart, and per-pass latency that lumps them together is
+    the wrong number.
     """
 
     client_kwargs: dict[str, Any]
@@ -56,6 +62,7 @@ class OllamaTransport:
         self,
         *,
         model: str,
+        pass_name: str,
         prompt: str,
         images: list[bytes],
         schema: dict[str, Any],
