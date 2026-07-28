@@ -20,6 +20,8 @@ TOLERANCE = Decimal("0.01")
 """Absolute tolerance, to absorb rounding in the document itself."""
 
 _NUMBER = re.compile(r"-?\d[\d., \s']*\d|-?\d")
+_CURRENCY = re.compile(r"[$€£¥₹]")
+_JUST_A_NUMBER = re.compile(r"[-+(]?\d[\d.,\s']*\)?%?")
 
 
 def parse_number(text: str) -> Decimal | None:
@@ -59,6 +61,21 @@ def parse_number(text: str) -> Decimal | None:
         return Decimal(raw)
     except InvalidOperation:
         return None
+
+
+def is_numeric(text: str) -> bool:
+    """Whether a cell *is* a number, rather than merely containing one.
+
+    `parse_number` is deliberately lenient: it has to find 385.00 inside
+    "Total: $385.00". Column alignment needs the opposite question asked.
+    "Hosting (3 months)" and "Domain name (1 year)" are descriptions, and two of
+    them in a three-row column are enough to right-align an invoice's item
+    column if containing a digit is the test.
+    """
+    stripped = _CURRENCY.sub("", text).strip()
+    if not stripped or not _JUST_A_NUMBER.fullmatch(stripped):
+        return False
+    return parse_number(stripped) is not None
 
 
 def _numeric_columns(rows: list[Row]) -> dict[int, list[Decimal]]:

@@ -22,11 +22,18 @@ Document looks exactly like a sparse document.
 
 from __future__ import annotations
 
-from typing import Any, Literal
+from typing import Any, Callable, Literal, NoReturn
 
 from pydantic import BaseModel, Field
 
-from .ir import BBox, Kind, Role, Zone
+from .ir import BBox, Cell, Kind, Reading, Role, Row, RowRole, Zone
+
+Read = Callable[[str], Reading]
+"""Turns cell text into a Reading carrying its engine, model and prompt version.
+
+Injected so the mapping functions stay pure: provenance belongs to whatever did
+the reading, and a mapper that reached for it would need an Engine to test.
+"""
 
 GRAPHIC_KINDS = ("logo", "chart", "signature", "stamp", "badge")
 """What a figure may be. `stamp`, `signature` and `badge` are Marks: their text
@@ -231,3 +238,73 @@ def zones_from_layout(response: LayoutResponse) -> list[Zone]:
 
     _validate_bands(zones)
     return zones
+
+
+def rows_from_table(response: TableResponse, *, read: Read) -> list[Row]:
+    """Map a table response onto Rows.
+
+    Two things a schema cannot check are checked here. That the region had any
+    rows at all: an empty table rendered as a table looks like a document that
+    had one. And that data rows are as wide as the header, which is how a dropped
+    or invented cell shows up — it shifts every value after it into the wrong
+    column, and the numbers stay individually plausible.
+
+    A summary row is allowed to be narrower. Totals rows merge cells as a matter
+    of course, and rejecting that would reject the fixture this project is held
+    to.
+    """
+    if not response.rows:
+        _no_content("table", "no rows")
+
+    header = next((r for r in response.rows if r.role == "header"), None)
+    width = len(header.cells) if header else None
+
+    rows = []
+    for index, wire in enumerate(response.rows):
+        if width is not None and (
+            len(wire.cells) > width
+            or (wire.role != "summary" and len(wire.cells) != width)
+        ):
+            raise MappingError(
+                f"table row {index} has {len(wire.cells)} cells but the header "
+                f"has {width} — a dropped or invented cell shifts every value "
+                "after it into the wrong column"
+            )
+        rows.append(
+            Row(
+                role=RowRole(wire.role),
+                cells=[Cell(readings=[read(text)]) for text in wire.cells],
+            )
+        )
+    return rows
+
+
+def _no_content(kind: str, what: str) -> NoReturn:
+    raise MappingError(
+        f"{kind} Zone came back with {what} — the layout pass said there is "
+        "content here, so an empty answer is a failure rather than a finding"
+    )
+
+
+def contents_into(zone: Zone, content: str, *, read: Read) -> Zone:
+    """Validate an extraction response for this Zone's Kind and fill it in.
+
+    One function rather than a branch in the Engine: which schema a Kind is read
+    with, and how that answer becomes IR, are the same decision and belong
+    together.
+    """
+    if zone.kind is Kind.TABLE:
+        zone.rows = rows_from_table(
+            TableResponse.model_validate_json(content), read=read
+        )
+    else:
+        raise NotImplementedError(f"{zone.kind.value} extraction not yet wired")
+
+    zone.complete = True
+    return zone
+
+
+EXTRACTION_SCHEMAS: dict[Kind, type[BaseModel]] = {
+    Kind.TABLE: TableResponse,
+}
+"""What each Kind is asked for. A Kind absent here has no Extractor yet."""

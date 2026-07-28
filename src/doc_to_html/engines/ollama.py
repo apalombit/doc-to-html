@@ -25,9 +25,15 @@ from ..config import (
     DEFAULT_OLLAMA_HOST,
     DEFAULT_TIMEOUT_S,
 )
-from ..ir import BBox, Reading, Zone
+from ..ir import BBox, Kind, Reading, Zone
 from ..preprocess import MODEL_INPUT_LONG_EDGE, ImageArray, resize_long_edge, to_png
-from ..wire import LayoutResponse, schema_of, zones_from_layout
+from ..wire import (
+    EXTRACTION_SCHEMAS,
+    LayoutResponse,
+    contents_into,
+    schema_of,
+    zones_from_layout,
+)
 from .transport import OllamaTransport, Response, Transport
 
 PROMPT_VERSION = "1"
@@ -70,6 +76,35 @@ empty string for every other kind.
 
 Ignore decoration. A horizontal rule, a panel border or a column divider is not
 a region and must not appear in the list."""
+
+TABLE_PROMPT = """You are looking at one table, cropped from a page.
+
+Return every row of it, in order from top to bottom.
+
+For each row give:
+
+role — one of:
+  header   a row of column headings, usually at the top and often shaded
+  data     an ordinary row of the table's contents
+  summary  a row of totals or subtotals, usually ruled off from the rows above it
+
+cells — the text of each cell, left to right, exactly as printed. Keep currency
+symbols, thousands separators and decimal marks as they appear on the page. Use
+an empty string for a cell that is blank, and keep it in the list: a blank cell
+still holds a column position.
+
+Give every data row the same number of cells as the header row.
+
+Read only what is printed. Do not add a row that is not on the page, do not
+merge two printed rows into one, and do not calculate anything — a total that is
+printed is read like any other cell, and a total that is not printed does not
+exist."""
+
+EXTRACTION_PROMPTS: dict[Kind, str] = {
+    Kind.TABLE: TABLE_PROMPT,
+}
+"""One prompt per Kind, and never one per document type. An invoice's line items
+and an inventory's stock list are the same question. See docs/adr/0001."""
 
 
 class TruncatedResponse(RuntimeError):
@@ -172,7 +207,22 @@ class OllamaEngine:
 
     def extract_zone(self, image: ImageArray, zone: Zone,
                      hint: str | None = None) -> Zone:
-        raise NotImplementedError("zone extraction not yet wired")
+        """Fill in a Zone's contents from the pixels it was handed.
+
+        The pixels are already this Zone's crop — the Extractor owns
+        decomposition. What is chosen here is the question: one prompt and one
+        schema per Kind, and no branch anywhere on what the document is.
+        """
+        prompt = EXTRACTION_PROMPTS.get(zone.kind)
+        schema = EXTRACTION_SCHEMAS.get(zone.kind)
+        if prompt is None or schema is None:
+            raise NotImplementedError(
+                f"{zone.kind.value} extraction not yet wired"
+            )
+        content = self.ask(
+            zone.kind.value, with_hint(prompt, hint), image, schema_of(schema)
+        )
+        return contents_into(zone, content, read=self.reading)
 
     def read_cell(self, image: ImageArray, bbox: BBox,
                   hint: str | None = None) -> Reading:

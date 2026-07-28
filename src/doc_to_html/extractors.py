@@ -15,7 +15,7 @@ from typing import Protocol
 
 from .engines.base import VisionEngine
 from .ir import Kind, Zone
-from .preprocess import MODEL_INPUT_LONG_EDGE, ImageArray, slice_points
+from .preprocess import MODEL_INPUT_LONG_EDGE, ImageArray, crop, slice_points
 
 
 class Extractor(Protocol):
@@ -23,6 +23,46 @@ class Extractor(Protocol):
 
     def extract(self, image: ImageArray, zone: Zone, engine: VisionEngine,
                 hint: str | None = None) -> Zone: ...
+
+
+class NoGeometry(ValueError):
+    """A Zone with no bounding box cannot be cropped, so it cannot be read."""
+
+
+def zone_pixels(image: ImageArray, zone: Zone) -> ImageArray:
+    """This Zone's own pixels, at the resolution the Rectified Image has them.
+
+    Every Extractor starts here. The layout pass looked at a downscaled page
+    because finding regions is coarse work; reading one is not, and this is where
+    the resolution that bought is spent.
+    """
+    if zone.bbox is None:
+        raise NoGeometry(
+            f"{zone.kind.value} Zone in band {zone.band} has no bounding box"
+        )
+    return crop(image, zone.bbox)
+
+
+def resolution_caveat(image: ImageArray, zone: Zone) -> str | None:
+    """Whether this Zone had to be read below the resolution it deserved.
+
+    Slice stitching is not built, so a Zone taller than the model's input budget
+    is read whole at reduced resolution rather than in overlapping strips. That
+    can drop rows. Returning a degraded reading as though it were an ordinary one
+    is the failure mode worth preventing, so the caveat is recorded and shown.
+    """
+    if zone.bbox is None:
+        return None
+    height, width = zone_pixels(image, zone).shape[:2]
+    longest = max(height, width)
+    if longest <= MODEL_INPUT_LONG_EDGE:
+        return None
+    slices = len(slice_points(longest, budget=MODEL_INPUT_LONG_EDGE))
+    return (
+        f"read at reduced resolution: {longest}px is over the model's "
+        f"{MODEL_INPUT_LONG_EDGE}px input budget and would need {slices} "
+        "overlapping slices, which are planned but not yet stitched"
+    )
 
 
 class TableExtractor:
@@ -39,7 +79,7 @@ class TableExtractor:
 
     def extract(self, image: ImageArray, zone: Zone, engine: VisionEngine,
                 hint: str | None = None) -> Zone:
-        raise NotImplementedError("table extraction not yet wired")
+        return engine.extract_zone(zone_pixels(image, zone), zone, hint)
 
     @staticmethod
     def plan_slices(crop_height: int) -> list[tuple[int, int]]:

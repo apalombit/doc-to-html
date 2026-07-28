@@ -21,7 +21,7 @@ from .checkpoints import Answer, CheckpointHandler, NullHandler, Question
 from .config import Settings, load
 from .engines.base import VisionEngine
 from .engines.ollama import OllamaEngine
-from .extractors import for_kind
+from .extractors import for_kind, resolution_caveat
 from .ir import Document, Failure
 from .preprocess import Rectified, rectify
 from .render import render
@@ -173,6 +173,10 @@ class Conversion:
         recorded as a Failure and left incomplete — it renders as a skeleton,
         which is unmistakably "this did not work" in a way that silently absent
         content is not — and the remaining Zones are still extracted.
+
+        A Zone that *was* read but only at reduced resolution is recorded too.
+        It keeps its content, because degraded content beats none; the caveat
+        exists so nobody mistakes it for an ordinary reading.
         """
         document.failures = []
         for index, zone in enumerate(document.zones):
@@ -189,6 +193,13 @@ class Conversion:
                         kind=zone.kind.value,
                         reason=f"{type(error).__name__}: {error}",
                     )
+                )
+                continue
+
+            caveat = resolution_caveat(rectified.image, zone)
+            if caveat is not None:
+                document.failures.append(
+                    Failure(zone_index=index, kind=zone.kind.value, reason=caveat)
                 )
 
     def _audit(self, rectified: Rectified, document: Document) -> None:

@@ -19,7 +19,7 @@ from enum import Enum
 from typing import Any
 
 from .ir import Block, Cell, CellState, Document, Kind, Pair, Role, RowRole, Zone
-from .probes import parse_number
+from .probes import is_numeric
 
 STYLESHEET = """
 :root { --ink:#1a1a1a; --muted:#666; --rule:#e0e0e0; --shade:#f4f4f4;
@@ -178,6 +178,11 @@ def _numeric_columns(zone: Zone) -> set[int]:
     Alignment follows content rather than position. Right-aligning everything
     but the first column looks right on an invoice and wrong on a table whose
     second and fifth columns are country codes and currencies.
+
+    The test is whether a cell *is* a number, not whether it contains one: an
+    item column reading "Hosting (3 months)" and "Domain name (1 year)" would
+    otherwise be right-aligned on the strength of the digits inside its
+    descriptions.
     """
     counts: dict[int, list[int]] = {}
     for row in zone.rows:
@@ -186,7 +191,7 @@ def _numeric_columns(zone: Zone) -> set[int]:
         for index, cell in enumerate(row.cells):
             seen = counts.setdefault(index, [0, 0])
             seen[0] += 1
-            if cell.text.strip() and parse_number(cell.text) is not None:
+            if is_numeric(cell.text):
                 seen[1] += 1
     return {index for index, (total, numeric) in counts.items()
             if total and numeric / total > 0.6}

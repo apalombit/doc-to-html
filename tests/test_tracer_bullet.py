@@ -22,7 +22,7 @@ from doc_to_html.preprocess import RectifyError, rectify
 from doc_to_html.render import render
 from doc_to_html.wire import LayoutResponse, MappingError, schema_of, zones_from_layout
 
-from .replay import ReplayTransport, layout_only, recorded, text
+from .replay import Call, ReplayTransport, layout_only, text
 
 REPO = Path(__file__).resolve().parent.parent
 INVOICE = REPO / "example" / "invoice.png"
@@ -44,7 +44,20 @@ def convert_invoice(transport: ReplayTransport) -> Document:
 
 @pytest.fixture
 def transport() -> ReplayTransport:
+    """The layout pass and nothing else recorded.
+
+    Every Zone therefore fails to extract, which is the spine at its thinnest:
+    the run completes, the Zones are in the right Bands, and the render is
+    skeletons. What makes each Zone fail is not the subject here.
+    """
     return ReplayTransport(layout_only("invoice_0001"))
+
+
+def layout_calls(transport: ReplayTransport) -> list[Call]:
+    return [
+        call for call in transport.calls
+        if call.schema == schema_of(LayoutResponse)
+    ]
 
 
 class TestTheFirstConversion:
@@ -65,7 +78,7 @@ class TestTheFirstConversion:
         assert [z.column for z in bands[0]] == [0, 1]
         assert all(z.bbox is not None for z in document.zones)
 
-    def test_nothing_is_extracted_yet_so_every_zone_is_a_skeleton(
+    def test_a_zone_with_no_reading_renders_as_a_skeleton(
         self, transport: ReplayTransport
     ) -> None:
         """The point of the tracer bullet: the spine works before any Extractor
@@ -121,8 +134,9 @@ class TestTheModelIsGivenASchema:
         schema stops travelling with the request, that guarantee is gone and the
         absence of a JSON-repair code path becomes a bug."""
         convert_invoice(transport)
-        assert transport.last.schema == schema_of(LayoutResponse)
-        assert transport.last.images and transport.last.images[0][:4] == b"\x89PNG"
+        first = transport.calls[0]
+        assert first.schema == schema_of(LayoutResponse)
+        assert first.images and first.images[0][:4] == b"\x89PNG"
 
     def test_the_wire_schema_is_not_the_ir(self) -> None:
         """A flat schema reads the page better than a nested one, and the IR's
@@ -148,7 +162,7 @@ class TestTheModelIsGivenASchema:
         """Detecting regions is coarse work; the resolution given away here is
         bought back by cropping each Zone from the full-resolution image."""
         convert_invoice(transport)
-        assert len(transport.last.images[0]) < INVOICE.stat().st_size * 4
+        assert len(layout_calls(transport)[0].images[0]) < INVOICE.stat().st_size * 4
 
 
 class TestMappingValidatesWhatASchemaCannot:
@@ -232,7 +246,7 @@ class TestFailuresThatASchemaCannotPrevent:
         ])
         document = convert_invoice(replay)
         assert len(document.zones) == 6
-        assert [call.num_ctx for call in replay.calls] == [8192, 16384]
+        assert [call.num_ctx for call in layout_calls(replay)] == [8192, 16384]
 
     def test_truncation_is_detected_even_when_the_transport_is_silent(self) -> None:
         """A transport may not report why it stopped. An unparseable prefix says
@@ -287,16 +301,16 @@ class TestTheFailureContract:
     def test_a_zone_that_cannot_be_read_is_reported_and_does_not_abort(
         self, transport: ReplayTransport
     ) -> None:
-        """No Extractor is wired yet, so every Zone fails — which is exactly the
-        shape of the contract: the run completes, each Zone is named with a
-        reason, and the render shows skeletons rather than nothing."""
+        """With no extraction responses recorded, every Zone fails — which is
+        the shape of the contract at its clearest: the run completes, each Zone
+        is named with a reason, and the render shows skeletons rather than
+        nothing."""
         document = convert_invoice(transport)
-        assert len(document.failures) == 6
         assert [f.zone_index for f in document.failures] == list(range(6))
         assert {f.kind for f in document.failures} == {
             "figure", "pairs", "prose", "table"
         }
-        assert all("not yet wired" in f.reason for f in document.failures)
+        assert all(f.reason for f in document.failures)
 
     def test_a_failure_is_traceable_from_the_render(
         self, transport: ReplayTransport
@@ -335,4 +349,4 @@ class TestTheSuiteNeedsNoModel:
             source=INVOICE, engines=engines_replaying(transport)
         )
         conversion.run()
-        assert [c for c in transport.calls] and len(transport.calls) == 1
+        assert len(layout_calls(transport)) == 1

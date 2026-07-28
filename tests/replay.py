@@ -65,13 +65,23 @@ def text(content: str, *, truncated: bool = False) -> Response:
     return Response(content=content, truncated=truncated)
 
 
-def recorded(fixture: str) -> list[Response]:
-    """Every recorded response for one fixture, in pipeline order."""
+def recorded(fixture: str, zones: list[int] | None = None) -> list[Response]:
+    """The recorded responses for one fixture, in pipeline order.
+
+    `zones` names which Zones are expected to reach a model, for while some
+    Kinds are not yet wired. Spelling that out in the test is the point: if a
+    pass appears or disappears, `ReplayTransport` says so rather than silently
+    serving one Zone's answer for another's question.
+    """
     directory = RESPONSES / fixture
-    layout = directory / "layout.json"
-    zones = sorted(directory.glob("zone_*.json"))
-    return [text(path.read_text()) for path in (layout, *zones)]
+    indices = (
+        range(len(list(directory.glob("zone_*.json")))) if zones is None else zones
+    )
+    paths = [directory / "layout.json"] + [
+        directory / f"zone_{index:02d}.json" for index in indices
+    ]
+    return [text(path.read_text()) for path in paths]
 
 
 def layout_only(fixture: str) -> list[Response]:
-    return recorded(fixture)[:1]
+    return recorded(fixture, zones=[])
