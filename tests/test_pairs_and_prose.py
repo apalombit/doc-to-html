@@ -207,19 +207,23 @@ class TestThePromptSaysWhatTheMappingCannotEnforce:
           Zones landed in band 0 and both tables merged into one box.
         - run 16 added five words to `prose` alone, one line, no growth — four
           Zones in band 0, column order [0, 1, 2, 3] against lefts 0.05, 0.75,
-          0.05, 0.75.
+          0.05, 0.75. **Run 17 repeated it verbatim and reproduced the failure
+          exactly**, at 475.3s against 220.0s, which also rules out the
+          CPU-offload confound: offload costs latency, not correctness.
 
-        The six runs separate cleanly: 11, 12 and 16 touched this block and all
-        three were rejected; 13, 14 and 15 did not and all three mapped. So the
-        variable is not how *long* these definitions are — run 16 grew nothing —
-        it is that this pass is at capacity, and asking it to classify more
-        carefully is paid for out of the Band and column instruction further
-        down.
+        Seven runs separate cleanly: 11, 12, 16 and 17 touched this block and
+        all four were rejected; 13, 14 and 15 did not and all three mapped. The
+        variable is not how *long* these definitions are — run 16 grew nothing.
 
-        That is the evidence 0002 asked for before splitting the pass, so this
-        is a tripwire rather than a style rule: the next edit here should be
-        deleting this test as part of separating classification from geometry,
-        not another wording. See docs/specs/0002-structure-not-geometry.md.
+        Be exact about what that supports. Run 16's wording is repeated, so
+        "this edit breaks Band numbering" is established. "*Any* edit does" is a
+        generalisation from three wordings, and 0001 already withdrew a claim of
+        that class. It is the working hypothesis, not a finding.
+
+        So this is a tripwire, not a style rule: it exists to make the next edit
+        here a deliberate act that reads this docstring first. Deleting it as
+        part of separating classification from geometry is the expected way for
+        it to go. See docs/specs/0002-structure-not-geometry.md.
         """
         from doc_to_html.engines.ollama import LAYOUT_PROMPT
 

@@ -296,13 +296,13 @@ def rows_from_table(response: TableResponse, *, read: Read) -> list[Row]:
     of course, and rejecting that would reject the fixture this project is held
     to.
 
-    A heading row split one cell per row is put back together first — see
-    `_join_split_heading`.
+    A header row split one cell per row is put back together first — see
+    `_join_split_header_row`.
     """
     if not response.rows:
         _no_content("table", "no rows")
 
-    wire_rows = _join_split_heading(response.rows)
+    wire_rows = _join_split_header_row(response.rows)
 
     header = next((r for r in wire_rows if r.role == "header"), None)
     width = len(header.cells) if header else None
@@ -327,15 +327,22 @@ def rows_from_table(response: TableResponse, *, read: Read) -> list[Row]:
     return rows
 
 
-def _join_split_heading(rows: list[WireRow]) -> list[WireRow]:
-    """Put back together a heading row returned one cell per row.
+def _join_split_header_row(rows: list[WireRow]) -> list[WireRow]:
+    """Put back together a header row returned one cell per row.
 
-    A heading whose cells sit at opposite edges of a wide table is the one thing
-    on `example/invoice.png` that four measured runs could not talk a real
+    A header row whose cells sit at opposite edges of a wide table is the one
+    thing on `example/invoice.png` that four measured runs could not talk a real
     `qwen3-vl:4b` out of: `Item` and `Price` come back as `["Item", ""]` and
     `["", "Price"]`, so `Price` never reaches `Item`'s row. Runs 01, 05, 10 and
     13 all show it, 13 with a prompt forbidding it in as many words, which is
     what moved the fix here from the prompt.
+
+    **Known limitation.** A genuine two-tier header — `["Q1", ""]` over
+    `["", "Revenue"]`, meaning two stacked rows of headings — meets every
+    condition below and is joined into one row. Nothing on the fixtures has that
+    shape, and no run has ever produced one, so this is a recorded risk rather
+    than a measured defect. "Invents nothing and discards nothing" is true of the
+    strings; it is not a claim about the structure they were arranged in.
 
     Note what is *not* wrong: the width. The model returns two cells and the
     table has two columns, so it has read the shape correctly and only misplaced
@@ -350,7 +357,7 @@ def _join_split_heading(rows: list[WireRow]) -> list[WireRow]:
       data row is a real shape rather than a defect.
     - Only equal widths, and only where no position is filled twice. Two
       headings competing for one column are not one row split in two, and
-      choosing between them would drop a heading silently.
+      choosing between them would drop one silently.
 
     Under those conditions the join invents nothing and discards nothing: every
     string keeps the column it arrived in. Anything else is passed through

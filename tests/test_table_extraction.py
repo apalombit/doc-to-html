@@ -232,24 +232,31 @@ class TestTheFailureContractOnAPartlyWorkingDocument:
         assert "could not be read" in html
 
 
+def table_zone(payload: str) -> Zone:
+    """Map a raw table payload straight onto a Zone, with no model in the way.
+
+    Returns the Zone rather than a Document: the callers below read `.rows`, and
+    a helper that claimed to return a Document made every one of them carry a
+    `# type: ignore` for a field the real type has.
+    """
+    from doc_to_html.ir import Reading
+
+    zone = Zone(kind=Kind.TABLE)
+    contents_into(zone, payload, read=lambda t: Reading(engine="test", text=t))
+    return zone
+
+
 class TestMappingATableResponse:
-    def rows(self, payload: str) -> Document:
-        from doc_to_html.ir import Reading, Zone
-
-        zone = Zone(kind=Kind.TABLE)
-        contents_into(zone, payload, read=lambda t: Reading(engine="test", text=t))
-        return zone  # type: ignore[return-value]
-
     def test_an_empty_result_is_a_failure_not_an_empty_table(self) -> None:
         """A schema cannot say that a region a model was pointed at has rows in
         it. An empty table rendered as a table looks like a document that had
         one."""
         with pytest.raises(MappingError, match="no rows"):
-            self.rows('{"rows": []}')
+            table_zone('{"rows": []}')
 
     def test_a_data_row_must_match_the_header_width(self) -> None:
         with pytest.raises(MappingError, match="row 2 has 3 cells.*header has 2"):
-            self.rows(
+            table_zone(
                 '{"rows": [{"role": "header", "cells": ["a", "b"]},'
                 ' {"role": "data", "cells": ["1", "2"]},'
                 ' {"role": "data", "cells": ["1", "2", "3"]}]}'
@@ -258,26 +265,26 @@ class TestMappingATableResponse:
     def test_a_summary_row_may_be_narrower_because_totals_rows_merge_cells(
         self,
     ) -> None:
-        zone = self.rows(
+        zone = table_zone(
             '{"rows": [{"role": "header", "cells": ["Item", "Price"]},'
             ' {"role": "data", "cells": ["Design", "300.00"]},'
             ' {"role": "summary", "cells": ["Total: 300.00"]}]}'
         )
-        assert [len(r.cells) for r in zone.rows] == [2, 2, 1]  # type: ignore[attr-defined]
+        assert [len(r.cells) for r in zone.rows] == [2, 2, 1]
 
     def test_a_table_with_no_header_row_is_allowed(self) -> None:
         """Plenty of tables have none. There is then nothing to check widths
         against, which is a smaller problem than rejecting the table."""
-        zone = self.rows('{"rows": [{"role": "data", "cells": ["a", "b"]}]}')
-        assert len(zone.rows) == 1  # type: ignore[attr-defined]
+        zone = table_zone('{"rows": [{"role": "data", "cells": ["a", "b"]}]}')
+        assert len(zone.rows) == 1
 
 
-class TestAHeadingRowSplitOneCellPerRow:
-    """A heading whose cells sit at opposite edges comes back as two rows.
+class TestAHeaderRowSplitOneCellPerRow:
+    """A header row whose cells sit at opposite edges comes back as two rows.
 
     Measured on `example/invoice.png` against a real `qwen3-vl:4b` in runs 01,
     05, 10 and 13 — the last of those with a prompt telling it in as many words
-    not to. The rows below bind correctly; it is specifically the shaded heading
+    not to. The rows below bind correctly; it is specifically the shaded header
     row, whose two cells are separated by most of the page width.
 
     The model's *width* is already right — it returns `["Item", ""]`, two cells,
@@ -287,83 +294,76 @@ class TestAHeadingRowSplitOneCellPerRow:
     in doubt.
 
     So the repair is here, and it is exact rather than a guess: two adjacent
-    heading rows of the same width that are never both filled at the same
+    header rows of the same width that are never both filled at the same
     position hold, between them, one row's cells. Merging them invents nothing
     and discards nothing. Anything less tidy is left alone and still fails
     loudly.
     """
 
-    def rows(self, payload: str) -> Document:
-        from doc_to_html.ir import Reading, Zone
-
-        zone = Zone(kind=Kind.TABLE)
-        contents_into(zone, payload, read=lambda t: Reading(engine="test", text=t))
-        return zone  # type: ignore[return-value]
-
     def test_the_split_header_measured_on_the_invoice_becomes_one_row(self) -> None:
         """Verbatim from debug/runs/13-header-row-only, zone 5."""
-        zone = self.rows(
+        zone = table_zone(
             '{"rows": [{"role": "header", "cells": ["Item", ""]},'
             ' {"role": "header", "cells": ["", "Price"]},'
             ' {"role": "data", "cells": ["Website design", "$300.00"]}]}'
         )
-        assert [r.role for r in zone.rows] == [  # type: ignore[attr-defined]
+        assert [r.role for r in zone.rows] == [
             RowRole.HEADER,
             RowRole.DATA,
         ]
-        header = zone.rows[0]  # type: ignore[attr-defined]
+        header = zone.rows[0]
         assert [c.readings[0].text for c in header.cells] == ["Item", "Price"]
 
-    def test_two_headings_that_disagree_are_not_merged(self) -> None:
+    def test_two_headers_that_disagree_are_not_merged(self) -> None:
         """Both filled at position 0 is not one row split in two, and guessing
         which to keep would silently drop a heading."""
         with pytest.raises(MappingError, match="row 1 has 1 cells"):
-            self.rows(
+            table_zone(
                 '{"rows": [{"role": "header", "cells": ["Item", ""]},'
                 ' {"role": "header", "cells": ["Price"]},'
                 ' {"role": "data", "cells": ["Design", "$300.00"]}]}'
             )
 
-    def test_a_single_heading_row_is_left_alone(self) -> None:
-        zone = self.rows(
+    def test_a_single_header_row_is_left_alone(self) -> None:
+        zone = table_zone(
             '{"rows": [{"role": "header", "cells": ["Item", "Price"]},'
             ' {"role": "data", "cells": ["Design", "$300.00"]}]}'
         )
-        assert len(zone.rows) == 2  # type: ignore[attr-defined]
+        assert len(zone.rows) == 2
         assert [c.readings[0].text for c in zone.rows[0].cells] == ["Item", "Price"]
 
     def test_data_rows_are_never_merged(self) -> None:
         """Two sparse data rows are a real shape — a table with gaps in it — and
         the evidence says the model reads data rows correctly, so there is
         nothing here to repair and everything to lose."""
-        zone = self.rows(
+        zone = table_zone(
             '{"rows": [{"role": "header", "cells": ["Item", "Price"]},'
             ' {"role": "data", "cells": ["Design", ""]},'
             ' {"role": "data", "cells": ["", "$300.00"]}]}'
         )
-        assert len(zone.rows) == 3  # type: ignore[attr-defined]
+        assert len(zone.rows) == 3
 
     def test_three_way_splits_merge_into_one(self) -> None:
-        zone = self.rows(
+        zone = table_zone(
             '{"rows": [{"role": "header", "cells": ["A", "", ""]},'
             ' {"role": "header", "cells": ["", "B", ""]},'
             ' {"role": "header", "cells": ["", "", "C"]},'
             ' {"role": "data", "cells": ["1", "2", "3"]}]}'
         )
-        assert len(zone.rows) == 2  # type: ignore[attr-defined]
+        assert len(zone.rows) == 2
         assert [c.readings[0].text for c in zone.rows[0].cells] == ["A", "B", "C"]
 
-    def test_a_wholly_blank_heading_row_does_not_survive_the_merge(self) -> None:
+    def test_a_wholly_blank_header_row_does_not_survive_the_merge(self) -> None:
         """Run 13 also produced a row with no cells at all. Merging the blank
         away is right; leaving it to fail the width check is not, because the
         message then blames a dropped cell for a row that never held one."""
-        zone = self.rows(
+        zone = table_zone(
             '{"rows": [{"role": "header", "cells": ["Item", ""]},'
             ' {"role": "header", "cells": ["", "Price"]},'
             ' {"role": "header", "cells": ["", ""]},'
             ' {"role": "data", "cells": ["Design", "$300.00"]}]}'
         )
-        assert len(zone.rows) == 2  # type: ignore[attr-defined]
+        assert len(zone.rows) == 2
         assert [c.readings[0].text for c in zone.rows[0].cells] == ["Item", "Price"]
 
     def test_every_cell_records_what_read_it(self) -> None:

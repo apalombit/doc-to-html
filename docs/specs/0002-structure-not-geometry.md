@@ -1,6 +1,8 @@
 # Structure, not geometry: the last three mismatches on `invoice.png`
 
-**Status:** open, at **2 mismatches**. Continues `0001-one-image-at-a-time.md`,
+**Status:** open, at **2 mismatches — after a repair in the mapper, not from the
+model**. See the honesty note under runs 14/15 before quoting that number.
+Continues `0001-one-image-at-a-time.md`,
 which holds the run history, the measured numbers, and everything already tried
 and rejected. Read this file for *what is wrong now*; read 0001 for *how we got
 here*.
@@ -15,13 +17,21 @@ zone 1: kind expected pairs, got prose
 zone 4: kind expected table, got pairs
 ```
 
-The header split is **fixed**, and not in the prompt: `wire._join_split_heading`
-puts back together a heading row the model still returns one cell per row. Zone
+The header split is **fixed**, and not in the prompt: `wire._join_split_header_row`
+puts back together a header row the model still returns one cell per row. Zone
 5's Row Roles are `[header, data, data, data, summary]`, `Price` sits on `Item`'s
 row, and the column-sum Probe reconciles at 385.00.
 
+**Read that honestly.** The model has not improved. Run 14's raw
+`06_table.json` still contains `["Item", ""]` and `["", "Price"]`, exactly as
+run 10's did; the acceptance criterion "Zone 5's Row Roles are `[header, data,
+data, data, summary]`" is now satisfied by this project's own repair rather than
+by anything the model returned. That is a legitimate fix — the wrongness was
+ours to correct once characterised — but 3 → 2 measures the *pipeline*, not the
+model, and comparing it against runs 01–13 compares two different things.
+
 **Both remaining defects are Kinds from the layout pass, and the section below
-says why no further prompt wording will move them.**
+says why prompt wording is not the lever for them.**
 
 ### The layout Kind block is frozen
 
@@ -30,17 +40,39 @@ leaving the layout unmappable for a reason in a *different* part of the answer:
 
 | Run | Edit to the Kind definitions | Result |
 |---|---|---|
-| 11 | "the heading row names **the columns**" | Kind fixed — Zone 4 came back `table` — and each table returned **once per column**, byte-identical boxes. Rejected. |
-| 12 | same idea, without the word "columns" | all seven Zones in `band 0`, both tables merged into one box. Rejected. |
+| 11 | added "the heading row names **the columns**" | each table returned **once per column**, byte-identical boxes. Rejected: `two Zones share column [0,1,0,1]`. |
+| 12 | dropped the phrase "names the columns"; added "one region however many columns it has" | all nine Zones collapsed to two Bands, both tables merged into one box, seven Zones in `band 0`. Rejected. |
 | 16 | five words added to `prose` alone, one line, **no growth** | four Zones in `band 0`, column order `[0,1,2,3]` against lefts `0.05, 0.75, 0.05, 0.75`. Rejected. |
+| 17 | **run 16 repeated verbatim** | *identical* failure: same message, same column order, same lefts. Rejected. |
 
-Six runs separate cleanly. Runs 11, 12 and 16 touched this block: all three
-rejected. Runs 13, 14 and 15 did not: all three mapped.
+Runs 11, 12, 16 and 17 touched this block: all four rejected. Runs 13, 14 and 15
+did not: all three mapped.
 
-So the variable is **not length** — run 16 grew nothing. The layout pass is at
-capacity, and asking it to classify more carefully is paid for out of the Band
-and column instruction further down. Run 11 also proves the model *can* be told:
-the Kind was fixed there. The prompt simply cannot hold both jobs.
+The variable is **not length** — run 16 grew nothing and still broke Bands. The
+working hypothesis is that this pass is at capacity, and that asking it to
+classify more carefully is paid for out of the Band and column instruction
+further down.
+
+**How far that is established, precisely.** One wording (run 16) is now repeated
+and reproduced exactly, which satisfies 0001's standing rule for *that* wording:
+adding five words to `prose` reliably breaks Band numbering on this document.
+The two other wordings, runs 11 and 12, are still single runs. So "**this
+particular edit breaks Bands**" is established; "**any edit to this block breaks
+Bands**" is a generalisation from three points and should be treated as the
+working hypothesis it is — 0001 line 478 records a withdrawn claim of that same
+class, *"the two `kind` confusions are capacity, not the prompt"*.
+
+Run 17 also disposes of the CPU-offload confound for this result. It ran at
+475.3s against run 16's 220.0s — more than twice as slow, at `41%/59% CPU/GPU` —
+and returned the identical answer. Consistent with 0001's finding that offload
+costs latency and not correctness.
+
+One claim to state carefully: run 11 is often summarised as "the Kind was
+fixed". What is true is that the `Payment Method` block came back `table` rather
+than `pairs`. It is *not* the expected Zone 4 — that answer has nine Zones with
+each table duplicated, so the indices do not correspond — and the layout was
+rejected before mapping, so no extractor ever ran against it. Suggestive, not
+established.
 
 `tests/test_pairs_and_prose.py` now pins the Kind block verbatim as a tripwire.
 **The next edit there should be deleting that test as part of splitting the
@@ -150,12 +182,14 @@ sound and only the remedies changed; the numbering is referred to elsewhere.
    second, independent defect with the same cause.
 
 2. ~~**The header split**, prompt-level in `TABLE_PROMPT`.~~ **Done**, in
-   `wire._join_split_heading` rather than the prompt. Runs 14 and 15.
+   `wire._join_split_header_row` rather than the prompt. Runs 14 and 15.
 
    The instruction to "do 1 and 2 together" was written on the expectation that
-   fixing 1 would relocate the bug into Zone 4's header. It would not have: the
-   join is in the mapper and applies to any `table` Zone, so whenever Zone 4 does
-   become a `table`, its header is already covered.
+   fixing 1 would relocate the bug into Zone 4's header. The join is in the
+   mapper and applies to any `table` Zone, so the intent is that Zone 4's header
+   is covered the moment Zone 4 becomes one. **This is unverified**: the only run
+   in which that block came back `table` is 11, which was rejected at layout, so
+   no table pass has ever read Zone 4. Treat it as designed-for, not shown.
 
 3. **Zone 1's Kind** (`prose` where the invoice details are `pairs`). **Still
    open.** Attempted in run 16 and rejected. Note the diagnosis this spec
@@ -165,7 +199,10 @@ sound and only the remedies changed; the numbering is referred to elsewhere.
    claims. Still costs nothing downstream — the text is read correctly either
    way.
 
-4. **The boxes.** Not by more prompt tuning of the same shape.
+4. **The boxes.** Originally "**not before 1–3**". That ordering is now
+   **withdrawn rather than met**: items 1 and 3 turned out to need the same split
+   of classification from geometry that this item proposes, so holding item 4
+   behind them would deadlock. Still not by more prompt tuning of the same shape.
    The frozen-across-resolutions result says the layout pass is not measuring the
    top of the page, so asking it more politely will not help. Two options worth
    weighing when the time comes, neither yet tried:
@@ -187,7 +224,7 @@ line break. A pass asking how many columns there are would answer a question
 nobody got wrong, and cost a whole extra VLM call on a document already at ~175s.
 
 What was actually wrong is row segmentation, and that is repairable exactly:
-`wire._join_split_heading` joins two adjacent `header` rows of equal width that
+`wire._join_split_header_row` joins two adjacent `header` rows of equal width that
 are never both filled at the same position. Every string keeps the column it
 arrived in — nothing invented, nothing dropped. Header rows only, because data
 rows bind correctly; no position filled twice, because two headings competing for
@@ -229,9 +266,26 @@ the change was made.
 Zone 1's Kind was not in the original list and remains open, for the same reason
 as Zone 4.
 
+## Open from review, not yet acted on
+
+**The join records no Caveat, and should.** `CONTEXT.md` defines a Caveat as
+"something an operator should know about *how* a Zone was read, on one that was
+read… so nobody mistakes it for an ordinary reading" — which is exactly a header
+row this project assembled rather than read. It is not built because the note
+would have to travel from `wire.rows_from_table` out through the Extractors to
+the Orchestrator, which is where `document.caveats` is filled, or else `Zone`
+grows a field and `ir.py`'s versioning and every fixture follow it. Both are real
+changes rather than review touch-ups. **Until it exists, a joined header is
+indistinguishable in the IR from one the model got right** — and the same
+argument applies to `LenientTransport`, which also repairs silently.
+
+**A two-tier header would be joined wrongly.** Recorded in
+`_join_split_header_row`'s docstring. No fixture has that shape and no run has
+produced one, so it is a known risk, not a measured defect.
+
 ## Not measured, and worth knowing
 
-Every run here is `invoice_0001` alone. `_join_split_heading` and the reverted
+Every run here is `invoice_0001` alone. `_join_split_header_row` and the reverted
 prompt attempts apply to **every** document, and their effect on fixtures
 0002–0005 has never been measured — as was true of runs 01–10 before them. The
 offline suite cannot cover it: `tests/responses/` is frozen ground truth recorded

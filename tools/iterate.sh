@@ -39,7 +39,13 @@ LABEL="${1:?usage: tools/iterate.sh <label>, e.g. 03-fewer-fields}"
 FIXTURE="${FIXTURE:-invoice_0001}"
 MODEL="${MODEL:-qwen3-vl:4b}"
 # Exported so the run and the diagnostic agree about what the model was shown.
-LONG_EDGE="${DTH_LAYOUT_LONG_EDGE:-512}"
+# The default is read from config rather than written here: this script records
+# the number into layout_long_edge.txt and hands it to inspect_run.py, so a third
+# copy of the literal would let a retune silently stamp every run directory with
+# a figure the run was not taken at — the one thing these directories exist to
+# make impossible.
+LONG_EDGE="${DTH_LAYOUT_LONG_EDGE:-$(python -c \
+    'from doc_to_html.config import DEFAULT_LAYOUT_LONG_EDGE as d; print(d)')}"
 export DTH_LAYOUT_LONG_EDGE="$LONG_EDGE"
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
