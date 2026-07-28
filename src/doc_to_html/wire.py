@@ -295,15 +295,20 @@ def rows_from_table(response: TableResponse, *, read: Read) -> list[Row]:
     A summary row is allowed to be narrower. Totals rows merge cells as a matter
     of course, and rejecting that would reject the fixture this project is held
     to.
+
+    A heading row split one cell per row is put back together first — see
+    `_join_split_heading`.
     """
     if not response.rows:
         _no_content("table", "no rows")
 
-    header = next((r for r in response.rows if r.role == "header"), None)
+    wire_rows = _join_split_heading(response.rows)
+
+    header = next((r for r in wire_rows if r.role == "header"), None)
     width = len(header.cells) if header else None
 
     rows = []
-    for index, wire in enumerate(response.rows):
+    for index, wire in enumerate(wire_rows):
         if width is not None and (
             len(wire.cells) > width
             or (wire.role != "summary" and len(wire.cells) != width)
@@ -320,6 +325,54 @@ def rows_from_table(response: TableResponse, *, read: Read) -> list[Row]:
             )
         )
     return rows
+
+
+def _join_split_heading(rows: list[WireRow]) -> list[WireRow]:
+    """Put back together a heading row returned one cell per row.
+
+    A heading whose cells sit at opposite edges of a wide table is the one thing
+    on `example/invoice.png` that four measured runs could not talk a real
+    `qwen3-vl:4b` out of: `Item` and `Price` come back as `["Item", ""]` and
+    `["", "Price"]`, so `Price` never reaches `Item`'s row. Runs 01, 05, 10 and
+    13 all show it, 13 with a prompt forbidding it in as many words, which is
+    what moved the fix here from the prompt.
+
+    Note what is *not* wrong: the width. The model returns two cells and the
+    table has two columns, so it has read the shape correctly and only misplaced
+    the line break. That is why the remedy 0002 sketched — a pass asking how
+    many columns there are — is not the one taken; it would answer a question
+    nobody got wrong.
+
+    The rule is deliberately narrow, because a repair that guesses is worse than
+    a failure that is loud:
+
+    - Only `header` rows. Data rows bind correctly on the evidence, and a sparse
+      data row is a real shape rather than a defect.
+    - Only equal widths, and only where no position is filled twice. Two
+      headings competing for one column are not one row split in two, and
+      choosing between them would drop a heading silently.
+
+    Under those conditions the join invents nothing and discards nothing: every
+    string keeps the column it arrived in. Anything else is passed through
+    untouched and still meets the width check below.
+    """
+    joined: list[WireRow] = []
+    for row in rows:
+        previous = joined[-1] if joined else None
+        if (
+            previous is not None
+            and previous.role == "header"
+            and row.role == "header"
+            and len(previous.cells) == len(row.cells)
+            and not any(a and b for a, b in zip(previous.cells, row.cells))
+        ):
+            joined[-1] = WireRow(
+                role="header",
+                cells=[a or b for a, b in zip(previous.cells, row.cells)],
+            )
+        else:
+            joined.append(row)
+    return joined
 
 
 def _no_content(kind: str, what: str) -> NoReturn:

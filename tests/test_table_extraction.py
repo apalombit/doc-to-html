@@ -271,6 +271,101 @@ class TestMappingATableResponse:
         zone = self.rows('{"rows": [{"role": "data", "cells": ["a", "b"]}]}')
         assert len(zone.rows) == 1  # type: ignore[attr-defined]
 
+
+class TestAHeadingRowSplitOneCellPerRow:
+    """A heading whose cells sit at opposite edges comes back as two rows.
+
+    Measured on `example/invoice.png` against a real `qwen3-vl:4b` in runs 01,
+    05, 10 and 13 — the last of those with a prompt telling it in as many words
+    not to. The rows below bind correctly; it is specifically the shaded heading
+    row, whose two cells are separated by most of the page width.
+
+    The model's *width* is already right — it returns `["Item", ""]`, two cells,
+    so it has counted the columns correctly. What it gets wrong is which line
+    each cell belongs to. That rules out the remedy 0002 proposed for this (a
+    pass asking how many columns the table has): the count was never the thing
+    in doubt.
+
+    So the repair is here, and it is exact rather than a guess: two adjacent
+    heading rows of the same width that are never both filled at the same
+    position hold, between them, one row's cells. Merging them invents nothing
+    and discards nothing. Anything less tidy is left alone and still fails
+    loudly.
+    """
+
+    def rows(self, payload: str) -> Document:
+        from doc_to_html.ir import Reading, Zone
+
+        zone = Zone(kind=Kind.TABLE)
+        contents_into(zone, payload, read=lambda t: Reading(engine="test", text=t))
+        return zone  # type: ignore[return-value]
+
+    def test_the_split_header_measured_on_the_invoice_becomes_one_row(self) -> None:
+        """Verbatim from debug/runs/13-header-row-only, zone 5."""
+        zone = self.rows(
+            '{"rows": [{"role": "header", "cells": ["Item", ""]},'
+            ' {"role": "header", "cells": ["", "Price"]},'
+            ' {"role": "data", "cells": ["Website design", "$300.00"]}]}'
+        )
+        assert [r.role for r in zone.rows] == [  # type: ignore[attr-defined]
+            RowRole.HEADER,
+            RowRole.DATA,
+        ]
+        header = zone.rows[0]  # type: ignore[attr-defined]
+        assert [c.readings[0].text for c in header.cells] == ["Item", "Price"]
+
+    def test_two_headings_that_disagree_are_not_merged(self) -> None:
+        """Both filled at position 0 is not one row split in two, and guessing
+        which to keep would silently drop a heading."""
+        with pytest.raises(MappingError, match="row 1 has 1 cells"):
+            self.rows(
+                '{"rows": [{"role": "header", "cells": ["Item", ""]},'
+                ' {"role": "header", "cells": ["Price"]},'
+                ' {"role": "data", "cells": ["Design", "$300.00"]}]}'
+            )
+
+    def test_a_single_heading_row_is_left_alone(self) -> None:
+        zone = self.rows(
+            '{"rows": [{"role": "header", "cells": ["Item", "Price"]},'
+            ' {"role": "data", "cells": ["Design", "$300.00"]}]}'
+        )
+        assert len(zone.rows) == 2  # type: ignore[attr-defined]
+        assert [c.readings[0].text for c in zone.rows[0].cells] == ["Item", "Price"]
+
+    def test_data_rows_are_never_merged(self) -> None:
+        """Two sparse data rows are a real shape — a table with gaps in it — and
+        the evidence says the model reads data rows correctly, so there is
+        nothing here to repair and everything to lose."""
+        zone = self.rows(
+            '{"rows": [{"role": "header", "cells": ["Item", "Price"]},'
+            ' {"role": "data", "cells": ["Design", ""]},'
+            ' {"role": "data", "cells": ["", "$300.00"]}]}'
+        )
+        assert len(zone.rows) == 3  # type: ignore[attr-defined]
+
+    def test_three_way_splits_merge_into_one(self) -> None:
+        zone = self.rows(
+            '{"rows": [{"role": "header", "cells": ["A", "", ""]},'
+            ' {"role": "header", "cells": ["", "B", ""]},'
+            ' {"role": "header", "cells": ["", "", "C"]},'
+            ' {"role": "data", "cells": ["1", "2", "3"]}]}'
+        )
+        assert len(zone.rows) == 2  # type: ignore[attr-defined]
+        assert [c.readings[0].text for c in zone.rows[0].cells] == ["A", "B", "C"]
+
+    def test_a_wholly_blank_heading_row_does_not_survive_the_merge(self) -> None:
+        """Run 13 also produced a row with no cells at all. Merging the blank
+        away is right; leaving it to fail the width check is not, because the
+        message then blames a dropped cell for a row that never held one."""
+        zone = self.rows(
+            '{"rows": [{"role": "header", "cells": ["Item", ""]},'
+            ' {"role": "header", "cells": ["", "Price"]},'
+            ' {"role": "header", "cells": ["", ""]},'
+            ' {"role": "data", "cells": ["Design", "$300.00"]}]}'
+        )
+        assert len(zone.rows) == 2  # type: ignore[attr-defined]
+        assert [c.readings[0].text for c in zone.rows[0].cells] == ["Item", "Price"]
+
     def test_every_cell_records_what_read_it(self) -> None:
         document, _ = convert_with(INVOICE, recorded_for("invoice_0001"))
         reading = document.zones[5].rows[1].cells[0].readings[0]

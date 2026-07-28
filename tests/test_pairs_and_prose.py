@@ -8,6 +8,7 @@ attract no Probe at all.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import pytest
@@ -190,6 +191,38 @@ class TestThePromptSaysWhatTheMappingCannotEnforce:
 
         assert "summarise" in PROSE_PROMPT
         assert "empty list" in PROSE_PROMPT
+
+    def test_the_kind_definitions_stay_as_short_as_they_are(self) -> None:
+        """Enlarging them is measured, twice, to break something else.
+
+        Runs 11 and 12 both added a sentence here separating `pairs` from a
+        two-column `table` by which way the binding runs — a heading names what
+        is *below* it, a label what is *beside* it. Both times the Kind was
+        fixed and the layout was rejected anyway, for a defect in a different
+        part of the answer: run 11 returned each table once per column, run 12
+        put all seven Zones in band 0 and merged both tables into one box.
+        Neither wording says anything about Bands. Text added here appears to
+        cost attention paid to the Band and column instruction further down.
+
+        So this pins the size, not the words: the two definitions stay one line
+        and five lines. If a future change needs them longer, that is the
+        signal to split the pass rather than to keep writing — see
+        docs/specs/0002-structure-not-geometry.md.
+        """
+        from doc_to_html.engines.ollama import LAYOUT_PROMPT
+
+        block = LAYOUT_PROMPT.split("kind — one of:")[1].split("role — one of:")[0]
+        entries: dict[str, int] = {}
+        current = ""
+        for line in block.splitlines():
+            if not line.strip():
+                continue
+            # An entry opens at exactly two spaces; its continuations are deeper.
+            if re.match(r"^ {2}\S", line):
+                current = line.split()[0]
+            entries[current] = entries.get(current, 0) + 1
+        assert entries["table"] == 5
+        assert entries["pairs"] == 1
 
 
 class TestAFailureStillDoesNotSpread:
