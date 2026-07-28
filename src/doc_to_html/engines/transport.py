@@ -9,8 +9,20 @@ pipeline and starts covering half of it.
 
 from __future__ import annotations
 
+import logging
+import time
 from dataclasses import dataclass
 from typing import Any, Protocol
+
+log = logging.getLogger(__name__)
+
+PROGRESS_EVERY_S = 15.0
+"""How often a pass in flight says it is still alive.
+
+A vision pass on an 8 GB machine takes tens of seconds, and silence for that long
+is indistinguishable from a hang — which is exactly how a runner dying mid-request
+first presented. Set DTH_LOG_LEVEL=INFO to see these.
+"""
 
 
 @dataclass(frozen=True)
@@ -24,6 +36,23 @@ class Response:
     """The generation stopped at the token limit rather than at the end of the
     answer. Constrained decoding cannot prevent this: it leaves a valid *prefix*
     of an incomplete array, which is exactly what a long table produces."""
+
+    thinking: str = ""
+    """Whatever arrived on the reasoning channel.
+
+    Kept separate rather than discarded because Ollama routes `qwen3-vl`'s
+    structured output here and leaves `content` empty — the answer is correct and
+    on the wrong channel. `answer` is what callers should read.
+
+    When the model really did reason, this holds prose instead, and schema
+    validation rejects it. That is the right outcome: the two cases are
+    indistinguishable by shape, so let the schema decide rather than guessing.
+    """
+
+    @property
+    def answer(self) -> str:
+        """The response, from whichever channel carried it."""
+        return self.content or self.thinking
 
 
 class Transport(Protocol):
@@ -50,10 +79,21 @@ class OllamaTransport:
     field the schema does not describe. Parsing around malformed output is a code
     path this deliberately removes rather than defends.
 
-    `pass_name` is carried but not used here. It is what a measuring wrapper needs
+    `pass_name` is used only for logging here. It is what a measuring wrapper needs
     and cannot otherwise know: `prose` and `list` share one schema, so the schema's
     title cannot tell them apart, and per-pass latency that lumps them together is
     the wrong number.
+
+    **Thinking is disabled.** `qwen3-vl` is a reasoning model, and with thinking on
+    it spends its entire token budget in `message.thinking` and returns an empty
+    `message.content` — which looks exactly like a truncation and cost a first
+    bake-off run 180 seconds to produce nothing. There is nothing to reason about
+    here: the answer is a transcription constrained by a schema.
+
+    **The response is streamed.** Not for the tokens, which are assembled and
+    handed back whole, but so a pass in flight can say it is still alive. A vision
+    pass takes tens of seconds on an 8 GB machine and silence that long reads as a
+    hang.
     """
 
     client_kwargs: dict[str, Any]
@@ -71,13 +111,64 @@ class OllamaTransport:
         import ollama
 
         client = ollama.Client(**self.client_kwargs)
-        reply = client.chat(
+        request: dict[str, Any] = dict(
             model=model,
             messages=[{"role": "user", "content": prompt, "images": images}],
             format=schema,
             options={"num_ctx": num_ctx, "num_predict": num_ctx, "temperature": 0},
+            stream=True,
         )
+
+        started = time.perf_counter()
+        log.info("%s: %s starting (num_ctx=%d, image=%dKB)",
+                 pass_name, model, num_ctx, len(images[0]) // 1024 if images else 0)
+
+        parts: list[str] = []
+        thoughts: list[str] = []
+        done_reason: str | None = None
+        spoke_at = started
+
+        for chunk in self._stream(client, request):
+            message = chunk.get("message") or {}
+            parts.append(message.get("content") or "")
+            thoughts.append(message.get("thinking") or "")
+            if chunk.get("done"):
+                done_reason = chunk.get("done_reason")
+
+            now = time.perf_counter()
+            if now - spoke_at >= PROGRESS_EVERY_S:
+                log.info("%s: %s still going, %.0fs, %d chars answered, %d reasoning",
+                         pass_name, model, now - started,
+                         sum(map(len, parts)), sum(map(len, thoughts)))
+                spoke_at = now
+
+        content, thinking = "".join(parts), "".join(thoughts)
+        log.info("%s: %s done in %.1fs, reason=%s, %d chars on %s",
+                 pass_name, model, time.perf_counter() - started, done_reason,
+                 len(content) or len(thinking),
+                 "content" if content else "the reasoning channel")
+
         return Response(
-            content=reply["message"]["content"],
-            truncated=reply.get("done_reason") == "length",
+            content=content,
+            truncated=done_reason == "length",
+            thinking=thinking,
         )
+
+    @staticmethod
+    def _stream(client: Any, request: dict[str, Any]) -> Any:
+        """Stream the reply, asking for thinking to be off where the model has it.
+
+        `think` is rejected outright by models that cannot reason, and which those
+        are is not worth a lookup table — so ask, and fall back once if the server
+        says no. Any other error is the caller's problem and is not swallowed here.
+        """
+        import ollama
+
+        try:
+            yield from client.chat(think=False, **request)
+        except (ollama.ResponseError, TypeError) as error:
+            if "think" not in str(error).lower():
+                raise
+            log.debug("%s does not take think=False; retrying without",
+                      request.get("model"))
+            yield from client.chat(**request)

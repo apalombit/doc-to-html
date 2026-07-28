@@ -37,6 +37,7 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     args = parser.parse_args(argv)
+    config.configure_logging(config.load())
 
     if args.command == "config":
         for line in config.describe(config.load()):

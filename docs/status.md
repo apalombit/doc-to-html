@@ -4,13 +4,16 @@ Snapshot of what exists, what does not, and what is known to be missing. Updated
 at checkpoints; `CONTEXT.md` holds the vocabulary and `docs/adr/` the decisions,
 neither of which belongs here.
 
-**The whole path is connected and no model has ever run down it.** A Source Image
-is rectified, laid out by a vision Engine, extracted Zone by Zone, checked by
-Probes and rendered as one self-contained HTML file with the IR embedded. All
-five fixtures convert with no Failures, and photographs distorted by known
-amounts come back straight. The suite runs offline against recorded responses
-with no model installed — which is exactly why the bake-off exists: everything
-below the model is tested, and the model is not.
+**The whole path is connected, and a real model has now run down part of it.** A
+Source Image is rectified, laid out by a vision Engine, extracted Zone by Zone,
+checked by Probes and rendered as one self-contained HTML file with the IR
+embedded. Against recorded responses all five fixtures convert with no Failures,
+and photographs distorted by known amounts come back straight.
+
+Against a **real** model, nothing converts yet: neither candidate follows the Band
+and column instruction, and the mapper rejects what they return. See "What the
+first bake-off found" — that gap between the two is the whole reason both the
+acceptance harness and the bake-off exist.
 
 ## Module state
 
@@ -24,7 +27,7 @@ below the model is tested, and the model is not.
 | `checkpoints.py` | **implemented** | `Question`/`Answer`, `NullHandler`, `ScriptedHandler` |
 | `config.py` | **implemented** | Every `.env.example` variable, with a code default and recorded provenance; the only reader of the environment |
 | `acceptance.py` | **implemented** | What "structurally correct" means, in one place. Used by the harness and the bake-off |
-| `bakeoff.py` | **implemented** | Opt-in measurement of real models. Never run — no model has been pulled |
+| `bakeoff.py` | **implemented** | Opt-in measurement of real models. Run partially; see "What the first bake-off found" |
 | `cli.py` | **partial** | `render`, `config` and `convert` work end to end; `--review` exits cleanly |
 | `preprocess.py` | **implemented** | Page-quad detection, perspective warp, deskew, illumination flattening, cropping, slice planning. Slice *stitching* is not built |
 | `engines/base.py` | **implemented** | `VisionEngine` and `BoxEngine` Protocols — the seam everything else depends on |
@@ -106,9 +109,11 @@ Recorded here so it is not "fixed" later.
 
 ## Open questions, deliberately unanswered
 
-The first three now have somewhere to be answered rather than argued:
-`python -m doc_to_html.bakeoff`. Nobody has run it, because no model has been
-pulled on this machine. **Every number below is still an estimate.**
+**First measurements taken.** `python -m doc_to_html.bakeoff` has now run against
+a real Ollama on the 8 GB M1. It is a partial run — one and two documents, not the
+whole set — and no configuration converts a document end to end yet. What it found
+is below under "What the first bake-off found", and it changes the shape of the
+open questions rather than answering them.
 
 - **Whether tesseract earns a place.** The slice runs vision-only and is
   therefore the control condition. Its accuracy is the number tesseract has to
@@ -116,12 +121,50 @@ pulled on this machine. **Every number below is still an estimate.**
 - **Which model wins.** `qwen3-vl:2b` at 1.9 GB would let the extraction and
   audit models stay resident together; `qwen3-vl:4b` is likely more accurate.
   Measurement, not argument, settles this.
-- **Whether the refinement loop's latency is tolerable.** Roughly 90s for a
-  first round on an 8 GB M1, plus an audit pass per page — a guess, not a
-  measurement. A conversion makes one layout pass plus one per Zone, which is
-  3 to 11 passes per fixture.
+- **Whether the refinement loop's latency is tolerable.** A single layout pass
+  measures 4.5s on `qwen3-vl:2b` and 41.1s on `qwen3-vl:4b` with nothing else
+  resident. A conversion makes one layout pass plus one per Zone — 3 to 11 passes
+  per fixture — so the 4B model looks likely to cost minutes per document. No full
+  document has converted yet, so this is still not settled.
 - **Multi-page.** A Conversion is strictly one Source Image; admitting page 2
   means growing the IR a `pages` array and revising every fixture.
+
+## What the first bake-off found
+
+Four things, none of which argument would have produced.
+
+**Memory is the binding constraint, and it presents as latency.** With an
+unrelated `llama3.2:3b` resident, one layout pass took **180s and timed out**. With
+nothing else loaded, the same pass took **4.5s**. A 40x difference from memory
+pressure alone, on a machine with 8 GB and ~76 MB free. Any latency figure taken
+without checking `ollama ps` first is meaningless.
+
+**Ollama routes `qwen3-vl`'s structured output to the reasoning channel.** With
+`think=False` the model answers correctly and quickly, but the JSON arrives in
+`message.thinking` with `message.content` empty. Reading only `content` — the
+obvious thing, and what the transport did — makes a working model indistinguishable
+from a hang. `Response.answer` now takes whichever channel carried it.
+
+**`think=False` is not reliably honoured.** On one document `qwen3-vl:2b` answered
+with no reasoning at all; on another it spent 5,609 characters reasoning and never
+answered, filling a 4096-token budget. `ThinkingNotDisabled` names that case
+because a bigger budget buys more reasoning, which is the opposite of the fix.
+
+**Neither candidate follows the Band and column instruction.** `qwen3-vl:2b` and
+`qwen3-vl:4b` both return every Zone as `band 0, column 0` — the 4B model put three
+Zones there on a two-Zone document. The mapper rejects it, correctly, so nothing
+converts. Latency for reference: 4.5s (2B) and 41.1s (4B) for one layout pass;
+resident 2011 MB and 2762 MB.
+
+**The obvious next move, and it is a design change rather than a fix.** Bands are
+derivable from the geometry the model already returns: Zones whose vertical spans
+overlap are in the same Band, and ordering them by `left` gives the column. Asking
+a 2–4B model to *number* them is asking for something the code can compute
+reliably from data the model is better at producing. That would delete the
+`band`/`column` fields from the layout wire schema, make three of the mapper's
+plausibility checks unnecessary, and remove the failure mode above entirely. It
+needs its own ticket and its own argument — it is a reversal of a design decision,
+not a bug fix.
 
 ## Rejected, with reasons recorded
 

@@ -190,6 +190,15 @@ EXTRACTION_PROMPTS: dict[Kind, str] = {
 and an inventory's stock list are the same question. See docs/adr/0001."""
 
 
+class ThinkingNotDisabled(RuntimeError):
+    """The model reasoned instead of answering, and returned nothing.
+
+    Its own failure mode, because it is indistinguishable from a truncation by
+    shape — an empty `content` either way — and the two want opposite responses. A
+    truncation wants a bigger budget; this wants thinking turned off.
+    """
+
+
 class TruncatedResponse(RuntimeError):
     """The model ran out of room and stopped mid-answer, twice.
 
@@ -281,8 +290,18 @@ class OllamaEngine:
                 schema=schema,
                 num_ctx=budget,
             )
+            if reply.truncated and not reply.content and reply.thinking:
+                # Not a truncation to retry, however much it looks like one: the
+                # model filled its budget with reasoning and never answered. A
+                # bigger budget buys more reasoning, so say what it is instead.
+                raise ThinkingNotDisabled(
+                    f"{pass_name}: {self.model} spent its whole budget reasoning "
+                    f"({len(reply.thinking)} characters) and never answered. "
+                    "Thinking is not disabled for this model, and there is nothing "
+                    "here to reason about."
+                )
             if not _ran_out_of_room(reply):
-                return reply.content
+                return reply.answer
             budget *= 2
 
         raise TruncatedResponse(
@@ -342,7 +361,7 @@ def _ran_out_of_room(reply: Response) -> bool:
     if reply.truncated:
         return True
     try:
-        json.loads(reply.content)
+        json.loads(reply.answer)
     except ValueError:
         return True
     return False

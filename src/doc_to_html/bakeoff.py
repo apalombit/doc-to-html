@@ -44,7 +44,7 @@ from pathlib import Path
 from typing import Any, Callable, Iterable
 
 from .acceptance import Mismatch, compare
-from .config import Settings, load
+from .config import Settings, configure_logging, load
 from .engines.ollama import OllamaEngine
 from .engines.transport import OllamaTransport, Response, Transport
 from .ir import Document
@@ -385,6 +385,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     settings = load()
+    configure_logging(settings)
     acceptance = load_acceptance_set(args.root)
     if args.fixtures:
         wanted = args.fixtures.split(",")

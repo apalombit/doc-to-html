@@ -20,7 +20,9 @@ two places to look when a setting does not take effect.
 
 from __future__ import annotations
 
+import logging
 import os
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Mapping, TypeVar
@@ -165,6 +167,22 @@ def load(
         timeout_s=_number(origins["DTH_TIMEOUT_S"], float),
         log_level=origins["DTH_LOG_LEVEL"].value,
         origins=origins,
+    )
+
+
+def configure_logging(settings: Settings) -> None:
+    """Apply DTH_LOG_LEVEL.
+
+    Resolved since the configuration layer was built and read by nothing until a
+    180-second vision pass produced no output at all and no way to tell a slow
+    model from a dead one. INFO gets one line per pass, plus a heartbeat while one
+    is in flight.
+    """
+    logging.basicConfig(
+        level=getattr(logging, settings.log_level.upper(), logging.INFO),
+        format="%(asctime)s %(levelname)-5s %(message)s",
+        datefmt="%H:%M:%S",
+        stream=sys.stderr,
     )
 
 
