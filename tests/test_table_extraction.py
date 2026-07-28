@@ -154,30 +154,38 @@ class TestProbesNeverHandOverTheAnswerKey:
 
 
 class TestTheFailureContractOnAPartlyWorkingDocument:
-    def test_zones_that_failed_do_not_cost_the_ones_that_worked(
+    def broken_at(self, zone_index: int, payload: str) -> Document:
+        replies = recorded_for("invoice_0001")
+        replies[wired_zones("invoice_0001").index(zone_index) + 1] = text(payload)
+        return convert_with(INVOICE, replies)[0]  # type: ignore[arg-type]
+
+    def test_a_clean_run_reports_nothing(
         self, invoice: tuple[Document, ReplayTransport]
     ) -> None:
-        """Throwing away two correct tables because the logo Zone had no
-        Extractor would destroy exactly the evidence the run exists to produce."""
         document, _ = invoice
+        assert all(zone.complete for zone in document.zones)
+        assert document.failures == []
+
+    def test_zones_that_failed_do_not_cost_the_ones_that_worked(self) -> None:
+        """Throwing away two correct tables because a Pairs Zone came back
+        unreadable would destroy exactly the evidence the run exists to
+        produce."""
+        document = self.broken_at(1, '{"pairs": [{"label": "", "value": "x"}]}')
         assert [z.complete for z in document.zones] == [
-            False, True, True, True, True, True
+            True, False, True, True, True, True
         ]
-        assert [f.zone_index for f in document.failures] == [0]
+        assert [f.zone_index for f in document.failures] == [1]
         assert all(f.reason for f in document.failures)
 
     def test_a_broken_response_leaves_a_skeleton_beside_real_content(self) -> None:
         """Only rectification failing outright, or a layout pass returning no
         Zones, aborts a Conversion. Everything else is reported and the rest of
         the document still renders."""
-        replies = recorded_for("invoice_0001")
-        broken = wired_zones("invoice_0001").index(5) + 1
-        replies[broken] = text('{"rows": []}')
-        document, _ = convert_with(INVOICE, replies)  # type: ignore[arg-type]
+        document = self.broken_at(5, '{"rows": []}')
 
         assert document.zones[4].complete
         assert not document.zones[5].complete
-        assert [f.zone_index for f in document.failures] == [0, 5]
+        assert [f.zone_index for f in document.failures] == [5]
         assert "no rows" in document.failures[-1].reason
 
         html = render(document)

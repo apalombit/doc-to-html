@@ -148,10 +148,42 @@ part of it.
 
 If the region genuinely contains no text, return an empty list."""
 
+LIST_PROMPT = """You are looking at a list, cropped from a page. It may be
+bulleted, numbered, or a row of links across the top of the page.
+
+Return one block per entry, in order, each with kind "item".
+
+lines — the text of the entry. Leave out the bullet character or the number
+itself: that a thing is a list entry is already recorded by its kind, and keeping
+the marker would print it twice.
+
+A heading printed above the list is not an entry and must not appear.
+
+Read only what is printed. Do not merge two entries into one, do not split one
+across two, and do not add an entry that is not on the page."""
+
+FIGURE_PROMPT = """You are looking at a picture, cropped from a page — a logo, a
+chart, a stamp, a signature or a badge.
+
+graphic — which of those it is.
+
+text — the words written on the picture that a reader reads, one entry each. For
+a chart, that is its title and its axis labels. For a stamp or a badge, the words
+on it. For a logo, return text only where it is set as ordinary type beside the
+mark; lettering drawn as part of the artwork is part of the picture and is not
+text. Return an empty list where there are no such words, which is the usual
+answer for a logo and for a handwritten signature.
+
+Never describe the picture, and never report what a chart's bars or lines are
+worth. A number read off the shape of a bar is a guess, and there is nowhere for
+it to go."""
+
 EXTRACTION_PROMPTS: dict[Kind, str] = {
     Kind.TABLE: TABLE_PROMPT,
     Kind.PAIRS: PAIRS_PROMPT,
     Kind.PROSE: PROSE_PROMPT,
+    Kind.LIST: LIST_PROMPT,
+    Kind.FIGURE: FIGURE_PROMPT,
 }
 """One prompt per Kind, and never one per document type. An invoice's line items
 and an inventory's stock list are the same question. See docs/adr/0001."""

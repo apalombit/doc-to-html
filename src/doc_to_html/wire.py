@@ -351,12 +351,14 @@ def contents_into(zone: Zone, content: str, *, read: Read) -> Zone:
         )
         if not zone.pairs and not zone.title:
             _no_content("pairs", "no pairs")
-    elif zone.kind is Kind.PROSE:
+    elif zone.kind in (Kind.PROSE, Kind.LIST):
         zone.blocks = blocks_from_response(
             BlocksResponse.model_validate_json(content), read=read
         )
         if not zone.blocks and not zone.title:
             _no_content(zone.kind.value, "no text")
+    elif zone.kind is Kind.FIGURE:
+        figure_into(zone, FigureResponse.model_validate_json(content), read=read)
     else:
         raise NotImplementedError(f"{zone.kind.value} extraction not yet wired")
 
@@ -364,9 +366,30 @@ def contents_into(zone: Zone, content: str, *, read: Read) -> Zone:
     return zone
 
 
+def figure_into(zone: Zone, response: FigureResponse, *, read: Read) -> Zone:
+    """Record what the graphic is and any text written on it.
+
+    An empty answer is the expected one for a logo, so nothing is checked for
+    emptiness here: a Graphic with no text is a Graphic, and the placeholder that
+    holds its position is the whole of what the render needs. A Mark with no text
+    — an illegible signature — has its presence recorded by its graphic kind
+    alone, which is what a reader needs to know.
+    """
+    zone.graphic_kind = response.graphic
+    lines = [line for line in (raw.strip() for raw in response.text) if line]
+    zone.blocks = (
+        [Block(kind="caption", lines=[Cell(readings=[read(line)]) for line in lines])]
+        if lines
+        else []
+    )
+    return zone
+
+
 EXTRACTION_SCHEMAS: dict[Kind, type[BaseModel]] = {
     Kind.TABLE: TableResponse,
     Kind.PAIRS: PairsResponse,
     Kind.PROSE: BlocksResponse,
+    Kind.LIST: BlocksResponse,
+    Kind.FIGURE: FigureResponse,
 }
 """What each Kind is asked for. A Kind absent here has no Extractor yet."""

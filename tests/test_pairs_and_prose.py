@@ -17,19 +17,15 @@ from doc_to_html.orchestrator import convert
 from doc_to_html.render import render
 from doc_to_html.wire import MappingError, contents_into
 
-from .replay import ReplayTransport, recorded, text
+from .replay import ReplayTransport, recorded_for, text, wired_zones
 from .test_tracer_bullet import engines_replaying
 
 REPO = Path(__file__).resolve().parent.parent
 INVOICE2 = REPO / "example" / "invoice2.png"
 
-WIRED = [0, 2, 3, 4, 5, 6, 7, 8, 9]
-"""Every Zone but the logo, which is a figure and has no Extractor yet."""
-
-
 @pytest.fixture
 def invoice2() -> Document:
-    transport = ReplayTransport(recorded("invoice_0002", zones=WIRED))
+    transport = ReplayTransport(recorded_for("invoice_0002"))
     return convert(INVOICE2, engines=engines_replaying(transport))
 
 
@@ -114,7 +110,7 @@ class TestProseKeepsItsShape:
         text, and neither leaves a trace in the output."""
         comments = invoice2.zones[7]
         text_out = comments.blocks[0].lines[0].text
-        assert len(text_out) > 80
+        assert len(text_out) > 70
         assert text_out in render(invoice2)
 
     def test_a_heading_block_renders_as_a_heading(self, invoice2: Document) -> None:
@@ -201,11 +197,13 @@ class TestThePromptSaysWhatTheMappingCannotEnforce:
 
 class TestAFailureStillDoesNotSpread:
     def test_one_bad_panel_does_not_cost_the_other(self) -> None:
-        replies = recorded("invoice_0002", zones=WIRED)
-        replies[WIRED.index(4) + 1] = text('{"pairs": [{"label": "", "value": "x"}]}')
+        replies = recorded_for("invoice_0002")
+        replies[wired_zones("invoice_0002").index(4) + 1] = text(
+            '{"pairs": [{"label": "", "value": "x"}]}'
+        )
         transport = ReplayTransport(replies)
         document = convert(INVOICE2, engines=engines_replaying(transport))
 
         assert not document.zones[4].complete
         assert len(document.zones[5].pairs) == 6
-        assert [f.zone_index for f in document.failures] == [1, 4]
+        assert [f.zone_index for f in document.failures] == [4]

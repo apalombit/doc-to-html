@@ -249,8 +249,14 @@ def _figure(zone: Zone, document: Document) -> str:
     """
     kind = zone.graphic_kind or "figure"
     if kind in {"stamp", "signature", "annotation", "badge"}:
+        # A Mark with no text — an illegible signature — falls back to naming
+        # itself. That it is there is the finding, and an empty box states it
+        # less clearly than the word does.
         text = "".join(_lines(b, document) for b in zone.blocks)
-        return f'<div class="mark" data-kind="{html.escape(kind)}">{text}</div>'
+        return (
+            f'<div class="mark" data-kind="{html.escape(kind)}">'
+            f"{text or html.escape(kind)}</div>"
+        )
 
     caption = "".join(
         f"<figcaption>{_lines(b, document)}</figcaption>"
