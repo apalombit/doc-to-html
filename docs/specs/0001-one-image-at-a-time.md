@@ -76,7 +76,77 @@ plausibility rule it has: Bands descend the page, columns run left to right, and
 same-Band Zones overlap vertically. This is the "schema-valid nonsense" failure
 mode issue #1 anticipated, arriving in a form the checks do not cover.
 
-## What to try, cheapest first
+## First: establish what is genuinely wrong (the current task)
+
+**Directive, 2026-07-28.** The spine working end to end is an acceptable place to be
+and slowness is accepted for now. Before any prompt or geometry is changed,
+establish which reported mismatches are real defects in the generated document and
+which are artefacts of how `compare()` counts. Do not fix anything until that is
+settled.
+
+### What the first analysis found
+
+`compare()` reported **6 mismatches** for `invoice_0001` against `qwen3-vl:4b`. They
+trace to **4 independent root causes**, so the count overstates the damage:
+
+| Root cause | Reported as |
+|---|---|
+| **(a)** Zone 0's box `(0,0,1,0.25)` encloses Zone 1 rather than locating the logo | `zone 0: kind expected figure, got prose` |
+| **(b)** Zone 6 `(0,0.85,1,1)` is invented — best overlap with any real region is IoU 0.26, against a *table* | `Zone count 7 vs 6`, `Band count 5 vs 4` |
+| **(c)** The payment table's header row is read twice | `zone 4: Row Roles ['header','data'] -> ['header','header','data']` |
+| **(d)** The line-items table returns a row of 0 cells, so the whole Zone is rejected | `zone 5: Row Roles [...] -> []`, `Probe results [...] -> []` |
+
+Every one corresponds to something genuinely wrong — this is not an over-read of a
+correct document. Cause (b) is also what displaces `Total: $385.00` into body text
+under a spurious "Domain name (1 year)" heading in the render. But (a) and (b) are
+one segmentation failure counted three times, and the missing Probe is purely a
+consequence of (d).
+
+### Two weaknesses in the measurement itself
+
+**`compare()` aligns Zones by list index.** Inserting a single spurious Zone into an
+otherwise *perfect* document produces **13 mismatches**. Segmentation differences
+cascade through every subsequent index, so mismatch count is not a measure of how
+wrong a document is, and two runs cannot be ranked by it. This run escaped the
+cascade by luck: the model's Zones 0–5 happened to stay index-aligned with the
+reference.
+
+This is fine for the acceptance harness, whose only question is "zero or not". It is
+useless for iterating, which needs to know whether a change made things better.
+
+**There is no geometric measure at all.** IoU against the reference boxes, which
+`compare()` never computes:
+
+```
+model 0 prose -> ref 0 figure  IoU=0.16      model 4 table -> ref 4 table  IoU=0.56
+model 1 pairs -> ref 1 pairs   IoU=0.40      model 5 table -> ref 5 table  IoU=0.60
+model 2 prose -> ref 2 prose   IoU=0.29      model 6 prose -> matches nothing (0.26)
+model 3 prose -> ref 3 prose   IoU=0.54
+```
+
+Only 2 of 7 boxes exceed 0.5. That is the schematic-tiling problem as a number, and
+it is a *continuous* signal — exactly what iterating needs and what a pass/fail
+count cannot give.
+
+### Next steps, in order
+
+1. **Align Zones by geometry, not index, for diagnosis.** Match each produced Zone to
+   its best-overlapping reference Zone, and report unmatched Zones on both sides as
+   *spurious* and *missed*. This separates "wrong segmentation" from "wrong reading"
+   — currently indistinguishable — and stops one error inflating into thirteen.
+   Keep `compare()` as it is for acceptance; this is a second, diagnostic view.
+2. **Report mean IoU and per-Zone IoU** alongside it, so a prompt change can be
+   judged better or worse rather than argued about.
+3. **Only then** touch the prompt or the checks. The four root causes above are the
+   list to work through, and (b) — the invented Zone — is the one to take first,
+   since it causes three of the six reported symptoms and the visible displacement of
+   the total.
+
+Item 1 is where the horizontal-disjointness check below belongs: Zone 0 enclosing
+Zone 1 is cause (a), and a mapper that rejected it would have turned a confidently
+wrong render into a named failure.
+
+## Later: what to try on the prompt, cheapest first
 
 1. **Reject horizontally overlapping Zones in one Band.** Zone 0 (0.00–1.00) encloses
    Zone 1 (0.75–1.00); two Zones side by side cannot overlap horizontally. A check
@@ -93,10 +163,14 @@ mode issue #1 anticipated, arriving in a form the checks do not cover.
    than looking.
 
 Stop at the first that gets `compare()` to zero. Record what was tried and what it
-cost in this file.
+cost in this file — **including what did not work**, which is the more useful half
+at ~5 minutes a run.
 
 ## Acceptance
 
+- [ ] Zones are aligned by geometry for diagnosis, so a segmentation error is
+      reported once rather than cascading through every later index
+- [ ] Mean and per-Zone IoU are reported, giving a continuous signal to iterate on
 - [ ] `compare(BUILDERS["invoice_0001"](), converted)` returns no mismatches against
       a real `qwen3-vl:4b`
 - [ ] The column-sum Probe reconciles at 385.00 from a real reading
