@@ -6,6 +6,7 @@ import argparse
 import sys
 from pathlib import Path
 
+from . import config
 from .ir import Document
 from .orchestrator import convert
 from .render import render
@@ -30,7 +31,16 @@ def main(argv: list[str] | None = None) -> int:
     render_cmd.add_argument("ir", type=Path)
     render_cmd.add_argument("-o", "--out", type=Path, required=True)
 
+    sub.add_parser(
+        "config", help="print the resolved settings and where each came from"
+    )
+
     args = parser.parse_args(argv)
+
+    if args.command == "config":
+        for line in config.describe(config.load()):
+            print(line)
+        return 0
 
     if args.command == "render":
         document = Document.from_json(args.ir.read_text())

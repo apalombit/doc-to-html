@@ -15,7 +15,7 @@ dependencies = [
 
 [project.optional-dependencies]
 tesseract = ["pytesseract>=0.3.13"]
-dev = ["pytest>=8.0"]
+dev = ["pytest>=8.0", "mypy>=1.11"]
 
 [project.scripts]
 doc-to-html = "doc_to_html.cli:main"
@@ -29,3 +29,13 @@ packages = ["src/doc_to_html"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.mypy]
+files = ["src/doc_to_html"]
+python_version = "3.12"
+strict = true
+
+[[tool.mypy.overrides]]
+# Neither ships type information; both are reached only through a narrow seam.
+module = ["cv2.*", "ollama.*"]
+ignore_missing_imports = true

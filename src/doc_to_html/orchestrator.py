@@ -18,13 +18,9 @@ from pathlib import Path
 
 from . import probes as probe_module
 from .checkpoints import Answer, CheckpointHandler, NullHandler, Question
+from .config import Settings, load
 from .engines.base import VisionEngine
-from .engines.ollama import (
-    DEFAULT_AUDIT_MODEL,
-    DEFAULT_EXTRACT_MODEL,
-    DEFAULT_LAYOUT_MODEL,
-    OllamaEngine,
-)
+from .engines.ollama import OllamaEngine
 from .extractors import for_kind
 from .ir import Document, Gap
 from .preprocess import rectify
@@ -69,14 +65,33 @@ class EngineSet:
     vision models resident at once does not fit in 8GB.
     """
 
-    layout: VisionEngine = field(
-        default_factory=lambda: OllamaEngine(model=DEFAULT_LAYOUT_MODEL)
-    )
-    extract: VisionEngine = field(
-        default_factory=lambda: OllamaEngine(model=DEFAULT_EXTRACT_MODEL)
-    )
-    audit: VisionEngine = field(
-        default_factory=lambda: OllamaEngine(model=DEFAULT_AUDIT_MODEL)
+    layout: VisionEngine
+    extract: VisionEngine
+    audit: VisionEngine
+
+
+def default_engines(settings: Settings | None = None) -> EngineSet:
+    """The Engines the resolved configuration asks for.
+
+    Which model fills which role is configuration, not code — that is what lets
+    a bake-off across models, or a move to Ollama Cloud, happen without an edit
+    here. See `config` and `.env.example`.
+    """
+    resolved = settings or load()
+
+    def engine(model: str) -> OllamaEngine:
+        return OllamaEngine(
+            model=model,
+            host=resolved.ollama_host,
+            api_key=resolved.ollama_api_key,
+            num_ctx=resolved.num_ctx,
+            timeout_s=resolved.timeout_s,
+        )
+
+    return EngineSet(
+        layout=engine(resolved.layout_model),
+        extract=engine(resolved.extract_model),
+        audit=engine(resolved.audit_model),
     )
 
 
@@ -90,7 +105,7 @@ class Conversion:
     """
 
     source: Path
-    engines: EngineSet = field(default_factory=EngineSet)
+    engines: EngineSet = field(default_factory=default_engines)
     handler: CheckpointHandler = field(default_factory=NullHandler)
     document: Document | None = None
 
@@ -196,7 +211,7 @@ def convert(source: Path | str, *, handler: CheckpointHandler | None = None,
     """
     conversion = Conversion(
         source=Path(source),
-        engines=engines or EngineSet(),
+        engines=engines or default_engines(),
         handler=handler or NullHandler(),
     )
     return conversion.run()

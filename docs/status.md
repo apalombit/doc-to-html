@@ -17,7 +17,8 @@ run offline with no model installed.
 | `probes.py` | **implemented** | column-sum, row-product, number parsing across both decimal conventions |
 | `render.py` | **implemented** | IR → self-contained HTML, tolerates partial IR, content-driven column alignment |
 | `checkpoints.py` | **implemented** | `Question`/`Answer`, `NullHandler`, `ScriptedHandler` |
-| `cli.py` | **partial** | `render` works end to end; `convert` reaches unimplemented code; `--review` exits cleanly |
+| `config.py` | **implemented** | Every `.env.example` variable, with a code default and recorded provenance; the only reader of the environment |
+| `cli.py` | **partial** | `render` and `config` work end to end; `convert` reaches unimplemented code; `--review` exits cleanly |
 | `preprocess.py` | **stub** | `slice_points()` implemented and tested; `rectify()` raises |
 | `engines/base.py` | **implemented** | `VisionEngine` and `BoxEngine` Protocols — the seam everything else depends on |
 | `engines/ollama.py` | **stub** | all four methods raise |
@@ -48,12 +49,9 @@ separators move a value three orders of magnitude if misread.
 
 ## Known gaps
 
-**No configuration mechanism.** `.env` and `.env.example` define the intended
-variables, and nothing reads them. Models are module constants in
-`engines/ollama.py`; `EngineSet` is configurable from Python only. Consequently
-**Ollama Cloud is currently unreachable** even with a valid key — there is no
-host or API-key plumbing. This is the first thing the slice must build, since
-the spec promises model selection without code changes.
+**Ollama Cloud is plumbed but unverified.** `config.py` resolves the host and
+API key and `OllamaEngine.client_kwargs()` carries them to the client, so a
+cloud host needs no code change. Nobody has run a Conversion against it.
 
 **Rectification is untestable against the fixture set.** All five sources are
 white documents filling a white frame, so no page quadrilateral exists to

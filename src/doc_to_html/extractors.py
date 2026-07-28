@@ -100,7 +100,7 @@ class FigureExtractor:
 
 
 REGISTRY: dict[Kind, Extractor] = {
-    extractor.kind: extractor  # type: ignore[misc]
+    extractor.kind: extractor
     for extractor in (
         TableExtractor(),
         PairsExtractor(),
