@@ -150,21 +150,25 @@ with no reasoning at all; on another it spent 5,609 characters reasoning and nev
 answered, filling a 4096-token budget. `ThinkingNotDisabled` names that case
 because a bigger budget buys more reasoning, which is the opposite of the fix.
 
-**Neither candidate follows the Band and column instruction.** `qwen3-vl:2b` and
-`qwen3-vl:4b` both return every Zone as `band 0, column 0` — the 4B model put three
-Zones there on a two-Zone document. The mapper rejects it, correctly, so nothing
-converts. Latency for reference: 4.5s (2B) and 41.1s (4B) for one layout pass;
-resident 2011 MB and 2762 MB.
+**The layout pass had never been downscaled.** `MODEL_INPUT_LONG_EDGE` was 1024 and
+every fixture is smaller, so the documented "layout runs on a downscaled page"
+design was a no-op. `LAYOUT_LONG_EDGE` (512) now separates the layout budget from
+extraction's, and that alone is what got `invoice_0001` through all eight passes
+without aborting — 322.9s for the whole document on `qwen3-vl:4b`.
 
-**The obvious next move, and it is a design change rather than a fix.** Bands are
-derivable from the geometry the model already returns: Zones whose vertical spans
-overlap are in the same Band, and ordering them by `left` gives the column. Asking
-a 2–4B model to *number* them is asking for something the code can compute
-reliably from data the model is better at producing. That would delete the
-`band`/`column` fields from the layout wire schema, make three of the mapper's
-plausibility checks unnecessary, and remove the failure mode above entirely. It
-needs its own ticket and its own argument — it is a reversal of a design decision,
-not a bug fix.
+**The layout pass returns schematic geometry.** Boxes come back snapped to a 0.05
+grid, tiling the page in uniform strips rather than locating content — one strip
+being full-width and enclosing the Zone beside it. Every downstream error follows
+from it, and the mapper's plausibility checks cannot catch it, because tiling
+strips satisfy all of them. **This is the live problem**, and it has its own spec:
+`docs/specs/0001-one-image-at-a-time.md`, narrowed to `invoice.png` alone.
+
+Two claims I made earlier here were wrong and are withdrawn. "Neither candidate
+follows the Band and column instruction" was generalised from one document — on
+`invoice_0001` the 4B model numbers Bands correctly. And deriving Bands from
+geometry, proposed as the fix, is **worse** in a measured case: on
+`sample_table_0003` the 2B model's boxes overlap vertically and derivation collapses
+two Bands into one.
 
 ## Rejected, with reasons recorded
 

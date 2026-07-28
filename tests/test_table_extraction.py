@@ -105,13 +105,37 @@ class TestExtractionReadsTheRightPixels:
         self, invoice: tuple[Document, ReplayTransport]
     ) -> None:
         """The layout pass gives resolution away by looking at the whole page.
-        Cropping each Zone from the rectified image is what buys it back."""
+        Cropping each Zone from the rectified image is what buys it back.
+
+        The two budgets are what makes this real: layout sees the page at
+        `LAYOUT_LONG_EDGE`, extraction crops from the full-resolution rectified
+        image. Both were 1024 once, which on an 862px fixture meant neither
+        happened and the test below would have passed on a no-op.
+        """
+        from doc_to_html.preprocess import LAYOUT_LONG_EDGE
+
         _, transport = invoice
         page = Image.open(io.BytesIO(transport.calls[0].images[0]))
         crop = Image.open(io.BytesIO(table_calls(transport)[1].images[0]))
-        assert page.size == (862, 563)
+
+        assert max(page.size) == LAYOUT_LONG_EDGE < 862
+        # The crop is a fraction of a *bigger* page than layout ever saw.
         assert crop.width == pytest.approx(0.96 * 862, abs=4)
         assert crop.height == pytest.approx(0.34 * 563, abs=4)
+        assert crop.width > page.width
+
+    def test_layout_and_extraction_have_separate_budgets(
+        self, invoice: tuple[Document, ReplayTransport]
+    ) -> None:
+        """Finding regions needs positions; reading a table needs glyphs. One
+        budget for both means either layout wastes tokens or extraction cannot
+        read."""
+        from doc_to_html.preprocess import LAYOUT_LONG_EDGE, MODEL_INPUT_LONG_EDGE
+
+        assert LAYOUT_LONG_EDGE < MODEL_INPUT_LONG_EDGE
+        _, transport = invoice
+        layout_px = max(Image.open(io.BytesIO(transport.calls[0].images[0])).size)
+        assert layout_px <= LAYOUT_LONG_EDGE
 
     def test_each_table_gets_its_own_crop(
         self, invoice: tuple[Document, ReplayTransport]

@@ -27,7 +27,13 @@ from ..config import (
     Settings,
 )
 from ..ir import BBox, Kind, Reading, Zone
-from ..preprocess import MODEL_INPUT_LONG_EDGE, ImageArray, resize_long_edge, to_png
+from ..preprocess import (
+    LAYOUT_LONG_EDGE,
+    MODEL_INPUT_LONG_EDGE,
+    ImageArray,
+    resize_long_edge,
+    to_png,
+)
 from ..wire import (
     EXTRACTION_SCHEMAS,
     LayoutResponse,
@@ -215,6 +221,7 @@ class OllamaEngine:
     model: str = DEFAULT_EXTRACT_MODEL
     host: str = DEFAULT_OLLAMA_HOST
     api_key: str = ""
+    layout_long_edge: int = LAYOUT_LONG_EDGE
     num_ctx: int = DEFAULT_NUM_CTX
     timeout_s: float = DEFAULT_TIMEOUT_S
     transport: Transport | None = None
@@ -236,6 +243,7 @@ class OllamaEngine:
             model=model,
             host=settings.ollama_host,
             api_key=settings.ollama_api_key,
+            layout_long_edge=settings.layout_long_edge,
             num_ctx=settings.num_ctx,
             timeout_s=settings.timeout_s,
             transport=transport,
@@ -268,7 +276,7 @@ class OllamaEngine:
         )
 
     def ask(self, pass_name: str, prompt: str, image: ImageArray,
-            schema: dict[str, Any]) -> str:
+            schema: dict[str, Any], long_edge: int = MODEL_INPUT_LONG_EDGE) -> str:
         """One constrained-decoding call, retried once if it ran out of room.
 
         A truncated response is a valid prefix of an incomplete array, so it is
@@ -278,7 +286,7 @@ class OllamaEngine:
         failure and says so rather than returning a plausible fragment.
         """
         transport = self.transport or OllamaTransport(self.client_kwargs())
-        page = to_png(resize_long_edge(image, MODEL_INPUT_LONG_EDGE))
+        page = to_png(resize_long_edge(image, long_edge))
 
         budget = self.num_ctx
         for attempt in (1, 2):
@@ -321,6 +329,7 @@ class OllamaEngine:
             with_hint(LAYOUT_PROMPT, hint),
             image,
             schema_of(LayoutResponse),
+            long_edge=self.layout_long_edge,
         )
         return zones_from_layout(LayoutResponse.model_validate_json(content))
 

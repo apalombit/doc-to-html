@@ -97,16 +97,22 @@ class TimingTransport:
 
     inner: Transport
     timings: list[PassTiming] = field(default_factory=list)
+    answers: list[tuple[str, str]] = field(default_factory=list)
+    """(pass name, raw answer) in order. Kept so `--dump` can write out what the
+    model actually said — a run that reports only "MappingError" throws away the
+    one thing needed to fix the prompt."""
 
     def __call__(self, *, model: str, pass_name: str, prompt: str,
                  images: list[bytes], schema: dict[str, Any],
                  num_ctx: int) -> Response:
         started = time.perf_counter()
         try:
-            return self.inner(
+            reply = self.inner(
                 model=model, pass_name=pass_name, prompt=prompt, images=images,
                 schema=schema, num_ctx=num_ctx,
             )
+            self.answers.append((pass_name, reply.answer))
+            return reply
         finally:
             self.timings.append(
                 PassTiming(pass_name=pass_name,
@@ -123,6 +129,7 @@ class Attempt:
     timings: list[PassTiming] = field(default_factory=list)
     mismatches: list[Mismatch] = field(default_factory=list)
     caveats: list[str] = field(default_factory=list)
+    answers: list[tuple[str, str]] = field(default_factory=list)
     resident_mb: float | None = None
     error: str | None = None
 
@@ -260,6 +267,7 @@ def run(models: Iterable[str], acceptance: dict[str, tuple[Path, Document]],
             except Exception as error:
                 attempt.error = f"{type(error).__name__}: {error}"
             attempt.timings = timing.timings
+            attempt.answers = timing.answers
             attempt.resident_mb = measure(model)
             attempts.append(attempt)
     return attempts
@@ -382,6 +390,9 @@ def main(argv: list[str] | None = None) -> int:
                        help="repository root, for finding the acceptance set")
     parser.add_argument("--json", action="store_true",
                        help="emit machine-readable results as well as the table")
+    parser.add_argument("--dump", type=Path, default=None,
+                       help="write every raw model answer here, for iterating on "
+                            "a prompt: DIR/<model>/<fixture>/NN_<pass>.json")
     args = parser.parse_args(argv)
 
     settings = load()
@@ -406,6 +417,14 @@ def main(argv: list[str] | None = None) -> int:
 
     attempts = run(models, acceptance, settings)
     print(report(attempts))
+
+    if args.dump:
+        for attempt in attempts:
+            out = args.dump / attempt.model.replace(":", "_") / attempt.fixture
+            out.mkdir(parents=True, exist_ok=True)
+            for index, (pass_name, answer) in enumerate(attempt.answers):
+                (out / f"{index:02d}_{pass_name}.json").write_text(answer)
+        print(f"\nraw answers written to {args.dump}", file=sys.stderr)
 
     if args.json:
         print(json.dumps(

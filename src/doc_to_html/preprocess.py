@@ -29,7 +29,22 @@ TARGET_LONG_EDGE = 3508
 """A4 at 300dpi. Crops are taken from this, so it sets the resolution ceiling."""
 
 MODEL_INPUT_LONG_EDGE = 1024
-"""Roughly what a vision model sees. Anything denser must be sliced, not shrunk."""
+"""Roughly what a vision model sees. Anything denser must be sliced, not shrunk.
+
+This is the budget for *extraction*, which has to read glyphs.
+"""
+
+LAYOUT_LONG_EDGE = 512
+"""What the layout pass sees, and deliberately less.
+
+Finding regions is coarse work: the layout prompt says not to read the text at
+all, so it needs positions rather than glyphs. A vision model's token count scales
+with pixels, so halving each dimension is roughly a quarter of the image tokens —
+which is context a small model was otherwise spending before it reached an answer.
+
+Note this had never actually been exercised: every fixture is under 1024px, so the
+"layout runs on a downscaled page" design was a no-op until this existed.
+"""
 
 
 class RectifyError(RuntimeError):

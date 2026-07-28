@@ -31,6 +31,7 @@ DEFAULT_OLLAMA_HOST = "http://localhost:11434"
 DEFAULT_LAYOUT_MODEL = "qwen3-vl:4b"
 DEFAULT_EXTRACT_MODEL = "qwen3-vl:4b"
 DEFAULT_AUDIT_MODEL = "granite3.2-vision:latest"
+DEFAULT_LAYOUT_LONG_EDGE = 512
 DEFAULT_NUM_CTX = 8192
 DEFAULT_TIMEOUT_S = 180.0
 DEFAULT_LOG_LEVEL = "INFO"
@@ -74,6 +75,7 @@ class Settings:
     layout_model: str = DEFAULT_LAYOUT_MODEL
     extract_model: str = DEFAULT_EXTRACT_MODEL
     audit_model: str = DEFAULT_AUDIT_MODEL
+    layout_long_edge: int = DEFAULT_LAYOUT_LONG_EDGE
     num_ctx: int = DEFAULT_NUM_CTX
     timeout_s: float = DEFAULT_TIMEOUT_S
     log_level: str = DEFAULT_LOG_LEVEL
@@ -151,6 +153,7 @@ def load(
             resolve("DTH_LAYOUT_MODEL", DEFAULT_LAYOUT_MODEL),
             resolve("DTH_EXTRACT_MODEL", DEFAULT_EXTRACT_MODEL),
             resolve("DTH_AUDIT_MODEL", DEFAULT_AUDIT_MODEL),
+            resolve("DTH_LAYOUT_LONG_EDGE", DEFAULT_LAYOUT_LONG_EDGE),
             resolve("DTH_NUM_CTX", DEFAULT_NUM_CTX),
             resolve("DTH_TIMEOUT_S", DEFAULT_TIMEOUT_S),
             resolve("DTH_LOG_LEVEL", DEFAULT_LOG_LEVEL),
@@ -163,6 +166,7 @@ def load(
         layout_model=origins["DTH_LAYOUT_MODEL"].value,
         extract_model=origins["DTH_EXTRACT_MODEL"].value,
         audit_model=origins["DTH_AUDIT_MODEL"].value,
+        layout_long_edge=_number(origins["DTH_LAYOUT_LONG_EDGE"], int),
         num_ctx=_number(origins["DTH_NUM_CTX"], int),
         timeout_s=_number(origins["DTH_TIMEOUT_S"], float),
         log_level=origins["DTH_LOG_LEVEL"].value,
