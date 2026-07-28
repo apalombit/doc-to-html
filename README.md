@@ -5,12 +5,16 @@ that carries the same content and the same structure. An invoice and an
 inventory sheet are the same kind of input: the system never classifies
 documents.
 
-**Status:** the whole path is connected and no model has ever run down it. A
-Source Image is rectified, laid out, extracted Zone by Zone, checked by Probes
-and rendered. All five acceptance fixtures convert against recorded responses,
-and photographs distorted by known amounts come back straight. What is untested
-is the only thing a model does: read a page. `python -m doc_to_html.bakeoff` is
-where that gets measured, and nobody has run it.
+**Status:** the whole path is connected, and a real model has now run down part of
+it. A Source Image is rectified, laid out, extracted Zone by Zone, checked by
+Probes and rendered. All five acceptance fixtures convert against recorded
+responses, and photographs distorted by known amounts come back straight.
+
+Against a **real** model nothing converts yet. `example/invoice.png` runs all eight
+passes against `qwen3-vl:4b` without aborting, but the layout pass returns
+schematic geometry — boxes tiling the page rather than locating its content — and
+every downstream error follows from that. Getting that one image right is the work
+in flight: **[docs/specs/0001-one-image-at-a-time.md](docs/specs/0001-one-image-at-a-time.md)**.
 
 ## What it aims at
 

@@ -22,6 +22,8 @@ import pytest
 
 from doc_to_html.ir import RECTIFIER_VERSION, BBox
 from doc_to_html.preprocess import (
+    PAD_X,
+    PAD_Y,
     ImageArray,
     RectifyError,
     crop,
@@ -365,3 +367,47 @@ class TestTheWorkingResolution:
         from it. TARGET_LONG_EDGE is a ceiling, not a target."""
         result = rectify(INVOICE)
         assert (result.image.shape[1], result.image.shape[0]) == (862, 563)
+
+
+class TestCropPaddingIsAsymmetric:
+    """The pads differ per axis, and the reason is measured rather than chosen.
+
+    A real `qwen3-vl:4b` returns Zone boxes ending at `right=0.94` on
+    `example/invoice.png` while the right-aligned prices run to about 0.97. With
+    the old symmetric 0.01 pad every crop clipped the final glyph, and three
+    unrelated model families all read `$300.00` as `$300.0` — they were reading
+    the same short image, not making the same mistake.
+    """
+
+    def page(self) -> ImageArray:
+        return np.full((1000, 1000, 3), 255, dtype=np.uint8)
+
+    def test_the_horizontal_pad_is_wider_than_the_vertical(self) -> None:
+        assert PAD_X > PAD_Y
+
+    def test_a_crop_reaches_further_sideways_than_up_and_down(self) -> None:
+        box = BBox(left=0.4, top=0.4, right=0.6, bottom=0.6)
+        cropped = crop(self.page(), box)
+        height, width = cropped.shape[:2]
+        assert width == 1000 * (0.6 + PAD_X) - 1000 * (0.4 - PAD_X)
+        assert height == 1000 * (0.6 + PAD_Y) - 1000 * (0.4 - PAD_Y)
+        assert width > height
+
+    def test_the_pad_recovers_the_last_character(self) -> None:
+        """0.03 on an 862px page is 26px — wide enough for the glyph that a
+        0.01 pad (8.6px) left outside the crop."""
+        assert PAD_X * 862 > 20
+
+    def test_padding_stays_inside_the_page(self) -> None:
+        """A Zone against an edge must not produce a negative or oversized crop."""
+        cropped = crop(self.page(), BBox(left=0.0, top=0.0, right=1.0, bottom=1.0))
+        assert cropped.shape[:2] == (1000, 1000)
+
+    def test_stacked_zones_do_not_swallow_each_other(self) -> None:
+        """The vertical pad stays small on purpose.
+
+        Run 06 put the two tables 0.01 apart, at 0.63 and 0.64. A vertical pad of
+        0.03 would overlap them and re-create the split-table failure that took
+        five runs to remove.
+        """
+        assert PAD_Y * 2 <= 0.02

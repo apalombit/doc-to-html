@@ -121,18 +121,44 @@ def to_png(image: ImageArray) -> bytes:
     return bytes(buffer.tobytes())
 
 
-def crop(image: ImageArray, bbox: BBox, *, pad: float = 0.01) -> ImageArray:
+PAD_X = 0.03
+"""Horizontal padding on a Zone crop.
+
+Wider than the vertical pad, and measured rather than chosen. On
+`example/invoice.png` a real `qwen3-vl:4b` returns boxes ending at `right=0.94`
+while the right-aligned prices run to about 0.97. The old symmetric 0.01 was
+8.6px on an 862px page — narrower than the character it was meant to rescue — so
+every crop clipped the last glyph and the model dutifully read `$300.00` as
+`$300.0` and `Price` as `Pric`. Three model families reproduced it exactly,
+because they were all reading the same short image.
+"""
+
+PAD_Y = 0.01
+"""Vertical padding on a Zone crop, deliberately left small.
+
+Padding is not free: it pulls a neighbour's content into the crop. On this page
+the two are not symmetric risks. Side-by-side Zones sit far apart — 0.38 and
+0.75 in the same Band, a gap of 0.37 — while stacked Zones nearly touch, 0.63
+and 0.64 between the two tables. A 0.03 vertical pad would make those two
+overlap and re-create the split-table failure that took five runs to remove.
+"""
+
+
+def crop(image: ImageArray, bbox: BBox, *,
+         pad_x: float = PAD_X, pad_y: float = PAD_Y) -> ImageArray:
     """Cut a Zone out of the Rectified Image at full resolution.
 
-    This is what buys back the resolution the layout downscale gave away. A
-    little padding is added because a bounding box drawn by a model routinely
-    clips a descender or the last character of a line.
+    This is what buys back the resolution the layout downscale gave away. Padding
+    is added because a bounding box drawn by a model routinely clips a descender
+    or the last character of a line — and on measured evidence it does that far
+    more readily on the right edge than the bottom, so the two axes are padded
+    differently. See `PAD_X` and `PAD_Y`.
     """
     height, width = image.shape[:2]
-    left = int(max(0.0, bbox.left - pad) * width)
-    right = int(min(1.0, bbox.right + pad) * width)
-    top = int(max(0.0, bbox.top - pad) * height)
-    bottom = int(min(1.0, bbox.bottom + pad) * height)
+    left = int(max(0.0, bbox.left - pad_x) * width)
+    right = int(min(1.0, bbox.right + pad_x) * width)
+    top = int(max(0.0, bbox.top - pad_y) * height)
+    bottom = int(min(1.0, bbox.bottom + pad_y) * height)
     if right - left < 1 or bottom - top < 1:
         raise RectifyError(f"crop for {bbox} is empty at {width}x{height}")
     return np.ascontiguousarray(image[top:bottom, left:right])

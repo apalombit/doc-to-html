@@ -112,16 +112,25 @@ class TestExtractionReadsTheRightPixels:
         image. Both were 1024 once, which on an 862px fixture meant neither
         happened and the test below would have passed on a no-op.
         """
-        from doc_to_html.preprocess import LAYOUT_LONG_EDGE
+        from doc_to_html.preprocess import LAYOUT_LONG_EDGE, PAD_X, PAD_Y
 
         _, transport = invoice
         page = Image.open(io.BytesIO(transport.calls[0].images[0]))
         crop = Image.open(io.BytesIO(table_calls(transport)[1].images[0]))
 
         assert max(page.size) == LAYOUT_LONG_EDGE < 862
+
+        # Derived from the fixture's own box and the pads rather than written
+        # down: a literal here goes stale the moment either pad is retuned, and
+        # a stale literal in this assertion reads as a broken crop.
+        box = BUILDERS["invoice_0001"]().zones[5].bbox
+        assert box is not None
+        wide = min(1.0, box.right + PAD_X) - max(0.0, box.left - PAD_X)
+        tall = min(1.0, box.bottom + PAD_Y) - max(0.0, box.top - PAD_Y)
+
         # The crop is a fraction of a *bigger* page than layout ever saw.
-        assert crop.width == pytest.approx(0.96 * 862, abs=4)
-        assert crop.height == pytest.approx(0.34 * 563, abs=4)
+        assert crop.width == pytest.approx(wide * 862, abs=4)
+        assert crop.height == pytest.approx(tall * 563, abs=4)
         assert crop.width > page.width
 
     def test_layout_and_extraction_have_separate_budgets(

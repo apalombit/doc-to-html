@@ -36,6 +36,13 @@ DEFAULT_NUM_CTX = 8192
 DEFAULT_TIMEOUT_S = 180.0
 DEFAULT_LOG_LEVEL = "INFO"
 
+DEFAULT_LENIENT_DECODING = False
+"""Whether to repair a response that ignored the schema it was given.
+
+Off, because every local Ollama model honours `format` and a repair path that is
+never exercised is a place for bugs to hide. On, it is the only way to reach a
+cloud vision model: none of them honour `format`. See `engines/lenient.py`."""
+
 DOTENV = Path(".env")
 """Looked for in the working directory. Absent is the normal case, not an error."""
 
@@ -79,6 +86,7 @@ class Settings:
     num_ctx: int = DEFAULT_NUM_CTX
     timeout_s: float = DEFAULT_TIMEOUT_S
     log_level: str = DEFAULT_LOG_LEVEL
+    lenient_decoding: bool = DEFAULT_LENIENT_DECODING
 
     origins: dict[str, Setting] = field(default_factory=dict)
     """Variable name -> what resolved and from where. Declaration order."""
@@ -121,6 +129,23 @@ def _number(setting: Setting, cast: Callable[[str], T]) -> T:
         ) from error
 
 
+def _flag(setting: Setting) -> bool:
+    """Parse a boolean setting, accepting what people actually type.
+
+    Named values only: an unrecognised string is a mistake worth reporting rather
+    than quietly falling back to false, which is how a run silently ignores the
+    thing it was configured to do.
+    """
+    value = setting.value.strip().lower()
+    if value in ("1", "true", "yes", "on"):
+        return True
+    if value in ("0", "false", "no", "off", ""):
+        return False
+    raise ConfigError(
+        f"{setting.name}={setting.value!r} from {setting.source} is not a boolean"
+    )
+
+
 def load(
     env: Mapping[str, str] | None = None,
     *,
@@ -157,6 +182,7 @@ def load(
             resolve("DTH_NUM_CTX", DEFAULT_NUM_CTX),
             resolve("DTH_TIMEOUT_S", DEFAULT_TIMEOUT_S),
             resolve("DTH_LOG_LEVEL", DEFAULT_LOG_LEVEL),
+            resolve("DTH_LENIENT_DECODING", DEFAULT_LENIENT_DECODING),
         )
     }
 
@@ -170,6 +196,7 @@ def load(
         num_ctx=_number(origins["DTH_NUM_CTX"], int),
         timeout_s=_number(origins["DTH_TIMEOUT_S"], float),
         log_level=origins["DTH_LOG_LEVEL"].value,
+        lenient_decoding=_flag(origins["DTH_LENIENT_DECODING"]),
         origins=origins,
     )
 

@@ -49,6 +49,7 @@ from .engines.ollama import OllamaEngine
 from .engines.transport import OllamaTransport, Response, Transport
 from .ir import Document
 from .orchestrator import Conversion, EngineSet
+from .render import render
 
 ACCEPTANCE_SET = Path("tests/fixtures")
 """Where the committed expected IR lives. Each file names its own Source Image."""
@@ -97,10 +98,14 @@ class TimingTransport:
 
     inner: Transport
     timings: list[PassTiming] = field(default_factory=list)
-    answers: list[tuple[str, str]] = field(default_factory=list)
-    """(pass name, raw answer) in order. Kept so `--dump` can write out what the
-    model actually said — a run that reports only "MappingError" throws away the
-    one thing needed to fix the prompt."""
+    answers: list[tuple[str, str, str]] = field(default_factory=list)
+    """(pass name, raw answer, the prompt that produced it) in order.
+
+    Kept so `--dump` can write out what the model actually said — a run that
+    reports only "MappingError" throws away the one thing needed to fix the
+    prompt. The prompt travels with the answer because iterating means comparing
+    runs, and a dump that records only the answer leaves you inferring which
+    wording produced it from the shell history."""
 
     def __call__(self, *, model: str, pass_name: str, prompt: str,
                  images: list[bytes], schema: dict[str, Any],
@@ -111,7 +116,7 @@ class TimingTransport:
                 model=model, pass_name=pass_name, prompt=prompt, images=images,
                 schema=schema, num_ctx=num_ctx,
             )
-            self.answers.append((pass_name, reply.answer))
+            self.answers.append((pass_name, reply.answer, prompt))
             return reply
         finally:
             self.timings.append(
@@ -129,7 +134,15 @@ class Attempt:
     timings: list[PassTiming] = field(default_factory=list)
     mismatches: list[Mismatch] = field(default_factory=list)
     caveats: list[str] = field(default_factory=list)
-    answers: list[tuple[str, str]] = field(default_factory=list)
+    answers: list[tuple[str, str, str]] = field(default_factory=list)
+    html: str | None = None
+    """The document as it actually rendered, when the Conversion got that far.
+
+    Kept so `--dump` can write it out. Every other artefact of a run describes an
+    intermediate stage; this is the thing a reader would have been handed, and
+    judging structural fidelity by eye against the Source Image is what
+    docs/adr/0002 asks for."""
+
     resident_mb: float | None = None
     error: str | None = None
 
@@ -253,6 +266,7 @@ def run(models: Iterable[str], acceptance: dict[str, tuple[Path, Document]],
                     engines=engines_for(model, settings, timing),
                 )
                 actual = conversion.run()
+                attempt.html = render(actual)
                 attempt.mismatches = compare(expected, actual)
                 for failure in actual.failures:
                     attempt.mismatches.append(
@@ -422,8 +436,11 @@ def main(argv: list[str] | None = None) -> int:
         for attempt in attempts:
             out = args.dump / attempt.model.replace(":", "_") / attempt.fixture
             out.mkdir(parents=True, exist_ok=True)
-            for index, (pass_name, answer) in enumerate(attempt.answers):
+            for index, (pass_name, answer, prompt) in enumerate(attempt.answers):
                 (out / f"{index:02d}_{pass_name}.json").write_text(answer)
+                (out / f"{index:02d}_{pass_name}.prompt.txt").write_text(prompt)
+            if attempt.html is not None:
+                (out / "document.html").write_text(attempt.html)
         print(f"\nraw answers written to {args.dump}", file=sys.stderr)
 
     if args.json:

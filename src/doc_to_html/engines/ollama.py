@@ -41,6 +41,7 @@ from ..wire import (
     schema_of,
     zones_from_layout,
 )
+from .lenient import LenientTransport
 from .transport import OllamaTransport, Response, Transport
 
 PROMPT_VERSION = "1"
@@ -48,15 +49,23 @@ PROMPT_VERSION = "1"
 
 LAYOUT_PROMPT = """You are looking at one page of a document.
 
-Divide the page into top-level regions and return them as a flat list, in
-reading order. Report only where each region is and what it structurally is.
-Do not read the text inside any region.
+Find the regions of content printed on this page and return them as a flat
+list, in reading order. Report only where each region is and what it
+structurally is. Do not read the text inside any region.
+
+The regions do not have to cover the page. Most of a page is blank, and blank
+paper belongs to no region. Do not stretch a region to reach its neighbour, and
+do not add a region to fill a gap: where nothing is printed, no region goes.
 
 For each region give:
 
 kind — one of:
-  table   a grid of rows and columns
-  pairs   label and value lines, such as "Invoice No: 12"
+  table   a grid of rows and columns under a heading row. Two grids stacked one
+          above the other are two regions, not one, whenever each has its own
+          heading row — even if their columns line up and only a small gap
+          separates them. A grid with a heading row is a table even if only one
+          row of values follows it
+  pairs   label and value lines with no heading row, such as "Invoice No: 12"
   prose   headings, paragraphs, addresses, free text
   list    bulleted or numbered items, or a row of navigation links
   figure  a logo, chart, stamp, signature or badge
@@ -67,12 +76,27 @@ role — one of:
   footer   small print at the foot of the page
   body     anything else
 
-band and column — number the horizontal stripes of the page from 0 at the top.
-Regions that sit side by side belong to the same band and are numbered from 0
-left to right in column. A region spanning the full width is alone in its band.
+band and column — group the regions you found. Regions that sit side by side at
+the same height share a band; bands are numbered from 0 at the top, and within
+a band the regions are numbered from 0 left to right in column. A region with
+nothing beside it is alone in its band. Bands describe how the regions are
+grouped — they are not stripes of the page, they need not be the same height,
+and they need not touch one another.
 
-left, top, right, bottom — the region's bounding box as fractions of the page
-width and height, between 0 and 1.
+The columns *inside* a table or a pairs region are that region's own business
+and are not regions themselves. Never report one region once per column it
+contains. Two regions in the same band always have different boxes; if you are
+about to give two regions the same box, they are one region.
+
+left, top, right, bottom — the smallest rectangle containing everything printed
+in that region, as fractions of the page width and height, between 0 and 1.
+Measure each edge against the ink rather than against a grid: put it just
+outside the outermost mark, and use however many decimals that takes. Two rules
+follow from this and matter more than tidy numbers:
+
+  - No edge may cut through a line of text, a table row, or a picture. If a
+    table row belongs to a region, the whole of that row is inside it.
+  - No region may contain any part of another, and no two regions may overlap.
 
 title — a short heading printed immediately above the region and belonging to
 it, such as a panel caption or a card title. Use an empty string if there is
@@ -101,6 +125,10 @@ an empty string for a cell that is blank, and keep it in the list: a blank cell
 still holds a column position.
 
 Give every data row the same number of cells as the header row.
+
+Ignore decoration. A horizontal rule between two rows is not itself a row, and
+neither is a shaded band behind one. Every row you return must have printed text
+in at least one of its cells; a row with no text in any cell is not a row.
 
 Read only what is printed. Do not add a row that is not on the page, do not
 merge two printed rows into one, and do not calculate anything — a total that is
@@ -227,6 +255,13 @@ class OllamaEngine:
     transport: Transport | None = None
     """Injected by the suite. `None` means talk to a real Ollama."""
 
+    lenient: bool = False
+    """Repair a response that ignored the schema it was given.
+
+    Needed only for models that do not honour `format` — which is every vision
+    model on Ollama Cloud, and none of the local ones. See `engines/lenient.py`
+    for why the tolerance lives behind this seam rather than in the mapper."""
+
     name: str = "ollama"
 
     @classmethod
@@ -247,6 +282,7 @@ class OllamaEngine:
             num_ctx=settings.num_ctx,
             timeout_s=settings.timeout_s,
             transport=transport,
+            lenient=settings.lenient_decoding,
         )
 
     def client_kwargs(self) -> dict[str, Any]:
@@ -286,6 +322,8 @@ class OllamaEngine:
         failure and says so rather than returning a plausible fragment.
         """
         transport = self.transport or OllamaTransport(self.client_kwargs())
+        if self.lenient:
+            transport = LenientTransport(transport)
         page = to_png(resize_long_edge(image, long_edge))
 
         budget = self.num_ctx

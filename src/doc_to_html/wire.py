@@ -64,7 +64,8 @@ class WireZone(BaseModel):
 
     kind: Literal["table", "pairs", "prose", "list", "figure"]
     role: Literal["header", "body", "summary", "footer"]
-    band: int = Field(description="Horizontal stripe, numbered from 0 at the top")
+    band: int = Field(description="Which group of side-by-side regions this "
+                                  "belongs to, numbered from 0 at the top")
     column: int = Field(description="Position within the band, from 0 at the left")
     left: float
     top: float
@@ -72,8 +73,18 @@ class WireZone(BaseModel):
     bottom: float
     title: str = Field(description="Heading printed above and belonging to this "
                                    "region; empty string if there is none")
-    graphic: str = Field(description="For a figure: one of logo, chart, "
-                                     "signature, stamp, badge. Empty otherwise")
+    graphic: Literal["", "logo", "chart", "signature", "stamp", "badge"] = Field(
+        default="",
+        description="What a figure is. Empty string for every other kind",
+    )
+    """Closed, so constrained decoding cannot produce anything else.
+
+    Described as a free string with its values named only in the description,
+    `qwen3-vl:4b` answered `"SPARKSUIT"` — the text it had read off the wordmark.
+    That is the failure this project uses constrained decoding to make
+    impossible, and it survived here because the field was typed `str`. The
+    runtime check in `zones_from_layout` stays as belt and braces for an Engine
+    that cannot constrain."""
 
 
 class LayoutResponse(BaseModel):
@@ -189,13 +200,22 @@ def _validate_bands(zones: list[Zone]) -> None:
                 f"right (lefts {[round(v, 3) for v in lefts]})"
             )
         for earlier, later in zip(ordered, ordered[1:]):
-            if earlier.bbox and later.bbox and not _overlaps_vertically(
-                earlier.bbox, later.bbox
-            ):
+            if not (earlier.bbox and later.bbox):
+                continue
+            if not _overlaps_vertically(earlier.bbox, later.bbox):
                 raise MappingError(
                     f"band {index}: Zones in columns {earlier.column} and "
                     f"{later.column} do not overlap vertically, so they are not "
                     "side by side"
+                )
+            if _overlaps_horizontally(earlier.bbox, later.bbox):
+                raise MappingError(
+                    f"band {index}: Zones in columns {earlier.column} and "
+                    f"{later.column} overlap horizontally "
+                    f"({earlier.bbox.left:.2f}-{earlier.bbox.right:.2f} and "
+                    f"{later.bbox.left:.2f}-{later.bbox.right:.2f}) — Zones "
+                    "side by side cannot share horizontal space, and one "
+                    "enclosing the other is not two Zones"
                 )
 
     tops = [
@@ -212,6 +232,19 @@ def _validate_bands(zones: list[Zone]) -> None:
 
 def _overlaps_vertically(one: BBox, other: BBox) -> bool:
     return min(one.bottom, other.bottom) > max(one.top, other.top)
+
+
+def _overlaps_horizontally(one: BBox, other: BBox) -> bool:
+    """Whether two boxes share any horizontal span.
+
+    The counterpart to `_overlaps_vertically`, and the check that catches the two
+    ways a Band can be schema-valid nonsense: a full-width Zone that *encloses*
+    the Zone beside it, and two Zones returned with the same box under different
+    column numbers. Both were observed against a real `qwen3-vl:4b`, the second
+    after a prompt that asks for non-overlapping regions in as many words — which
+    is why this is a check and not a sentence.
+    """
+    return min(one.right, other.right) > max(one.left, other.left)
 
 
 def zones_from_layout(response: LayoutResponse) -> list[Zone]:

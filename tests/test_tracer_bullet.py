@@ -13,13 +13,20 @@ import sys
 from pathlib import Path
 
 import pytest
+from pydantic import ValidationError
 
 from doc_to_html.engines.ollama import OllamaEngine, TruncatedResponse, with_hint
 from doc_to_html.ir import Document, Kind, Role
 from doc_to_html.orchestrator import Conversion, convert
 from doc_to_html.preprocess import RectifyError, rectify
 from doc_to_html.render import render
-from doc_to_html.wire import LayoutResponse, MappingError, schema_of, zones_from_layout
+from doc_to_html.wire import (
+    LayoutResponse,
+    MappingError,
+    WireZone,
+    schema_of,
+    zones_from_layout,
+)
 
 from .replay import (
     Call,
@@ -200,6 +207,49 @@ class TestMappingValidatesWhatASchemaCannot:
                           top=0.5, bottom=0.7),
             )
 
+    def test_a_zone_enclosing_the_one_beside_it_is_rejected(self) -> None:
+        """The `qwen3-vl:4b` baseline on `example/invoice.png`, in miniature.
+
+        A full-width Zone that swallows the Zone beside it satisfies every other
+        rule here — the Bands descend, the columns run left to right, the two
+        overlap vertically — and describes a page that cannot exist. It rendered
+        the logo and the invoice details as one block of prose.
+        """
+        with pytest.raises(MappingError, match="overlap horizontally"):
+            self.parse(
+                self.wire(band=0, column=0, left=0.0, right=1.0,
+                          top=0.0, bottom=0.25),
+                self.wire(band=0, column=1, left=0.75, right=1.0,
+                          top=0.0, bottom=0.25),
+            )
+
+    def test_two_zones_returned_with_the_same_box_are_rejected(self) -> None:
+        """Observed after a prompt that forbids overlap in as many words.
+
+        Two Zones, one box, different column numbers. Nothing else catches it:
+        the columns are unique, the lefts are trivially in order, and a box
+        overlaps itself vertically. Both crops are identical, so the model is
+        asked the same question twice and the document gains a Zone.
+        """
+        with pytest.raises(MappingError, match="overlap horizontally"):
+            self.parse(
+                self.wire(band=0, column=0, left=0.05, right=0.94,
+                          top=0.38, bottom=0.46),
+                self.wire(band=0, column=1, left=0.05, right=0.94,
+                          top=0.38, bottom=0.46),
+            )
+
+    def test_zones_that_merely_touch_are_side_by_side(self) -> None:
+        """Sharing an edge is not overlapping.
+
+        Worth pinning: a column rule drawn between two panels routinely produces
+        boxes that abut exactly, and rejecting those would reject correct pages.
+        """
+        assert len(self.parse(
+            self.wire(band=0, column=0, left=0.1, right=0.5, top=0.1, bottom=0.3),
+            self.wire(band=0, column=1, left=0.5, right=0.9, top=0.1, bottom=0.3),
+        )) == 2
+
     def test_columns_must_run_left_to_right(self) -> None:
         with pytest.raises(MappingError, match="does not run left to right"):
             self.parse(
@@ -214,9 +264,28 @@ class TestMappingValidatesWhatASchemaCannot:
                 self.wire(band=0, column=0, left=0.6, right=0.9),
             )
 
-    def test_an_unknown_graphic_is_rejected(self) -> None:
-        with pytest.raises(MappingError, match="graphic 'photograph'"):
+    def test_an_unknown_graphic_cannot_be_expressed(self) -> None:
+        """The schema refuses it, so constrained decoding cannot produce it.
+
+        This used to be the mapper's job, and `qwen3-vl:4b` walked through the
+        gap: asked for a figure's graphic in a field typed `str`, it answered
+        `"SPARKSUIT"` — the text off the wordmark it was looking at. A closed
+        Literal makes that unrepresentable rather than merely detected.
+        """
+        with pytest.raises(ValidationError, match="graphic"):
             self.parse(self.wire(kind="figure", graphic="photograph"))
+
+    def test_the_mapper_still_rejects_a_graphic_a_schema_let_through(self) -> None:
+        """Belt and braces, for an Engine that cannot constrain its output.
+
+        `model_construct` skips validation, which is the only way to reach this
+        check now — and exactly the position a non-Ollama Engine would put us in.
+        """
+        zone = WireZone.model_construct(
+            **(self.wire(kind="figure") | {"graphic": "photograph"})  # type: ignore[arg-type]
+        )
+        with pytest.raises(MappingError, match="graphic 'photograph'"):
+            zones_from_layout(LayoutResponse.model_construct(zones=[zone]))
 
     def test_a_title_of_whitespace_is_no_title(self) -> None:
         assert self.parse(self.wire(title="  "))[0].title is None  # type: ignore[attr-defined]

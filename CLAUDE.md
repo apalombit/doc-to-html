@@ -22,11 +22,24 @@ numbers and what has already been tried and rejected.
 
 ## Current work
 
-**`docs/specs/0001-one-image-at-a-time.md`** — issue #10.
+**`docs/specs/0002-structure-not-geometry.md`** — issue #11.
 
-Make `example/invoice.png` convert correctly against a real `qwen3-vl:4b`, ignoring
-the other four fixtures for now. The spine works end to end; the model's reading does
-not. The spec's "First: establish what is genuinely wrong" section is the live task.
+`example/invoice.png` is at **3 mismatches** against a real `qwen3-vl:4b`, with the
+column-sum Probe reconciling at 385.00 and every string read correctly. What is left
+is the document's *shape*: a wide two-column table header is either split one row per
+column, or mislabelled `pairs` so its cells are read across the row.
 
-Verify this is still current with `gh issue list --label ready-for-agent`; if #10 is
+`docs/specs/0001-one-image-at-a-time.md` (issue #10) is the history — the measured
+numbers, and everything already tried and rejected. Read 0002 for what is wrong now,
+0001 for how we got here.
+
+Runs live in `debug/runs/<label>/`, newest highest. Each carries the prompt, host,
+resolution and every raw answer that produced it. **Open a run's `index.html` before
+changing a prompt** — `tools/inspect_run.py` builds it from a `--dump` without
+calling Ollama, and reasoning about the page from coordinates instead of pixels
+produced both retracted conclusions in 0001.
+
+One turn of the loop: `DTH_LAYOUT_LONG_EDGE=384 tools/iterate.sh <label>`, ~3 min.
+
+Verify this is still current with `gh issue list --label ready-for-agent`; if #11 is
 closed, this section is stale.

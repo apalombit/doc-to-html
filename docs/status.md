@@ -15,9 +15,16 @@ and column instruction, and the mapper rejects what they return. See "What the
 first bake-off found" — that gap between the two is the whole reason both the
 acceptance harness and the bake-off exist.
 
-**Currently being worked on:** `docs/specs/0001-one-image-at-a-time.md` (issue #10)
-— getting `example/invoice.png` to convert correctly against a real model, one image
-at a time. Everything below describes the ground it stands on.
+**Currently being worked on:** `docs/specs/0002-structure-not-geometry.md` (issue
+#11). `example/invoice.png` is at 3 mismatches against a real `qwen3-vl:4b`, the
+column-sum Probe reconciles at 385.00, and every string on the page is read
+correctly. What remains is structural: a wide two-column table header is split one
+row per column, or mislabelled so its cells are read across the row.
+
+`docs/specs/0001-one-image-at-a-time.md` (issue #10) is the run history — measured
+numbers, and everything tried and rejected. Runs are on disk in `debug/runs/`.
+
+Everything below describes the ground this stands on.
 
 ## Module state
 
