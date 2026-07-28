@@ -100,8 +100,58 @@ merge two printed rows into one, and do not calculate anything — a total that 
 printed is read like any other cell, and a total that is not printed does not
 exist."""
 
+PAIRS_PROMPT = """You are looking at one block of label and value lines, cropped
+from a page.
+
+Return every pair in it, in order from top to bottom.
+
+label — the text naming the value, without its trailing colon.
+
+value — the value itself, exactly as printed. Use an empty string if a label has
+nothing printed against it.
+
+Two pairs printed side by side on one line, separated by a gap or a divider, are
+two pairs and not one.
+
+A heading printed above this block is not a pair and must not appear in the list.
+
+Read only what is printed. Do not expand an abbreviation, do not reformat a date
+or a number, do not correct what looks like a mistake, and do not add a pair that
+is not on the page."""
+
+PROSE_PROMPT = """You are looking at one block of text, cropped from a page.
+
+Return it as a list of blocks, in order from top to bottom.
+
+For each block give:
+
+kind — one of:
+  heading      a title for what follows
+  paragraph    ordinary running text
+  address      a postal address or a block of contact details
+  item         one entry of a bulleted or numbered list, or one link in a row of
+               navigation links
+  caption      a short label belonging to a picture or a figure
+  quote        text quoted from elsewhere, usually indented or in quotation marks
+  attribution  the line naming the source of a quote
+  mark         a stamp, a signature or a badge
+
+lines — the text of the block, one entry per line the document breaks. A line
+that runs to the right-hand edge and continues below it has merely wrapped, and
+is one line. A line that stops short and continues below it was broken on
+purpose, and is two — which is how a three-line address stays three lines.
+
+Read what is printed, in full. Do not shorten a paragraph, do not summarise it,
+do not correct its spelling, and do not add text that is not on the page. Leave
+out a heading printed above this block that names the block rather than being
+part of it.
+
+If the region genuinely contains no text, return an empty list."""
+
 EXTRACTION_PROMPTS: dict[Kind, str] = {
     Kind.TABLE: TABLE_PROMPT,
+    Kind.PAIRS: PAIRS_PROMPT,
+    Kind.PROSE: PROSE_PROMPT,
 }
 """One prompt per Kind, and never one per document type. An invoice's line items
 and an inventory's stock list are the same question. See docs/adr/0001."""

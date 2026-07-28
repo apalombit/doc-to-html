@@ -85,3 +85,26 @@ def recorded(fixture: str, zones: list[int] | None = None) -> list[Response]:
 
 def layout_only(fixture: str) -> list[Response]:
     return recorded(fixture, zones=[])
+
+
+def wired_zones(fixture: str) -> list[int]:
+    """The Zones of a fixture whose Kind has an Extractor wired.
+
+    Derived rather than written down, because a Kind gaining an Extractor changes
+    which Zones reach a model and every test that replays this document would
+    otherwise need editing to keep its responses in step.
+    """
+    from doc_to_html.wire import EXTRACTION_SCHEMAS
+
+    from .fixtures import BUILDERS
+
+    return [
+        index
+        for index, zone in enumerate(BUILDERS[fixture]().zones)
+        if zone.kind in EXTRACTION_SCHEMAS
+    ]
+
+
+def recorded_for(fixture: str) -> list[Response]:
+    """Layout, plus a response for every Zone that will actually be asked about."""
+    return recorded(fixture, zones=wired_zones(fixture))

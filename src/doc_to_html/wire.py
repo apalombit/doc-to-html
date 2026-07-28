@@ -26,7 +26,7 @@ from typing import Any, Callable, Literal, NoReturn
 
 from pydantic import BaseModel, Field
 
-from .ir import BBox, Cell, Kind, Reading, Role, Row, RowRole, Zone
+from .ir import BBox, Block, Cell, Kind, Pair, Reading, Role, Row, RowRole, Zone
 
 Read = Callable[[str], Reading]
 """Turns cell text into a Reading carrying its engine, model and prompt version.
@@ -286,17 +286,77 @@ def _no_content(kind: str, what: str) -> NoReturn:
     )
 
 
+def pairs_from_response(response: PairsResponse, *, read: Read) -> list[Pair]:
+    """Map a pairs response onto Pairs.
+
+    A Pair is a label bound to a value, so a value with no label means the region
+    was not Pairs — a finding rather than something to coerce. A label with no
+    value is kept, because a printed label with nothing against it is what the
+    page says.
+    """
+    pairs = []
+    for index, wire in enumerate(response.pairs):
+        label, value = wire.label.strip(), wire.value.strip()
+        if not label and not value:
+            continue
+        if not label:
+            raise MappingError(
+                f"pairs Zone entry {index} has no label, only {value!r} — an "
+                "unlabelled value is not a Pair, so this region was not Pairs"
+            )
+        pairs.append(Pair(label=Cell(readings=[read(label)]),
+                          value=Cell(readings=[read(value)])))
+    return pairs
+
+
+def blocks_from_response(response: BlocksResponse, *, read: Read) -> list[Block]:
+    """Map a prose or list response onto Blocks.
+
+    Blank lines are dropped: a line with nothing on it is not content, and
+    keeping it puts an empty row in the render. A block left with nothing after
+    that is dropped too — but a response where *every* block empties out is an
+    empty answer, and the caller decides whether that is allowed.
+    """
+    blocks = []
+    for wire in response.blocks:
+        lines = [line for line in (raw.strip() for raw in wire.lines) if line]
+        if not lines:
+            continue
+        blocks.append(
+            Block(kind=wire.kind, lines=[Cell(readings=[read(line)]) for line in lines])
+        )
+    return blocks
+
+
 def contents_into(zone: Zone, content: str, *, read: Read) -> Zone:
     """Validate an extraction response for this Zone's Kind and fill it in.
 
     One function rather than a branch in the Engine: which schema a Kind is read
     with, and how that answer becomes IR, are the same decision and belong
     together.
+
+    An empty answer is allowed only for a Zone carrying a Title. A titled section
+    with nothing under it is a real thing on a page — "Services / Products" above
+    blank space — and reporting it as a failure puts a finding in front of an
+    operator with nothing to fix. Without a Title there is nothing on the page to
+    explain the emptiness, so the layout and extraction passes disagree.
     """
     if zone.kind is Kind.TABLE:
         zone.rows = rows_from_table(
             TableResponse.model_validate_json(content), read=read
         )
+    elif zone.kind is Kind.PAIRS:
+        zone.pairs = pairs_from_response(
+            PairsResponse.model_validate_json(content), read=read
+        )
+        if not zone.pairs and not zone.title:
+            _no_content("pairs", "no pairs")
+    elif zone.kind is Kind.PROSE:
+        zone.blocks = blocks_from_response(
+            BlocksResponse.model_validate_json(content), read=read
+        )
+        if not zone.blocks and not zone.title:
+            _no_content(zone.kind.value, "no text")
     else:
         raise NotImplementedError(f"{zone.kind.value} extraction not yet wired")
 
@@ -306,5 +366,7 @@ def contents_into(zone: Zone, content: str, *, read: Read) -> Zone:
 
 EXTRACTION_SCHEMAS: dict[Kind, type[BaseModel]] = {
     Kind.TABLE: TableResponse,
+    Kind.PAIRS: PairsResponse,
+    Kind.PROSE: BlocksResponse,
 }
 """What each Kind is asked for. A Kind absent here has no Extractor yet."""

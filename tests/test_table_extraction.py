@@ -14,12 +14,12 @@ from pathlib import Path
 import pytest
 from PIL import Image
 
-from doc_to_html.ir import Document, Kind, RowRole
+from doc_to_html.ir import Document, Kind, RowRole, Zone
 from doc_to_html.orchestrator import convert
 from doc_to_html.render import render
 from doc_to_html.wire import MappingError, TableResponse, contents_into
 
-from .replay import Call, ReplayTransport, recorded, text
+from .replay import Call, ReplayTransport, recorded_for, text, wired_zones
 from .test_tracer_bullet import engines_replaying
 
 REPO = Path(__file__).resolve().parent.parent
@@ -40,12 +40,12 @@ def table_calls(transport: ReplayTransport) -> list[Call]:
 
 @pytest.fixture
 def invoice() -> tuple[Document, ReplayTransport]:
-    return convert_with(INVOICE, recorded("invoice_0001", zones=[4, 5]))
+    return convert_with(INVOICE, recorded_for("invoice_0001"))
 
 
 @pytest.fixture
 def statistics() -> tuple[Document, ReplayTransport]:
-    return convert_with(STATISTICS, recorded("sample_table_0003", zones=[1]))
+    return convert_with(STATISTICS, recorded_for("sample_table_0003"))
 
 
 class TestARealTable:
@@ -157,33 +157,33 @@ class TestTheFailureContractOnAPartlyWorkingDocument:
     def test_zones_that_failed_do_not_cost_the_ones_that_worked(
         self, invoice: tuple[Document, ReplayTransport]
     ) -> None:
-        """Throwing away two correct tables because a Pairs Zone had no
+        """Throwing away two correct tables because the logo Zone had no
         Extractor would destroy exactly the evidence the run exists to produce."""
         document, _ = invoice
         assert [z.complete for z in document.zones] == [
-            False, False, False, False, True, True
+            False, True, True, True, True, True
         ]
-        assert [f.zone_index for f in document.failures] == [0, 1, 2, 3]
+        assert [f.zone_index for f in document.failures] == [0]
         assert all(f.reason for f in document.failures)
 
-    def test_a_failed_zone_renders_as_a_skeleton_beside_real_content(
-        self, invoice: tuple[Document, ReplayTransport]
-    ) -> None:
-        html = render(invoice[0])
+    def test_a_broken_response_leaves_a_skeleton_beside_real_content(self) -> None:
+        """Only rectification failing outright, or a layout pass returning no
+        Zones, aborts a Conversion. Everything else is reported and the rest of
+        the document still renders."""
+        replies = recorded_for("invoice_0001")
+        broken = wired_zones("invoice_0001").index(5) + 1
+        replies[broken] = text('{"rows": []}')
+        document, _ = convert_with(INVOICE, replies)  # type: ignore[arg-type]
+
+        assert document.zones[4].complete
+        assert not document.zones[5].complete
+        assert [f.zone_index for f in document.failures] == [0, 5]
+        assert "no rows" in document.failures[-1].reason
+
+        html = render(document)
         assert 'class="skeleton"' in html
         assert "<table>" in html
         assert "could not be read" in html
-
-    def test_a_broken_table_response_does_not_abort_the_run(self) -> None:
-        """Only rectification failing outright, or a layout pass returning no
-        Zones, aborts a Conversion. Everything else is reported."""
-        replies = recorded("invoice_0001", zones=[4])
-        replies.append(text('{"rows": []}'))
-        document, _ = convert_with(INVOICE, replies)  # type: ignore[arg-type]
-        assert document.zones[4].complete
-        assert not document.zones[5].complete
-        assert [f.zone_index for f in document.failures] == [0, 1, 2, 3, 5]
-        assert "no rows" in document.failures[-1].reason
 
 
 class TestMappingATableResponse:
@@ -226,26 +226,43 @@ class TestMappingATableResponse:
         assert len(zone.rows) == 1  # type: ignore[attr-defined]
 
     def test_every_cell_records_what_read_it(self) -> None:
-        document, _ = convert_with(INVOICE, recorded("invoice_0001", zones=[4, 5]))
+        document, _ = convert_with(INVOICE, recorded_for("invoice_0001"))
         reading = document.zones[5].rows[1].cells[0].readings[0]
         assert reading.engine == "ollama"
         assert reading.model and reading.prompt_version
 
 
 class TestAZoneTooDenseToReadWhole:
-    def test_a_zone_over_the_input_budget_is_flagged(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
-        """Slice stitching is not built, so an over-tall Zone is read at reduced
-        resolution. Silently returning a degraded reading as if it were a normal
-        one is the failure mode worth preventing here."""
-        from doc_to_html import extractors
+    def zone_over(self, height: int, width: int) -> str | None:
+        import numpy as np
 
-        monkeypatch.setattr(extractors, "MODEL_INPUT_LONG_EDGE", 64)
-        document, _ = convert_with(INVOICE, recorded("invoice_0001", zones=[4, 5]))
-        assert document.zones[5].complete
-        reduced = [f for f in document.failures if "reduced resolution" in f.reason]
-        assert [f.zone_index for f in reduced] == [4, 5]
+        from doc_to_html.extractors import resolution_caveat
+        from doc_to_html.ir import BBox
+
+        page = np.zeros((height, width, 3), dtype=np.uint8)
+        return resolution_caveat(page, Zone(kind=Kind.TABLE,
+                                            bbox=BBox(0.0, 0.0, 1.0, 1.0)))
+
+    def test_an_over_tall_zone_is_flagged_as_read_at_reduced_resolution(self) -> None:
+        """Slice stitching is not built, so an over-tall Zone is read whole at
+        reduced resolution, which can drop rows. Returning a degraded reading as
+        if it were an ordinary one is the failure mode worth preventing here."""
+        caveat = self.zone_over(4000, 800) or ""
+        assert "reduced resolution" in caveat
+        assert "overlapping slices" in caveat
+
+    def test_a_zone_merely_wider_than_the_budget_is_not_flagged(self) -> None:
+        """Slices are horizontal bands, so width is not what slicing addresses.
+        Flagging every full-width Zone of a 1200px page would bury a real finding
+        in noise."""
+        assert self.zone_over(200, 4000) is None
+
+    def test_a_flagged_zone_keeps_its_content(
+        self, invoice: tuple[Document, ReplayTransport]
+    ) -> None:
+        """Degraded content beats none, so a flagged Zone stays complete and the
+        caveat rides alongside it rather than replacing it."""
+        assert invoice[0].zones[5].complete
 
     def test_slices_are_planned_with_an_overlap(self) -> None:
         """The overlap is what makes slicing safe, and doubles as a consistency

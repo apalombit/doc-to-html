@@ -50,22 +50,47 @@ def resolution_caveat(image: ImageArray, zone: Zone) -> str | None:
     is read whole at reduced resolution rather than in overlapping strips. That
     can drop rows. Returning a degraded reading as though it were an ordinary one
     is the failure mode worth preventing, so the caveat is recorded and shown.
+
+    The test is on *height* specifically, because that is what slicing addresses:
+    slices are horizontal bands. A Zone that is merely wider than the budget
+    loses a few percent of scale and no rows, and flagging that would bury a real
+    finding in noise — every full-width Zone of a 1200px page would carry one.
     """
     if zone.bbox is None:
         return None
-    height, width = zone_pixels(image, zone).shape[:2]
-    longest = max(height, width)
-    if longest <= MODEL_INPUT_LONG_EDGE:
+    height = zone_pixels(image, zone).shape[0]
+    if height <= MODEL_INPUT_LONG_EDGE:
         return None
-    slices = len(slice_points(longest, budget=MODEL_INPUT_LONG_EDGE))
+    slices = len(slice_points(height, budget=MODEL_INPUT_LONG_EDGE))
     return (
-        f"read at reduced resolution: {longest}px is over the model's "
+        f"read at reduced resolution: {height}px tall is over the model's "
         f"{MODEL_INPUT_LONG_EDGE}px input budget and would need {slices} "
         "overlapping slices, which are planned but not yet stitched"
     )
 
 
-class TableExtractor:
+class CropAndRead:
+    """Cut the Zone out of the Rectified Image, hand it to the Engine.
+
+    Every Extractor's body, because the difference between Kinds is which
+    question gets asked and not how the pixels are obtained — and the question
+    belongs to the Engine, which owns the prompts. What varies per Kind is any
+    *decomposition* it needs, which is why `TableExtractor` has more here than
+    the others and nobody else has any.
+
+    An Extractor never chooses an Engine and never retries. If one starts
+    deciding a result was poor and having another go, it has crossed into the
+    Orchestrator's job and there are now two places that know about Escalation.
+    """
+
+    kind: Kind
+
+    def extract(self, image: ImageArray, zone: Zone, engine: VisionEngine,
+                hint: str | None = None) -> Zone:
+        return engine.extract_zone(zone_pixels(image, zone), zone, hint)
+
+
+class TableExtractor(CropAndRead):
     """Reads a grid, tagging each row header / data / summary.
 
     Row roles are what keep a summary row out of a column sum. They exist only
@@ -76,10 +101,6 @@ class TableExtractor:
     """
 
     kind = Kind.TABLE
-
-    def extract(self, image: ImageArray, zone: Zone, engine: VisionEngine,
-                hint: str | None = None) -> Zone:
-        return engine.extract_zone(zone_pixels(image, zone), zone, hint)
 
     @staticmethod
     def plan_slices(crop_height: int) -> list[tuple[int, int]]:
@@ -96,35 +117,23 @@ class TableExtractor:
         raise NotImplementedError("slice stitching not yet wired")
 
 
-class PairsExtractor:
+class PairsExtractor(CropAndRead):
     """Reads label -> value bindings. A totals block is this Kind with Role SUMMARY."""
 
     kind = Kind.PAIRS
 
-    def extract(self, image: ImageArray, zone: Zone, engine: VisionEngine,
-                hint: str | None = None) -> Zone:
-        raise NotImplementedError("pairs extraction not yet wired")
 
-
-class ProseExtractor:
+class ProseExtractor(CropAndRead):
     """Reads headings, paragraphs and addresses. The whole of a doctor's note."""
 
     kind = Kind.PROSE
 
-    def extract(self, image: ImageArray, zone: Zone, engine: VisionEngine,
-                hint: str | None = None) -> Zone:
-        raise NotImplementedError("prose extraction not yet wired")
 
-
-class ListExtractor:
+class ListExtractor(CropAndRead):
     kind = Kind.LIST
 
-    def extract(self, image: ImageArray, zone: Zone, engine: VisionEngine,
-                hint: str | None = None) -> Zone:
-        raise NotImplementedError("list extraction not yet wired")
 
-
-class FigureExtractor:
+class FigureExtractor(CropAndRead):
     """Records a Graphic's position without reconstructing it.
 
     Text *written on* a graphic is document content and is captured: a chart's
@@ -133,10 +142,6 @@ class FigureExtractor:
     """
 
     kind = Kind.FIGURE
-
-    def extract(self, image: ImageArray, zone: Zone, engine: VisionEngine,
-                hint: str | None = None) -> Zone:
-        raise NotImplementedError("figure handling not yet wired")
 
 
 REGISTRY: dict[Kind, Extractor] = {
