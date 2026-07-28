@@ -1,0 +1,1488 @@
+{
+  "source": {
+    "path": "example/sample-table.png",
+    "sha256": "94aac4057c9f65b887e44431600a6f291876f0877c378b0db9cb2e193a1525cc",
+    "width": 960,
+    "height": 690,
+    "rectified_width": null,
+    "rectified_height": null
+  },
+  "ir_version": 1,
+  "rectifier_version": 1,
+  "hint": null,
+  "zones": [
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 0,
+      "bbox": {
+        "left": 0.026,
+        "top": 0.025,
+        "right": 0.31,
+        "bottom": 0.075
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Country statistics",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
+      "kind": "table",
+      "role": "body",
+      "band": 1,
+      "column": 0,
+      "bbox": {
+        "left": 0.02,
+        "top": 0.11,
+        "right": 0.98,
+        "bottom": 0.97
+      },
+      "title": "Population and GDP (millions of USD)",
+      "rows": [
+        {
+          "cells": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Country",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "ISO",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Population",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "GDP (USD M)",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Currency",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ],
+          "role": "header"
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.038,
+                "top": 0.22,
+                "right": 0.27,
+                "bottom": 0.246
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "United States",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.278,
+                "top": 0.22,
+                "right": 0.36,
+                "bottom": 0.246
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "USA",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.37,
+                "top": 0.22,
+                "right": 0.58,
+                "bottom": 0.246
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "331,900,000",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.6,
+                "top": 0.22,
+                "right": 0.805,
+                "bottom": 0.246
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "19,485,394",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.818,
+                "top": 0.22,
+                "right": 0.9,
+                "bottom": 0.246
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "USD",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ],
+          "role": "data"
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.038,
+                "top": 0.2707,
+                "right": 0.27,
+                "bottom": 0.2967
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "China",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.278,
+                "top": 0.2707,
+                "right": 0.36,
+                "bottom": 0.2967
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "CHN",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.37,
+                "top": 0.2707,
+                "right": 0.58,
+                "bottom": 0.2967
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "1,412,000,000",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.6,
+                "top": 0.2707,
+                "right": 0.805,
+                "bottom": 0.2967
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "14,722,801",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.818,
+                "top": 0.2707,
+                "right": 0.9,
+                "bottom": 0.2967
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "CNY",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ],
+          "role": "data"
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.038,
+                "top": 0.3214,
+                "right": 0.27,
+                "bottom": 0.34740000000000004
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Japan",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.278,
+                "top": 0.3214,
+                "right": 0.36,
+                "bottom": 0.34740000000000004
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "JPN",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.37,
+                "top": 0.3214,
+                "right": 0.58,
+                "bottom": 0.34740000000000004
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "125,700,000",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.6,
+                "top": 0.3214,
+                "right": 0.805,
+                "bottom": 0.34740000000000004
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "4,937,422",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.818,
+                "top": 0.3214,
+                "right": 0.9,
+                "bottom": 0.34740000000000004
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "JPY",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ],
+          "role": "data"
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.038,
+                "top": 0.3721,
+                "right": 0.27,
+                "bottom": 0.3981
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Germany",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.278,
+                "top": 0.3721,
+                "right": 0.36,
+                "bottom": 0.3981
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "DEU",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.37,
+                "top": 0.3721,
+                "right": 0.58,
+                "bottom": 0.3981
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "83,240,000",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.6,
+                "top": 0.3721,
+                "right": 0.805,
+                "bottom": 0.3981
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "4,223,116",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.818,
+                "top": 0.3721,
+                "right": 0.9,
+                "bottom": 0.3981
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "EUR",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ],
+          "role": "data"
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.038,
+                "top": 0.4228,
+                "right": 0.27,
+                "bottom": 0.44880000000000003
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "India",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.278,
+                "top": 0.4228,
+                "right": 0.36,
+                "bottom": 0.44880000000000003
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "IND",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.37,
+                "top": 0.4228,
+                "right": 0.58,
+                "bottom": 0.44880000000000003
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "1,408,000,000",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.6,
+                "top": 0.4228,
+                "right": 0.805,
+                "bottom": 0.44880000000000003
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "3,173,398",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.818,
+                "top": 0.4228,
+                "right": 0.9,
+                "bottom": 0.44880000000000003
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "INR",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ],
+          "role": "data"
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.038,
+                "top": 0.47350000000000003,
+                "right": 0.27,
+                "bottom": 0.49950000000000006
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "United Kingdom",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.278,
+                "top": 0.47350000000000003,
+                "right": 0.36,
+                "bottom": 0.49950000000000006
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "GBR",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.37,
+                "top": 0.47350000000000003,
+                "right": 0.58,
+                "bottom": 0.49950000000000006
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "67,330,000",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.6,
+                "top": 0.47350000000000003,
+                "right": 0.805,
+                "bottom": 0.49950000000000006
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "3,070,667",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.818,
+                "top": 0.47350000000000003,
+                "right": 0.9,
+                "bottom": 0.49950000000000006
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "GBP",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ],
+          "role": "data"
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.038,
+                "top": 0.5242,
+                "right": 0.27,
+                "bottom": 0.5502
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "France",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.278,
+                "top": 0.5242,
+                "right": 0.36,
+                "bottom": 0.5502
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "FRA",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.37,
+                "top": 0.5242,
+                "right": 0.58,
+                "bottom": 0.5502
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "67,750,000",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.6,
+                "top": 0.5242,
+                "right": 0.805,
+                "bottom": 0.5502
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "2,937,473",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.818,
+                "top": 0.5242,
+                "right": 0.9,
+                "bottom": 0.5502
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "EUR",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ],
+          "role": "data"
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.038,
+                "top": 0.5749,
+                "right": 0.27,
+                "bottom": 0.6009
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Italy",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.278,
+                "top": 0.5749,
+                "right": 0.36,
+                "bottom": 0.6009
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "ITA",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.37,
+                "top": 0.5749,
+                "right": 0.58,
+                "bottom": 0.6009
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "59,110,000",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.6,
+                "top": 0.5749,
+                "right": 0.805,
+                "bottom": 0.6009
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "2,099,880",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.818,
+                "top": 0.5749,
+                "right": 0.9,
+                "bottom": 0.6009
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "EUR",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ],
+          "role": "data"
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.038,
+                "top": 0.6256,
+                "right": 0.27,
+                "bottom": 0.6516000000000001
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Canada",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.278,
+                "top": 0.6256,
+                "right": 0.36,
+                "bottom": 0.6516000000000001
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "CAN",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.37,
+                "top": 0.6256,
+                "right": 0.58,
+                "bottom": 0.6516000000000001
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "38,250,000",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.6,
+                "top": 0.6256,
+                "right": 0.805,
+                "bottom": 0.6516000000000001
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "1,988,336",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.818,
+                "top": 0.6256,
+                "right": 0.9,
+                "bottom": 0.6516000000000001
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "CAD",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ],
+          "role": "data"
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.038,
+                "top": 0.6763,
+                "right": 0.27,
+                "bottom": 0.7023
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "South Korea",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.278,
+                "top": 0.6763,
+                "right": 0.36,
+                "bottom": 0.7023
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "KOR",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.37,
+                "top": 0.6763,
+                "right": 0.58,
+                "bottom": 0.7023
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "51,740,000",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.6,
+                "top": 0.6763,
+                "right": 0.805,
+                "bottom": 0.7023
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "1,810,966",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.818,
+                "top": 0.6763,
+                "right": 0.9,
+                "bottom": 0.7023
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "KRW",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ],
+          "role": "data"
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.038,
+                "top": 0.727,
+                "right": 0.27,
+                "bottom": 0.753
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Russia",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.278,
+                "top": 0.727,
+                "right": 0.36,
+                "bottom": 0.753
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "RUS",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.37,
+                "top": 0.727,
+                "right": 0.58,
+                "bottom": 0.753
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "143,400,000",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.6,
+                "top": 0.727,
+                "right": 0.805,
+                "bottom": 0.753
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "1,775,800",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.818,
+                "top": 0.727,
+                "right": 0.9,
+                "bottom": 0.753
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "RUB",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ],
+          "role": "data"
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.038,
+                "top": 0.7777,
+                "right": 0.27,
+                "bottom": 0.8037
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Brazil",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.278,
+                "top": 0.7777,
+                "right": 0.36,
+                "bottom": 0.8037
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "BRA",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.37,
+                "top": 0.7777,
+                "right": 0.58,
+                "bottom": 0.8037
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "214,300,000",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.6,
+                "top": 0.7777,
+                "right": 0.805,
+                "bottom": 0.8037
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "1,608,981",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.818,
+                "top": 0.7777,
+                "right": 0.9,
+                "bottom": 0.8037
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "BRL",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ],
+          "role": "data"
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.038,
+                "top": 0.8284,
+                "right": 0.27,
+                "bottom": 0.8544
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Australia",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.278,
+                "top": 0.8284,
+                "right": 0.36,
+                "bottom": 0.8544
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "AUS",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.37,
+                "top": 0.8284,
+                "right": 0.58,
+                "bottom": 0.8544
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "25,690,000",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.6,
+                "top": 0.8284,
+                "right": 0.805,
+                "bottom": 0.8544
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "1,542,660",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.818,
+                "top": 0.8284,
+                "right": 0.9,
+                "bottom": 0.8544
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "AUD",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ],
+          "role": "data"
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.038,
+                "top": 0.8791,
+                "right": 0.27,
+                "bottom": 0.9051
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Spain",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.278,
+                "top": 0.8791,
+                "right": 0.36,
+                "bottom": 0.9051
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "ESP",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.37,
+                "top": 0.8791,
+                "right": 0.58,
+                "bottom": 0.9051
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "47,420,000",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.6,
+                "top": 0.8791,
+                "right": 0.805,
+                "bottom": 0.9051
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "1,425,865",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.818,
+                "top": 0.8791,
+                "right": 0.9,
+                "bottom": 0.9051
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "EUR",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ],
+          "role": "data"
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.038,
+                "top": 0.9298,
+                "right": 0.27,
+                "bottom": 0.9558
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Mexico",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.278,
+                "top": 0.9298,
+                "right": 0.36,
+                "bottom": 0.9558
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "MEX",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.37,
+                "top": 0.9298,
+                "right": 0.58,
+                "bottom": 0.9558
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "130,300,000",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.6,
+                "top": 0.9298,
+                "right": 0.805,
+                "bottom": 0.9558
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "1,293,490",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.818,
+                "top": 0.9298,
+                "right": 0.9,
+                "bottom": 0.9558
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "MXN",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ],
+          "role": "data"
+        }
+      ],
+      "pairs": [],
+      "blocks": [],
+      "graphic_kind": null,
+      "complete": true
+    }
+  ],
+  "corrections": [],
+  "probes": [],
+  "gaps": []
+}

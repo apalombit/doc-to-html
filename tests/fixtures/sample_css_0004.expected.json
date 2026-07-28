@@ -1,0 +1,198 @@
+{
+  "source": {
+    "path": "example/sample-css.png",
+    "sha256": "c8e749f5758437c7a7c2ce3335cf9fb7ba5697ac81bf0c3886f165eeafb8dfd5",
+    "width": 789,
+    "height": 534,
+    "rectified_width": null,
+    "rectified_height": null
+  },
+  "ir_version": 1,
+  "rectifier_version": 1,
+  "hint": null,
+  "zones": [
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 0,
+      "bbox": {
+        "left": 0.043,
+        "top": 0.062,
+        "right": 0.313,
+        "bottom": 0.14
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Sample HTML",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
+      "kind": "figure",
+      "role": "header",
+      "band": 0,
+      "column": 1,
+      "bbox": {
+        "left": 0.323,
+        "top": 0.082,
+        "right": 0.376,
+        "bottom": 0.132
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "caption",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "CSS",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": "badge",
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 1,
+      "column": 0,
+      "bbox": {
+        "left": 0.043,
+        "top": 0.208,
+        "right": 0.905,
+        "bottom": 0.245
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "This document demonstrates inline <style> blocks with typography, layout, and components.",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 2,
+      "column": 0,
+      "bbox": {
+        "left": 0.043,
+        "top": 0.283,
+        "right": 0.957,
+        "bottom": 0.588
+      },
+      "title": "Card heading",
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Cards are reusable layout containers. Edit the CSS in the <head> to customize.",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 3,
+      "column": 0,
+      "bbox": {
+        "left": 0.043,
+        "top": 0.62,
+        "right": 0.957,
+        "bottom": 0.93
+      },
+      "title": "Another card",
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "You can add as many as you need. Anchor links are styled too.",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": null,
+      "complete": true
+    }
+  ],
+  "corrections": [],
+  "probes": [],
+  "gaps": []
+}

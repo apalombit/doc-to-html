@@ -1,0 +1,872 @@
+{
+  "source": {
+    "path": "example/invoice2.png",
+    "sha256": "6f602a7612b19e448d974deea1b6f1685a644bb6a6edf26f349154381c3381d8",
+    "width": 1164,
+    "height": 718,
+    "rectified_width": null,
+    "rectified_height": null
+  },
+  "ir_version": 1,
+  "rectifier_version": 1,
+  "hint": null,
+  "zones": [
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 0,
+      "bbox": {
+        "left": 0.014,
+        "top": 0.045,
+        "right": 0.23,
+        "bottom": 0.11
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Invoice With Credit",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
+      "kind": "figure",
+      "role": "header",
+      "band": 0,
+      "column": 1,
+      "bbox": {
+        "left": 0.676,
+        "top": 0.024,
+        "right": 0.742,
+        "bottom": 0.122
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [],
+      "graphic_kind": "logo",
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 2,
+      "bbox": {
+        "left": 0.75,
+        "top": 0.028,
+        "right": 0.9,
+        "bottom": 0.135
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "address",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Acme Corporation",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Software Development",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Field 3, Moon",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "info@acme.com",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
+      "kind": "pairs",
+      "role": "header",
+      "band": 1,
+      "column": 0,
+      "bbox": {
+        "left": 0.014,
+        "top": 0.128,
+        "right": 0.3,
+        "bottom": 0.155
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [
+        {
+          "label": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "NO",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          },
+          "value": {
+            "bbox": {
+              "left": 0.048,
+              "top": 0.13,
+              "right": 0.115,
+              "bottom": 0.15
+            },
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "554775/R1",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          }
+        },
+        {
+          "label": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "Date",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          },
+          "value": {
+            "bbox": {
+              "left": 0.175,
+              "top": 0.13,
+              "right": 0.258,
+              "bottom": 0.15
+            },
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "01/01/2015",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          }
+        }
+      ],
+      "blocks": [],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
+      "kind": "pairs",
+      "role": "body",
+      "band": 2,
+      "column": 0,
+      "bbox": {
+        "left": 0.015,
+        "top": 0.168,
+        "right": 0.405,
+        "bottom": 0.455
+      },
+      "title": "Company Details",
+      "rows": [],
+      "pairs": [
+        {
+          "label": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "Name",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          },
+          "value": {
+            "bbox": {
+              "left": 0.183,
+              "top": 0.246,
+              "right": 0.35,
+              "bottom": 0.264
+            },
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "Acme Corporation",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          }
+        },
+        {
+          "label": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "Industry",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          },
+          "value": {
+            "bbox": {
+              "left": 0.183,
+              "top": 0.274,
+              "right": 0.35,
+              "bottom": 0.29200000000000004
+            },
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "Software Development",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          }
+        },
+        {
+          "label": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "Address",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          },
+          "value": {
+            "bbox": {
+              "left": 0.183,
+              "top": 0.302,
+              "right": 0.35,
+              "bottom": 0.32
+            },
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "Field 3, Moon",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          }
+        },
+        {
+          "label": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "Phone",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          },
+          "value": {
+            "bbox": {
+              "left": 0.183,
+              "top": 0.33,
+              "right": 0.35,
+              "bottom": 0.34800000000000003
+            },
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "123.4456.4567",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          }
+        },
+        {
+          "label": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "Email",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          },
+          "value": {
+            "bbox": {
+              "left": 0.183,
+              "top": 0.358,
+              "right": 0.35,
+              "bottom": 0.376
+            },
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "mainl@acme.com",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          }
+        },
+        {
+          "label": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "Tax NO",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          },
+          "value": {
+            "bbox": {
+              "left": 0.183,
+              "top": 0.386,
+              "right": 0.35,
+              "bottom": 0.404
+            },
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "123456789",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          }
+        },
+        {
+          "label": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "Tax Office",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          },
+          "value": {
+            "bbox": {
+              "left": 0.183,
+              "top": 0.414,
+              "right": 0.35,
+              "bottom": 0.432
+            },
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "A' Moon",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          }
+        }
+      ],
+      "blocks": [],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
+      "kind": "pairs",
+      "role": "body",
+      "band": 2,
+      "column": 1,
+      "bbox": {
+        "left": 0.43,
+        "top": 0.168,
+        "right": 0.985,
+        "bottom": 0.455
+      },
+      "title": "Customer Details",
+      "rows": [],
+      "pairs": [
+        {
+          "label": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "Name",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          },
+          "value": {
+            "bbox": {
+              "left": 0.59,
+              "top": 0.246,
+              "right": 0.885,
+              "bottom": 0.264
+            },
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "Microsoft Corporation",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          }
+        },
+        {
+          "label": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "Industry",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          },
+          "value": {
+            "bbox": {
+              "left": 0.59,
+              "top": 0.274,
+              "right": 0.885,
+              "bottom": 0.29200000000000004
+            },
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "Software Development",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          }
+        },
+        {
+          "label": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "Address",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          },
+          "value": {
+            "bbox": {
+              "left": 0.59,
+              "top": 0.302,
+              "right": 0.885,
+              "bottom": 0.32
+            },
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "One Microsoft Way Redmond, WA 98052-7329, USA",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          }
+        },
+        {
+          "label": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "Phone",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          },
+          "value": {
+            "bbox": {
+              "left": 0.59,
+              "top": 0.33,
+              "right": 0.885,
+              "bottom": 0.34800000000000003
+            },
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "(425) 882-8080",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          }
+        },
+        {
+          "label": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "Email",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          },
+          "value": {
+            "bbox": {
+              "left": 0.59,
+              "top": 0.358,
+              "right": 0.885,
+              "bottom": 0.376
+            },
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "contact@microsoft.com",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          }
+        },
+        {
+          "label": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "Tax NO",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          },
+          "value": {
+            "bbox": {
+              "left": 0.59,
+              "top": 0.386,
+              "right": 0.885,
+              "bottom": 0.404
+            },
+            "readings": [
+              {
+                "engine": "fixture",
+                "text": "123456789",
+                "model": null,
+                "prompt_version": null
+              }
+            ],
+            "state": "agreed"
+          }
+        }
+      ],
+      "blocks": [],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 3,
+      "column": 0,
+      "bbox": {
+        "left": 0.015,
+        "top": 0.487,
+        "right": 0.985,
+        "bottom": 0.545
+      },
+      "title": "Services / Products",
+      "rows": [],
+      "pairs": [],
+      "blocks": [],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 4,
+      "column": 0,
+      "bbox": {
+        "left": 0.015,
+        "top": 0.6,
+        "right": 0.573,
+        "bottom": 0.77
+      },
+      "title": "Comments / Notes",
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Odit repudiandae numquam sit facere blanditiis, quasi distinctio ipsam? Libero odit ex expedita, facere sunt, possimus consectetur dolore, nobis iure amet vero.",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 4,
+      "column": 1,
+      "bbox": {
+        "left": 0.598,
+        "top": 0.6,
+        "right": 0.985,
+        "bottom": 0.865
+      },
+      "title": "Payment Method",
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "For your convenience, you may deposit the final amount at one of our banks",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.607,
+                "top": 0.75,
+                "right": 0.807,
+                "bottom": 0.772
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Alpha Bank - MO123456789456123",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.607,
+                "top": 0.778,
+                "right": 0.8,
+                "bottom": 0.8
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Beta Bank - MO123456789456123",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": {
+                "left": 0.607,
+                "top": 0.806,
+                "right": 0.812,
+                "bottom": 0.828
+              },
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Gamma Bank - MO123456789456123",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "footer",
+      "band": 5,
+      "column": 0,
+      "bbox": {
+        "left": 0.015,
+        "top": 0.895,
+        "right": 0.3,
+        "bottom": 0.975
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Thank you for choosing our services.",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "We hope to see you again soon",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "~ACME~",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": null,
+      "complete": true
+    }
+  ],
+  "corrections": [],
+  "probes": [],
+  "gaps": []
+}

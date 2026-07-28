@@ -1,0 +1,473 @@
+{
+  "source": {
+    "path": "example/sample-semantic.png",
+    "sha256": "902f72417c0a60b00e674d36200bd10f946cbf08c91fe8f53c63b0f734594ea0",
+    "width": 915,
+    "height": 1122,
+    "rectified_width": null,
+    "rectified_height": null
+  },
+  "ir_version": 1,
+  "rectifier_version": 1,
+  "hint": null,
+  "zones": [
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 0,
+      "bbox": {
+        "left": 0.096,
+        "top": 0.062,
+        "right": 0.43,
+        "bottom": 0.096
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "The Weekly Digest",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
+      "kind": "list",
+      "role": "header",
+      "band": 1,
+      "column": 0,
+      "bbox": {
+        "left": 0.096,
+        "top": 0.125,
+        "right": 0.365,
+        "bottom": 0.146
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Home",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        },
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Archive",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        },
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "About",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        },
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Contact",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 2,
+      "column": 0,
+      "bbox": {
+        "left": 0.096,
+        "top": 0.235,
+        "right": 0.495,
+        "bottom": 0.262
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Why semantic HTML matters",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "May 9, 2026 \u00b7 by Jane Author",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 3,
+      "column": 0,
+      "bbox": {
+        "left": 0.096,
+        "top": 0.355,
+        "right": 0.58,
+        "bottom": 0.465
+      },
+      "title": "Introduction",
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Modern HTML5 introduced semantic elements like <article>, <section>, and <nav> that describe the meaning of content rather than its appearance.",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 3,
+      "column": 1,
+      "bbox": {
+        "left": 0.598,
+        "top": 0.335,
+        "right": 0.927,
+        "bottom": 0.487
+      },
+      "title": "TL;DR",
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Semantic tags improve accessibility, SEO, and code clarity.",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
+      "kind": "list",
+      "role": "body",
+      "band": 4,
+      "column": 0,
+      "bbox": {
+        "left": 0.096,
+        "top": 0.485,
+        "right": 0.56,
+        "bottom": 0.595
+      },
+      "title": "Benefits",
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Screen readers can navigate the document structure",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        },
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Search engines understand content hierarchy",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        },
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "CSS and JavaScript can target meaningful regions",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 5,
+      "column": 0,
+      "bbox": {
+        "left": 0.096,
+        "top": 0.62,
+        "right": 0.84,
+        "bottom": 0.7
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "quote",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "HTML provides for a number of elements that allow for finer-grained semantics in HTML documents.",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        },
+        {
+          "kind": "attribution",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "\u2014 W3C HTML5.2 specification",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 6,
+      "column": 0,
+      "bbox": {
+        "left": 0.096,
+        "top": 0.755,
+        "right": 0.285,
+        "bottom": 0.775
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Tags: html, web, standards",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "footer",
+      "band": 7,
+      "column": 0,
+      "bbox": {
+        "left": 0.096,
+        "top": 0.86,
+        "right": 0.425,
+        "bottom": 0.91
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "\u00a9 2026 The Weekly Digest. All rights reserved.",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Contact: editor@example.com",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": null,
+      "complete": true
+    }
+  ],
+  "corrections": [],
+  "probes": [],
+  "gaps": []
+}

@@ -1,0 +1,52 @@
+"""Thin wrapper over the library. Argument parsing and file IO, nothing else."""
+
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+
+from .ir import Document
+from .orchestrator import convert
+from .render import render
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(prog="doc-to-html")
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    convert_cmd = sub.add_parser("convert", help="convert one image to HTML")
+    convert_cmd.add_argument("image", type=Path)
+    convert_cmd.add_argument("-o", "--out", type=Path, required=True)
+    convert_cmd.add_argument(
+        "--review",
+        action="store_true",
+        help="stop at Checkpoints to ask; without it the run is unattended",
+    )
+
+    render_cmd = sub.add_parser(
+        "render", help="render an IR JSON file to HTML, without reading any image"
+    )
+    render_cmd.add_argument("ir", type=Path)
+    render_cmd.add_argument("-o", "--out", type=Path, required=True)
+
+    args = parser.parse_args(argv)
+
+    if args.command == "render":
+        document = Document.from_json(args.ir.read_text())
+        args.out.write_text(render(document))
+        print(f"wrote {args.out}", file=sys.stderr)
+        return 0
+
+    if args.review:
+        print("interactive review is not yet wired", file=sys.stderr)
+        return 2
+
+    document = convert(args.image)
+    args.out.write_text(render(document))
+    print(f"wrote {args.out}", file=sys.stderr)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

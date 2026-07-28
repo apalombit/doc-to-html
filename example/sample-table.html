@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sample HTML table</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+  table { width: 100%; border-collapse: collapse; }
+  caption { font-weight: bold; padding: .5rem; text-align: left; }
+  th, td { padding: .5rem .75rem; border-bottom: 1px solid #e1e1e1; text-align: left; }
+  th { background: #f2f4f7; }
+  tbody tr:hover { background: #f9fafb; }
+  td:nth-child(3), td:nth-child(4) { text-align: right; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<h1>Country statistics</h1>
+<table>
+  <caption>Population and GDP (millions of USD)</caption>
+  <thead>
+    <tr><th>Country</th><th>ISO</th><th>Population</th><th>GDP (USD M)</th><th>Currency</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>United States</td><td>USA</td><td>331,900,000</td><td>19,485,394</td><td>USD</td></tr>
+    <tr><td>China</td><td>CHN</td><td>1,412,000,000</td><td>14,722,801</td><td>CNY</td></tr>
+    <tr><td>Japan</td><td>JPN</td><td>125,700,000</td><td>4,937,422</td><td>JPY</td></tr>
+    <tr><td>Germany</td><td>DEU</td><td>83,240,000</td><td>4,223,116</td><td>EUR</td></tr>
+    <tr><td>India</td><td>IND</td><td>1,408,000,000</td><td>3,173,398</td><td>INR</td></tr>
+    <tr><td>United Kingdom</td><td>GBR</td><td>67,330,000</td><td>3,070,667</td><td>GBP</td></tr>
+    <tr><td>France</td><td>FRA</td><td>67,750,000</td><td>2,937,473</td><td>EUR</td></tr>
+    <tr><td>Italy</td><td>ITA</td><td>59,110,000</td><td>2,099,880</td><td>EUR</td></tr>
+    <tr><td>Canada</td><td>CAN</td><td>38,250,000</td><td>1,988,336</td><td>CAD</td></tr>
+    <tr><td>South Korea</td><td>KOR</td><td>51,740,000</td><td>1,810,966</td><td>KRW</td></tr>
+    <tr><td>Russia</td><td>RUS</td><td>143,400,000</td><td>1,775,800</td><td>RUB</td></tr>
+    <tr><td>Brazil</td><td>BRA</td><td>214,300,000</td><td>1,608,981</td><td>BRL</td></tr>
+    <tr><td>Australia</td><td>AUS</td><td>25,690,000</td><td>1,542,660</td><td>AUD</td></tr>
+    <tr><td>Spain</td><td>ESP</td><td>47,420,000</td><td>1,425,865</td><td>EUR</td></tr>
+    <tr><td>Mexico</td><td>MEX</td><td>130,300,000</td><td>1,293,490</td><td>MXN</td></tr>
+  </tbody>
+</table>
+</body>
+</html>
