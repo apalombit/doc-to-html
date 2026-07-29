@@ -32,23 +32,30 @@ DEFAULT_LAYOUT_MODEL = "qwen3-vl:4b"
 DEFAULT_EXTRACT_MODEL = "qwen3-vl:4b"
 DEFAULT_AUDIT_MODEL = "granite3.2-vision:latest"
 
-DEFAULT_CLASSIFY_MODEL = "qwen3.5:4b"
-"""The only role whose default is not the model that lays the page out.
+DEFAULT_CLASSIFY_MODEL = "qwen3-vl:4b"
+"""The same model as layout and extraction, deliberately, for now.
 
-Deliberate, and measured rather than assumed. Issue #13 asked both models the
-Kind question about `invoice_0001`'s Zone 4 — a shaded heading row over a data
-row — three times each at two resolutions. `qwen3-vl:4b` answered `pairs` six
-times out of six, including at the full-resolution crop where the shading is
-plainly legible; `qwen3.5:4b` answered `pairs` at layout scale and `table` at
-the crop. Neither the crop alone nor the model alone fixes that Zone, which is
-why the split of the pass and this default arrived together.
+**What this default costs, stated plainly.** Issue #13 asked two models the Kind
+question about `invoice_0001`'s Zone 4 — a shaded heading row over a data row —
+three times each at two resolutions. `qwen3-vl:4b` answered `pairs` six times
+out of six, including at the full-resolution crop where the shading is plainly
+legible. `qwen3.5:4b` answered `pairs` at layout scale and `table` at the crop.
+So with this default, splitting the pass fixes Zone 1, whose problem is being
+asked about as one of seven regions rather than on its own, and leaves Zone 4
+wrong. Two mismatches becomes one, not zero.
 
-3.4GB against `qwen3-vl:4b`'s 3.3GB, so it is inside the same 8GB budget — but
-not *at the same time*, which is why the Orchestrator runs every classification
-together rather than interleaving them with extraction.
+**Why take that anyway.** `qwen3.5:4b` has never run the layout pass, never been
+measured on the other four fixtures, and never converted a document end to end;
+naming two Kinds correctly in a standalone probe is not evidence it can do the
+job. Shipping it as a default on that basis would be generalising from one
+measurement on one fixture, which is the mistake 0001 records twice. One model
+in every role also costs one model load per document rather than two, since two
+vision models will not stay resident in 8GB together.
 
-Its geometry is unmeasured: it has never run the layout pass, and naming two
-Kinds correctly is not evidence it locates blocks. See issue #19."""
+What #15 actually bought is that this is a *setting*: `DTH_CLASSIFY_MODEL` picks
+the classifier independently of the layout and extraction models, so evaluating
+models per step — and combinations across steps — is configuration rather than
+code. That evaluation is issue #19."""
 DEFAULT_LAYOUT_LONG_EDGE = 512
 DEFAULT_NUM_CTX = 8192
 DEFAULT_TIMEOUT_S = 180.0

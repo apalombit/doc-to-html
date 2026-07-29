@@ -271,7 +271,8 @@ class TestTheOrchestratorClassifiesBetweenGeometryAndExtraction:
 
     def test_classification_is_routable_to_its_own_model(self) -> None:
         """A model that locates blocks well and one that reads them well need
-        not be the same one — measured, and the reason the default differs."""
+        not be the same one. They are the same one today; what #15 bought is
+        that changing it is a setting rather than an edit here."""
         settings = load(env={"DTH_CLASSIFY_MODEL": "a-classifier"}, dotenv_path=NOWHERE)
         engines = orchestrator.default_engines(settings)
 

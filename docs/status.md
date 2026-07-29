@@ -43,13 +43,22 @@ things at once.
   both, 6/6.
 
 So the fix is to split the layout pass into geometry and classification, and to
-let classification run on its own model. Progress: #13, #14 and #15 are done —
-the Engine can classify one Zone from its crop, and the Orchestrator now runs
-geometry → classify → extract with `DTH_CLASSIFY_MODEL` defaulting to
-`qwen3.5:4b`. **The replay suite is red, by design**: replay serves recorded
-responses by order, so the extra call per Zone puts all five fixtures out of
-step. #16 re-records them and is next. Nothing about this has yet been measured
-against a real model — the numbers above are still #13's probe, not a conversion.
+make classification routable to its own model. Progress: #13, #14 and #15 are
+done — the Engine can classify one Zone from its crop, and the Orchestrator now
+runs geometry → classify → extract.
+
+**The routing shipped; the model swap did not.** `DTH_CLASSIFY_MODEL` defaults
+to `qwen3-vl:4b`, one model in every step — decided 2026-07-29, against 0003's
+recommendation. Not because the probe was wrong but because it was thin:
+`qwen3.5:4b` has never run the layout pass, touched the other four fixtures, or
+converted a document, so defaulting to it would generalise from one measurement
+on one fixture. **Expect this to fix Zone 1 and not Zone 4** — two mismatches to
+one, not zero. Evaluating models per step and combinations across steps is #19.
+
+**The replay suite is red, by design**: replay serves recorded responses by
+order, so the extra call per Zone puts all five fixtures out of step. #16
+re-records them and is next. Nothing about this has yet been measured against a
+real model — the numbers above are still #13's probe, not a conversion.
 
 | Issue | | |
 |---|---|---|
@@ -169,14 +178,17 @@ Recorded here so it is not "fixed" later.
 - **Whether tesseract earns a place.** The slice runs vision-only and is
   therefore the control condition. Its accuracy is the number tesseract has to
   beat.
-- **Which model wins — partly answered, and the answer is "not one model".**
+- **Which model wins — still open, and shipping as one model until it is not.**
   `qwen3-vl:4b` reads text correctly on `invoice.png` but cannot tell a shaded
   heading row from a label/value pair at any resolution (issue #13, 6/6 wrong).
   `qwen3.5:4b` gets that Kind right from a full-resolution crop, and is 3.4GB
   against 3.3GB, so it fits the same budget. **Its geometry has never been
   measured** — it has not run the layout pass or touched the other four fixtures.
-  #19 is where that happens. Until then "classification wants a different model
-  from extraction" is a measured claim about two Zones, not about the pipeline.
+  So "classification wants a different model from extraction" remains a measured
+  claim about two Zones, not about the pipeline, and #15 shipped the *ability* to
+  act on it rather than the act: one model fills all three roles today, and
+  `DTH_CLASSIFY_MODEL` is what a future answer changes. #19 is where the
+  evaluation — per step, and across combinations — happens.
 - **Whether the latency is tolerable.** `invoice_0001` converts in ~175s on
   `qwen3-vl:4b` with the whole GPU. Adding one classification call per Zone is
   #15's cost and #19 measures it. Tolerable for a batch, not for an interactive

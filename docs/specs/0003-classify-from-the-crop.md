@@ -41,6 +41,26 @@ model, and that routing is now the difference between fixing one mismatch and
 fixing two rather than a convenience. It does not change what to build below;
 it changes why, and it changes the default.
 
+> **The default was reversed on 2026-07-29, after #15 shipped.**
+> `DTH_CLASSIFY_MODEL` defaults to `qwen3-vl:4b`: one model in every step. The
+> routing this section argues for was built and is what makes the setting exist;
+> the model swap it recommends was declined for now.
+>
+> The reason is the paragraph immediately below this one — "what it does not
+> license". A default is a claim about every document, and the evidence for
+> `qwen3.5:4b` is two Zones of one fixture in a standalone probe, with its
+> geometry, its behaviour on the other four fixtures, and its end-to-end
+> conversion all still unmeasured. Shipping it as the default would be the
+> generalisation this spec warned against two paragraphs later, made by the
+> spec itself.
+>
+> **This is a deferral, not a refutation.** The probe stands; #19 evaluates
+> models per step and combinations across steps, and is free to reinstate this
+> recommendation with numbers behind it. Until then the honest prediction for
+> the split is **2 mismatches → 1**: Zone 1's cause is isolation, which the
+> split cures, and Zone 4's is a model that cannot use the crop, which it does
+> not.
+
 **What it does not license.** Every number here is from `invoice_0001`'s two bad
 Zones. `qwen3.5:4b` has never run the geometry pass, never been measured on the
 other four fixtures, and never converted a document end to end. That it names two

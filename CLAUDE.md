@@ -39,13 +39,25 @@ runs 18-20) measured **three** causes where 0003 argued one:
 - **Neither alone fixes Zone 4** — the crop alone and the model swap alone both
   leave it wrong.
 
-So the fix is the split **plus** a classification pass routable to its own model,
-defaulting to `qwen3.5:4b` (3.4GB, same budget, already installed) while geometry
-and extraction stay on `qwen3-vl:4b`.
+So 0003 concluded the fix was the split **plus** a classification pass routable
+to its own model, defaulting to `qwen3.5:4b`. **The routing shipped; the model
+swap did not** — see the decision below.
 
 **#13, #14 and #15 are done.** `OllamaEngine.classify_zone` classifies one Zone
-from its own crop, and the Orchestrator now runs geometry → classify → extract
-with `DTH_CLASSIFY_MODEL` defaulting to `qwen3.5:4b`. **#16 is next.**
+from its own crop, and the Orchestrator now runs geometry → classify → extract.
+**#16 is next.**
+
+**`DTH_CLASSIFY_MODEL` defaults to `qwen3-vl:4b` — one model in every step.**
+0003 argued for defaulting it to `qwen3.5:4b`; that was **decided against on
+2026-07-29**, and the split shipped without the model swap. The reasoning is not
+that the probe was wrong but that it was thin: `qwen3.5:4b` has never run the
+layout pass, never touched the other four fixtures, and never converted a
+document, so making it a default would generalise from one measurement on one
+fixture. Expect this default to fix **Zone 1 only** — Zone 1's problem is being
+asked about as one of seven regions, which the split cures; Zone 4 needs a model
+that can use the crop, and `qwen3-vl:4b` answered `pairs` 6/6 at full
+resolution. **Two mismatches should become one, not zero.** Evaluating models
+per step, and combinations across steps, is #19.
 
 **The replay suite is red right now, and that is #15's expected outcome** — 49
 failures across `test_table_extraction`, `test_acceptance`, `test_pairs_and_prose`,
@@ -55,8 +67,8 @@ what was recorded as its extraction answer. #16 re-records them. Do not treat
 those failures as a defect, and do not fix them anywhere but #16.
 
 Nothing here has been measured against a real model yet: no conversion has run
-with the split, so the +1 call per Zone has no latency number and `qwen3.5:4b`
-has still never classified inside a real run. That is #19.
+with the split, so the +1 call per Zone has no latency number and the predicted
+"two mismatches becomes one" is a prediction, not a result. That is #19.
 
 Nothing about `qwen3.5:4b`'s **geometry** has been measured — it has never run the
 layout pass or touched the other four fixtures. #19 is where that happens, and it

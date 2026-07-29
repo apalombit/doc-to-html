@@ -222,12 +222,13 @@ def engines_for(model: str, settings: Settings,
     """One model in every role, classification included.
 
     A bake-off asks how a single model does at the whole job, so every role
-    shares it. That now differs from the shipped default, which classifies on a
-    second model — so a bake-off measures one model's own ceiling rather than
-    what a production run does, and `--models a,b` cannot express the pairing.
-    Deliberate: the question a bake-off answers is which model to pick for a
-    role, and answering it with another model in the loop confounds it.
-    Measuring the pairing is issue #19's job.
+    shares it — which currently matches the shipped defaults, so a bake-off run
+    and a production run make the same calls to the same model.
+
+    That correspondence ends the moment any role is pointed elsewhere:
+    `--models a,b` names one model at a time and cannot express "a for geometry,
+    b for classification". Measuring a combination is issue #19's job, and it
+    needs a way to say so that does not exist here yet.
     """
     def engine() -> OllamaEngine:
         return OllamaEngine.from_settings(settings, model, transport=transport)

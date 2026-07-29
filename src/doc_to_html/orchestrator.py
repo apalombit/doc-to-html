@@ -66,15 +66,16 @@ class EngineSet:
     """Which model does what.
 
     Layout and audit default to different families so the auditor does not share
-    the blind spot that caused a miss. Classification defaults to a different
-    model again, because issue #13 measured that the model which lays this page
-    out reads one of its Zones' Kind wrong at every resolution it was offered.
+    the blind spot that caused a miss. Classification is a role of its own so a
+    model that locates blocks well and one that reads them well need not be the
+    same — though today they are, and `config.DEFAULT_CLASSIFY_MODEL` records
+    what that costs and why it is still the right default.
 
-    The Orchestrator batches by model, and with three roles on two models that
-    batching is what keeps the cost down: every classification runs together,
-    between all the layout work and all the extraction work, so a document costs
-    two model loads rather than one per Zone. Two vision models resident at once
-    does not fit in 8GB.
+    The Orchestrator batches by model, which is what keeps a mixed set
+    affordable: every classification runs together, between all the layout work
+    and all the extraction work, so pointing this role at a second model costs
+    two model loads for the document rather than one per Zone. Two vision models
+    resident at once does not fit in 8GB.
     """
 
     layout: VisionEngine

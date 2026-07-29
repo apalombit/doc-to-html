@@ -136,11 +136,24 @@ class TestEngineSet:
         assert engines.extract.model == "extract-model"
         assert engines.audit.model == "audit-model"
 
-    def test_classification_defaults_to_a_different_model_from_layout(self) -> None:
-        """Not a typo in the defaults: issue #13 measured that the model which
-        lays this page out names one of its Zones' Kind wrong at every
-        resolution it was offered. See `config.DEFAULT_CLASSIFY_MODEL`."""
-        assert config.DEFAULT_CLASSIFY_MODEL != config.DEFAULT_LAYOUT_MODEL
+    def test_one_model_does_layout_classification_and_extraction(self) -> None:
+        """Separable roles, one model in all three of them for now.
+
+        Not an accident of copying a default around: two vision models will not
+        stay resident in 8GB, and the rival classifier has never run the layout
+        pass or touched four of the five fixtures. See
+        `config.DEFAULT_CLASSIFY_MODEL` for what this costs, and #19 for the
+        evaluation that would change it."""
+        assert config.DEFAULT_CLASSIFY_MODEL == config.DEFAULT_LAYOUT_MODEL
+        assert config.DEFAULT_CLASSIFY_MODEL == config.DEFAULT_EXTRACT_MODEL
+
+    def test_the_classifier_can_still_be_pointed_somewhere_else(self) -> None:
+        """The point of the role existing. Sharing a default must not quietly
+        become sharing a value."""
+        settings = resolve(DTH_CLASSIFY_MODEL="a-classifier")
+        engines = default_engines(settings)
+        assert engines.classify.model == "a-classifier"
+        assert engines.layout.model == config.DEFAULT_LAYOUT_MODEL
 
     def test_a_cloud_host_and_key_reach_the_client(self) -> None:
         """The promise is that Ollama Cloud is a configuration change. If the
