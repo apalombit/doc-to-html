@@ -22,24 +22,35 @@ numbers and what has already been tried and rejected.
 
 ## Current work
 
-**`docs/specs/0002-structure-not-geometry.md`** — issue #11.
+**`docs/specs/0003-classify-from-the-crop.md`** — issue #12.
 
-`example/invoice.png` is at **3 mismatches** against a real `qwen3-vl:4b`, with the
-column-sum Probe reconciling at 385.00 and every string read correctly. What is left
-is the document's *shape*: a wide two-column table header is either split one row per
-column, or mislabelled `pairs` so its cells are read across the row.
+`example/invoice.png` is at **2 mismatches**, both the layout pass giving a Zone the
+wrong Kind. Four prompt attempts failed to move them (runs 11, 12, 13, 16; 17
+reproduced 16 exactly), and three broke Band numbering as a side effect.
 
-`docs/specs/0001-one-image-at-a-time.md` (issue #10) is the history — the measured
-numbers, and everything already tried and rejected. Read 0002 for what is wrong now,
-0001 for how we got here.
+It is not wording, it is **resolution**: layout classifies at 384px, where the
+evidence does not survive — Zone 1 is 73x33px for three lines whose colons are
+about one pixel each. The fix is to split the pass and classify each Zone from its
+**full-resolution crop**, which the Extractor already takes seconds later.
+
+**Start with the blocking experiment in 0003**: ask the model the Kind question
+against the two crops already on disk. If it answers `prose` and `pairs` again, the
+spec is void and the problem is the model, not the pixels.
+
+`docs/specs/0002-structure-not-geometry.md` (issue #11) is the history — the
+measured numbers, the four rejected prompt attempts, and the header-row join that
+took invoice.png from 3 mismatches to 2. `0001-one-image-at-a-time.md` is older
+history still.
 
 Runs live in `debug/runs/<label>/`, newest highest. Each carries the prompt, host,
-resolution and every raw answer that produced it. **Open a run's `index.html` before
-changing a prompt** — `tools/inspect_run.py` builds it from a `--dump` without
-calling Ollama, and reasoning about the page from coordinates instead of pixels
-produced both retracted conclusions in 0001.
+resolution, the CPU/GPU split and every raw answer that produced it. **Open a run's
+`index.html` before changing a prompt** — `tools/inspect_run.py` builds it from a
+`--dump` without calling Ollama, and reasoning about the page from coordinates
+instead of pixels produced both retracted conclusions in 0001.
 
 One turn of the loop: `DTH_LAYOUT_LONG_EDGE=384 tools/iterate.sh <label>`, ~3 min.
+`FIXTURE=all` runs all five fixtures — no prompt change has ever been measured
+against the other four.
 
 Verify this is still current with `gh issue list --label ready-for-agent`; if #11 is
 closed, this section is stale.
