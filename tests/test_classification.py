@@ -220,24 +220,28 @@ def geometry(*kinds: str) -> str:
     ).model_dump_json()
 
 
+UNCLASSIFIABLE = '{"kind": "stripe"}'
+"""A Kind outside the closed set, which `classification_into` refuses. How a
+failing classification is provoked without a model that fails."""
+
+
 def convert_classifying(guessed: list[str], classified: list[str],
-                        broken: dict[int, str] | None = None,
+                        broken: int | None = None,
                         ) -> tuple[Document, ReplayTransport]:
     """Convert `example/invoice.png` against a scripted geometry/classify/extract.
 
-    `broken` replaces one Zone's classification reply, which is how a failing
-    classification is provoked without a model that fails.
+    `broken` is the index of the one Zone whose classification comes back
+    unusable.
     """
-    failed = broken or {}
     replies = [text(geometry(*guessed))]
     for index, kind in enumerate(classified):
-        replies.append(text(failed.get(index) or answer(kind)))
+        replies.append(text(UNCLASSIFIABLE if index == broken else answer(kind)))
     # Only the Zones that survive classification are extracted, so only they get
     # a content reply — `ReplayTransport` serves by order, and a spare reply here
     # would be handed to the next Zone's question.
     replies.extend(
         text(CONTENT_FOR[kind])
-        for index, kind in enumerate(classified) if index not in failed
+        for index, kind in enumerate(classified) if index != broken
     )
     return convert_recording(INVOICE, replies)
 
@@ -301,7 +305,7 @@ class TestAFailedClassificationDoesNotSpread:
         """One bad crop does not cost the document, following the contract
         extraction already keeps."""
         document, transport = convert_classifying(
-            ["prose", "prose"], ["prose", "pairs"], broken={0: '{"kind": "stripe"}'}
+            ["prose", "prose"], ["prose", "pairs"], broken=0
         )
 
         assert [f.zone_index for f in document.failures] == [0]
@@ -310,7 +314,7 @@ class TestAFailedClassificationDoesNotSpread:
 
     def test_the_failure_names_the_zone_and_why(self) -> None:
         document, _ = convert_classifying(
-            ["prose"], ["prose"], broken={0: '{"kind": "stripe"}'}
+            ["prose"], ["prose"], broken=0
         )
 
         failure = document.failures[0]
@@ -322,7 +326,7 @@ class TestAFailedClassificationDoesNotSpread:
         anyway would route it on geometry's guess — the guess this pass exists
         to stop trusting."""
         _, transport = convert_classifying(
-            ["prose"], ["prose"], broken={0: '{"kind": "stripe"}'}
+            ["prose"], ["prose"], broken=0
         )
 
         assert [c.pass_name for c in transport.calls] == ["layout", "classify"]
@@ -344,11 +348,21 @@ class TestAZoneClassifiedAtReducedResolution:
     def test_a_crop_within_the_budget_says_nothing(self) -> None:
         assert self.caveat_over(200, 800) is None
 
-    def test_a_zone_merely_wider_than_the_budget_is_not_flagged(self) -> None:
-        """Matching what `resolution_caveat` flags, and for the same reason: a
-        wide Zone loses a few percent of scale, and flagging every full-width
-        Zone of a 1200px page would bury a real finding in noise."""
-        assert self.caveat_over(200, 4000) is None
+    def test_a_crop_merely_wider_than_the_budget_is_flagged_too(self) -> None:
+        """The one place this must *not* copy `resolution_caveat`, which ignores
+        width because slices are horizontal bands and a wide Zone loses no rows.
+
+        Classification loses something else. `resize_long_edge` scales on
+        `max(height, width)`, so a wide crop is shrunk on both axes — and what
+        goes with it is the shading under a heading row and the colon after a
+        label, which is the entire evidence this pass decides on. A full-width
+        Zone of a 3508px page is 2-3x over the budget and nowhere near over the
+        height one, so testing height here would leave the commonest crop in the
+        project silently degraded.
+        """
+        caveat = self.caveat_over(200, 4000) or ""
+        assert "classified at reduced resolution" in caveat
+        assert "4000px" in caveat
 
     def test_it_reaches_the_document_and_keeps_its_kind(self,
                                                        monkeypatch: pytest.MonkeyPatch,

@@ -27,7 +27,7 @@ from .preprocess import (
     MODEL_INPUT_LONG_EDGE,
     ImageArray,
     Rectified,
-    over_input_budget,
+    long_edge_over_input_budget,
     rectify,
 )
 from .render import render
@@ -99,27 +99,50 @@ def default_engines(settings: Settings | None = None) -> EngineSet:
     )
 
 
+def failed(index: int, zone: Zone, error: Exception) -> Failure:
+    """Record what went wrong on one Zone, in the form both passes report.
+
+    Classification and extraction fail differently but report identically, and
+    that is the contract rather than a coincidence: an operator reading the
+    render should not have to know which pass gave up on a Zone to find out that
+    one did. Naming the exception type matters — `MappingError` and
+    `TruncatedResponse` are different problems with different fixes.
+    """
+    return Failure(
+        zone_index=index,
+        kind=zone.kind.value,
+        reason=f"{type(error).__name__}: {error}",
+    )
+
+
 def classification_caveat(image: ImageArray, zone: Zone) -> str | None:
     """Whether this Zone's Kind was decided below the resolution it deserved.
 
-    The counterpart of `resolution_caveat`, and the same pixels — but a
-    different loss. Extraction shrunk past the budget can drop rows; a Kind
-    decided on a shrunk crop can lose the very evidence that separates two
-    Kinds, which is the whole finding this pass exists to act on: a shaded
-    heading row over a data row, against two label/value lines, is a distinction
-    made of a few pixels of grey.
+    The counterpart of `resolution_caveat`, over the same pixels — but a
+    different loss, and therefore a different test. Extraction shrunk past the
+    budget can drop rows, so it measures height. A Kind decided on a shrunk crop
+    loses the evidence that separates two Kinds — a shaded heading row over a
+    data row, against two label/value lines, is a distinction made of a few
+    pixels of grey — and that goes just as readily to a horizontal shrink, so
+    this measures the long edge. See `long_edge_over_input_budget`: sharing
+    extraction's height test here would say nothing about the full-width Zone,
+    which is the commonest shape in the project.
 
     The Zone keeps the Kind either way. A degraded reading beats none, and a
     Zone with no Kind has no Extractor to route it to — so this is a note on an
     answer, not a rejection of one.
+
+    Here rather than beside `resolution_caveat` in `extractors.py` because this
+    is not an Extractor's business: the classification pass has no Extractor,
+    and each caveat sits with the pass that earns it.
     """
-    height = over_input_budget(image, zone)
-    if height is None:
+    longest = long_edge_over_input_budget(image, zone)
+    if longest is None:
         return None
     return (
-        f"classified at reduced resolution: {height}px tall is over the "
-        f"model's {MODEL_INPUT_LONG_EDGE}px input budget, so the Kind was "
-        "decided on a shrunk crop"
+        f"classified at reduced resolution: the crop's {longest}px long edge is "
+        f"over the model's {MODEL_INPUT_LONG_EDGE}px input budget, so the Kind "
+        "was decided on a shrunk crop"
     )
 
 
@@ -137,12 +160,16 @@ class Conversion:
     handler: CheckpointHandler = field(default_factory=NullHandler)
     document: Document | None = None
 
-    classified: bool = field(init=False, default=False)
-    """Whether the classification pass has run. See `_classify`.
+    classification_ran: bool = field(init=False, default=False)
+    """Whether the classification pass has happened yet. See `_classify`.
 
-    `init=False` on this and the two below: they are bookkeeping the passes
-    write as they go, not something a caller configures. Passing a half-finished
-    Conversion in would mean skipping a pass that never ran.
+    A flag rather than something derived from the Zones, which is how `_layout`
+    knows: a Zone carries no mark saying whether it was classified, and the Kind
+    it holds cannot say either, since a Zone that failed classification keeps
+    whatever Kind it arrived with.
+
+    `init=False` on this and the three below: they are bookkeeping the passes
+    write as they go, not something a caller configures.
     """
 
     unclassified: set[int] = field(init=False, default_factory=set)
@@ -153,15 +180,21 @@ class Conversion:
     `_extract` rebuilds that list every round.
     """
 
-    classification_notes: list[Failure | Caveat] = field(
-        init=False, default_factory=list
-    )
-    """What classification recorded, kept across rounds.
+    classification_failures: list[Failure] = field(init=False, default_factory=list)
+    """Failures classification recorded, kept across rounds.
 
     Classification runs once and extraction runs every round, so `_extract`
-    clearing the Document's Failures and Caveats would erase these on round two.
-    Keeping them here makes classification the owner of its own findings and
-    `_extract` merely the thing that puts them back.
+    clearing the Document's Failures would erase these on round two. Keeping
+    them here makes classification the owner of its own findings and `_extract`
+    merely the thing that puts them back.
+    """
+
+    classification_caveats: list[Caveat] = field(init=False, default_factory=list)
+    """Caveats classification recorded, kept across rounds. See above.
+
+    Two lists rather than one of `Failure | Caveat`: they are put back into two
+    separate fields of the Document, so one list would only be sorted back out
+    by type at the other end.
     """
 
     def run(self) -> Document:
@@ -211,6 +244,11 @@ class Conversion:
     def _layout(self, rectified: Rectified, document: Document) -> None:
         """Detect Zones — Band, column, Role, bbox — on a downscaled page.
 
+        It still returns a Kind as well, and that Kind is not used: `_classify`
+        overwrites every one of them from the Zone's own crop moments later.
+        Deleting it from the prompt and the wire schema is issue #17; until then
+        the geometry pass is still paying tokens to guess something discarded.
+
         Run once per Conversion, not once per round. A later round refines what
         is *in* the Zones; re-detecting them would discard everything extracted
         so far in exchange for a near-identical answer from a near-deterministic
@@ -244,9 +282,9 @@ class Conversion:
         question to ask about it, and asking anyway would route it on geometry's
         guess, which is the guess this pass exists to stop trusting.
         """
-        if self.classified:
+        if self.classification_ran:
             return
-        self.classified = True
+        self.classification_ran = True
 
         for index, zone in enumerate(document.zones):
             try:
@@ -254,21 +292,20 @@ class Conversion:
                     rectified.image, zone, document.hint
                 )
             except Exception as error:
+                # The Kind recorded here is the one geometry guessed, which this
+                # pass exists to distrust — but it is the only one there is, and
+                # a Failure saying nothing about what it failed on is worse than
+                # one saying "the thing geometry took for a table". #17 removes
+                # geometry's guess, and then this becomes the Kind's default.
                 self.unclassified.add(index)
-                self.classification_notes.append(
-                    Failure(
-                        zone_index=index,
-                        kind=zone.kind.value,
-                        reason=f"{type(error).__name__}: {error}",
-                    )
-                )
+                self.classification_failures.append(failed(index, zone, error))
                 continue
 
-            note = classification_caveat(rectified.image, document.zones[index])
+            classified = document.zones[index]
+            note = classification_caveat(rectified.image, classified)
             if note is not None:
-                self.classification_notes.append(
-                    Caveat(zone_index=index,
-                           kind=document.zones[index].kind.value, note=note)
+                self.classification_caveats.append(
+                    Caveat(zone_index=index, kind=classified.kind.value, note=note)
                 )
 
     def _extract(self, rectified: Rectified, document: Document) -> None:
@@ -290,12 +327,8 @@ class Conversion:
         classification found is seeded back in, because that pass ran once and
         its findings are as true on round two as they were on round one.
         """
-        document.failures = [
-            note for note in self.classification_notes if isinstance(note, Failure)
-        ]
-        document.caveats = [
-            note for note in self.classification_notes if isinstance(note, Caveat)
-        ]
+        document.failures = list(self.classification_failures)
+        document.caveats = list(self.classification_caveats)
         for index, zone in enumerate(document.zones):
             if zone.complete or index in self.unclassified:
                 continue
@@ -304,13 +337,7 @@ class Conversion:
                     rectified.image, zone, self.engines.extract, document.hint
                 )
             except Exception as error:
-                document.failures.append(
-                    Failure(
-                        zone_index=index,
-                        kind=zone.kind.value,
-                        reason=f"{type(error).__name__}: {error}",
-                    )
-                )
+                document.failures.append(failed(index, zone, error))
                 continue
 
             note = resolution_caveat(rectified.image, zone)

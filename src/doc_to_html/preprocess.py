@@ -190,23 +190,45 @@ def zone_pixels(image: ImageArray, zone: Zone) -> ImageArray:
     return crop(image, zone.bbox)
 
 
-def over_input_budget(image: ImageArray, zone: Zone) -> int | None:
-    """This Zone's crop height, when it is more than a model can be shown.
+def height_over_input_budget(image: ImageArray, zone: Zone) -> int | None:
+    """This Zone's crop height, when it is taller than a model can be shown.
 
-    The fact, without the consequence: two passes look at the same crop and are
-    degraded differently by the same shrink — extraction can lose whole rows,
-    classification can lose the shading and the colons that tell one Kind from
-    another. Each says so in its own words; both ask here whether there is
-    anything to say, so a retune of the budget cannot move one and not the other.
+    What *extraction* loses to the budget, and the axis is the point. Height,
+    because height is what slicing would address if it were built: slices are
+    horizontal bands. A Zone merely wider than the budget loses a few percent of
+    scale and no rows, and flagging that would bury a real finding in noise.
 
-    Height rather than area, because height is what slicing would address if it
-    were built: slices are horizontal bands. A Zone merely wider than the budget
-    loses a few percent of scale and no rows.
+    Deliberately not the test classification uses — see
+    `long_edge_over_input_budget`, which asks a different question about the same
+    crop because the two passes lose different things to the same shrink.
     """
     if zone.bbox is None:
         return None
     height = int(zone_pixels(image, zone).shape[0])
     return height if height > MODEL_INPUT_LONG_EDGE else None
+
+
+def long_edge_over_input_budget(image: ImageArray, zone: Zone) -> int | None:
+    """This Zone's crop's longer side, when the crop will be shrunk to fit.
+
+    What *classification* loses to the budget. `resize_long_edge` scales on
+    `max(height, width)`, so this is the exact condition under which the model is
+    shown fewer pixels than the crop has — on either axis.
+
+    Wider-and-not-taller matters here where it does not for extraction, and that
+    asymmetry is the whole reason this is a second function rather than a second
+    caller of the first. Extraction loses rows, which only a vertical shrink
+    takes. Classification loses the shading under a heading row and the colons
+    after a label — evidence a *horizontal* shrink destroys just as thoroughly,
+    and evidence that is the entire basis on which this pass tells `table` from
+    `pairs` from `prose`. A full-width Zone of a 3508px page is 2-3x over this
+    budget while being nowhere near over the height one.
+    """
+    if zone.bbox is None:
+        return None
+    height, width = zone_pixels(image, zone).shape[:2]
+    longest = int(max(height, width))
+    return longest if longest > MODEL_INPUT_LONG_EDGE else None
 
 
 DETECT_LONG_EDGE = 800
