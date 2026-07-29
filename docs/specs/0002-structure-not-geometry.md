@@ -1,7 +1,12 @@
 # Structure, not geometry: the last three mismatches on `invoice.png`
 
-**Status:** open, at **2 mismatches — after a repair in the mapper, not from the
-model**. See the honesty note under runs 14/15 before quoting that number.
+**Status: closed — history, not work in flight.** Issue #11 is closed; the two
+mismatches it could not move are `0003-classify-from-the-crop.md` (issue #12),
+which has them diagnosed and measured. Read this for the four rejected prompt
+attempts and why the header-row join lives in the mapper rather than the prompt.
+
+It reached **2 mismatches — after a repair in the mapper, not from the model**.
+See the honesty note under runs 14/15 before quoting that number.
 Continues `0001-one-image-at-a-time.md`,
 which holds the run history, the measured numbers, and everything already tried
 and rejected. Read this file for *what is wrong now*; read 0001 for *how we got

@@ -4,25 +4,68 @@ Snapshot of what exists, what does not, and what is known to be missing. Updated
 at checkpoints; `CONTEXT.md` holds the vocabulary and `docs/adr/` the decisions,
 neither of which belongs here.
 
-**The whole path is connected, and a real model has now run down part of it.** A
-Source Image is rectified, laid out by a vision Engine, extracted Zone by Zone,
-checked by Probes and rendered as one self-contained HTML file with the IR
-embedded. Against recorded responses all five fixtures convert with no Failures,
-and photographs distorted by known amounts come back straight.
+## Where this is, in one paragraph
 
-Against a **real** model, nothing converts yet: neither candidate follows the Band
-and column instruction, and the mapper rejects what they return. See "What the
-first bake-off found" — that gap between the two is the whole reason both the
-acceptance harness and the bake-off exist.
+**The PoC works end to end and is two mismatches from correct on one image.** A
+Source Image is rectified, laid out by a vision Engine, extracted Zone by Zone
+from full-resolution crops, checked by Probes and rendered as one self-contained
+HTML file with the IR embedded. Offline, all five fixtures convert with no
+Failures. Against a real `qwen3-vl:4b`, `example/invoice.png` converts through
+every pass in ~175s and lands at **2 mismatches**: every string on the page is
+read correctly and the column-sum Probe reconciles at 385.00, but two Zones get
+the wrong Kind.
 
-**Currently being worked on:** `docs/specs/0002-structure-not-geometry.md` (issue
-#11). `example/invoice.png` is at 3 mismatches against a real `qwen3-vl:4b`, the
-column-sum Probe reconciles at 385.00, and every string on the page is read
-correctly. What remains is structural: a wide two-column table header is split one
-row per column, or mislabelled so its cells are read across the row.
+### What the PoC is deliberately proving, and what it is not
 
-`docs/specs/0001-one-image-at-a-time.md` (issue #10) is the run history — measured
-numbers, and everything tried and rejected. Runs are on disk in `debug/runs/`.
+The bet this whole slice tests is narrow: **that a 3–4B vision model on 8GB of
+unified memory can recover a document's structure well enough to rebuild it as
+HTML, without any per-document-type code.** So the scope is one image, one model,
+one page, vision only. Not multi-page, not photographs, not handwriting, not
+tesseract, not a correction UI — all of those are listed under "Known gaps" and
+none of them is in flight.
+
+The measure of success is `example/invoice.png` at **0 mismatches** against a real
+model, then the same prompts held to the other four fixtures without regressing.
+
+### What is being worked on right now
+
+**`docs/specs/0003-classify-from-the-crop.md` — issue #12.** Both remaining
+mismatches are the layout pass giving a Zone the wrong Kind, and issue #13
+measured why: the pass is being asked two different questions about two different
+things at once.
+
+- Zone 1 (`Invoice #` / `Created` / `Due`) is fixed by **isolation** — asked on
+  its own it answers `pairs` correctly even at 96×38px; it only answers `prose`
+  when asked as one of seven regions.
+- Zone 4 (a shaded `Payment Method | Check #` row over one data row) needs **both**
+  a full-resolution crop **and** a model that can use it: `qwen3.5:4b` flips
+  `pairs`→`table` between the two resolutions, `qwen3-vl:4b` answers `pairs` at
+  both, 6/6.
+
+So the fix is to split the layout pass into geometry and classification, and to
+let classification run on its own model. Progress: #13 and #14 are done — the
+Engine can classify one Zone from its crop, and nothing calls it yet. #15 wires
+it into the Orchestrator, and is next.
+
+| Issue | | |
+|---|---|---|
+| **#10** | open | Make one image work: `invoice.png`. The live epic. |
+| **#12** | open | Classify from the crop. The current spec, child of #10. |
+| #13, #14 | closed | Experiment; `classify_zone` behind `VisionEngine`. |
+| **#15** | open | **Next.** Orchestrator runs geometry → classify → extract. |
+| #16 | open | Re-record the five fixtures. Shares a branch with #15; the suite is red between them by design. |
+| #17 | open | Delete Kind from the layout prompt. |
+| #18 | open | Show each classification beside its crop. |
+| #19 | open | Measure latency and all five fixtures. |
+
+Closed and not coming back: **#1** (the end-to-end slice — built) and **#11**
+(structure-not-geometry — took invoice.png from 3 mismatches to 2 and handed the
+rest to #12).
+
+The specs are the memory, and carry what was tried and rejected:
+`0001-one-image-at-a-time.md` (run history), `0002-structure-not-geometry.md`
+(the four rejected prompt attempts), `0003-classify-from-the-crop.md` (current).
+Runs are on disk in `debug/runs/`, newest highest, and are gitignored.
 
 Everything below describes the ground this stands on.
 
@@ -40,12 +83,12 @@ Everything below describes the ground this stands on.
 | `acceptance.py` | **implemented** | What "structurally correct" means, in one place. Used by the harness and the bake-off |
 | `bakeoff.py` | **implemented** | Opt-in measurement of real models. Run partially; see "What the first bake-off found" |
 | `cli.py` | **partial** | `render`, `config` and `convert` work end to end; `--review` exits cleanly |
-| `preprocess.py` | **implemented** | Page-quad detection, perspective warp, deskew, illumination flattening, cropping, slice planning. Slice *stitching* is not built |
-| `engines/base.py` | **implemented** | `VisionEngine` and `BoxEngine` Protocols — the seam everything else depends on |
-| `engines/ollama.py` | **partial** | `detect_zones` and `extract_zone` for all five Kinds are real, with the truncation retry; `read_cell` and `audit_coverage` raise |
+| `preprocess.py` | **implemented** | Page-quad detection, perspective warp, deskew, illumination flattening, cropping, slice planning. Owns `zone_pixels`, so the classifier and the Extractors cut identical pixels. Slice *stitching* is not built |
+| `engines/base.py` | **implemented** | `VisionEngine` (five methods) and `BoxEngine` Protocols — the seam everything else depends on |
+| `engines/ollama.py` | **partial** | `detect_zones`, `classify_zone` and `extract_zone` for all five Kinds are real, with the truncation retry; `read_cell` and `audit_coverage` raise |
 | `engines/tesseract.py` | **stub** | deliberately — see "Open questions" |
 | `extractors.py` | **implemented** | All five crop their Zone and hand it to the Engine; only `TableExtractor.stitch` raises |
-| `orchestrator.py` | **partial** | Layout, extraction with the failure contract, and Probes run; the Coverage Audit and the Ladder are deliberate no-ops for this slice |
+| `orchestrator.py` | **partial** | Layout, extraction with the failure contract, and Probes run. **Does not call `classify_zone` yet** — that is #15. The Coverage Audit and the Ladder are deliberate no-ops for this slice |
 
 ## Fixtures
 
@@ -120,23 +163,27 @@ Recorded here so it is not "fixed" later.
 
 ## Open questions, deliberately unanswered
 
-**First measurements taken.** `python -m doc_to_html.bakeoff` has now run against
-a real Ollama on the 8 GB M1. It is a partial run — one and two documents, not the
-whole set — and no configuration converts a document end to end yet. What it found
-is below under "What the first bake-off found", and it changes the shape of the
-open questions rather than answering them.
-
 - **Whether tesseract earns a place.** The slice runs vision-only and is
   therefore the control condition. Its accuracy is the number tesseract has to
   beat.
-- **Which model wins.** `qwen3-vl:2b` at 1.9 GB would let the extraction and
-  audit models stay resident together; `qwen3-vl:4b` is likely more accurate.
-  Measurement, not argument, settles this.
-- **Whether the refinement loop's latency is tolerable.** A single layout pass
-  measures 4.5s on `qwen3-vl:2b` and 41.1s on `qwen3-vl:4b` with nothing else
-  resident. A conversion makes one layout pass plus one per Zone — 3 to 11 passes
-  per fixture — so the 4B model looks likely to cost minutes per document. No full
-  document has converted yet, so this is still not settled.
+- **Which model wins — partly answered, and the answer is "not one model".**
+  `qwen3-vl:4b` reads text correctly on `invoice.png` but cannot tell a shaded
+  heading row from a label/value pair at any resolution (issue #13, 6/6 wrong).
+  `qwen3.5:4b` gets that Kind right from a full-resolution crop, and is 3.4GB
+  against 3.3GB, so it fits the same budget. **Its geometry has never been
+  measured** — it has not run the layout pass or touched the other four fixtures.
+  #19 is where that happens. Until then "classification wants a different model
+  from extraction" is a measured claim about two Zones, not about the pipeline.
+- **Whether the latency is tolerable.** `invoice_0001` converts in ~175s on
+  `qwen3-vl:4b` with the whole GPU. Adding one classification call per Zone is
+  #15's cost and #19 measures it. Tolerable for a batch, not for an interactive
+  tool — and memory pressure can make any of these figures 40x worse, so no
+  number taken without checking `ollama ps` first means anything.
+- **Whether the split is even the cheapest fix.** Untested rival: one pass at a
+  higher `LAYOUT_LONG_EDGE` on `qwen3.5:4b` might fix Zone 4 with no extra call
+  per Zone at all. The isolation finding argues against it — Zone 1 needs the
+  question narrowed, not the page enlarged — but that is an argument, not a
+  measurement. Recorded in spec 0003.
 - **Multi-page.** A Conversion is strictly one Source Image; admitting page 2
   means growing the IR a `pages` array and revising every fixture.
 
@@ -167,12 +214,16 @@ design was a no-op. `LAYOUT_LONG_EDGE` (512) now separates the layout budget fro
 extraction's, and that alone is what got `invoice_0001` through all eight passes
 without aborting — 322.9s for the whole document on `qwen3-vl:4b`.
 
-**The layout pass returns schematic geometry.** Boxes come back snapped to a 0.05
+**The layout pass returned schematic geometry.** Boxes came back snapped to a 0.05
 grid, tiling the page in uniform strips rather than locating content — one strip
-being full-width and enclosing the Zone beside it. Every downstream error follows
-from it, and the mapper's plausibility checks cannot catch it, because tiling
-strips satisfy all of them. **This is the live problem**, and it has its own spec:
-`docs/specs/0001-one-image-at-a-time.md`, narrowed to `invoice.png` alone.
+being full-width and enclosing the Zone beside it. The mapper's plausibility
+checks cannot catch that, because tiling strips satisfy all of them.
+
+*Since fixed enough to stop being the cause.* The boxes are now roughly right and
+every string reads correctly; what is left is **IoU 0.56**, with Zones 0–3
+identical at 384/512/768/862 — the geometry pass emitting a prior instead of
+measuring. That is a real defect and is **explicitly out of scope** for spec 0003,
+which is about Kind, not boxes. Nothing is in flight against it.
 
 Two claims I made earlier here were wrong and are withdrawn. "Neither candidate
 follows the Band and column instruction" was generalised from one document — on
@@ -195,7 +246,7 @@ two Bands into one.
 - **A database.** The IR travels inside the HTML file.
 
 Both framework rejections rest on the same insurance: `VisionEngine` is a
-four-method Protocol, so adopting any of them later is a change behind a seam
+five-method Protocol, so adopting any of them later is a change behind a seam
 rather than a rewrite. The thing that would make it a rewrite is letting Ollama
 calls leak into Extractors.
 
@@ -203,7 +254,7 @@ calls leak into Extractors.
 
 ```bash
 uv venv && uv pip install -e '.[dev]'
-pytest                        # 273 tests, no model, no Ollama, no network
+pytest                        # 327 tests, no model, no Ollama, no network
 mypy                          # strict, over src/
 
 doc-to-html config            # what resolved, and from where

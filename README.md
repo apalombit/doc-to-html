@@ -5,16 +5,29 @@ that carries the same content and the same structure. An invoice and an
 inventory sheet are the same kind of input: the system never classifies
 documents.
 
-**Status:** the whole path is connected, and a real model has now run down part of
-it. A Source Image is rectified, laid out, extracted Zone by Zone, checked by
-Probes and rendered. All five acceptance fixtures convert against recorded
-responses, and photographs distorted by known amounts come back straight.
+**Status: working proof of concept, two mismatches from correct on one image.** A
+Source Image is rectified, laid out, extracted Zone by Zone from full-resolution
+crops, checked by Probes and rendered. All five acceptance fixtures convert
+against recorded responses, and photographs distorted by known amounts come back
+straight.
 
-Against a **real** model nothing converts yet. `example/invoice.png` runs all eight
-passes against `qwen3-vl:4b` without aborting, but the layout pass returns
-schematic geometry — boxes tiling the page rather than locating its content — and
-every downstream error follows from that. Getting that one image right is the work
-in flight: **[docs/specs/0001-one-image-at-a-time.md](docs/specs/0001-one-image-at-a-time.md)**.
+Against a **real** `qwen3-vl:4b`, `example/invoice.png` converts through every
+pass in ~175s and lands at **2 mismatches**. Every string on the page is read
+correctly and the column-sum Probe reconciles at 385.00; what is wrong is that
+two Zones get the wrong Kind — a block of `label: value` lines called `prose`,
+and a shaded heading row over a data row called `pairs` instead of `table`.
+
+Fixing those is the work in flight:
+**[docs/specs/0003-classify-from-the-crop.md](docs/specs/0003-classify-from-the-crop.md)**
+(issue #12). Measurement showed the layout pass is being asked two questions at
+once — where a region is, and what it structurally is — and the second answers
+correctly when asked on its own against the Zone's own pixels.
+
+**What this PoC is testing** is one narrow bet: that a 3–4B vision model on 8GB of
+unified memory can recover a document's structure well enough to rebuild it as
+HTML, with no per-document-type code anywhere. Scope is deliberately one page, one
+image, vision only. Success is `invoice.png` at 0 mismatches, then the same
+prompts held to the other four fixtures without regressing.
 
 ## What it aims at
 
@@ -47,9 +60,10 @@ Source Image
   │  rectify: page quad → perspective warp → orientation → equalise
   ▼
 Rectified Image ──────────────────────────────── all coordinates live here
-  │  layout pass (vision): Bands, Zones, Kind, Role, bbox
+  │  layout pass (vision, downscaled page): Bands, Zones, Kind, Role, bbox
+  │  classification (per-Zone full-res crop): Kind, Title    [built, not wired — #15]
   │  per-Zone extraction from full-res crops, sliced with overlap if dense
-  │  coverage audit (different model family): content no Zone covers
+  │  coverage audit (different model family): content no Zone covers   [not built]
   ▼
 IR ── Probes: does a column of data rows sum to a summary row?
   │    Ladder: read → upscale → other engine → ask human
@@ -81,7 +95,7 @@ recorded in `tests/responses/`. Everything else is the code that ships:
 
 ```bash
 uv venv && uv pip install -e '.[dev]'
-pytest                        # 273 tests, no model, no Ollama, no network
+pytest                        # 327 tests, no model, no Ollama, no network
 doc-to-html render tests/fixtures/invoice_0001.expected.json -o out.html
 ```
 

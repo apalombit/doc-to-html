@@ -1,6 +1,10 @@
 # Make one image work: `example/invoice.png`
 
-**Status:** open. Tracked as GitHub issue #10.
+**Status:** open — the epic, tracked as GitHub issue #10. `invoice.png` is at 2
+mismatches, not 0, so this is not done. But the *live* work is two specs further
+on: `0002-structure-not-geometry.md` (closed) and then
+`0003-classify-from-the-crop.md` (issue #12, current). Read this one for the run
+history and everything already tried and rejected.
 
 ## Why this exists
 
