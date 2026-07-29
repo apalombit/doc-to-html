@@ -28,14 +28,23 @@ numbers and what has already been tried and rejected.
 wrong Kind. Four prompt attempts failed to move them (runs 11, 12, 13, 16; 17
 reproduced 16 exactly), and three broke Band numbering as a side effect.
 
-It is not wording, it is **resolution**: layout classifies at 384px, where the
-evidence does not survive — Zone 1 is 73x33px for three lines whose colons are
-about one pixel each. The fix is to split the pass and classify each Zone from its
-**full-resolution crop**, which the Extractor already takes seconds later.
+It is not wording. The blocking experiment (issue #13, `tools/classify_probe.py`,
+runs 18-20) measured **three** causes where 0003 argued one:
 
-**Start with the blocking experiment in 0003**: ask the model the Kind question
-against the two crops already on disk. If it answers `prose` and `pairs` again, the
-spec is void and the problem is the model, not the pixels.
+- **Zone 1 — isolation.** Asked on its own it answers `pairs` correctly even at
+  96x33px; it only answers `prose` when asked as one of seven regions.
+- **Zone 4 — resolution, but only for a model that can use it.** `qwen3.5:4b`
+  flips `pairs`->`table` between layout scale and its crop. `qwen3-vl:4b` answers
+  `pairs` at both, 6/6, with the shaded heading row plainly legible.
+- **Neither alone fixes Zone 4** — the crop alone and the model swap alone both
+  leave it wrong.
+
+So the fix is the split **plus** a classification pass routable to its own model,
+defaulting to `qwen3.5:4b` (3.4GB, same budget, already installed) while geometry
+and extraction stay on `qwen3-vl:4b`. Tickets #14-#19 are the work, #14 first.
+
+Nothing about `qwen3.5:4b`'s **geometry** has been measured — it has never run the
+layout pass or touched the other four fixtures. #19 is where that happens.
 
 `docs/specs/0002-structure-not-geometry.md` (issue #11) is the history — the
 measured numbers, the four rejected prompt attempts, and the header-row join that

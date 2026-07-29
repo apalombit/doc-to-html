@@ -1,7 +1,50 @@
 # Classify from the crop, not from the downscaled page
 
-**Status:** open. Continues `0002-structure-not-geometry.md`, which holds the run
-history and the four rejected prompt attempts. Read this for *what to build*.
+**Status:** open, and **amended by measurement** — runs 18, 19 and 20, issue #13.
+Continues `0002-structure-not-geometry.md`, which holds the run history and the
+four rejected prompt attempts. Read this for *what to build*.
+
+## What the blocking experiment measured
+
+The premise below was tested before anything was built, as story 10 asked. It is
+**half right, and the half that is wrong is the half this spec argued hardest**.
+Both Zones, both resolutions, three repeats each, constrained decoding, the Kind
+definitions cut verbatim out of `LAYOUT_PROMPT`:
+
+| Zone | Expected | `qwen3-vl:4b` at layout scale | at its crop | `qwen3.5:4b` at layout scale | at its crop |
+|---|---|---|---|---|---|
+| 1 | `pairs` | `pairs` ✓ | `pairs` ✓ | `pairs` ✓ | `pairs` ✓ |
+| 4 | `table` | `pairs` ✗ | `pairs` ✗ | `pairs` ✗ | **`table` ✓** |
+
+Three separate mechanisms, and this spec had conflated them:
+
+1. **Zone 1 is fixed by isolation, not by resolution.** Asked on its own it comes
+   back `pairs` in all twelve calls — at 96×38, which this spec called too small
+   to see the colons. Asked as one of seven regions it comes back `prose` in runs
+   13, 14 and 15. The evidence always survived; the *question* was crowded. So
+   "both are correct readings of the evidence the model was given" is **false for
+   Zone 1**, and splitting the pass fixes it for a reason this spec did not give.
+2. **Zone 4 is fixed by resolution, but only for a model that can use it.**
+   `qwen3.5:4b` reads it `pairs` at 365×60 and `table` at 819×135 — exactly the
+   effect this spec predicted. `qwen3-vl:4b` reads it `pairs` at both, six times
+   out of six, with the shaded heading row plainly visible at full resolution.
+3. **Neither change alone fixes Zone 4.** The crop alone leaves it wrong; the
+   model swap alone, at layout scale, leaves it wrong. Only both together fix it.
+
+`qwen3.5:4b` is 3.4GB against `qwen3-vl:4b`'s 3.3GB, so it is inside the same
+budget on the same 8GB machine, and it is already installed.
+
+**What this changes about the plan.** The split is still the right shape and its
+two halves are both load-bearing — but classification must be routable to its own
+model, and that routing is now the difference between fixing one mismatch and
+fixing two rather than a convenience. It does not change what to build below;
+it changes why, and it changes the default.
+
+**What it does not license.** Every number here is from `invoice_0001`'s two bad
+Zones. `qwen3.5:4b` has never run the geometry pass, never been measured on the
+other four fixtures, and never converted a document end to end. That it names two
+Kinds correctly is not evidence it lays out a page as well — see 0001 on
+generalising from one measurement.
 
 ## Problem Statement
 
@@ -35,6 +78,11 @@ is a faint band at 27px.
 **Both are correct readings of the evidence the model was given.** Every Kind is
 decided at 2.24× less linear resolution than the crop the Extractor takes seconds
 later from the same page.
+
+> **Measured, and this paragraph is wrong.** Zone 1 answers `pairs` correctly at
+> 96×38 when asked on its own, so its evidence did survive and the reasoning
+> about one-pixel colons was never the cause. Zone 4's shading is legible at
+> 819×135 and `qwen3-vl:4b` still answers `pairs`. See the amendment at the top.
 
 ## Solution
 
@@ -191,6 +239,14 @@ mechanical. **If it answers `prose` and `pairs` again, the resolution hypothesis
 is wrong and this entire spec is void** — the defect would then be the model's
 grasp of the distinction, not the pixels it was shown, and the next move is a
 different model rather than a different pass.
+
+> **Done — `tools/classify_probe.py`, runs 18/19/20.** It answered `pairs` and
+> `pairs`: neither branch this paragraph anticipated. The two-way split it
+> proposed was too coarse, because it held the model fixed. Writing the void
+> condition down still did its job — it forced the question to be asked in
+> twenty minutes rather than after a day of building, and the answer redirected
+> the work instead of confirming it. The probe keeps working after the split of
+> the pass lands; it fails loudly if the Kind block it cuts from has gone.
 
 **Everything in 0002 was measured on `invoice_0001` alone**, as were runs 01–10
 before it. The likeliest casualties of a `table`/`pairs` change are fixture 0002
