@@ -190,6 +190,25 @@ def zone_pixels(image: ImageArray, zone: Zone) -> ImageArray:
     return crop(image, zone.bbox)
 
 
+def over_input_budget(image: ImageArray, zone: Zone) -> int | None:
+    """This Zone's crop height, when it is more than a model can be shown.
+
+    The fact, without the consequence: two passes look at the same crop and are
+    degraded differently by the same shrink — extraction can lose whole rows,
+    classification can lose the shading and the colons that tell one Kind from
+    another. Each says so in its own words; both ask here whether there is
+    anything to say, so a retune of the budget cannot move one and not the other.
+
+    Height rather than area, because height is what slicing would address if it
+    were built: slices are horizontal bands. A Zone merely wider than the budget
+    loses a few percent of scale and no rows.
+    """
+    if zone.bbox is None:
+        return None
+    height = int(zone_pixels(image, zone).shape[0])
+    return height if height > MODEL_INPUT_LONG_EDGE else None
+
+
 DETECT_LONG_EDGE = 800
 """Page edges are a coarse feature. Finding them on a small copy is faster and
 less distracted by the texture of the paper."""

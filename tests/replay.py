@@ -121,6 +121,9 @@ def engines_replaying(transport: ReplayTransport) -> EngineSet:
     settings = Settings()
     return EngineSet(
         layout=OllamaEngine.from_settings(settings, settings.layout_model, transport),
+        classify=OllamaEngine.from_settings(
+            settings, settings.classify_model, transport
+        ),
         extract=OllamaEngine.from_settings(settings, settings.extract_model, transport),
         audit=OllamaEngine.from_settings(settings, settings.audit_model, transport),
     )

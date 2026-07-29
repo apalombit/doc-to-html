@@ -32,6 +32,7 @@ class TestDefaults:
         settings = resolve()
         assert settings.ollama_host == "http://localhost:11434"
         assert settings.layout_model == config.DEFAULT_LAYOUT_MODEL
+        assert settings.classify_model == config.DEFAULT_CLASSIFY_MODEL
         assert settings.extract_model == config.DEFAULT_EXTRACT_MODEL
         assert settings.audit_model == config.DEFAULT_AUDIT_MODEL
         assert settings.num_ctx == config.DEFAULT_NUM_CTX
@@ -124,14 +125,22 @@ class TestEngineSet:
     def test_engines_are_built_from_resolved_configuration(self) -> None:
         settings = resolve(
             DTH_LAYOUT_MODEL="layout-model",
+            DTH_CLASSIFY_MODEL="classify-model",
             DTH_EXTRACT_MODEL="extract-model",
             DTH_AUDIT_MODEL="audit-model",
         )
         engines = default_engines(settings)
         assert isinstance(engines, EngineSet)
         assert engines.layout.model == "layout-model"
+        assert engines.classify.model == "classify-model"
         assert engines.extract.model == "extract-model"
         assert engines.audit.model == "audit-model"
+
+    def test_classification_defaults_to_a_different_model_from_layout(self) -> None:
+        """Not a typo in the defaults: issue #13 measured that the model which
+        lays this page out names one of its Zones' Kind wrong at every
+        resolution it was offered. See `config.DEFAULT_CLASSIFY_MODEL`."""
+        assert config.DEFAULT_CLASSIFY_MODEL != config.DEFAULT_LAYOUT_MODEL
 
     def test_a_cloud_host_and_key_reach_the_client(self) -> None:
         """The promise is that Ollama Cloud is a configuration change. If the

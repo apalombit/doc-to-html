@@ -43,12 +43,20 @@ So the fix is the split **plus** a classification pass routable to its own model
 defaulting to `qwen3.5:4b` (3.4GB, same budget, already installed) while geometry
 and extraction stay on `qwen3-vl:4b`.
 
-**#13 and #14 are done: `OllamaEngine.classify_zone` classifies one Zone from its
-own crop, and nothing calls it yet. #15 is next** — it wires the Orchestrator to
-run geometry → classify → extract, and sets that model default. #15 and #16 share
-a branch and **the suite is red between them by design**: replay serves recorded
-responses by order, so an extra call per Zone puts all five fixtures out of step
-until #16 re-records them.
+**#13, #14 and #15 are done.** `OllamaEngine.classify_zone` classifies one Zone
+from its own crop, and the Orchestrator now runs geometry → classify → extract
+with `DTH_CLASSIFY_MODEL` defaulting to `qwen3.5:4b`. **#16 is next.**
+
+**The replay suite is red right now, and that is #15's expected outcome** — 49
+failures across `test_table_extraction`, `test_acceptance`, `test_pairs_and_prose`,
+`test_list_and_figure` and `test_bakeoff`. Replay serves recorded responses by
+order, so the extra call per Zone means every fixture's classification call eats
+what was recorded as its extraction answer. #16 re-records them. Do not treat
+those failures as a defect, and do not fix them anywhere but #16.
+
+Nothing here has been measured against a real model yet: no conversion has run
+with the split, so the +1 call per Zone has no latency number and `qwen3.5:4b`
+has still never classified inside a real run. That is #19.
 
 Nothing about `qwen3.5:4b`'s **geometry** has been measured — it has never run the
 layout pass or touched the other four fixtures. #19 is where that happens, and it

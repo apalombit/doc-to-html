@@ -22,8 +22,14 @@ from .config import Settings, load
 from .engines.base import VisionEngine
 from .engines.ollama import OllamaEngine
 from .extractors import for_kind, resolution_caveat
-from .ir import Caveat, Document, Failure
-from .preprocess import Rectified, rectify
+from .ir import Caveat, Document, Failure, Zone
+from .preprocess import (
+    MODEL_INPUT_LONG_EDGE,
+    ImageArray,
+    Rectified,
+    over_input_budget,
+    rectify,
+)
 from .render import render
 
 MAX_ROUNDS = 5
@@ -60,12 +66,19 @@ class EngineSet:
     """Which model does what.
 
     Layout and audit default to different families so the auditor does not share
-    the blind spot that caused a miss. The Orchestrator batches by model: all
-    layout and extraction work finishes before the auditor loads, because two
-    vision models resident at once does not fit in 8GB.
+    the blind spot that caused a miss. Classification defaults to a different
+    model again, because issue #13 measured that the model which lays this page
+    out reads one of its Zones' Kind wrong at every resolution it was offered.
+
+    The Orchestrator batches by model, and with three roles on two models that
+    batching is what keeps the cost down: every classification runs together,
+    between all the layout work and all the extraction work, so a document costs
+    two model loads rather than one per Zone. Two vision models resident at once
+    does not fit in 8GB.
     """
 
     layout: VisionEngine
+    classify: VisionEngine
     extract: VisionEngine
     audit: VisionEngine
 
@@ -80,8 +93,33 @@ def default_engines(settings: Settings | None = None) -> EngineSet:
     resolved = settings or load()
     return EngineSet(
         layout=OllamaEngine.from_settings(resolved, resolved.layout_model),
+        classify=OllamaEngine.from_settings(resolved, resolved.classify_model),
         extract=OllamaEngine.from_settings(resolved, resolved.extract_model),
         audit=OllamaEngine.from_settings(resolved, resolved.audit_model),
+    )
+
+
+def classification_caveat(image: ImageArray, zone: Zone) -> str | None:
+    """Whether this Zone's Kind was decided below the resolution it deserved.
+
+    The counterpart of `resolution_caveat`, and the same pixels — but a
+    different loss. Extraction shrunk past the budget can drop rows; a Kind
+    decided on a shrunk crop can lose the very evidence that separates two
+    Kinds, which is the whole finding this pass exists to act on: a shaded
+    heading row over a data row, against two label/value lines, is a distinction
+    made of a few pixels of grey.
+
+    The Zone keeps the Kind either way. A degraded reading beats none, and a
+    Zone with no Kind has no Extractor to route it to — so this is a note on an
+    answer, not a rejection of one.
+    """
+    height = over_input_budget(image, zone)
+    if height is None:
+        return None
+    return (
+        f"classified at reduced resolution: {height}px tall is over the "
+        f"model's {MODEL_INPUT_LONG_EDGE}px input budget, so the Kind was "
+        "decided on a shrunk crop"
     )
 
 
@@ -99,8 +137,35 @@ class Conversion:
     handler: CheckpointHandler = field(default_factory=NullHandler)
     document: Document | None = None
 
+    classified: bool = field(init=False, default=False)
+    """Whether the classification pass has run. See `_classify`.
+
+    `init=False` on this and the two below: they are bookkeeping the passes
+    write as they go, not something a caller configures. Passing a half-finished
+    Conversion in would mean skipping a pass that never ran.
+    """
+
+    unclassified: set[int] = field(init=False, default_factory=set)
+    """Zones whose classification call raised, by index.
+
+    Their Kind is unknown, so extraction has no question to ask about them and
+    skips them. Held here rather than derived from `document.failures` because
+    `_extract` rebuilds that list every round.
+    """
+
+    classification_notes: list[Failure | Caveat] = field(
+        init=False, default_factory=list
+    )
+    """What classification recorded, kept across rounds.
+
+    Classification runs once and extraction runs every round, so `_extract`
+    clearing the Document's Failures and Caveats would erase these on round two.
+    Keeping them here makes classification the owner of its own findings and
+    `_extract` merely the thing that puts them back.
+    """
+
     def run(self) -> Document:
-        """Rectify, lay out, extract, probe, audit, refine until Ladders run dry."""
+        """Rectify, lay out, classify, extract, probe, audit, refine."""
         rectified = rectify(self.source)
         hint = self._ask_opening()
 
@@ -109,6 +174,7 @@ class Conversion:
 
         for _ in range(MAX_ROUNDS):
             self._layout(rectified, document)
+            self._classify(rectified, document)
             self._extract(rectified, document)
 
             document.probes = probe_module.run(document)
@@ -143,7 +209,7 @@ class Conversion:
         return answer.note or None
 
     def _layout(self, rectified: Rectified, document: Document) -> None:
-        """Detect Zones — Band, column, Kind, Role, bbox — on a downscaled page.
+        """Detect Zones — Band, column, Role, bbox — on a downscaled page.
 
         Run once per Conversion, not once per round. A later round refines what
         is *in* the Zones; re-detecting them would discard everything extracted
@@ -155,6 +221,55 @@ class Conversion:
         document.zones = self.engines.layout.detect_zones(
             rectified.image, document.hint
         )
+
+    def _classify(self, rectified: Rectified, document: Document) -> None:
+        """Decide each Zone's Kind from that Zone's own crop.
+
+        A pass of its own, between geometry and extraction, because the two
+        questions want different pixels: where a block is, is coarse work on a
+        downscaled page, while what a block *is* can turn on a shaded heading row
+        that the downscale removes. Issue #13 measured both halves — a Zone asked
+        about on its own is classified correctly at a resolution where the same
+        Zone asked about as one of seven is not, and a Zone needing glyphs needs
+        the crop *and* a model able to use it. Hence a separate pass and a
+        separate model.
+
+        Once per Conversion, for the same reason `_layout` is: the Kind of a
+        block does not change between rounds, and re-asking would spend a call
+        per Zone to be told again what the same pixels are.
+
+        A Zone whose call raises is a Failure on that Zone alone, following the
+        contract extraction already keeps — one bad crop does not cost the
+        document. It is then left out of extraction: with no Kind there is no
+        question to ask about it, and asking anyway would route it on geometry's
+        guess, which is the guess this pass exists to stop trusting.
+        """
+        if self.classified:
+            return
+        self.classified = True
+
+        for index, zone in enumerate(document.zones):
+            try:
+                document.zones[index] = self.engines.classify.classify_zone(
+                    rectified.image, zone, document.hint
+                )
+            except Exception as error:
+                self.unclassified.add(index)
+                self.classification_notes.append(
+                    Failure(
+                        zone_index=index,
+                        kind=zone.kind.value,
+                        reason=f"{type(error).__name__}: {error}",
+                    )
+                )
+                continue
+
+            note = classification_caveat(rectified.image, document.zones[index])
+            if note is not None:
+                self.classification_notes.append(
+                    Caveat(zone_index=index,
+                           kind=document.zones[index].kind.value, note=note)
+                )
 
     def _extract(self, rectified: Rectified, document: Document) -> None:
         """Fill each incomplete Zone from a full-resolution crop of it.
@@ -169,11 +284,20 @@ class Conversion:
         content, because degraded content beats none, and calling it a failure
         would have the render say a Zone could not be read directly above the
         content it read.
+
+        The lists are rebuilt each round rather than appended to, so a Zone read
+        successfully on round two does not keep round one's Failure. What
+        classification found is seeded back in, because that pass ran once and
+        its findings are as true on round two as they were on round one.
         """
-        document.failures = []
-        document.caveats = []
+        document.failures = [
+            note for note in self.classification_notes if isinstance(note, Failure)
+        ]
+        document.caveats = [
+            note for note in self.classification_notes if isinstance(note, Caveat)
+        ]
         for index, zone in enumerate(document.zones):
-            if zone.complete:
+            if zone.complete or index in self.unclassified:
                 continue
             try:
                 for_kind(zone.kind).extract(

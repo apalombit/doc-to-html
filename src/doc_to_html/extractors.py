@@ -21,6 +21,7 @@ from .ir import Kind, Zone
 from .preprocess import (
     MODEL_INPUT_LONG_EDGE,
     ImageArray,
+    over_input_budget,
     slice_points,
     zone_pixels,
 )
@@ -46,10 +47,8 @@ def resolution_caveat(image: ImageArray, zone: Zone) -> str | None:
     loses a few percent of scale and no rows, and flagging that would bury a real
     finding in noise — every full-width Zone of a 1200px page would carry one.
     """
-    if zone.bbox is None:
-        return None
-    height = zone_pixels(image, zone).shape[0]
-    if height <= MODEL_INPUT_LONG_EDGE:
+    height = over_input_budget(image, zone)
+    if height is None:
         return None
     slices = len(slice_points(height, budget=MODEL_INPUT_LONG_EDGE))
     return (

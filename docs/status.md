@@ -43,17 +43,20 @@ things at once.
   both, 6/6.
 
 So the fix is to split the layout pass into geometry and classification, and to
-let classification run on its own model. Progress: #13 and #14 are done — the
-Engine can classify one Zone from its crop, and nothing calls it yet. #15 wires
-it into the Orchestrator, and is next.
+let classification run on its own model. Progress: #13, #14 and #15 are done —
+the Engine can classify one Zone from its crop, and the Orchestrator now runs
+geometry → classify → extract with `DTH_CLASSIFY_MODEL` defaulting to
+`qwen3.5:4b`. **The replay suite is red, by design**: replay serves recorded
+responses by order, so the extra call per Zone puts all five fixtures out of
+step. #16 re-records them and is next. Nothing about this has yet been measured
+against a real model — the numbers above are still #13's probe, not a conversion.
 
 | Issue | | |
 |---|---|---|
 | **#10** | open | Make one image work: `invoice.png`. The live epic. |
 | **#12** | open | Classify from the crop. The current spec, child of #10. |
-| #13, #14 | closed | Experiment; `classify_zone` behind `VisionEngine`. |
-| **#15** | open | **Next.** Orchestrator runs geometry → classify → extract. |
-| #16 | open | Re-record the five fixtures. Shares a branch with #15; the suite is red between them by design. |
+| #13, #14, #15 | closed | Experiment; `classify_zone` behind `VisionEngine`; the Orchestrator driving it. |
+| **#16** | open | **Next.** Re-record the five fixtures. Shares a branch with #15; the suite is red between them by design. |
 | #17 | open | Delete Kind from the layout prompt. |
 | #18 | open | Show each classification beside its crop. |
 | #19 | open | Measure latency and all five fixtures. |
@@ -79,7 +82,7 @@ Everything below describes the ground this stands on.
 | `probes.py` | **implemented** | column-sum, row-product, number parsing across both decimal conventions |
 | `render.py` | **implemented** | IR → self-contained HTML, tolerates partial IR, content-driven column alignment |
 | `checkpoints.py` | **implemented** | `Question`/`Answer`, `NullHandler`, `ScriptedHandler` |
-| `config.py` | **implemented** | Every `.env.example` variable, with a code default and recorded provenance; the only reader of the environment |
+| `config.py` | **implemented** | Every `.env.example` variable, with a code default and recorded provenance; the only reader of the environment. `DTH_CLASSIFY_MODEL` is the one role that does not default to the layout model |
 | `acceptance.py` | **implemented** | What "structurally correct" means, in one place. Used by the harness and the bake-off |
 | `bakeoff.py` | **implemented** | Opt-in measurement of real models. Run partially; see "What the first bake-off found" |
 | `cli.py` | **partial** | `render`, `config` and `convert` work end to end; `--review` exits cleanly |
@@ -88,7 +91,7 @@ Everything below describes the ground this stands on.
 | `engines/ollama.py` | **partial** | `detect_zones`, `classify_zone` and `extract_zone` for all five Kinds are real, with the truncation retry; `read_cell` and `audit_coverage` raise |
 | `engines/tesseract.py` | **stub** | deliberately — see "Open questions" |
 | `extractors.py` | **implemented** | All five crop their Zone and hand it to the Engine; only `TableExtractor.stitch` raises |
-| `orchestrator.py` | **partial** | Layout, extraction with the failure contract, and Probes run. **Does not call `classify_zone` yet** — that is #15. The Coverage Audit and the Ladder are deliberate no-ops for this slice |
+| `orchestrator.py` | **partial** | Geometry, classification and extraction run in that order, each with the failure contract, plus Probes. Classification is routable to its own model and runs once per Conversion. The Coverage Audit and the Ladder are deliberate no-ops for this slice |
 
 ## Fixtures
 

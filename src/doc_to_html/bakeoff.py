@@ -219,16 +219,21 @@ def ollama_resident_for(settings: Settings) -> ResidentFor:
 
 def engines_for(model: str, settings: Settings,
                 transport: Transport) -> EngineSet:
-    """One model in every role.
+    """One model in every role, classification included.
 
-    A bake-off asks how a single model does at the whole job, so layout and
-    extraction share it — which is also how the Orchestrator runs, because two
-    vision models cannot stay resident in 8 GB.
+    A bake-off asks how a single model does at the whole job, so every role
+    shares it. That now differs from the shipped default, which classifies on a
+    second model — so a bake-off measures one model's own ceiling rather than
+    what a production run does, and `--models a,b` cannot express the pairing.
+    Deliberate: the question a bake-off answers is which model to pick for a
+    role, and answering it with another model in the loop confounds it.
+    Measuring the pairing is issue #19's job.
     """
     def engine() -> OllamaEngine:
         return OllamaEngine.from_settings(settings, model, transport=transport)
 
-    return EngineSet(layout=engine(), extract=engine(), audit=engine())
+    return EngineSet(layout=engine(), classify=engine(), extract=engine(),
+                     audit=engine())
 
 
 TransportFor = Callable[[str, str], Transport]

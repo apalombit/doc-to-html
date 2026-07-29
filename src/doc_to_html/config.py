@@ -31,6 +31,24 @@ DEFAULT_OLLAMA_HOST = "http://localhost:11434"
 DEFAULT_LAYOUT_MODEL = "qwen3-vl:4b"
 DEFAULT_EXTRACT_MODEL = "qwen3-vl:4b"
 DEFAULT_AUDIT_MODEL = "granite3.2-vision:latest"
+
+DEFAULT_CLASSIFY_MODEL = "qwen3.5:4b"
+"""The only role whose default is not the model that lays the page out.
+
+Deliberate, and measured rather than assumed. Issue #13 asked both models the
+Kind question about `invoice_0001`'s Zone 4 — a shaded heading row over a data
+row — three times each at two resolutions. `qwen3-vl:4b` answered `pairs` six
+times out of six, including at the full-resolution crop where the shading is
+plainly legible; `qwen3.5:4b` answered `pairs` at layout scale and `table` at
+the crop. Neither the crop alone nor the model alone fixes that Zone, which is
+why the split of the pass and this default arrived together.
+
+3.4GB against `qwen3-vl:4b`'s 3.3GB, so it is inside the same 8GB budget — but
+not *at the same time*, which is why the Orchestrator runs every classification
+together rather than interleaving them with extraction.
+
+Its geometry is unmeasured: it has never run the layout pass, and naming two
+Kinds correctly is not evidence it locates blocks. See issue #19."""
 DEFAULT_LAYOUT_LONG_EDGE = 512
 DEFAULT_NUM_CTX = 8192
 DEFAULT_TIMEOUT_S = 180.0
@@ -80,6 +98,7 @@ class Settings:
     ollama_host: str = DEFAULT_OLLAMA_HOST
     ollama_api_key: str = ""
     layout_model: str = DEFAULT_LAYOUT_MODEL
+    classify_model: str = DEFAULT_CLASSIFY_MODEL
     extract_model: str = DEFAULT_EXTRACT_MODEL
     audit_model: str = DEFAULT_AUDIT_MODEL
     layout_long_edge: int = DEFAULT_LAYOUT_LONG_EDGE
@@ -176,6 +195,7 @@ def load(
             resolve("OLLAMA_HOST", DEFAULT_OLLAMA_HOST),
             resolve("OLLAMA_API_KEY", "", secret=True),
             resolve("DTH_LAYOUT_MODEL", DEFAULT_LAYOUT_MODEL),
+            resolve("DTH_CLASSIFY_MODEL", DEFAULT_CLASSIFY_MODEL),
             resolve("DTH_EXTRACT_MODEL", DEFAULT_EXTRACT_MODEL),
             resolve("DTH_AUDIT_MODEL", DEFAULT_AUDIT_MODEL),
             resolve("DTH_LAYOUT_LONG_EDGE", DEFAULT_LAYOUT_LONG_EDGE),
@@ -190,6 +210,7 @@ def load(
         ollama_host=origins["OLLAMA_HOST"].value,
         ollama_api_key=origins["OLLAMA_API_KEY"].value,
         layout_model=origins["DTH_LAYOUT_MODEL"].value,
+        classify_model=origins["DTH_CLASSIFY_MODEL"].value,
         extract_model=origins["DTH_EXTRACT_MODEL"].value,
         audit_model=origins["DTH_AUDIT_MODEL"].value,
         layout_long_edge=_number(origins["DTH_LAYOUT_LONG_EDGE"], int),
