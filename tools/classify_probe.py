@@ -76,18 +76,22 @@ with the production padding by the diagnostic that draws them.
 
 @dataclass(frozen=True)
 class Case:
-    """One Zone under test, with what the page says it is."""
+    """One Zone under test, with what the page says it is.
+
+    `crop_file` names the Kind run 15 answered, so what went wrong is legible
+    without a second field to hold it: `zone_01_prose.png` is the Zone the model
+    called `prose` and `expected` says is `pairs`.
+    """
 
     index: int
     expected: str
-    got_at_layout: str
     bbox: BBox
     crop_file: str
 
 
 CASES = (
-    Case(1, "pairs", "prose", BBox(0.75, 0.10, 0.94, 0.23), "zone_01_prose.png"),
-    Case(4, "table", "pairs", BBox(0.05, 0.41, 0.94, 0.63), "zone_04_pairs.png"),
+    Case(1, "pairs", BBox(0.75, 0.10, 0.94, 0.23), "zone_01_prose.png"),
+    Case(4, "table", BBox(0.05, 0.41, 0.94, 0.63), "zone_04_pairs.png"),
 )
 """The two Zones, with the boxes run 15's model actually returned.
 
@@ -111,17 +115,6 @@ def prompt_for() -> str:
     words and its numbers are not comparable with theirs.
     """
     return CLASSIFY_PROMPT
-
-
-def layout_view(page: ImageArray, bbox: BBox) -> ImageArray:
-    """The Zone as the layout pass saw it: cut from the downscaled page.
-
-    Cut from the already-downscaled image rather than cropped-then-shrunk,
-    because that is the order the layout pass does it in and the two are not the
-    same picture — resampling a region on its own keeps detail that resampling
-    the whole page throws away.
-    """
-    return crop(page, bbox)
 
 
 def ask(engine: OllamaEngine, image: ImageArray, prompt: str,
@@ -185,7 +178,11 @@ def main(argv: list[str] | None = None) -> int:
     for case in CASES:
         available = {
             "crop": cv2.imread(str(SOURCE_RUN / case.crop_file)),
-            "layout": layout_view(layout_page, case.bbox),
+            # Cut from the already-downscaled page rather than cropped and then
+            # shrunk, because that is the order the layout pass does it in and
+            # the two are not the same picture: resampling a region on its own
+            # keeps detail that resampling the whole page throws away.
+            "layout": crop(layout_page, case.bbox),
         }
         if available["crop"] is None:
             raise SystemExit(f"no {case.crop_file} in {SOURCE_RUN}")

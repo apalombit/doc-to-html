@@ -19,9 +19,10 @@ definitions cut verbatim out of `LAYOUT_PROMPT`:
 Three separate mechanisms, and this spec had conflated them:
 
 1. **Zone 1 is fixed by isolation, not by resolution.** Asked on its own it comes
-   back `pairs` in all twelve calls — at 96×38, which this spec called too small
-   to see the colons. Asked as one of seven regions it comes back `prose` in runs
-   13, 14 and 15. The evidence always survived; the *question* was crowded. So
+   back `pairs` in all twelve of its calls — including the six at 96×38, the size
+   this spec called too small to see the colons. Asked as one of seven regions it
+   comes back `prose` in runs 13, 14 and 15. The evidence always survived; the
+   *question* was crowded. So
    "both are correct readings of the evidence the model was given" is **false for
    Zone 1**, and splitting the pass fixes it for a reason this spec did not give.
 2. **Zone 4 is fixed by resolution, but only for a model that can use it.**
@@ -45,6 +46,16 @@ Zones. `qwen3.5:4b` has never run the geometry pass, never been measured on the
 other four fixtures, and never converted a document end to end. That it names two
 Kinds correctly is not evidence it lays out a page as well — see 0001 on
 generalising from one measurement.
+
+**A cheaper rival this did not test.** If Zone 4 needs pixels and `qwen3.5:4b`
+can use them, then *one* pass at a higher `LAYOUT_LONG_EDGE` on that model might
+fix it without a second call per Zone at all — no extra latency, no recording
+churn, no split. Nothing here rules that out: the isolation finding says Zone 1
+needs the question narrowed rather than the page enlarged, which is an argument
+against it, but it is an argument and not a measurement. Two runs of
+`DTH_LAYOUT_LONG_EDGE=768 MODEL=qwen3.5:4b tools/iterate.sh` would settle it, and
+it is the first thing to try if the split's latency turns out to be the objection
+0003 predicts it will be.
 
 ## Problem Statement
 
@@ -81,8 +92,10 @@ later from the same page.
 
 > **Measured, and this paragraph is wrong.** Zone 1 answers `pairs` correctly at
 > 96×38 when asked on its own, so its evidence did survive and the reasoning
-> about one-pixel colons was never the cause. Zone 4's shading is legible at
-> 819×135 and `qwen3-vl:4b` still answers `pairs`. See the amendment at the top.
+> about one-pixel colons was never the cause. Zone 4's shading is plainly legible
+> at 819×135 — checked by eye against the crop — and `qwen3-vl:4b` still answers
+> `pairs`. Whether it is legible at 365×60 was never checked, and nothing here
+> needs it to be. See the amendment at the top.
 
 ## Solution
 
@@ -246,7 +259,8 @@ different model rather than a different pass.
 > condition down still did its job — it forced the question to be asked in
 > twenty minutes rather than after a day of building, and the answer redirected
 > the work instead of confirming it. The probe keeps working after the split of
-> the pass lands; it fails loudly if the Kind block it cuts from has gone.
+> the pass lands: it asks with whatever `CLASSIFY_PROMPT` currently says, so it
+> keeps measuring the shipped question rather than a frozen copy of it.
 
 **Everything in 0002 was measured on `invoice_0001` alone**, as were runs 01–10
 before it. The likeliest casualties of a `table`/`pairs` change are fixture 0002

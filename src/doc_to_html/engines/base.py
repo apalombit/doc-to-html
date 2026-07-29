@@ -31,15 +31,21 @@ class VisionEngine(Protocol):
 
     def classify_zone(self, image: ImageArray, zone: Zone,
                       hint: str | None = None) -> Zone:
-        """Decide one Zone's Kind from a full-resolution crop of it.
+        """Decide one Zone's Kind, and the fields that depend on reading it.
+
+        **Takes the whole Rectified Image and crops the Zone out itself** — the
+        opposite way round from `extract_zone`, which is handed a crop an
+        Extractor already cut. The asymmetry is deliberate: an Extractor owns
+        decomposition because a table may need slicing, while classification
+        always wants exactly the Zone, so putting the cut here keeps it identical
+        to the one the Extractor makes later. A classifier judging a
+        differently-padded image could name a Kind for one picture while the
+        Extractor reads another.
 
         Separate from `detect_zones` because the two answer different questions
-        about different pixels, and measurably so: a Zone asked about on its own
-        is classified correctly at a resolution where the same Zone, asked about
-        as one of seven, is not. See issue #13.
-
-        Separate from `extract_zone` because which Extractor to run is decided
-        here — the Kind this returns is what routes the Zone to one.
+        about different pixels, and measurably so — see `CLASSIFY_PROMPT` and
+        issue #13. Separate from `extract_zone` because the Kind this returns is
+        what routes the Zone to an Extractor in the first place.
         """
         ...
 

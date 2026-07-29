@@ -15,23 +15,15 @@ from typing import Protocol
 
 from .engines.base import VisionEngine
 from .ir import Kind, Zone
+# `zone_pixels` and its `NoGeometry` live in `preprocess` now, beside the `crop`
+# they use, so the classification pass can cut a Zone out with the same padding
+# an Extractor does without importing the Extractors.
 from .preprocess import (
     MODEL_INPUT_LONG_EDGE,
     ImageArray,
-    NoGeometry,
     slice_points,
     zone_pixels,
 )
-
-__all__ = [
-    "CropAndRead", "Extractor", "FigureExtractor", "ListExtractor", "NoGeometry",
-    "PairsExtractor", "ProseExtractor", "REGISTRY", "TableExtractor", "for_kind",
-    "resolution_caveat", "zone_pixels",
-]
-"""`NoGeometry` and `zone_pixels` live in `preprocess` now, beside the `crop` they
-use, so the classification pass can cut a Zone out with the same padding an
-Extractor does without importing the Extractors. They are re-exported because
-this module is where a reader looks for them."""
 
 
 class Extractor(Protocol):

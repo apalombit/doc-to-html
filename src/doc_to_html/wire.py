@@ -99,12 +99,11 @@ class ClassifyResponse(BaseModel):
     Separate from `WireZone` rather than a subset of it, because the two passes
     are asked different questions about different pixels: geometry sees the whole
     page downscaled and answers about position, this sees one region at full
-    resolution and answers about structure. Issue #13 measured why that matters —
-    a Zone asked about on its own is classified correctly at a resolution where
-    the same Zone, asked about as one of seven, is not.
+    resolution and answers about structure. See `CLASSIFY_PROMPT` for what was
+    measured about that difference.
 
-    Three scalars and no list: the whole question is an enum, and the flattest
-    schema in this file reads the page best.
+    Three scalars and no list, which is this module's standing rule about
+    constrained decoding applied to the smallest question in the pipeline.
     """
 
     kind: Literal["table", "pairs", "prose", "list", "figure"]
@@ -310,7 +309,11 @@ def zones_from_layout(response: LayoutResponse) -> list[Zone]:
 
 
 def classification_into(zone: Zone, content: str) -> Zone:
-    """Apply one Zone's classification to it. Pure, and where validation lives.
+    """Fill in one Zone's Kind from a classification response.
+
+    Fills the Zone in place and returns it, as `contents_into` does — the two are
+    the same move at different stages, and a Zone rebuilt here would drop the
+    geometry the previous pass put on it.
 
     The Kind that arrives is discarded rather than reconciled. Geometry's guess
     was made from a downscaled page and is the thing this pass exists to replace;
@@ -318,6 +321,15 @@ def classification_into(zone: Zone, content: str) -> Zone:
 
     The Zone is *not* marked complete. A Kind is not contents — it says which
     Extractor to run, and a Zone marked complete here would never be read.
+
+    **A Title now depends on the geometry box containing it.** The layout pass
+    used to report a Title independently of its own box, so a box drawn tight
+    still carried the caption above it; read from the crop, a caption outside the
+    box is a caption nobody sees. Every titled Zone in the five fixtures has its
+    Title inside its box — checked against the ground-truth geometry — so this is
+    a coupling the split introduces rather than a defect it has. It becomes
+    load-bearing when #17 removes the layout pass's copy, and it is the thing to
+    look at first if Titles start going missing.
     """
     where = (f"zone in band {zone.band} column {zone.column}")
     try:

@@ -32,7 +32,7 @@ It is not wording. The blocking experiment (issue #13, `tools/classify_probe.py`
 runs 18-20) measured **three** causes where 0003 argued one:
 
 - **Zone 1 — isolation.** Asked on its own it answers `pairs` correctly even at
-  96x33px; it only answers `prose` when asked as one of seven regions.
+  96x38px; it only answers `prose` when asked as one of seven regions.
 - **Zone 4 — resolution, but only for a model that can use it.** `qwen3.5:4b`
   flips `pairs`->`table` between layout scale and its crop. `qwen3-vl:4b` answers
   `pairs` at both, 6/6, with the shaded heading row plainly legible.

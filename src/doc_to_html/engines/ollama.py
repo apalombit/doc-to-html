@@ -152,11 +152,14 @@ separated two causes the layout prompt had conflated:
   and `pairs` at both to `qwen3-vl:4b`, six times out of six.
 
 The `table`/`pairs` wording here says what the heading row *does* rather than
-what it looks like, because shading is legible at both resolutions and decided
-neither answer. **Run 11 measured that sentence and it worked** — Zone 4 came
-back `table` — and run 11 was rejected for breaking Band numbering, not for
-getting the Kind wrong. That failure mode is what the split removes: there is no
-Band numbering in this prompt to break.
+what it looks like. Run 11 tried that sentence inside the layout prompt and the
+`Payment Method` block came back `table` — but 0002 is careful about how far
+that goes, and so is this: that answer had nine Zones with each table
+duplicated, so the indices do not correspond to the expected Zone 4, and the
+layout was rejected before mapping, so no Extractor ever ran against it.
+**Suggestive, not established.** What run 11 does establish is that the sentence
+did not cost the Kind, and that it was rejected for breaking Band numbering —
+which is a failure mode this prompt cannot have, having no Band numbering in it.
 
 Note what has and has not been measured *here*. Runs 18-20 established the
 resolution and isolation effects using the layout prompt's original Kind
