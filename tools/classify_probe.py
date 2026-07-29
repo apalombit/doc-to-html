@@ -25,14 +25,23 @@ Only the pixel count differs, so a difference in the answers is attributable to
 resolution and nothing else. Both images reach the model unresized:
 `resize_long_edge` is a ceiling and never enlarges, and both are under it.
 
-**The Kind definitions are cut out of the shipped layout prompt rather than
-rewritten here.** Four attempts to fix these two Zones by rewording have already
-failed, so an experiment carrying a fifth wording could not separate a resolution
-effect from a prompt effect. If that block ever moves, this script fails loudly
-rather than quietly testing something else.
+**It asks with the shipped `CLASSIFY_PROMPT`, not a wording of its own.** Four
+attempts to fix these two Zones by rewording have already failed, so an
+experiment carrying a fifth wording could not separate a resolution effect from a
+prompt effect.
 
-Writes every raw answer, both images per Zone, the exact prompt and the schema to
-`debug/runs/<label>/`, beside the run whose crops it reuses.
+`--model` and `--conditions` are what make it answer the second question too:
+narrowed to one condition it stops being about resolution and compares models,
+and it says so in the summary rather than printing a verdict about a comparison
+it did not run.
+
+Writes every raw answer, every image it asked about, the exact prompt and the
+schema to `debug/runs/<label>/`, beside the run whose crops it reuses.
+
+**Runs 18, 19 and 20 were taken before `CLASSIFY_PROMPT` existed**, when these
+definitions lived only in `LAYOUT_PROMPT`. Each carries the prompt it actually
+used; a re-run now measures different words, so its numbers stand beside theirs
+rather than replacing them.
 """
 
 from __future__ import annotations
@@ -44,19 +53,17 @@ import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal
 
 import cv2
-from pydantic import BaseModel
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
 from doc_to_html.config import load  # noqa: E402
-from doc_to_html.engines.ollama import LAYOUT_PROMPT, OllamaEngine  # noqa: E402
-from doc_to_html.preprocess import ImageArray, crop  # noqa: E402
+from doc_to_html.engines.ollama import CLASSIFY_PROMPT, OllamaEngine  # noqa: E402
 from doc_to_html.ir import BBox  # noqa: E402
-from doc_to_html.wire import schema_of  # noqa: E402
+from doc_to_html.preprocess import ImageArray, crop  # noqa: E402
+from doc_to_html.wire import ClassifyResponse, schema_of  # noqa: E402
 
 SOURCE_RUN = REPO / "debug" / "runs" / "15-join-split-heading-repeat"
 """The run whose crops and layout image this reuses.
@@ -65,16 +72,6 @@ Reusing them rather than re-cropping from scratch is the point: these are the
 pixels a real `qwen3-vl:4b` was handed when it gave the two wrong answers, cut
 with the production padding by the diagnostic that draws them.
 """
-
-
-class ClassifyResponse(BaseModel):
-    """One Zone's Kind. Flat, and one field: the whole question is an enum.
-
-    Closed for the same reason `WireZone.graphic` is closed — described as a free
-    string, this model answers with text it read off the page.
-    """
-
-    kind: Literal["table", "pairs", "prose", "list", "figure"]
 
 
 @dataclass(frozen=True)
@@ -100,35 +97,20 @@ against a hand-authored box would measure a pass that does not exist.
 """
 
 
-def kind_definitions() -> str:
-    """The `kind` block of the shipped layout prompt, verbatim.
-
-    Cut out rather than restated so this experiment provably asks the question
-    the pipeline asks. Four prompt rewordings have already failed on these two
-    Zones; a fifth one hiding in here would make a positive result meaningless.
-    """
-    start = LAYOUT_PROMPT.find("kind — one of:")
-    end = LAYOUT_PROMPT.find("role — one of:")
-    if start < 0 or end <= start:
-        raise SystemExit(
-            "the layout prompt no longer has a 'kind — one of:' block ending at "
-            "'role — one of:'. This probe cuts the Kind definitions out of it so "
-            "the experiment cannot test a new wording by accident — if the split "
-            "of the pass has already happened, this script has served its purpose."
-        )
-    return LAYOUT_PROMPT[start:end].rstrip()
-
-
 def prompt_for() -> str:
-    """The Kind question, asked about one crop instead of a whole page."""
-    return f"""You are looking at one region, cropped from a page of a document.
+    """The shipped classification prompt, verbatim.
 
-Say what it structurally is.
+    Asking exactly what the pipeline asks is the whole discipline here: four
+    prompt rewordings have already failed on these two Zones, so a fifth one
+    hiding in this script would make any result meaningless.
 
-{kind_definitions()}
-
-Answer for this region only. Do not describe anything outside the crop, and do
-not read the text out."""
+    This used to cut the Kind definitions out of `LAYOUT_PROMPT`, because when
+    runs 18-20 were taken that was the only place they existed. `CLASSIFY_PROMPT`
+    is their home now, and those runs carry the prompt they actually used in
+    their own `prompt.txt` — a re-run after this change is measuring different
+    words and its numbers are not comparable with theirs.
+    """
+    return CLASSIFY_PROMPT
 
 
 def layout_view(page: ImageArray, bbox: BBox) -> ImageArray:
@@ -194,8 +176,8 @@ def main(argv: list[str] | None = None) -> int:
     (out / "commit.txt").write_text(commit.stdout)
 
     print(f"=> {args.label}: {args.model}, {args.repeats} repeats per condition")
-    print(f"   {len(CASES)} zones x 2 conditions x {args.repeats} = "
-          f"{len(CASES) * 2 * args.repeats} calls\n")
+    print(f"   {len(CASES)} zones x {len(conditions)} condition(s) x "
+          f"{args.repeats} = {len(CASES) * len(conditions) * args.repeats} calls\n")
 
     results: dict[tuple[int, str], list[str]] = {}
     rows: list[dict[str, object]] = []

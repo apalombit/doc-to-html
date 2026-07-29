@@ -24,7 +24,7 @@ from __future__ import annotations
 
 from typing import Any, Callable, Literal, NoReturn
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError
 
 from .ir import BBox, Block, Cell, Kind, Pair, Reading, Role, Row, RowRole, Zone
 
@@ -91,6 +91,32 @@ class LayoutResponse(BaseModel):
     """The layout pass: where the regions are, and nothing about their contents."""
 
     zones: list[WireZone]
+
+
+class ClassifyResponse(BaseModel):
+    """What one Zone structurally is, decided from that Zone's own crop.
+
+    Separate from `WireZone` rather than a subset of it, because the two passes
+    are asked different questions about different pixels: geometry sees the whole
+    page downscaled and answers about position, this sees one region at full
+    resolution and answers about structure. Issue #13 measured why that matters —
+    a Zone asked about on its own is classified correctly at a resolution where
+    the same Zone, asked about as one of seven, is not.
+
+    Three scalars and no list: the whole question is an enum, and the flattest
+    schema in this file reads the page best.
+    """
+
+    kind: Literal["table", "pairs", "prose", "list", "figure"]
+    title: str = Field(
+        default="",
+        description="Heading printed above this region and belonging to it; "
+                    "empty string if there is none",
+    )
+    graphic: Literal["", "logo", "chart", "signature", "stamp", "badge"] = Field(
+        default="",
+        description="What a figure is. Empty string for every other kind",
+    )
 
 
 class WireRow(BaseModel):
@@ -281,6 +307,40 @@ def zones_from_layout(response: LayoutResponse) -> list[Zone]:
 
     _validate_bands(zones)
     return zones
+
+
+def classification_into(zone: Zone, content: str) -> Zone:
+    """Apply one Zone's classification to it. Pure, and where validation lives.
+
+    The Kind that arrives is discarded rather than reconciled. Geometry's guess
+    was made from a downscaled page and is the thing this pass exists to replace;
+    keeping it as a tie-breaker would reintroduce the answer being corrected.
+
+    The Zone is *not* marked complete. A Kind is not contents — it says which
+    Extractor to run, and a Zone marked complete here would never be read.
+    """
+    where = (f"zone in band {zone.band} column {zone.column}")
+    try:
+        response = ClassifyResponse.model_validate_json(content)
+    except ValidationError as error:
+        # Named with the answer rather than the field path: a Kind outside the
+        # closed set means the Engine could not constrain its decoding, and
+        # which value it invented is the useful half of that report.
+        raise MappingError(
+            f"{where}: {content.strip()[:120]} is not a classification "
+            f"({error.error_count()} problems)"
+        ) from error
+
+    graphic = response.graphic.strip().lower()
+    if graphic and graphic not in GRAPHIC_KINDS:
+        raise MappingError(
+            f"{where}: graphic {response.graphic!r} is not one of {GRAPHIC_KINDS}"
+        )
+
+    zone.kind = Kind(response.kind)
+    zone.title = response.title.strip() or None
+    zone.graphic_kind = graphic or None
+    return zone
 
 
 def rows_from_table(response: TableResponse, *, read: Read) -> list[Row]:

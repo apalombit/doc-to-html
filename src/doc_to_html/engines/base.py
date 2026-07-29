@@ -29,6 +29,20 @@ class VisionEngine(Protocol):
         """
         ...
 
+    def classify_zone(self, image: ImageArray, zone: Zone,
+                      hint: str | None = None) -> Zone:
+        """Decide one Zone's Kind from a full-resolution crop of it.
+
+        Separate from `detect_zones` because the two answer different questions
+        about different pixels, and measurably so: a Zone asked about on its own
+        is classified correctly at a resolution where the same Zone, asked about
+        as one of seven, is not. See issue #13.
+
+        Separate from `extract_zone` because which Extractor to run is decided
+        here — the Kind this returns is what routes the Zone to one.
+        """
+        ...
+
     def extract_zone(self, image: ImageArray, zone: Zone,
                      hint: str | None = None) -> Zone:
         """Fill in a Zone's contents from a full-resolution crop of it."""

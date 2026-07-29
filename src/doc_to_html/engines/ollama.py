@@ -33,10 +33,13 @@ from ..preprocess import (
     ImageArray,
     resize_long_edge,
     to_png,
+    zone_pixels,
 )
 from ..wire import (
     EXTRACTION_SCHEMAS,
+    ClassifyResponse,
     LayoutResponse,
+    classification_into,
     contents_into,
     schema_of,
     zones_from_layout,
@@ -107,6 +110,59 @@ empty string for every other kind.
 
 Ignore decoration. A horizontal rule, a panel border or a column divider is not
 a region and must not appear in the list."""
+
+CLASSIFY_PROMPT = """You are looking at one region, cropped from a page of a
+document.
+
+Say what it structurally is.
+
+kind — one of:
+  table   a grid of rows and columns under a heading row. The heading row names
+          the columns rather than labelling the values beside it, and is often
+          shaded or ruled off. A grid with a heading row is a table even if only
+          one row of values follows it
+  pairs   label and value lines with no heading row, such as "Invoice No: 12".
+          Each label names the value on its own line and nothing below it
+  prose   headings, paragraphs, addresses, free text
+  list    bulleted or numbered items, or a row of navigation links
+  figure  a logo, chart, stamp, signature or badge
+
+title — a short heading printed at the top of this region and naming the whole of
+it, such as a panel caption or a card title. Use an empty string if there is
+none. Do not invent one, and do not use the first label of a pairs region or the
+first cell of a table heading row.
+
+graphic — for a figure only: logo, chart, signature, stamp or badge. Use an empty
+string for every other kind.
+
+Answer for this region only. Do not describe anything outside the crop, and do
+not read the text out."""
+"""The Kind question, asked about one crop rather than about a whole page.
+
+Split out of `LAYOUT_PROMPT` on measured evidence, not for tidiness. Issue #13
+put both of `example/invoice.png`'s wrong Kinds to a real model twice each, once
+at the resolution the layout pass sees and once at the Zone's own crop, and
+separated two causes the layout prompt had conflated:
+
+- **Isolation.** Zone 1 answers `pairs` correctly at 96x38px when it is the only
+  region in the question, and `prose` when it is one of seven — in runs 13, 14
+  and 15. Its evidence always survived the downscale; the question was crowded.
+- **Resolution, for a model that can use it.** Zone 4 — a shaded heading row over
+  one data row — is `pairs` at 365x60px and `table` at 819x135px to `qwen3.5:4b`,
+  and `pairs` at both to `qwen3-vl:4b`, six times out of six.
+
+The `table`/`pairs` wording here says what the heading row *does* rather than
+what it looks like, because shading is legible at both resolutions and decided
+neither answer. **Run 11 measured that sentence and it worked** — Zone 4 came
+back `table` — and run 11 was rejected for breaking Band numbering, not for
+getting the Kind wrong. That failure mode is what the split removes: there is no
+Band numbering in this prompt to break.
+
+Note what has and has not been measured *here*. Runs 18-20 established the
+resolution and isolation effects using the layout prompt's original Kind
+definitions; this prompt is those plus run 11's sentence. Nothing has yet run
+this exact wording end to end — #19 is where that happens, and where the other
+four fixtures are seen for the first time."""
 
 TABLE_PROMPT = """You are looking at one table, cropped from a page.
 
@@ -370,6 +426,30 @@ class OllamaEngine:
             long_edge=self.layout_long_edge,
         )
         return zones_from_layout(LayoutResponse.model_validate_json(content))
+
+    def classify_zone(self, image: ImageArray, zone: Zone,
+                      hint: str | None = None) -> Zone:
+        """Decide one Zone's Kind from that Zone's own crop.
+
+        Takes the whole Rectified Image and cuts the Zone out itself, with the
+        same helper and the same padding an Extractor uses — a classifier judging
+        a differently-padded image could name a Kind for one picture while the
+        Extractor reads another, and nothing in the IR would say why they
+        disagreed.
+
+        One Zone per call, like `extract_zone` and for the same reason: the loop
+        is the Orchestrator's, so a Zone whose classification fails is a Failure
+        on that Zone rather than on the document.
+        """
+        return classification_into(
+            zone,
+            self.ask(
+                "classify",
+                with_hint(CLASSIFY_PROMPT, hint),
+                zone_pixels(image, zone),
+                schema_of(ClassifyResponse),
+            ),
+        )
 
     def extract_zone(self, image: ImageArray, zone: Zone,
                      hint: str | None = None) -> Zone:

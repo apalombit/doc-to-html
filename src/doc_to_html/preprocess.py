@@ -20,7 +20,7 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
-from .ir import BBox, Source
+from .ir import BBox, Source, Zone
 
 ImageArray = NDArray[Any]
 """Pixels as OpenCV hands them over: (H, W, 3), BGR, uint8."""
@@ -162,6 +162,32 @@ def crop(image: ImageArray, bbox: BBox, *,
     if right - left < 1 or bottom - top < 1:
         raise RectifyError(f"crop for {bbox} is empty at {width}x{height}")
     return np.ascontiguousarray(image[top:bottom, left:right])
+
+
+class NoGeometry(ValueError):
+    """A Zone with no bounding box cannot be cropped, so it cannot be read."""
+
+
+def zone_pixels(image: ImageArray, zone: Zone) -> ImageArray:
+    """This Zone's own pixels, at the resolution the Rectified Image has them.
+
+    Every reader of a single Zone starts here — the Extractors, and the
+    classification pass that decides the Zone's Kind before them. It lives beside
+    `crop` rather than with the Extractors because two callers cutting a Zone out
+    with different padding would be judging different pixels: the classifier
+    would name a Kind for one image and the Extractor would read another, and
+    the two could disagree about what the block is with nothing in the IR to say
+    why.
+
+    The layout pass looked at a downscaled page because finding regions is coarse
+    work. Reading one is not, and this is where the resolution that bought is
+    spent.
+    """
+    if zone.bbox is None:
+        raise NoGeometry(
+            f"{zone.kind.value} Zone in band {zone.band} has no bounding box"
+        )
+    return crop(image, zone.bbox)
 
 
 DETECT_LONG_EDGE = 800

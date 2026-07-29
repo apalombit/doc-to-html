@@ -15,7 +15,23 @@ from typing import Protocol
 
 from .engines.base import VisionEngine
 from .ir import Kind, Zone
-from .preprocess import MODEL_INPUT_LONG_EDGE, ImageArray, crop, slice_points
+from .preprocess import (
+    MODEL_INPUT_LONG_EDGE,
+    ImageArray,
+    NoGeometry,
+    slice_points,
+    zone_pixels,
+)
+
+__all__ = [
+    "CropAndRead", "Extractor", "FigureExtractor", "ListExtractor", "NoGeometry",
+    "PairsExtractor", "ProseExtractor", "REGISTRY", "TableExtractor", "for_kind",
+    "resolution_caveat", "zone_pixels",
+]
+"""`NoGeometry` and `zone_pixels` live in `preprocess` now, beside the `crop` they
+use, so the classification pass can cut a Zone out with the same padding an
+Extractor does without importing the Extractors. They are re-exported because
+this module is where a reader looks for them."""
 
 
 class Extractor(Protocol):
@@ -23,24 +39,6 @@ class Extractor(Protocol):
 
     def extract(self, image: ImageArray, zone: Zone, engine: VisionEngine,
                 hint: str | None = None) -> Zone: ...
-
-
-class NoGeometry(ValueError):
-    """A Zone with no bounding box cannot be cropped, so it cannot be read."""
-
-
-def zone_pixels(image: ImageArray, zone: Zone) -> ImageArray:
-    """This Zone's own pixels, at the resolution the Rectified Image has them.
-
-    Every Extractor starts here. The layout pass looked at a downscaled page
-    because finding regions is coarse work; reading one is not, and this is where
-    the resolution that bought is spent.
-    """
-    if zone.bbox is None:
-        raise NoGeometry(
-            f"{zone.kind.value} Zone in band {zone.band} has no bounding box"
-        )
-    return crop(image, zone.bbox)
 
 
 def resolution_caveat(image: ImageArray, zone: Zone) -> str | None:
