@@ -193,6 +193,38 @@ class TestNothingElseReadsTheEnvironment:
         assert offenders == []
 
 
+class TestTheAuditModelIsAPlaceholder:
+    """`DTH_AUDIT_MODEL` names the same model as layout, which is precisely the
+    arrangement the Coverage Audit is documented as worthless under.
+
+    Safe only because nothing calls it. These two tests are the tripwire: the
+    first records the debt, the second fails the moment the debt comes due.
+    """
+
+    def test_the_audit_shares_the_layout_model_for_now(self) -> None:
+        assert config.DEFAULT_AUDIT_MODEL == config.DEFAULT_LAYOUT_MODEL
+
+    def test_the_coverage_audit_is_still_unwired(self) -> None:
+        """**When this fails, read `config.DEFAULT_AUDIT_MODEL` before fixing it.**
+
+        Implementing `audit_coverage` is what makes the model above start
+        mattering. An auditor sharing the layout model's blind spot cannot see
+        what that blind spot missed, so it would pass every document and report
+        confidence it has not earned — on the one check that catches *absent*
+        content, where a false pass is the whole failure mode. Point
+        `DTH_AUDIT_MODEL` at a second family as part of that work; do not simply
+        delete this test.
+        """
+        import numpy as np
+
+        from doc_to_html.engines.ollama import OllamaEngine
+
+        with pytest.raises(NotImplementedError):
+            OllamaEngine(model="test-model").audit_coverage(
+                np.zeros((10, 10, 3), dtype=np.uint8), []
+            )
+
+
 class TestCli:
     def test_the_config_command_prints_what_resolved(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch,

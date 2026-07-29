@@ -30,7 +30,24 @@ from typing import Callable, Mapping, TypeVar
 DEFAULT_OLLAMA_HOST = "http://localhost:11434"
 DEFAULT_LAYOUT_MODEL = "qwen3-vl:4b"
 DEFAULT_EXTRACT_MODEL = "qwen3-vl:4b"
-DEFAULT_AUDIT_MODEL = "granite3.2-vision:latest"
+DEFAULT_AUDIT_MODEL = "qwen3-vl:4b"
+"""A placeholder, and the one default that is knowingly wrong for its job.
+
+Nothing loads this today: `_audit` is a no-op, `OllamaEngine.audit_coverage`
+raises, and no code path reaches either. So the value names a model that is
+never sent anywhere, and pointing it at the model already on disk keeps
+`doc-to-html config` describing a machine that exists — an 8GB box has no room
+for a second vision family it never calls.
+
+**It must be re-pointed before the Coverage Audit is built.** The audit is the
+only safeguard that catches *absent* content, and it is worth something only
+from a different model family: asking the model that missed a block whether it
+missed a block shares the blind spot that caused the miss. Left at this value it
+would self-audit, pass, and report confidence it has not earned — worse than not
+running, because a silent no-op is at least honest about being one.
+
+`test_the_coverage_audit_is_still_unwired` fails the moment the audit is
+implemented, which is the moment this needs deciding rather than inheriting."""
 
 DEFAULT_CLASSIFY_MODEL = "qwen3-vl:4b"
 """The same model as layout and extraction, deliberately, for now.

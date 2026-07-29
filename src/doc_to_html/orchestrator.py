@@ -65,11 +65,13 @@ class Rung(str, Enum):
 class EngineSet:
     """Which model does what.
 
-    Layout and audit default to different families so the auditor does not share
-    the blind spot that caused a miss. Classification is a role of its own so a
-    model that locates blocks well and one that reads them well need not be the
-    same — though today they are, and `config.DEFAULT_CLASSIFY_MODEL` records
-    what that costs and why it is still the right default.
+    Four roles, one model behind all of them today. Classification is separate so
+    a model that locates blocks well and one that reads them well need not be the
+    same; audit is separate because an auditor sharing the layout model's blind
+    spot cannot catch what that blind spot missed. Neither separation is being
+    *used* right now — `config.DEFAULT_CLASSIFY_MODEL` records what that costs
+    for classification, `DEFAULT_AUDIT_MODEL` why it is only safe while the audit
+    is a no-op.
 
     The Orchestrator batches by model, which is what keeps a mixed set
     affordable: every classification runs together, between all the layout work
@@ -360,6 +362,12 @@ class Conversion:
         miss. Until a second family is wired, content the layout pass never saw
         goes unnoticed. That is the known blind spot of the vision-only slice and
         the strongest argument for building this next.
+
+        `DTH_AUDIT_MODEL` currently names the *same* model as layout, which is
+        the arrangement this docstring calls worthless. That is deliberate and
+        safe only while this method returns immediately — see
+        `config.DEFAULT_AUDIT_MODEL`. Whoever deletes the `return` below owes a
+        second family first.
         """
         return
 
