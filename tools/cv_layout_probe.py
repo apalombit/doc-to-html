@@ -46,9 +46,14 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "tools"))
 
-from doc_to_html.geometry_score import expected_boxes, mean_best_iou  # noqa: E402
+from doc_to_html.geometry_score import (  # noqa: E402
+    expected_boxes,
+    expected_zones,
+    mean_best_iou,
+    score_geometry,
+)
 from doc_to_html.ir import BBox  # noqa: E402
-from doc_to_html.preprocess import rectify  # noqa: E402
+from doc_to_html.preprocess import content_ink, rectify  # noqa: E402
 from layout_probe import FIXTURE, SOURCE  # noqa: E402
 
 
@@ -92,12 +97,139 @@ def zones_from_morphology(image: np.ndarray, kx: float, ky: float,
     return sorted(boxes, key=lambda b: (round(b.top, 2), b.left))
 
 
+def _runs_of_blank(profile: np.ndarray, least: int) -> list[tuple[int, int]]:
+    """Stretches of `least` or more empty lines, as half-open (start, end)."""
+    empty = np.flatnonzero(profile == 0)
+    if empty.size == 0:
+        return []
+    breaks = np.flatnonzero(np.diff(empty) > 1)
+    starts = np.concatenate(([empty[0]], empty[breaks + 1]))
+    ends = np.concatenate((empty[breaks], [empty[-1]]))
+    return [(int(a), int(b) + 1) for a, b in zip(starts, ends)
+            if b + 1 - a >= least]
+
+
+def _slices_between(gaps: list[tuple[int, int]], span: int) -> list[tuple[int, int]]:
+    """What is left once the gaps are removed."""
+    pieces, cursor = [], 0
+    for start, end in gaps:
+        if start > cursor:
+            pieces.append((cursor, start))
+        cursor = end
+    if cursor < span:
+        pieces.append((cursor, span))
+    return pieces
+
+
+def zones_from_xy_cut(mask: np.ndarray, gap: float) -> list[tuple[BBox, int, int]]:
+    """Recursive projection cutting, emitting Bands and columns natively.
+
+    Blind dilation cannot group, because it has no notion of axis alternation: a
+    kernel wide enough to weld a line together is wide enough to weld two columns
+    together, and its best six-region answer welded the whole page into two
+    full-height strips. Cutting alternates axes by construction —
+
+        ink profile down the page -> widest full-width blank bands -> Bands
+          within each Band: profile across -> gutters -> columns
+
+    — which is the IR's own vocabulary rather than a bag of boxes, so its output
+    can be compared with an expected IR on Band and column as well as on
+    position.
+
+    Two levels deep and no further. Cutting naturally produces a split *tree*,
+    and Zones are a flat list by definition; going deeper would need a flattening
+    rule, which is a design decision this probe exists to inform rather than to
+    take. `gap` is a fraction of the page's short edge, applied to both axes so
+    one number sweeps the whole method.
+    """
+    height, width = mask.shape[:2]
+    short_edge = min(width, height)
+    least = max(1, int(gap * short_edge))
+
+    rows = (mask > 0).sum(axis=1)
+    bands = _slices_between(_runs_of_blank(rows, least), height)
+
+    found = []
+    for band_index, (top, bottom) in enumerate(bands):
+        strip = mask[top:bottom]
+        if not strip.any():
+            continue
+        columns = _slices_between(
+            _runs_of_blank((strip > 0).sum(axis=0), least), width)
+        placed = 0
+        for left, right in columns:
+            cell = strip[:, left:right]
+            if not cell.any():
+                continue
+            # Tighten to the cell's own ink: the cut lands in the middle of a
+            # gutter, and a box that keeps half the gutter is not the Zone.
+            ys = np.flatnonzero(cell.any(axis=1))
+            xs = np.flatnonzero(cell.any(axis=0))
+            found.append((
+                BBox((left + int(xs[0])) / width, (top + int(ys[0])) / height,
+                     (left + int(xs[-1]) + 1) / width,
+                     (top + int(ys[-1]) + 1) / height),
+                band_index, placed,
+            ))
+            placed += 1
+    return found
+
+
+def expected_bands(path: Path) -> list[tuple[int, int]]:
+    """The reference IR's own Band and column numbering, in Zone order."""
+    return [
+        (zone.band if zone.band is not None else -1,
+         zone.column if zone.column is not None else -1)
+        for zone in expected_zones(path)
+    ]
+
+
+def xy_cut_report(image: np.ndarray, want: list[BBox],
+                  want_bands: list[tuple[int, int]]) -> list[str]:
+    """Sweep the gap threshold, scored on the same ruler as everything else.
+
+    **Gate 3, from spec 0004.** This earns a follow-up spec only if it produces
+    six Zones on `invoice_0001` *with Bands and columns matching the expected IR*
+    and beats the model's snapped score on `covered` and `splits`. Beating IoU
+    alone is explicitly not enough — morphology's 0.475 is the standing example
+    of a high IoU describing a different page. And `iou` is a secondary field
+    anyway since the calibration in #23 measured the reference at 0.70 against
+    its own ink.
+    """
+    mask = content_ink(image)
+    lines = [
+        "",
+        "xy-cut arm — recursive projection cutting, Bands and columns native",
+        "",
+        "the model's snapped geometry is the bar: 6 Zones, covered 0.99, splits 0",
+        "",
+        f"{'gap':>7}{'zones':>7}{'iou':>8}{'covered':>10}{'splits':>8}"
+        f"{'doubles':>9}   bands match?",
+    ]
+    for gap in (0.008, 0.012, 0.016, 0.02, 0.03, 0.04, 0.06, 0.08):
+        found = zones_from_xy_cut(mask, gap)
+        boxes = [box for box, _, _ in found]
+        got_bands = [(band, column) for _, band, column in found]
+        score = score_geometry(boxes, want, image)
+        matches = (
+            "yes" if got_bands == want_bands
+            else f"no ({len(got_bands)} vs {len(want_bands)})"
+        )
+        lines.append(
+            f"{gap:7.3f}{score.zones:7d}{score.iou:8.3f}{score.covered:10.2f}"
+            f"{score.splits:8d}{score.doubles:9d}   {matches}"
+        )
+    return lines
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--label", default="30-cv-layout")
     parser.add_argument("--min-area", type=float, default=0.0015,
                         help="drop components smaller than this fraction of the "
                              "page — specks, rule fragments, stray marks")
+    parser.add_argument("--arm", default="both",
+                        choices=("morphology", "xy-cut", "both"))
     args = parser.parse_args()
 
     out = REPO / "debug" / "runs" / args.label
@@ -126,13 +258,17 @@ def main() -> int:
         "",
         f"{'kx':>7s}{'ky':>7s}{'zones':>7s}{'mean IoU':>10s}",
     ]
-    best = (0.0, None)
-    for kx, ky in kernels:
-        got = zones_from_morphology(image, kx, ky, args.min_area)
-        value = mean_best_iou(got, want)
-        lines.append(f"{kx:7.3f}{ky:7.3f}{len(got):7d}{value:10.3f}")
-        if value > best[0]:
-            best = (value, (kx, ky, got))
+    best: tuple[float, tuple[float, float, list[BBox]] | None] = (0.0, None)
+    if args.arm in ("morphology", "both"):
+        for kx, ky in kernels:
+            got = zones_from_morphology(image, kx, ky, args.min_area)
+            value = mean_best_iou(got, want)
+            lines.append(f"{kx:7.3f}{ky:7.3f}{len(got):7d}{value:10.3f}")
+            if value > best[0]:
+                best = (value, (kx, ky, got))
+
+    if args.arm in ("xy-cut", "both"):
+        lines += xy_cut_report(image, want, expected_bands(FIXTURE))
 
     if best[1]:
         kx, ky, got = best[1]
