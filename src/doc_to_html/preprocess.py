@@ -168,6 +168,32 @@ class NoGeometry(ValueError):
     """A Zone with no bounding box cannot be cropped, so it cannot be read."""
 
 
+class EmptyZone(ValueError):
+    """A Zone whose crop carries no ink, so there is nothing in it to read."""
+
+
+MIN_ZONE_INK = 0.001
+"""How much of a Zone's crop must be ink before the Zone is believed.
+
+Measured, not chosen. On `example/invoice.png` the six Zones `qwen3-vl:4b`
+returns carry between 1.5% and 18.7% ink (`debug/runs/23-fresh-invoice-e2e/`).
+The two Zones that made `qwen3.5:4b` fabricate content carry **0.0%**
+(`debug/runs/25-invoice-qwen35-longedge768/`, `zone_00` and `zone_01`, 164 and
+170 byte PNGs). The gap between those populations is three orders of magnitude,
+so the threshold sits fifteen times below the sparsest real Zone rather than
+splitting a difference.
+
+Low on purpose. This exists to reject *blank* crops, not thin ones: a signature
+or a one-line note is a real Zone with little ink, and a threshold tuned to catch
+those would start deleting content. On an 819x135 crop 0.1% is about 110 pixels —
+a few glyphs, and less than one character of a heading.
+
+It also clears the noise floor. A photographed blank still measures 0.00% at
+`INK_LEVEL` up to sigma 20 and 0.06% at sigma 20 itself, so the threshold sits
+above what noise alone produces and fifteen times below the sparsest real Zone.
+"""
+
+
 def zone_pixels(image: ImageArray, zone: Zone) -> ImageArray:
     """This Zone's own pixels, at the resolution the Rectified Image has them.
 
@@ -267,6 +293,188 @@ def _ink(gray: ImageArray) -> ImageArray:
     _, mask = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
     binary: ImageArray = mask
     return binary
+
+
+INK_LEVEL = 200
+"""How dark a pixel must be to count as ink, on the equalised grey.
+
+An absolute cut, and **deliberately not Otsu** — which is what `_ink` uses
+everywhere else in this file. The difference is whether the input is guaranteed
+to contain ink. `skew_angle` gets a whole page and Otsu's bimodal assumption
+holds. This gets one Zone's crop, and the entire question is whether that crop
+contains anything at all.
+
+Otsu always splits a histogram into two classes, so on a blank crop it splits
+paper noise and calls half of it ink. Measured on synthetic blanks: 0.0% at
+uniform white, but **30.2% at sigma 2, 47.0% at sigma 8** — sensor noise on a
+photograph of blank paper. A guard built on Otsu would rate an empty crop as the
+densest Zone on the page and pass exactly the case it exists to catch.
+
+An absolute cut is available here only because the Rectified Image has already
+been intensity-equalised — flattening the illumination so a fixed level means
+the same thing across the page is what `equalise` is for. Measured at this
+level: blank crops stay at 0.00% through sigma 20 (0.06%), while the sparsest
+real Zone on `invoice.png` is 1.53%.
+"""
+
+
+def ink_fraction(image: ImageArray) -> float:
+    """How much of this image is ink, between 0 and 1.
+
+    The one measurement in the system that reads the pixels back. Everything else
+    checks the model's answer against another part of the model's answer — Bands
+    against each other, Probe sums against a stated total, extracted content
+    against its Zone's Kind — so a region the model located where nothing is
+    printed passes every existing check and reaches an Extractor, which is asked
+    what a blank image says and answers.
+    """
+    cv2 = _cv2()
+    if image.size == 0:
+        return 0.0
+    grey = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) if image.ndim == 3 else image
+    return float((grey < INK_LEVEL).mean())
+
+
+GAP_MERGE_X = 0.02
+GAP_MERGE_Y = 0.04
+"""How far uncovered ink is spread before it is grouped, as fractions of the page.
+
+Without this the check finds nothing useful: connected components of raw ink are
+*words*, and every word is far below `MIN_GAP_AREA`. On the line-item table
+`qwen3.5:4b` missed entirely, undilated components reported **zero** Gaps for a
+block covering 28% of the page. Spreading first is what turns words into the
+mass a human would call "a table nobody read".
+
+Taller than it is wide, because that is the shape of the merge wanted: lines
+should join into a block, while two columns side by side should stay apart. The
+asymmetry is also where the safety margin is. Measured against `invoice.png`,
+geometry that is *correct* (`debug/runs/23-fresh-invoice-e2e/`) yields no Gaps at
+0.02 x 0.04 and none at 0.02 x 0.06, but **one** at 0.03 x 0.06 and two at
+0.03 x 0.08 — the horizontal term is what starts welding real Zones to their
+neighbours and inventing findings. So the vertical term carries the merging and
+the horizontal one stays well below where false Gaps begin.
+"""
+
+MIN_GAP_AREA = 0.004
+"""How much of the page a patch of uncovered ink must cover to be a Gap.
+
+Sized against what the check exists to catch and what it must ignore. The
+line-item table `qwen3.5:4b` missed entirely in
+`debug/runs/25-invoice-qwen35-longedge768/` spans about 28% of the page — three
+orders of magnitude clear of this. What sits just underneath is padding
+overspill and antialiasing along a Zone edge, which is a few hundred pixels.
+
+Not tuned finer, because a Gap is a *finding* rather than a fact: it enters the
+Ladder and gets looked at again. A threshold precise enough to catch a stray
+word would report one on every document and make the finding worthless.
+"""
+
+MIN_GAP_THICKNESS = 0.01
+"""How thick, as a fraction of the page's short edge, a mark must be to be content.
+
+A **Separator** is ink and is explicitly not a Zone: a horizontal rule, a panel
+border, a column divider. Every one of them is a few pixels thick, so thickness
+is part of telling a rule from a paragraph without knowing what either says.
+
+On `invoice.png` this is about 5.6px against a text line of roughly 15px.
+
+Applied to *raw* ink, before `GAP_MERGE_X`/`GAP_MERGE_Y` spread it. After
+dilation everything is thick — a 3px rule on a 600px page comes out 27px — so a
+thickness test on grouped ink cannot see a Separator at all.
+"""
+
+SEPARATOR_ASPECT = 10.0
+"""How much longer than it is thick a mark must be before it is a Separator.
+
+Thickness alone is not enough, and using it alone deletes content: the stem of a
+letter is as thin as a rule. What distinguishes them is that a rule is also
+*long* — it runs the width of a panel — while a glyph is thin and short.
+
+Requiring both is what lets the check drop a table's ruling without dropping the
+narrow characters in the row above it.
+"""
+
+
+def content_ink(image: ImageArray) -> ImageArray:
+    """Ink a reader would call content, as a binary mask.
+
+    Dark pixels at `INK_LEVEL`, with **Separators removed** — a horizontal rule,
+    a panel border, a column divider. They are ink and are explicitly not
+    content, so anything reasoning about where the content on a page is has to
+    drop them first or it reasons about the ruling too.
+
+    Separators go from the mask rather than from the findings, because grouping
+    welds a rule to whatever sits near it: once a panel border has merged with
+    the paragraph beside it there is no component left that is recognisably a
+    rule.
+    """
+    cv2 = _cv2()
+    height, width = image.shape[:2]
+    grey = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) if image.ndim == 3 else image
+    mask: ImageArray = (grey < INK_LEVEL).astype(np.uint8) * 255
+
+    short_edge = min(width, height)
+    count, labels, stats, _ = cv2.connectedComponentsWithStats(mask, connectivity=8)
+    for i in range(1, count):
+        _, _, w, h, _ = stats[i]
+        thin = min(w, h) < MIN_GAP_THICKNESS * short_edge
+        long_for_its_thickness = max(w, h) >= SEPARATOR_ASPECT * max(1, min(w, h))
+        if thin and long_for_its_thickness:
+            mask[labels == i] = 0
+    return mask
+
+
+def uncovered_ink(image: ImageArray, boxes: list[BBox]) -> list[BBox]:
+    """Patches of ink that no box contains — candidate Gaps.
+
+    The only check in the system that can see content the layout pass never
+    detected. Everything else reasons from the Zones outward, so a block nobody
+    put a Zone on leaves the IR self-consistent and every Probe passing, and the
+    document is simply missing a table.
+
+    Deliberately weaker than the Coverage Audit `orchestrator._audit` describes,
+    and not a substitute for it. This finds *ink*, not content: it cannot tell a
+    decorative mark from a lost paragraph, and it is blind to the other half of
+    the problem — a Zone that covers its content and reads it wrongly. What it
+    has instead is independence. It is not a model, so unlike an auditor sharing
+    the layout model's weights it cannot share the blind spot that caused the
+    miss.
+
+    Boxes are subtracted with the same padding `crop` adds, so ink the Extractor
+    was actually shown is not then reported as ink nobody covered.
+    """
+    cv2 = _cv2()
+    height, width = image.shape[:2]
+
+    # Separators come off the whole page, before any box is subtracted. Doing it
+    # the other way round leaves a rule that a box happens to overlap broken into
+    # stubs too short for the aspect test to recognise, so the half of a rule
+    # nobody covered would be reported as content nobody covered.
+    mask = content_ink(image)
+
+    for box in boxes:
+        left = int(max(0.0, box.left - PAD_X) * width)
+        right = int(min(1.0, box.right + PAD_X) * width)
+        top = int(max(0.0, box.top - PAD_Y) * height)
+        bottom = int(min(1.0, box.bottom + PAD_Y) * height)
+        mask[top:bottom, left:right] = 0
+
+    kernel = cv2.getStructuringElement(
+        cv2.MORPH_RECT,
+        (max(1, int(width * GAP_MERGE_X)), max(1, int(height * GAP_MERGE_Y))),
+    )
+    count, _, stats, _ = cv2.connectedComponentsWithStats(
+        cv2.dilate(mask, kernel), connectivity=8
+    )
+    found = []
+    for i in range(1, count):
+        x, y, w, h, _ = stats[i]
+        if (w * h) / (width * height) < MIN_GAP_AREA:
+            continue
+        found.append(
+            BBox(x / width, y / height, (x + w) / width, (y + h) / height)
+        )
+    return found
 
 
 def _order_corners(quad: ImageArray) -> ImageArray:

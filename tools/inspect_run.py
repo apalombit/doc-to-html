@@ -47,8 +47,19 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 from doc_to_html import geometry_score  # noqa: E402
 from doc_to_html.engines.lenient import canonicalise  # noqa: E402
 from doc_to_html.ir import BBox  # noqa: E402
-from doc_to_html.preprocess import LAYOUT_LONG_EDGE, PAD_X, PAD_Y  # noqa: E402
-from doc_to_html.wire import LayoutResponse, schema_of  # noqa: E402
+from doc_to_html.preprocess import (  # noqa: E402
+    LAYOUT_LONG_EDGE,
+    PAD_X,
+    PAD_Y,
+    ImageArray,
+    rectify,
+)
+from doc_to_html.wire import (  # noqa: E402
+    LayoutResponse,
+    MappingError,
+    schema_of,
+    zones_from_layout,
+)
 
 MODEL_COLOUR = (220, 50, 50)
 EXPECTED_COLOUR = (30, 150, 70)
@@ -162,6 +173,29 @@ def boxes_from_expected(path: Path) -> list[Box]:
             )
         )
     return found
+
+
+def bands_validate(dump: Path) -> bool | None:
+    """Whether this run's Bands and columns would survive mapping into the IR.
+
+    Reported beside the ink because run 25 taught that the two move
+    independently: that answer passed Band validation and scored 0.21 IoU,
+    describing a page it had not been shown. A summary carrying only one of them
+    would have called it a success.
+    """
+    schema = schema_of(LayoutResponse)
+    for path in sorted(dump.glob("*_layout.json"), reverse=True):
+        try:
+            parsed = LayoutResponse.model_validate_json(
+                canonicalise(path.read_text(), schema))
+        except Exception:  # noqa: BLE001 - unparseable is not "invalid Bands"
+            continue
+        try:
+            zones_from_layout(parsed)
+        except MappingError:
+            return False
+        return True
+    return None
 
 
 def _font(size: int) -> ImageFont.ImageFont:
@@ -412,7 +446,53 @@ def contact_sheet(title: str, panels: list[tuple[str, str, str, Image.Image]],
     return "\n".join(parts)
 
 
-def geometry_report(model: list[Box], expected: list[Box]) -> str:
+def _ink_report(model: list[Box], expected: list[Box], page: ImageArray,
+                valid: bool | None = None) -> str:
+    """The same boxes, scored against the pixels instead of against the fixture.
+
+    Reported beside the IoU and never instead of it, and **nothing here rejects a
+    layout**. `splits` and `doubles` are new enough that their thresholds have
+    been measured on exactly one page, and spec 0002 records four prompt changes
+    that were obviously right and cost Band numbering. A guard tuned against a
+    ruler this young would reject good geometry.
+
+    The reference row is the floor. The fixture's own rectangles were typed by
+    hand, so what they score is how well the ruler can possibly be satisfied on
+    this page — a model row is only readable against it.
+    """
+    got = [box.bbox for box in model]
+    want = [box.bbox for box in expected]
+    scored = geometry_score.score_geometry(got, want, page, valid=valid)
+    floor = geometry_score.score_geometry(want, want, page, valid=True)
+
+    def row(label: str, score: geometry_score.GeometryScore) -> str:
+        says = {True: "yes", False: "NO", None: "?"}[score.valid]
+        return (f"{label:11}{score.zones:7d}{score.iou:8.2f}{score.covered:10.2f}"
+                f"{score.splits:8d}{score.doubles:9d}{says:>7}")
+
+    lines = [
+        "against the ink  (reported, never enforced — nothing here rejects a layout)",
+        f"{'':11}{'zones':>7}{'iou':>8}{'covered':>10}{'splits':>8}"
+        f"{'doubles':>9}{'valid':>7}",
+        row("model", scored),
+        row("reference", floor),
+        "",
+    ]
+    for index, box in enumerate(model):
+        one = geometry_score.score_geometry([box.bbox], want, page)
+        note = ""
+        if one.splits:
+            note = f"cuts {one.splits} mass{'es' if one.splits > 1 else ''} of ink"
+        if one.doubles:
+            note = (note + "; " if note else "") + "holds two separated masses"
+        if note:
+            lines.append(f"got {index}  {box.label:22} {note}")
+    return "\n".join(lines)
+
+
+def geometry_report(model: list[Box], expected: list[Box],
+                    page: ImageArray | None = None,
+                    valid: bool | None = None) -> str:
     """Per-box IoU, and the coverage that tells a split from an invention.
 
     Both numbers are printed because they disagree in the interesting case, and
@@ -456,6 +536,10 @@ def geometry_report(model: list[Box], expected: list[Box]) -> str:
         if share < 0.9:
             lines.append(f"want {index} ({want.label}) is only {share:.0%} covered by "
                          f"any single model box")
+
+    if page is not None:
+        lines.append("")
+        lines.append(_ink_report(model, expected, page, valid))
     return "\n".join(lines)
 
 
@@ -524,7 +608,13 @@ def main(argv: list[str] | None = None) -> int:
         zones.append((f"got {index}  {box.label}  -> {name}", crop, answer))
         crop.save(out / f"zone_{index:02d}_{box.kind}.png")
 
-    report = geometry_report(model, expected)
+    # The ruler measures the Rectified Image, because that is the page the
+    # Orchestrator put the boxes on. The panels above draw on the Source Image,
+    # which is the page a reader recognises; on a photograph the two differ by a
+    # deskew and a warp, and scoring the wrong one would quietly measure the
+    # rectifier instead of the layout pass.
+    report = geometry_report(model, expected, rectify(args.source).image,
+                             bands_validate(args.dump))
     print(report)
 
     for slug, _heading, _note, image in panels:

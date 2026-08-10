@@ -57,9 +57,17 @@ sys.path.insert(0, str(REPO / "src"))
 
 from doc_to_html.config import load  # noqa: E402
 from doc_to_html.engines.ollama import LAYOUT_PROMPT, OllamaEngine  # noqa: E402
-from doc_to_html.geometry_score import expected_boxes, mean_best_iou  # noqa: E402
+from doc_to_html.geometry_score import (  # noqa: E402
+    GeometryScore,
+    expected_boxes,
+    score_geometry,
+)
 from doc_to_html.ir import BBox  # noqa: E402
-from doc_to_html.preprocess import rectify, resize_long_edge  # noqa: E402
+from doc_to_html.preprocess import (  # noqa: E402
+    ImageArray,
+    rectify,
+    resize_long_edge,
+)
 from doc_to_html.wire import (  # noqa: E402
     LayoutResponse,
     MappingError,
@@ -117,40 +125,45 @@ ARMS = ("shipped", "dims", "anchored")
 
 @dataclass(frozen=True)
 class Scored:
-    """What one layout call was worth."""
+    """What one layout call was worth, and why if it was worth nothing."""
 
-    mean_iou: float
-    zones: int
-    valid: bool
+    geometry: GeometryScore
     detail: str
 
 
-def score(content: str, want: list[BBox]) -> Scored:
-    """Mean best IoU over the model's boxes, and whether the Bands validate.
+def nothing_came_back(detail: str, *, valid: bool) -> Scored:
+    return Scored(GeometryScore(0, 0.0, 0.0, 0, 0, valid), detail)
 
-    Both numbers, because run 25 produced geometry that validated and scored
-    0.21: legality and correctness move independently here, and a summary that
-    reported only one of them would have called that run a success.
+
+def score(content: str, want: list[BBox], image: ImageArray) -> Scored:
+    """The shared six-field record, plus whether the Bands validate.
+
+    Both, because run 25 produced geometry that validated and scored 0.21:
+    legality and correctness move independently here, and a summary that reported
+    only one of them would have called that run a success.
+
+    The record is the same one a run's contact sheet prints, so a row here and a
+    line there are the same measurement rather than two that have to be
+    reconciled by whoever is reading both.
     """
     try:
         parsed = LayoutResponse.model_validate_json(content)
     except Exception as exc:  # noqa: BLE001 - any parse failure is one outcome
-        return Scored(0.0, 0, False, f"unparseable: {type(exc).__name__}")
+        return nothing_came_back(f"unparseable: {type(exc).__name__}", valid=False)
 
     valid, detail = True, "ok"
     try:
-        zones = zones_from_layout(parsed)
+        zones_from_layout(parsed)
     except MappingError as exc:
         valid, detail = False, f"MappingError: {exc}"
-        zones = []
 
     got = [
         BBox(z.left, z.top, z.right, z.bottom)
         for z in parsed.zones
     ]
     if not got:
-        return Scored(0.0, 0, valid, detail)
-    return Scored(mean_best_iou(got, want), len(got), valid, detail)
+        return nothing_came_back(detail, valid=valid)
+    return Scored(score_geometry(got, want, image, valid=valid), detail)
 
 
 def main() -> int:
@@ -207,24 +220,31 @@ def main() -> int:
                         )
                     except Exception as exc:  # noqa: BLE001
                         content = ""
-                        scored = Scored(
-                            0.0, 0, False, f"{type(exc).__name__}: {exc}")
+                        scored = nothing_came_back(
+                            f"{type(exc).__name__}: {exc}", valid=False)
                     else:
-                        scored = score(content, want)
+                        scored = score(content, want, rectified.image)
                     took = time.perf_counter() - started
                     stem = f"{model.replace(':', '_')}__{arm}__{edge}__{run}"
                     (out / f"{stem}.json").write_text(content)
                     results.setdefault((model, arm, edge), []).append(scored)
+                    got = scored.geometry
                     print(f"  {model:12s} {arm:9s} edge {edge:4d} #{run}  "
-                          f"IoU {scored.mean_iou:.3f}  zones {scored.zones}  "
-                          f"{'valid' if scored.valid else 'INVALID'}  "
+                          f"IoU {got.iou:.3f}  covered {got.covered:.2f}  "
+                          f"splits {got.splits:3d}  zones {got.zones}  "
+                          f"{'valid' if got.valid else 'INVALID'}  "
                           f"{took:5.1f}s", file=sys.stderr)
 
+    floor = score_geometry(want, want, rectified.image)
     lines = [
         f"layout probe — {args.repeats} repeats, long edges {edges}",
         "",
+        f"the reference boxes score covered {floor.covered:.2f}, "
+        f"splits {floor.splits}, doubles {floor.doubles} — the floor, and they "
+        f"were eyeballed",
+        "",
         f"{'model':13s}{'arm':10s}{'edge':>6s}{'mean IoU':>10s}"
-        f"{'zones':>7s}{'valid':>7s}",
+        f"{'covered':>9s}{'splits':>8s}{'doubles':>9s}{'zones':>7s}{'valid':>7s}",
     ]
     for model in models:
         for arm in arms:
@@ -232,12 +252,15 @@ def main() -> int:
                 cells = results.get((model, arm, edge), [])
                 if not cells:
                     continue
-                mean = statistics.fmean(c.mean_iou for c in cells)
-                zones = statistics.fmean(c.zones for c in cells)
-                valid = sum(c.valid for c in cells)
+                got = [c.geometry for c in cells]
                 lines.append(
-                    f"{model:13s}{arm:10s}{edge:6d}{mean:10.3f}{zones:7.1f}"
-                    f"{valid:>4d}/{len(cells)}"
+                    f"{model:13s}{arm:10s}{edge:6d}"
+                    f"{statistics.fmean(c.iou for c in got):10.3f}"
+                    f"{statistics.fmean(c.covered for c in got):9.2f}"
+                    f"{statistics.fmean(c.splits for c in got):8.1f}"
+                    f"{statistics.fmean(c.doubles for c in got):9.1f}"
+                    f"{statistics.fmean(c.zones for c in got):7.1f}"
+                    f"{sum(bool(c.valid) for c in got):>4d}/{len(cells)}"
                 )
     lines += ["", "detail:"]
     for (model, arm, edge), cells in results.items():

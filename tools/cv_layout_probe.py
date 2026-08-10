@@ -65,7 +65,7 @@ def ink_mask(image: np.ndarray) -> np.ndarray:
     return binary
 
 
-def zones_from_morphology(image: np.ndarray, kx: int, ky: int,
+def zones_from_morphology(image: np.ndarray, kx: float, ky: float,
                           min_area: float) -> list[BBox]:
     """Connected components of dilated ink, as normalised boxes.
 
