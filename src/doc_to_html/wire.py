@@ -198,7 +198,7 @@ def _validate_box(wire: WireZone, where: str) -> BBox:
     return BBox(wire.left, wire.top, wire.right, wire.bottom)
 
 
-def _validate_bands(zones: list[Zone]) -> None:
+def validate_bands(zones: list[Zone]) -> None:
     """Bands must be horizontal stripes, read top to bottom, left to right.
 
     This is the check that catches a model which numbered Bands by reading order
@@ -304,7 +304,7 @@ def zones_from_layout(response: LayoutResponse) -> list[Zone]:
             )
         )
 
-    _validate_bands(zones)
+    validate_bands(zones)
     return zones
 
 

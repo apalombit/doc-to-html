@@ -12,7 +12,8 @@ one round.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+import logging
+from dataclasses import dataclass, field, replace
 from enum import Enum
 from pathlib import Path
 
@@ -22,15 +23,24 @@ from .config import Settings, load
 from .engines.base import VisionEngine
 from .engines.ollama import OllamaEngine
 from .extractors import for_kind, resolution_caveat
-from .ir import Caveat, Document, Failure, Zone
+from .ir import Caveat, Document, Failure, Gap, Zone
 from .preprocess import (
+    MIN_ZONE_INK,
     MODEL_INPUT_LONG_EDGE,
+    EmptyZone,
     ImageArray,
     Rectified,
+    ink_fraction,
+    snap_to_ink,
     long_edge_over_input_budget,
     rectify,
+    uncovered_ink,
+    zone_pixels,
 )
 from .render import render
+from .wire import MappingError, validate_bands
+
+log = logging.getLogger(__name__)
 
 MAX_ROUNDS = 5
 """A backstop, not a control.
@@ -115,6 +125,79 @@ def failed(index: int, zone: Zone, error: Exception) -> Failure:
         zone_index=index,
         kind=zone.kind.value,
         reason=f"{type(error).__name__}: {error}",
+    )
+
+
+def snapped_or_original(image: ImageArray, zones: list[Zone]) -> list[Zone]:
+    """The Engine's Zones with their boxes moved onto the ink, or unchanged.
+
+    The Orchestrator is the seam rather than the Engine, deliberately. Snapping
+    belongs to *any* Engine's answer, not to Ollama's, and routing and policy
+    already live here.
+
+    **A deterministic repair must never be able to cost a Conversion.** Snapping
+    cannot create an overlap by construction, but "cannot" is an argument and
+    this is a Conversion, so the snapped Zones are put back through the same Band
+    validation the wire mapper applies and the originals are kept if they no
+    longer pass. Falling back silently is the right behaviour: the unsnapped
+    geometry is exactly what shipped before, so the worst case is the status quo.
+
+    Measured on the shipped answer for `example/invoice.png`: covered 0.82 -> 0.99
+    and splits 46 -> 0, with the Zone count unchanged. See
+    `debug/runs/35-snap-offline/`.
+    """
+    boxes = [zone.bbox for zone in zones]
+    if not zones or any(box is None for box in boxes):
+        return zones
+
+    snapped = snap_to_ink(image, [box for box in boxes if box is not None])
+    moved = [replace(zone, bbox=box) for zone, box in zip(zones, snapped)]
+    try:
+        validate_bands(moved)
+    except MappingError as exc:
+        log.warning(
+            "snapping the layout boxes to the ink made the Bands invalid (%s), "
+            "so the Conversion continues on the geometry as the Engine returned "
+            "it", exc,
+        )
+        return zones
+    return moved
+
+
+def empty_zone(image: ImageArray, zone: Zone) -> EmptyZone | None:
+    """Whether this Zone's crop is blank, and so holds nothing to classify.
+
+    The first check in the pipeline that reads the pixels back. Every other
+    safeguard compares the model's answer to another part of the model's answer,
+    so a Zone placed where nothing is printed satisfies all of them: it can sit
+    in a legal Band, carry a plausible Kind, and reach an Extractor.
+
+    What that costs is measured. In `debug/runs/25-invoice-qwen35-longedge768/`
+    the geometry pass returned six boxes that passed `validate_bands` and
+    collapsed every region to a single line; two of the crops carried 0.0% ink.
+    The classifier was asked what Kind of content a blank image holds and said
+    `prose`; the prose Extractor was handed the same blank image and returned
+    "The following is a sample paragraph. Heading". Neither call malfunctioned.
+    Both were asked a question with no true answer, and a question with no true
+    answer gets an invented one.
+
+    So this rejects the question rather than the answer, and it returns the
+    exception instead of raising it because the caller is a loop that must record
+    a Failure and carry on to the next Zone — one blank crop does not cost the
+    document.
+
+    Returns None for a Zone with no bbox: that is `NoGeometry`'s business, and
+    `zone_pixels` reports it with the better message.
+    """
+    if zone.bbox is None:
+        return None
+    fraction = ink_fraction(zone_pixels(image, zone))
+    if fraction >= MIN_ZONE_INK:
+        return None
+    return EmptyZone(
+        f"the crop for this Zone is blank — {fraction * 100:.2f}% ink, under the "
+        f"{MIN_ZONE_INK * 100:.2f}% a Zone must carry. Geometry placed a region "
+        "where nothing is printed, so there is nothing here to read"
     )
 
 
@@ -259,9 +342,8 @@ class Conversion:
         """
         if document.zones:
             return
-        document.zones = self.engines.layout.detect_zones(
-            rectified.image, document.hint
-        )
+        zones = self.engines.layout.detect_zones(rectified.image, document.hint)
+        document.zones = snapped_or_original(rectified.image, zones)
 
     def _classify(self, rectified: Rectified, document: Document) -> None:
         """Decide each Zone's Kind from that Zone's own crop.
@@ -291,6 +373,9 @@ class Conversion:
 
         for index, zone in enumerate(document.zones):
             try:
+                empty = empty_zone(rectified.image, zone)
+                if empty is not None:
+                    raise empty
                 document.zones[index] = self.engines.classify.classify_zone(
                     rectified.image, zone, document.hint
                 )
@@ -356,20 +441,37 @@ class Conversion:
         one that catches content that is *absent* — a failure which otherwise
         leaves the IR internally consistent and every Probe passing.
 
-        Not run yet, and deliberately not faked: an audit is only worth anything
-        from a *different model family*, because asking the model that missed a
-        block whether it missed a block shares the blind spot that caused the
-        miss. Until a second family is wired, content the layout pass never saw
-        goes unnoticed. That is the known blind spot of the vision-only slice and
-        the strongest argument for building this next.
+        **Two layers, and only the cheaper one is built.**
 
-        `DTH_AUDIT_MODEL` currently names the *same* model as layout, which is
-        the arrangement this docstring calls worthless. That is deliberate and
-        safe only while this method returns immediately — see
-        `config.DEFAULT_AUDIT_MODEL`. Whoever deletes the `return` below owes a
-        second family first.
+        What runs is `uncovered_ink`: dark pixels the Zones do not account for,
+        grouped and reported as Gaps. It is not a model, which is the entire
+        reason it is allowed to run — an auditor sharing the layout model's
+        weights shares the blind spot that caused the miss, and would pass every
+        document while reporting confidence it has not earned. A threshold on
+        pixels shares nothing with the model, so it cannot be fooled the same
+        way. Measured on `example/invoice.png`: correct geometry produces no Gaps
+        and the sliver geometry of `debug/runs/25-invoice-qwen35-longedge768/`,
+        which lost the entire line-item table, produces Gaps over 21% of the
+        page.
+
+        What is *not* built is the Coverage Audit proper. Ink is not content:
+        this cannot tell a stamp from a lost paragraph, and it is entirely blind
+        to a Zone that covers its content and reads it wrongly — which is the
+        larger half of the problem. `OllamaEngine.audit_coverage` still raises,
+        `DTH_AUDIT_MODEL` still names the layout model and is still never sent
+        anywhere, and `config.DEFAULT_AUDIT_MODEL` still needs re-pointing at a
+        second family before that method is written. Nothing here discharges that
+        debt; it narrows the window in which the debt is invisible.
         """
-        return
+        boxes = [zone.bbox for zone in document.zones if zone.bbox is not None]
+        # The note says how the finding was made, because that is what bounds
+        # how far to trust it. `_findings` already prints that something lies
+        # outside every Zone; what it cannot say is that a threshold on dark
+        # pixels found it, and so this may be a Mark rather than lost content.
+        document.gaps = [
+            Gap(bbox=box, note="found by ink coverage, so it may be a mark")
+            for box in uncovered_ink(rectified.image, boxes)
+        ]
 
     def _climb_ladders(self, rectified: Rectified, document: Document) -> None:
         """Advance every unresolved item one Rung.

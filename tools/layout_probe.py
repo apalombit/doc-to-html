@@ -31,7 +31,7 @@ the appended text and nothing else.
 
 **Scored against the expected IR, not by eye.** Mean best IoU over the model's
 boxes is the same number `tools/inspect_run.py` prints, so a probe result and a
-run's contact sheet are comparable. `_validate_bands` is run too: run 25 taught
+run's contact sheet are comparable. `validate_bands` is run too: run 25 taught
 that passing validation and being right are independent, and a prompt that buys
 legality while keeping the boxes wrong is a worse outcome than an honest refusal.
 
@@ -46,6 +46,7 @@ load. What they answer is unaffected, which is the only thing this asks about.
 from __future__ import annotations
 
 import argparse
+import json
 import statistics
 import sys
 import time
@@ -55,7 +56,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
-from doc_to_html.config import load  # noqa: E402
+from doc_to_html.config import Settings, load  # noqa: E402
 from doc_to_html.engines.ollama import LAYOUT_PROMPT, OllamaEngine  # noqa: E402
 from doc_to_html.geometry_score import (  # noqa: E402
     GeometryScore,
@@ -166,8 +167,74 @@ def score(content: str, want: list[BBox], image: ImageArray) -> Scored:
     return Scored(score_geometry(got, want, image, valid=valid), detail)
 
 
+def sweep_fixtures(out: Path, names: list[str], model: str, repeats: int,
+                   edge: int, settings: Settings) -> int:
+    """The geometry pass alone, across documents, at one call per repeat.
+
+    Four of the five fixtures have never had their geometry measured by anything.
+    Every number spec 0004 rests on comes from `invoice_0001`, and snapping would
+    be the first change to geometry in this project's history — it should not
+    ship as another finding from one page.
+
+    They do not need Conversions to be measured. Layout is one call, so five
+    fixtures at two repeats is ten calls and a few minutes, against roughly four
+    minutes for a single full Conversion. Answers are written in the dump layout
+    `snap_probe.py` reads, so pricing the snap on them afterwards costs nothing.
+    """
+    engine = OllamaEngine.from_settings(settings, model)
+    lines = [
+        f"layout-only sweep — {model}, long edge {edge}, {repeats} repeats",
+        "",
+        f"{'fixture':24}{'zones':>7}{'iou':>8}{'covered':>10}{'splits':>8}"
+        f"{'doubles':>9}{'valid':>7}{'seconds':>9}",
+    ]
+    for name in names:
+        expected = REPO / "tests" / "fixtures" / f"{name}.expected.json"
+        source = REPO / json.loads(expected.read_text())["source"]["path"]
+        if not source.exists():
+            lines.append(f"{name:24}  source missing at {source}")
+            continue
+
+        rectified = rectify(source)
+        want = expected_boxes(expected)
+        for run in range(repeats):
+            started = time.perf_counter()
+            try:
+                content = engine.ask(
+                    "layout", LAYOUT_PROMPT, rectified.image,
+                    schema_of(LayoutResponse), long_edge=edge,
+                )
+            except Exception as exc:  # noqa: BLE001
+                lines.append(f"{name:24}  {type(exc).__name__}: {exc}")
+                continue
+            took = time.perf_counter() - started
+
+            dump = out / "dump" / model.replace(":", "_") / name
+            dump.mkdir(parents=True, exist_ok=True)
+            (dump / f"{run:02d}_layout.json").write_text(content)
+
+            got = score(content, want, rectified.image).geometry
+            lines.append(
+                f"{name[:23]:24}{got.zones:7d}{got.iou:8.2f}{got.covered:10.2f}"
+                f"{got.splits:8d}{got.doubles:9d}"
+                f"{'yes' if got.valid else 'NO':>7}{took:9.1f}"
+            )
+            print(f"  {name:24} zones {got.zones}  covered {got.covered:.2f}  "
+                  f"splits {got.splits}  {took:.1f}s", file=sys.stderr)
+
+    report = "\n".join(lines)
+    (out / "sweep.txt").write_text(report + "\n")
+    print()
+    print(report)
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--fixtures", default=None,
+                        help="comma-separated fixture names, or 'all'. Runs the "
+                             "geometry pass only, on the shipped prompt, and "
+                             "skips the arm comparison entirely.")
     parser.add_argument("--label", default="26-layout-frame")
     parser.add_argument("--repeats", type=int, default=2)
     parser.add_argument("--models", default="qwen3-vl:4b,qwen3.5:4b")
@@ -187,13 +254,23 @@ def main() -> int:
     out.mkdir(parents=True)
 
     settings = load()
-    rectified = rectify(SOURCE)
-    want = expected_boxes(FIXTURE)
-
     edges = (
         [int(e) for e in args.long_edges.split(",") if e]
         or [settings.layout_long_edge]
     )
+
+    if args.fixtures:
+        names = (
+            sorted(p.name.replace(".expected.json", "")
+                   for p in (REPO / "tests" / "fixtures").glob("*.expected.json"))
+            if args.fixtures == "all"
+            else [n for n in args.fixtures.split(",") if n]
+        )
+        model = [m for m in args.models.split(",") if m][0]
+        return sweep_fixtures(out, names, model, args.repeats, edges[0], settings)
+
+    rectified = rectify(SOURCE)
+    want = expected_boxes(FIXTURE)
     models = [m for m in args.models.split(",") if m]
     arms = [a for a in args.arms.split(",") if a]
 

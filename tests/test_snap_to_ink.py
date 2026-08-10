@@ -15,8 +15,11 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+from dataclasses import replace
+
 from doc_to_html.geometry_score import iou
-from doc_to_html.ir import BBox
+from doc_to_html.ir import BBox, Kind, Role, Zone
+from doc_to_html.orchestrator import snapped_or_original
 from doc_to_html.preprocess import MAX_SNAP_GROWTH, snap_to_ink
 
 HEIGHT, WIDTH = 600, 800
@@ -116,7 +119,7 @@ class TestWhatItMustNeverDo:
     def test_it_cannot_make_two_boxes_overlap(self) -> None:
         """Both boxes want the same ink; neither may cross the midpoint.
 
-        A layout that satisfied `_validate_bands` before the snap has to satisfy
+        A layout that satisfied `validate_bands` before the snap has to satisfy
         it afterwards, or a deterministic improvement has cost a Conversion.
         """
         page = paper()
@@ -222,3 +225,67 @@ class TestTheMeasuredAnswers:
         once = snap_to_ink(page, list(self.SHIPPED))
 
         assert snap_to_ink(page, once) == once
+
+
+class TestTheOrchestratorKeepsWhatWorks:
+    """Wiring, and the promise attached to it.
+
+    The snap cannot create an overlap by construction, but "cannot" is an
+    argument and a Conversion is a document someone is waiting for. So the
+    Orchestrator re-validates and keeps the Engine's own geometry if the snapped
+    Zones no longer pass — the worst case is exactly what shipped before.
+    """
+
+    def zones(self, boxes: list[BBox]) -> list[Zone]:
+        return [
+            Zone(kind=Kind.PROSE, role=Role.BODY, bbox=b, band=i, column=0)
+            for i, b in enumerate(boxes)
+        ]
+
+    def test_good_geometry_is_snapped_onto_its_ink(self) -> None:
+        page = page_with_one_block()
+        loose = self.zones([box(50, 200, 600, 340)])
+
+        moved = snapped_or_original(page, loose)
+
+        assert moved[0].bbox is not None
+        assert pixels(moved[0].bbox) == (100, 240, 500, 280)
+
+    def test_geometry_that_would_stop_validating_is_kept_as_it_was(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """The snap is forced to misbehave, because by construction it cannot.
+
+        Overlap is impossible through the midpoint cap, so there is no page that
+        provokes this naturally. The policy is still worth a test: it is the
+        promise that a deterministic step can never cost a Conversion, and a
+        promise nothing exercises is a comment.
+        """
+        page = page_with_one_block()
+        original = self.zones([box(100, 240, 500, 280),
+                               box(100, 300, 500, 340)])
+        original[1] = replace(original[1], band=1)
+
+        def swaps_the_bands(image: np.ndarray,
+                            boxes: list[BBox]) -> list[BBox]:
+            return list(reversed(boxes))
+
+        monkeypatch.setattr("doc_to_html.orchestrator.snap_to_ink",
+                            swaps_the_bands)
+
+        kept = snapped_or_original(page, original)
+
+        assert kept == original, "a layout that validated before must survive"
+
+    def test_a_zone_without_geometry_leaves_every_box_alone(self) -> None:
+        """One Zone with no bbox cannot be snapped, and must not silently drop
+        the others by shifting them onto the wrong Zones."""
+        page = page_with_one_block()
+        mixed = self.zones([box(50, 200, 600, 340)])
+        mixed.append(Zone(kind=Kind.PROSE, role=Role.BODY, bbox=None,
+                          band=1, column=0))
+
+        assert snapped_or_original(page, mixed) == mixed
+
+    def test_no_zones_is_not_a_crash(self) -> None:
+        assert snapped_or_original(page_with_one_block(), []) == []
