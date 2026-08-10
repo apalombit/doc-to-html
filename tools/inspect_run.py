@@ -44,7 +44,9 @@ from PIL import Image, ImageChops, ImageDraw, ImageFont
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
+from doc_to_html import geometry_score  # noqa: E402
 from doc_to_html.engines.lenient import canonicalise  # noqa: E402
+from doc_to_html.ir import BBox  # noqa: E402
 from doc_to_html.preprocess import LAYOUT_LONG_EDGE, PAD_X, PAD_Y  # noqa: E402
 from doc_to_html.wire import LayoutResponse, schema_of  # noqa: E402
 
@@ -77,16 +79,21 @@ class Box:
             int(self.right * width), int(self.bottom * height),
         )
 
+    @property
+    def bbox(self) -> BBox:
+        """The rectangle alone, as the domain type the shared ruler measures.
+
+        A `Box` is a rectangle plus what a run claimed about it — kind, role,
+        Band, column — which the scorer has no business knowing. This is the
+        seam between the two.
+        """
+        return BBox(self.left, self.top, self.right, self.bottom)
+
     def area(self) -> float:
-        return max(0.0, self.right - self.left) * max(0.0, self.bottom - self.top)
+        return geometry_score.area(self.bbox)
 
     def iou(self, other: Box) -> float:
-        wide = min(self.right, other.right) - max(self.left, other.left)
-        tall = min(self.bottom, other.bottom) - max(self.top, other.top)
-        if wide <= 0 or tall <= 0:
-            return 0.0
-        overlap = wide * tall
-        return overlap / (self.area() + other.area() - overlap)
+        return geometry_score.iou(self.bbox, other.bbox)
 
     def covered_by(self, other: Box) -> float:
         """How much of *this* box sits inside `other`, as a fraction of this one.
@@ -96,11 +103,7 @@ class Box:
         half of a split is almost entirely covered by the reference Zone it came
         from, while a genuinely spurious box is not covered by anything.
         """
-        wide = min(self.right, other.right) - max(self.left, other.left)
-        tall = min(self.bottom, other.bottom) - max(self.top, other.top)
-        if wide <= 0 or tall <= 0 or self.area() == 0:
-            return 0.0
-        return (wide * tall) / self.area()
+        return geometry_score.covered_by(self.bbox, other.bbox)
 
 
 def boxes_from_layout(dump: Path) -> list[Box]:
@@ -138,20 +141,24 @@ def boxes_from_layout(dump: Path) -> list[Box]:
 
 
 def boxes_from_expected(path: Path) -> list[Box]:
-    """The hand-authored reference IR, which stores a `bbox` object per Zone."""
-    data = json.loads(path.read_text())
+    """The hand-authored reference IR, which stores a `bbox` object per Zone.
+
+    Read through the shared loader, so the rectangles this draws are the same
+    rectangles the probes score against — a picture that disagreed with the
+    number under it would be worse than no picture.
+    """
     found = []
-    for index, zone in enumerate(data["zones"]):
-        bbox = zone.get("bbox")
-        if bbox is None:
-            print(f"  expected zone {index} has no bbox, skipped", file=sys.stderr)
+    for zone in geometry_score.expected_zones(path):
+        if zone.box is None:
+            print(f"  expected zone {zone.index} has no bbox, skipped",
+                  file=sys.stderr)
             continue
         found.append(
             Box(
-                left=bbox["left"], top=bbox["top"],
-                right=bbox["right"], bottom=bbox["bottom"],
-                kind=zone["kind"], role=zone["role"],
-                band=zone.get("band"), column=zone.get("column"),
+                left=zone.box.left, top=zone.box.top,
+                right=zone.box.right, bottom=zone.box.bottom,
+                kind=zone.kind, role=zone.role,
+                band=zone.band, column=zone.column,
             )
         )
     return found
@@ -422,15 +429,13 @@ def geometry_report(model: list[Box], expected: list[Box]) -> str:
         return "\n".join(lines)
 
     lines.append(f"{'':4} {'model box':38} {'best IoU':>10}  {'covered by':>10}  verdict")
-    total = 0.0
+    reference = [want.bbox for want in expected]
     for index, box in enumerate(model):
-        ious = [box.iou(want) for want in expected]
-        best = max(range(len(expected)), key=lambda i: ious[i])
+        best, best_iou = geometry_score.best_match(box.bbox, reference)
         covers = [(box.covered_by(want), i) for i, want in enumerate(expected)]
         cover, cover_index = max(covers)
-        total += ious[best]
 
-        if ious[best] >= 0.5:
+        if best_iou >= 0.5:
             verdict = f"matches want {best}"
         elif cover >= 0.8:
             verdict = f"inside want {cover_index} - a SPLIT, not spurious"
@@ -439,11 +444,12 @@ def geometry_report(model: list[Box], expected: list[Box]) -> str:
         lines.append(
             f"got {index}  {box.label:22} "
             f"({box.left:.2f},{box.top:.2f},{box.right:.2f},{box.bottom:.2f}) "
-            f"{ious[best]:>10.2f}  {cover:>10.2f}  {verdict}"
+            f"{best_iou:>10.2f}  {cover:>10.2f}  {verdict}"
         )
 
+    mean = geometry_score.mean_best_iou([box.bbox for box in model], reference)
     lines.append("")
-    lines.append(f"mean best IoU over {len(model)} model boxes: {total / len(model):.2f}")
+    lines.append(f"mean best IoU over {len(model)} model boxes: {mean:.2f}")
 
     claimed = [max(want.covered_by(box) for box in model) for want in expected]
     for index, (want, share) in enumerate(zip(expected, claimed)):
