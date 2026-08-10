@@ -13,6 +13,7 @@ in ir.py — otherwise stored Corrections silently point at the wrong pixels.
 from __future__ import annotations
 
 import hashlib
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -422,6 +423,198 @@ def content_ink(image: ImageArray) -> ImageArray:
         if thin and long_for_its_thickness:
             mask[labels == i] = 0
     return mask
+
+
+MAX_SNAP_GROWTH = 0.05
+"""How far an edge may travel outward looking for the rest of its ink, as a
+fraction of the page.
+
+A backstop, not a working limit. Growth already stops the moment the boundary row
+or column is blank, so on any real page it ends after a few pixels of a clipped
+descender. This exists for the pathological answer — run 25's slivers, where a
+box holding 0.0% ink sits inside a dense region and every row it meets is inked.
+Without a cap such a box would grow until it hit its neighbours' midpoints and
+turn a visible failure into a plausible-looking one.
+
+Five percent of the page is about 28px on `invoice.png`, against a text line of
+roughly 15px: enough to recover a clipped line, not enough to acquire another.
+"""
+
+
+def _grow_edge(has_ink: Callable[[int], bool], start: int, step: int,
+               limit: int) -> int:
+    """Walk an edge outward while the line it lands on still carries ink.
+
+    Stops on the first blank line, so an edge can never come to rest part-way
+    through a line of text or a logo — which is the whole point of growing rather
+    than only trimming.
+
+    Bounded by comparison rather than by equality: a cap can legitimately land on
+    the far side of the edge when two boxes already overlap, and `edge != limit`
+    would then walk away from the limit for ever and index the mask from the
+    wrong end.
+    """
+    edge = start
+    if step < 0:
+        while edge > limit and has_ink(edge - 1):
+            edge -= 1
+    else:
+        while edge < limit and has_ink(edge):
+            edge += 1
+    return edge
+
+
+def snap_to_ink(image: ImageArray, boxes: list[BBox]) -> list[BBox]:
+    """Move each box's edges onto the ink it was drawn around.
+
+    The layout pass asks a model for metric coordinates on a 384x251 thumbnail,
+    and runs 26-28 measured that it cannot produce them: every coordinate lands
+    on a coarse mental grid, 2.25x the linear pixels changes nothing, and stating
+    the image's exact dimensions makes it monotonically worse. This stops asking.
+    The model says *which* regions exist and in what order; the page says where
+    their edges are.
+
+    Per edge: trim inward past blank lines to the ink, then grow outward while
+    the boundary line still carries ink, capped at the midpoint to the nearest
+    box that could be grown into and at `MAX_SNAP_GROWTH`.
+
+    Four properties, each of them a test:
+
+    - **Idempotent.** The trim/grow pair is iterated to a fixed point here, so
+      snapping a snapped layout returns it unchanged. Without the loop a
+      cap-limited edge could move again on a second call, because the cap is
+      computed from where the boxes currently are.
+    - **Cannot create an overlap.** Two boxes growing towards each other stop at
+      their shared midpoint, so a layout that satisfied `_validate_bands` before
+      still does.
+    - **Invisible on good geometry.** A box already tight against its ink comes
+      back unchanged.
+    - **Silent on a blank Zone.** A box with no ink in it is returned untouched
+      and left to the empty-crop guard. Two mechanisms claiming one failure is
+      how a Finding ends up reported twice and fixed neither time.
+
+    Separators are not ink here, because `content_ink` has already removed them:
+    a box must not stretch to reach a horizontal rule that is explicitly not
+    content.
+    """
+    if not boxes:
+        return []
+
+    height, width = image.shape[:2]
+    mask = content_ink(image)
+
+    snapped = list(boxes)
+    for _ in range(4):
+        moved = [_snap_one(mask, box, snapped, width, height) for box in snapped]
+        if moved == snapped:
+            break
+        snapped = moved
+    return snapped
+
+
+def _snap_one(mask: ImageArray, box: BBox, others: list[BBox],
+              width: int, height: int) -> BBox:
+    """One box, trimmed and grown against the ink, capped by its neighbours."""
+    left = min(max(round(box.left * width), 0), width)
+    right = min(max(round(box.right * width), 0), width)
+    top = min(max(round(box.top * height), 0), height)
+    bottom = min(max(round(box.bottom * height), 0), height)
+    if right - left < 1 or bottom - top < 1:
+        return box
+
+    inside = mask[top:bottom, left:right]
+    if not inside.any():
+        return box  # a blank Zone is the empty-crop guard's finding, not ours
+
+    rows = np.flatnonzero(inside.any(axis=1))
+    columns = np.flatnonzero(inside.any(axis=0))
+    trimmed_top, trimmed_bottom = top + int(rows[0]), top + int(rows[-1]) + 1
+    trimmed_left, trimmed_right = left + int(columns[0]), left + int(columns[-1]) + 1
+
+    reach_y = int(MAX_SNAP_GROWTH * height)
+    reach_x = int(MAX_SNAP_GROWTH * width)
+    row_ink = lambda row: bool(mask[row, trimmed_left:trimmed_right].any())  # noqa: E731
+
+    new_top = _reached(
+        _grow_edge(row_ink, trimmed_top, -1, 0),
+        trimmed_top, reach_y, _cap(box, others, "up", height), low=True)
+    new_bottom = _reached(
+        _grow_edge(row_ink, trimmed_bottom, 1, height),
+        trimmed_bottom, reach_y, _cap(box, others, "down", height), low=False)
+
+    column_ink = lambda col: bool(mask[new_top:new_bottom, col].any())  # noqa: E731
+    new_left = _reached(
+        _grow_edge(column_ink, trimmed_left, -1, 0),
+        trimmed_left, reach_x, _cap(box, others, "left", width), low=True)
+    new_right = _reached(
+        _grow_edge(column_ink, trimmed_right, 1, width),
+        trimmed_right, reach_x, _cap(box, others, "right", width), low=False)
+
+    return BBox(new_left / width, new_top / height,
+                new_right / width, new_bottom / height)
+
+
+def _reached(target: int, trimmed: int, reach: int, cap: int | None, *,
+             low: bool) -> int:
+    """Where the edge actually lands, once the two limits have had their say.
+
+    The reach is **all or nothing**, not a partial move. An edge that would have
+    to travel further than `MAX_SNAP_GROWTH` is looking at ink that runs on and
+    on — run 25's sliver inside a dense block — and following it part of the way
+    would leave the edge in the middle of that ink, which is the one place the
+    grow step exists to avoid. Refusing to move at all leaves the box visibly
+    wrong, which is the honest outcome.
+
+    Refusing rather than truncating also keeps the whole snap idempotent: a
+    partial move measured from wherever the edge currently sits would advance
+    again on every call.
+    """
+    if abs(target - trimmed) > reach:
+        target = trimmed
+    if cap is None:
+        return target
+    return max(target, cap) if low else min(target, cap)
+
+
+def _cap(box: BBox, others: list[BBox], direction: str,
+         span: int) -> int | None:
+    """How far this edge may travel before it would meet a neighbour.
+
+    The midpoint of the gap, so two boxes growing towards each other meet and
+    stop rather than overlap. Only boxes that overlap on the *other* axis count:
+    a Zone in the next column cannot be grown into by moving downward, and
+    letting it cap the growth would pin every box in a two-column Band to its
+    neighbour's height.
+    """
+    if direction in ("up", "down"):
+        near = [
+            other for other in others
+            if other is not box
+            and other.right > box.left and other.left < box.right
+        ]
+        edges = (
+            [other.bottom for other in near if other.bottom <= box.top]
+            if direction == "up" else
+            [other.top for other in near if other.top >= box.bottom]
+        )
+        here = box.top if direction == "up" else box.bottom
+    else:
+        near = [
+            other for other in others
+            if other is not box
+            and other.bottom > box.top and other.top < box.bottom
+        ]
+        edges = (
+            [other.right for other in near if other.right <= box.left]
+            if direction == "left" else
+            [other.left for other in near if other.left >= box.right]
+        )
+        here = box.left if direction == "left" else box.right
+
+    if not edges:
+        return None
+    neighbour = max(edges) if direction in ("up", "left") else min(edges)
+    return round((neighbour + here) / 2 * span)
 
 
 def uncovered_ink(image: ImageArray, boxes: list[BBox]) -> list[BBox]:
