@@ -118,7 +118,10 @@ class Box:
 
 
 def boxes_from_layout(dump: Path) -> list[Box]:
-    """The layout pass's answer, in wire form (`left`/`top`/`right`/`bottom`).
+    """The geometry the Conversion ran on, in wire form.
+
+    Prefers `zones_used.json` — what the Document actually held — and falls back
+    to the raw layout answer for a dump taken before that existed.
 
     Takes the **last** `*_layout.json` that parses, not the first. `ask` retries
     a truncated pass with a doubled budget and the dump records every call, so a
@@ -131,6 +134,22 @@ def boxes_from_layout(dump: Path) -> list[Box]:
     the right thing to keep, and it means the same repair has to be applied here
     to read it back.
     """
+    used = dump / "zones_used.json"
+    if used.exists():
+        # What the Conversion ran on, which is not always what the model said.
+        # Run 39 converted on boxes the Orchestrator had snapped onto the ink
+        # while this tool drew and scored the raw layout answer, so its contact
+        # sheet described a document that was never produced. Prefer the record
+        # of what happened over the record of what was proposed.
+        return [
+            Box(
+                left=z["left"], top=z["top"], right=z["right"], bottom=z["bottom"],
+                kind=z.get("kind", "?"), role=z.get("role", "?"),
+                band=z.get("band"), column=z.get("column"),
+            )
+            for z in json.loads(used.read_text())
+        ]
+
     schema = schema_of(LayoutResponse)
     for path in sorted(dump.glob("*_layout.json"), reverse=True):
         try:

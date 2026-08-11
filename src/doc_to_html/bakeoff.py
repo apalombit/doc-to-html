@@ -143,6 +143,17 @@ class Attempt:
     judging structural fidelity by eye against the Source Image is what
     docs/adr/0002 asks for."""
 
+    zones_used: str | None = None
+    """The geometry the Conversion actually ran on, as JSON.
+
+    Not the same thing as the layout answer in `answers`, and the difference is
+    the point. The dump records what the model *said*; anything the Orchestrator
+    does to those boxes afterwards — snapping them onto the ink, for instance —
+    happens downstream of it. Run 39 converted on snapped geometry while the
+    contact sheet drew and scored the raw answer, so its diagnostic described a
+    document that had not been produced. A tool reading a run cannot be expected
+    to know which passes rewrite geometry; the run has to say."""
+
     resident_mb: float | None = None
     error: str | None = None
 
@@ -273,6 +284,18 @@ def run(models: Iterable[str], acceptance: dict[str, tuple[Path, Document]],
                 )
                 actual = conversion.run()
                 attempt.html = render(actual)
+                attempt.zones_used = json.dumps(
+                    [
+                        {
+                            "kind": zone.kind.value, "role": zone.role.value,
+                            "band": zone.band, "column": zone.column,
+                            "left": zone.bbox.left, "top": zone.bbox.top,
+                            "right": zone.bbox.right, "bottom": zone.bbox.bottom,
+                        }
+                        for zone in actual.zones if zone.bbox is not None
+                    ],
+                    indent=2,
+                )
                 attempt.mismatches = compare(expected, actual)
                 for failure in actual.failures:
                     attempt.mismatches.append(
@@ -447,6 +470,8 @@ def main(argv: list[str] | None = None) -> int:
                 (out / f"{index:02d}_{pass_name}.prompt.txt").write_text(prompt)
             if attempt.html is not None:
                 (out / "document.html").write_text(attempt.html)
+            if attempt.zones_used is not None:
+                (out / "zones_used.json").write_text(attempt.zones_used)
         print(f"\nraw answers written to {args.dump}", file=sys.stderr)
 
     if args.json:
