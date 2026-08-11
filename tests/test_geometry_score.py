@@ -115,11 +115,21 @@ def test_scoring_against_no_reference_scores_zero() -> None:
 
 
 def test_the_reference_rectangles_come_off_the_expected_ir() -> None:
-    boxes = expected_boxes(FIXTURES / "invoice_0001.expected.json")
-    written = json.loads((FIXTURES / "invoice_0001.expected.json").read_text())
+    """Read verbatim, whatever they say.
+
+    Not pinned to particular coordinates: `invoice_0001`'s are now derived from
+    `example/invoice.html` by `tools/fixture_geometry.py`, and a test asserting
+    the old hand-typed numbers would have to be edited every time the truth got
+    better, which is the wrong way round.
+    """
+    path = FIXTURES / "invoice_0001.expected.json"
+    boxes = expected_boxes(path)
+    written = json.loads(path.read_text())
 
     assert len(boxes) == len(written["zones"])
-    assert boxes[0] == BBox(0.04, 0.06, 0.41, 0.17)
+    first = written["zones"][0]["bbox"]
+    assert boxes[0] == BBox(first["left"], first["top"],
+                            first["right"], first["bottom"])
 
 
 def _fixture_missing_one_box(tmp_path: Path) -> Path:

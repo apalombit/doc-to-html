@@ -276,18 +276,20 @@ class TestTheMeasuredPage:
         return expected_boxes(REPO / "tests" / "fixtures"
                               / "invoice_0001.expected.json")
 
-    def test_the_eyeballed_reference_is_the_floor_and_it_is_clean(self) -> None:
+    def test_the_reference_is_the_floor_and_it_is_clean(self) -> None:
         """What the fixture's own rectangles score, before anything is read
         against them.
 
-        They were typed by hand, so this could have come back messy — a
-        reference that clipped ink or welded two blocks would put a ceiling on
-        every geometry number this project has recorded. It does not.
+        These are no longer eyeballed: `tools/fixture_geometry.py` reads them off
+        `example/invoice.html` as the browser lays it out. Four ink pixels of
+        13,850 still fall outside — antialiasing beyond the glyph boxes the
+        renderer reports, at corners a single pixel of slack does not reach — so
+        this asks for essentially-all rather than exactly-all and says which.
         """
         reference = self.reference()
         score = score_geometry(reference, reference, self.page())
 
-        assert score.covered == pytest.approx(1.0)
+        assert score.covered > 0.999
         assert score.splits == 0
         assert score.doubles == 0
 
