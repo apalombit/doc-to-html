@@ -131,20 +131,25 @@ def failed(index: int, zone: Zone, error: Exception) -> Failure:
 def snapped_or_original(image: ImageArray, zones: list[Zone]) -> list[Zone]:
     """The Engine's Zones with their boxes moved onto the ink, or unchanged.
 
-    The Orchestrator is the seam rather than the Engine, deliberately. Snapping
-    belongs to *any* Engine's answer, not to Ollama's, and routing and policy
-    already live here.
+    **Not called by the Conversion. Measured, shipped, and reverted.**
 
-    **A deterministic repair must never be able to cost a Conversion.** Snapping
-    cannot create an overlap by construction, but "cannot" is an argument and
-    this is a Conversion, so the snapped Zones are put back through the same Band
-    validation the wire mapper applies and the originals are kept if they no
-    longer pass. Falling back silently is the right behaviour: the unsnapped
-    geometry is exactly what shipped before, so the worst case is the status quo.
+    Gate 1 passed on every field it was written to read — `covered` 0.82 -> 0.99,
+    `splits` 46 -> 0, `zones` unchanged, and nothing worse on any of the five
+    fixtures. Run 39 then converted the invoice with it wired in and went from
+    **3 mismatches to 6**: Zone 5, the line-item table and the best box on the
+    page at 0.83 IoU, stopped extracting — `table row 2 has 0 cells but the
+    header has 2` — which also lost the column-sum Probe, the only arithmetic
+    check the document has.
 
-    Measured on the shipped answer for `example/invoice.png`: covered 0.82 -> 0.99
-    and splits 46 -> 0, with the Zone count unchanged. See
-    `debug/runs/35-snap-offline/`.
+    So the assumption the whole of spec 0004 rests on is false as stated: a box
+    that contains more of its own ink does not necessarily yield a crop that
+    reads better. Growing Zone 5 outward to the ink it had been clipping changed
+    what the table Extractor was shown, and it came back with a malformed row.
+
+    Kept rather than deleted because the measurement stands and the next attempt
+    should start here — but any gate that re-wires it has to include "no Zone
+    that previously converted stops converting", which is the condition Gate 1
+    was missing and the reason this shipped at all.
     """
     boxes = [zone.bbox for zone in zones]
     if not zones or any(box is None for box in boxes):
@@ -342,8 +347,9 @@ class Conversion:
         """
         if document.zones:
             return
-        zones = self.engines.layout.detect_zones(rectified.image, document.hint)
-        document.zones = snapped_or_original(rectified.image, zones)
+        document.zones = self.engines.layout.detect_zones(
+            rectified.image, document.hint
+        )
 
     def _classify(self, rectified: Rectified, document: Document) -> None:
         """Decide each Zone's Kind from that Zone's own crop.
