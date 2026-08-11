@@ -49,7 +49,7 @@ def build() -> Document:
                 role=Role.HEADER,
                 band=0,
                 column=0,
-                bbox=BBox(0.04, 0.06, 0.41, 0.17),
+                bbox=BBox(0.0487, 0.081, 0.3991, 0.1474),
                 graphic_kind="logo",
                 blocks=[Block(kind="caption", lines=[cell("SPARKSUITE")])],
                 complete=True,
@@ -59,7 +59,7 @@ def build() -> Document:
                 role=Role.HEADER,
                 band=0,
                 column=1,
-                bbox=BBox(0.70, 0.07, 0.96, 0.20),
+                bbox=BBox(0.7399, 0.0799, 0.9513, 0.2007),
                 pairs=[
                     _pair("Invoice #", "123", BBox(0.92, 0.085, 0.96, 0.105)),
                     _pair("Created", "January 1, 2023",
@@ -77,7 +77,7 @@ def build() -> Document:
                 role=Role.BODY,
                 band=1,
                 column=0,
-                bbox=BBox(0.04, 0.27, 0.35, 0.41),
+                bbox=BBox(0.0487, 0.2771, 0.2275, 0.3979),
                 blocks=[
                     Block(
                         kind="address",
@@ -95,7 +95,7 @@ def build() -> Document:
                 role=Role.BODY,
                 band=1,
                 column=1,
-                bbox=BBox(0.72, 0.27, 0.96, 0.41),
+                bbox=BBox(0.7866, 0.2771, 0.9513, 0.3979),
                 blocks=[
                     Block(
                         kind="address",
@@ -115,7 +115,7 @@ def build() -> Document:
                 role=Role.BODY,
                 band=2,
                 column=0,
-                bbox=BBox(0.03, 0.48, 0.97, 0.60),
+                bbox=BBox(0.0406, 0.4956, 0.9594, 0.595),
                 rows=[
                     Row(
                         role=RowRole.HEADER,
@@ -137,7 +137,7 @@ def build() -> Document:
                 role=Role.BODY,
                 band=3,
                 column=0,
-                bbox=BBox(0.03, 0.63, 0.97, 0.95),
+                bbox=BBox(0.0406, 0.6448, 0.9594, 0.9325),
                 rows=[
                     Row(role=RowRole.HEADER, cells=[cell("Item"), cell("Price")]),
                     Row(
