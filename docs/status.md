@@ -12,16 +12,15 @@ Zone by Zone from its own crop, extracted from the same crop, checked by Probes
 and rendered as one self-contained HTML file with the IR embedded. Against a real
 `qwen3-vl:4b` the invoice matches its expected IR exactly — all six Kinds right,
 every string on the page rendered, no skeletons, no Failures, and the column-sum
-Probe reconciling at 385.00. Run 49, `debug/runs/49-table-grid-hint/`, taken with
-`DTH_SNAP_ZONES=1`.
+Probe reconciling at 385.00. Run 49, `debug/runs/49-table-grid-hint/`, and the
+shipped defaults now match the ones that run used.
 
 **Everything below this paragraph predates that result** and describes the
 document at 2 and 3 mismatches. It is kept as the record of how the count moved
 and what was rejected on the way; `CLAUDE.md` and
 `docs/specs/0003-classify-from-the-crop.md` carry the current state. The three
-standing caveats are that only this one fixture is measured, that the shipped
-default has `DTH_SNAP_ZONES` off so `convert()` out of the box is unmeasured, and
-that the replay suite is red by design until #16 re-records it.
+standing caveats are that only this one fixture is measured, and that the replay
+suite is red by design until #16 re-records it.
 
 The count went up, not down. The classification split (#12) was predicted to take
 it from 2 to 1; run 22 measured 3. It fixed the Zone it was designed to fix and

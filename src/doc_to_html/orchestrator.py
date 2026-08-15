@@ -203,9 +203,9 @@ def _why_kept(zones: list[Zone]) -> str:
 def snapped_or_original(image: ImageArray, zones: list[Zone]) -> list[Zone]:
     """The Engine's Zones with their boxes moved onto the ink, or unchanged.
 
-    **Off by default. Reached only when `DTH_SNAP_ZONES` is set** — shipped once,
-    reverted, and now a setting so the revert can be re-examined rather than
-    inherited.
+    **On by default as of run 49** — shipped once, reverted for a measured reason,
+    kept as a setting so the revert could be re-examined rather than inherited,
+    and turned back on once the two changes below removed what it had cost.
 
     Gate 1 passed on every field it was written to read — `covered` 0.82 -> 0.99,
     `splits` 46 -> 0, `zones` unchanged, and nothing worse on any of the five
@@ -228,13 +228,16 @@ def snapped_or_original(image: ImageArray, zones: list[Zone]) -> list[Zone]:
       empty `data` row after `Website design`, in the same slot both times. That
       one row is the whole of the regression.
 
-    So the open question is not whether to snap but what the table Extractor does
-    with an empty row — it already repairs this model's other known table
-    malformation, a header split across two rows, by joining them.
+    **That one row is now gone twice over, which is what let this default back
+    on.** `wire._without_empty_rows` drops a zero-cell row before the width check
+    — a row with no cells has no value to put in the wrong column — and
+    `DTH_TABLE_GRID_HINT` stops the model emitting it at all: run 49's raw table
+    answers carry no empty row on either table.
 
-    Any gate that turns this on by default has to include "no Zone that
-    previously converted stops converting", which is the condition Gate 1 was
-    missing and the reason this shipped at all. See `config.DEFAULT_SNAP_ZONES`.
+    So the gate Gate 1 was missing — *no Zone that previously converted stops
+    converting* — is met rather than argued around: run 49 has zero Failures,
+    every Zone complete, and the column-sum Probe reconciling. Still one fixture;
+    see `config.DEFAULT_SNAP_ZONES` for what that does and does not license.
     """
     boxes = [zone.bbox for zone in zones]
     if not zones or any(box is None for box in boxes):

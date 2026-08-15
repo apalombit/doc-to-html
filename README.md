@@ -13,7 +13,8 @@ Probes and rendered. Photographs distorted by known amounts come back straight.
 Against a **real** `qwen3-vl:4b`, `example/invoice.png` matches its expected IR
 exactly: all six Zones get the right Kind, every string on the page reaches the
 render, no Zone renders as a skeleton, and the column-sum Probe reconciles at
-385.00. Measured in `debug/runs/49-table-grid-hint/`, with `DTH_SNAP_ZONES=1`.
+385.00. Measured in `debug/runs/49-table-grid-hint/`, and the shipped defaults
+are the ones that run used.
 
 **One document, and only one.** The other four acceptance fixtures have not been
 measured against the changes that got it there, and the replay suite is red by

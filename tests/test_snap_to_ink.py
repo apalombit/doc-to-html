@@ -18,6 +18,7 @@ import pytest
 from dataclasses import replace
 from pathlib import Path
 
+from doc_to_html.config import DEFAULT_SNAP_ZONES
 from doc_to_html.geometry_score import iou
 from doc_to_html.ir import BBox, Document, Kind, Role, Source, Zone
 from doc_to_html.orchestrator import Conversion, EngineSet, snapped_or_original
@@ -359,10 +360,17 @@ class TestTheFlagDecidesWhetherItRunsAtAll:
         Read at import instead, a bake-off arm that exports it would silently get
         the default and the run directory would record an arm that never ran.
         """
+        def resolved() -> bool:
+            return Conversion(source=Path("unused.png"),
+                              engines=None).snap_zones  # type: ignore[arg-type]
+
+        # Both directions, against the default rather than a literal. Asserting
+        # "unset means False" is what this test said before, and it broke the day
+        # the default moved — which measured the default, not the mechanism.
         monkeypatch.setenv("DTH_SNAP_ZONES", "1")
-        assert Conversion(source=Path("unused.png"),
-                          engines=None).snap_zones is True  # type: ignore[arg-type]
+        assert resolved() is True
+        monkeypatch.setenv("DTH_SNAP_ZONES", "0")
+        assert resolved() is False
 
         monkeypatch.delenv("DTH_SNAP_ZONES")
-        assert Conversion(source=Path("unused.png"),
-                          engines=None).snap_zones is False  # type: ignore[arg-type]
+        assert resolved() is DEFAULT_SNAP_ZONES

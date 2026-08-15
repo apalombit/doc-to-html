@@ -42,7 +42,8 @@ the lessons, not the history.
 
 1. **`DTH_SNAP_ZONES`** — move each Zone's box onto its own ink. Geometry 0.56 ->
    0.91 IoU. It fixes **no** Kind (twelve classifications identical across two
-   snapped runs) and on its own it *cost* the line-item table. Default **off**.
+   snapped runs) and on its own it once *cost* the line-item table. Default
+   **on**: changes 2 and 5 removed that cost, and run 49 was taken with it set.
 2. **Zero-cell rows dropped** before the table width check. That check exists
    because a row with the wrong number of cells shifts values into wrong columns;
    a row with *none* has nothing to shift. Runs 39 and 45 both lost the whole
@@ -94,11 +95,6 @@ fall back and label themselves as reconstructed.
   what was recorded as its extraction answer. Expected, tracked as **#16**, and
   the only correct place to fix it. 393 pass. *Any count other than 49/393 is a
   real regression.*
-- **The default config does not reproduce run 49.** It was taken with
-  `DTH_SNAP_ZONES=1`, and that flag defaults off. Snap-on plus the grid hint has
-  never been run against snap-off plus the grid hint, so what `convert()` does out
-  of the box is unmeasured. Resolve before quoting "0 mismatches" as the shipped
-  behaviour.
 - **Four fixtures are unmeasured** against every change above (**#19**).
   `invoice_0002` returns no geometry at all — both repeats died with
   `ThinkingNotDisabled` despite `think=False` being sent.

@@ -85,37 +85,39 @@ Off, because every local Ollama model honours `format` and a repair path that is
 never exercised is a place for bugs to hide. On, it is the only way to reach a
 cloud vision model: none of them honour `format`. See `engines/lenient.py`."""
 
-DEFAULT_SNAP_ZONES = False
+DEFAULT_SNAP_ZONES = True
 """Whether to move each Zone's box onto its own ink before classifying it.
 
-Off, and now for a measured reason rather than a single run's. Runs 39 and 45
-both converted `invoice_0001` with this on, at different commits weeks apart, and
-both went from 3 mismatches to 6 in **the same** way: `table row 2 has 0 cells
-but the header has 2`, costing Zone 5 and the column-sum Probe with it.
+**On**, so the default configuration is the one that was measured: run 49 took
+`invoice_0001` to zero mismatches with this set, and a default that cannot
+reproduce the project's own headline number is a trap.
 
-What the snap does and does not buy, against run 43 — the same page, the same
-byte-identical layout answer, no snap:
+What the snap buys, against run 43 — the same page, the same byte-identical
+layout answer, no snap:
 
 - **Geometry, yes.** 0.56 IoU against the true rectangles becomes 0.91, `covered`
   0.82 becomes 0.99, `splits` 46 becomes 0.
-- **Kinds, no.** All six classifications come back identical from snapped crops
-  and raw crops, in both runs. The snap moves none of the document's three Kind
-  mismatches and breaks none. Perfect geometry not moving them is also what run
-  42 found from the true rectangles, so this is now three ways of saying it.
-- **One table row, reliably.** Both snapped runs emit run 43's exact row list
-  plus a spurious empty `data` row, at the same index, right after
-  `Website design`. Same position, same shape, two independent runs.
+- **Kinds, no.** All six classifications come back identical from snapped and
+  unsnapped crops, across two runs. Run 42 found the same from the true
+  rectangles: perfect geometry moves no Kind on this document.
 
-That last point is why this is a setting and not a revival. The suspicion it was
-written to test — that the empty row was decoder noise, since the snapped crop
-plainly contains the whole table — is **refuted**: noise does not land in the
-same slot twice. The snapped crop causes it, and what to do about it is a
-question for the table Extractor, which already repairs this model's other known
-table malformation by joining a split header row.
+**It was off for two years of this file's history and for a real reason.** Runs
+39 and 45 both converted with it on, weeks apart, and both went 3 mismatches to
+6 the same way — `table row 2 has 0 cells but the header has 2`, losing Zone 5
+and the column-sum Probe. Reproducible, so the snapped crop caused it rather
+than a decoder glitch.
 
-Anything turning this on by default owes the condition Gate 1 was missing: **no
-Zone that previously converted stops converting.** As of run 45 it still fails
-that. See `orchestrator.snapped_or_original` and spec 0004."""
+**Two later changes removed that cost, and both are measured.** Zero-cell rows
+are now dropped before the table width check (`wire._without_empty_rows`), and
+`DTH_TABLE_GRID_HINT` stops the model emitting the spurious row at all — run 49's
+raw answers carry no empty row on either table. The condition Gate 1 was missing
+— *no Zone that previously converted stops converting* — is met: run 49 has zero
+Failures and every Zone complete.
+
+**What this is not.** Measured on one fixture. Run 36 found geometry broken on
+four of the five, so what the snap does to those is unknown, and `invoice_0002`
+returns no geometry to snap at all. See `orchestrator.snapped_or_original` and
+spec 0004."""
 
 DEFAULT_TABLE_GRID_HINT = True
 """Whether to tell the table Extractor how many rows and columns it is filling.
