@@ -12,7 +12,11 @@ from pathlib import Path
 
 import pytest
 
-from doc_to_html.ir import Document, Kind, Reading, Zone
+import numpy as np
+
+from doc_to_html.ir import BBox, Document, Kind, Reading, Role, Source, Zone
+from doc_to_html.orchestrator import Conversion, EngineSet
+from doc_to_html.preprocess import Rectified
 from doc_to_html.render import render
 from doc_to_html.wire import MappingError, contents_into
 
@@ -20,6 +24,18 @@ from .replay import convert_replaying, recorded_for, text, wired_zones
 
 REPO = Path(__file__).resolve().parent.parent
 INVOICE2 = REPO / "example" / "invoice2.png"
+
+PAGE_HEIGHT, PAGE_WIDTH = 600, 800
+
+
+def source() -> Source:
+    return Source(path="unused.png", sha256="0" * 64,
+                  width=PAGE_WIDTH, height=PAGE_HEIGHT)
+
+
+def rectified_page() -> Rectified:
+    page = np.full((PAGE_HEIGHT, PAGE_WIDTH, 3), 245, dtype=np.uint8)
+    return Rectified(image=page, source=source())
 
 @pytest.fixture
 def invoice2() -> Document:
@@ -244,12 +260,121 @@ class TestThePromptSaysWhatTheMappingCannotEnforce:
 
 class TestAFailureStillDoesNotSpread:
     def test_one_bad_panel_does_not_cost_the_other(self) -> None:
+        """An empty answer rather than an unlabelled value, on purpose.
+
+        An unlabelled value is no longer a plain Failure — it is the Pairs
+        Extractor diagnosing the Kind, and the Orchestrator re-reads the Zone as
+        prose on the strength of it (`TestAnUnlabelledValueIsADiagnosis`). What
+        this test is for is the other contract, that a Zone which genuinely
+        cannot be read does not cost its neighbours, so it needs a failure with
+        no diagnosis attached. An empty answer for an untitled Zone is one.
+        """
         replies = recorded_for("invoice_0002")
-        replies[wired_zones("invoice_0002").index(4) + 1] = text(
-            '{"pairs": [{"label": "", "value": "x"}]}'
-        )
+        replies[wired_zones("invoice_0002").index(4) + 1] = text('{"pairs": []}')
         document = convert_replaying(INVOICE2, replies)
 
         assert not document.zones[4].complete
         assert len(document.zones[5].pairs) == 6
         assert [f.zone_index for f in document.failures] == [4]
+
+
+class TestAnUnlabelledValueIsADiagnosis:
+    """The Pairs Extractor says the region is not Pairs, and is believed.
+
+    `invoice_0001`'s Zone 3 is `Acme Corp.` / `John Doe` / `john@example.com` —
+    prose, classified `pairs` in every run ever taken. Asked for Pairs, the model
+    binds the first two and returns the email with a blank label, which is a fact
+    about the page rather than a bad read: nothing is printed to the left of it.
+
+    Before this, `pairs_from_response` raised and the raise happened before any
+    Pair reached the Zone, so all three lines were discarded — including the two
+    that had bound correctly — and the Zone rendered as an empty skeleton. The
+    payload below is run 45's answer for that Zone verbatim.
+    """
+
+    ZONE_3 = (
+        '{"pairs": [{"label": "Acme Corp.", "value": "John Doe"},'
+        ' {"label": "", "value": "john@example.com"}]}'
+    )
+    AS_PROSE = (
+        '{"blocks": [{"kind": "address", "lines":'
+        ' ["Acme Corp.", "John Doe", "john@example.com"]}]}'
+    )
+
+    class TwoAnswers:
+        """An Engine that answers Pairs once and prose once, through real mapping.
+
+        Goes through `contents_into` rather than returning a filled Zone, so the
+        `NotPairs` this turns on is raised by the code that ships rather than by
+        the test.
+        """
+
+        def __init__(self, pairs: str, prose: str) -> None:
+            self.replies = {Kind.PAIRS: pairs, Kind.PROSE: prose}
+            self.asked: list[Kind] = []
+
+        def extract_zone(self, image: object, zone: Zone,
+                         hint: str | None = None) -> Zone:
+            self.asked.append(zone.kind)
+            return contents_into(
+                zone, self.replies[zone.kind],
+                read=lambda t: Reading(engine="test", text=t),
+            )
+
+    def converted(self, pairs: str | None = None) -> tuple[Document, TwoAnswers]:
+        engine = self.TwoAnswers(pairs or self.ZONE_3, self.AS_PROSE)
+        document = Document(source=source())
+        document.zones = [Zone(kind=Kind.PAIRS, role=Role.BODY, band=0, column=0,
+                               bbox=BBox(0.1, 0.1, 0.9, 0.4))]
+        conversion = Conversion(
+            source=Path("unused.png"),
+            engines=EngineSet(layout=engine, classify=engine,  # type: ignore[arg-type]
+                              extract=engine, audit=engine),
+        )
+        conversion.classification_ran = True
+        conversion._extract(rectified_page(), document)
+        return document, engine
+
+    def test_the_zone_is_asked_again_as_prose(self) -> None:
+        _, engine = self.converted()
+        assert engine.asked == [Kind.PAIRS, Kind.PROSE]
+
+    def test_every_line_reaches_the_document(self) -> None:
+        """Including the two the Pairs answer had already bound correctly, which
+        is what the raise used to throw away."""
+        document, _ = self.converted()
+        lines = [
+            line.text for block in document.zones[0].blocks for line in block.lines
+        ]
+        assert lines == ["Acme Corp.", "John Doe", "john@example.com"]
+
+    def test_the_kind_is_corrected_on_the_zone(self) -> None:
+        """So the Document records what it converted, not what was guessed."""
+        document, _ = self.converted()
+        assert document.zones[0].kind is Kind.PROSE
+        assert document.zones[0].complete
+
+    def test_it_is_a_caveat_and_not_a_failure(self) -> None:
+        """The Zone has its content. A Failure would put "could not be read"
+        above the text that was read."""
+        document, _ = self.converted()
+        assert document.failures == []
+        assert [c.zone_index for c in document.caveats] == [0]
+        assert "re-read as prose" in document.caveats[0].note
+
+    def test_a_prose_reread_that_also_fails_is_reported_once(self) -> None:
+        """The re-read is one extra attempt, not an unbounded search."""
+        engine = self.TwoAnswers(self.ZONE_3, '{"blocks": []}')
+        document = Document(source=source())
+        document.zones = [Zone(kind=Kind.PAIRS, role=Role.BODY, band=0, column=0,
+                               bbox=BBox(0.1, 0.1, 0.9, 0.4))]
+        conversion = Conversion(
+            source=Path("unused.png"),
+            engines=EngineSet(layout=engine, classify=engine,  # type: ignore[arg-type]
+                              extract=engine, audit=engine),
+        )
+        conversion.classification_ran = True
+        conversion._extract(rectified_page(), document)
+
+        assert [f.zone_index for f in document.failures] == [0]
+        assert not document.zones[0].complete

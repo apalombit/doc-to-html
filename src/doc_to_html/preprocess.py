@@ -425,6 +425,111 @@ def content_ink(image: ImageArray) -> ImageArray:
     return mask
 
 
+MIN_ROW_GAP = 4
+"""Blank rows that separate one printed line from the next, in pixels.
+
+Line spacing on `invoice.png` is roughly 20px between 15px lines, so this has a
+lot of room. It is a floor against antialiasing joining two lines, not a tuned
+value."""
+
+MIN_COLUMN_GAP = 6
+"""Blank columns that separate one column of a table from the next, in pixels.
+
+**An absolute count, deliberately not a fraction of the crop's width.** A
+fraction works on `invoice_0001`, whose two-column table has a 530px gutter, and
+destroys `sample_table_0003`: at 4% of a 960px crop the threshold is 38px, wider
+than any gutter in a five-column table, so all five collapse into one band and
+the measurement reports two columns where there are five. At 6px the same three
+tables measure 2, 2 and 5 columns — all correct."""
+
+MIN_BAND = 4
+"""How much ink, along the axis being projected, counts as a band rather than a
+mark.
+
+`content_ink` already drops separators, so this is not what excludes a table's
+ruling. It excludes what survives that: a stray descender, an antialiased edge, a
+dot."""
+
+
+def ink_bands(profile: ImageArray, min_gap: int, min_size: int) -> list[tuple[int, int]]:
+    """Runs of ink in a projection, split where the blank is wide enough.
+
+    One helper for both axes, because a row of a table and a column of one are
+    the same question asked ninety degrees apart: project the ink onto an axis,
+    and the stretches that survive are the structure.
+
+    `tools/cv_layout_probe.py` has `_runs_of_blank` and `_slices_between` doing
+    this for the XY-cut arm. That duplication is known and is not resolved here —
+    unifying a probe with shipping code is its own change, and commit 080f7aa,
+    which collapsed three copies of the geometry ruler into one, is the record of
+    how that should be done when it is done.
+    """
+    bands: list[tuple[int, int]] = []
+    start: int | None = None
+    gap = 0
+    for index, value in enumerate(profile):
+        if value > 0:
+            if start is None:
+                start = index
+            gap = 0
+            continue
+        if start is None:
+            continue
+        gap += 1
+        if gap >= min_gap:
+            end = index - gap
+            if end - start + 1 >= min_size:
+                bands.append((start, end))
+            start = None
+    if start is not None and len(profile) - start >= min_size:
+        bands.append((start, len(profile) - 1))
+    return bands
+
+
+@dataclass(frozen=True)
+class TableGrid:
+    """How many rows and columns a table crop actually has, read off the pixels.
+
+    **The point of this is that it is not the model's opinion.** The extraction
+    pass returns rows and cells, and on a wide, short table it returns them
+    wrongly: `invoice_0001`'s Zone 4 is two printed lines and comes back as four
+    rows, each cut in half, because its two columns sit ~800px apart with nothing
+    between them. Two prompt attempts failed to move that — run 13 and run 48,
+    the latter returning output byte-identical to the run before it — so the
+    remedy has to come from something the prompt cannot consult.
+
+    This reads nothing and understands nothing. It counts bands of ink down the
+    crop and across it, which is why it is trustworthy: there is no judgement in
+    it to get wrong.
+
+    Measured against three real tables: `invoice_0001` Zone 4 gives 2x2 and Zone 5
+    gives 5x2, both correct. `sample_table_0003` gives 17x5 where the truth is
+    16x5 — the columns right, the rows one over, against a hand-typed Zone box
+    that CLAUDE.md already flags as 0.605-0.854 IoU against its own ink. So the
+    row count is **not yet proven** on a crop this tool did not choose, and that
+    is why a caller should state this to a model rather than enforce it on one.
+    """
+
+    rows: int
+    columns: int
+    row_bands: list[tuple[int, int]]
+    column_bands: list[tuple[int, int]]
+
+
+def table_grid(crop: ImageArray) -> TableGrid:
+    """Count a table crop's rows and columns by projecting its ink.
+
+    Down the crop for rows, across it for columns. Separators are already gone —
+    `content_ink` removes them — so the horizontal rule above a totals row does
+    not become a sixth row, and a column divider does not become a column.
+    """
+    mask = content_ink(crop)
+    rows = ink_bands(mask.sum(axis=1), MIN_ROW_GAP, MIN_BAND)
+    columns = ink_bands(mask.sum(axis=0), MIN_COLUMN_GAP, MIN_BAND)
+    return TableGrid(rows=len(rows), columns=len(columns),
+                     row_bands=rows, column_bands=columns)
+
+
 MAX_SNAP_GROWTH = 0.05
 """How far an edge may travel outward looking for the rest of its ink, as a
 fraction of the page.
@@ -485,7 +590,7 @@ def snap_to_ink(image: ImageArray, boxes: list[BBox]) -> list[BBox]:
       cap-limited edge could move again on a second call, because the cap is
       computed from where the boxes currently are.
     - **Cannot create an overlap.** Two boxes growing towards each other stop at
-      their shared midpoint, so a layout that satisfied `_validate_bands` before
+      their shared midpoint, so a layout that satisfied `validate_bands` before
       still does.
     - **Invisible on good geometry.** A box already tight against its ink comes
       back unchanged.

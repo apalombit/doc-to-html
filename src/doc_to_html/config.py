@@ -85,6 +85,90 @@ Off, because every local Ollama model honours `format` and a repair path that is
 never exercised is a place for bugs to hide. On, it is the only way to reach a
 cloud vision model: none of them honour `format`. See `engines/lenient.py`."""
 
+DEFAULT_SNAP_ZONES = False
+"""Whether to move each Zone's box onto its own ink before classifying it.
+
+Off, and now for a measured reason rather than a single run's. Runs 39 and 45
+both converted `invoice_0001` with this on, at different commits weeks apart, and
+both went from 3 mismatches to 6 in **the same** way: `table row 2 has 0 cells
+but the header has 2`, costing Zone 5 and the column-sum Probe with it.
+
+What the snap does and does not buy, against run 43 — the same page, the same
+byte-identical layout answer, no snap:
+
+- **Geometry, yes.** 0.56 IoU against the true rectangles becomes 0.91, `covered`
+  0.82 becomes 0.99, `splits` 46 becomes 0.
+- **Kinds, no.** All six classifications come back identical from snapped crops
+  and raw crops, in both runs. The snap moves none of the document's three Kind
+  mismatches and breaks none. Perfect geometry not moving them is also what run
+  42 found from the true rectangles, so this is now three ways of saying it.
+- **One table row, reliably.** Both snapped runs emit run 43's exact row list
+  plus a spurious empty `data` row, at the same index, right after
+  `Website design`. Same position, same shape, two independent runs.
+
+That last point is why this is a setting and not a revival. The suspicion it was
+written to test — that the empty row was decoder noise, since the snapped crop
+plainly contains the whole table — is **refuted**: noise does not land in the
+same slot twice. The snapped crop causes it, and what to do about it is a
+question for the table Extractor, which already repairs this model's other known
+table malformation by joining a split header row.
+
+Anything turning this on by default owes the condition Gate 1 was missing: **no
+Zone that previously converted stops converting.** As of run 45 it still fails
+that. See `orchestrator.snapped_or_original` and spec 0004."""
+
+DEFAULT_TABLE_GRID_HINT = True
+"""Whether to tell the table Extractor how many rows and columns it is filling.
+
+**On**, because it is the change that took `invoice_0001` to zero mismatches and
+it passed a four-condition gate written before the run. `extract_zone` measures
+the crop it is about to send — `preprocess.table_grid`, an ink projection, no
+model call — and states the counts in the prompt.
+
+**What it is aimed at.** `invoice_0001`'s Zone 4 is two printed lines, 841x59px,
+its two columns ~800px apart. It comes back as four rows, each cut in half, and
+the header-only repair in `wire.py` fixes half of that. Two prompt attempts have
+failed to move it: run 13 forbade the header split in as many words, and run 48
+added the general case and returned output **byte-identical** to the run before.
+
+**Why a third attempt is not just a fourth wording.** The two failures were
+*behavioural* instructions — don't split, keep a line together — and the model is
+not deciding to split; it does not read the two ends of the line as one row, so
+there is no decision for an instruction to bear on. A count is a different kind
+of statement, and the model demonstrably honours that kind: the prompt already
+says "give every data row the same number of cells as the header row" and every
+row it returns has exactly the right number of cells. It obeys *how many cells*
+while ignoring *which line they belong to*.
+
+**Run 49 measured it, and it worked — `invoice_0001` converts with 0 mismatches
+for the first time.** All four pre-registered gate conditions held:
+
+| | before (run 48) | with the grid stated (run 49) |
+|---|---|---|
+| zone 4 | 4 rows, every one cut in half | **2 rows**, `['Payment Method','Check #']` / `['Check','1000']` |
+| zone 5 | header split, one spurious empty row | **5 clean rows**, header whole |
+| mismatches | 1 | **0** |
+| render / skeletons / failures | 25/25, 0, 0 | 25/25, 0, 0 |
+
+The effect is larger than the target. It was aimed at Zone 4's data row and it
+also stopped the header split that four runs could not talk this model out of,
+and the empty row that cost two runs their table. Both tables now come back
+correct at source, and `wire.py`'s repairs did not need to fire.
+
+**What defaulting this on is and is not backed by.** One run, one fixture, and
+the four other fixtures have not been converted against it. That is a deliberate
+call rather than an oversight: it is the only change measured to take this
+document to zero, the gate it passed included *no Zone that previously converted
+stops converting*, and every check behind it still runs because the grid is
+stated rather than enforced.
+
+The one known inaccuracy in the ruler is corrected rather than shipped.
+`table_grid` counts bands of ink, and a Zone's Title is a printed line that is not
+a row — `sample_table_0003` prints "Population and GDP (millions of USD)" above
+its grid and measured 17 against a true 16. `with_grid` subtracts for a titled
+Zone. Neither of `invoice_0001`'s tables carries a Title, so run 49's numbers are
+unaffected by that correction and did not need re-taking."""
+
 DOTENV = Path(".env")
 """Looked for in the working directory. Absent is the normal case, not an error."""
 
@@ -130,6 +214,8 @@ class Settings:
     timeout_s: float = DEFAULT_TIMEOUT_S
     log_level: str = DEFAULT_LOG_LEVEL
     lenient_decoding: bool = DEFAULT_LENIENT_DECODING
+    snap_zones: bool = DEFAULT_SNAP_ZONES
+    table_grid_hint: bool = DEFAULT_TABLE_GRID_HINT
 
     origins: dict[str, Setting] = field(default_factory=dict)
     """Variable name -> what resolved and from where. Declaration order."""
@@ -227,6 +313,8 @@ def load(
             resolve("DTH_TIMEOUT_S", DEFAULT_TIMEOUT_S),
             resolve("DTH_LOG_LEVEL", DEFAULT_LOG_LEVEL),
             resolve("DTH_LENIENT_DECODING", DEFAULT_LENIENT_DECODING),
+            resolve("DTH_SNAP_ZONES", DEFAULT_SNAP_ZONES),
+            resolve("DTH_TABLE_GRID_HINT", DEFAULT_TABLE_GRID_HINT),
         )
     }
 
@@ -242,6 +330,8 @@ def load(
         timeout_s=_number(origins["DTH_TIMEOUT_S"], float),
         log_level=origins["DTH_LOG_LEVEL"].value,
         lenient_decoding=_flag(origins["DTH_LENIENT_DECODING"]),
+        snap_zones=_flag(origins["DTH_SNAP_ZONES"]),
+        table_grid_hint=_flag(origins["DTH_TABLE_GRID_HINT"]),
         origins=origins,
     )
 

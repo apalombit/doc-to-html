@@ -13,6 +13,7 @@ one round.
 from __future__ import annotations
 
 import logging
+import time
 from dataclasses import dataclass, field, replace
 from enum import Enum
 from pathlib import Path
@@ -23,22 +24,27 @@ from .config import Settings, load
 from .engines.base import VisionEngine
 from .engines.ollama import OllamaEngine
 from .extractors import for_kind, resolution_caveat
-from .ir import Caveat, Document, Failure, Gap, Zone
+from .ir import Caveat, Document, Failure, Gap, Kind, Zone
 from .preprocess import (
+    LAYOUT_LONG_EDGE,
     MIN_ZONE_INK,
     MODEL_INPUT_LONG_EDGE,
+    PAD_X,
+    PAD_Y,
     EmptyZone,
     ImageArray,
     Rectified,
     ink_fraction,
     snap_to_ink,
+    table_grid,
     long_edge_over_input_budget,
     rectify,
     uncovered_ink,
     zone_pixels,
 )
 from .render import render
-from .wire import MappingError, validate_bands
+from .trace import Change, Disposition, Stage, Trace
+from .wire import MappingError, NotPairs, validate_bands
 
 log = logging.getLogger(__name__)
 
@@ -128,10 +134,78 @@ def failed(index: int, zone: Zone, error: Exception) -> Failure:
     )
 
 
+def _box_data(zone: Zone) -> dict[str, float] | None:
+    """One Zone's rectangle as plain numbers, for the Trace.
+
+    A dict rather than the `BBox` itself because `trace.py` serialises with
+    `json.dumps` and holds no knowledge of the IR — the Trace is a record of what
+    happened, not a second copy of the domain model.
+    """
+    if zone.bbox is None:
+        return None
+    return {
+        "left": zone.bbox.left, "top": zone.bbox.top,
+        "right": zone.bbox.right, "bottom": zone.bbox.bottom,
+    }
+
+
+def _crop_data(image: ImageArray, zone: Zone) -> dict[str, object] | None:
+    """The pixels a pass was actually shown, described.
+
+    Which pixels, at what size, with what padding — the three things needed to
+    tell "the model misread this" from "the model was shown the wrong thing", and
+    a distinction this project has had to make from the raw dump more than once.
+    The padding is recorded rather than assumed because a reader comparing two
+    runs cannot know whether `PAD_X` moved between them.
+    """
+    if zone.bbox is None:
+        return None
+    pixels = zone_pixels(image, zone)
+    return {
+        "width": pixels.shape[1], "height": pixels.shape[0],
+        "box": _box_data(zone), "pad_x": PAD_X, "pad_y": PAD_Y,
+        "ink_fraction": round(ink_fraction(pixels), 4),
+    }
+
+
+def _grid_data(image: ImageArray, zone: Zone) -> dict[str, int] | None:
+    """What the *page* says a table's shape is, beside what the model returned.
+
+    Recorded for table Zones only, so the contact sheet can put the two claims
+    next to each other — *the page has 2 rows, the model returned 4* — which is
+    the whole of the Zone 4 defect stated in one line. Without it a reader has to
+    count rows off a crop by eye, which is how this went unnoticed for eight runs.
+
+    Measured here rather than handed back from `extract_zone`, which measures the
+    same crop to build its prompt when `DTH_TABLE_GRID_HINT` is on. Two calls to a
+    pure function on identical pixels agree by construction, and that is cheaper
+    than widening a shipping signature to carry a diagnostic out.
+    """
+    if zone.kind is not Kind.TABLE or zone.bbox is None:
+        return None
+    grid = table_grid(zone_pixels(image, zone))
+    return {"rows": grid.rows, "columns": grid.columns}
+
+
+def _why_kept(zones: list[Zone]) -> str:
+    """Which of `snapped_or_original`'s two refusals fired.
+
+    Both return the Engine's own list, so the caller cannot tell them apart by
+    identity — and they are different findings. A Zone with no geometry is a
+    layout problem; Bands going invalid is the snap being overruled by the
+    guard written for exactly that.
+    """
+    if not zones or any(zone.bbox is None for zone in zones):
+        return "a Zone has no bbox, so there was nothing to snap it to"
+    return "snapping made the Bands invalid, so the Engine's geometry was kept"
+
+
 def snapped_or_original(image: ImageArray, zones: list[Zone]) -> list[Zone]:
     """The Engine's Zones with their boxes moved onto the ink, or unchanged.
 
-    **Not called by the Conversion. Measured, shipped, and reverted.**
+    **Off by default. Reached only when `DTH_SNAP_ZONES` is set** — shipped once,
+    reverted, and now a setting so the revert can be re-examined rather than
+    inherited.
 
     Gate 1 passed on every field it was written to read — `covered` 0.82 -> 0.99,
     `splits` 46 -> 0, `zones` unchanged, and nothing worse on any of the five
@@ -141,15 +215,26 @@ def snapped_or_original(image: ImageArray, zones: list[Zone]) -> list[Zone]:
     header has 2` — which also lost the column-sum Probe, the only arithmetic
     check the document has.
 
-    So the assumption the whole of spec 0004 rests on is false as stated: a box
-    that contains more of its own ink does not necessarily yield a crop that
-    reads better. Growing Zone 5 outward to the ink it had been clipping changed
-    what the table Extractor was shown, and it came back with a malformed row.
+    Run 45 repeated that at a later commit and got the same six mismatches by the
+    same route, so the regression is real and reproducible rather than one bad
+    decode. What it costs is also narrower than the revert recorded, and both
+    halves matter to whoever picks this up next:
 
-    Kept rather than deleted because the measurement stands and the next attempt
-    should start here — but any gate that re-wires it has to include "no Zone
-    that previously converted stops converting", which is the condition Gate 1
-    was missing and the reason this shipped at all.
+    - All twelve classifications across the two snapped runs came back
+      **identical** to run 43's unsnapped ones. The snap moves none of the
+      document's three Kind mismatches and breaks none — consistent with run 42,
+      which found the same from the true rectangles.
+    - The table answers differ from run 43's by exactly **one row**, a spurious
+      empty `data` row after `Website design`, in the same slot both times. That
+      one row is the whole of the regression.
+
+    So the open question is not whether to snap but what the table Extractor does
+    with an empty row — it already repairs this model's other known table
+    malformation, a header split across two rows, by joining them.
+
+    Any gate that turns this on by default has to include "no Zone that
+    previously converted stops converting", which is the condition Gate 1 was
+    missing and the reason this shipped at all. See `config.DEFAULT_SNAP_ZONES`.
     """
     boxes = [zone.bbox for zone in zones]
     if not zones or any(box is None for box in boxes):
@@ -251,6 +336,22 @@ class Conversion:
     handler: CheckpointHandler = field(default_factory=NullHandler)
     document: Document | None = None
 
+    snap_zones: bool = field(default_factory=lambda: load().snap_zones)
+    """Whether `_layout` moves each box onto its ink. See `snapped_or_original`.
+
+    Resolved per Conversion rather than read at import, so a test or a bake-off
+    arm can set the variable and get the behaviour without reloading the module.
+    """
+
+    trace: Trace = field(default_factory=Trace)
+    """What this Conversion did, step by step. See `trace.py`.
+
+    Always on, with no flag: it is an append-only list, the cost is nil, and a
+    diagnostic that is off by default is off on the run you needed it for. The
+    passes only ever append — nothing here reads it back — so an Event that is
+    wrong or missing still leaves the Document byte-identical.
+    """
+
     classification_ran: bool = field(init=False, default=False)
     """Whether the classification pass has happened yet. See `_classify`.
 
@@ -290,18 +391,37 @@ class Conversion:
 
     def run(self) -> Document:
         """Rectify, lay out, classify, extract, probe, audit, refine."""
+        started = time.perf_counter()
         rectified = rectify(self.source)
+        self.trace.record(
+            Stage.RECTIFY, "rectify", Disposition.ACCEPTED,
+            seconds=time.perf_counter() - started,
+            path=rectified.source.path, sha256=rectified.source.sha256,
+            source_width=rectified.source.width,
+            source_height=rectified.source.height,
+            rectified_width=rectified.image.shape[1],
+            rectified_height=rectified.image.shape[0],
+            warped=rectified.warped,
+        )
         hint = self._ask_opening()
 
         document = Document(source=rectified.source, hint=hint)
         self.document = document
 
-        for _ in range(MAX_ROUNDS):
+        for round_number in range(MAX_ROUNDS):
             self._layout(rectified, document)
             self._classify(rectified, document)
             self._extract(rectified, document)
 
             document.probes = probe_module.run(document)
+            for probe in document.probes:
+                self.trace.record(
+                    Stage.PROBE, probe.kind,
+                    Disposition.ACCEPTED if probe.ok else Disposition.REJECTED,
+                    zone_index=probe.zone_index,
+                    ok=probe.ok, computed=probe.computed, stated=probe.stated,
+                    detail=probe.detail,
+                )
             self._audit(rectified, document)
             self._climb_ladders(rectified, document)
 
@@ -309,6 +429,15 @@ class Conversion:
             if answer.is_empty:
                 # Nothing new entered the system. Re-running identical passes
                 # over identical pixels would reproduce the Draft as it stands.
+                self.trace.record(
+                    Stage.RENDER, "converged", Disposition.ACCEPTED,
+                    round=round_number,
+                    zones=len(document.zones),
+                    incomplete=sum(1 for z in document.zones if not z.complete),
+                    failures=len(document.failures),
+                    caveats=len(document.caveats),
+                    seconds=time.perf_counter() - started,
+                )
                 break
             self._apply(answer, document)
         else:
@@ -347,9 +476,47 @@ class Conversion:
         """
         if document.zones:
             return
-        document.zones = self.engines.layout.detect_zones(
-            rectified.image, document.hint
+
+        mark, started = self.trace.next_call, time.perf_counter()
+        zones = self.engines.layout.detect_zones(rectified.image, document.hint)
+        call, made = self.trace.calls_since(mark)
+        self.trace.record(
+            Stage.LAYOUT, "detect_zones", Disposition.ACCEPTED,
+            seconds=time.perf_counter() - started, call=call, calls=made,
+            long_edge=LAYOUT_LONG_EDGE, zones=len(zones),
+            boxes=[_box_data(zone) for zone in zones],
         )
+
+        if self.snap_zones:
+            log.info("DTH_SNAP_ZONES is on: moving %d boxes onto their ink", len(zones))
+            before = [_box_data(zone) for zone in zones]
+            started = time.perf_counter()
+            snapped = snapped_or_original(rectified.image, zones)
+            kept = snapped is zones
+            self.trace.record(
+                Stage.SNAP, "snap_to_ink",
+                Disposition.KEPT if kept else Disposition.OVERRIDDEN,
+                seconds=time.perf_counter() - started,
+                enabled=True, reverted=kept,
+                reason=_why_kept(zones) if kept else None,
+                before=before, after=[_box_data(zone) for zone in snapped],
+                changed=[
+                    Change(path=f"zones[{index}].bbox", before=was, after=now)
+                    for index, (was, now) in enumerate(
+                        zip(before, [_box_data(zone) for zone in snapped])
+                    )
+                    if was != now
+                ],
+            )
+            zones = snapped
+        else:
+            self.trace.record(
+                Stage.SNAP, "snap_to_ink", Disposition.SKIPPED,
+                enabled=False,
+                reason="DTH_SNAP_ZONES is off, so the Engine's boxes are used "
+                       "as returned",
+            )
+        document.zones = zones
 
     def _classify(self, rectified: Rectified, document: Document) -> None:
         """Decide each Zone's Kind from that Zone's own crop.
@@ -378,9 +545,17 @@ class Conversion:
         self.classification_ran = True
 
         for index, zone in enumerate(document.zones):
+            was = zone.kind.value
+            mark, started = self.trace.next_call, time.perf_counter()
             try:
                 empty = empty_zone(rectified.image, zone)
                 if empty is not None:
+                    self.trace.record(
+                        Stage.CLASSIFY, "empty_zone", Disposition.SKIPPED,
+                        zone_index=index,
+                        ink_fraction=ink_fraction(zone_pixels(rectified.image, zone)),
+                        threshold=MIN_ZONE_INK, kind=was, reason=str(empty),
+                    )
                     raise empty
                 document.zones[index] = self.engines.classify.classify_zone(
                     rectified.image, zone, document.hint
@@ -391,15 +566,43 @@ class Conversion:
                 # a Failure saying nothing about what it failed on is worse than
                 # one saying "the thing geometry took for a table". #17 removes
                 # geometry's guess, and then this becomes the Kind's default.
+                call, made = self.trace.calls_since(mark)
+                self.trace.record(
+                    Stage.CLASSIFY, "classify_zone", Disposition.REJECTED,
+                    zone_index=index, seconds=time.perf_counter() - started,
+                    call=call, calls=made, kind=was,
+                    error=f"{type(error).__name__}: {error}",
+                    consequence="left out of extraction: with no Kind there is "
+                                "no question to ask about this Zone",
+                )
                 self.unclassified.add(index)
                 self.classification_failures.append(failed(index, zone, error))
                 continue
 
             classified = document.zones[index]
+            call, made = self.trace.calls_since(mark)
+            self.trace.record(
+                Stage.CLASSIFY, "classify_zone", Disposition.ACCEPTED,
+                zone_index=index, seconds=time.perf_counter() - started,
+                call=call, calls=made,
+                changed=[Change(path=f"zones[{index}].kind",
+                                before=was, after=classified.kind.value)],
+                crop=_crop_data(rectified.image, classified),
+                kind_before=was, kind_after=classified.kind.value,
+                title=classified.title, graphic=classified.graphic_kind,
+                over_input_budget=long_edge_over_input_budget(
+                    rectified.image, classified
+                ),
+            )
+
             note = classification_caveat(rectified.image, classified)
             if note is not None:
                 self.classification_caveats.append(
                     Caveat(zone_index=index, kind=classified.kind.value, note=note)
+                )
+                self.trace.record(
+                    Stage.CLASSIFY, "classify_caveat", Disposition.ACCEPTED,
+                    zone_index=index, kind=classified.kind.value, note=note,
                 )
 
     def _extract(self, rectified: Rectified, document: Document) -> None:
@@ -426,19 +629,143 @@ class Conversion:
         for index, zone in enumerate(document.zones):
             if zone.complete or index in self.unclassified:
                 continue
+
+            extractor = for_kind(zone.kind)
+            asked = zone.kind.value
+            mark, started = self.trace.next_call, time.perf_counter()
             try:
-                for_kind(zone.kind).extract(
+                extractor.extract(
                     rectified.image, zone, self.engines.extract, document.hint
                 )
+            except NotPairs as diagnosis:
+                self._record_extract(index, asked, extractor, rectified, zone,
+                                     mark, started, Disposition.REROUTED,
+                                     error=f"{type(diagnosis).__name__}: {diagnosis}")
+                try:
+                    self._reread_as_prose(rectified, document, index, diagnosis)
+                except Exception as error:
+                    document.failures.append(failed(index, zone, error))
+                    continue
             except Exception as error:
+                self._record_extract(index, asked, extractor, rectified, zone,
+                                     mark, started, Disposition.REJECTED,
+                                     error=f"{type(error).__name__}: {error}")
                 document.failures.append(failed(index, zone, error))
                 continue
+            else:
+                self._record_extract(index, asked, extractor, rectified, zone,
+                                     mark, started, Disposition.ACCEPTED)
 
             note = resolution_caveat(rectified.image, zone)
             if note is not None:
                 document.caveats.append(
                     Caveat(zone_index=index, kind=zone.kind.value, note=note)
                 )
+                self.trace.record(
+                    Stage.EXTRACT, "resolution_caveat", Disposition.ACCEPTED,
+                    zone_index=index, kind=zone.kind.value, note=note,
+                )
+
+    def _record_extract(self, index: int, asked: str, extractor: object,
+                        rectified: Rectified, zone: Zone, mark: int,
+                        started: float, disposition: Disposition,
+                        error: str | None = None) -> None:
+        """One Event for one extraction attempt, however it ended.
+
+        A method rather than three copies inline because the four exits from the
+        loop above — read, re-routed, refused, raised — must record the *same*
+        fields or the sheet's per-Zone view develops holes exactly where a Zone
+        went wrong, which is the only place anybody looks.
+
+        The wire-level repairs — the split-header join and the empty-row drop —
+        are deliberately *not* recorded here. They happen inside `wire.py`, which
+        maps a response without knowing which Zone index it belongs to, and
+        threading a collector down through `contents_into` would put diagnostic
+        plumbing in the shipping path for something the sheet can obtain safely:
+        the raw answer is in the Call and the mappers are pure, so
+        `tools/inspect_run.py` re-runs those same functions on that same input and
+        reports the difference. What is recorded here is the count each Kind ended
+        with, which is the other half of that comparison.
+        """
+        call, made = self.trace.calls_since(mark)
+        self.trace.record(
+            Stage.EXTRACT, "extract", disposition,
+            zone_index=index, seconds=time.perf_counter() - started,
+            call=call, calls=made,
+            kind_asked=asked, extractor=type(extractor).__name__,
+            crop=_crop_data(rectified.image, zone),
+            grid=_grid_data(rectified.image, zone),
+            rows=len(zone.rows), pairs=len(zone.pairs), blocks=len(zone.blocks),
+            complete=zone.complete, error=error,
+            changed=[Change(path=f"zones[{index}].complete",
+                            before=False, after=True)] if zone.complete else [],
+        )
+
+    def _reread_as_prose(self, rectified: Rectified, document: Document,
+                         index: int, diagnosis: NotPairs) -> None:
+        """Read a Zone again as prose, because the Pairs Extractor says it is.
+
+        The one place a Kind decided by classification is overturned later, and it
+        is overturned on evidence rather than on a second opinion: an unlabelled
+        value means there is no label printed beside it, which is a fact about the
+        page. The classifier had only the crop; this had the crop *and* what the
+        model read off it.
+
+        What it recovers is measured. On `invoice_0001` Zone 3 is the
+        `Acme Corp.` / `John Doe` / `john@example.com` block — prose, classified
+        `pairs` in every run ever taken. The Pairs mapper rejected it on the
+        unlabelled email, and because the mapper raises before anything reaches
+        the Zone, all three lines were discarded, including the two that had
+        bound correctly. The Zone rendered as an empty skeleton.
+
+        Kind is corrected on the Zone rather than left as classified, so the
+        Document records what it was actually converted as and the renderer
+        reaches for the right template. The Caveat is what keeps that honest: an
+        operator reading the render can see the Kind was overturned and by what.
+        Not a Failure, because the Zone has its content — a Failure here would put
+        "this could not be read" directly above the text that was read, which is
+        the confusion `_extract` already avoids for reduced-resolution reads.
+
+        One extra call, only on this failure path. Narrow on purpose: `pairs` is
+        the only Kind whose Extractor can produce evidence about the Kind itself,
+        so there is no symmetric rule to write for the others and inventing one
+        would be guessing.
+        """
+        zone = document.zones[index]
+        log.info(
+            "Zone %d was classified %s, and the Pairs Extractor disagrees (%s) — "
+            "reading it again as prose", index, zone.kind.value, diagnosis,
+        )
+        was = zone.kind.value
+        zone.kind = Kind.PROSE
+        mark, started = self.trace.next_call, time.perf_counter()
+        for_kind(Kind.PROSE).extract(
+            rectified.image, zone, self.engines.extract, document.hint
+        )
+        call, made = self.trace.calls_since(mark)
+        self.trace.record(
+            Stage.EXTRACT, "reroute", Disposition.REROUTED,
+            zone_index=index, seconds=time.perf_counter() - started,
+            call=call, calls=made,
+            changed=[Change(path=f"zones[{index}].kind",
+                            before=was, after=Kind.PROSE.value)],
+            trigger=f"{type(diagnosis).__name__}: {diagnosis}",
+            kind_before=was, kind_after=Kind.PROSE.value,
+            blocks=len(zone.blocks),
+            lines=sum(len(block.lines) for block in zone.blocks),
+            complete=zone.complete,
+        )
+        document.caveats.append(
+            Caveat(
+                zone_index=index,
+                kind=Kind.PROSE.value,
+                note=(
+                    f"classified {was}, re-read as prose: the {was} Extractor "
+                    f"found an unlabelled value, which is evidence the region is "
+                    f"not {was} — {diagnosis}"
+                ),
+            )
+        )
 
     def _audit(self, rectified: Rectified, document: Document) -> None:
         """Find content no Zone covers.

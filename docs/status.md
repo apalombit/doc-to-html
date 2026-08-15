@@ -6,14 +6,27 @@ neither of which belongs here.
 
 ## Where this is, in one paragraph
 
-**The PoC works end to end and is two mismatches from correct on one image.** A
-Source Image is rectified, laid out by a vision Engine, extracted Zone by Zone
-from full-resolution crops, checked by Probes and rendered as one self-contained
-HTML file with the IR embedded. Offline, all five fixtures convert with no
-Failures. Against a real `qwen3-vl:4b`, `example/invoice.png` converts through
-every pass in ~175s and lands at **2 mismatches**: every string on the page is
-read correctly and the column-sum Probe reconciles at 385.00, but two Zones get
-the wrong Kind.
+**The PoC works end to end and `example/invoice.png` now converts with zero
+mismatches.** A Source Image is rectified, laid out by a vision Engine, classified
+Zone by Zone from its own crop, extracted from the same crop, checked by Probes
+and rendered as one self-contained HTML file with the IR embedded. Against a real
+`qwen3-vl:4b` the invoice matches its expected IR exactly — all six Kinds right,
+every string on the page rendered, no skeletons, no Failures, and the column-sum
+Probe reconciling at 385.00. Run 49, `debug/runs/49-table-grid-hint/`, taken with
+`DTH_SNAP_ZONES=1`.
+
+**Everything below this paragraph predates that result** and describes the
+document at 2 and 3 mismatches. It is kept as the record of how the count moved
+and what was rejected on the way; `CLAUDE.md` and
+`docs/specs/0003-classify-from-the-crop.md` carry the current state. The three
+standing caveats are that only this one fixture is measured, that the shipped
+default has `DTH_SNAP_ZONES` off so `convert()` out of the box is unmeasured, and
+that the replay suite is red by design until #16 re-records it.
+
+The count went up, not down. The classification split (#12) was predicted to take
+it from 2 to 1; run 22 measured 3. It fixed the Zone it was designed to fix and
+broke one it was not designed to touch — see below, and
+`docs/specs/0003-classify-from-the-crop.md` for the numbers.
 
 ### What the PoC is deliberately proving, and what it is not
 
@@ -29,10 +42,10 @@ model, then the same prompts held to the other four fixtures without regressing.
 
 ### What is being worked on right now
 
-**`docs/specs/0003-classify-from-the-crop.md` — issue #12.** Both remaining
-mismatches are the layout pass giving a Zone the wrong Kind, and issue #13
-measured why: the pass is being asked two different questions about two different
-things at once.
+**`docs/specs/0003-classify-from-the-crop.md` — issue #12.** Every remaining
+mismatch is a Zone getting the wrong Kind. When there were two of them, issue #13
+measured why: the layout pass is being asked two different questions about two
+different things at once.
 
 - Zone 1 (`Invoice #` / `Created` / `Due`) is fixed by **isolation** — asked on
   its own it answers `pairs` correctly even at 96×38px; it only answers `prose`
@@ -52,13 +65,45 @@ to `qwen3-vl:4b`, one model in every step — decided 2026-07-29, against 0003's
 recommendation. Not because the probe was wrong but because it was thin:
 `qwen3.5:4b` has never run the layout pass, touched the other four fixtures, or
 converted a document, so defaulting to it would generalise from one measurement
-on one fixture. **Expect this to fix Zone 1 and not Zone 4** — two mismatches to
-one, not zero. Evaluating models per step and combinations across steps is #19.
+on one fixture. Evaluating models per step and combinations across steps is #19.
+
+**Run 22 is the first conversion with the split, and it made `invoice_0001`
+worse: 2 mismatches → 3.** Baseline is run 21 at the commit before the split;
+same model, same fixture, same long edge, both at the same 41%/59% CPU/GPU split.
+
+- **Zone 1 is fixed**, `prose` → `pairs`, exactly as the isolation finding
+  predicted.
+- **Zone 4 is unchanged.** `qwen3-vl:4b` answers `pairs` from a crop where the
+  shaded heading row is plainly legible — now 7/7 wrong, counting this run.
+  It needs a different model, which is #19.
+- **Zone 3 regressed**, `prose` → `pairs`, and this was not predicted by anything.
+  Zones 2 and 3 are the two address blocks in Band 1. Zone 2 (`Sparksuite, Inc.`
+  / a street / a city) still reads `prose`; Zone 3 (`Acme Corp.` / `John Doe` /
+  `john@example.com`) has no street and no city in it, and asked with no
+  neighbour to compare against it reads `pairs`. **Isolation cuts both ways** —
+  narrowing the question also removes the evidence that lives between Zones. That
+  is a fourth mechanism on top of #13's three, and 0003 did not have it.
+- **A wrong Kind is not confined to the Kind.** Zone 3 went to the Pairs
+  extractor and raised `MappingError` on an unlabelled value. The failure
+  contract held — that Zone renders as a skeleton with an "Unresolved" finding,
+  the other five convert — but the document lost a block it used to render.
+
+**Classification costs ~95s per document**: 6 calls, 15.8s mean, 17.4s worst, on
+a 219.3s baseline. The document total rose only 27.2s, and that discount is an
+artefact of the wrong Kinds — three Zones went to the cheaper Pairs prompt
+instead of Prose. Quote the 95s.
 
 **The replay suite is red, by design**: replay serves recorded responses by
 order, so the extra call per Zone puts all five fixtures out of step. #16
-re-records them and is next. Nothing about this has yet been measured against a
-real model — the numbers above are still #13's probe, not a conversion.
+re-records them and is next.
+
+**A second spec is now open against the same three mismatches from the other
+end** — `docs/specs/0004-check-the-box-against-the-ink.md`, issue #20. 0003 asks
+which model names a Zone's Kind; 0004 asks whether the crop that Kind is judged
+from is the Zone at all. Runs 26-32 measured geometry itself at **mean best IoU
+0.56**, invariant to resolution and worse under prompt framing, with no check
+anywhere comparing a box to ink. Its first gate decides whether #12's and #19's
+comparisons are being run on inputs that are themselves wrong.
 
 | Issue | | |
 |---|---|---|
@@ -69,6 +114,7 @@ real model — the numbers above are still #13's probe, not a conversion.
 | #17 | open | Delete Kind from the layout prompt. |
 | #18 | open | Show each classification beside its crop. |
 | #19 | open | Measure latency and all five fixtures. |
+| **#20** | open | Check the box against the ink — spec 0004. Geometry itself, measured: IoU 0.56 on the shipped path, and its Gate 1 decides whether #12/#19 are measuring the wrong inputs. |
 
 Closed and not coming back: **#1** (the end-to-end slice — built) and **#11**
 (structure-not-geometry — took invoice.png from 3 mismatches to 2 and handed the
@@ -180,7 +226,8 @@ Recorded here so it is not "fixed" later.
   beat.
 - **Which model wins — still open, and shipping as one model until it is not.**
   `qwen3-vl:4b` reads text correctly on `invoice.png` but cannot tell a shaded
-  heading row from a label/value pair at any resolution (issue #13, 6/6 wrong).
+  heading row from a label/value pair at any resolution (issue #13, 6/6 wrong;
+  7/7 counting run 22's full conversion).
   `qwen3.5:4b` gets that Kind right from a full-resolution crop, and is 3.4GB
   against 3.3GB, so it fits the same budget. **Its geometry has never been
   measured** — it has not run the layout pass or touched the other four fixtures.
@@ -190,15 +237,28 @@ Recorded here so it is not "fixed" later.
   `DTH_CLASSIFY_MODEL` is what a future answer changes. #19 is where the
   evaluation — per step, and across combinations — happens.
 - **Whether the latency is tolerable.** `invoice_0001` converts in ~175s on
-  `qwen3-vl:4b` with the whole GPU. Adding one classification call per Zone is
-  #15's cost and #19 measures it. Tolerable for a batch, not for an interactive
+  `qwen3-vl:4b` with the whole GPU. Adding one classification call per Zone costs
+  **~95s per document** — 6 calls at 15.8s mean, measured in run 22 at a 41%/59%
+  CPU/GPU split, so the absolute figures are inflated but the ratio to that run's
+  own baseline is not. The "it is only one enum out" argument does not hold: the
+  cost is encoding the crop and prefilling the prompt, and classification pays it
+  in full and then makes the Extractor pay it again on the same pixels. #19 still
+  owes two runs on a whole GPU. Tolerable for a batch, not for an interactive
   tool — and memory pressure can make any of these figures 40x worse, so no
   number taken without checking `ollama ps` first means anything.
 - **Whether the split is even the cheapest fix.** Untested rival: one pass at a
   higher `LAYOUT_LONG_EDGE` on `qwen3.5:4b` might fix Zone 4 with no extra call
   per Zone at all. The isolation finding argues against it — Zone 1 needs the
   question narrowed, not the page enlarged — but that is an argument, not a
-  measurement. Recorded in spec 0003.
+  measurement. Recorded in spec 0003, and run 22 strengthens the rival's case: a
+  single pass is the only one of the two that can see two address blocks at once.
+- **What a Zone judged alone is owed.** Run 22's Zone 3 says a Kind decided from
+  one crop can be wrong precisely because it is alone — the block beside it was
+  the evidence. Three candidate answers, none measured: widen `CLASSIFY_PROMPT`'s
+  `prose` cue (which is the move 0002 records four failures of, so not on one
+  run); give the classifier the Role and Band position it already has and does
+  not use; or treat a neighbourless Kind as provisional and let something else
+  break the tie, which is what the Coverage Audit was for. #19 decides.
 - **Multi-page.** A Conversion is strictly one Source Image; admitting page 2
   means growing the IR a `pages` array and revising every fixture.
 

@@ -9,12 +9,24 @@ where the failure contract is exercised on a document that partly worked.
 from __future__ import annotations
 
 import io
+import json
 from pathlib import Path
 
+import numpy as np
 import pytest
 from PIL import Image
 
-from doc_to_html.ir import Document, Kind, RowRole, Zone
+from doc_to_html.engines.ollama import TABLE_PROMPT, OllamaEngine, with_grid
+from doc_to_html.ir import BBox, Document, Kind, RowRole, Zone
+from doc_to_html.preprocess import (
+    MIN_BAND,
+    TableGrid,
+    content_ink,
+    ink_bands,
+    rectify,
+    table_grid,
+    zone_pixels,
+)
 from doc_to_html.render import render
 from doc_to_html.wire import MappingError, TableResponse, contents_into
 
@@ -35,6 +47,11 @@ STATISTICS = REPO / "example" / "sample-table.png"
 
 def convert_with(image: Path, replies: list[object]) -> tuple[Document, ReplayTransport]:
     return convert_recording(image, replies)  # type: ignore[arg-type]
+
+
+def engine_with(*replies: str) -> tuple[OllamaEngine, ReplayTransport]:
+    transport = ReplayTransport([text(reply) for reply in replies])
+    return OllamaEngine(model="test-model", transport=transport), transport
 
 
 def table_calls(transport: ReplayTransport) -> list[Call]:
@@ -279,6 +296,76 @@ class TestMappingATableResponse:
         assert len(zone.rows) == 1
 
 
+class TestARowWithNoCellsAtAll:
+    """A row carrying nothing is dropped, and takes nothing with it.
+
+    The width check exists because a row with the *wrong* number of cells hides a
+    dropped or invented one, and every value after it lands in the wrong column.
+    A row with none has no value to misplace, so it is the one case where
+    removing it is safe — and it is the case that cost a document.
+
+    Measured: runs 39 and 45 both converted `invoice_0001` on ink-snapped
+    geometry and both returned the whole line-item table plus one empty row after
+    `Website design`. The width check rejected it, `rows_from_table` raised, and
+    nine correctly read strings, the table and the column-sum Probe were lost to
+    an empty skeleton.
+    """
+
+    MEASURED = (
+        '{"rows": [{"role": "header", "cells": ["Item", ""]},'
+        ' {"role": "header", "cells": ["", "Price"]},'
+        ' {"role": "data", "cells": ["Website design", "$300.00"]},'
+        ' {"role": "data", "cells": []},'
+        ' {"role": "data", "cells": ["Hosting (3 months)", "$75.00"]},'
+        ' {"role": "data", "cells": ["Domain name (1 year)", "$10.00"]},'
+        ' {"role": "summary", "cells": ["", "Total: $385.00"]}]}'
+    )
+    """Run 45's answer for Zone 5, byte for byte apart from whitespace."""
+
+    def test_the_run_that_lost_the_invoice_table_now_keeps_every_row(self) -> None:
+        zone = table_zone(self.MEASURED)
+
+        assert [r.role for r in zone.rows] == [
+            RowRole.HEADER, RowRole.DATA, RowRole.DATA, RowRole.DATA,
+            RowRole.SUMMARY,
+        ]
+
+    def test_no_string_is_lost_or_moved_between_columns(self) -> None:
+        zone = table_zone(self.MEASURED)
+
+        assert [[c.readings[0].text for c in r.cells] for r in zone.rows] == [
+            ["Item", "Price"],
+            ["Website design", "$300.00"],
+            ["Hosting (3 months)", "$75.00"],
+            ["Domain name (1 year)", "$10.00"],
+            ["", "Total: $385.00"],
+        ]
+
+    def test_a_row_short_of_the_header_is_still_rejected(self) -> None:
+        """The dangerous case, and the reason this is not a blanket repair.
+
+        One cell out of two could belong to either column. Guessing would put a
+        price under a description and leave the number individually plausible,
+        which is the failure the width check was written for.
+        """
+        with pytest.raises(MappingError, match="row 1 has 1 cells.*header has 2"):
+            table_zone(
+                '{"rows": [{"role": "header", "cells": ["a", "b"]},'
+                ' {"role": "data", "cells": ["1"]}]}'
+            )
+
+    def test_a_response_that_is_nothing_but_empty_rows_is_still_a_failure(
+        self,
+    ) -> None:
+        """Dropping them all leaves no table, which is the empty answer the
+        layout pass already contradicted — not a table with zero rows."""
+        with pytest.raises(MappingError, match="empty rows"):
+            table_zone(
+                '{"rows": [{"role": "data", "cells": []},'
+                ' {"role": "data", "cells": []}]}'
+            )
+
+
 class TestAHeaderRowSplitOneCellPerRow:
     """A header row whose cells sit at opposite edges comes back as two rows.
 
@@ -432,3 +519,99 @@ class TestAZoneTooDenseToReadWhole:
         plan = TableExtractor.plan_slices(3000)
         assert plan[0][0] == 0 and plan[-1][1] == 3000
         assert plan[1][0] < plan[0][1], "slices must overlap"
+
+
+class TestMeasuringTheGridFromThePixels:
+    """`table_grid`, and the three real tables it has to be right about.
+
+    Two prompt attempts have failed to stop this model cutting a wide row in half
+    — run 13 on the header, run 48 on the general case, the latter returning
+    output byte-identical to the run before it. So the remedy has to come from
+    something a prompt cannot consult, and this is it: project the crop's ink down
+    for rows and across for columns, and count the bands. It reads nothing and
+    understands nothing, which is exactly why it can be trusted.
+
+    These are the fixtures' own pixels rather than a synthetic grid, because the
+    parameter that matters is the one a drawn test would never exercise — see
+    `test_the_gutter_threshold_is_absolute_and_not_a_fraction`.
+    """
+
+    def crop_of(self, fixture: str, index: int) -> object:
+        expected = json.loads(
+            (REPO / "tests" / "fixtures" / f"{fixture}.expected.json").read_text()
+        )
+        box = expected["zones"][index]["bbox"]
+        image = rectify(REPO / expected["source"]["path"]).image
+        return zone_pixels(image, Zone(
+            kind=Kind.TABLE, bbox=BBox(box["left"], box["top"],
+                                       box["right"], box["bottom"]),
+        ))
+
+    def test_a_two_row_table_measures_two_rows(self) -> None:
+        """`invoice_0001`'s Zone 4 — the Zone the model returns as four rows."""
+        grid = table_grid(self.crop_of("invoice_0001", 4))
+        assert (grid.rows, grid.columns) == (2, 2)
+
+    def test_the_line_item_table_measures_its_five_rows(self) -> None:
+        """Five rows, not six: `content_ink` has already dropped the rule above
+        the total, so the ruling does not become a row."""
+        grid = table_grid(self.crop_of("invoice_0001", 5))
+        assert (grid.rows, grid.columns) == (5, 2)
+
+    def test_the_gutter_threshold_is_absolute_and_not_a_fraction(self) -> None:
+        """The parameter that decides whether this generalises at all.
+
+        `invoice_0001`'s table has one 530px gutter, so any threshold works on it.
+        `sample_table_0003` has five columns with narrow gutters: at 4% of a 960px
+        crop the threshold is 38px, wider than any of them, and all five collapse
+        into two bands. Measured, and the reason `MIN_COLUMN_GAP` is a pixel count.
+        """
+        crop = self.crop_of("sample_table_0003", 1)
+        assert table_grid(crop).columns == 5
+
+        mask = content_ink(crop)
+        as_a_fraction = len(ink_bands(mask.sum(axis=0),
+                                      int(mask.shape[1] * 0.04), MIN_BAND))
+        assert as_a_fraction == 2, "the fraction is what this test exists to reject"
+
+    def test_a_title_is_a_printed_line_and_not_a_row(self) -> None:
+        """The one inaccuracy this ruler has, and where it belongs.
+
+        `sample_table_0003` prints "Population and GDP (millions of USD)" above
+        its grid. That is the Zone's Title in the IR — not a row — but it is a
+        band of ink like any other, so the projection counts 17 where the table
+        has 16. Both numbers are right; they count different things.
+
+        The ruler is left alone and `with_grid` subtracts, because that is the
+        seam where a claim about a *crop* becomes a claim about a *table*, and it
+        is the first place `zone.title` is known — classification fills it before
+        extraction runs. Neither of `invoice_0001`'s tables has a Title, which is
+        why the count was exact there and this never surfaced until run 49.
+        """
+        crop = self.crop_of("sample_table_0003", 1)
+        assert table_grid(crop).rows == 17, "the crop really does hold 17 lines"
+
+        titled = with_grid(TABLE_PROMPT, table_grid(crop), titled=True)
+        assert "it holds 16 rows and 5 columns" in titled
+
+
+class TestStatingTheGridInThePrompt:
+    def test_the_counts_reach_the_prompt(self) -> None:
+        grid = TableGrid(rows=2, columns=2, row_bands=[], column_bands=[])
+        asked = with_grid(TABLE_PROMPT, grid)
+
+        assert "it holds 2 rows and 2 columns" in asked
+        assert asked.startswith(TABLE_PROMPT), "stated after, never instead of"
+
+    def test_the_flag_off_leaves_the_prompt_exactly_as_it_ships(self) -> None:
+        """Off has to mean untouched, or the default is not the measured one."""
+        engine, transport = engine_with('{"rows": [{"role": "data",'
+                                        ' "cells": ["a", "b"]}]}')
+        engine.table_grid_hint = False
+        page = np.full((120, 400, 3), 245, dtype=np.uint8)
+        page[20:40, 10:100] = 20
+
+        engine.extract_zone(page, Zone(kind=Kind.TABLE, bbox=BBox(0, 0, 1, 1)))
+
+        assert transport.last is not None
+        assert transport.last.prompt == TABLE_PROMPT

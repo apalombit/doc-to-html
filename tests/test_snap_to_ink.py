@@ -16,11 +16,12 @@ import numpy as np
 import pytest
 
 from dataclasses import replace
+from pathlib import Path
 
 from doc_to_html.geometry_score import iou
-from doc_to_html.ir import BBox, Kind, Role, Zone
-from doc_to_html.orchestrator import snapped_or_original
-from doc_to_html.preprocess import MAX_SNAP_GROWTH, snap_to_ink
+from doc_to_html.ir import BBox, Document, Kind, Role, Source, Zone
+from doc_to_html.orchestrator import Conversion, EngineSet, snapped_or_original
+from doc_to_html.preprocess import MAX_SNAP_GROWTH, Rectified, snap_to_ink
 
 HEIGHT, WIDTH = 600, 800
 
@@ -289,3 +290,79 @@ class TestTheOrchestratorKeepsWhatWorks:
 
     def test_no_zones_is_not_a_crash(self) -> None:
         assert snapped_or_original(page_with_one_block(), []) == []
+
+
+class TestTheFlagDecidesWhetherItRunsAtAll:
+    """`DTH_SNAP_ZONES`, and the fact that off means untouched.
+
+    The snap shipped once without a way to turn it off, cost the document, and
+    was reverted by deleting the call. This is that call back with a switch on
+    it, so the pair that matters is: on, the boxes move; off, they are the
+    Engine's own coordinates, bit for bit. The second is the one worth a test —
+    a flag that leaks when unset is how run 39 happens twice.
+    """
+
+    class OneAnswer:
+        """A layout Engine that returns a fixed answer and records the call."""
+
+        def __init__(self, zones: list[Zone]) -> None:
+            self.zones = zones
+            self.calls = 0
+
+        def detect_zones(self, image: np.ndarray, hint: str | None) -> list[Zone]:
+            self.calls += 1
+            return list(self.zones)
+
+    def conversion(self, engine: OneAnswer, *, snap: bool) -> Conversion:
+        engines = EngineSet(layout=engine, classify=engine,  # type: ignore[arg-type]
+                            extract=engine, audit=engine)
+        return Conversion(source=Path("unused.png"), engines=engines,
+                          snap_zones=snap)
+
+    def loose(self) -> list[Zone]:
+        """One box drawn well outside the block it surrounds."""
+        return [Zone(kind=Kind.PROSE, role=Role.BODY,
+                     bbox=box(50, 200, 600, 340), band=0, column=0)]
+
+    def source(self) -> Source:
+        return Source(path="unused.png", sha256="0" * 64, width=WIDTH, height=HEIGHT)
+
+    def rectified(self, page: np.ndarray) -> Rectified:
+        return Rectified(image=page, source=self.source())
+
+    def test_off_leaves_the_engines_coordinates_exactly_as_they_arrived(self) -> None:
+        engine = self.OneAnswer(self.loose())
+        document = Document(source=self.source())
+
+        self.conversion(engine, snap=False)._layout(
+            self.rectified(page_with_one_block()), document
+        )
+
+        assert document.zones == self.loose(), "unset must mean untouched"
+
+    def test_on_moves_the_boxes_onto_the_ink(self) -> None:
+        engine = self.OneAnswer(self.loose())
+        document = Document(source=self.source())
+
+        self.conversion(engine, snap=True)._layout(
+            self.rectified(page_with_one_block()), document
+        )
+
+        assert document.zones[0].bbox is not None
+        assert pixels(document.zones[0].bbox) == (100, 240, 500, 280)
+
+    def test_the_flag_is_read_from_the_environment(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Resolved per Conversion, so setting the variable is enough.
+
+        Read at import instead, a bake-off arm that exports it would silently get
+        the default and the run directory would record an arm that never ran.
+        """
+        monkeypatch.setenv("DTH_SNAP_ZONES", "1")
+        assert Conversion(source=Path("unused.png"),
+                          engines=None).snap_zones is True  # type: ignore[arg-type]
+
+        monkeypatch.delenv("DTH_SNAP_ZONES")
+        assert Conversion(source=Path("unused.png"),
+                          engines=None).snap_zones is False  # type: ignore[arg-type]

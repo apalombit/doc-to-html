@@ -59,6 +59,22 @@ class MappingError(ValueError):
     """
 
 
+class NotPairs(MappingError):
+    """The Pairs Extractor's evidence that this Zone is not Pairs at all.
+
+    A distinct type rather than a message the Orchestrator matches on, because
+    this is the one failure in the project that carries a *diagnosis* rather than
+    only a complaint: an unlabelled value is positive evidence about the Zone's
+    Kind, arrived at from the full-resolution crop that the classification pass
+    saw at the same size but answered differently. Everything else raised here
+    says "I could not read this"; this says "you asked the wrong question".
+
+    `_extract` acts on it by re-reading the Zone as prose. Matching on the
+    message text would have worked today and broken the first time somebody
+    reworded it.
+    """
+
+
 class WireZone(BaseModel):
     """One region, as a model reports it. Flat on purpose: scalars only."""
 
@@ -374,7 +390,9 @@ def rows_from_table(response: TableResponse, *, read: Read) -> list[Row]:
     if not response.rows:
         _no_content("table", "no rows")
 
-    wire_rows = _join_split_header_row(response.rows)
+    wire_rows = _join_split_header_row(_without_empty_rows(response.rows))
+    if not wire_rows:
+        _no_content("table", "nothing but empty rows")
 
     header = next((r for r in wire_rows if r.role == "header"), None)
     width = len(header.cells) if header else None
@@ -454,6 +472,34 @@ def _join_split_header_row(rows: list[WireRow]) -> list[WireRow]:
     return joined
 
 
+def _without_empty_rows(rows: list[WireRow]) -> list[WireRow]:
+    """Drop rows carrying no cells at all, before anything is checked.
+
+    A row with **zero** cells is not the failure the width check below exists to
+    catch. That check's reason is that "a dropped or invented cell shifts every
+    value after it into the wrong column" — which is a statement about a row that
+    has *some* cells and the wrong number of them, where there is no way to tell
+    which column each surviving value belongs to. A row with none carries nothing
+    to place, so dropping it moves no value into a wrong column. Every other row
+    keeps the cells it arrived with.
+
+    Measured, and the reason this exists: runs 39 and 45 both converted
+    `invoice_0001` on ink-snapped geometry and both returned the correct table
+    plus one `{"role": "data", "cells": []}` at the same index, right after
+    `Website design`. The width check rejected the row, `rows_from_table` raised,
+    and the Zone rendered as an empty skeleton — losing nine correctly read
+    strings, the line-item table and the column-sum Probe, the only arithmetic
+    check the document has. Replaying run 45's recorded answer through this
+    reproduces the fixture's Row Roles and every cell exactly, and the Probe
+    reconciles at 385.00.
+
+    Narrow on purpose, in the same spirit as `_join_split_header_row`: a row with
+    one cell out of two is still ambiguous and is still rejected. This only ever
+    removes a row that says nothing.
+    """
+    return [row for row in rows if row.cells]
+
+
 def _no_content(kind: str, what: str) -> NoReturn:
     raise MappingError(
         f"{kind} Zone came back with {what} — the layout pass said there is "
@@ -475,7 +521,7 @@ def pairs_from_response(response: PairsResponse, *, read: Read) -> list[Pair]:
         if not label and not value:
             continue
         if not label:
-            raise MappingError(
+            raise NotPairs(
                 f"pairs Zone entry {index} has no label, only {value!r} — an "
                 "unlabelled value is not a Pair, so this region was not Pairs"
             )

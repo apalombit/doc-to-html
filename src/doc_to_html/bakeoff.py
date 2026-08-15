@@ -50,6 +50,7 @@ from .engines.transport import OllamaTransport, Response, Transport
 from .ir import Document
 from .orchestrator import Conversion, EngineSet
 from .render import render
+from .trace import Call, Trace
 
 ACCEPTANCE_SET = Path("tests/fixtures")
 """Where the committed expected IR lives. Each file names its own Source Image."""
@@ -107,10 +108,25 @@ class TimingTransport:
     runs, and a dump that records only the answer leaves you inferring which
     wording produced it from the shell history."""
 
+    trace: Trace | None = None
+    """Where each call is recorded as a `Call`, when a Conversion is tracing.
+
+    The same seam, used for the same reason: this already sees the model, the
+    prompt, the answer and the clock. What it adds over `answers` is that a Call
+    is appended **once per call, in a `finally`, carrying an optional error** —
+    so it holds the failed calls too. `answers` appends only on success while
+    `timings` appends always, which means those two desynchronise the moment a
+    pass raises, and a reader pairing them up gets a prompt attached to somebody
+    else's answer. Left as they are because the report reads them positionally
+    within a pass; the Trace is the record that does not have the flaw."""
+
     def __call__(self, *, model: str, pass_name: str, prompt: str,
                  images: list[bytes], schema: dict[str, Any],
                  num_ctx: int) -> Response:
         started = time.perf_counter()
+        call = Call(pass_name=pass_name, model=model, prompt=prompt,
+                    num_ctx=num_ctx)
+        reply = None
         try:
             reply = self.inner(
                 model=model, pass_name=pass_name, prompt=prompt, images=images,
@@ -118,11 +134,31 @@ class TimingTransport:
             )
             self.answers.append((pass_name, reply.answer, prompt))
             return reply
+        except Exception as error:
+            call.error = f"{type(error).__name__}: {error}"
+            raise
         finally:
+            seconds = time.perf_counter() - started
             self.timings.append(
-                PassTiming(pass_name=pass_name,
-                           seconds=time.perf_counter() - started)
+                PassTiming(pass_name=pass_name, seconds=seconds)
             )
+            if self.trace is not None:
+                call.seconds = seconds
+                if reply is not None:
+                    call.answer = reply.answer
+                    call.thinking = reply.thinking
+                    call.truncated = reply.truncated
+                # `ask` retries a truncated pass once with a doubled budget, so
+                # the same pass appears twice. Marked here rather than left for a
+                # reader to spot, because an unexplained second call to the same
+                # pass reads as a bug in the loop above it.
+                previous = self.trace.calls[-1] if self.trace.calls else None
+                call.retried = (
+                    previous is not None
+                    and previous.pass_name == pass_name
+                    and previous.truncated
+                )
+                self.trace.record_call(call)
 
 
 @dataclass
@@ -153,6 +189,14 @@ class Attempt:
     contact sheet drew and scored the raw answer, so its diagnostic described a
     document that had not been produced. A tool reading a run cannot be expected
     to know which passes rewrite geometry; the run has to say."""
+
+    trace: Trace | None = None
+    """Every step this Conversion took, model call or decision. See `trace.py`.
+
+    Written to the dump as `trace.json`, which is what lets a contact sheet show
+    the pipeline in the order it ran instead of pairing Zone *i* with answer *i*
+    and hoping. That pairing is how run 46's sheet came to show six classify
+    verdicts under a heading reading "What each crop returned"."""
 
     resident_mb: float | None = None
     error: str | None = None
@@ -275,12 +319,19 @@ def run(models: Iterable[str], acceptance: dict[str, tuple[Path, Document]],
     attempts = []
     for model in models:
         for name, (image, expected) in acceptance.items():
-            timing = TimingTransport(inner=build(model, name))
-            attempt = Attempt(fixture=name, model=model)
+            # One Trace, shared: the Conversion appends its steps, the transport
+            # appends the calls those steps made. Built here rather than taken
+            # off the Conversion afterwards because the transport is wrapped
+            # before the Conversion exists, and an Event naming a call has to be
+            # able to find it in the same list.
+            trace = Trace()
+            timing = TimingTransport(inner=build(model, name), trace=trace)
+            attempt = Attempt(fixture=name, model=model, trace=trace)
             try:
                 conversion = Conversion(
                     source=image,
                     engines=engines_for(model, settings, timing),
+                    trace=trace,
                 )
                 actual = conversion.run()
                 attempt.html = render(actual)
@@ -472,6 +523,11 @@ def main(argv: list[str] | None = None) -> int:
                 (out / "document.html").write_text(attempt.html)
             if attempt.zones_used is not None:
                 (out / "zones_used.json").write_text(attempt.zones_used)
+            if attempt.trace is not None:
+                # Written even when the Conversion raised: a run that died
+                # halfway is exactly the run whose steps you want to read, and
+                # the Trace holds everything up to the point it stopped.
+                (out / "trace.json").write_text(attempt.trace.to_json())
         print(f"\nraw answers written to {args.dump}", file=sys.stderr)
 
     if args.json:

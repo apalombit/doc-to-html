@@ -13,7 +13,15 @@ import json
 import pytest
 
 from doc_to_html import probes
-from doc_to_html.ir import BBox, CellState, Correction, Document, Reading, cell
+from doc_to_html.ir import (
+    BBox,
+    Caveat,
+    CellState,
+    Correction,
+    Document,
+    Reading,
+    cell,
+)
 from doc_to_html.render import render
 from doc_to_html.probes import parse_number
 
@@ -125,6 +133,30 @@ class TestRender:
         invoice.probes = probes.run(invoice)
         html = render(invoice)
         assert "Unresolved" in html
+
+    def test_a_caveat_is_not_filed_as_unresolved(self, invoice: Document) -> None:
+        """A Caveat says the Zone converted with a qualifier on how. Under an
+        "Unresolved" heading it tells a reader the document failed while showing
+        them a complete document — which is what run 46 looked like, with one
+        re-read Zone, no Failures and every string on the page rendered."""
+        invoice.caveats = [
+            Caveat(zone_index=3, kind="prose",
+                   note="classified pairs, re-read as prose")
+        ]
+        html = render(invoice)
+
+        assert "Read with a caveat" in html
+        assert "Unresolved" not in html
+
+    def test_both_blocks_appear_when_both_apply(self, invoice: Document) -> None:
+        invoice.zones[-1].rows[1].cells[1] = cell("$800.00")
+        invoice.probes = probes.run(invoice)
+        invoice.caveats = [Caveat(zone_index=3, kind="prose", note="re-read")]
+        html = render(invoice)
+
+        assert html.index("Unresolved") < html.index("Read with a caveat"), (
+            "what is missing comes before what is merely qualified"
+        )
 
 
 class TestCorrections:

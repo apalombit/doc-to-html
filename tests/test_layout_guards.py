@@ -1,14 +1,14 @@
 """Checks that read the pixels back, rather than the model's answer again.
 
 Every other safeguard in the project compares one part of the model's answer to
-another — `_validate_bands` puts boxes against boxes, Probes put a column sum
+another — `validate_bands` puts boxes against boxes, Probes put a column sum
 against a stated total, the Pairs Extractor puts extracted content against its
 Zone's Kind. None of them looks at the page. So geometry that places a Zone where
 nothing is printed satisfies all of them, reaches an Extractor, and the Extractor
 answers, because a question with no true answer still gets an answer.
 
 `qwen3.5:4b` at long edge 768 is that failure, measured: six boxes that passed
-`_validate_bands`, two of them blank, and a rendered document containing
+`validate_bands`, two of them blank, and a rendered document containing
 `1 | 20` and "The following is a sample paragraph" read out of white paper —
 with the line-item table missing entirely and nothing anywhere noticing.
 
@@ -62,7 +62,7 @@ SLIVER_GEOMETRY = [
 over the top margin where nothing is printed.
 
 `qwen3.5:4b` produced this class of answer at long edge 768 — six boxes that
-satisfied `_validate_bands`, two of them carrying 0.0% ink, and a rendered
+satisfied `validate_bands`, two of them carrying 0.0% ink, and a rendered
 document containing `1 | 20` read out of white paper with the line-item table
 missing entirely. These coordinates are reconstructed to that shape rather than
 copied from the run, which is no longer on disk. What the guards must do about a

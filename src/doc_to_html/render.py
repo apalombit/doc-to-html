@@ -76,6 +76,8 @@ figure.omitted figcaption { padding:.5em; text-align:center; }
 .findings { border-left:3px solid var(--flag); background:var(--flag-bg);
             padding:.6em 1em; margin:0 0 1.75rem; font-size:.875em; }
 .findings ul { margin:.3em 0 0; padding-left:1.2em; }
+.findings.caveats { border-left-color:var(--rule); background:var(--shade);
+                    color:var(--muted); }
 """
 
 
@@ -110,9 +112,17 @@ def _infer_title(document: Document) -> str | None:
 
 
 def _findings(document: Document) -> str:
-    """Surface failed Probes and unresolved Gaps at the top of the render.
+    """Surface failed Probes, unresolved Gaps and Caveats at the top of the render.
 
     A reader should not have to open the IR to learn the system was unsure.
+
+    Two blocks, not one, because the two say opposite things about whether the
+    content below can be relied on. "Unresolved" means something is missing or
+    does not add up. A Caveat means the Zone converted and there is a qualifier
+    on *how* — read at reduced resolution, or a Kind overturned by the Extractor
+    that was handed it. Filing the second under the first tells a reader their
+    document failed while showing them a complete document, which is what a run
+    on `invoice_0001` with a re-read Zone and no Failures at all looked like.
     """
     items = [
         f"Probe <code>{html.escape(p.kind)}</code> did not reconcile"
@@ -132,15 +142,21 @@ def _findings(document: Document) -> str:
         f"be read: {html.escape(f.reason)}"
         for f in document.failures
     ]
-    items += [
+    caveats = [
         f"Zone {c.zone_index} (<code>{html.escape(c.kind)}</code>) "
         f"{html.escape(c.note)}"
         for c in document.caveats
     ]
+    return _findings_block("Unresolved", "findings", items) + _findings_block(
+        "Read with a caveat", "findings caveats", caveats
+    )
+
+
+def _findings_block(heading: str, css: str, items: list[str]) -> str:
     if not items:
         return ""
     return (
-        '<div class="findings"><strong>Unresolved</strong><ul>'
+        f'<div class="{css}"><strong>{heading}</strong><ul>'
         + "".join(f"<li>{item}</li>" for item in items)
         + "</ul></div>"
     )

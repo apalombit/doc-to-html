@@ -35,6 +35,7 @@ import base64
 import html
 import io
 import json
+import re
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -54,9 +55,20 @@ from doc_to_html.preprocess import (  # noqa: E402
     ImageArray,
     rectify,
 )
+from doc_to_html.trace import (  # noqa: E402
+    TRACE_VERSION,
+    Call,
+    Disposition,
+    Event,
+    Stage,
+    Trace,
+)
 from doc_to_html.wire import (  # noqa: E402
     LayoutResponse,
     MappingError,
+    TableResponse,
+    _join_split_header_row,
+    _without_empty_rows,
     schema_of,
     zones_from_layout,
 )
@@ -420,28 +432,488 @@ def layout_prompt(dump: Path) -> str:
     return path.read_text()
 
 
+def read_trace(dump: Path) -> Trace | None:
+    """The Conversion's own account of itself, when the run recorded one.
+
+    None for every run taken before `trace.json` existed, and for any
+    `trace_version` this tool does not know — a half-understood shape rendered
+    confidently is the failure this file keeps relearning, so an unfamiliar
+    version goes to the same fallback as no trace at all.
+    """
+    path = dump / "trace.json"
+    if not path.exists():
+        return None
+    trace = Trace.from_json(path.read_text())
+    if trace.version != TRACE_VERSION:
+        print(f"trace.json is version {trace.version}, this tool reads "
+              f"{TRACE_VERSION} — falling back", file=sys.stderr)
+        return None
+    return trace
+
+
+def run_settings(dump: Path) -> list[tuple[str, str]]:
+    """How the run was configured, from the files `iterate.sh` already writes.
+
+    `dump` is `<run>/dump/<model>/<fixture>`, so the run directory is three up.
+    Everything here is optional: a dump inspected on its own, away from the run
+    that produced it, still builds a sheet — it just cannot say what commit it
+    was taken at.
+    """
+    run = dump.parents[2]
+    files = [
+        ("commit", "commit.txt"), ("host", "host.txt"),
+        ("layout long edge", "layout_long_edge.txt"),
+        ("fixtures", "fixtures.txt"),
+    ]
+    rows = []
+    for label, name in files:
+        path = run / name
+        if path.exists():
+            rows.append((label, path.read_text().strip()))
+
+    env = run / "dth_env.txt"
+    if env.exists():
+        for line in env.read_text().splitlines():
+            if "=" in line:
+                key, value = line.split("=", 1)
+                rows.append((key, value))
+
+    resident = run / "ollama_ps_after.txt"
+    if resident.exists():
+        lines = resident.read_text().splitlines()
+        if len(lines) > 1 and lines[1].strip():
+            rows.append(("resident during the run", " ".join(lines[1].split())))
+    return rows
+
+
+STAGE_TITLES = {
+    Stage.RECTIFY: "RECTIFY",
+    Stage.LAYOUT: "LAYOUT",
+    Stage.SNAP: "SNAP",
+    Stage.CLASSIFY: "CLASSIFY",
+    Stage.EXTRACT: "EXTRACT",
+    Stage.PROBE: "PROBE",
+    Stage.AUDIT: "AUDIT",
+    Stage.RENDER: "RENDER",
+}
+
+
+def stage_numbers(trace: Trace) -> dict[int, str]:
+    """`seq` -> "4.3", the stage's position and the step's position within it.
+
+    Numbered from the stages that actually ran rather than from the `Stage` enum,
+    so a run that never reached extraction does not leave a gap where a reader
+    would look for one.
+    """
+    order: list[Stage] = []
+    for event in trace.events:
+        if event.stage not in order:
+            order.append(event.stage)
+
+    numbers, counts = {}, {stage: 0 for stage in order}
+    for event in trace.events:
+        counts[event.stage] += 1
+        numbers[event.seq] = f"{order.index(event.stage) + 1}.{counts[event.stage]}"
+    return numbers
+
+
+def handled(event: Event, trace: Trace) -> str:
+    """The one line saying what became of this step's input. Never empty.
+
+    Composed here rather than in the Orchestrator on purpose. `trace.py` records
+    primitives so that building a sentence can never raise inside a Conversion;
+    the sentence is this tool's job, where the worst a mistake can do is misword a
+    report. The vocabulary is fixed by `Disposition` so the sheet reads the same
+    way at every step.
+    """
+    data = event.data
+    if event.step == "empty_zone":
+        return (f"skipped — the crop carries {data.get('ink_fraction', 0):.1%} "
+                f"ink, under the {data.get('threshold', 0):.1%} floor, so there "
+                "is nothing here to classify")
+    if event.step == "snap_to_ink":
+        if not data.get("enabled"):
+            return f"skipped — {data.get('reason', 'the snap is off')}"
+        if data.get("reverted"):
+            return f"kept — {data.get('reason', 'the snap was refused')}"
+        moved = len(event.changed)
+        return (f"overridden — {moved} of {len(data.get('before', []))} boxes "
+                "moved onto their ink; the Engine's own coordinates were "
+                "replaced")
+    if event.step == "classify_zone":
+        if event.disposition is Disposition.REJECTED:
+            return (f"rejected — {data.get('error', 'the call failed')}. "
+                    f"{data.get('consequence', '')}")
+        before, after = data.get("kind_before"), data.get("kind_after")
+        if before == after:
+            return f"accepted — Kind confirmed as {after}"
+        return f"accepted — Kind overturned, {before} -> {after}"
+    if event.step == "classify_caveat" or event.step == "resolution_caveat":
+        return f"accepted with a caveat — {data.get('note', '')}"
+    if event.step == "extract":
+        if event.disposition is Disposition.REROUTED:
+            return (f"re-routed — the {data.get('kind_asked')} Extractor reports "
+                    f"the region is not {data.get('kind_asked')}: "
+                    f"{data.get('error', '')}")
+        if event.disposition is Disposition.REJECTED:
+            return (f"rejected — {data.get('error', '')} "
+                    "The Zone keeps no content and renders as a skeleton.")
+        counts = ", ".join(
+            f"{data[key]} {key}" for key in ("rows", "pairs", "blocks")
+            if data.get(key)
+        )
+        return f"accepted — {counts or 'no items'} into the Zone"
+    if event.step == "reroute":
+        return (f"re-routed — read again as prose, Kind corrected "
+                f"{data.get('kind_before')} -> {data.get('kind_after')}, "
+                f"{data.get('lines', 0)} lines recovered")
+    if event.step == "wire_repair":
+        return f"repaired — {data.get('what', '')}"
+    if event.stage is Stage.PROBE:
+        verdict = "reconciles" if data.get("ok") else "DOES NOT reconcile"
+        return (f"{'accepted' if data.get('ok') else 'rejected'} — computed "
+                f"{data.get('computed')} against a stated {data.get('stated')}, "
+                f"{verdict}")
+    if event.step == "rectify":
+        warped = data.get("warped")
+        return ("accepted — a page quadrilateral was found and flattened to"
+                if warped else
+                "accepted — no page quadrilateral, so the image is used as-is")
+    if event.step == "converged":
+        return (f"accepted — nothing new entered the system on round "
+                f"{data.get('round', 0) + 1}, so the Draft stands")
+    return f"{event.disposition.value} — {event.step}"
+
+
+def result_line(event: Event) -> str:
+    """What changed in the Document because of this step, or that nothing did."""
+    if event.changed:
+        return "; ".join(
+            f"{change.path}: {_short(change.before)} -> {_short(change.after)}"
+            for change in event.changed
+        )
+    if event.step == "extract" and event.disposition is Disposition.REJECTED:
+        return "the Zone stays incomplete and a Failure is recorded against it"
+    if event.step == "classify_zone" and event.disposition is Disposition.REJECTED:
+        return "the Zone is left out of extraction entirely"
+    return "nothing in the Document changed"
+
+
+def _short(value: object) -> str:
+    if isinstance(value, dict) and "left" in value:
+        return (f"({value['left']:.3f},{value['top']:.3f},"
+                f"{value['right']:.3f},{value['bottom']:.3f})")
+    return str(value)
+
+
+def wire_repairs(call: Call) -> list[str]:
+    """The repairs `wire.py` applied to this answer, recovered by replaying them.
+
+    The two mappers that quietly change an answer — the split-header join and the
+    empty-row drop — run inside `wire.py`, which maps a response without knowing
+    which Zone it belongs to. Rather than thread a collector through the shipping
+    path for a diagnostic, this re-runs those same functions on the same recorded
+    input and reports the difference. Pure functions, the real ones imported
+    rather than reimplemented, so this cannot drift from what the Conversion did.
+
+    Silent on anything that does not parse: a truncated answer has its own
+    reporting and does not need a second, confusing account here.
+    """
+    if call.pass_name != "table" or not call.answer:
+        return []
+    try:
+        rows = TableResponse.model_validate_json(call.answer).rows
+    except Exception:
+        return []
+
+    notes = []
+    without_empty = _without_empty_rows(rows)
+    dropped = len(rows) - len(without_empty)
+    if dropped:
+        notes.append(
+            f"{dropped} row(s) carrying no cells at all were dropped before the "
+            "width check — a row with nothing in it has no value to put in the "
+            "wrong column, and rejecting the table over one would have cost "
+            "every row beside it"
+        )
+    joined = _join_split_header_row(without_empty)
+    if len(joined) < len(without_empty):
+        notes.append(
+            f"a header row split across {len(without_empty) - len(joined) + 1} "
+            "rows was joined back into one — this model puts `Item` and `Price` "
+            "on separate rows when they sit at opposite edges of a wide table"
+        )
+    return notes
+
+
+def pipeline_map(trace: Trace) -> str:
+    """The shape of the run before any of the detail, one line per stage.
+
+    Read first and read fast: how many calls each stage made, how long it took,
+    and what it produced. A reader who only wants "where did the time go" or
+    "which stage lost the Zone" should not have to scroll the timeline to find
+    out which stage to scroll to.
+    """
+    order: list[Stage] = []
+    for event in trace.events:
+        if event.stage not in order:
+            order.append(event.stage)
+
+    rows = []
+    for position, stage in enumerate(order, start=1):
+        events = trace.in_stage(stage)
+        calls = sum(event.data.get("calls", 0) or 0 for event in events)
+        seconds = sum(event.seconds for event in events)
+        dispositions: dict[str, int] = {}
+        for event in events:
+            dispositions[event.disposition.value] = (
+                dispositions.get(event.disposition.value, 0) + 1
+            )
+        summary = ", ".join(f"{count} {name}" for name, count in dispositions.items())
+        rows.append(
+            f"{position} {STAGE_TITLES[stage]:<9}"
+            f"{f'{calls} call(s)' if calls else 'no calls':<12}"
+            f"{summary:<44}{seconds:>7.1f}s"
+        )
+    return "\n".join(rows)
+
+
+def zone_lives(trace: Trace, model: list[Box], expected: list[Box]) -> str:
+    """One row per Zone: the whole causal chain, stage by stage.
+
+    The at-a-glance answer to "where did this Zone go wrong", which is the
+    question every session with this tool has actually been asking. Each cell is
+    what one stage decided, so a wrong Kind and a lost extraction are visibly two
+    columns apart rather than one undifferentiated failure.
+    """
+    reference = [box.bbox for box in expected]
+    header = (f"{'Zone':<6}{'geometry':<16}{'layout said':<14}"
+              f"{'classify said':<16}{'extracted as':<15}outcome")
+    rows = [header, "-" * len(header)]
+
+    for index in range(len(model)):
+        events = trace.for_zone(index)
+        classify = next((e for e in events if e.step == "classify_zone"), None)
+        extract = [e for e in events if e.step in ("extract", "reroute")]
+
+        if reference:
+            _, best = geometry_score.best_match(model[index].bbox, reference)
+            geometry = f"{best:.2f} IoU {'ok' if best >= 0.5 else 'POOR'}"
+        else:
+            geometry = "no reference"
+
+        said = (classify.data.get("kind_before") if classify else None) or "?"
+        got = (classify.data.get("kind_after") if classify else None) or "?"
+        if classify and classify.disposition is Disposition.REJECTED:
+            got = "FAILED"
+
+        last = extract[-1] if extract else None
+        if last is None:
+            kind, outcome = "-", "never reached extraction"
+        else:
+            kind = last.data.get("kind_after") or last.data.get("kind_asked") or "-"
+            counts = ", ".join(
+                f"{last.data[key]} {key}" for key in ("rows", "pairs", "blocks",
+                                                      "lines")
+                if last.data.get(key)
+            )
+            if last.disposition is Disposition.REJECTED:
+                outcome = "LOST — renders as a skeleton"
+            elif last.step == "reroute":
+                outcome = f"re-routed, {counts}"
+            else:
+                outcome = counts or "empty"
+
+        rows.append(f"{index:<6}{geometry:<16}{said:<14}{got:<16}{kind:<15}{outcome}")
+    return "\n".join(rows)
+
+
+def timeline(trace: Trace, page: Image.Image) -> list[str]:
+    """Every step of the Conversion, in the order it ran.
+
+    The spine of the sheet. One entry per Event — a model call and a decision get
+    the same five lines in the same order, so a reader never has to work out
+    which they are looking at. The steps that lose content in this project are
+    mostly decisions, and a sheet that showed only the calls would show only the
+    half that was working.
+    """
+    numbers = stage_numbers(trace)
+    parts = []
+
+    for event in trace.events:
+        call = trace.calls[event.call] if event.call is not None else None
+        zone = "" if event.zone_index is None else f" · Zone {event.zone_index}"
+        meta = []
+        if call is not None:
+            meta.append(html.escape(call.model))
+        if event.seconds:
+            meta.append(f"{event.seconds:.1f}s")
+        if call is not None:
+            meta.append(f"call {event.call + 1} of {len(trace.calls)}")
+            if call.retried:
+                meta.append("a retry of the call above, at a doubled budget")
+
+        parts.append(f'<div class=step id="step-{event.seq}">')
+        parts.append(
+            f'<h3><span class=num>{numbers[event.seq]}</span> '
+            f'{STAGE_TITLES[event.stage]}{html.escape(zone)} '
+            f'<span class=stepname>{html.escape(event.step)}</span>'
+            f'<span class=meta>{" · ".join(meta)}</span></h3>'
+        )
+
+        given = _given(event, page)
+        if given:
+            parts.append(_row("GIVEN", given))
+        if call is not None:
+            parts.append(_row("ASKED", _details(
+                f"the {html.escape(call.pass_name)} prompt, "
+                f"{len(call.prompt)} characters",
+                html.escape(call.prompt),
+            )))
+            answered = _details(
+                f"{len(call.answer)} characters"
+                + (", TRUNCATED" if call.truncated else ""),
+                html.escape(call.answer or "(nothing on the content channel)"),
+            )
+            if call.thinking:
+                answered += _details(
+                    f"reasoning channel, {len(call.thinking)} characters",
+                    html.escape(call.thinking),
+                )
+            if call.error:
+                answered += f'<div class=bad>{html.escape(call.error)}</div>'
+            parts.append(_row("ANSWERED", answered))
+            for note in wire_repairs(call):
+                parts.append(_row("REPAIRED", html.escape(note)))
+
+        parts.append(_row("HANDLED",
+                          f'<b>{html.escape(handled(event, trace))}</b>',
+                          css="handled"))
+        parts.append(_row("RESULT", html.escape(result_line(event))))
+        parts.append("</div>")
+    return parts
+
+
+def _row(label: str, body: str, css: str = "") -> str:
+    return (f'<div class="line {css}"><span class=label>{label}</span>'
+            f'<span class=body>{body}</span></div>')
+
+
+def _details(summary: str, body: str) -> str:
+    return (f"<details><summary>{summary}</summary>"
+            f"<pre>{body}</pre></details>")
+
+
+def _given(event: Event, page: Image.Image) -> str:
+    """What this step was handed, described — and shown, when it was pixels.
+
+    The crop is rendered inline rather than linked because "the model misread
+    this" and "the model was shown the wrong thing" are the two explanations a
+    reader is choosing between, and only one of them survives seeing the picture.
+    """
+    data = event.data
+    crop = data.get("crop")
+    if crop and crop.get("box"):
+        box = crop["box"]
+        image = crop_for(page, Box(left=box["left"], top=box["top"],
+                                   right=box["right"], bottom=box["bottom"],
+                                   kind="", role=""))
+        return (
+            f"the Zone's own crop, {crop['width']}x{crop['height']}px, cut from "
+            f"the rectified page with PAD_X {crop['pad_x']:.0%} / "
+            f"PAD_Y {crop['pad_y']:.0%}, {crop['ink_fraction']:.1%} ink"
+            f'<br><img class=crop src="data:image/png;base64,{_embed(image)}">'
+        )
+    if event.step == "detect_zones":
+        return (f"the whole page, downscaled to a {data.get('long_edge')}px long "
+                "edge — finding regions is coarse work and needs no glyphs")
+    if event.step == "rectify":
+        return (f"{data.get('source_width')}x{data.get('source_height')} source, "
+                f"rectified to {data.get('rectified_width')}x"
+                f"{data.get('rectified_height')}")
+    if event.step == "snap_to_ink":
+        return f"the {len(data.get('before', []))} boxes the layout pass returned"
+    if event.step == "empty_zone":
+        return f"the Zone's crop, tested for ink before anything is asked of it"
+    return ""
+
+
+STYLE = """
+body{font:14px/1.55 -apple-system,system-ui,sans-serif;margin:0;padding:32px;
+background:#1a1a1a;color:#e8e8e8;max-width:1180px}
+h1{font-size:21px;margin:0 0 4px}
+h2{font-size:16px;margin-top:40px;border-bottom:1px solid #444;padding-bottom:6px}
+h3{font-size:14px;margin:0 0 10px;font-weight:600}
+img{max-width:100%;border:1px solid #444;background:#fff}
+img.crop{margin-top:6px;max-height:280px;width:auto}
+.note{color:#aaa;margin:4px 0 14px}
+pre{background:#111;padding:12px;border-radius:4px;overflow-x:auto;
+font-size:12px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
+details{margin:2px 0}
+summary{cursor:pointer;color:#8ab4f8;font-size:13px}
+.step{border-left:3px solid #3a3a3a;padding:14px 0 14px 16px;margin:0 0 6px}
+.step:hover{border-left-color:#666}
+.num{display:inline-block;min-width:34px;color:#f0a04b;font-variant-numeric:tabular-nums}
+.stepname{color:#888;font-weight:400;margin-left:8px;font-family:ui-monospace,monospace;
+font-size:12px}
+.meta{float:right;color:#777;font-weight:400;font-size:12px}
+.line{display:grid;grid-template-columns:92px minmax(0,1fr);gap:12px;margin:3px 0}
+.label{color:#777;font-size:11px;letter-spacing:.08em;padding-top:2px}
+.body{min-width:0}
+.handled .label{color:#f0a04b}
+.handled .body{color:#fff}
+.bad{color:#ff8a8a}
+.zone{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;
+align-items:start;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid #333}
+@media(max-width:760px){.zone{grid-template-columns:1fr}.line{grid-template-columns:1fr}}
+table.cfg{border-collapse:collapse;font-size:13px}
+table.cfg td{padding:3px 18px 3px 0;vertical-align:top}
+table.cfg td:first-child{color:#888}
+"""
+
+
 def contact_sheet(title: str, panels: list[tuple[str, str, str, Image.Image]],
                   zones: list[tuple[str, Image.Image, str]],
-                  geometry: str, prompt: str, paths: str) -> str:
-    """One self-contained page: every image inline, so it survives being moved."""
-    parts = [
-        "<style>",
-        "body{font:14px -apple-system,system-ui,sans-serif;margin:0;padding:32px;",
-        "background:#1a1a1a;color:#e8e8e8;max-width:1100px}",
-        "h1{font-size:20px} h2{font-size:16px;margin-top:36px;border-bottom:1px solid #444;",
-        "padding-bottom:6px} img{max-width:100%;border:1px solid #444;background:#fff}",
-        ".note{color:#aaa;margin:4px 0 12px} pre{background:#242424;padding:12px;",
-        "border-radius:4px;overflow-x:auto;font-size:12px;line-height:1.45}",
-        ".zone{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;",
-        "align-items:start;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid #333}",
-        "@media(max-width:760px){.zone{grid-template-columns:1fr}}",
-        "</style>",
-        f"<h1>{html.escape(title)}</h1>",
-        "<h2>Where this came from</h2>",
-        f"<pre>{html.escape(paths)}</pre>",
-        "<h2>The layout prompt that produced it</h2>",
-        f"<pre>{html.escape(prompt)}</pre>",
-    ]
+                  geometry: str, prompt: str, paths: str,
+                  trace: Trace | None = None,
+                  settings: list[tuple[str, str]] | None = None,
+                  page: Image.Image | None = None,
+                  model: list[Box] | None = None,
+                  expected: list[Box] | None = None,
+                  outcome: str = "") -> str:
+    """One self-contained page: every image inline, so it survives being moved.
+
+    With a Trace, the spine of the page is the pipeline in execution order and
+    the panels are orientation for it. Without one — every run taken before
+    `trace.json` existed — it falls back to the old shape and says so, rather
+    than presenting a reconstruction as a record.
+    """
+    parts = [f"<style>{STYLE}</style>", f"<h1>{html.escape(title)}</h1>"]
+
+    if settings:
+        parts.append('<table class=cfg>')
+        for label, value in settings:
+            parts.append(f"<tr><td>{html.escape(label)}</td>"
+                         f"<td>{html.escape(value)}</td></tr>")
+        parts.append("</table>")
+
+    parts.append("<h2>Where this came from</h2>")
+    parts.append(f"<pre>{html.escape(paths)}</pre>")
+
+    if trace is not None:
+        parts.append("<h2>The shape of this run</h2>")
+        parts.append("<p class=note>Every stage the Conversion ran, in order, "
+                     "with what each decided. Read this first, then scroll to "
+                     "whichever stage the question is about.</p>")
+        parts.append(f"<pre>{html.escape(pipeline_map(trace))}</pre>")
+
+        if model is not None and expected is not None:
+            parts.append("<h2>The life of each Zone</h2>")
+            parts.append("<p class=note>One row per Zone, across every stage. A "
+                         "wrong Kind and a lost extraction are two different "
+                         "columns here, which is the distinction a single "
+                         "'6 off' hides.</p>")
+            parts.append(f"<pre>{html.escape(zone_lives(trace, model, expected))}</pre>")
 
     for _slug, heading, note, image in panels:
         parts.append(f"<h2>{html.escape(heading)}</h2>")
@@ -451,18 +923,79 @@ def contact_sheet(title: str, panels: list[tuple[str, str, str, Image.Image]],
     parts.append("<h2>Geometry</h2>")
     parts.append(f"<pre>{html.escape(geometry)}</pre>")
 
-    parts.append("<h2>What each crop returned</h2>")
-    parts.append("<p class=note>Left: the pixels sent. Right: the answer that came back."
-                 " A wrong answer beside a wrong crop is an extraction problem that is"
-                 " really a layout problem.</p>")
-    for heading, crop, answer in zones:
-        parts.append("<div class=zone>")
-        parts.append(f'<div><b>{html.escape(heading)}</b><br>'
-                     f'<img src="data:image/png;base64,{_embed(crop)}"></div>')
-        parts.append(f"<div><pre>{html.escape(answer)}</pre></div>")
-        parts.append("</div>")
+    if trace is not None and page is not None:
+        parts.append("<h2>What happened, step by step</h2>")
+        parts.append(
+            "<p class=note>Every step the Conversion took, in the order it took "
+            "them — model calls and decisions alike, in the same shape, because "
+            "the steps that lose content here are mostly decisions. "
+            "<b>HANDLED</b> is what was done with the answer; <b>RESULT</b> is "
+            "what changed in the Document because of it.</p>"
+        )
+        parts.extend(timeline(trace, page))
+    else:
+        parts.append("<h2>What each crop returned</h2>")
+        parts.append(
+            "<p class=note><b>Inferred, not recorded.</b> This dump predates "
+            "<code>trace.json</code>, so which answer belongs to which Zone is "
+            "reconstructed from call order rather than read from the run. Since "
+            "classification became its own pass there is one call per Zone "
+            "before extraction begins, so what is paired below is each Zone's "
+            "<i>classification</i> verdict — not the content it returned. "
+            "Re-run the conversion to get the real account.</p>"
+        )
+        for heading, crop, answer in zones:
+            parts.append("<div class=zone>")
+            parts.append(f'<div><b>{html.escape(heading)}</b><br>'
+                         f'<img src="data:image/png;base64,{_embed(crop)}"></div>')
+            parts.append(f"<div><pre>{html.escape(answer)}</pre></div>")
+            parts.append("</div>")
+
+    if outcome:
+        parts.append("<h2>What came out</h2>")
+        parts.append(f"<pre>{html.escape(outcome)}</pre>")
+
+    parts.append("<h2>The layout prompt that produced it</h2>")
+    parts.append("<p class=note>Kept whole at the foot of the sheet. Every other "
+                 "prompt this run sent is on its own step above.</p>")
+    parts.append(f"<pre>{html.escape(prompt)}</pre>")
 
     return "\n".join(parts)
+
+
+def outcome_report(dump: Path, trace: Trace | None) -> str:
+    """The artefact and its findings: Probes, Failures, Caveats, final Kinds.
+
+    Read off `document.html`'s embedded IR rather than recomputed, so this is
+    what the reader was actually handed and not a second opinion about it.
+    """
+    document = dump / "document.html"
+    if not document.exists():
+        return "the Conversion did not finish, so there is no Document to report"
+
+    match = re.search(r'id="doc-ir">(.*?)</script>', document.read_text(), re.S)
+    if match is None:
+        return "document.html carries no embedded IR"
+    ir = json.loads(match.group(1))
+
+    lines = [f"{'Zone':<6}{'kind':<9}{'complete':<10}items"]
+    for index, zone in enumerate(ir["zones"]):
+        items = len(zone["rows"]) or len(zone["pairs"]) or len(zone["blocks"])
+        lines.append(f"{index:<6}{zone['kind']:<9}"
+                     f"{str(zone['complete']):<10}{items}")
+
+    lines.append("")
+    for probe in ir.get("probes", []):
+        verdict = "ok" if probe["ok"] else "DID NOT RECONCILE"
+        lines.append(f"probe {probe['kind']}: computed {probe['computed']} "
+                     f"against a stated {probe['stated']} — {verdict}")
+    for failure in ir.get("failures", []):
+        lines.append(f"FAILURE on zone {failure['zone_index']}: {failure['reason']}")
+    for caveat in ir.get("caveats", []):
+        lines.append(f"caveat on zone {caveat['zone_index']}: {caveat['note']}")
+    if not any((ir.get("probes"), ir.get("failures"), ir.get("caveats"))):
+        lines.append("no Probes, Failures or Caveats")
+    return "\n".join(lines)
 
 
 def _ink_report(model: list[Box], expected: list[Box], page: ImageArray,
@@ -640,17 +1173,26 @@ def main(argv: list[str] | None = None) -> int:
         image.save(out / f"{slug}.png")
 
     prompt = layout_prompt(args.dump)
+    trace = read_trace(args.dump)
     paths = "\n".join([
         f"source image  {args.source}",
         f"expected IR   {args.expected}",
         f"raw dump      {args.dump.resolve()}",
         f"this report   {out.resolve()}",
+        f"trace         {'trace.json, ' + str(len(trace.events)) + ' steps and '
+                         + str(len(trace.calls)) + ' calls'
+                        if trace else 'none — this dump predates it'}",
     ])
     (out / "layout_prompt.txt").write_text(prompt)
 
     sheet = out / "index.html"
-    sheet.write_text(contact_sheet(f"{args.dump.parent.name} / {args.dump.name}",
-                                   panels, zones, report, prompt, paths))
+    sheet.write_text(contact_sheet(
+        f"{args.dump.parent.name} / {args.dump.name}",
+        panels, zones, report, prompt, paths,
+        trace=trace, settings=run_settings(args.dump), page=page,
+        model=model, expected=expected,
+        outcome=outcome_report(args.dump, trace),
+    ))
     print(f"\n{paths}\n\nwrote {sheet}", file=sys.stderr)
     return 0
 

@@ -31,7 +31,9 @@ from ..preprocess import (
     LAYOUT_LONG_EDGE,
     MODEL_INPUT_LONG_EDGE,
     ImageArray,
+    TableGrid,
     resize_long_edge,
+    table_grid,
     to_png,
     zone_pixels,
 )
@@ -117,12 +119,15 @@ document.
 Say what it structurally is.
 
 kind — one of:
-  table   a grid of rows and columns under a heading row. The heading row names
-          the columns rather than labelling the values beside it, and is often
-          shaded or ruled off. A grid with a heading row is a table even if only
-          one row of values follows it
-  pairs   label and value lines with no heading row, such as "Invoice No: 12".
-          Each label names the value on its own line and nothing below it
+  table   a grid of rows and columns under a heading row. Decide this on the
+          typesetting rather than the wording: if the top row is set apart from
+          what follows — shaded, ruled off, or in bold — and its cells line up in
+          the same columns as the values under it, the region is a table. That
+          holds even when each heading word would read naturally as a label for
+          the value beneath it, and even when only one row of values follows
+  pairs   label and value lines with no set-apart heading row, such as
+          "Invoice No: 12". Each label sits on the same line as the value it
+          names, with nothing below it
   prose   headings, paragraphs, addresses, free text
   list    bulleted or numbered items, or a row of navigation links
   figure  a logo, chart, stamp, signature or badge
@@ -151,21 +156,41 @@ separated two causes the layout prompt had conflated:
   one data row — is `pairs` at 365x60px and `table` at 819x135px to `qwen3.5:4b`,
   and `pairs` at both to `qwen3-vl:4b`, six times out of six.
 
-The `table`/`pairs` wording here says what the heading row *does* rather than
-what it looks like. Run 11 tried that sentence inside the layout prompt and the
-`Payment Method` block came back `table` — but 0002 is careful about how far
-that goes, and so is this: that answer had nine Zones with each table
-duplicated, so the indices do not correspond to the expected Zone 4, and the
-layout was rejected before mapping, so no Extractor ever ran against it.
-**Suggestive, not established.** What run 11 does establish is that the sentence
-did not cost the Kind, and that it was rejected for breaking Band numbering —
-which is a failure mode this prompt cannot have, having no Band numbering in it.
+**The `table`/`pairs` wording says the typesetting decides, and that ordering was
+measured rather than guessed.** The earlier version put the semantic test first —
+"the heading row names the columns rather than labelling the values beside it" —
+and mentioned shading as an aside, "often shaded or ruled off". One reads as a
+rule and the other as a hint, so `qwen3-vl:4b` applied the rule and called
+`invoice_0001`'s Zone 4 `pairs` in every run ever recorded, 8 for 8. It was not
+wrong to: `Payment Method` genuinely does label the `Check` beneath it, while
+`Item` names a column.
 
-Note what has and has not been measured *here*. Runs 18-20 established the
-resolution and isolation effects using the layout prompt's original Kind
-definitions; this prompt is those plus run 11's sentence. Nothing has yet run
-this exact wording end to end — #19 is where that happens, and where the other
-four fixtures are seen for the first time."""
+Three experiments separated the cause, all with this prompt's predecessor:
+
+- **Not row count.** Zone 5 truncated to a heading plus one data row — Zone 4's
+  exact shape — still answers `table`, 3/3. So the old "even if only one row of
+  values follows it" clause was never the clause being tested.
+- **Not blindness to the shading.** Asked a typesetting question alone — "is the
+  top row set apart by shade, rule or bold?" — Zone 4 answers yes, 3/3. The cue
+  was seen and outweighed.
+- **The heading's words decide, and nothing else does.** Crossing the two heading
+  bands over the two data rows, so the layout is pixel-identical and only the
+  text differs, gives `table` wherever `Item | Price` is the heading and `pairs`
+  wherever `Payment Method | Check #` is — 12 for 12, the data row contributing
+  nothing.
+
+Hence the inversion, plus `pairs` now requiring the label on the **same line** as
+its value. On `invoice_0001`, six Zones, three repeats: **6/6, against 4/6 for
+the wording it replaces.** Zone 4 `pairs`→`table` and Zone 3 `pairs`→`prose`,
+with Zones 0, 1, 2 and 5 unmoved.
+
+**What this is not measured against.** The same wording turns `invoice_0002`'s
+two panel Zones from `pairs` to `table`, which is a real regression and open —
+those panels put each label above its value rather than beside it, so the
+same-line rule reads them out of `pairs`. Shipped as the default anyway, on one
+fixture's evidence, which is a deliberate call and #19's to revisit. Unlike the
+four attempts 0002 records, this one cannot cost Band numbering: Bands come from
+the layout pass and this prompt runs after geometry."""
 
 TABLE_PROMPT = """You are looking at one table, cropped from a page.
 
@@ -185,14 +210,62 @@ still holds a column position.
 
 Give every data row the same number of cells as the header row.
 
+A row is one horizontal line of the page. Its cells can sit far apart — a wide
+table puts the first column against the left edge and the last against the right,
+with blank paper between them — and that is still one row. Text printed at the
+same height belongs to the same row however far apart it sits, so read across the
+whole width of the region before starting a new row.
+
 Ignore decoration. A horizontal rule between two rows is not itself a row, and
 neither is a shaded band behind one. Every row you return must have printed text
 in at least one of its cells; a row with no text in any cell is not a row.
 
-Read only what is printed. Do not add a row that is not on the page, do not
-merge two printed rows into one, and do not calculate anything — a total that is
-printed is read like any other cell, and a total that is not printed does not
-exist."""
+Read only what is printed. Do not add a row that is not on the page, do not merge
+two printed rows into one, do not split one printed row across two rows, and do
+not calculate anything — a total that is printed is read like any other cell, and
+a total that is not printed does not exist."""
+"""Read a grid, one row per printed line.
+
+**The two paragraphs about what a row is are measured, and they changed nothing.
+Do not try this again.** They close an asymmetry worth closing — this prompt
+forbade *merging* two printed rows and said nothing about *splitting* one, while
+`LIST_PROMPT` has forbidden both directions all along ("do not merge two entries
+into one, do not split one across two") — but closing it did not move the model.
+Run 48 returned answers **byte-identical** to run 47's for both tables on
+`invoice_0001`. Not similar: identical. Kept because the instruction is correct
+and the asymmetry was a latent trap, not because it earns its tokens.
+
+The defect they are aimed at, from run 47's Zone 4 — a shaded heading over one
+line of values, 841x59px, its two columns roughly 800px apart:
+
+    {"role": "header", "cells": ["Payment Method", ""]},
+    {"role": "header", "cells": ["", "Check #"]},
+    {"role": "data",   "cells": ["Check", ""]},
+    {"role": "data",   "cells": ["", "1000"]}
+
+Four rows where the page has two. Note what is *not* wrong: every row carries two
+cells, so the width check passes, and every string is correct and in the column it
+belongs to. It is a well-formed table making a false claim about the document —
+two records where there is one — which is why no structural rule catches it.
+`_join_split_header_row` repairs the header half of this and deliberately leaves
+data rows alone; see its docstring for why guessing there is dangerous.
+
+**That makes two independent prompt attempts, and the route is closed.** Run 13
+forbade the header split in as many words and failed, which is what moved the
+repair into `wire.py` in the first place. Run 48 argued the general case instead
+— what a row *is* on the page, rather than what a header is — on the theory that
+run 13 had argued too narrowly. It produced identical output. The model's reading
+of a wide, short table is not reachable from the prompt, and the remedy is the
+one thing that can see what the prompt cannot: the page. A horizontal ink
+projection over the crop counts the printed lines, and on both tables it is
+right — 2 bands for Zone 4's two printed lines, 5 for Zone 5's five rows. That
+licenses generalising `_join_split_header_row` to data rows without the guesswork
+its docstring is careful about.
+
+Every fixture's tables share this prompt, and `invoice_0001`'s Zone 5 carries the
+only arithmetic Probe in the suite. A change here that fixes Zone 4 and costs
+Zone 5 is a failure, not a trade — run 48 at least cost nothing, holding Zone 5
+at 5 rows with the Probe reconciling."""
 
 PAIRS_PROMPT = """You are looking at one block of label and value lines, cropped
 from a page.
@@ -321,6 +394,13 @@ class OllamaEngine:
     model on Ollama Cloud, and none of the local ones. See `engines/lenient.py`
     for why the tolerance lives behind this seam rather than in the mapper."""
 
+    table_grid_hint: bool = False
+    """State a table's measured row and column counts in its prompt.
+
+    Off by default; see `config.DEFAULT_TABLE_GRID_HINT` for what it is aimed at
+    and why a counted fact is a different lever from the two behavioural
+    instructions that already failed."""
+
     name: str = "ollama"
 
     @classmethod
@@ -342,6 +422,7 @@ class OllamaEngine:
             timeout_s=settings.timeout_s,
             transport=transport,
             lenient=settings.lenient_decoding,
+            table_grid_hint=settings.table_grid_hint,
         )
 
     def client_kwargs(self) -> dict[str, Any]:
@@ -468,6 +549,8 @@ class OllamaEngine:
             raise NotImplementedError(
                 f"{zone.kind.value} extraction not yet wired"
             )
+        if zone.kind is Kind.TABLE and self.table_grid_hint:
+            prompt = with_grid(prompt, table_grid(image), titled=bool(zone.title))
         content = self.ask(
             zone.kind.value, with_hint(prompt, hint), image, schema_of(schema)
         )
@@ -495,6 +578,43 @@ def _ran_out_of_room(reply: Response) -> bool:
     except ValueError:
         return True
     return False
+
+
+def with_grid(prompt: str, grid: TableGrid, *, titled: bool = False) -> str:
+    """State the grid a table Extractor is filling in, measured from its crop.
+
+    The one prompt in this project assembled from the page rather than written
+    down, which is the whole idea: two attempts to talk the model out of cutting a
+    wide row in half failed — run 48's answers were byte-identical to the run
+    before it — and a measurement is not an instruction. The counts come from
+    `preprocess.table_grid`, an ink projection over the very pixels about to be
+    sent, so the prompt and the picture cannot disagree.
+
+    **A Title is a printed line and not a row**, which is the whole of `titled`.
+    `table_grid` counts bands of ink and cannot tell one from the other, so a
+    Zone carrying a Title measures one row too many: `sample_table_0003` prints
+    "Population and GDP (millions of USD)" above its grid and comes out at 17
+    against a true 16. The Title is known here — classification fills
+    `zone.title` before extraction runs — so the correction belongs at this seam,
+    where a claim about a *crop* becomes a claim about a *table*. Neither of
+    `invoice_0001`'s tables has one, which is why the count is exact there.
+
+    Stated, not enforced. The schema is untouched, so the model can return a
+    different shape and every check behind it still runs. That tolerance is worth
+    keeping even now the count is corrected: the ruler is right on three real
+    tables and unproven on every other page in the world, and a sentence survives
+    a wrong number where a schema would force content to be dropped or invented
+    to satisfy one.
+    """
+    rows = max(1, grid.rows - 1) if titled else grid.rows
+    return (
+        f"{prompt}\n\n"
+        f"This region has been measured from the page: it holds {rows} "
+        f"rows and {grid.columns} columns. Return exactly {rows} rows, each "
+        f"with {grid.columns} cells. Two pieces of text at the same height are "
+        f"two cells of one row, even when they sit at opposite edges with blank "
+        f"paper between them — they are not two rows."
+    )
 
 
 def with_hint(prompt: str, hint: str | None) -> str:

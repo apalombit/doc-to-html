@@ -5,23 +5,33 @@ that carries the same content and the same structure. An invoice and an
 inventory sheet are the same kind of input: the system never classifies
 documents.
 
-**Status: working proof of concept, two mismatches from correct on one image.** A
-Source Image is rectified, laid out, extracted Zone by Zone from full-resolution
-crops, checked by Probes and rendered. All five acceptance fixtures convert
-against recorded responses, and photographs distorted by known amounts come back
-straight.
+**Status: working proof of concept — `example/invoice.png` converts with zero
+mismatches against a real model.** A Source Image is rectified, laid out,
+classified and extracted Zone by Zone from full-resolution crops, checked by
+Probes and rendered. Photographs distorted by known amounts come back straight.
 
-Against a **real** `qwen3-vl:4b`, `example/invoice.png` converts through every
-pass in ~175s and lands at **2 mismatches**. Every string on the page is read
-correctly and the column-sum Probe reconciles at 385.00; what is wrong is that
-two Zones get the wrong Kind — a block of `label: value` lines called `prose`,
-and a shaded heading row over a data row called `pairs` instead of `table`.
+Against a **real** `qwen3-vl:4b`, `example/invoice.png` matches its expected IR
+exactly: all six Zones get the right Kind, every string on the page reaches the
+render, no Zone renders as a skeleton, and the column-sum Probe reconciles at
+385.00. Measured in `debug/runs/49-table-grid-hint/`, with `DTH_SNAP_ZONES=1`.
 
-Fixing those is the work in flight:
+**One document, and only one.** The other four acceptance fixtures have not been
+measured against the changes that got it there, and the replay suite is red by
+design while recorded responses are re-taken. Both are tracked and neither is a
+surprise — see CLAUDE.md.
+
+The work in flight:
 **[docs/specs/0003-classify-from-the-crop.md](docs/specs/0003-classify-from-the-crop.md)**
 (issue #12). Measurement showed the layout pass is being asked two questions at
-once — where a region is, and what it structurally is — and the second answers
-correctly when asked on its own against the Zone's own pixels.
+once — where a region is, and what it structurally is — so classification became
+a pass of its own, against each Zone's own pixels.
+
+**It has made things worse so far, and the spec records why.** The count was 2
+before the split. Narrowing the question to one Zone fixed the Zone it was aimed
+at and broke a different one: an address block with no street and no city in it,
+judged with no neighbouring block to compare against, reads as `label: value`
+pairs. Isolation cuts both ways, which the spec had not anticipated. The
+measurements are in it, including the ~95s per document the extra calls cost.
 
 **What this PoC is testing** is one narrow bet: that a 3–4B vision model on 8GB of
 unified memory can recover a document's structure well enough to rebuild it as

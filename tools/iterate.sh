@@ -110,6 +110,11 @@ echo "=> $LABEL: $MODEL over $COUNT fixture(s) at layout long edge $LONG_EDGE," 
      "from scratch. Expect ~3 minutes each." >&2
 echo "$LONG_EDGE" > "$OUT/layout_long_edge.txt"
 printf '%s\n' $FIXTURES > "$OUT/fixtures.txt"
+# Every DTH_* this turn was taken under, so the directory stays self-describing
+# when the default moves under it. DTH_SNAP_ZONES is the reason this exists: it
+# changes the geometry every later pass is handed, and without it recorded here
+# the only trace of an experimental arm is the coordinates in zones_used.json.
+env | grep '^DTH_' | sort > "$OUT/dth_env.txt" || true
 
 # One process for the whole set, so the model is loaded once. Only the first
 # fixture is therefore a cold start; the rest run warm, and their timings are not
