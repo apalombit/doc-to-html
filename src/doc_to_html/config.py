@@ -169,7 +169,220 @@ The one known inaccuracy in the ruler is corrected rather than shipped.
 a row — `sample_table_0003` prints "Population and GDP (millions of USD)" above
 its grid and measured 17 against a true 16. `with_grid` subtracts for a titled
 Zone. Neither of `invoice_0001`'s tables carries a Title, so run 49's numbers are
-unaffected by that correction and did not need re-taking."""
+unaffected by that correction and did not need re-taking.
+
+**That subtraction had never fired in production until `DTH_CAPTION_PASS`.** It
+is gated on `bool(zone.title)`, and `title` came back `None` from all 36 of run
+69's classify calls, so `sample_table_0003` was asked for 17 rows on a 16-row
+table and returned a spurious trailing `header`. Both of that fixture's
+mismatches trace to it."""
+
+DEFAULT_CAPTION_PASS = False
+"""Whether to ask each Zone for its Title before asking what Kind it is.
+
+**Off**, so an unset environment runs the pipeline exactly as run 69 did, one
+call per Zone. Flipped only once a run has passed the gate in
+`docs/specs/0005-nothing-is-missing.md`, which is the order `DTH_TABLE_GRID_HINT`
+followed.
+
+**What it is aimed at.** `zone.title` has never been populated on any fixture:
+36 classify calls in run 69, 36 empty titles, on crops where the caption is
+plainly legible. Asked as its own question against those same crops, the same
+model answered correctly 4 times out of 4. The Title is worth more than its own
+11 mismatches because `with_grid(titled=...)` is dead while it is `None` — see
+`DEFAULT_TABLE_GRID_HINT` above.
+
+**Why a second call rather than a fifth wording.** The two questions want
+opposite pixels. The Title needs the caption band in frame; the Kind is
+measurably wrong while it is there, because a shaded caption bar satisfies
+`CLASSIFY_PROMPT`'s own "top row set apart" test for a table. Cropping the band
+off moved 2 of 3 `invoice_0002` panels from `table` to the correct `pairs`; a
+prompt clause explaining the difference moved 0 of 6. One call cannot show both
+frames.
+
+**What bounds the risk.** `preprocess.caption_band` returns `None` unless the
+crop holds a second band of ink, so a Zone that is only a heading — 20 of run
+69's 36 crops — is never asked and never stripped. The cost is +16 calls on that
+geometry, not +36.
+
+**Measured. Run 71 failed its gate; run 72 passes it on every condition but one.**
+`FIXTURE=all` with `DTH_LAYOUT_DETECTOR=heron`:
+
+| fixture | run 69 | run 71 | run 72 |
+|---|---|---|---|
+| `invoice_0001` | **0, match** | 8 | **0, match** |
+| `invoice_0002` | 20 | 20 | 20 |
+| `sample_css_0004` | 10 | 10 | 10 |
+| `sample_semantic_0005` | 14 | 15 | 15 |
+| `sample_table_0003` | 2 | **0, match** | **0, match** |
+| total | 46 | 53 | **45** |
+| full matches | 1 | 1 | **2** |
+
+Run 72 restores `invoice_0001` completely — the Probe reconciles at 385.00 again
+— and keeps `sample_table_0003`. Geometry is untouched in both runs: `covered`
+1.00, `splits` 0, `doubles` 0/3/0/1/0, identical to run 69.
+
+**The one condition it misses** is *no fixture rises above its run-69 count*:
+`sample_semantic_0005` goes 14 → 15. It gains "Benefits" as a correct Title and
+picks up two the reference does not want — "The Weekly Digest" and "Why semantic
+HTML matters". Both are real captions of the boxes the detector produced; the
+reference splits each of those boxes in two, so neither half carries a Title.
+That is the grouping gap, and it is why this still ships off: the pass is right
+about the pixels it is shown and the pixels are wrong.
+
+Run 71's failure and how it was diagnosed is kept below, because the shape of it
+is the reusable part.
+
+**Why it fails: to this model, "is this line a heading?" and "is this a table's
+header row?" are one question — and `CAPTION_PROMPT` asked it in the same words
+`CLASSIFY_PROMPT` uses.** One says a table's top row is "set apart — shaded,
+ruled off, or in bold"; the other asks whether the first line is "set apart from
+what follows by being bold, larger, shaded, or alone above the rest". A header
+row satisfies both, so `is_heading: true` is the correct answer to what was
+actually asked. On `invoice_0001` that took `"Item"` and `"Payment Method"` — the
+first cells of two header rows — as Titles and cut them off. Zone 4 became a
+single data row and classified `pairs`; Zone 5 lost its summary row and with it
+the column-sum Probe.
+
+**What it got right, and it is not nothing.** `sample_table_0003` reaches a full
+match because the Title finally arrives and revives `with_grid(titled=True)`.
+`invoice_0002`'s panels return "Company Details" and "Customer Details" on the
+right panels — they score as mismatches only because that page comes back as 9
+Zones against a reference of 10, so every index after the first shifts. And
+geometry is untouched: `covered` 1.00 and `splits` 0 on all five, `doubles`
+unchanged.
+
+**Two changes answer that, and both are in.**
+
+*The schema, not the wording.* `CaptionResponse` now offers three answers —
+`caption`, `header`, `content` — where it offered a boolean. The boolean was
+answered `true` on 8 of 8 crops because the model had nowhere to put "that is a
+grid's heading row"; offered the option, it takes it. Measured 4/11 → 8/11 over
+the crops run 71 got wrong and right. See `wire.CaptionResponse`, which also
+records why `header` and `content` share one behaviour and must not be collapsed
+back.
+
+*A counted fact, as the next lever was always going to be.* A heading row has one
+cell per column of the values beneath it; a caption spans the region and ignores
+that grid. `CaptionBand.aligns_to_grid` compares the two column counts for
+equality — no threshold — and the Orchestrator lets it **refuse** a caption the
+model proposed. It may never assert one: a refused caption costs a Title, while a
+false one cost run 71 a Kind, a summary row and a Probe, so the veto is pointed
+only at the expensive side. Measured over 16 real Zone crops: 2 true positives —
+`invoice_0001`'s two tables — and **0 false positives**.
+
+Run 72a, `invoice_0001` alone with the schema change and before the veto: **8 →
+2**, the Probe reconciling at 385.00 again and Zone 5 whole. The two survivors
+were Zone 4's Kind and its Title, both from the one crop where the model still
+answers `caption` — the page's hardest case, which `engines.ollama` has recorded
+since spec 0003: "`Payment Method` genuinely does label the `Check` beneath it,
+while `Item` names a column." The veto is aimed exactly there, and in run 72 it
+**fired once across all five fixtures**, on that Zone, refusing "Payment Method"
+at 2 columns against 2. Nothing else in the corpus tripped it."""
+
+DEFAULT_DERIVE_BANDS = False
+"""Whether a Zone's Band and column come from its box rather than from the model.
+
+**Off**, following `DTH_SNAP_ZONES`: a change to geometry ships off until a live
+Conversion has been measured with it, and no run has ever completed with this on.
+
+**What it fixes.** Band numbering is the part of the layout answer this project
+has watched break most often — five of the six changes ever made to
+`LAYOUT_PROMPT` broke it, each time as collateral on a change that never
+mentioned it. It is also the one part fully determined by something the model
+already gives correctly: the boxes. Runs 55 and 56 are the clearest case. Both
+returned sane boxes and correctly alternating columns, and both failed to
+increment the Band index between the first two rows — every Zone landing in Band
+0 with columns `[0, 1, 0, 1]` — which cost `invoice_0001` and `invoice_0002`
+their whole Conversion for a duplicated integer.
+
+**What it is measured against.** `wire.bands_from_boxes` reproduces the
+hand-authored Band and column numbering of all five fixtures from their boxes
+alone, and reproduces run 50's numbering — the model's own answer on the document
+that converts at zero mismatches — so switching it on costs that run nothing. The
+naive rule it replaces, merging on any vertical overlap, matched three of five.
+
+**What it is not measured against: a live Conversion.** Run 57 was to be that and
+was stopped before it finished. Until one completes, the evidence is offline
+only, which is exactly the situation `DTH_SNAP_ZONES`' own docstring describes as
+the reason a geometry default waits.
+
+**What turning it on changes besides the numbers.** `validate_bands` stops being
+able to reject a layout for its Band numbering, because the numbering then comes
+from the boxes it is checked against. A document that would have been thrown away
+converts instead. That is the intent, and it is also a real loss of a signal that
+has caught genuine nonsense before."""
+
+DEFAULT_LAYOUT_REGION_HINT = False
+"""Whether to tell the layout pass how many regions the page holds, at most.
+
+**Off**, because a default is a claim about every document and this is measured
+on two. `DTH_TABLE_GRID_HINT` shipped off and was flipped only once a run had
+passed a gate written before it; this follows that order.
+
+**What it is aimed at.** `invoice_0002` has boxed panels containing label/value
+rows, so "what counts as one region" is under-determined. `qwen3-vl:4b` resolves
+it downward and returns a synthetic 18x4 lattice — **72 regions, all `pairs`, for
+a page with 10** — which overruns the token budget, is retried at twice it, and
+is then rejected by `validate_bands`. The page has never converted.
+
+**Why a count rather than better wording.** `LAYOUT_PROMPT` already forbids this
+in as many words: "The columns inside a table or a pairs region are that region's
+own business and are not regions themselves." It is ignored, exactly as the two
+behavioural instructions about splitting a table row were ignored in runs 13 and
+48. This model complies with *how many* and ignores *which* — which is the whole
+finding behind `DEFAULT_TABLE_GRID_HINT`, applied one pass earlier.
+
+**Stated as a ceiling, not as a target.** `preprocess.count_regions` overcounts:
+8 for `invoice_0001`'s true 6, 11 for `invoice_0002`'s true 10. An exact count
+would push a page the model already gets right into splitting regions to reach
+the number, and `invoice_0001` at 0 mismatches is the thing that must not move.
+A bound has no such pull — 6 is already under 8 — while still capping a runaway.
+See `engines.ollama.with_regions`.
+
+**Unmeasured.** Nothing has been run with this on. Read
+`preprocess.REGION_GAP` for what the ruler is calibrated against, which is two
+fixtures and not the other three."""
+
+DEFAULT_LAYOUT_DETECTOR = ""
+"""Which trained detector finds the Zones, or empty for the vision model.
+
+**Empty**, so an unset environment builds the Engine set exactly as it was and a
+run is byte-identical to one from before this existed. `heron` and
+`doclayout_yolo` are the names; see `engines.detector`.
+
+**What it replaces.** The VLM layout pass is the least stable step in the
+pipeline, and structurally so. At `DTH_LAYOUT_LONG_EDGE=384`, Qwen3-VL resolves
+the whole page into roughly 12x8 visual tokens and then decodes box coordinates
+as text, with no localization objective in the loop. Three prompt instructions
+have been measured ignored, resolution changed nothing across 2.25x the linear
+pixels, and a measured ceiling was read as a target.
+
+**What it is measured to do.** `debug/runs/65-detector-bakeoff`, both candidates,
+five fixtures, nine confidences, scored on the shared ruler. At one threshold
+across the corpus: **covered 1.00 and splits 0 on all five**, against the VLM's
+worst-covered 0.42 and 173 splits. `invoice_0001` comes back as exactly its six
+regions with Bands matching the expected IR, and `invoice_0002` — which has never
+converted — gets a layout that describes the page. Inference is 0.6s on the CPU,
+where the VLM pass costs 187s and once cost 2498s.
+
+**What is not measured: a live Conversion**, which is what this flag exists to
+make possible. Until one completes, the evidence is offline only.
+
+**What it over-counts, and why that is the recoverable direction.** 14 Zones
+against a true 10 on `invoice_0002`, 17 against 9 on `sample_semantic_0005` —
+every one of them a heading box sitting above its own content, or a run of list
+items that belong to one list. With coverage at 1.00 and splits at 0 nothing is
+lost, only mis-grouped: a Zone too many renders as two blocks, where a Zone
+missing loses content for good."""
+
+DEFAULT_DETECTOR_CONFIDENCE = 0.0
+"""Confidence floor for the layout detector, or 0 for the detector's own.
+
+Zero rather than a number, because the right threshold is a property of the
+model and not of the pipeline: `heron` wants 0.40 and `doclayout_yolo` 0.15, and
+each is recorded on its own class with what was measured at it. This exists so a
+sweep does not need a code edit."""
 
 DOTENV = Path(".env")
 """Looked for in the working directory. Absent is the normal case, not an error."""
@@ -218,6 +431,11 @@ class Settings:
     lenient_decoding: bool = DEFAULT_LENIENT_DECODING
     snap_zones: bool = DEFAULT_SNAP_ZONES
     table_grid_hint: bool = DEFAULT_TABLE_GRID_HINT
+    caption_pass: bool = DEFAULT_CAPTION_PASS
+    layout_region_hint: bool = DEFAULT_LAYOUT_REGION_HINT
+    derive_bands: bool = DEFAULT_DERIVE_BANDS
+    layout_detector: str = DEFAULT_LAYOUT_DETECTOR
+    detector_confidence: float = DEFAULT_DETECTOR_CONFIDENCE
 
     origins: dict[str, Setting] = field(default_factory=dict)
     """Variable name -> what resolved and from where. Declaration order."""
@@ -317,6 +535,11 @@ def load(
             resolve("DTH_LENIENT_DECODING", DEFAULT_LENIENT_DECODING),
             resolve("DTH_SNAP_ZONES", DEFAULT_SNAP_ZONES),
             resolve("DTH_TABLE_GRID_HINT", DEFAULT_TABLE_GRID_HINT),
+            resolve("DTH_CAPTION_PASS", DEFAULT_CAPTION_PASS),
+            resolve("DTH_LAYOUT_REGION_HINT", DEFAULT_LAYOUT_REGION_HINT),
+            resolve("DTH_DERIVE_BANDS", DEFAULT_DERIVE_BANDS),
+            resolve("DTH_LAYOUT_DETECTOR", DEFAULT_LAYOUT_DETECTOR),
+            resolve("DTH_DETECTOR_CONFIDENCE", DEFAULT_DETECTOR_CONFIDENCE),
         )
     }
 
@@ -334,6 +557,11 @@ def load(
         lenient_decoding=_flag(origins["DTH_LENIENT_DECODING"]),
         snap_zones=_flag(origins["DTH_SNAP_ZONES"]),
         table_grid_hint=_flag(origins["DTH_TABLE_GRID_HINT"]),
+        caption_pass=_flag(origins["DTH_CAPTION_PASS"]),
+        layout_region_hint=_flag(origins["DTH_LAYOUT_REGION_HINT"]),
+        derive_bands=_flag(origins["DTH_DERIVE_BANDS"]),
+        layout_detector=origins["DTH_LAYOUT_DETECTOR"].value,
+        detector_confidence=_number(origins["DTH_DETECTOR_CONFIDENCE"], float),
         origins=origins,
     )
 

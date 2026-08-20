@@ -45,6 +45,8 @@ from typing import Any, Callable, Iterable
 
 from .acceptance import Mismatch, compare
 from .config import Settings, configure_logging, load
+from .engines.base import LayoutEngine
+from .engines.detector import from_name
 from .engines.ollama import OllamaEngine
 from .engines.transport import OllamaTransport, Response, Transport
 from .ir import Document
@@ -284,11 +286,23 @@ def engines_for(model: str, settings: Settings,
     `--models a,b` names one model at a time and cannot express "a for geometry,
     b for classification". Measuring a combination is issue #19's job, and it
     needs a way to say so that does not exist here yet.
+
+    **`DTH_LAYOUT_DETECTOR` is the one exception, and it has to be.** With it
+    set, geometry comes from a trained ONNX detector rather than from `model`,
+    and this is the only path `tools/iterate.sh` runs — so ignoring it here would
+    mean the flag could be measured by a probe and never by a Conversion, which
+    is the thing it exists to make possible. The other three roles still share
+    `model`, and `--models` still means what it says about them.
     """
     def engine() -> OllamaEngine:
         return OllamaEngine.from_settings(settings, model, transport=transport)
 
-    return EngineSet(layout=engine(), classify=engine(), extract=engine(),
+    layout: LayoutEngine = engine()
+    if settings.layout_detector:
+        layout = from_name(settings.layout_detector,
+                           settings.detector_confidence or None)
+
+    return EngineSet(layout=layout, classify=engine(), extract=engine(),
                      audit=engine())
 
 

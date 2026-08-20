@@ -29,7 +29,7 @@ from doc_to_html.bakeoff import (
 from doc_to_html.config import Settings
 from doc_to_html.engines.transport import Response, Transport
 
-from .replay import ReplayTransport, recorded_for
+from .replay import ReplayTransport, break_zone, recorded_for
 
 REPO = Path(__file__).resolve().parent.parent
 
@@ -119,7 +119,9 @@ class TestWhatARunProduces:
         )
         invoice = next(a for a in attempts if a.fixture == "invoice_0001")
         assert [t.pass_name for t in invoice.timings] == [
-            "layout", "figure", "pairs", "prose", "prose", "table", "table"
+            "layout",
+            *["classify"] * 6,
+            "figure", "pairs", "prose", "prose", "table", "table",
         ]
         assert all(t.seconds >= 0 for t in invoice.timings)
         assert invoice.seconds == pytest.approx(
@@ -155,8 +157,8 @@ class TestWhatARunProduces:
     ) -> None:
         """A Zone left as a skeleton is not a match, however well the rest read."""
         def one_bad_zone(model: str, fixture: str) -> Transport:
-            replies = recorded_for(fixture)
-            replies[1] = Response(content='{"rows": []}', truncated=False)
+            replies = break_zone(recorded_for(fixture), fixture, 4,
+                                 '{"rows": []}')
             return ReplayTransport(replies)
 
         attempts = run(

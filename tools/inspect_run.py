@@ -64,6 +64,7 @@ from doc_to_html.trace import (  # noqa: E402
     Trace,
 )
 from doc_to_html.wire import (  # noqa: E402
+    CaptionResponse,
     LayoutResponse,
     MappingError,
     TableResponse,
@@ -301,18 +302,24 @@ def layout_input(page: Image.Image, long_edge: int) -> Image.Image:
     )
 
 
-def crop_for(page: Image.Image, box: Box) -> Image.Image:
+def crop_for(page: Image.Image, box: Box, *,
+             pad_top: bool = True) -> Image.Image:
     """The pixels an Extractor really sent, padding included.
 
     Imports the pads from `preprocess` rather than restating them. A diagnostic
     that draws a different crop from the one the pipeline takes is worse than no
     diagnostic — it was reasoning from exactly that kind of mismatch that put
     "Zone 6 is invented" in the spec.
+
+    `pad_top=False` for the one crop that is not an Extractor's: a Kind question
+    whose caption band was withheld. Its recorded box already sits at the cut, so
+    re-adding `PAD_Y` above it would draw back a sliver of the very band whose
+    absence the panel exists to show.
     """
     width, height = page.size
     left = int(max(0.0, box.left - PAD_X) * width)
     right = int(min(1.0, box.right + PAD_X) * width)
-    top = int(max(0.0, box.top - PAD_Y) * height)
+    top = int(max(0.0, box.top - (PAD_Y if pad_top else 0.0)) * height)
     bottom = int(min(1.0, box.bottom + PAD_Y) * height)
     if right - left < 1 or bottom - top < 1:
         return Image.new("RGB", (10, 10), "black")
@@ -376,6 +383,28 @@ def _trim(page: Image.Image) -> Image.Image:
     return page.crop((0, 0, page.width, min(page.height, used[3] + 24)))
 
 
+NOT_EXTRACTION = ("_layout.json", "_classify.json", "_caption.json")
+"""Dump files that are not one Zone's contents, and must not be paired with one.
+
+Every pass added in front of extraction has to be listed here, and `_classify`
+never was: since #15 put a classify call before every Zone, this paired Zone 0
+with `00_classify.json` and every later Zone with another classify verdict —
+run 69's `invoice_0001` dump has six of them sorting ahead of the first
+extraction answer.
+
+**Scope, stated honestly.** Only the fallback path reads this, for a dump written
+before `trace.json` existed, and that path already prints a warning that it is
+reconstructing from call order. So this was a wrong answer with a caveat attached
+rather than a silent one. It is fixed because a caveat is not a reason to leave
+a reconstruction wrong when the correction is a filename filter.
+
+That the list is a constant rather than a rule is the remaining weakness: a dump
+is filenames, and only the Orchestrator knows which passes read a Zone. The Trace
+knows too, which is why `zone_lives` and the timeline read that instead — and why
+a dump that has one never reaches this function.
+"""
+
+
 def pass_answers(dump: Path) -> list[tuple[str, str]]:
     """(file stem, answer) for every extraction pass, one per Zone, in order.
 
@@ -391,7 +420,10 @@ def pass_answers(dump: Path) -> list[tuple[str, str]]:
     """
     entries: list[tuple[str, str, bool]] = []
     for path in sorted(dump.glob("*.json")):
-        if path.name.endswith("_layout.json"):
+        # `bakeoff --dump` writes one `NN_<pass>.json` per call. Anything else in
+        # the directory — `trace.json`, `zones_used.json` — is the run describing
+        # itself, not a model answering.
+        if not re.match(r"\d+_", path.name) or path.name.endswith(NOT_EXTRACTION):
             continue
         raw = path.read_text()
         try:
@@ -418,18 +450,32 @@ def _embed(image: Image.Image) -> str:
     return base64.b64encode(buffer.getvalue()).decode()
 
 
-def layout_prompt(dump: Path) -> str:
+def layout_prompt(dump: Path, trace: Trace | None = None) -> str:
     """The exact prompt the layout pass was given, as `--dump` recorded it.
 
     Shown at the top of the sheet rather than referred to. Comparing two runs is
     the whole activity, and a sheet that does not carry its own prompt makes the
     reader reconstruct it from a git log that may have moved on since.
+
+    **Two different reasons there may be no prompt, and they must not read the
+    same.** A dump from before prompt capture is missing a record. A dump from a
+    `DTH_LAYOUT_DETECTOR` run is not missing anything — the geometry came from a
+    trained detector, and there was no wording involved to record. A reader who
+    saw "predates prompt capture" on a detector run would go looking for a
+    recording bug that is not there.
     """
     path = dump / "00_layout.prompt.txt"
-    if not path.exists():
-        return ("(no prompt recorded — this dump predates prompt capture, so "
-                "which wording produced it is not on disk)")
-    return path.read_text()
+    if path.exists():
+        return path.read_text()
+
+    if trace is not None and any(
+            event.stage is Stage.LAYOUT and event.data.get("calls") == 0
+            for event in trace.events):
+        return ("(no prompt — this run's geometry came from a layout detector, "
+                "not from a model, so there was no wording to record. See "
+                "dth_env.txt for which detector.)")
+    return ("(no prompt recorded — this dump predates prompt capture, so "
+            "which wording produced it is not on disk)")
 
 
 def read_trace(dump: Path) -> Trace | None:
@@ -540,14 +586,46 @@ def handled(event: Event, trace: Trace) -> str:
         return (f"overridden — {moved} of {len(data.get('before', []))} boxes "
                 "moved onto their ink; the Engine's own coordinates were "
                 "replaced")
+    if event.step == "read_caption":
+        if event.disposition is Disposition.SKIPPED:
+            return f"skipped — {data.get('reason', 'the caption pass is off')}"
+        if event.disposition is Disposition.REJECTED:
+            return (f"rejected — {data.get('error', 'the call failed')}. "
+                    f"{data.get('consequence', '')}")
+        read = caption_verdict(
+            trace.calls[event.call] if event.call is not None else None
+        )
+        if event.disposition is Disposition.KEPT:
+            if data.get("vetoed"):
+                return (f"kept — the model called {data['vetoed']!r} a caption "
+                        f"and the ink refused it: that line holds "
+                        f"{data.get('head_columns')} columns and so does what is "
+                        "below it, which makes it a grid's heading row. No Title "
+                        "is taken and the Kind question keeps the whole crop")
+            if read and read[1] == "header":
+                return (f"kept — {read[0]!r} is the heading row of a grid, "
+                        "not a caption naming the region, so the Zone takes no "
+                        "Title and the Kind question keeps the whole crop")
+            said = f"{read[0]!r} is" if read else "the first line is"
+            return (f"kept — {said} the region's own content, not a caption, so "
+                    "the Zone takes no Title and the Kind question keeps the "
+                    "whole crop")
+        return (f"accepted — {data.get('title')!r} is a caption naming the "
+                f"region; it becomes the Zone's Title, and the "
+                f"{data.get('cut_row', 0)} rows it occupies are cut from the "
+                "crop the Kind question sees")
     if event.step == "classify_zone":
         if event.disposition is Disposition.REJECTED:
             return (f"rejected — {data.get('error', 'the call failed')}. "
                     f"{data.get('consequence', '')}")
         before, after = data.get("kind_before"), data.get("kind_after")
+        withheld = (
+            "" if not data.get("skip_rows") else
+            f", asked without the {data['skip_rows']} caption rows above it"
+        )
         if before == after:
-            return f"accepted — Kind confirmed as {after}"
-        return f"accepted — Kind overturned, {before} -> {after}"
+            return f"accepted — Kind confirmed as {after}{withheld}"
+        return f"accepted — Kind overturned, {before} -> {after}{withheld}"
     if event.step == "classify_caveat" or event.step == "resolution_caveat":
         return f"accepted with a caveat — {data.get('note', '')}"
     if event.step == "extract":
@@ -604,6 +682,31 @@ def _short(value: object) -> str:
         return (f"({value['left']:.3f},{value['top']:.3f},"
                 f"{value['right']:.3f},{value['bottom']:.3f})")
     return str(value)
+
+
+def caption_verdict(call: Call | None) -> tuple[str, str] | None:
+    """(first line, verdict) from a recorded caption answer, or None.
+
+    Read back off the answer rather than carried in the Event, the same way
+    `wire_repairs` below re-runs `wire.py` on a recorded response: the real
+    schema is imported, so this cannot drift from what the Conversion mapped.
+
+    Worth the trouble because `header` and `content` are indistinguishable by
+    effect — both take no Title and cut nothing — so without the verdict the
+    sheet can only report that nothing happened, not *why*. "That line is a
+    grid's heading row" is the whole reason the third value exists, and a
+    diagnostic that cannot show it cannot explain the next regression either.
+
+    `None` for a dump whose calls were not recorded, which is any plain
+    `convert()`; the caller falls back to naming no line.
+    """
+    if call is None or call.pass_name != "caption" or not call.answer:
+        return None
+    try:
+        answer = CaptionResponse.model_validate_json(call.answer)
+    except Exception:
+        return None
+    return answer.first_line.strip(), answer.line_is
 
 
 def wire_repairs(call: Call) -> list[str]:
@@ -688,12 +791,13 @@ def zone_lives(trace: Trace, model: list[Box], expected: list[Box]) -> str:
     """
     reference = [box.bbox for box in expected]
     header = (f"{'Zone':<6}{'geometry':<16}{'layout said':<14}"
-              f"{'classify said':<16}{'extracted as':<15}outcome")
+              f"{'classify said':<16}{'title':<22}{'extracted as':<15}outcome")
     rows = [header, "-" * len(header)]
 
     for index in range(len(model)):
         events = trace.for_zone(index)
         classify = next((e for e in events if e.step == "classify_zone"), None)
+        caption = next((e for e in events if e.step == "read_caption"), None)
         extract = [e for e in events if e.step in ("extract", "reroute")]
 
         if reference:
@@ -724,7 +828,16 @@ def zone_lives(trace: Trace, model: list[Box], expected: list[Box]) -> str:
             else:
                 outcome = counts or "empty"
 
-        rows.append(f"{index:<6}{geometry:<16}{said:<14}{got:<16}{kind:<15}{outcome}")
+        # Blank when the pass never ran, "—" when it ran and took nothing. The
+        # difference is the whole question `DTH_CAPTION_PASS` is being measured
+        # on, and one symbol for both would hide it.
+        if caption is None:
+            title = ""
+        else:
+            title = _short(caption.data.get("title") or "—")[:20]
+
+        rows.append(f"{index:<6}{geometry:<16}{said:<14}{got:<16}{title:<22}"
+                    f"{kind:<15}{outcome}")
     return "\n".join(rows)
 
 
@@ -815,15 +928,45 @@ def _given(event: Event, page: Image.Image) -> str:
     crop = data.get("crop")
     if crop and crop.get("box"):
         box = crop["box"]
+        cut = crop.get("skip_rows") or 0
         image = crop_for(page, Box(left=box["left"], top=box["top"],
                                    right=box["right"], bottom=box["bottom"],
-                                   kind="", role=""))
-        return (
+                                   kind="", role=""),
+                         pad_top=not cut)
+        described = (
             f"the Zone's own crop, {crop['width']}x{crop['height']}px, cut from "
             f"the rectified page with PAD_X {crop['pad_x']:.0%} / "
             f"PAD_Y {crop['pad_y']:.0%}, {crop['ink_fraction']:.1%} ink"
-            f'<br><img class=crop src="data:image/png;base64,{_embed(image)}">'
         )
+        if cut:
+            described = (
+                f"the Zone's crop <b>with its top {cut} rows withheld</b> — the "
+                f"caption band, already read as the Title — {crop['width']}x"
+                f"{crop['height']}px, {crop['ink_fraction']:.1%} ink. The "
+                "Extractor still gets the whole crop; only this question does not"
+            )
+        if event.step == "read_caption":
+            median = data.get("median_gap")
+            against = (f"against a median line gap of {median}px"
+                       if median is not None else
+                       "and only two bands, so no median to compare it against")
+            described += (
+                f". The first printed line spans rows {data.get('band_top')}"
+                f"-{data.get('band_bottom')} of {data.get('lines')} bands, with "
+                f"{data.get('gap_below')}px blank below it, {against} — reported "
+                "only; no rule keys off that ratio. It holds "
+                f"{data.get('head_columns')} column(s) of ink against "
+                f"{data.get('body_columns')} below the cut, and *that* pair does "
+                "decide: equal counts mean a grid's heading row, which the ink "
+                "may refuse a caption for. See CAPTION_PROMPT"
+            )
+        return (
+            described
+            + f'<br><img class=crop src="data:image/png;base64,{_embed(image)}">'
+        )
+    if event.step == "read_caption":
+        return (f"the Zone's crop, measured for a caption band before anything "
+                f"is asked of it — {data.get('lines', 1)} band(s) of ink")
     if event.step == "detect_zones":
         return (f"the whole page, downscaled to a {data.get('long_edge')}px long "
                 "edge — finding regions is coarse work and needs no glyphs")
@@ -938,11 +1081,12 @@ def contact_sheet(title: str, panels: list[tuple[str, str, str, Image.Image]],
         parts.append(
             "<p class=note><b>Inferred, not recorded.</b> This dump predates "
             "<code>trace.json</code>, so which answer belongs to which Zone is "
-            "reconstructed from call order rather than read from the run. Since "
-            "classification became its own pass there is one call per Zone "
-            "before extraction begins, so what is paired below is each Zone's "
-            "<i>classification</i> verdict — not the content it returned. "
-            "Re-run the conversion to get the real account.</p>"
+            "reconstructed from call order rather than read from the run. The "
+            "passes that run <i>before</i> extraction — layout, classify, "
+            "caption — are skipped here so the pairing lands on contents rather "
+            "than on verdicts, but two adjacent Zones of the same Kind still "
+            "cannot be told from one retried call. Re-run the conversion to get "
+            "the real account.</p>"
         )
         for heading, crop, answer in zones:
             parts.append("<div class=zone>")
@@ -1108,8 +1252,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--long-edge", type=int, default=LAYOUT_LONG_EDGE)
     args = parser.parse_args(argv)
 
-    if not (args.dump / "00_layout.json").exists():
-        print(f"no 00_layout.json in {args.dump}", file=sys.stderr)
+    # Either a recorded layout *call* or a record of the geometry the Conversion
+    # ran on. Requiring the first assumed the layout pass is always a model, and
+    # `DTH_LAYOUT_DETECTOR` makes it sometimes an ONNX detector that issues no
+    # call and writes no `00_layout.json`. Run 69 converted all five fixtures
+    # that way and produced no contact sheet at all — `boxes_from_layout` had
+    # everything it needed in `zones_used.json` and never got asked.
+    if not ((args.dump / "00_layout.json").exists()
+            or (args.dump / "zones_used.json").exists()):
+        print(f"no layout answer and no zones_used.json in {args.dump}",
+              file=sys.stderr)
         return 1
 
     out = args.out or Path("debug") / args.dump.name
@@ -1172,8 +1324,8 @@ def main(argv: list[str] | None = None) -> int:
     for slug, _heading, _note, image in panels:
         image.save(out / f"{slug}.png")
 
-    prompt = layout_prompt(args.dump)
     trace = read_trace(args.dump)
+    prompt = layout_prompt(args.dump, trace)
     paths = "\n".join([
         f"source image  {args.source}",
         f"expected IR   {args.expected}",

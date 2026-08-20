@@ -146,7 +146,8 @@ class TestTheOrchestratorRecordsWhatItDid:
         document = Document(source=source())
 
         class Layout:
-            def detect_zones(self, image: object, hint: object) -> list[Zone]:
+            def detect_zones(self, image: object, hint: object,
+                             region_ceiling: int | None = None) -> list[Zone]:
                 return [Zone(kind=Kind.PROSE, role=Role.BODY, band=0, column=0,
                              bbox=BBox(0.05, 0.35, 0.9, 0.55))]
 
@@ -167,7 +168,8 @@ class TestTheOrchestratorRecordsWhatItDid:
         document = Document(source=source())
 
         class Layout:
-            def detect_zones(self, image: object, hint: object) -> list[Zone]:
+            def detect_zones(self, image: object, hint: object,
+                             region_ceiling: int | None = None) -> list[Zone]:
                 return one_zone(Kind.PROSE)
 
         run.engines = EngineSet(layout=Layout(), classify=engine,  # type: ignore[arg-type]

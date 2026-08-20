@@ -16,6 +16,7 @@ import html
 import json
 from dataclasses import asdict
 from enum import Enum
+from itertools import groupby
 from typing import Any
 
 from .ir import Block, Cell, CellState, Document, Kind, Pair, Role, RowRole, Zone
@@ -253,10 +254,37 @@ def _pairs(zone: Zone, document: Document) -> str:
 
 
 def _prose(zone: Zone, document: Document) -> str:
-    return "".join(_block(b, document) for b in zone.blocks)
+    """Blocks in order, with runs of `item` gathered into lists.
+
+    `prose` and `list` are not disjoint: `PROSE_PROMPT` offers `item` as a block
+    kind, so a bulleted region read as prose comes back with exactly the blocks a
+    LIST Zone would have. Rendering those as paragraphs made the classifier's
+    choice change the HTML for identical content — silently, since a prose Zone
+    full of items is complete, carries no Failure and no Caveat, and reads as a
+    success. Gathering them here means the Kind decides which prompt is asked and
+    stops deciding what the reader gets.
+
+    Only *consecutive* items group, because a paragraph between two bullets ends
+    the list on the page and should end it here.
+    """
+    parts = []
+    for is_item, run in groupby(zone.blocks, key=lambda b: b.kind == "item"):
+        if is_item:
+            items = "".join(f"<li>{_lines(b, document)}</li>" for b in run)
+            parts.append(f"<ul>{items}</ul>")
+        else:
+            parts.extend(_block(b, document) for b in run)
+    return "".join(parts)
 
 
 def _list(zone: Zone, document: Document) -> str:
+    """Items only, and deliberately nothing else.
+
+    Kept separate from `_prose` rather than routed through it. Dropping a
+    non-item block is the point: a LIST Zone that comes back as paragraphs
+    renders an empty `<ul>`, which is visible as the mis-read it is. `_prose`
+    keeps every block because there nothing has claimed the region is a list.
+    """
     items = "".join(
         f"<li>{_lines(b, document)}</li>" for b in zone.blocks if b.kind == "item"
     )

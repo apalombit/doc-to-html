@@ -21,7 +21,7 @@ from pathlib import Path
 from . import probes as probe_module
 from .checkpoints import Answer, CheckpointHandler, NullHandler, Question
 from .config import Settings, load
-from .engines.base import VisionEngine
+from .engines.base import LayoutEngine, VisionEngine
 from .engines.ollama import OllamaEngine
 from .extractors import for_kind, resolution_caveat
 from .ir import Caveat, Document, Failure, Gap, Kind, Zone
@@ -31,9 +31,13 @@ from .preprocess import (
     MODEL_INPUT_LONG_EDGE,
     PAD_X,
     PAD_Y,
+    REGION_GAP,
     EmptyZone,
     ImageArray,
     Rectified,
+    caption_band,
+    count_regions,
+    crop_row_as_fraction,
     ink_fraction,
     snap_to_ink,
     table_grid,
@@ -96,7 +100,7 @@ class EngineSet:
     resident at once does not fit in 8GB.
     """
 
-    layout: VisionEngine
+    layout: LayoutEngine
     classify: VisionEngine
     extract: VisionEngine
     audit: VisionEngine
@@ -111,11 +115,32 @@ def default_engines(settings: Settings | None = None) -> EngineSet:
     """
     resolved = settings or load()
     return EngineSet(
-        layout=OllamaEngine.from_settings(resolved, resolved.layout_model),
+        layout=_layout_engine(resolved),
         classify=OllamaEngine.from_settings(resolved, resolved.classify_model),
         extract=OllamaEngine.from_settings(resolved, resolved.extract_model),
         audit=OllamaEngine.from_settings(resolved, resolved.audit_model),
     )
+
+
+def _layout_engine(settings: Settings) -> LayoutEngine:
+    """A trained detector if one is named, and the vision model otherwise.
+
+    **Unset is the whole contract.** With no `DTH_LAYOUT_DETECTOR` this returns
+    exactly what it always returned, so a default run is byte-identical to one
+    from before detectors existed — the same discipline `DTH_SNAP_ZONES` and
+    `DTH_TABLE_GRID_HINT` shipped under.
+
+    Imported inside the call so `onnxruntime` stays an optional extra: a package
+    that fails at import because a detector nobody asked for is unavailable
+    would make the extra mandatory in practice.
+    """
+    if not settings.layout_detector:
+        return OllamaEngine.from_settings(settings, settings.layout_model)
+
+    from .engines.detector import from_name
+
+    return from_name(settings.layout_detector,
+                     settings.detector_confidence or None)
 
 
 def failed(index: int, zone: Zone, error: Exception) -> Failure:
@@ -149,7 +174,8 @@ def _box_data(zone: Zone) -> dict[str, float] | None:
     }
 
 
-def _crop_data(image: ImageArray, zone: Zone) -> dict[str, object] | None:
+def _crop_data(image: ImageArray, zone: Zone, *,
+               skip_rows: int = 0) -> dict[str, object] | None:
     """The pixels a pass was actually shown, described.
 
     Which pixels, at what size, with what padding — the three things needed to
@@ -157,13 +183,22 @@ def _crop_data(image: ImageArray, zone: Zone) -> dict[str, object] | None:
     a distinction this project has had to make from the raw dump more than once.
     The padding is recorded rather than assumed because a reader comparing two
     runs cannot know whether `PAD_X` moved between them.
+
+    `skip_rows` is the caption band withheld from the Kind question. The `box`
+    reported is the *shown* one, its top moved down to the cut, so the contact
+    sheet draws the crop the model saw rather than the Zone's full extent — the
+    two differ by exactly the band whose absence is the point of the change.
     """
     if zone.bbox is None:
         return None
-    pixels = zone_pixels(image, zone)
+    pixels = zone_pixels(image, zone)[skip_rows:]
+    box = _box_data(zone) or {}
+    if skip_rows:
+        box["top"] = crop_row_as_fraction(image, zone.bbox, skip_rows)
     return {
         "width": pixels.shape[1], "height": pixels.shape[0],
-        "box": _box_data(zone), "pad_x": PAD_X, "pad_y": PAD_Y,
+        "box": box, "pad_x": PAD_X, "pad_y": PAD_Y,
+        "skip_rows": skip_rows,
         "ink_fraction": round(ink_fraction(pixels), 4),
     }
 
@@ -346,6 +381,29 @@ class Conversion:
     arm can set the variable and get the behaviour without reloading the module.
     """
 
+    layout_region_hint: bool = field(
+        default_factory=lambda: load().layout_region_hint
+    )
+    """Whether `_layout` measures the page and states a region ceiling.
+
+    Resolved per Conversion for the same reason as `snap_zones` above, and it
+    lives here rather than on the Engine because the measurement is the
+    Orchestrator's: it owns the Rectified Image and the Trace, so measuring once
+    here is what keeps the number in the prompt and the number in `trace.json`
+    provably the same one. See `config.DEFAULT_LAYOUT_REGION_HINT`.
+    """
+
+    caption_pass: bool = field(default_factory=lambda: load().caption_pass)
+    """Whether `_classify` reads each Zone's Title before asking its Kind.
+
+    Resolved per Conversion for the same reason as the two above, and it lives
+    here rather than on the Engine because the band measurement that decides
+    whether to ask at all is the Orchestrator's: it owns the Rectified Image and
+    the Trace, so measuring once here is what keeps the crop the model saw and
+    the crop `trace.json` describes provably the same pixels. See
+    `config.DEFAULT_CAPTION_PASS`.
+    """
+
     trace: Trace = field(default_factory=Trace)
     """What this Conversion did, step by step. See `trace.py`.
 
@@ -480,15 +538,31 @@ class Conversion:
         if document.zones:
             return
 
+        ceiling = self._region_ceiling(rectified)
+
         mark, started = self.trace.next_call, time.perf_counter()
-        zones = self.engines.layout.detect_zones(rectified.image, document.hint)
+        try:
+            zones = self.engines.layout.detect_zones(rectified.image, document.hint)
+            overrun = ceiling is not None and len(zones) > ceiling
+            failure: Exception | None = None
+        except (MappingError, RuntimeError) as error:
+            zones, overrun, failure = [], False, error
         call, made = self.trace.calls_since(mark)
         self.trace.record(
-            Stage.LAYOUT, "detect_zones", Disposition.ACCEPTED,
+            Stage.LAYOUT, "detect_zones",
+            Disposition.REJECTED if (overrun or failure) else Disposition.ACCEPTED,
             seconds=time.perf_counter() - started, call=call, calls=made,
             long_edge=LAYOUT_LONG_EDGE, zones=len(zones),
             boxes=[_box_data(zone) for zone in zones],
+            reason=(
+                f"{len(zones)} Zones, more than the {ceiling} the page measures"
+                if overrun else f"{type(failure).__name__}: {failure}"
+                if failure else None
+            ),
         )
+
+        if overrun or failure:
+            zones = self._layout_again(rectified, document, ceiling, failure)
 
         if self.snap_zones:
             log.info("DTH_SNAP_ZONES is on: moving %d boxes onto their ink", len(zones))
@@ -521,6 +595,166 @@ class Conversion:
             )
         document.zones = zones
 
+    def _layout_again(self, rectified: Rectified, document: Document,
+                      ceiling: int | None, failure: Exception | None) -> list[Zone]:
+        """Ask once more, this time stating how many regions the page holds.
+
+        **The hint is a rescue, not a policy, and that is the whole design.**
+        Stated on every call it is a liability: runs 55 and 56 both put it on the
+        first call and both cost `invoice_0001` its zero-mismatch Conversion —
+        the model read the bound as a target, split real regions to reach it, and
+        returned quantised boxes where the unhinted call had returned measured
+        ones. Asked only after an answer has already failed, it cannot do that:
+        a document whose first answer is fine never sees a number, so the
+        baseline is protected by construction rather than by an argument about
+        wording, which is the argument that was wrong twice.
+
+        What survives from those runs is that the count *works* — it took
+        `invoice_0002` from 72 regions to 11 to its true 10, and killed a runaway
+        that a bigger token budget only fed. That is worth having exactly where
+        the page has already proved it needs it.
+
+        A second failure is the caller's, unchanged: this re-raises rather than
+        returning a fragment, because a plausible partial layout looks like a
+        sparse document and is worse than an error.
+        """
+        if ceiling is None:
+            assert failure is not None
+            raise failure
+
+        log.info("layout is being asked again with the measured ceiling of %d",
+                 ceiling)
+        mark, started = self.trace.next_call, time.perf_counter()
+        zones = self.engines.layout.detect_zones(
+            rectified.image, document.hint, region_ceiling=ceiling
+        )
+        call, made = self.trace.calls_since(mark)
+        self.trace.record(
+            Stage.LAYOUT, "detect_zones_with_ceiling", Disposition.ACCEPTED,
+            seconds=time.perf_counter() - started, call=call, calls=made,
+            long_edge=LAYOUT_LONG_EDGE, zones=len(zones), ceiling=ceiling,
+            boxes=[_box_data(zone) for zone in zones],
+        )
+        return zones
+
+    def _region_ceiling(self, rectified: Rectified) -> int | None:
+        """How many regions the page holds at most, measured from its ink.
+
+        Recorded either way. A step that ran and a step that was switched off are
+        different facts, and a trace that says nothing about the second leaves a
+        reader unable to tell "measured, and this is the number" from "never
+        measured" — which is the distinction the whole module exists to keep.
+
+        Measured on the **full-resolution** Rectified Image, not on the
+        downscaled page the model is shown, because that is what
+        `preprocess.REGION_GAP` is calibrated against. The gap is a fraction of
+        the short edge, so the count is scale-invariant and the two agree anyway;
+        matching the calibration is what makes that claim checkable rather than
+        assumed.
+        """
+        if not self.layout_region_hint:
+            self.trace.record(
+                Stage.LAYOUT, "measure_regions", Disposition.SKIPPED,
+                enabled=False,
+                reason="DTH_LAYOUT_REGION_HINT is off, so the layout prompt "
+                       "states no bound on how many regions the page holds",
+            )
+            return None
+
+        started = time.perf_counter()
+        ceiling = count_regions(rectified.image)
+        log.info("DTH_LAYOUT_REGION_HINT is on: the page measures at most "
+                 "%d regions", ceiling)
+        self.trace.record(
+            Stage.LAYOUT, "measure_regions", Disposition.ACCEPTED,
+            seconds=time.perf_counter() - started,
+            enabled=True, gap=REGION_GAP, regions=ceiling,
+        )
+        return ceiling
+
+    def _read_caption(self, rectified: Rectified, document: Document,
+                      index: int) -> int:
+        """Take this Zone's Title off its first printed line. Returns rows to skip.
+
+        Runs before the Kind question and hands it a number, because the two want
+        opposite pixels: the Title needs the caption band in frame and the Kind is
+        measurably wrong while it is there. See `config.DEFAULT_CAPTION_PASS`.
+
+        **The band measurement decides whether to ask at all**, and that guard is
+        structural rather than a judgement: `caption_band` returns `None` unless
+        something is printed *below* the first line, so a Zone that is only a
+        heading — 20 of run 69's 36 crops — is never asked and never stripped.
+        Without it such a Zone would take its only line as its own Title and then
+        have the Extractor read the same words again as its content.
+
+        A failure here costs the Title and nothing else. The Zone keeps its full
+        crop and goes on to be classified, because a Kind is what routes it to an
+        Extractor and a missing Title is not worth a skeleton.
+        """
+        zone = document.zones[index]
+        if not self.caption_pass or zone.bbox is None:
+            return 0
+
+        band = caption_band(zone_pixels(rectified.image, zone))
+        if band is None:
+            self.trace.record(
+                Stage.CLASSIFY, "read_caption", Disposition.SKIPPED,
+                zone_index=index, kind=zone.kind.value,
+                lines=1, reason="the crop holds one band of ink, so there is "
+                                "nothing printed below the first line and no "
+                                "caption to lift off it",
+            )
+            return 0
+
+        mark, started = self.trace.next_call, time.perf_counter()
+        try:
+            document.zones[index] = self.engines.classify.read_caption(
+                rectified.image, zone, document.hint
+            )
+        except Exception as error:
+            call, made = self.trace.calls_since(mark)
+            self.trace.record(
+                Stage.CLASSIFY, "read_caption", Disposition.REJECTED,
+                zone_index=index, seconds=time.perf_counter() - started,
+                call=call, calls=made, kind=zone.kind.value,
+                error=f"{type(error).__name__}: {error}",
+                consequence="the Zone keeps no Title and is classified on its "
+                            "whole crop, caption included",
+            )
+            return 0
+
+        titled = document.zones[index]
+        call, made = self.trace.calls_since(mark)
+
+        # The ink may refuse a caption, and may never assert one. A heading row
+        # has one cell per column of the values below it; a caption spans the
+        # region and ignores that grid, so equal column counts either side of the
+        # cut mean the model has named a table's heading row. Refusing costs at
+        # most a Title, while accepting a false one costs a Kind, a row and a
+        # Probe — run 71 spent all three on `invoice_0001`. The veto is therefore
+        # only ever pointed at the expensive side. See `CaptionBand`.
+        vetoed = titled.title is not None and band.aligns_to_grid
+        if vetoed:
+            refused, titled.title = titled.title, None
+
+        taken = titled.title is not None
+        self.trace.record(
+            Stage.CLASSIFY, "read_caption",
+            Disposition.ACCEPTED if taken else Disposition.KEPT,
+            zone_index=index, seconds=time.perf_counter() - started,
+            call=call, calls=made,
+            changed=([Change(path=f"zones[{index}].title",
+                             before=None, after=titled.title)] if taken else []),
+            crop=_crop_data(rectified.image, titled),
+            title=titled.title, kind=titled.kind.value,
+            band_top=band.top, band_bottom=band.bottom,
+            gap_below=band.gap_below, median_gap=band.median_gap,
+            lines=band.lines, cut_row=band.cut_row if taken else 0,
+            head_columns=band.head_columns, body_columns=band.body_columns,
+            vetoed=refused if vetoed else None,
+        )
+        return band.cut_row if taken else 0
+
     def _classify(self, rectified: Rectified, document: Document) -> None:
         """Decide each Zone's Kind from that Zone's own crop.
 
@@ -542,6 +776,13 @@ class Conversion:
         document. It is then left out of extraction: with no Kind there is no
         question to ask about it, and asking anyway would route it on geometry's
         guess, which is the guess this pass exists to stop trusting.
+
+        **Two calls per Zone under `DTH_CAPTION_PASS`, and two Events.** The
+        Title is read first, from the whole crop, and the caption band it names is
+        then withheld from the Kind question — see `_read_caption`. They are
+        recorded as separate steps rather than one step making two calls because
+        the contact sheet renders one call per Event, so a merged step would show
+        the first prompt and hide the second.
         """
         if self.classification_ran:
             return
@@ -549,6 +790,11 @@ class Conversion:
 
         for index, zone in enumerate(document.zones):
             was = zone.kind.value
+            skip_rows = self._read_caption(rectified, document, index)
+            # Re-read rather than trusting the loop variable: the caption pass
+            # fills its Zone in place today, and a Zone rebuilt there instead
+            # would silently drop the Title on the way to the Kind question.
+            zone = document.zones[index]
             mark, started = self.trace.next_call, time.perf_counter()
             try:
                 empty = empty_zone(rectified.image, zone)
@@ -561,7 +807,7 @@ class Conversion:
                     )
                     raise empty
                 document.zones[index] = self.engines.classify.classify_zone(
-                    rectified.image, zone, document.hint
+                    rectified.image, zone, document.hint, skip_rows=skip_rows
                 )
             except Exception as error:
                 # The Kind recorded here is the one geometry guessed, which this
@@ -590,9 +836,11 @@ class Conversion:
                 call=call, calls=made,
                 changed=[Change(path=f"zones[{index}].kind",
                                 before=was, after=classified.kind.value)],
-                crop=_crop_data(rectified.image, classified),
+                crop=_crop_data(rectified.image, classified,
+                                skip_rows=skip_rows),
                 kind_before=was, kind_after=classified.kind.value,
                 title=classified.title, graphic=classified.graphic_kind,
+                skip_rows=skip_rows,
                 over_input_budget=long_edge_over_input_budget(
                     rectified.image, classified
                 ),

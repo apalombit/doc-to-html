@@ -15,6 +15,11 @@ dependencies = [
 
 [project.optional-dependencies]
 tesseract = ["pytesseract>=0.3.13"]
+# Trained layout detectors, run as ONNX on the CPU. Optional because the base
+# install must stay importable without a model download, and because this is
+# still a bakeoff: `tools/detector_probe.py` decides whether either candidate
+# earns a place before anything in `src/` depends on it.
+detector = ["onnxruntime>=1.20"]
 dev = ["pytest>=8.0", "mypy>=1.11"]
 
 [project.scripts]
@@ -36,6 +41,6 @@ python_version = "3.12"
 strict = true
 
 [[tool.mypy.overrides]]
-# Neither ships type information; both are reached only through a narrow seam.
-module = ["cv2.*", "ollama.*"]
+# None ships type information; each is reached only through a narrow seam.
+module = ["cv2.*", "ollama.*", "onnxruntime.*"]
 ignore_missing_imports = true

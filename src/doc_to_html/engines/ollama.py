@@ -39,8 +39,10 @@ from ..preprocess import (
 )
 from ..wire import (
     EXTRACTION_SCHEMAS,
+    CaptionResponse,
     ClassifyResponse,
     LayoutResponse,
+    caption_into,
     classification_into,
     contents_into,
     schema_of,
@@ -49,8 +51,12 @@ from ..wire import (
 from .lenient import LenientTransport
 from .transport import OllamaTransport, Response, Transport
 
-PROMPT_VERSION = "1"
-"""Recorded on every Reading. Without it an eval regression cannot be attributed."""
+PROMPT_VERSION = "2"
+"""Recorded on every Reading. Without it an eval regression cannot be attributed.
+
+Bumped to 2 when `CLASSIFY_PROMPT`'s `pairs` entry dropped its same-line
+constraint. Readings either side of that are not comparable at one version, which
+is the whole reason the field exists."""
 
 LAYOUT_PROMPT = """You are looking at one page of a document.
 
@@ -125,17 +131,14 @@ kind — one of:
           the same columns as the values under it, the region is a table. That
           holds even when each heading word would read naturally as a label for
           the value beneath it, and even when only one row of values follows
-  pairs   label and value lines with no set-apart heading row, such as
-          "Invoice No: 12". Each label sits on the same line as the value it
-          names, with nothing below it
+  pairs   a block of labelled values, such as "Invoice No: 12". Every entry
+          names its value: a line with nothing naming it is not a pair. The
+          label may sit beside its value or directly above it. What makes this
+          pairs rather than a table is that the labels are not set apart from
+          the values as a row — not shaded, ruled off, or in bold
   prose   headings, paragraphs, addresses, free text
   list    bulleted or numbered items, or a row of navigation links
   figure  a logo, chart, stamp, signature or badge
-
-title — a short heading printed at the top of this region and naming the whole of
-it, such as a panel caption or a card title. Use an empty string if there is
-none. Do not invent one, and do not use the first label of a pairs region or the
-first cell of a table heading row.
 
 graphic — for a figure only: logo, chart, signature, stamp or badge. Use an empty
 string for every other kind.
@@ -179,18 +182,113 @@ Three experiments separated the cause, all with this prompt's predecessor:
   wherever `Payment Method | Check #` is — 12 for 12, the data row contributing
   nothing.
 
-Hence the inversion, plus `pairs` now requiring the label on the **same line** as
-its value. On `invoice_0001`, six Zones, three repeats: **6/6, against 4/6 for
-the wording it replaces.** Zone 4 `pairs`→`table` and Zone 3 `pairs`→`prose`,
-with Zones 0, 1, 2 and 5 unmoved.
+Hence the inversion, plus a `pairs` clause that took Zone 3 out of `pairs`. On
+`invoice_0001`, six Zones, three repeats: **6/6, against 4/6 for the wording it
+replaces.** Zone 4 `pairs`→`table` and Zone 3 `pairs`→`prose`, with Zones 0, 1,
+2 and 5 unmoved.
 
-**What this is not measured against.** The same wording turns `invoice_0002`'s
-two panel Zones from `pairs` to `table`, which is a real regression and open —
-those panels put each label above its value rather than beside it, so the
-same-line rule reads them out of `pairs`. Shipped as the default anyway, on one
-fixture's evidence, which is a deliberate call and #19's to revisit. Unlike the
-four attempts 0002 records, this one cannot cost Band numbering: Bands come from
-the layout pass and this prompt runs after geometry."""
+**That clause bundled two constraints, and only one of them was doing the work.**
+It read "each label sits on the same line as the value it names, with nothing
+below it" — a geometric test (*beside*) and a semantic one (*names*) in one
+sentence. The geometric half is what turned `invoice_0002`'s two panel Zones from
+`pairs` to `table`: those panels put each label above its value, and the
+same-line rule read them out of `pairs` on their arrangement alone. So it is
+gone, and the semantic half is now stated on its own — "every entry names its
+value; a line with nothing naming it is not a pair".
+
+**What carries Zone 3 is the half that stayed.** Zone 3 is `Acme Corp.` /
+`John Doe` / `john@example.com`: three stacked lines, none of which names
+another. It was never excluded from `pairs` for being stacked — plenty of pairs
+are — but for being unlabelled, and that test is unchanged and now explicit. If
+Zone 3 ever comes back `pairs` again, this paragraph is the thing that was
+wrong, and restoring the same-line wording is the revert.
+
+The closing sentence defers to the `table` entry rather than competing with it,
+which keeps the ordering the 12/12 crossover bought: typesetting decides, and a
+set-apart row of labels is a table however its words read.
+
+Unlike the four attempts 0002 records, none of this can cost Band numbering:
+Bands come from the layout pass and this prompt runs after geometry.
+
+**The `title` paragraph is gone, and its absence is the point.** It asked for "a
+short heading printed at the top of this region and naming the whole of it" and
+returned `""` in all 36 of run 69's classify calls — on crops where the caption
+is legible enough that the same model, asked about it alone, answered correctly
+4 times out of 4. Two mechanisms are consistent with that and this change does
+not need to separate them: the field may simply be a low-attention slot in a
+three-part answer, or the prompt may be contradicting itself, since `kind` is
+decoded first and a panel's shaded caption bar satisfies the `table` entry's own
+"top row set apart" test — after which the title clause's "do not use the first
+cell of a table heading row" correctly forbids reporting it. Either way the ask
+is unreachable from here. It now has its own call; see `CAPTION_PROMPT`."""
+
+CAPTION_PROMPT = """You are looking at one region, cropped from a page of a
+document.
+
+Copy out the first printed line of this region, exactly as printed.
+
+Then say which of these three it is:
+
+  caption   a short heading that names the whole region and is not itself part
+            of the content, such as a panel caption or a card title
+  header    the heading row of a grid: it has one cell per column of the values
+            below it, and its words sit over the columns they name
+  content   the first line of the region's own content — a paragraph's opening
+            line, an address's first line, or the first labelled value
+
+Answer for this region only, and do not read out any line but the first."""
+"""What a region's first printed line is. One question, one call.
+
+Asked because the same question inside `CLASSIFY_PROMPT` was answered `""` 36
+times out of 36, and asked *this* way — alone, against the identical crops from
+run 69 — was answered correctly 4 times out of 4: `sample_table_0003`'s
+"Population and GDP (millions of USD)" and `invoice_0002`'s "Company Details",
+"Customer Details" and "Payment Method".
+
+**Three answers, because two were not enough, and that was the whole defect.**
+The first version asked a yes/no — is this line a heading? — and got `true` on
+**8 of 8** crops in run 71. It was not being ignored; it was being answered
+correctly, because that prompt's test for a heading ("set apart by being bold,
+larger, shaded, or alone above the rest") is word for word `CLASSIFY_PROMPT`'s
+test for a table's top row. A heading row satisfies both, and with no third
+answer available the model had nowhere else to put it. Two of `invoice_0001`'s
+Zones lost their heading rows to that, taking a Kind, a summary row and the
+385.00 Probe with them.
+
+Measured over the 11 crops from run 71 that the two shapes were compared on —
+the five `invoice_0001` false positives, three true captions and three
+`sample_semantic_0005` cases:
+
+| | correct |
+|---|---|
+| `is_heading: true/false` | **4 / 11** |
+| `caption` / `header` / `content` | **8 / 11** |
+
+A fourth shape was tried and rejected: asking the question semantically with
+typesetting explicitly discounted ("ignore how the line is typeset") answers
+`content` for `sample_table_0003`'s caption, losing the fixture the whole change
+is gated on.
+
+**One residual miss, and no further wording is proposed for it.**
+`invoice_0001`'s Zone 1 opens "Invoice # : 123" and comes back `caption`, even
+though the `content` entry already names "the first labelled value". It costs one
+title mismatch and nothing structural.
+
+**No measured numbers in this prompt, against the standing pattern.**
+`DTH_TABLE_GRID_HINT` established that this model honours a counted fact where it
+ignores a behavioural instruction, so stating the caption band's measurements
+here was the obvious next move. The measurements say the opposite of the truth on
+the fixture that matters most: `sample_table_0003`'s caption sits 19 rows above
+its table against a median line gap of 20, so a prompt reporting that gap would
+argue the model out of the answer it gets right unaided. `invoice_0002`'s panels
+do show the expected signal — 30, 33 and 29 against medians of 10, 7 and 10 —
+which is exactly why one number cannot be trusted to carry both. The band is
+measured, but only to decide whether to ask at all, and to explain the step in
+the contact sheet. See `preprocess.caption_band`.
+
+**Reading before judging** is deliberate: `first_line` is decoded before
+`line_is`, so the verdict is given against a line the model has already copied
+out rather than against an impression of the crop."""
 
 TABLE_PROMPT = """You are looking at one table, cropped from a page.
 
@@ -401,6 +499,12 @@ class OllamaEngine:
     and why a counted fact is a different lever from the two behavioural
     instructions that already failed."""
 
+    derive_bands: bool = False
+    """Take each Zone's Band and column from its box rather than from the model.
+
+    Off by default; see `config.DEFAULT_DERIVE_BANDS` for what it fixes, what it
+    is measured against, and what it gives up."""
+
     name: str = "ollama"
 
     @classmethod
@@ -423,6 +527,7 @@ class OllamaEngine:
             transport=transport,
             lenient=settings.lenient_decoding,
             table_grid_hint=settings.table_grid_hint,
+            derive_bands=settings.derive_bands,
         )
 
     def client_kwargs(self) -> dict[str, Any]:
@@ -476,7 +581,7 @@ class OllamaEngine:
                 schema=schema,
                 num_ctx=budget,
             )
-            if reply.truncated and not reply.content and reply.thinking:
+            if _reasoned_instead_of_answering(reply):
                 # Not a truncation to retry, however much it looks like one: the
                 # model filled its budget with reasoning and never answered. A
                 # bigger budget buys more reasoning, so say what it is instead.
@@ -495,24 +600,56 @@ class OllamaEngine:
             f"last budget {budget // 2}. The Zone is too dense to read whole."
         )
 
-    def detect_zones(self, image: ImageArray, hint: str | None = None) -> list[Zone]:
+    def detect_zones(self, image: ImageArray, hint: str | None = None,
+                     region_ceiling: int | None = None) -> list[Zone]:
         """Zones with Band, column, Kind, Role and bbox — no contents.
 
         Runs on a downscaled page: detecting regions is a coarse task that small
         models handle well, and the resolution given away here is bought back by
         cropping each Zone from the full-resolution image for extraction.
+
+        `region_ceiling` is an upper bound on how many regions the page holds,
+        measured from the ink by the caller. `None` means the caller did not
+        measure and the prompt goes out unchanged. See `with_regions`.
         """
+        prompt = LAYOUT_PROMPT
+        if region_ceiling is not None:
+            prompt = with_regions(prompt, region_ceiling)
         content = self.ask(
             "layout",
-            with_hint(LAYOUT_PROMPT, hint),
+            with_hint(prompt, hint),
             image,
             schema_of(LayoutResponse),
             long_edge=self.layout_long_edge,
         )
-        return zones_from_layout(LayoutResponse.model_validate_json(content))
+        return zones_from_layout(LayoutResponse.model_validate_json(content),
+                                 derive_bands=self.derive_bands)
+
+    def read_caption(self, image: ImageArray, zone: Zone,
+                     hint: str | None = None) -> Zone:
+        """Read this Zone's first printed line and say whether it is its Title.
+
+        Cut with `zone_pixels`, the same helper `classify_zone` and every
+        Extractor use, because this question needs the caption *in* frame — it is
+        the one pass that must see the band the Kind question is about to be
+        spared. See `CAPTION_PROMPT` for what was measured.
+
+        Only worth asking when `preprocess.caption_band` finds a band with
+        something under it; the Orchestrator owns that test, so this method makes
+        no judgement about whether it should have been called.
+        """
+        return caption_into(
+            zone,
+            self.ask(
+                "caption",
+                with_hint(CAPTION_PROMPT, hint),
+                zone_pixels(image, zone),
+                schema_of(CaptionResponse),
+            ),
+        )
 
     def classify_zone(self, image: ImageArray, zone: Zone,
-                      hint: str | None = None) -> Zone:
+                      hint: str | None = None, *, skip_rows: int = 0) -> Zone:
         """Decide one Zone's Kind from that Zone's own crop.
 
         Takes the whole Rectified Image and cuts the Zone out itself, with the
@@ -520,6 +657,19 @@ class OllamaEngine:
         a differently-padded image could name a Kind for one picture while the
         Extractor reads another, and nothing in the IR would say why they
         disagreed.
+
+        **`skip_rows` breaks that on purpose, and only downward.** It drops the
+        leading crop rows holding a caption the caption pass has already taken as
+        the Title, because while a shaded caption bar is visible this model reads
+        it as a table's heading row — `CLASSIFY_PROMPT`'s own "top row set apart"
+        test, which the bar satisfies. Cropping it off moved 2 of 3
+        `invoice_0002` panels from `table` to the correct `pairs`, where a prompt
+        clause spelling out the difference moved 0 of 6.
+
+        **The Extractor keeps the whole crop**, caption included, and must: a
+        Title is a printed line, `table_grid` counts it as one, and
+        `with_grid(titled=True)` subtracts it. Stripping the Extractor's crop as
+        well would subtract it twice.
 
         One Zone per call, like `extract_zone` and for the same reason: the loop
         is the Orchestrator's, so a Zone whose classification fails is a Failure
@@ -530,7 +680,7 @@ class OllamaEngine:
             self.ask(
                 "classify",
                 with_hint(CLASSIFY_PROMPT, hint),
-                zone_pixels(image, zone),
+                zone_pixels(image, zone)[skip_rows:],
                 schema_of(ClassifyResponse),
             ),
         )
@@ -562,6 +712,35 @@ class OllamaEngine:
 
     def audit_coverage(self, image: ImageArray, zones: list[Zone]) -> list[BBox]:
         raise NotImplementedError("coverage audit not yet wired")
+
+
+def _reasoned_instead_of_answering(reply: Response) -> bool:
+    """Whether the reasoning channel holds reasoning rather than the answer.
+
+    The distinction is not academic: it decides between a retry at twice the
+    budget and an error, and getting it backwards costs a document.
+
+    **An empty `content` proves nothing about this model.** Ollama routes
+    `qwen3-vl`'s schema-constrained output to `message.thinking` and leaves
+    `message.content` empty on *every* call — checked across all 13 calls of run
+    50, layout through both tables, each of which logged "chars on the reasoning
+    channel" and each of which was a correct answer. So the old test here —
+    truncated, no content, some thinking — was true of every genuine truncation
+    this model can produce, which made the doubling retry in `ask` unreachable
+    and reported a budget the page had outgrown as a thinking setting that was
+    never wrong. `invoice_0002` died this way in three runs (36 twice, 51).
+
+    What actually separates the two is the *shape* of the text. The answer is
+    constrained by `format`, so it opens with a brace or a bracket however early
+    it was cut off; reasoning is prose. That test costs one character.
+
+    The budget test is kept, so the error it gates stays literally true when it
+    says the model spent the whole of one. Prose that stops of its own accord is
+    a different failure and still falls through to the retry.
+    """
+    if not reply.truncated or reply.content or not reply.thinking:
+        return False
+    return reply.thinking.lstrip()[:1] not in ("{", "[")
 
 
 def _ran_out_of_room(reply: Response) -> bool:
@@ -614,6 +793,44 @@ def with_grid(prompt: str, grid: TableGrid, *, titled: bool = False) -> str:
         f"with {grid.columns} cells. Two pieces of text at the same height are "
         f"two cells of one row, even when they sit at opposite edges with blank "
         f"paper between them — they are not two rows."
+    )
+
+
+def with_regions(prompt: str, ceiling: int) -> str:
+    """State an upper bound on how many regions the page holds, measured from it.
+
+    The layout counterpart of `with_grid`, and it exists for the same reason:
+    `LAYOUT_PROMPT` already forbids reporting a panel's inner rows as regions of
+    their own, in as many words, and `qwen3-vl:4b` returns 72 regions for a
+    10-region page regardless. That is the third instruction this project has
+    watched this model ignore, after the two about splitting a table row, and the
+    pattern in all three is the same — it complies with *how many* and ignores
+    *which*. So this stops arguing and states a number.
+
+    **A ceiling and not a count, because the ruler overcounts.**
+    `preprocess.count_regions` measures 8 where `invoice_0001` has 6 and 11 where
+    `invoice_0002` has 10. Stated as an exact target, that number would push a
+    page the model already reads correctly into splitting regions to reach it,
+    and `invoice_0001` at zero mismatches is precisely what must not move. Stated
+    as a bound it has no such pull — 6 is already under 8, so a correct answer
+    stays correct — while a runaway is still capped. The asymmetry is the whole
+    design: being wrong high costs nothing, being wrong low costs a region.
+
+    Stated, not enforced, exactly as `with_grid` is. The wire schema is
+    untouched, so a wrong bound is a sentence the model may disagree with and
+    every check behind it still runs, rather than a constraint it must drop
+    content to satisfy.
+    """
+    return (
+        f"{prompt}\n\n"
+        f"This page has been measured from the ink printed on it: it holds no "
+        f"more than {ceiling} regions.\n\n"
+        f"That is a limit, not a quantity to produce. Most pages hold fewer "
+        f"regions than their limit, and returning fewer is the usual and correct "
+        f"answer. Never split a region in order to reach the number. Only never "
+        f"go above it.\n\n"
+        f"A panel and the rows printed inside it are one region: count the "
+        f"panel, not its rows."
     )
 
 

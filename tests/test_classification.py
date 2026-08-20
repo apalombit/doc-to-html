@@ -30,6 +30,7 @@ from doc_to_html.ir import BBox, Document, Kind, Role, Zone
 from doc_to_html.orchestrator import Conversion
 from doc_to_html.preprocess import PAD_X, PAD_Y, NoGeometry
 from doc_to_html.wire import (
+    CaptionResponse,
     ClassifyResponse,
     LayoutResponse,
     MappingError,
@@ -66,11 +67,17 @@ def engine_with(*replies: str) -> tuple[OllamaEngine, ReplayTransport]:
     return OllamaEngine(model="test-model", transport=transport), transport
 
 
-def answer(kind: str = "pairs", title: str = "", graphic: str = "") -> str:
+def answer(kind: str = "pairs", graphic: str = "") -> str:
     return ClassifyResponse(
         kind=kind,  # type: ignore[arg-type]
-        title=title,
         graphic=graphic,  # type: ignore[arg-type]
+    ).model_dump_json()
+
+
+def caption(first_line: str = "", line_is: str = "caption") -> str:
+    return CaptionResponse(
+        first_line=first_line,
+        line_is=line_is,  # type: ignore[arg-type]
     ).model_dump_json()
 
 
@@ -128,13 +135,37 @@ class TestWhatComesBack:
         assert classified.kind is Kind.TABLE
 
     def test_a_title_belonging_to_the_zone_comes_back_with_it(self) -> None:
-        engine, _ = engine_with(answer("pairs", title="Company Details"))
-        assert engine.classify_zone(page(), zone()).title == "Company Details"
+        """From the caption pass, not the Kind question. Asked alongside the
+        Kind it came back empty 36 times out of 36 — see `CAPTION_PROMPT`."""
+        engine, _ = engine_with(caption("Company Details", line_is="caption"))
+        assert engine.read_caption(page(), zone()).title == "Company Details"
+
+    def test_a_first_line_that_is_content_is_not_a_title(self) -> None:
+        """The model read the line and said it is the content\'s own first row.
+        Storing it anyway would duplicate it: the Extractor reads it next."""
+        engine, _ = engine_with(caption("Name", line_is="content"))
+        assert engine.read_caption(page(), zone()).title is None
+
+    def test_a_grid_heading_row_is_not_a_title_either(self) -> None:
+        """The answer the two-value schema could not express, and the whole
+        reason for the third. `"Item"` over a price table is a heading — it is
+        just not the *region's* heading — and with only true/false available the
+        model said true, cutting the row off `invoice_0001`'s table in run 71."""
+        engine, _ = engine_with(caption("Item", line_is="header"))
+        assert engine.read_caption(page(), zone()).title is None
+
+    def test_a_verdict_outside_the_three_is_refused(self) -> None:
+        """Constrained decoding prevents this locally; the lenient path for cloud
+        models does not honour `format`, so the mapper is the guard. Refusing
+        costs the Title and nothing else — see `Conversion._read_caption`."""
+        engine, _ = engine_with('{"first_line": "Item", "line_is": "maybe"}')
+        with pytest.raises(MappingError):
+            engine.read_caption(page(), zone())
 
     def test_no_title_is_None_rather_than_empty(self) -> None:
         """`None` and `""` render differently, and the wire can only say `""`."""
-        engine, _ = engine_with(answer("pairs", title="   "))
-        assert engine.classify_zone(page(), zone()).title is None
+        engine, _ = engine_with(caption("   ", line_is="caption"))
+        assert engine.read_caption(page(), zone()).title is None
 
     def test_a_figure_says_which_graphic_it_is(self) -> None:
         engine, _ = engine_with(answer("figure", graphic="logo"))
@@ -170,7 +201,7 @@ class TestTheAnswerIsConstrained:
         """One record of scalars, per this repo's rule: a 4B model asked for
         something flat reads a page better than one asked for something nested."""
         properties = schema_of(ClassifyResponse)["properties"]
-        assert set(properties) == {"kind", "title", "graphic"}
+        assert set(properties) == {"kind", "graphic"}
         assert all(field.get("type") != "array" for field in properties.values())
 
     def test_a_kind_outside_the_closed_set_is_refused(self) -> None:

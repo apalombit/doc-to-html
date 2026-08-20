@@ -32,12 +32,12 @@ from doc_to_html.wire import MappingError, TableResponse, contents_into
 
 from .fixtures import BUILDERS
 from .replay import (
+    break_zone,
     Call,
     ReplayTransport,
     convert_recording,
     recorded_for,
     text,
-    wired_zones,
 )
 
 REPO = Path(__file__).resolve().parent.parent
@@ -131,16 +131,18 @@ class TestExtractionReadsTheRightPixels:
         """
         from doc_to_html.preprocess import LAYOUT_LONG_EDGE, PAD_X, PAD_Y
 
-        _, transport = invoice
+        document, transport = invoice
         page = Image.open(io.BytesIO(transport.calls[0].images[0]))
         crop = Image.open(io.BytesIO(table_calls(transport)[1].images[0]))
 
         assert max(page.size) == LAYOUT_LONG_EDGE < 862
 
-        # Derived from the fixture's own box and the pads rather than written
-        # down: a literal here goes stale the moment either pad is retuned, and
-        # a stale literal in this assertion reads as a broken crop.
-        box = BUILDERS["invoice_0001"]().zones[5].bbox
+        # Derived from the box the Conversion actually cropped on, and the pads,
+        # rather than written down: a literal here goes stale the moment either
+        # pad is retuned, and a stale literal in this assertion reads as a broken
+        # crop. The *typed* fixture box will not do — `DTH_SNAP_ZONES` ships on,
+        # so the box the Extractor sees has been moved onto its own ink first.
+        box = document.zones[5].bbox
         assert box is not None
         wide = min(1.0, box.right + PAD_X) - max(0.0, box.left - PAD_X)
         tall = min(1.0, box.bottom + PAD_Y) - max(0.0, box.top - PAD_Y)
@@ -210,8 +212,8 @@ class TestProbesNeverHandOverTheAnswerKey:
 
 class TestTheFailureContractOnAPartlyWorkingDocument:
     def broken_at(self, zone_index: int, payload: str) -> Document:
-        replies = recorded_for("invoice_0001")
-        replies[wired_zones("invoice_0001").index(zone_index) + 1] = text(payload)
+        replies = break_zone(recorded_for("invoice_0001"), "invoice_0001",
+                             zone_index, payload)
         return convert_with(INVOICE, replies)[0]  # type: ignore[arg-type]
 
     def test_a_clean_run_reports_nothing(
@@ -225,7 +227,7 @@ class TestTheFailureContractOnAPartlyWorkingDocument:
         """Throwing away two correct tables because a Pairs Zone came back
         unreadable would destroy exactly the evidence the run exists to
         produce."""
-        document = self.broken_at(1, '{"pairs": [{"label": "", "value": "x"}]}')
+        document = self.broken_at(1, '{"pairs": []}')
         assert [z.complete for z in document.zones] == [
             True, False, True, True, True, True
         ]

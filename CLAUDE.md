@@ -22,21 +22,27 @@ numbers and what has already been tried and rejected.
 
 ## Current work
 
-**`example/invoice.png` (`invoice_0001`) converts with 0 mismatches.** Run 49,
-`debug/runs/49-table-grid-hint/`. Every string on the page reaches the render, no
-Zone renders as a skeleton, no Failures, no Caveats, and the column-sum Probe
-reconciles at 385.00.
+**All five fixtures convert. Two are full matches.** Best measurement is run 72,
+`DTH_LAYOUT_DETECTOR=heron DTH_CAPTION_PASS=1 FIXTURE=all`:
 
-| | run 43 | 46 | 47 | 48 | **49** |
-|---|---|---|---|---|---|
-| mismatches | 3 | 1 | 1 | 1 | **0** |
-| Kinds correct | 4/6 | 4/6 | 6/6 | 6/6 | **6/6** |
-| strings rendered | 13/25 | 25/25 | 25/25 | 25/25 | **25/25** |
-| skeletons / failures | 2 / 2 | 0 / 0 | 0 / 0 | 0 / 0 | **0 / 0** |
-| geometry IoU / covered / splits | 0.56 / 0.82 / 46 | 0.91 / 0.99 / 0 | — | — | 0.91 / 0.99 / 0 |
+| | `invoice_0001` | `invoice_0002` | `sample_css_0004` | `sample_semantic_0005` | `sample_table_0003` | total |
+|---|---|---|---|---|---|---|
+| run 69 — flag off, the baseline | **0, match** | 20 | 10 | 14 | 2 | 46 |
+| **run 72 — caption pass on** | **0, match** | 20 | 10 | 15 | **0, match** | **45** |
 
-**Read `docs/specs/0003` for the measurements.** What follows is the state and
-the lessons, not the history.
+`invoice_0001` renders every string, no skeletons, no Failures, no Caveats, and
+its column-sum Probe reconciles at 385.00. Geometry is the same in both runs:
+`covered` 1.00, `splits` 0, `doubles` 0/3/0/1/0.
+
+**The remaining 45 are dominated by Zone grouping, not by reading.** Nothing is
+lost on any fixture — every mismatch is content that arrived and was mis-grouped
+or mis-named. `invoice_0002` cannot fall below 20 while it returns 9 Zones
+against a reference of 10, and `sample_css_0004` cannot gain a Title while each
+heading stands as its own Zone.
+
+**Read `docs/specs/0005` first — it has the current numbers and the ranked
+work.** `docs/specs/0003` is history: treat runs before 50 as superseded and do
+not cite them as evidence.
 
 ### What got it there — five changes, each measured
 
@@ -90,21 +96,69 @@ fall back and label themselves as reconstructed.
 
 ### What is open, honestly
 
-- **The suite is red: 49 failures.** Replay serves recorded responses by order,
-  and classification added a call per Zone, so every fixture's classify call eats
-  what was recorded as its extraction answer. Expected, tracked as **#16**, and
-  the only correct place to fix it. 393 pass. *Any count other than 49/393 is a
-  real regression.*
-- **Four fixtures are unmeasured** against every change above (**#19**).
-  `invoice_0002` returns no geometry at all — both repeats died with
-  `ThinkingNotDisabled` despite `think=False` being sent.
-- **The new `CLASSIFY_PROMPT` regresses `invoice_0002`**, turning its two panel
-  Zones from `pairs` to `table`: those panels stack label above value and the new
-  rule wants them on one line. Shipped as the default on one fixture's evidence,
-  deliberately.
+- **The suite is green: 537 pass, 0 fail.** *Any failure is a real regression.*
+  Issue **#16** is fixed: `ReplayTransport` holds one queue per `pass_name`
+  instead of one flat list, so a pass added in front of extraction no longer
+  eats the answers recorded for it. That was the whole of the 49 red tests. Four
+  of them were not the ordering at all and are worth knowing about, because each
+  had been masked by it:
+  - `test_a_table_is_read_from_a_crop_and_not_from_the_page` derived its expected
+    crop from the *typed* fixture box, but `DTH_SNAP_ZONES` ships on and the
+    Extractor sees the snapped box.
+  - two failure-contract tests picked payloads that are no longer failures — an
+    unlabelled pair is now a `NotPairs` *diagnosis* and gets re-read as prose,
+    and an empty `pairs` answer is allowed for a Zone carrying a Title.
+  - `test_a_bulleted_list_becomes_a_real_list` counted `<ul>` across the whole
+    page, which also counts the findings block.
+- **All five fixtures are measured** (**#19**), by runs 67-72 with
+  `DTH_LAYOUT_DETECTOR=heron`. `invoice_0002` converts — the VLM layout pass was
+  what could not produce geometry for it. Best vector, run 72 with
+  `DTH_CAPTION_PASS=1`: **45 — 0, 20, 10, 15, 0**, two full matches. Run 69's 46
+  — 0, 20, 10, 14, 2 is the flag-off baseline. See `docs/specs/0005`.
+- **`DTH_CAPTION_PASS` works and still ships off.** It reads each Zone's Title in
+  its own call, then withholds the caption band from the Kind question. It took
+  `sample_table_0003` to a full match — the Title revives `with_grid(titled=)`,
+  dead in production until then — and fixed three `invoice_0002` Kinds. It stays
+  off because it cannot yet lower the total: the remaining errors are Zone
+  grouping, not titles.
+- **The `invoice_0002` panel question is answered, and the run 50 rewrite did not
+  work.** Run 50 dropped the *same-line* half of the `pairs` clause so a stacked
+  panel could be `pairs` again, and recorded that nobody had checked. Run 69
+  checked: the panels still came back `table`. The cause is not that clause —
+  each panel opens with a **shaded caption bar**, which satisfies the `table`
+  entry's own "top row set apart" test. Withholding the bar fixes it; a prompt
+  clause explaining the difference moved 0 of 6.
+- **Titles are correct on more Zones than the score shows.** `invoice_0002`'s
+  panels and `sample_semantic_0005`'s two headings return the right caption for
+  the box they were given, and score as mismatches because the detector groups
+  those boxes differently from the reference. Do not chase them as title bugs.
 
-### Three things that would otherwise be re-derived the hard way
+### The lesson run 71 cost, and it is not about captions
 
+**When a model answers a closed question the same way every time, check whether
+the schema can express the true answer before rewording the question.**
+`CaptionResponse` first asked a boolean — is this line a heading? — and got
+`true` on **8 of 8** crops. It was not being ignored. That prompt's test for a
+heading was word for word `CLASSIFY_PROMPT`'s test for a table's top row, so a
+heading row satisfied both and there was no other answer available. Run 71 cut
+two heading rows off `invoice_0001`, costing a Kind, a summary row and the 385.00
+Probe. Offering a third value — `caption` / `header` / `content` — took the same
+model from 4/11 to 8/11 with no change to the reasoning asked of it.
+
+`header` and `content` do exactly the same thing in the pipeline. The distinction
+exists only so the model has somewhere to put the answer; **do not collapse the
+enum back to a boolean.**
+
+### Four things that would otherwise be re-derived the hard way
+
+- **A prompt rule that bundles two tests will be credited with the wrong one.**
+  `pairs` required the label "on the same line as the value it names" — a
+  geometric test and a semantic one in one sentence. Spec 0003 credits the whole
+  clause with fixing Zone 3, so it read as untouchable; in fact only the semantic
+  half was doing that, and the geometric half was the sole cause of the
+  `invoice_0002` panel regression. Run 50 dropped the geometric half and every
+  one of the 13 answers stayed **byte-identical**. Before defending a clause,
+  check whether it is one rule or two wearing one sentence.
 - **Do not read a geometry IoU for any fixture except `invoice_0001`** without
   first deriving its rectangles from source, as `tools/fixture_geometry.py` does.
   The typed boxes are 0.605-0.854 against their own ink.

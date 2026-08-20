@@ -22,11 +22,14 @@ Document looks exactly like a sparse document.
 
 from __future__ import annotations
 
+import logging
 from typing import Any, Callable, Literal, NoReturn
 
 from pydantic import BaseModel, Field, ValidationError
 
 from .ir import BBox, Block, Cell, Kind, Pair, Reading, Role, Row, RowRole, Zone
+
+log = logging.getLogger(__name__)
 
 Read = Callable[[str], Reading]
 """Turns cell text into a Reading carrying its engine, model and prompt version.
@@ -118,19 +121,65 @@ class ClassifyResponse(BaseModel):
     resolution and answers about structure. See `CLASSIFY_PROMPT` for what was
     measured about that difference.
 
-    Three scalars and no list, which is this module's standing rule about
+    Two scalars and no list, which is this module's standing rule about
     constrained decoding applied to the smallest question in the pipeline.
+
+    **`title` used to be the third, and asking for it here is what stopped it
+    ever arriving.** It came back `""` in all 36 of run 69's classify calls, on
+    crops where the caption is plainly legible; asked on its own against those
+    same crops it came back correct 4 times out of 4. It is now
+    `CaptionResponse`'s question. See `engines.ollama.CAPTION_PROMPT`.
     """
 
     kind: Literal["table", "pairs", "prose", "list", "figure"]
-    title: str = Field(
-        default="",
-        description="Heading printed above this region and belonging to it; "
-                    "empty string if there is none",
-    )
     graphic: Literal["", "logo", "chart", "signature", "stamp", "badge"] = Field(
         default="",
         description="What a figure is. Empty string for every other kind",
+    )
+
+
+class CaptionResponse(BaseModel):
+    """What a region's first printed line is: its caption, a heading row, or content.
+
+    Two fields, and the reading one comes first on purpose: the model is asked to
+    copy the line out before judging it, so the judgement is made against a line
+    it has already read rather than against an impression of the crop.
+
+    Kept apart from `ClassifyResponse` because the two questions want different
+    pixels — this one needs the caption in frame, and the Kind question is
+    measurably wrong while it is. That is the same argument that put
+    classification in its own pass, applied one level further down.
+
+    **`header` and `content` do exactly the same thing, and that is the point. Do
+    not collapse this back to a boolean.** Nothing branches on which of the two
+    it is; both mean "no Title, and the Kind question keeps the whole crop". The
+    third value exists so the model has somewhere to *put* the answer, and that
+    is the entire measured difference between the two shapes:
+
+    | | `is_heading: bool` | this |
+    |---|---|---|
+    | correct on 11 run-71 crops | **4** | **8** |
+
+    The boolean answered `true` on 8 of 8 crops — a constant rather than a
+    judgement. Asked whether `"Item"` at the top of a price table is a heading,
+    it has no false answer available that is not also wrong, so it said yes, and
+    run 71 cut two table heading rows off `invoice_0001`: Zone 4 became a single
+    data row and classified `pairs`, Zone 5 lost its summary row and with it the
+    385.00 column-sum Probe. Offered `header`, the same model answers `header` on
+    both.
+
+    The lesson generalises past this field. When a model answers a closed
+    question the same way every time, check whether the schema can express the
+    true answer before rewording the question.
+    """
+
+    first_line: str = Field(
+        description="The region's first printed line, copied exactly",
+    )
+    line_is: Literal["caption", "header", "content"] = Field(
+        description="caption: a heading naming the whole region, not part of it. "
+                    "header: the heading row of a grid, one cell per column "
+                    "below. content: the region's own first line of content",
     )
 
 
@@ -214,8 +263,66 @@ def _validate_box(wire: WireZone, where: str) -> BBox:
     return BBox(wire.left, wire.top, wire.right, wire.bottom)
 
 
+def bands_from_boxes(boxes: list[BBox]) -> list[tuple[int, int]]:
+    """Band and column for each box, worked out from the boxes themselves.
+
+    **The rule:** sort by top edge, then left. A new Band starts as soon as a box
+    begins at or below where the *shortest* box in the current Band ended.
+    Within a Band, columns run left to right.
+
+    `min` rather than `max` is the whole of it, and the naive version is what
+    made that clear. Merging a box into a Band whenever it overlaps *any* member
+    chains along the page: `invoice_0002`'s address block ends at 0.135 and its
+    "NO: / Date:" line begins at 0.128, a seven-thousandth overlap, and that hair
+    was enough to pull a Band 1 Zone into Band 0 and everything after it up by
+    one. A short member has to be able to close a Band, or one tall neighbour
+    swallows the rows beneath it.
+
+    **Measured against every ground truth in the repo.** The rule reproduces the
+    hand-authored Band and column numbering of all five fixtures exactly, and
+    reproduces run 50's numbering — the model's own answer on the document that
+    converts at zero mismatches — so deriving costs that run nothing. The naive
+    any-overlap version matched three of five.
+
+    **Why derive at all, rather than take what the model said.** Band numbering
+    is the part of the layout answer this project has watched break most often:
+    five of the six prompt changes ever made to `LAYOUT_PROMPT` broke it, each
+    time as collateral on a change that never mentioned it. And it is the one
+    part that is fully determined by an answer the model already gives — the
+    boxes. Runs 55 and 56 are the clearest case: correct boxes, correctly
+    alternating columns, and a Band index that failed to increment between the
+    first two rows, which cost both documents the whole Conversion.
+
+    The model's own numbering is not lost: it is in the raw layout answer, which
+    every run dumps as `00_layout.json`, so before and after stay comparable.
+    """
+    order = sorted(range(len(boxes)),
+                   key=lambda i: (boxes[i].top, boxes[i].left))
+    bands: list[list[int]] = []
+    current: list[int] = []
+    for index in order:
+        if current and boxes[index].top >= min(boxes[j].bottom for j in current):
+            bands.append(current)
+            current = []
+        current.append(index)
+    if current:
+        bands.append(current)
+
+    placed: dict[int, tuple[int, int]] = {}
+    for band, members in enumerate(bands):
+        for column, index in enumerate(sorted(members, key=lambda j: boxes[j].left)):
+            placed[index] = (band, column)
+    return [placed[i] for i in range(len(boxes))]
+
+
 def validate_bands(zones: list[Zone]) -> None:
     """Bands must be horizontal stripes, read top to bottom, left to right.
+
+    It has two jobs now, depending on where the numbering came from. On the
+    model's own numbering — the default — it is what it always was, the check
+    below. Under `DTH_DERIVE_BANDS` it cannot fire, because the numbers are
+    derived from the very boxes it checks them against; there it is a check on
+    the derivation, and the day that rule is changed it is what says so.
 
     This is the check that catches a model which numbered Bands by reading order
     rather than by position, or grouped two Zones as side by side when one sits
@@ -288,11 +395,20 @@ def _overlaps_horizontally(one: BBox, other: BBox) -> bool:
     return min(one.right, other.right) > max(one.left, other.left)
 
 
-def zones_from_layout(response: LayoutResponse) -> list[Zone]:
+def zones_from_layout(response: LayoutResponse, *,
+                      derive_bands: bool = False) -> list[Zone]:
     """Map a layout response onto Zones. Pure, and the place validation lives.
 
     Zones come back incomplete: this pass reports where content is, never what
     it says. They render as skeletons until an Extractor fills them.
+
+    `derive_bands` replaces the model's Band and column numbering with numbering
+    worked out from its own boxes — see `bands_from_boxes`. **Off by default**,
+    which keeps this function's behaviour what it has always been: the model's
+    numbering, checked by `validate_bands` and rejected when it describes no
+    page. See `config.DEFAULT_DERIVE_BANDS` for what turning it on is measured
+    against, and for what it has not been measured against, which is a live
+    Conversion.
     """
     if not response.zones:
         raise MappingError(
@@ -300,25 +416,45 @@ def zones_from_layout(response: LayoutResponse) -> list[Zone]:
             "Conversion cannot continue"
         )
 
-    zones = []
-    for index, wire in enumerate(response.zones):
+    boxes, built = [], []
+    for index, wire in enumerate(response.zones):  # noqa: B007
         where = f"zone {index} ({wire.kind}, band {wire.band} column {wire.column})"
         graphic = wire.graphic.strip().lower()
         if graphic and graphic not in GRAPHIC_KINDS:
             raise MappingError(
                 f"{where}: graphic {wire.graphic!r} is not one of {GRAPHIC_KINDS}"
             )
-        zones.append(
-            Zone(
-                kind=Kind(wire.kind),
-                role=Role(wire.role),
-                band=wire.band,
-                column=wire.column,
-                bbox=_validate_box(wire, where),
-                title=wire.title.strip() or None,
-                graphic_kind=graphic or None,
-            )
+        boxes.append(_validate_box(wire, where))
+        built.append((wire, graphic))
+
+    # Band and column either come from the boxes or are taken as the model gave
+    # them. See `bands_from_boxes` for the rule and the five fixtures it was
+    # measured against. Everything else in the answer is the model's either way.
+    placed = (
+        bands_from_boxes(boxes) if derive_bands
+        else [(wire.band, wire.column) for wire in response.zones]
+    )
+    zones = [
+        Zone(
+            kind=Kind(wire.kind),
+            role=Role(wire.role),
+            band=band,
+            column=column,
+            bbox=box,
+            title=wire.title.strip() or None,
+            graphic_kind=graphic or None,
         )
+        for (wire, graphic), box, (band, column) in zip(built, boxes, placed)
+    ]
+
+    if derive_bands:
+        moved = sum(
+            1 for wire, (band, column) in zip(response.zones, placed)
+            if (wire.band, wire.column) != (band, column)
+        )
+        if moved:
+            log.info("DTH_DERIVE_BANDS is on: %d of %d Zones renumbered from "
+                     "their boxes", moved, len(zones))
 
     validate_bands(zones)
     return zones
@@ -366,8 +502,48 @@ def classification_into(zone: Zone, content: str) -> Zone:
         )
 
     zone.kind = Kind(response.kind)
-    zone.title = response.title.strip() or None
     zone.graphic_kind = graphic or None
+    return zone
+
+
+def caption_into(zone: Zone, content: str) -> Zone:
+    """Fill in one Zone's Title from a caption response, or leave it unset.
+
+    Fills in place and returns the Zone, as `classification_into` does. Only
+    `caption` yields a Title. A `first_line` the model called `header` or
+    `content` is dropped rather than stored: either way it is part of the
+    region's own contents, and the Extractor is about to read it anyway.
+
+    **A blank `first_line` takes no Title even on `caption`.** No text means no
+    caption to name, and because the Orchestrator gates its crop on
+    `zone.title is not None` rather than on the verdict, that same emptiness also
+    means no band is cut. The two decisions cannot drift apart.
+
+    **"Not a heading" does not clear a Title that is already there.** The VLM
+    layout pass reports a Title of its own, so on that path a Zone can arrive
+    carrying one; this pass adds a Title where there was none rather than
+    arbitrating between two sources. Deleting the layout pass's copy is #17's
+    job, and doing half of it here would make the two paths disagree about a
+    field for reasons neither records. A detector run has no such copy, and that
+    is the path this was measured on.
+
+    **A Title depends on the geometry box containing it.** Read from the crop, a
+    caption outside the box is a caption nobody sees, and
+    `detector.attach_headings` exists to put each `section_header` inside the
+    region it names. Every titled Zone in the five fixtures has its Title inside
+    its box.
+    """
+    where = f"zone in band {zone.band} column {zone.column}"
+    try:
+        response = CaptionResponse.model_validate_json(content)
+    except ValidationError as error:
+        raise MappingError(
+            f"{where}: {content.strip()[:120]} is not a caption "
+            f"({error.error_count()} problems)"
+        ) from error
+
+    if response.line_is == "caption":
+        zone.title = response.first_line.strip() or None
     return zone
 
 

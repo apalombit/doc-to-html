@@ -425,6 +425,24 @@ def content_ink(image: ImageArray) -> ImageArray:
     return mask
 
 
+REGION_GAP = 0.04
+"""How wide a blank run must be, as a fraction of the page's short edge, to end
+one region and begin the next. Used by `count_regions`.
+
+**Calibrated on two fixtures, and it overcounts on both** — which is the whole
+reason `count_regions` is only ever stated as a ceiling:
+
+| fixture | regions on the page | `count_regions` at 0.04 |
+|---|---|---|
+| `invoice_0001` | 6 | 8 |
+| `invoice_0002` | 10 | 11 |
+
+0.04 is the best *joint* value rather than the best for either. No single gap
+gets both right: at 0.08 `invoice_0001` measures a correct 6 and `invoice_0002`
+collapses to **1**, the whole page welded into one region. Do not chase one
+number that serves both — the sweep in `tools/cv_layout_probe.py` is where this
+gets re-calibrated, and it prints the whole curve for exactly that reason."""
+
 MIN_ROW_GAP = 4
 """Blank rows that separate one printed line from the next, in pixels.
 
@@ -528,6 +546,133 @@ def table_grid(crop: ImageArray) -> TableGrid:
     columns = ink_bands(mask.sum(axis=0), MIN_COLUMN_GAP, MIN_BAND)
     return TableGrid(rows=len(rows), columns=len(columns),
                      row_bands=rows, column_bands=columns)
+
+
+@dataclass(frozen=True)
+class CaptionBand:
+    """A crop's first line of ink, and how far it stands apart from the rest.
+
+    Measurement only. Nothing here decides whether the line *is* a caption — that
+    is asked of a model, for a reason the numbers below make plain.
+    """
+
+    top: int
+    bottom: int
+    """The first band's edges, in crop rows."""
+
+    gap_below: int
+    """Blank rows between this band and the next."""
+
+    median_gap: int | None
+    """The typical blank between the bands that follow, or `None` when there are
+    fewer than three bands in all and there is nothing to compare against."""
+
+    lines: int
+    """How many bands the crop holds altogether. Always 2 or more."""
+
+    head_columns: int
+    body_columns: int
+    """Columns of ink in the first band, and in everything below the cut.
+
+    The two numbers `aligns_to_grid` compares. Kept as fields rather than
+    recomputed, so the contact sheet reports the same pair the decision used.
+    """
+
+    @property
+    def cut_row(self) -> int:
+        """The crop row a caption-less body starts at — the middle of the blank.
+
+        The middle rather than the band's own edge, so the cut clears this line's
+        descenders without reaching the next line's ascenders.
+        """
+        return self.bottom + max(1, self.gap_below // 2)
+
+    @property
+    def aligns_to_grid(self) -> bool:
+        """Whether the first line is a grid's heading row rather than a caption.
+
+        **The measurable half of a distinction the model gets wrong in one
+        direction only.** A heading row has one cell per column of the values
+        under it and its words sit over the columns they name; a caption spans
+        the region and ignores that grid. Counting columns either side of the cut
+        separates the two without reading a word.
+
+        An equality of counts, not a threshold — the same shape as `table_grid`,
+        and calibrated on nothing. Measured over the 16 Zone crops in runs 71 and
+        72a that have a band to test:
+
+        - **2 true positives**: `invoice_0001`'s two tables, 2 columns against 2.
+        - **0 false positives**: every real caption differs — `sample_table_0003`
+          gives 1 against 6, `invoice_0002`'s panels 1 against 2.
+
+        `head_columns > 1` is required so a single-column list of lines under a
+        one-word caption cannot read as a grid.
+        """
+        return self.head_columns > 1 and self.head_columns == self.body_columns
+
+
+def caption_band(crop: ImageArray) -> CaptionBand | None:
+    """The crop's first printed line, when there is anything printed below it.
+
+    `None` when the crop holds fewer than two bands, and **that is the whole
+    safety property for a Zone whose box is a fragment**. One band means there is
+    nothing under the first line, so there is no caption to lift off and no body
+    to leave behind. Structural rather than a judgement: it asks whether a second
+    line exists, not whether the first one looks like a heading.
+
+    It matters because over-splitting is real and common. Over run 69's 36 Zone
+    crops, 20 hold a single band — all six of `sample_css_0004`'s and eight of
+    `sample_semantic_0005`'s, which are headings standing as Zones of their own.
+    Without this guard `sample_css_0004`'s "Card heading" would have its only
+    line taken as its own Title and then read again as its content.
+
+    **The gap it measures is reported, never thresholded.** A caption is
+    sometimes set far apart — `invoice_0002`'s three panels give 30, 33 and 29
+    rows against median line gaps of 10, 7 and 10 — and sometimes not at all:
+    `sample_table_0003`'s caption gives **19 against a median of 20**. A rule
+    keyed on that ratio would miss the one case the whole change is gated on,
+    which is why the numbers stay out of `CAPTION_PROMPT` and reach only the
+    contact sheet. See `engines.ollama.CAPTION_PROMPT`.
+
+    **The column counts are a different matter and do decide something.** See
+    `CaptionBand.aligns_to_grid`: they are compared for equality rather than
+    against a threshold, and they separate a heading row from a caption cleanly
+    where the gap does not.
+    """
+    mask = content_ink(crop)
+    bands = ink_bands(mask.sum(axis=1), MIN_ROW_GAP, MIN_BAND)
+    if len(bands) < 2:
+        return None
+
+    gaps = [bands[index + 1][0] - bands[index][1]
+            for index in range(1, len(bands) - 1)]
+    top, bottom = bands[0]
+    cut = bottom + max(1, (bands[1][0] - bottom) // 2)
+    head = ink_bands(mask[top:bottom + 1].sum(axis=0), MIN_COLUMN_GAP, MIN_BAND)
+    body = ink_bands(mask[cut:].sum(axis=0), MIN_COLUMN_GAP, MIN_BAND)
+    return CaptionBand(
+        top=top, bottom=bottom,
+        gap_below=bands[1][0] - bottom,
+        median_gap=sorted(gaps)[len(gaps) // 2] if gaps else None,
+        lines=len(bands),
+        head_columns=len(head), body_columns=len(body),
+    )
+
+
+def crop_row_as_fraction(image: ImageArray, bbox: BBox, row: int) -> float:
+    """Where one row of a Zone's crop falls on the page, as a fraction of height.
+
+    The inverse of `crop`'s vertical arithmetic, and it exists so a cut measured
+    in crop rows can be *described* in page coordinates for the contact sheet
+    without a second, drifting copy of that arithmetic. `tests/test_caption.py`
+    pins the two together.
+    """
+    height = image.shape[0]
+    top = int(max(0.0, bbox.top - PAD_Y) * height)
+    # The row's centre, not its top edge. `x / height * height` lands a hair
+    # under `x` in binary, so naming the edge makes `int()` round-trip to the row
+    # above roughly half the time and the drawn box slips by a pixel.
+    return float(min(1.0, (top + row + 0.5) / height))
 
 
 MAX_SNAP_GROWTH = 0.05
@@ -773,6 +918,116 @@ def uncovered_ink(image: ImageArray, boxes: list[BBox]) -> list[BBox]:
             BBox(x / width, y / height, (x + w) / width, (y + h) / height)
         )
     return found
+
+
+def _runs_of_blank(profile: ImageArray, least: int) -> list[tuple[int, int]]:
+    """Stretches of `least` or more empty lines, as half-open (start, end)."""
+    empty = np.flatnonzero(profile == 0)
+    if empty.size == 0:
+        return []
+    breaks = np.flatnonzero(np.diff(empty) > 1)
+    starts = np.concatenate(([empty[0]], empty[breaks + 1]))
+    ends = np.concatenate((empty[breaks], [empty[-1]]))
+    return [(int(a), int(b) + 1) for a, b in zip(starts, ends)
+            if b + 1 - a >= least]
+
+
+def _slices_between(gaps: list[tuple[int, int]], span: int) -> list[tuple[int, int]]:
+    """What is left once the gaps are removed."""
+    pieces, cursor = [], 0
+    for start, end in gaps:
+        if start > cursor:
+            pieces.append((cursor, start))
+        cursor = end
+    if cursor < span:
+        pieces.append((cursor, span))
+    return pieces
+
+
+def regions_from_xy_cut(mask: ImageArray, gap: float) -> list[tuple[BBox, int, int]]:
+    """Recursive projection cutting, emitting Bands and columns natively.
+
+    Blind dilation cannot group, because it has no notion of axis alternation: a
+    kernel wide enough to weld a line together is wide enough to weld two columns
+    together, and its best six-region answer welded the whole page into two
+    full-height strips. Cutting alternates axes by construction —
+
+        ink profile down the page -> widest full-width blank bands -> Bands
+          within each Band: profile across -> gutters -> columns
+
+    — which is the IR's own vocabulary rather than a bag of boxes, so its output
+    can be compared with an expected IR on Band and column as well as on
+    position.
+
+    Two levels deep and no further. Cutting naturally produces a split *tree*,
+    and Zones are a flat list by definition; going deeper would need a flattening
+    rule, which is a design decision this probe exists to inform rather than to
+    take. `gap` is a fraction of the page's short edge, applied to both axes so
+    one number sweeps the whole method.
+
+    **Moved here verbatim from `tools/cv_layout_probe.py`**, where it was the
+    XY-cut arm, so that `count_regions` and the probe measure with one
+    implementation rather than two that can drift. `ink_bands` above answers a
+    similar question and is deliberately *not* reused: its edge handling differs,
+    and rebuilding this on it would move the counts that `REGION_GAP` is
+    calibrated against. Unifying the two is its own change — see `ink_bands`.
+    """
+    height, width = mask.shape[:2]
+    short_edge = min(width, height)
+    least = max(1, int(gap * short_edge))
+
+    rows = (mask > 0).sum(axis=1)
+    bands = _slices_between(_runs_of_blank(rows, least), height)
+
+    found = []
+    for band_index, (top, bottom) in enumerate(bands):
+        strip = mask[top:bottom]
+        if not strip.any():
+            continue
+        columns = _slices_between(
+            _runs_of_blank((strip > 0).sum(axis=0), least), width)
+        placed = 0
+        for left, right in columns:
+            cell = strip[:, left:right]
+            if not cell.any():
+                continue
+            # Tighten to the cell's own ink: the cut lands in the middle of a
+            # gutter, and a box that keeps half the gutter is not the Zone.
+            ys = np.flatnonzero(cell.any(axis=1))
+            xs = np.flatnonzero(cell.any(axis=0))
+            found.append((
+                BBox((left + int(xs[0])) / width, (top + int(ys[0])) / height,
+                     (left + int(xs[-1]) + 1) / width,
+                     (top + int(ys[-1]) + 1) / height),
+                band_index, placed,
+            ))
+            placed += 1
+    return found
+
+
+def count_regions(image: ImageArray, gap: float = REGION_GAP) -> int:
+    """How many regions the ink on this page falls into. No model.
+
+    A measurement, not an opinion, and that is the point: two attempts to talk
+    `qwen3-vl:4b` out of over-segmenting a nested page were behavioural
+    instructions and both were ignored — `LAYOUT_PROMPT` already says a panel's
+    inner rows "are not regions themselves" and the model returned 72 regions for
+    a 10-region page anyway. The same asymmetry `DTH_TABLE_GRID_HINT` exploits
+    applies here: this model complies with *how many* and ignores *which*.
+
+    **Read the answer as an upper bound.** It overcounts on both fixtures it is
+    calibrated against (8 for a true 6, 11 for a true 10), which is why
+    `engines.ollama.with_regions` states it as a ceiling. A ceiling is safe in a
+    way an exact count is not: a page whose regions the model already gets right
+    sits under the bound and feels no pressure to split, while a runaway is
+    still capped.
+
+    Boxes are discarded here deliberately. Using them as geometry is a separate
+    and much larger change — their Bands do not match the expected IR on either
+    fixture, and their IoU is well below what the layout pass already achieves on
+    `invoice_0001`.
+    """
+    return len(regions_from_xy_cut(content_ink(image), gap))
 
 
 def _order_corners(quad: ImageArray) -> ImageArray:

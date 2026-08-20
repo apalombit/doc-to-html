@@ -15,23 +15,64 @@ from ..preprocess import ImageArray
 
 
 @runtime_checkable
+class LayoutEngine(Protocol):
+    """Whatever finds the Zones. Narrower than `VisionEngine` on purpose.
+
+    The layout pass has been reduced to a box detector and this Protocol is
+    where that becomes visible in the types. It reports rectangles; the `Kind` it
+    also carries is discarded, because `_classify` overwrites every one from the
+    Zone's own crop moments later.
+
+    Split out so `engines.detector.LayoutEngine` — a trained ONNX detector with
+    no prompt, no model call and no other pass to offer — can fill the role
+    without pretending to `classify_zone` or `read_cell`. `OllamaEngine`
+    satisfies this structurally, so nothing that already worked moved.
+    """
+
+    name: str
+    model: str
+
+    def detect_zones(self, image: ImageArray, hint: str | None = None,
+                     region_ceiling: int | None = None) -> list[Zone]:
+        """Zones with Band, column, Role and bbox — no contents."""
+        ...
+
+
+@runtime_checkable
 class VisionEngine(Protocol):
     """A vision model reached through Ollama, local or hosted."""
 
     name: str
     model: str
 
-    def detect_zones(self, image: ImageArray,
-                     hint: str | None = None) -> list[Zone]:
+    def detect_zones(self, image: ImageArray, hint: str | None = None,
+                     region_ceiling: int | None = None) -> list[Zone]:
         """Zones with Band, column, Kind, Role and bbox — no contents.
 
         Run on a downscaled page: a coarse task that small models handle well.
+
+        `region_ceiling` is an upper bound on how many regions the page holds,
+        measured from the ink by the caller rather than asked of a model. `None`
+        means unmeasured, and an Engine that has no use for it may ignore it.
+        """
+        ...
+
+    def read_caption(self, image: ImageArray, zone: Zone,
+                     hint: str | None = None) -> Zone:
+        """Fill in one Zone's Title from its own crop, or leave it unset.
+
+        Its own pass because it wants the opposite pixels from `classify_zone`:
+        the Title needs the caption band in frame, and the Kind is measurably
+        wrong while that band is visible. One call cannot show both.
         """
         ...
 
     def classify_zone(self, image: ImageArray, zone: Zone,
-                      hint: str | None = None) -> Zone:
+                      hint: str | None = None, *, skip_rows: int = 0) -> Zone:
         """Decide one Zone's Kind, and the fields that depend on reading it.
+
+        `skip_rows` drops the leading crop rows a caption occupies, when one has
+        already been read off them. See `ollama.OllamaEngine.classify_zone`.
 
         **Takes the whole Rectified Image and crops the Zone out itself** — the
         opposite way round from `extract_zone`, which is handed a crop an

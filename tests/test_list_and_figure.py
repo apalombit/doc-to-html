@@ -8,6 +8,7 @@ not, and decoration that must produce nothing at all.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import pytest
@@ -26,6 +27,11 @@ INVOICE2 = REPO / "example" / "invoice2.png"
 
 def converted(image: Path, fixture: str) -> Document:
     return convert_replaying(image, recorded_for(fixture))
+
+
+def zones_of(html: str) -> str:
+    """The rendered Zones, with the findings blocks cut out."""
+    return re.sub(r'<div class="findings.*?</div>', "", html, flags=re.S)
 
 
 def fill(kind: Kind, payload: str, **zone_args: object) -> Zone:
@@ -57,7 +63,9 @@ class TestLists:
     def test_a_bulleted_list_becomes_a_real_list(self, article: Document) -> None:
         html = render(article)
         assert "<li>Search engines understand content hierarchy</li>" in html
-        assert html.count("<ul>") == 2
+        # Counted inside the Zones only. The findings block renders a `<ul>` of
+        # its own, so a page-wide count measures the audit as well as the lists.
+        assert zones_of(html).count("<ul>") == 2
 
     def test_a_navigation_row_is_a_list_by_structure(self, article: Document) -> None:
         """Structure decides the IR; the header Role is what makes it render as a
@@ -78,6 +86,34 @@ class TestLists:
         zone = fill(Kind.LIST, '{"blocks": [{"kind": "paragraph", "lines": ["a"]}]}')
         assert zone.complete
         assert "<ul></ul>" in render(Document(source=_source(), zones=[zone]))
+
+    def test_a_list_classified_as_prose_still_renders_as_a_list(self) -> None:
+        """`prose` and `list` are not disjoint — `PROSE_PROMPT` offers `item` as
+        a block kind — so the Kind must not be what decides the reader gets a
+        list. Before this, the same blocks rendered as paragraphs under one Kind
+        and list items under the other, with nothing recorded to say so."""
+        zone = fill(
+            Kind.PROSE,
+            '{"blocks": [{"kind": "item", "lines": ["one"]},'
+            ' {"kind": "item", "lines": ["two"]}]}',
+        )
+        html = render(Document(source=_source(), zones=[zone]))
+        assert "<ul><li>one</li><li>two</li></ul>" in html
+        assert "<p>one</p>" not in html
+
+    def test_prose_around_a_list_keeps_its_paragraphs(self) -> None:
+        """Only consecutive items group. A paragraph between two bullets ends
+        the list on the page, and closing the `<ul>` is what says so."""
+        zone = fill(
+            Kind.PROSE,
+            '{"blocks": [{"kind": "heading", "lines": ["Title"]},'
+            ' {"kind": "item", "lines": ["one"]},'
+            ' {"kind": "paragraph", "lines": ["aside"]},'
+            ' {"kind": "item", "lines": ["two"]}]}',
+        )
+        html = render(Document(source=_source(), zones=[zone]))
+        assert "<h1>Title</h1><ul><li>one</li></ul>" in html
+        assert "<p>aside</p><ul><li>two</li></ul>" in html
 
 
 class TestQuotations:

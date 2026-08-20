@@ -644,3 +644,72 @@ rather than only where somebody happens to look. It is also the only mechanism
 that can tell Zone 5's genuine `['', 'Total: $385.00']` from Zone 4's
 cut-in-half pair, which shape alone cannot. This is the one to build first if
 anything in this space is built.
+
+## Run 50 — the `pairs` clause was two rules, and only one held Zone 3
+
+`invoice_0001` stays at **0 mismatches**, Kinds **6/6**, geometry
+0.91 / 0.99 / 0, Probe 385.00. All four unchanged from run 49 — and unchanged in
+the strongest sense available: **all 13 model answers are byte-identical to run
+49's**, layout through both tables.
+
+The clause that was rewritten:
+
+```
+  pairs   label and value lines with no set-apart heading row, such as
+          "Invoice No: 12". Each label sits on the same line as the value it
+          names, with nothing below it
+```
+
+```
+  pairs   a block of labelled values, such as "Invoice No: 12". Every entry
+          names its value: a line with nothing naming it is not a pair. The
+          label may sit beside its value or directly above it. What makes this
+          pairs rather than a table is that the labels are not set apart from
+          the values as a row — not shaded, ruled off, or in bold
+```
+
+### What this spec had wrong, and it was a bookkeeping error
+
+Run 47 recorded "plus `pairs` requiring the label on the **same line** as its
+value. That second clause is what fixed Zone 3." True as far as it went, and it
+made the clause read as load-bearing and untouchable — which is exactly how it
+was treated when the `invoice_0002` panel regression was shipped as a deliberate
+cost rather than examined.
+
+**The sentence was two tests, not one.** A geometric one (*beside*) and a
+semantic one (*names*). Zone 3 is `Acme Corp.` / `John Doe` / `john@example.com`
+— three stacked lines, none of which names another. It failed the semantic test.
+It was never excluded from `pairs` for being stacked; it was excluded for being
+unlabelled, and the run 47 note credited the wrong half.
+
+The two halves also had opposite value:
+
+| half | keeps Zone 3 out of `pairs` | costs `invoice_0002`'s panels |
+|---|---|---|
+| *beside* — geometric | no | **yes** |
+| *names* — semantic | **yes** | no |
+
+So the geometric half was pure cost, and this is what a run of byte-identical
+answers means here: not "the change was too weak to matter" but "the constraint
+removed was doing no work on this fixture". Zone 4 stays `table` on the
+typesetting rule that run 47's crossover established, which the closing sentence
+now defers to explicitly instead of competing with.
+
+### What is not measured
+
+**`invoice_0002` — the fixture this was for.** It still returns no geometry
+(`ThinkingNotDisabled`, both repeats), so the panels have not been reclassified
+under the new wording and **nothing here claims they were**. The change is
+predicted to fix them and is unverified. #19.
+
+The other three fixtures are equally unmeasured against it. The prediction for
+all four is "no change", on the same reasoning as above — the clause removed only
+excluded stacked label/value pairs, and only `invoice_0002` has any.
+
+### The lesson, which is not about pairs
+
+Two prompt rules living in one sentence get credited to whichever one the next
+measurement happens to exercise. This one survived four runs and a shipped
+regression on that mis-credit. **When a clause is defended as load-bearing, check
+how many tests it actually contains** — the cheap experiment is to remove one and
+see whether anything moves, which here cost one run and moved nothing.

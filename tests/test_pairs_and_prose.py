@@ -20,7 +20,7 @@ from doc_to_html.preprocess import Rectified
 from doc_to_html.render import render
 from doc_to_html.wire import MappingError, contents_into
 
-from .replay import convert_replaying, recorded_for, text, wired_zones
+from .replay import break_zone, convert_replaying, recorded_for, text
 
 REPO = Path(__file__).resolve().parent.parent
 INVOICE2 = REPO / "example" / "invoice2.png"
@@ -269,13 +269,13 @@ class TestAFailureStillDoesNotSpread:
         cannot be read does not cost its neighbours, so it needs a failure with
         no diagnosis attached. An empty answer for an untitled Zone is one.
         """
-        replies = recorded_for("invoice_0002")
-        replies[wired_zones("invoice_0002").index(4) + 1] = text('{"pairs": []}')
+        replies = break_zone(recorded_for("invoice_0002"), "invoice_0002",
+                             3, '{"pairs": []}')
         document = convert_replaying(INVOICE2, replies)
 
-        assert not document.zones[4].complete
+        assert not document.zones[3].complete
         assert len(document.zones[5].pairs) == 6
-        assert [f.zone_index for f in document.failures] == [4]
+        assert [f.zone_index for f in document.failures] == [3]
 
 
 class TestAnUnlabelledValueIsADiagnosis:

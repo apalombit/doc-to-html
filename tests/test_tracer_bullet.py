@@ -15,8 +15,13 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from doc_to_html.engines.ollama import OllamaEngine, TruncatedResponse, with_hint
-from doc_to_html.ir import Document, Kind, Role
+from doc_to_html.engines.ollama import (
+    OllamaEngine,
+    ThinkingNotDisabled,
+    TruncatedResponse,
+    with_hint,
+)
+from doc_to_html.ir import BBox, Document, Kind, Role
 from doc_to_html.orchestrator import Conversion, convert
 from doc_to_html.preprocess import RectifyError, rectify
 from doc_to_html.render import render
@@ -24,6 +29,7 @@ from doc_to_html.wire import (
     LayoutResponse,
     MappingError,
     WireZone,
+    bands_from_boxes,
     schema_of,
     zones_from_layout,
 )
@@ -33,6 +39,7 @@ from .replay import (
     ReplayTransport,
     engines_replaying,
     layout_only,
+    reasoning_channel,
     text,
 )
 
@@ -301,6 +308,106 @@ class TestMappingValidatesWhatASchemaCannot:
         assert zones_from_layout(LayoutResponse.model_validate_json(raw))
 
 
+class TestBandsDerivedFromTheBoxes:
+    """`DTH_DERIVE_BANDS`, which is off by default.
+
+    Every rejection in the class above is a document thrown away for a number the
+    model got wrong about an answer it otherwise got right. Turning this on takes
+    the numbering from the boxes instead, so those become corrections. Nothing
+    here is measured against a live Conversion — see `config.DEFAULT_DERIVE_BANDS`.
+    """
+
+    def wire(self, **overrides: object) -> dict[str, object]:
+        base = {
+            "kind": "prose", "role": "body", "band": 0, "column": 0,
+            "left": 0.1, "top": 0.1, "right": 0.9, "bottom": 0.3,
+            "title": "", "graphic": "",
+        }
+        return base | overrides
+
+    def parse(self, *zones: dict[str, object]) -> list[object]:
+        return list(zones_from_layout(
+            LayoutResponse.model_validate({"zones": list(zones)}),
+            derive_bands=True,
+        ))
+
+    def test_bands_numbered_by_reading_order_are_renumbered_by_position(
+        self,
+    ) -> None:
+        """Off, this is a `MappingError`. On, the Zone at the top of the page
+        becomes Band 0 whatever the model called it."""
+        zones = self.parse(
+            self.wire(band=0, top=0.6, bottom=0.8),
+            self.wire(band=1, top=0.1, bottom=0.3),
+        )
+        assert [(z.band, z.column) for z in zones] == [(1, 0), (0, 0)]
+
+    def test_zones_the_model_calls_one_band_but_are_stacked_are_split(
+        self,
+    ) -> None:
+        """Two Zones with clear paper between them are two Bands, whatever the
+        model numbered them."""
+        zones = self.parse(
+            self.wire(band=0, column=0, left=0.1, right=0.4,
+                      top=0.1, bottom=0.2),
+            self.wire(band=0, column=1, left=0.6, right=0.9,
+                      top=0.5, bottom=0.7),
+        )
+        assert [(z.band, z.column) for z in zones] == [(0, 0), (1, 0)]
+
+    def test_a_repeated_column_is_given_distinct_numbers(self) -> None:
+        """Runs 55 and 56 in miniature, and the reason this exists.
+
+        Both returned correct boxes, correctly alternating columns, and a Band
+        index that failed to increment — every Zone landing in Band 0 with
+        columns `[0, 1, 0, 1]`. That cost `invoice_0001` and `invoice_0002` their
+        entire Conversion, twice, for a duplicated integer the boxes already
+        disambiguate.
+        """
+        zones = self.parse(
+            self.wire(band=0, column=0, left=0.1, right=0.4),
+            self.wire(band=0, column=0, left=0.6, right=0.9),
+        )
+        assert [(z.band, z.column) for z in zones] == [(0, 0), (0, 1)]
+
+    def test_a_box_that_describes_nothing_is_still_refused(self) -> None:
+        """Deriving replaces the numbering, not the checks on the geometry. Two
+        Zones sharing one box overlap horizontally however they are numbered."""
+        with pytest.raises(MappingError, match="overlap horizontally"):
+            self.parse(
+                self.wire(left=0.05, right=0.94, top=0.38, bottom=0.46),
+                self.wire(left=0.05, right=0.94, top=0.38, bottom=0.46),
+            )
+
+    @pytest.mark.parametrize("fixture", [
+        "invoice_0001", "invoice_0002", "sample_table_0003",
+        "sample_css_0004", "sample_semantic_0005",
+    ])
+    def test_derived_bands_reproduce_every_hand_authored_numbering(
+        self, fixture: str
+    ) -> None:
+        """The whole licence for deriving instead of believing.
+
+        `bands_from_boxes` overrules the model on every Conversion, so the bar is
+        that it reproduces the numbering a person wrote down for all five
+        documents from their boxes alone. It does. The naive rule — merge on any
+        vertical overlap — matched three of the five, chaining a Band along the
+        page through a seven-thousandth overlap; see `bands_from_boxes` for why
+        the shortest member closes a Band.
+        """
+        expected = json.loads(
+            (REPO / "tests" / "fixtures" / f"{fixture}.expected.json").read_text()
+        )["zones"]
+        boxes = [
+            BBox(z["bbox"]["left"], z["bbox"]["top"],
+                 z["bbox"]["right"], z["bbox"]["bottom"])
+            for z in expected
+        ]
+        assert bands_from_boxes(boxes) == [
+            (z["band"], z["column"]) for z in expected
+        ]
+
+
 class TestFailuresThatASchemaCannotPrevent:
     def test_a_truncated_response_is_retried_with_a_raised_budget(self) -> None:
         cut = '{"zones": [{"kind": "prose", "role": "body", "band": 0, "col'
@@ -311,6 +418,38 @@ class TestFailuresThatASchemaCannotPrevent:
         document = convert_invoice(replay)
         assert len(document.zones) == 6
         assert [call.num_ctx for call in layout_calls(replay)] == [8192, 16384]
+
+    def test_a_truncation_on_the_reasoning_channel_is_still_a_truncation(
+        self,
+    ) -> None:
+        """The channel the real model actually answers on.
+
+        Ollama puts `qwen3-vl`'s schema-constrained output in `message.thinking`
+        with `message.content` empty, so a genuine truncation arrives looking
+        exactly like a model that reasoned instead of answering. Reading it as
+        the latter skips the retry above and blames a thinking setting that was
+        never wrong — `invoice_0002` died this way in runs 36 and 51. Every
+        truncation test beside this one uses the content channel, which is why
+        nothing caught it.
+        """
+        cut = '{"zones": [{"kind": "prose", "role": "body", "band": 0, "col'
+        replay = ReplayTransport([
+            reasoning_channel(cut, truncated=True),
+            *layout_only("invoice_0001"),
+        ])
+        document = convert_invoice(replay)
+        assert len(document.zones) == 6
+        assert [call.num_ctx for call in layout_calls(replay)] == [8192, 16384]
+
+    def test_reasoning_that_fills_the_budget_still_says_so(self) -> None:
+        """The other half of the pair, and what the discriminator is for: prose
+        on that channel is a thinking setting, and a bigger budget only buys more
+        of it."""
+        replay = ReplayTransport(
+            [reasoning_channel("Let me look at this page. ", truncated=True)]
+        )
+        with pytest.raises(ThinkingNotDisabled, match="never answered"):
+            convert_invoice(replay)
 
     def test_truncation_is_detected_even_when_the_transport_is_silent(self) -> None:
         """A transport may not report why it stopped. An unparseable prefix says

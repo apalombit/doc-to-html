@@ -149,12 +149,21 @@ for fixture in $FIXTURES; do
     # Each expected IR names its own Source Image, so the set needs no table here.
     source="${SOURCE:-$(python -c "import json,sys
 print(json.load(open('tests/fixtures/$fixture.expected.json'))['source']['path'])")}"
-    python tools/inspect_run.py \
+    # Its stderr is kept, not discarded. Run 69 converted all five fixtures and
+    # produced no contact sheet for any of them: the diagnostic refused, said why
+    # on stderr, and `2>/dev/null || true` threw the sentence away — leaving five
+    # empty geometry.txt files and no sign that anything had gone wrong. A tool
+    # that cannot draw the run is not fatal, but it must be audible.
+    if ! python tools/inspect_run.py \
         "$OUT/dump/${MODEL//:/_}/$fixture" \
         --source "$source" \
         --expected "tests/fixtures/$fixture.expected.json" \
         --long-edge "$LONG_EDGE" \
-        --out "$dest" > "$dest/geometry.txt" 2>/dev/null || true
+        --out "$dest" > "$dest/geometry.txt" 2>"$dest/geometry.stderr.txt"
+    then
+        echo "WARNING: no contact sheet for $fixture:" >&2
+        sed 's/^/  /' "$dest/geometry.stderr.txt" >&2
+    fi
 done
 
 cat "$OUT/bakeoff.stdout.txt"

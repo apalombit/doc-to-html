@@ -53,7 +53,11 @@ from doc_to_html.geometry_score import (  # noqa: E402
     score_geometry,
 )
 from doc_to_html.ir import BBox  # noqa: E402
-from doc_to_html.preprocess import content_ink, rectify  # noqa: E402
+from doc_to_html.preprocess import (  # noqa: E402
+    content_ink,
+    rectify,
+    regions_from_xy_cut,
+)
 from layout_probe import FIXTURE, SOURCE  # noqa: E402
 
 
@@ -97,84 +101,6 @@ def zones_from_morphology(image: np.ndarray, kx: float, ky: float,
     return sorted(boxes, key=lambda b: (round(b.top, 2), b.left))
 
 
-def _runs_of_blank(profile: np.ndarray, least: int) -> list[tuple[int, int]]:
-    """Stretches of `least` or more empty lines, as half-open (start, end)."""
-    empty = np.flatnonzero(profile == 0)
-    if empty.size == 0:
-        return []
-    breaks = np.flatnonzero(np.diff(empty) > 1)
-    starts = np.concatenate(([empty[0]], empty[breaks + 1]))
-    ends = np.concatenate((empty[breaks], [empty[-1]]))
-    return [(int(a), int(b) + 1) for a, b in zip(starts, ends)
-            if b + 1 - a >= least]
-
-
-def _slices_between(gaps: list[tuple[int, int]], span: int) -> list[tuple[int, int]]:
-    """What is left once the gaps are removed."""
-    pieces, cursor = [], 0
-    for start, end in gaps:
-        if start > cursor:
-            pieces.append((cursor, start))
-        cursor = end
-    if cursor < span:
-        pieces.append((cursor, span))
-    return pieces
-
-
-def zones_from_xy_cut(mask: np.ndarray, gap: float) -> list[tuple[BBox, int, int]]:
-    """Recursive projection cutting, emitting Bands and columns natively.
-
-    Blind dilation cannot group, because it has no notion of axis alternation: a
-    kernel wide enough to weld a line together is wide enough to weld two columns
-    together, and its best six-region answer welded the whole page into two
-    full-height strips. Cutting alternates axes by construction —
-
-        ink profile down the page -> widest full-width blank bands -> Bands
-          within each Band: profile across -> gutters -> columns
-
-    — which is the IR's own vocabulary rather than a bag of boxes, so its output
-    can be compared with an expected IR on Band and column as well as on
-    position.
-
-    Two levels deep and no further. Cutting naturally produces a split *tree*,
-    and Zones are a flat list by definition; going deeper would need a flattening
-    rule, which is a design decision this probe exists to inform rather than to
-    take. `gap` is a fraction of the page's short edge, applied to both axes so
-    one number sweeps the whole method.
-    """
-    height, width = mask.shape[:2]
-    short_edge = min(width, height)
-    least = max(1, int(gap * short_edge))
-
-    rows = (mask > 0).sum(axis=1)
-    bands = _slices_between(_runs_of_blank(rows, least), height)
-
-    found = []
-    for band_index, (top, bottom) in enumerate(bands):
-        strip = mask[top:bottom]
-        if not strip.any():
-            continue
-        columns = _slices_between(
-            _runs_of_blank((strip > 0).sum(axis=0), least), width)
-        placed = 0
-        for left, right in columns:
-            cell = strip[:, left:right]
-            if not cell.any():
-                continue
-            # Tighten to the cell's own ink: the cut lands in the middle of a
-            # gutter, and a box that keeps half the gutter is not the Zone.
-            ys = np.flatnonzero(cell.any(axis=1))
-            xs = np.flatnonzero(cell.any(axis=0))
-            found.append((
-                BBox((left + int(xs[0])) / width, (top + int(ys[0])) / height,
-                     (left + int(xs[-1]) + 1) / width,
-                     (top + int(ys[-1]) + 1) / height),
-                band_index, placed,
-            ))
-            placed += 1
-    return found
-
-
 def expected_bands(path: Path) -> list[tuple[int, int]]:
     """The reference IR's own Band and column numbering, in Zone order."""
     return [
@@ -207,7 +133,7 @@ def xy_cut_report(image: np.ndarray, want: list[BBox],
         f"{'doubles':>9}   bands match?",
     ]
     for gap in (0.008, 0.012, 0.016, 0.02, 0.03, 0.04, 0.06, 0.08):
-        found = zones_from_xy_cut(mask, gap)
+        found = regions_from_xy_cut(mask, gap)
         boxes = [box for box, _, _ in found]
         got_bands = [(band, column) for _, band, column in found]
         score = score_geometry(boxes, want, image)
