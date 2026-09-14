@@ -177,13 +177,50 @@ is gated on `bool(zone.title)`, and `title` came back `None` from all 36 of run
 table and returned a spurious trailing `header`. Both of that fixture's
 mismatches trace to it."""
 
-DEFAULT_CAPTION_PASS = False
+DEFAULT_CAPTION_PASS = True
 """Whether to ask each Zone for its Title before asking what Kind it is.
 
-**Off**, so an unset environment runs the pipeline exactly as run 69 did, one
-call per Zone. Flipped only once a run has passed the gate in
-`docs/specs/0005-nothing-is-missing.md`, which is the order `DTH_TABLE_GRID_HINT`
-followed.
+**On since run 82**, measured one flag apart against run 81 re-scored. It is the
+largest single improvement this corpus has recorded: **23 findings to 12**, with
+`sample_table_0003` and `invoice_0001` both full matches and **11 Titles written,
+every one of them correct**.
+
+| fixture | 81 | 82 |
+|---|---|---|
+| `invoice_0001` | **match** | **match** |
+| `invoice_0002` | 9 | **4** |
+| `sample_semantic_0005` | 8 | **6** |
+| `sample_css_0004` | 4 | **2** |
+| `sample_table_0003` | 2 | **match** |
+| total | 23 | **12** |
+
+Geometry did not move, which is the check that the pass stayed in its lane:
+`covered` 1.00, `splits` 0, `doubles` `[0, 3, 0, 0, 1]`, 6 geometry findings
+either way. No Failures and no Caveats on any fixture.
+
+**Ten of the thirteen Title findings were reachable, and all ten landed** — the
+count was derived before the run from `caption_band` and `aligns_to_grid`, which
+are arithmetic, and it came back exact. The three that were never reachable are
+Zones the ink refuses to ask about; see `preprocess.caption_band`.
+
+**What it bought beyond its own category**, and both were predicted by the
+docstrings rather than discovered:
+
+- **`sample_table_0003` went to a full match**, taking a Row Roles finding with
+  it. `with_grid(titled=)` subtracts the caption line from the stated row count,
+  and it had never once fired in production because `zone.title` was always
+  `None` — that fixture reported 17 rows against a true 16. A Title is worth more
+  than its own mismatch.
+- **`invoice_0002`'s payment panel changed Kind**, `table` to `pairs`, because
+  withholding the caption band takes away the shaded bar that satisfies
+  `CLASSIFY_PROMPT`'s "top row set apart" test. Still not `prose`, so it is still
+  a finding — but it moved for exactly the stated reason.
+
+**`invoice_0001` is the gate this had to pass, and the interesting part is that
+it wrote nothing.** Its reference carries no Titles at all across 6 Zones; three
+of them are asked, and the model answered `content` or `header` on all three
+while `aligns_to_grid` vetoed the two grid headings. The Probe still reconciles
+at 385.00.
 
 **What it is aimed at.** `zone.title` has never been populated on any fixture:
 36 classify calls in run 69, 36 empty titles, on crops where the caption is
@@ -222,13 +259,22 @@ Run 72 restores `invoice_0001` completely — the Probe reconciles at 385.00 aga
 — and keeps `sample_table_0003`. Geometry is untouched in both runs: `covered`
 1.00, `splits` 0, `doubles` 0/3/0/1/0, identical to run 69.
 
-**The one condition it misses** is *no fixture rises above its run-69 count*:
-`sample_semantic_0005` goes 14 → 15. It gains "Benefits" as a correct Title and
-picks up two the reference does not want — "The Weekly Digest" and "Why semantic
-HTML matters". Both are real captions of the boxes the detector produced; the
-reference splits each of those boxes in two, so neither half carries a Title.
-That is the grouping gap, and it is why this still ships off: the pass is right
-about the pixels it is shown and the pixels are wrong.
+**The one condition run 72 missed, and how it was resolved — this is the part
+worth carrying forward.** Run 72 failed *no fixture rises above its run-69
+count*: `sample_semantic_0005` went 14 → 15, gaining "Benefits" as a correct
+Title and picking up two the reference did not want, "The Weekly Digest" and
+"Why semantic HTML matters". Both were real captions of the boxes the detector
+produced; the reference split each of those boxes in two, so neither half
+carried a Title. The diagnosis at the time was *the pass is right about the
+pixels it is shown and the pixels are wrong* — and it was correct.
+
+**Nothing about this pass was changed to fix that. The grouping was.** Spec
+0006 merged exactly those two boxes, and the reference now asks for "The Weekly
+Digest" by name; the fixture question about "Why semantic HTML matters" was
+settled the same way, in its favour. Both are among the eleven Titles run 82
+wrote correctly. **A pass can be blocked by a fault in a different pass, and
+switching it on again is the only way to find out it is no longer blocked** —
+this one sat off for ten runs after it was already right.
 
 Run 71's failure and how it was diagnosed is kept below, because the shape of it
 is the reusable part.

@@ -109,27 +109,10 @@
         "right": 0.4918,
         "bottom": 0.3004
       },
-      "title": null,
+      "title": "Why semantic HTML matters",
       "rows": [],
       "pairs": [],
       "blocks": [
-        {
-          "kind": "heading",
-          "lines": [
-            {
-              "bbox": null,
-              "readings": [
-                {
-                  "engine": "fixture",
-                  "text": "Why semantic HTML matters",
-                  "model": null,
-                  "prompt_version": null
-                }
-              ],
-              "state": "agreed"
-            }
-          ]
-        },
         {
           "kind": "paragraph",
           "lines": [

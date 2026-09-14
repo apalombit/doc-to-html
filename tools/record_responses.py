@@ -30,8 +30,14 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
 from doc_to_html.ir import Document, Kind, RowRole, Zone  # noqa: E402
+from doc_to_html.preprocess import (  # noqa: E402
+    caption_band,
+    rectify,
+    zone_pixels,
+)
 from doc_to_html.wire import (  # noqa: E402
     BlocksResponse,
+    CaptionResponse,
     FigureResponse,
     LayoutResponse,
     PairsResponse,
@@ -42,7 +48,7 @@ from doc_to_html.wire import (  # noqa: E402
     WireZone,
 )
 
-from tests.fixtures import BUILDERS  # noqa: E402
+from tests.fixtures import BUILDERS, IMAGES  # noqa: E402
 
 # `tests.fixtures.BUILDERS` is the single list of what the acceptance set is.
 # A second copy here is how a sixth fixture ends up recorded by one tool and not
@@ -104,6 +110,59 @@ def contents_of(zone: Zone) -> object:
     )
 
 
+def first_printed_line(zone: Zone) -> str:
+    """The line a reader's eye lands on first, whatever the Zone's Kind."""
+    if zone.rows:
+        return " ".join(c.text for c in zone.rows[0].cells).strip()
+    if zone.pairs:
+        return f"{zone.pairs[0].label.text} {zone.pairs[0].value.text}".strip()
+    for block in zone.blocks:
+        for line in block.lines:
+            if line.text.strip():
+                return line.text.strip()
+    return ""
+
+
+def caption_of(zone: Zone) -> CaptionResponse:
+    """What a model that read this Zone correctly would answer about its first
+    line — all three verdicts, not just the one that writes a Title.
+
+    `header` and `content` do the same thing in the pipeline and are still kept
+    apart here, for the reason `wire.CaptionResponse` gives: collapsing them is
+    what made run 71 answer `true` on 8 of 8 crops. A recording that flattened
+    them would stop the suite noticing if the distinction were ever lost.
+    """
+    if zone.title:
+        return CaptionResponse(first_line=zone.title, line_is="caption")
+    if zone.rows and zone.rows[0].role is RowRole.HEADER:
+        return CaptionResponse(first_line=first_printed_line(zone),
+                               line_is="header")
+    return CaptionResponse(first_line=first_printed_line(zone),
+                           line_is="content")
+
+
+def captions_of(name: str, document: Document) -> list[CaptionResponse]:
+    """One answer per Zone the Orchestrator will actually ask about.
+
+    **The gate is re-derived here rather than assumed**, because it is not the
+    Zone count: `preprocess.caption_band` returns `None` for a crop holding a
+    single band of ink, and the Orchestrator then never makes the call. A queue
+    with one entry per Zone would serve every answer to the wrong question from
+    the first skipped Zone onward — the same off-by-one `recorded`'s per-pass
+    queues were introduced to make impossible.
+
+    Measured against the Source Image, so it is the same arithmetic
+    `_read_caption` runs, not a second copy of the rule.
+    """
+    image = rectify(REPO / IMAGES[name]).image
+    return [
+        caption_of(zone)
+        for zone in document.zones
+        if zone.bbox is not None
+        and caption_band(zone_pixels(image, zone)) is not None
+    ]
+
+
 def record(name: str, out: Path) -> None:
     document: Document = BUILDERS[name]()
 
@@ -120,7 +179,13 @@ def record(name: str, out: Path) -> None:
         (directory / f"zone_{index:02d}.json").write_text(
             payload.model_dump_json(indent=2) + "\n"  # type: ignore[attr-defined]
         )
-    print(f"{name}: layout + {len(document.zones)} zones")
+
+    captions = captions_of(name, document)
+    (directory / "caption.json").write_text(
+        json.dumps([c.model_dump() for c in captions], indent=2) + "\n"
+    )
+    print(f"{name}: layout + {len(document.zones)} zones "
+          f"+ {len(captions)} captions")
 
 
 def main() -> int:

@@ -1,0 +1,22 @@
+[
+  {
+    "first_line": "Invoice # 123",
+    "line_is": "content"
+  },
+  {
+    "first_line": "Sparksuite, Inc.",
+    "line_is": "content"
+  },
+  {
+    "first_line": "Acme Corp.",
+    "line_is": "content"
+  },
+  {
+    "first_line": "Payment Method Check #",
+    "line_is": "header"
+  },
+  {
+    "first_line": "Item Price",
+    "line_is": "header"
+  }
+]

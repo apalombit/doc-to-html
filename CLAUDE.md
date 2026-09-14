@@ -110,61 +110,95 @@ disagreement rather than a page-reading failure is that fixing the code and
 fixing the references land on exactly the same total.** The detector groups these
 regions; insisting they were two meant it could not be right.
 
-**Author the next fixture to it.** One open inconsistency remains and is
-deliberate: `sample_semantic_0005` Zone 1 keeps `Why semantic HTML matters` as a
-`heading` Block rather than as its Title. That is the same question on a second
-axis — *where* the heading goes, not *whether* it shares a Zone — and it is not
-settled.
+**Author the next fixture to it, and it now holds everywhere.** The last
+exception — `sample_semantic_0005` Zone 1 keeping `Why semantic HTML matters` as
+a `heading` Block rather than as its Title — was closed on 2026-09-14. It had
+been left open deliberately, because it is the same question on a second axis:
+*where* the heading goes, not *whether* it shares a Zone. **What closed it was a
+pass being switched on, not an argument.** `DTH_CAPTION_PASS` reads the first
+printed line of that crop and proposes it as a Title, correctly; leaving the
+reference alone would have scored a right answer as wrong.
 
-### The baseline: run 81
+### The baseline: run 84
 
-**`debug/runs/81-new-defaults/` is the current baseline and the only citable
+**`debug/runs/84-rule-not-a-line/` is the current baseline and the only citable
 measurement.** 2026-09-14, `qwen3-vl:4b`, all five fixtures, shipped defaults and
 **no `DTH_*` axis set** — `dth_env.txt` carries only `DTH_LAYOUT_LONG_EDGE`, so
 this measures the defaults themselves rather than an arm. Open
-`debug/runs/81-new-defaults/<fixture>/index.html`.
+`debug/runs/84-rule-not-a-line/<fixture>/index.html`.
 
-| fixture | findings | geometry | title | kind | role | rows | covered | splits | doubles | Zones v ref |
-|---|---|---|---|---|---|---|---|---|---|---|
-| `invoice_0001` | **match** | – | – | – | – | – | 1.00 | 0 | 0 | 6 v 6 |
-| `invoice_0002` | 9 | 2 | 6 | 1 | – | – | 1.00 | 0 | 3 | 9 v 9 |
-| `sample_semantic_0005` | 7 | 2 | 3 | 1 | 1 | – | 1.00 | 0 | 1 | 9 v 8 |
-| `sample_css_0004` | 4 | 2 | 2 | – | – | – | 1.00 | 0 | 0 | 4 v 5 |
-| `sample_table_0003` | 2 | – | 1 | – | – | 1 | 1.00 | 0 | 0 | 2 v 2 |
-| | **22** | **6** | **12** | **2** | **1** | **1** | | | | |
+| fixture | findings | geometry | title | kind | role | covered | splits | doubles | Zones v ref |
+|---|---|---|---|---|---|---|---|---|---|
+| `invoice_0001` | **match** | – | – | – | – | 1.00 | 0 | 0 | 6 v 6 |
+| `invoice_0002` | 4 | 2 | 1 | 1 | – | 1.00 | 0 | 3 | 9 v 9 |
+| `sample_semantic_0005` | 4 | 2 | – | 1 | 1 | 1.00 | 0 | 1 | 9 v 8 |
+| `sample_css_0004` | 2 | 2 | – | – | – | 1.00 | 0 | 0 | 4 v 5 |
+| `sample_table_0003` | **match** | – | – | – | – | 1.00 | 0 | 0 | 2 v 2 |
+| | **10** | **6** | **1** | **2** | **1** | | | | |
 
-`invoice_0001` renders every string — no skeletons, no Failures, no Caveats — and
-its column-sum Probe reconciles at **385.00**.
+**Two full matches.** `invoice_0001` renders every string — no skeletons, no
+Failures, no Caveats — and its column-sum Probe reconciles at **385.00**.
+`sample_table_0003` joined it when `DTH_CAPTION_PASS` shipped: a Title revives
+`with_grid(titled=)`, which subtracts the caption's printed line from the row
+count stated to the Extractor, and that had never once fired in production.
 
-**60 model calls, down from 72.** Grouping correctly is cheaper as well as
-righter: every Zone that stops being split is one classify-plus-extract pair that
-never happens.
+**Thirteen Titles written across the corpus, every one correct** — and none on
+`invoice_0001`, whose reference asks for none. Three of its Zones are asked, the
+model answers `content` or `header` on all three, and `CaptionBand.aligns_to_grid`
+vetoes the two grid headings.
 
-**Titles are the largest category by a distance — 12 of 22 — and that is the
-point.** They went 7 → 9 → 12 as geometry went 16 → 11 → 6. A region that is
-grouped correctly gets its Title compared **for the first time**, and nothing
-writes `zone.title` on the shipped path. Every one of the 12 is reachable by
-`DTH_CAPTION_PASS`, which no split region was. **A rising Title count is how this
-corpus reports progress**, and reading a fixture's total in isolation will get
-that backwards: `sample_css_0004` reads 4 here against 3 in run 80, because both
-cards are now whole and both card Titles are therefore scored, where run 80 had
-one card split and only one Title compared.
+**82 model calls.** Up from 60 before the caption pass, which costs a second call
+for each Zone whose crop holds a body. No Failures and no Caveats on any of the
+five — worth checking explicitly now that Titles exist, because `wire.py`'s
+empty-answer rule makes an empty extraction *legal* for a Zone carrying a Title.
+None of the five has an empty Zone.
 
-**Predict the geometry column before spending a run.** It is deterministic —
-`align()` over `LayoutEngine.detect_zones` — and has come back exact four times
-running. Spend model time only on the half that needs it. Two conventions to keep
-straight: raw `align()` counts `fragments + merged + spurious + missing` and gives
-**4** here, while the acceptance total adds the per-document zone-count finding
-and gives **6**. Same geometry, two accounting rules.
+**How it got here, four runs in one sitting**, each one axis apart and each
+predicted before it was taken:
+
+| run | change | total |
+|---|---|---|
+| 81 | spec 0006's two geometry rules, re-scored on the settled Zone convention | 23 |
+| 82 | `DTH_CAPTION_PASS=1`, one flag apart | **12** |
+| 83 | the same, as the shipped default — finding-for-finding identical to 82 | 12 |
+| 84 | a rule drawn down the side of a region is not a printed line | **10** |
+
+**Predict before spending a run; it has come back exact six times.** Geometry is
+`align()` over `LayoutEngine.detect_zones`. **The caption pass is equally
+predictable** — which Zones it asks about is `caption_band` and `aligns_to_grid`,
+both arithmetic — so run 82's reach (ten of thirteen Title findings) and run 84's
+(exactly `TL;DR` and `Introduction`, nothing else moving) were both derived first
+and both came back exact. Two accounting rules to keep straight: raw `align()`
+counts `fragments + merged + spurious + missing` and gives **4** here, while the
+acceptance total adds the per-document zone-count finding and gives **6**.
 
 **Re-score without a new Conversion.** The IR is in
-`debug/runs/81-new-defaults/dump/qwen3-vl_4b/<fixture>/document.html`, in the
+`debug/runs/84-rule-not-a-line/dump/qwen3-vl_4b/<fixture>/document.html`, in the
 `doc-ir` script block. Unescape `<\/` to `</`, then
-`compare(BUILDERS[fixture](), Document.from_json(payload))` — note `from_json`
-takes the decoded object, and `compare` returns a plain list.
+`compare(BUILDERS[fixture](), Document.from_json(payload))` — `from_json` takes
+the decoded object, and `compare` returns a plain list. Do this rather than
+re-running whenever only the references change.
 
 **This table expires when the directory does** — `debug/runs/` is gitignored.
 Re-take with `FIXTURE=all tools/iterate.sh <label>` rather than quoting it.
+
+### What is left, named exactly
+
+Ten findings, and **not one of them is a model misreading a page**:
+
+- **6 geometry.** Two stacked splits with no container anywhere in the detection
+  pool at any confidence, and two side-by-side merges whose parts clear the
+  threshold and are discarded by `outermost`. `docs/specs/0006` decomposes both
+  and records why the narrow fix for the merges measures 4 → 10.
+- **1 Title, and it is correct behaviour.** `invoice_0002`'s `Services /
+  Products` is a Title with no body at all — 29px of a single line — so
+  `caption_band` refuses it, because a Zone with nothing under its first line
+  has no caption to lift off and no body to leave behind. Do not chase it.
+- **2 Kinds and 1 Role.** `invoice_0002`'s payment panel reads `pairs` where the
+  reference says `prose`; `sample_semantic_0005`'s colophon reads `list`; and its
+  zone 7 reports `role expected footer, got body`, because `_role` derives Role
+  from the Band index and regrouping moved a Band under it. **The Role one is the
+  cheapest thing left on the board.**
 
 ### How the two defaults were chosen — 79, 80, 81 in one sitting
 
@@ -213,11 +247,13 @@ none. `config.DEFAULT_LAYOUT_DETECTOR` carries that table.
 Every remaining finding is content that arrived and was mis-grouped or mis-named —
 a different failure class from the vision path, which dropped content.
 
-**Grouping is now the minority of what is left** — 6 of 22, down from 16 of 26,
-and **Titles are the largest category at 12.** That is the shape of the corpus
-changing, not a rounding: every grouping fix so far converted geometry findings
-into Title findings, which is progress, because a Title is reachable and a split
-region is not.
+**Grouping is now the majority of what is left** — 6 of 10, up from 16 of 26 in
+share while falling by ten in count. The Title category rose to 13 as grouping
+was fixed and then fell to 1 as `DTH_CAPTION_PASS` shipped, which is the arc
+worth remembering: **every grouping fix converted geometry findings into Title
+findings, and that looked like standing still until the pass that reads Titles
+was switched on.** A Title is reachable; a split region is not. Judge a grouping
+change on the geometry column, not the total.
 
 **What grouping is left is four faults, and they were decomposed rather than
 estimated.** Two are stacked splits — `invoice_0002`'s footer and
@@ -305,21 +341,21 @@ collapsed. **Open `debug/runs/<label>/index.html` and read top to bottom.**
   `{'role': 'header', 'cells': ['', '', '', '', '']}`, and it survives. The drop
   tests cell **count**, not cell **content**. That is one of that fixture's two
   findings.
-- **Titles are the whole of what is left to chase, and they are one lever.**
-  Twelve of the 22 findings, and **every one has the same cause**: no pass writes
-  `zone.title` on the shipped path at all — `title` was removed from
-  `ClassifyResponse` and `DTH_CAPTION_PASS` ships off, which the
-  baseline's `trace.json` confirms with **zero `read_caption` events on all five
-  fixtures**. Grouping is now fixed as far as this corpus reaches, so **the
-  caption pass is the next thing to measure** — it is the only lever on the
-  largest category, and the reason it was held back no longer applies.
-- **`DTH_CAPTION_PASS` works and still ships off.** It reads each Zone's Title in
-  its own call, then withholds the caption band from the Kind question. The Title
-  revives `with_grid(titled=)`, which was dead in production until it existed. It
-  stays off only because it has never been measured one flag apart against the
-  current default. The second half of that reason — that it cannot help while
-  regions are split — **expired with run 81**: the regions it would caption are
-  now whole, and their Titles are 12 of the 22 findings.
+- **Titles were the whole of what was left to chase, and `DTH_CAPTION_PASS` took
+  ten of the thirteen.** It ships on since run 82. Of the three that remained,
+  two were never a model failure but a banding one — `TL;DR` and `Introduction`
+  carry a 3px `border-left` inked in every row, so each crop read as one
+  unbroken band and was never asked. `preprocess._without_vertical_rules` now
+  clears full-height columns before banding; see run 84. **The third is correct
+  behaviour and should be left alone:** `invoice_0002`'s `Services / Products`
+  is a Title with no body at all, 29px of a single line, and a Zone with nothing
+  under its first line has no caption to lift off.
+- **`DTH_CAPTION_PASS` ships on, and how long it sat off is the lesson.** It
+  reads each Zone's Title in its own call, then withholds the caption band from
+  the Kind question. It was built, tested and correct for ten runs while switched
+  off, because run 72 showed `sample_semantic_0005` rising — and that rise was
+  caused by *grouping*, not by this pass. Spec 0006 fixed the grouping; nothing
+  here changed. See `config.DEFAULT_CAPTION_PASS`.
 - **`DTH_LAYOUT_LONG_EDGE` applies only on the vision path.** The detector never
   reads it. It is the one default in `config.py` with no docstring, and it ships
   at a value no recorded run used — worth settling if the vision path is ever
@@ -332,6 +368,17 @@ collapsed. **Open `debug/runs/<label>/index.html` and read top to bottom.**
 
 ### Lessons that generalise
 
+- **A change can be blocked by a fault somewhere else, and nothing will tell you
+  when it stops being blocked.** `DTH_CAPTION_PASS` was built, tested and correct,
+  and sat switched off for ten runs. The gate it failed was real — run 72 had
+  `sample_semantic_0005` rising because the pass proposed Titles the reference
+  did not want — but the cause was *grouping*: the reference split those boxes,
+  so neither half could carry a Title. Spec 0006 merged them, and the pass then
+  went 23 findings to 12 **with no change to the pass at all**. The note on the
+  shelf said "the pass is right about the pixels it is shown and the pixels are
+  wrong", which was the correct diagnosis and still did not schedule the retry.
+  **When you shelve a change, write down what would have to become true — and
+  re-read that list when a neighbouring pass moves.**
 - **`dth_env.txt` proves what was exported, not what was read — and a flag that
   does not arrive looks exactly like a flag that does nothing.** `DTH_HEADING_RULE`
   reached `Settings`, was recorded in the run directory, and never reached the

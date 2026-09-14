@@ -22,7 +22,7 @@ from doc_to_html.config import Settings
 from doc_to_html.engines.ollama import OllamaEngine
 from doc_to_html.engines.transport import Response
 from doc_to_html.ir import Document
-from doc_to_html.orchestrator import EngineSet, convert
+from doc_to_html.orchestrator import Conversion, EngineSet, convert
 
 RESPONSES = Path(__file__).resolve().parent / "responses"
 
@@ -142,6 +142,19 @@ def recorded(fixture: str, zones: list[int] | None = None
             for zone in document.zones
         ],
     }
+    # **One entry per Zone that is actually asked, not per Zone.** A crop holding
+    # a single band of ink is never put to the model, so `caption.json` is
+    # shorter than the Zone list and `tools/record_responses.py` derives which
+    # ones by measuring the same crops the Orchestrator measures. The key is
+    # omitted when the file is absent, so a fixture recorded before captions
+    # existed fails at the transport naming the pass rather than serving one
+    # Zone's answer to another Zone's question.
+    captions = directory / "caption.json"
+    if captions.is_file():
+        queues["caption"] = [
+            text(json.dumps(answer))
+            for answer in json.loads(captions.read_text())
+        ]
     for index in indices:
         queues.setdefault(document.zones[index].kind.value, []).append(
             text((directory / f"zone_{index:02d}.json").read_text())
@@ -216,15 +229,29 @@ def engines_replaying(transport: ReplayTransport) -> EngineSet:
 
 
 def convert_recording(
-    image: Path, replies: list[Response] | dict[str, list[Response]]
+    image: Path, replies: list[Response] | dict[str, list[Response]],
+    *, caption_pass: bool | None = None,
 ) -> tuple[Document, ReplayTransport]:
     """Convert a Source Image against recorded responses, keeping the calls.
 
     Here rather than in each test module because four of them were repeating the
     same three lines, and a change to how the seam is faked should be one edit.
+
+    `caption_pass` names the pass explicitly instead of letting it follow the
+    shipped default. **A test that scripts a flat list of replies needs this**:
+    `ReplayTransport` serves a flat list strictly in order, so switching a pass
+    on inserts a call the list does not have and every later answer lands
+    against the wrong question. Tests pinning the classify-then-extract sequence
+    say `caption_pass=False` and go on measuring one thing.
     """
     transport = ReplayTransport(replies)
-    return convert(image, engines=engines_replaying(transport)), transport
+    if caption_pass is None:
+        return convert(image, engines=engines_replaying(transport)), transport
+
+    conversion = Conversion(source=Path(image),
+                            engines=engines_replaying(transport),
+                            caption_pass=caption_pass)
+    return conversion.run(), transport
 
 
 def convert_replaying(

@@ -274,7 +274,13 @@ def convert_classifying(guessed: list[str], classified: list[str],
         text(CONTENT_FOR[kind])
         for index, kind in enumerate(classified) if index != broken
     )
-    return convert_recording(INVOICE, replies)
+    # The caption pass is named off rather than left to the shipped default.
+    # These tests script a *synthetic* geometry — `geometry(*guessed)` invents
+    # boxes that are not `invoice_0001`'s — so there is no crop to derive a
+    # caption answer from, and every reply here is served strictly in order.
+    # What they pin is the classify-then-extract sequence; that the caption
+    # question comes before the Kind question is `test_caption.py`'s to hold.
+    return convert_recording(INVOICE, replies, caption_pass=False)
 
 
 class TestTheOrchestratorClassifiesBetweenGeometryAndExtraction:

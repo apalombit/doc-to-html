@@ -1,0 +1,30 @@
+[
+  {
+    "first_line": "The Weekly Digest",
+    "line_is": "caption"
+  },
+  {
+    "first_line": "Why semantic HTML matters",
+    "line_is": "caption"
+  },
+  {
+    "first_line": "Introduction",
+    "line_is": "caption"
+  },
+  {
+    "first_line": "TL;DR",
+    "line_is": "caption"
+  },
+  {
+    "first_line": "Benefits",
+    "line_is": "caption"
+  },
+  {
+    "first_line": "HTML provides for a number of elements that allow for finer-grained semantics in HTML documents.",
+    "line_is": "content"
+  },
+  {
+    "first_line": "\u00a9 2026 The Weekly Digest. All rights reserved.",
+    "line_is": "content"
+  }
+]

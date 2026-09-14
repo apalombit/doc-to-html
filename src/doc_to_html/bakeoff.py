@@ -361,6 +361,16 @@ def run(models: Iterable[str], acceptance: dict[str, tuple[Path, Document]],
                     source=image,
                     engines=engines_for(model, settings, timing),
                     trace=trace,
+                    # Named rather than left to the field's default, which
+                    # resolves `config.load()` against the *process
+                    # environment* a second time. Both readings agree when a
+                    # variable is exported, which is how `tools/iterate.sh`
+                    # runs — so this is not a bug being fixed but a divergence
+                    # being closed: the run must convert on the Settings it
+                    # resolved and wrote into `dth_env.txt`, not on a
+                    # re-resolution that nothing recorded. `DTH_HEADING_RULE`
+                    # is what this project already paid to learn that with.
+                    caption_pass=settings.caption_pass,
                 )
                 actual = conversion.run()
                 attempt.html = render(actual)

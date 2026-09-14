@@ -148,6 +148,19 @@ class TestPreferringAContainer:
             resolve(DTH_PREFER_CONTAINER="0")).prefer_container is False
 
 
+class TestReadingEachZonesTitle:
+    """`DTH_CAPTION_PASS`, on since run 82 — 23 findings to 12, and the only
+    pass that writes `zone.title` on the shipped path."""
+
+    def test_it_ships_on(self) -> None:
+        assert resolve().caption_pass is config.DEFAULT_CAPTION_PASS is True
+
+    def test_it_can_be_switched_off(self) -> None:
+        """It costs a second call per Zone that has a body, so the way back to
+        one call per Zone stays reachable."""
+        assert resolve(DTH_CAPTION_PASS="0").caption_pass is False
+
+
 class TestReporting:
     def test_the_report_shows_where_each_value_came_from(self) -> None:
         lines = config.describe(resolve(DTH_LAYOUT_MODEL="qwen3-vl:2b"))

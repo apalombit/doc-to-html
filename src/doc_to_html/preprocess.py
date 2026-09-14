@@ -611,6 +611,42 @@ class CaptionBand:
         return self.head_columns > 1 and self.head_columns == self.body_columns
 
 
+def _without_vertical_rules(mask: ImageArray) -> ImageArray:
+    """The same ink with any rule drawn down the side of the region removed.
+
+    **A rule is not a printed line, and leaving it in costs the whole region.**
+    Banding projects ink across each row, so a single column inked from top to
+    bottom makes *every* row inked and the crop reads as one unbroken band —
+    which `caption_band` then refuses, because one band means nothing sits under
+    the first line. Two of `sample_semantic_0005`'s Zones were never asked for a
+    Title for exactly this reason: a 3px `border-left` at columns 10-12 of one
+    crop and 487-489 of the other. Removed, they read as 3 and 4 bands with the
+    heading first, which is what they look like. Measured live, run 84 against
+    83: those two Zones gained their Titles and **nothing else on the corpus
+    moved**, 12 findings to 10. Which Zones it would reach was derived before the
+    run — `caption_band` is arithmetic — and came back exact.
+
+    The test is deliberately the strictest one available — inked in *every* row,
+    so only a run spanning the full height qualifies. A rule beside a paragraph
+    is that; a tall glyph, a bullet column and a table's vertical gridline
+    between two rows of cells are not, because text leaves gaps between lines.
+
+    Falls back to the original when clearing would leave nothing, so a crop that
+    is genuinely solid still reports one band and is refused, rather than
+    reporting none and dividing by zero further down.
+    """
+    inked = mask > 0
+    if inked.size == 0:
+        return mask
+    rules = inked.all(axis=0)
+    if not rules.any() or rules.all():
+        return mask
+
+    without = mask.copy()
+    without[:, rules] = 0
+    return without
+
+
 def caption_band(crop: ImageArray) -> CaptionBand | None:
     """The crop's first printed line, when there is anything printed below it.
 
@@ -639,7 +675,7 @@ def caption_band(crop: ImageArray) -> CaptionBand | None:
     against a threshold, and they separate a heading row from a caption cleanly
     where the gap does not.
     """
-    mask = content_ink(crop)
+    mask = _without_vertical_rules(content_ink(crop))
     bands = ink_bands(mask.sum(axis=1), MIN_ROW_GAP, MIN_BAND)
     if len(bands) < 2:
         return None

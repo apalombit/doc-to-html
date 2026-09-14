@@ -1,5 +1,6 @@
 {
   "invoice_0001": [
+    "caption.json",
     "layout.json",
     "zone_00.json",
     "zone_01.json",
@@ -9,6 +10,7 @@
     "zone_05.json"
   ],
   "invoice_0002": [
+    "caption.json",
     "layout.json",
     "zone_00.json",
     "zone_01.json",
@@ -21,11 +23,13 @@
     "zone_08.json"
   ],
   "sample_table_0003": [
+    "caption.json",
     "layout.json",
     "zone_00.json",
     "zone_01.json"
   ],
   "sample_css_0004": [
+    "caption.json",
     "layout.json",
     "zone_00.json",
     "zone_01.json",
@@ -34,6 +38,7 @@
     "zone_04.json"
   ],
   "sample_semantic_0005": [
+    "caption.json",
     "layout.json",
     "zone_00.json",
     "zone_01.json",

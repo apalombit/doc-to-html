@@ -65,6 +65,51 @@ class TestTheInkDecidesWhetherToAsk:
     def test_an_empty_crop_has_no_caption(self) -> None:
         assert caption_band(page([])) is None
 
+    def test_a_rule_down_the_side_does_not_make_the_region_one_band(self) -> None:
+        """`sample_semantic_0005`'s callout and its opening section, as pixels.
+
+        Both carry a 3px `border-left`. Banding projects ink across each row, so
+        one column inked top to bottom makes every row inked and the whole crop
+        reads as a single unbroken band — which is then refused, and the Zone is
+        never asked for a Title it plainly has. Measured on the real crops: 1
+        band each with the rule, 3 and 4 without.
+        """
+        ruled = page([(10, 30), (60, 80)])
+        ruled[:, 5:8] = 0
+
+        band = caption_band(ruled)
+
+        assert band is not None
+        assert (band.top, band.bottom) == (10, 29)
+        assert band.lines == 2
+
+    def test_a_run_that_stops_short_is_ink_and_is_taken_at_face_value(
+        self,
+    ) -> None:
+        """The exception is the strictest one available — inked in *every* row —
+        and this is the cost of that, stated rather than hidden.
+
+        A column that stops short of the full height is ink somebody printed: a
+        tall glyph, a bullet column, a gridline between two rows of cells. It is
+        not removed, so where it happens to bridge two bands the crop still
+        reads as one and is still refused. Widening the test to catch this case
+        would start deleting real ink, which is the more expensive mistake: the
+        cost here is a Title not asked for, and there it is a body silently cut
+        off the Kind question.
+        """
+        bridged = page([(10, 30), (60, 80)])
+        bridged[0:200, 5:8] = 0
+
+        assert caption_band(bridged) is None
+
+    def test_a_crop_that_is_solid_ink_is_still_refused(self) -> None:
+        """The fallback. Clearing every column would leave nothing to band at
+        all, so a genuinely solid crop keeps reporting one band and is refused
+        rather than reporting none."""
+        solid = np.zeros((300, 400, 3), dtype=np.uint8)
+
+        assert caption_band(solid) is None
+
     def test_two_bands_are_measured(self) -> None:
         band = caption_band(page([(10, 30), (60, 80), (90, 110)]))
 
@@ -167,11 +212,29 @@ class TestTheOrchestratorAsksInTheRightOrder:
         conversion.run()
         return conversion, transport
 
-    def test_the_pass_is_off_by_default_and_asks_nothing(self) -> None:
-        """An unset environment runs exactly as run 69 did, one call per Zone."""
+    def test_switched_off_the_pass_asks_nothing(self) -> None:
+        """The escape hatch, which stays reachable now that the pass ships on:
+        `DTH_CAPTION_PASS=0` runs one call per Zone, exactly as run 69 did."""
         _, transport = self.converted(caption_pass=False)
 
         assert [c.pass_name for c in transport.calls].count("caption") == 0
+
+    def test_on_the_shipped_default_it_asks(self) -> None:
+        """The mirror, and the reason it is worth a test of its own: for ten runs
+        this pass was built, tested and switched off, and every test that
+        exercised it named `caption_pass=True` by hand — so nothing would have
+        noticed if the default had never taken effect."""
+        from doc_to_html.config import DEFAULT_CAPTION_PASS
+
+        assert DEFAULT_CAPTION_PASS is True
+
+        replies = recorded_for("invoice_0001")
+        transport = ReplayTransport(replies)
+        conversion = Conversion(source=INVOICE,
+                                engines=engines_replaying(transport))
+        conversion.run()
+
+        assert [c.pass_name for c in transport.calls].count("caption") > 0
 
     def test_a_zone_is_asked_before_it_is_classified(self) -> None:
         """Order is the whole design: the Title is read from the whole crop, and

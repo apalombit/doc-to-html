@@ -1,0 +1,26 @@
+[
+  {
+    "first_line": "Invoice With Credit",
+    "line_is": "caption"
+  },
+  {
+    "first_line": "Company Details",
+    "line_is": "caption"
+  },
+  {
+    "first_line": "Customer Details",
+    "line_is": "caption"
+  },
+  {
+    "first_line": "Comments / Notes",
+    "line_is": "caption"
+  },
+  {
+    "first_line": "Payment Method",
+    "line_is": "caption"
+  },
+  {
+    "first_line": "Thank you for choosing our services.",
+    "line_is": "content"
+  }
+]

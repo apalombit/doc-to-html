@@ -89,17 +89,23 @@ def build() -> Document:
             # is printed at y 0.285-0.300. That left 910px of ink no reference
             # in this fixture claimed, and it was the only such hole in the
             # corpus: the box contradicted its own contents.
+            #
+            # The article title is this Zone's Title and not a `heading` Block,
+            # settled 2026-09-14. It was the last place in the corpus reading a
+            # heading-over-its-content the other way, and it was left open when
+            # the Zone convention was settled because it is a different question
+            # — *where* the heading goes, not *whether* it shares a Zone. What
+            # closed it: `DTH_CAPTION_PASS` reads the first printed line of this
+            # crop and proposes it as a Title, correctly. Keeping it as a Block
+            # would have scored a right answer as wrong.
             Zone(
                 kind=Kind.PROSE,
                 role=Role.BODY,
                 band=1,
                 column=0,
                 bbox=BBox(0.0951, 0.2362, 0.4918, 0.3004),
+                title="Why semantic HTML matters",
                 blocks=[
-                    Block(
-                        kind="heading",
-                        lines=[cell("Why semantic HTML matters")],
-                    ),
                     Block(
                         kind="paragraph",
                         lines=[cell("May 9, 2026 · by Jane Author")],

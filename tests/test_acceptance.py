@@ -326,3 +326,36 @@ class TestTheGroundTruthOnDisk:
     def test_every_fixture_names_an_image_that_exists(self, fixture: str) -> None:
         assert (REPO / IMAGES[fixture]).is_file()
         assert BUILDERS[fixture]().source.path == IMAGES[fixture]
+
+    @pytest.mark.parametrize("fixture", list(BUILDERS))
+    def test_the_caption_queue_is_as_long_as_the_pass_is_talkative(
+        self, fixture: str
+    ) -> None:
+        """One recorded answer per Zone the ink will actually let be asked.
+
+        Not per Zone: `preprocess.caption_band` refuses a crop holding a single
+        band, so the queue is shorter than the Zone list, and *which* Zones are
+        skipped moves whenever a rectangle does. A queue one entry out serves
+        every answer from the skip onward to the wrong Zone — quietly, because
+        each answer is individually well-formed. Regenerate with
+        `python tools/record_responses.py`.
+        """
+        import json
+
+        from doc_to_html.preprocess import caption_band, rectify, zone_pixels
+
+        document = BUILDERS[fixture]()
+        image = rectify(REPO / IMAGES[fixture]).image
+        asked = [
+            zone for zone in document.zones
+            if zone.bbox is not None
+            and caption_band(zone_pixels(image, zone)) is not None
+        ]
+        recorded = json.loads(
+            (REPO / "tests" / "responses" / fixture / "caption.json").read_text()
+        )
+
+        assert len(recorded) == len(asked)
+        assert [a["first_line"] for a in recorded if a["line_is"] == "caption"] == [
+            zone.title for zone in asked if zone.title
+        ]

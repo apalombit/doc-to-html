@@ -131,9 +131,15 @@ class TestWhatARunProduces:
             transport_for=replaying, resident_for=sized,
         )
         invoice = next(a for a in attempts if a.fixture == "invoice_0001")
+        # Geometry once, then every Zone read for its Title and classified, then
+        # every Zone extracted. Zone 0 is a single band of ink, so the ink
+        # refuses to ask about it and there are five captions against six
+        # classifications — the asymmetry is the guard in `preprocess`
+        # doing its job, and a flat `["caption"] * 6` would assert it away.
         assert [t.pass_name for t in invoice.timings] == [
             "layout",
-            *["classify"] * 6,
+            "classify",
+            *["caption", "classify"] * 5,
             "figure", "pairs", "prose", "prose", "table", "table",
         ]
         assert all(t.seconds >= 0 for t in invoice.timings)
@@ -348,6 +354,64 @@ class TestTheBakeOffBuildsTheSameLayoutEngineAsAConversion:
                 if not name.startswith("_")} == {
             name: value for name, value in vars(theirs).items()
             if not name.startswith("_")}
+
+
+class TestASettingThatBypassesTheEngineSetStillReachesTheBakeOff:
+    """`DTH_CAPTION_PASS` arrives by a **different route** from the detector
+    settings above, and that is the reason to pin it separately.
+
+    `bakeoff` builds `Conversion(source=, engines=, trace=)` and never mentions
+    `caption_pass`; the value arrives because the field's default factory calls
+    `config.load()` itself. So the two paths agree today by coincidence of
+    reading the same environment, not because anything forwards it — and the
+    failure mode is identical to `DTH_HEADING_RULE`'s: a run that announces
+    itself as an arm, records the variable in `dth_env.txt`, and measures the
+    other arm. The moment any caller passes `caption_pass=` explicitly, this
+    test is what says the bake-off was left behind.
+    """
+
+    @staticmethod
+    def _captions_asked(settings: Settings,
+                        acceptance: dict[str, object]) -> int:
+        """Caption calls made by a real `bakeoff.run`, not by a copy of it.
+
+        Asserted on the calls rather than on an attribute, because the question
+        is whether the pass *ran* — which is the thing a byte-identical arm
+        cannot tell you.
+        """
+        seen: list[ReplayTransport] = []
+
+        def counting(model: str, fixture: str) -> Transport:
+            replies = recorded_for(fixture)
+            replies["caption"] = [
+                Response(content='{"first_line": "x", "line_is": "content"}',
+                         truncated=False)
+                for _ in range(40)
+            ]
+            transport = ReplayTransport(replies)
+            seen.append(transport)
+            return transport
+
+        run(["model-a"], {"invoice_0001": acceptance["invoice_0001"]},
+            settings, transport_for=counting, resident_for=sized)
+        return sum(1 for t in seen for c in t.calls if c.pass_name == "caption")
+
+    def test_the_flag_reaches_the_conversion_the_bakeoff_runs(
+        self, acceptance: dict[str, object]
+    ) -> None:
+        asked = self._captions_asked(
+            Settings(layout_detector="", caption_pass=True), acceptance)
+
+        assert asked > 0
+
+    def test_and_switching_it_off_reaches_it_too(
+        self, acceptance: dict[str, object]
+    ) -> None:
+        """The other direction, so a rule that always asks cannot pass this."""
+        asked = self._captions_asked(
+            Settings(layout_detector="", caption_pass=False), acceptance)
+
+        assert asked == 0
 
 
 class TestItIsNotPartOfTheDefaultSuite:
