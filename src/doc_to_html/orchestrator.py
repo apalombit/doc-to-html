@@ -122,25 +122,40 @@ def default_engines(settings: Settings | None = None) -> EngineSet:
     )
 
 
-def _layout_engine(settings: Settings) -> LayoutEngine:
-    """A trained detector if one is named, and the vision model otherwise.
+VISION = frozenset({"", "none", "off"})
+"""`DTH_LAYOUT_DETECTOR` values that select the vision model instead of a detector.
 
-    **Unset is the whole contract.** With no `DTH_LAYOUT_DETECTOR` this returns
-    exactly what it always returned, so a default run is byte-identical to one
-    from before detectors existed — the same discipline `DTH_SNAP_ZONES` and
-    `DTH_TABLE_GRID_HINT` shipped under.
+`""` is the in-code spelling and `none`/`off` are the ones that work from a shell.
+**Both are needed, and the second is not a convenience.** `config.load` treats an
+empty environment variable as unset — a deliberate rule, so that `DTH_NUM_CTX=` in
+a dotenv reads as "I left this alone" rather than as a value that fails to parse.
+Once the detector became the default, that rule made `DTH_LAYOUT_DETECTOR=`
+resolve straight back to `heron`, leaving the vision path reachable from Python
+but not from the environment. A named value is the way back."""
+
+
+def _layout_engine(settings: Settings) -> LayoutEngine:
+    """A trained detector unless the vision model is asked for by name.
+
+    **The detector is the default**, because the vision path raises
+    `MappingError` on three of the five fixtures and matches none, where the
+    detector converts all five. `config.DEFAULT_LAYOUT_DETECTOR` carries the
+    table. The vision path is still reachable — `DTH_LAYOUT_DETECTOR=none` — and
+    is what the recorded responses in the suite replay against.
 
     Imported inside the call so `onnxruntime` stays an optional extra: a package
     that fails at import because a detector nobody asked for is unavailable
     would make the extra mandatory in practice.
     """
-    if not settings.layout_detector:
+    if settings.layout_detector.strip().lower() in VISION:
         return OllamaEngine.from_settings(settings, settings.layout_model)
 
     from .engines.detector import from_name
 
     return from_name(settings.layout_detector,
-                     settings.detector_confidence or None)
+                     settings.detector_confidence or None,
+                     heading_rule=settings.heading_rule,
+                     prefer_container=settings.prefer_container)
 
 
 def failed(index: int, zone: Zone, error: Exception) -> Failure:

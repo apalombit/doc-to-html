@@ -18,8 +18,7 @@
     "zone_05.json",
     "zone_06.json",
     "zone_07.json",
-    "zone_08.json",
-    "zone_09.json"
+    "zone_08.json"
   ],
   "sample_table_0003": [
     "layout.json",
@@ -43,7 +42,6 @@
     "zone_04.json",
     "zone_05.json",
     "zone_06.json",
-    "zone_07.json",
-    "zone_08.json"
+    "zone_07.json"
   ]
 }

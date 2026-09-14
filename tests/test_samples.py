@@ -104,10 +104,14 @@ class TestArticle:
         assert "<li>Search engines understand content hierarchy</li>" in html
 
     def test_navigation_is_a_list_by_structure(self, semantic_doc: Document) -> None:
-        """Structure decides the IR; the header Role decides it renders inline."""
-        nav = semantic_doc.zones[1]
+        """Structure decides the IR; the header Role decides it renders inline.
+
+        Zone 0, with the masthead `<h1>` as its Title — `<header>` is one region
+        here, as a card and a panel are."""
+        nav = semantic_doc.zones[0]
         assert nav.kind is Kind.LIST
         assert nav.role is Role.HEADER
+        assert nav.title == "The Weekly Digest"
         assert len(nav.blocks) == 4
 
     def test_quotation_and_attribution_are_distinct(

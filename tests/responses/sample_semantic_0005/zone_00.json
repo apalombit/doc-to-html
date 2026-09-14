@@ -1,9 +1,27 @@
 {
   "blocks": [
     {
-      "kind": "heading",
+      "kind": "item",
       "lines": [
-        "The Weekly Digest"
+        "Home"
+      ]
+    },
+    {
+      "kind": "item",
+      "lines": [
+        "Archive"
+      ]
+    },
+    {
+      "kind": "item",
+      "lines": [
+        "About"
+      ]
+    },
+    {
+      "kind": "item",
+      "lines": [
+        "Contact"
       ]
     }
   ]

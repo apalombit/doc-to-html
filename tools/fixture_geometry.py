@@ -1,7 +1,11 @@
 """Read a fixture's true Zone rectangles off the document that produced it.
 
-    python tools/fixture_geometry.py            # print, and check the render
+    python tools/fixture_geometry.py            # invoice_0001, off the browser
     python tools/fixture_geometry.py --write    # update the expected IR
+
+    python tools/fixture_geometry.py --snap                    # the other four
+    python tools/fixture_geometry.py --snap --write
+    python tools/fixture_geometry.py --snap --fixtures sample_css_0004
 
 Every geometry number this project has recorded is scored against rectangles
 that were **typed by hand**. Both fixture builders say so, and #23 measured what
@@ -20,6 +24,45 @@ not the element's own border box, which includes cell padding the ink does not
 occupy. That is as close to "where the ink is" as the source can answer, and it
 is exact rather than eyeballed.
 
+## Two derivations, one convention
+
+That convention — **ink, not container** — is the whole of it, and for a long
+time only `invoice_0001` followed it. The other four fixtures were typed around
+what is *drawn*: a card's border, a panel's shaded caption bar, an `<aside>`'s
+padding. Measured, mean typed-vs-ink IoU per fixture:
+
+    invoice_0001          exact        read off the browser
+    sample_table_0003     0.854
+    sample_semantic_0005  0.758        worst box 0.445, the TL;DR aside
+    invoice_0002          0.659        worst box 0.043, Services / Products
+    sample_css_0004       0.605        worst box 0.260, the second card
+
+`geometry_score.MATCH_IOU` is 0.50, so a reference at 0.043 against its own ink
+cannot be matched by a correctly drawn detection at all — the fixture, not the
+run, decides the finding. `Services / Products` is the clearest case: its panel
+is empty, so the typed box is a full-width shaded bar over a heading's worth of
+text.
+
+**`--snap` is the second derivation**, for the four whose HTML cannot be
+re-rendered. `preprocess.snap_to_ink` moves each typed rectangle onto the ink it
+encloses, from the Source Image — the artefact that actually exists — using the
+same operation every detection goes through in `LayoutEngine.detect_zones`. It
+corrects edges, so it cannot fix a box drawn around the wrong *content*; the one
+such case in the corpus, `sample_semantic_0005` Zone 2 stopping short of the
+byline its own Block claims, is fixed in the builder and that fix has to land
+first or snapping shrinks the box further.
+
+**Why the browser is not used for those four.** Measured, not assumed: only
+`invoice.html` still re-renders to its screenshot, at 0.74% of pixels differing.
+The other four differ by 6.9-14.1%, and in **content height** rather than
+position — different fonts on this machine, and `invoice2.html` additionally
+wants the Bootstrap CDN. `render_matches_source` refuses all four, correctly.
+
+**`--snap` refuses `invoice_0001`**, because snapping is an approximation of the
+convention and that fixture already has the thing itself. Snapped, its
+browser-exact rectangles score 0.916 against themselves — so applying this to it
+would trade the corpus's only ground truth for an estimate of it.
+
 **The one judgement.** Which elements make up which Zone is a mapping decision,
 made once, written down below. Everything after it is arithmetic. Zones 4 and 5
 are each a union of table rows, which is the only place this is interesting:
@@ -37,6 +80,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -44,19 +88,40 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
+sys.path.insert(0, str(REPO))
 
 import numpy as np  # noqa: E402
 from PIL import Image  # noqa: E402
 
 from doc_to_html.geometry_score import expected_zones, iou, score_geometry  # noqa: E402
 from doc_to_html.ir import BBox  # noqa: E402
-from doc_to_html.preprocess import rectify  # noqa: E402
+from doc_to_html.preprocess import rectify, snap_to_ink  # noqa: E402
 
 CHROME = Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 
 SOURCE_HTML = REPO / "example" / "invoice.html"
 SOURCE_PNG = REPO / "example" / "invoice.png"
 EXPECTED = REPO / "tests" / "fixtures" / "invoice_0001.expected.json"
+
+BROWSER_EXACT = "invoice_0001"
+"""The one fixture `--snap` refuses, and the reason it exists to refuse it.
+
+Its rectangles are already the thing `--snap` approximates. Snapped, they score
+0.916 against themselves — so running this over it would trade the corpus's only
+ground truth for an estimate of it, and every later comparison would be against
+a ruler nobody could re-derive.
+"""
+
+ZONE_BBOX = re.compile(r"^ {16}bbox=BBox\([^)]*\),$", re.M)
+"""A Zone's own rectangle in a builder, and nothing else.
+
+Anchored on exactly sixteen spaces, which is the indentation of a keyword
+argument to a `Zone(` inside the `zones=[` list. Cell rectangles are written at
+thirty-three or more — `value=cell(..., bbox=BBox(...))` — so they cannot match.
+`rewrite_builder` checks the count against the Zone count anyway and refuses on
+a mismatch, because an indentation convention is a weaker guarantee than a
+count.
+"""
 
 RENDERED_EXTENT_SLACK = 1
 """Pixels of slack around the browser's text bounds, and why it is not a fudge.
@@ -217,11 +282,110 @@ def render_matches_source(width: int, height: int) -> tuple[bool, float]:
     return differing < 0.01, differing
 
 
+def rewrite_builder(fixture: str, boxes: list[BBox]) -> None:
+    """Put the derived rectangles back into the builder, which is the truth.
+
+    The builders are the authoritative hand-authored ground truth and the JSON
+    beside them is their serialised form — `tools/write_expected_ir.py` says so,
+    and `tests/test_acceptance.py` asserts the two agree. So writing the JSON
+    alone, the way the browser path does for `invoice_0001`, would land this
+    fixture's numbers in the file nobody edits and leave the file everybody
+    reads disagreeing with it. The assertion would catch that, but only after
+    the numbers had been quoted.
+    """
+    path = REPO / "tests" / "fixtures" / f"{fixture}.py"
+    source = path.read_text()
+    found = ZONE_BBOX.findall(source)
+    if len(found) != len(boxes):
+        raise SystemExit(
+            f"{path.name}: {len(found)} Zone rectangles in the source against "
+            f"{len(boxes)} in the IR — refusing to guess which is which"
+        )
+
+    replacements = iter(
+        f"                bbox=BBox({box.left:.4f}, {box.top:.4f}, "
+        f"{box.right:.4f}, {box.bottom:.4f}),"
+        for box in boxes
+    )
+    path.write_text(ZONE_BBOX.sub(lambda _: next(replacements), source))
+    print(f"  wrote {len(boxes)} rectangles into {path.relative_to(REPO)}")
+
+
+def snap_fixture(fixture: str, write: bool) -> int:
+    """Move one fixture's typed rectangles onto the ink they enclose."""
+    from tests.fixtures import IMAGES
+
+    if fixture == BROWSER_EXACT:
+        print(f"{fixture}: refusing — its rectangles are read off the browser, "
+              f"and snapping them scores 0.916 against themselves")
+        return 1
+
+    image = rectify(REPO / IMAGES[fixture]).image
+    zones = expected_zones(REPO / "tests" / "fixtures" / f"{fixture}.expected.json")
+    typed = [zone.box for zone in zones if zone.box is not None]
+    if len(typed) != len(zones):
+        raise SystemExit(f"{fixture}: a Zone has no rectangle to snap")
+    snapped = snap_to_ink(image, typed)
+
+    print(f"\n{fixture}")
+    print(f"{'zone':6}{'typed by hand':>34}{'snapped to its ink':>34}{'IoU':>7}")
+    for index, (was, now) in enumerate(zip(typed, snapped)):
+        print(f"{index:<6}"
+              f"{f'{was.left:.3f} {was.top:.3f} {was.right:.3f} {was.bottom:.3f}':>34}"
+              f"{f'{now.left:.3f} {now.top:.3f} {now.right:.3f} {now.bottom:.3f}':>34}"
+              f"{iou(was, now):7.3f}")
+
+    before = score_geometry(typed, typed, image)
+    after = score_geometry(snapped, snapped, image)
+    print(f"{'':11}{'covered':>10}{'splits':>8}{'doubles':>9}")
+    print(f"{'typed':11}{before.covered:10.2f}{before.splits:8d}{before.doubles:9d}")
+    print(f"{'snapped':11}{after.covered:10.2f}{after.splits:8d}{after.doubles:9d}")
+
+    if write:
+        rewrite_builder(fixture, snapped)
+    return 0
+
+
+def snap_main(args: argparse.Namespace) -> int:
+    """`--snap` over every fixture but the one with real ground truth.
+
+    Run it twice: the second run should report IoU 1.000 on every Zone, which is
+    the check that the rewrite landed and that snapping is idempotent. A box
+    that still moves on the second pass is a box `snap_to_ink` disagrees with
+    itself about.
+    """
+    from tests.fixtures import IMAGES
+
+    wanted = ([f.strip() for f in args.fixtures.split(",") if f.strip()]
+              if args.fixtures else
+              [name for name in IMAGES if name != BROWSER_EXACT])
+    for fixture in wanted:
+        if fixture not in IMAGES:
+            raise SystemExit(f"unknown fixture {fixture!r}; "
+                             f"known: {', '.join(IMAGES)}")
+        snap_fixture(fixture, args.write)
+
+    if args.write:
+        print("\nnow run: python tools/write_expected_ir.py")
+    else:
+        print("\n--write to update the builders")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--write", action="store_true",
                         help="update the expected IR in place")
+    parser.add_argument("--snap", action="store_true",
+                        help="derive the four non-browser fixtures' rectangles "
+                             "by snapping the typed ones onto their own ink")
+    parser.add_argument("--fixtures", default=None,
+                        help="comma-separated, with --snap; default is every "
+                             "fixture but invoice_0001")
     args = parser.parse_args()
+
+    if args.snap:
+        return snap_main(args)
 
     if not CHROME.exists():
         print(f"no headless Chrome at {CHROME}", file=sys.stderr)

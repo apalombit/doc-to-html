@@ -20,17 +20,22 @@ import pytest
 from doc_to_html.config import (
     DEFAULT_DETECTOR_CONFIDENCE,
     DEFAULT_LAYOUT_DETECTOR,
+    Settings,
     load,
 )
 from doc_to_html.engines.base import LayoutEngine as LayoutEngineProtocol
 from doc_to_html.engines.detector import (
     CONTAINED,
+    CONTAINER_HEIGHT,
     HEADING_GAP,
+    HEADING_GAP_MAX,
+    HEADING_GAP_RATIO,
     Detection,
     DetectorUnavailable,
     LayoutEngine,
     attach_headings,
     attach_trailing_rows,
+    prefer_container,
     from_name,
     outermost,
     split_containers,
@@ -151,6 +156,21 @@ class TestFoldingAHeadingIntoWhatItNames:
         far = box(0.05, 0.13 + HEADING_GAP * 2, 0.90, 0.60)
         assert len(attach_headings([heading, far])) == 2
 
+    def test_the_nearest_box_below_is_the_only_candidate(self) -> None:
+        """A heading too far from its neighbour does not reach past it.
+
+        Worth pinning because the distance test used to sit inside the search
+        rather than after it, where a filtered-out neighbour left the *next* box
+        down as the nearest survivor. It never fired — a farther box has a larger
+        gap, so it fails any test the nearer one failed — but only for the two
+        tests in this file, and the relative rule divides by a different number
+        for every heading.
+        """
+        heading = box(0.05, 0.10, 0.30, 0.13, "section_header")
+        near = box(0.05, 0.13 + HEADING_GAP * 2, 0.90, 0.40)
+        far = box(0.05, 0.45, 0.90, 0.60)
+        assert len(attach_headings([heading, near, far])) == 3
+
     def test_a_heading_does_not_absorb_another_heading(self) -> None:
         first = box(0.05, 0.10, 0.30, 0.13, "section_header")
         second = box(0.05, 0.15, 0.30, 0.18, "section_header")
@@ -176,6 +196,84 @@ class TestFoldingAHeadingIntoWhatItNames:
             merged = attach_headings([box(0.05, 0.10, 0.30, 0.13, name),
                                       box(0.05, 0.16, 0.90, 0.40)])
             assert len(merged) == 1, f"{name} should attach"
+
+
+class TestJudgingTheGapAgainstTheGapAbove:
+    """`DTH_HEADING_RULE=relative` — a heading is closer to what it names than
+    to what it follows.
+
+    `HEADING_GAP` asks how far down the page a gap is, which is a question about
+    these five fixtures. Re-derived pre-snap against the fixture builders' Zone
+    contents, it answers 4 of 14 heading cases wrongly, and neither relative
+    measure spec 0006 proposed does better. The ratio against the gap *above*
+    does: every true merge in the corpus sits at 1.293 or less, the nearest false
+    one at 2.89.
+    """
+
+    def test_a_heading_nearer_its_body_than_its_neighbour_merges(self) -> None:
+        above = box(0.05, 0.05, 0.90, 0.20)
+        heading = box(0.05, 0.40, 0.30, 0.43, "section_header")
+        body = box(0.05, 0.46, 0.90, 0.70)
+
+        assert len(attach_headings([above, heading, body], relative=True)) == 2
+
+    def test_a_heading_nearer_what_it_follows_stays_separate(self) -> None:
+        """The shape the absolute rule cannot see: both gaps are small, and it
+        is their *ratio* that says this heading belongs to neither box."""
+        above = box(0.05, 0.05, 0.90, 0.40)
+        heading = box(0.05, 0.41, 0.30, 0.44, "section_header")
+        far_body = box(0.05, 0.44 + 0.01 * HEADING_GAP_RATIO * 2, 0.90, 0.80)
+
+        assert len(attach_headings([above, heading, far_body], relative=True)) == 3
+
+    def test_the_same_gap_is_read_differently_by_the_two_rules(self) -> None:
+        """The point of the flag, in one page.
+
+        A 0.06 gap below a heading with 0.30 of white space above it: past
+        `HEADING_GAP`, so the absolute rule leaves it, and comfortably inside the
+        ratio, so the relative rule merges it. This is `sample_css_0004`'s card,
+        which is the whole of the difference between the two arms.
+        """
+        page = [box(0.05, 0.05, 0.90, 0.10),
+                box(0.05, 0.40, 0.30, 0.44, "section_header"),
+                box(0.05, 0.50, 0.90, 0.75)]
+
+        assert len(attach_headings(page)) == 3, "absolute: 0.06 exceeds 0.05"
+        assert len(attach_headings(page, relative=True)) == 2
+
+    def test_nothing_above_measures_to_the_top_of_the_page(self) -> None:
+        """Otherwise the rule is not total.
+
+        Four of the corpus's fourteen headings have no box above them that
+        overlaps horizontally, and their gaps below are non-monotonic — a merge
+        at 0.044 sits between leaves at 0.032 and 0.081 — so no absolute
+        threshold orders them. A panel title 0.40 down the page with its body
+        0.04 beneath it is that case.
+        """
+        heading = box(0.05, 0.40, 0.30, 0.43, "section_header")
+        body = box(0.05, 0.47, 0.90, 0.70)
+
+        assert len(attach_headings([heading, body], relative=True)) == 1
+
+    def test_a_box_beside_the_heading_is_not_above_it(self) -> None:
+        """`invoice_0002`'s `Customer Details` is why. It sits in the right-hand
+        column with the logo up and to the left of it, which shares no x with it
+        — so the white space above it runs to the top of the page, not to the
+        bottom of something in another column."""
+        beside = box(0.60, 0.05, 0.95, 0.38)
+        heading = box(0.05, 0.40, 0.30, 0.43, "section_header")
+        body = box(0.05, 0.47, 0.55, 0.70)
+
+        assert len(attach_headings([beside, heading, body], relative=True)) == 2
+
+    def test_the_outer_bound_catches_what_the_ratio_would_admit(self) -> None:
+        """`Services / Products`: an empty panel, so the nearest box below the
+        heading is the next section's body at a gap of 0.147. Enough white space
+        above it and the ratio alone lets that through."""
+        heading = box(0.05, 0.50, 0.30, 0.53, "section_header")
+        next_section = box(0.05, 0.53 + HEADING_GAP_MAX * 1.5, 0.90, 0.95)
+
+        assert len(attach_headings([heading, next_section], relative=True)) == 2
 
 
 class TestTakingARegionApartAgain:
@@ -384,12 +482,35 @@ class TestBoxesBecomeZones:
 
 
 class TestChoosingTheLayoutEngine:
-    """The flag off must mean nothing moved."""
+    """Which engine finds the Zones, and what an empty flag falls back to."""
 
-    def test_the_default_is_the_vision_model(self) -> None:
-        assert DEFAULT_LAYOUT_DETECTOR == ""
-        assert load(env={}).layout_detector == ""
-        assert isinstance(default_engines(load(env={})).layout, OllamaEngine)
+    def test_the_default_is_the_detector(self) -> None:
+        """Measured against each other one flag apart, all five fixtures: the
+        vision path raises `MappingError` on three of them and matches none,
+        the detector converts all five and matches `invoice_0001`. See
+        `config.DEFAULT_LAYOUT_DETECTOR` for the table."""
+        assert DEFAULT_LAYOUT_DETECTOR == "heron"
+        assert load(env={}).layout_detector == "heron"
+        assert isinstance(default_engines(load(env={})).layout, LayoutEngine)
+
+    @pytest.mark.parametrize("spelling", ["none", "off", "NONE", " none "])
+    def test_the_vision_model_is_reachable_by_name(self, spelling: str) -> None:
+        """The path is worse, not gone."""
+        settings = load(env={"DTH_LAYOUT_DETECTOR": spelling})
+        assert isinstance(default_engines(settings).layout, OllamaEngine)
+
+    def test_an_empty_flag_still_means_the_vision_model_in_code(self) -> None:
+        """`Settings(layout_detector="")` is how the suite replays recordings."""
+        assert isinstance(
+            default_engines(Settings(layout_detector="")).layout, OllamaEngine
+        )
+
+    def test_an_empty_environment_variable_cannot_reach_the_vision_model(self) -> None:
+        """Not a bug to fix here — the deliberate rule that an empty variable
+        reads as unset, meeting a default that is no longer empty. It is why
+        `orchestrator.VISION` accepts a name, and asserting it stops someone
+        "fixing" `DTH_LAYOUT_DETECTOR=` by loosening that rule for every key."""
+        assert load(env={"DTH_LAYOUT_DETECTOR": ""}).layout_detector == "heron"
 
     def test_the_default_confidence_defers_to_the_detector(self) -> None:
         assert DEFAULT_DETECTOR_CONFIDENCE == 0.0
@@ -424,3 +545,87 @@ class TestChoosingTheLayoutEngine:
             OllamaEngine.from_settings(load(env={}), "qwen3-vl:4b"),
             LayoutEngineProtocol,
         )
+
+
+class TestAdoptingAContainerTheThresholdDropped:
+    """`DTH_PREFER_CONTAINER` — the mirror of `split_containers`.
+
+    That function re-opens a container the threshold kept. This one restores one
+    the threshold dropped: five of the corpus's remaining over-splits have their
+    container sitting in the pool at 0.05-0.27 against a 0.40 threshold, so
+    `outermost` never saw it.
+    """
+
+    @staticmethod
+    def _mask(rows: list[tuple[float, float]]) -> np.ndarray:
+        """A page with ink in the given normalised row bands, full width."""
+        mask = np.zeros((200, 200), dtype=np.uint8)
+        for top, bottom in rows:
+            mask[int(top * 200):int(bottom * 200), 20:180] = 255
+        return mask
+
+    def test_a_stack_inside_a_weak_container_becomes_that_container(self) -> None:
+        parts = [box(0.10, 0.10, 0.90, 0.13), box(0.10, 0.14, 0.90, 0.17)]
+        container = box(0.09, 0.09, 0.91, 0.18, "key_value_region", 0.20)
+        mask = self._mask([(0.10, 0.13), (0.14, 0.17)])
+
+        merged = prefer_container(parts, parts + [container], mask, 0.40)
+
+        assert len(merged) == 1
+        assert merged[0] is container
+
+    def test_boxes_side_by_side_are_a_band_and_are_left_alone(self) -> None:
+        """The one signal that separated every case in the corpus. Stacked
+        contents are one region printed as lines; contents side by side are a
+        row of the page the detector drew one rectangle around."""
+        parts = [box(0.10, 0.10, 0.45, 0.17), box(0.55, 0.10, 0.90, 0.17)]
+        container = box(0.09, 0.09, 0.91, 0.18, "key_value_region", 0.20)
+        mask = self._mask([(0.10, 0.17)])
+
+        assert len(prefer_container(parts, parts + [container], mask, 0.40)) == 2
+
+    def test_a_container_taller_than_the_bound_is_refused(self) -> None:
+        """Without this `invoice_0001` loses its zero-mismatch Conversion: a
+        `table` at 0.09 spanning 0.444 of the page reads both printed tables as
+        one region, undoing `split_containers`."""
+        parts = [box(0.10, 0.10, 0.90, 0.13), box(0.10, 0.60, 0.90, 0.63)]
+        tall = box(0.09, 0.09, 0.91, 0.09 + CONTAINER_HEIGHT * 2,
+                   "key_value_region", 0.20)
+        mask = self._mask([(0.10, 0.13), (0.60, 0.63)])
+
+        assert len(prefer_container(parts, parts + [tall], mask, 0.40)) == 2
+
+    def test_a_page_level_class_is_never_a_zone(self) -> None:
+        """`form` is heron's "this is a document". On `sample_css_0004` it spans
+        the whole page, so offered the chance it collapses the document."""
+        parts = [box(0.10, 0.10, 0.90, 0.13), box(0.10, 0.14, 0.90, 0.17)]
+        whole = box(0.09, 0.09, 0.91, 0.18, "form", 0.20)
+        mask = self._mask([(0.10, 0.13), (0.14, 0.17)])
+
+        assert len(prefer_container(parts, parts + [whole], mask, 0.40)) == 2
+
+    def test_a_container_at_or_above_the_threshold_is_not_a_candidate(
+        self,
+    ) -> None:
+        """`outermost` has already had its say about those."""
+        parts = [box(0.10, 0.10, 0.90, 0.13), box(0.10, 0.14, 0.90, 0.17)]
+        strong = box(0.09, 0.09, 0.91, 0.18, "key_value_region", 0.80)
+        mask = self._mask([(0.10, 0.13), (0.14, 0.17)])
+
+        assert len(prefer_container(parts, parts + [strong], mask, 0.40)) == 2
+
+    def test_a_container_reaching_past_its_parts_is_refused(self) -> None:
+        """It must account for the parts' ink and bring none of its own —
+        the test that stops it swallowing a neighbour."""
+        parts = [box(0.10, 0.10, 0.90, 0.13), box(0.10, 0.14, 0.90, 0.17)]
+        greedy = box(0.09, 0.09, 0.91, 0.24, "key_value_region", 0.20)
+        mask = self._mask([(0.10, 0.13), (0.14, 0.17), (0.19, 0.23)])
+
+        assert len(prefer_container(parts, parts + [greedy], mask, 0.40)) == 2
+
+    def test_one_box_is_not_a_regrouping(self) -> None:
+        part = [box(0.10, 0.10, 0.90, 0.17)]
+        container = box(0.09, 0.09, 0.91, 0.18, "key_value_region", 0.20)
+        mask = self._mask([(0.10, 0.17)])
+
+        assert prefer_container(part, part + [container], mask, 0.40) == part

@@ -49,7 +49,8 @@ def fill(kind: Kind, payload: str, *, title: str | None = None) -> Zone:
 
 class TestTitledPanels:
     def test_both_panels_come_back_populated(self, invoice2: Document) -> None:
-        panels = [z for z in invoice2.zones if z.kind is Kind.PAIRS and z.title]
+        panels = [z for z in invoice2.zones
+                  if z.kind is Kind.PAIRS and z.title and z.role is Role.BODY]
         assert [z.title for z in panels] == ["Company Details", "Customer Details"]
         assert [len(z.pairs) for z in panels] == [7, 6]
         assert sum(len(z.pairs) for z in panels) == 13
@@ -65,7 +66,7 @@ class TestTitledPanels:
             panel = html.split(f'<h2 class="zone-title">{title}</h2>')[1]
             assert panel.startswith('<div class="zone-body"><dl class="pairs">')
 
-        band = [z for z in invoice2.zones if z.band == 2]
+        band = [z for z in invoice2.zones if z.band == 1]
         assert [z.column for z in band] == [0, 1]
 
     def test_pairs_render_as_a_description_list(self, invoice2: Document) -> None:
@@ -88,10 +89,10 @@ class TestASectionThatIsLegitimatelyEmpty:
         """"Services / Products" has a heading and nothing under it. That is what
         the page says, and reporting it as a failed extraction would put a finding
         in front of an operator with nothing to fix."""
-        empty = invoice2.zones[6]
+        empty = invoice2.zones[5]
         assert empty.title == "Services / Products"
         assert empty.complete and not empty.blocks
-        assert 6 not in [f.zone_index for f in invoice2.failures]
+        assert 5 not in [f.zone_index for f in invoice2.failures]
 
     def test_it_renders_as_a_titled_zone_with_nothing_in_it(
         self, invoice2: Document
@@ -121,13 +122,21 @@ class TestProseKeepsItsShape:
     def test_a_long_paragraph_survives_intact(self, invoice2: Document) -> None:
         """Truncation and summarisation are the two ways a reader silently loses
         text, and neither leaves a trace in the output."""
-        comments = invoice2.zones[7]
+        comments = invoice2.zones[6]
         text_out = comments.blocks[0].lines[0].text
         assert len(text_out) > 70
         assert text_out in render(invoice2)
 
-    def test_a_heading_block_renders_as_a_heading(self, invoice2: Document) -> None:
-        assert "<h1>Invoice With Credit</h1>" in render(invoice2)
+    def test_the_document_title_renders_bound_to_its_own_numbers(
+        self, invoice2: Document
+    ) -> None:
+        """`Invoice With Credit` used to be a `heading` Block in a Zone of its
+        own, rendering `<h1>` a Band above the NO/Date line it names. It is that
+        Zone's Title now, so it renders at the level a Title renders at and the
+        numbers sit under it — which is what the page shows."""
+        html = render(invoice2)
+        assert '<h2 class="zone-title">Invoice With Credit</h2>' in html
+        assert "<h1>" not in html
 
     def test_the_footer_role_is_preserved(self, invoice2: Document) -> None:
         html = render(invoice2)
@@ -189,7 +198,7 @@ class TestMappingProse:
             fill(Kind.PROSE, '{"blocks": [{"kind": "paragraph", "lines": ["", " "]}]}')
 
     def test_every_line_records_what_read_it(self, invoice2: Document) -> None:
-        reading = invoice2.zones[0].blocks[0].lines[0].readings[0]
+        reading = invoice2.zones[2].blocks[0].lines[0].readings[0]
         assert reading.engine == "ollama"
         assert reading.model and reading.prompt_version
 
@@ -270,12 +279,12 @@ class TestAFailureStillDoesNotSpread:
         no diagnosis attached. An empty answer for an untitled Zone is one.
         """
         replies = break_zone(recorded_for("invoice_0002"), "invoice_0002",
-                             3, '{"pairs": []}')
+                             2, '{"blocks": []}')
         document = convert_replaying(INVOICE2, replies)
 
-        assert not document.zones[3].complete
-        assert len(document.zones[5].pairs) == 6
-        assert [f.zone_index for f in document.failures] == [3]
+        assert not document.zones[2].complete
+        assert [len(document.zones[i].pairs) for i in (3, 4)] == [7, 6]
+        assert [f.zone_index for f in document.failures] == [2]
 
 
 class TestAnUnlabelledValueIsADiagnosis:

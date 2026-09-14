@@ -1,21 +1,15 @@
 {
   "blocks": [
     {
-      "kind": "item",
+      "kind": "quote",
       "lines": [
-        "Screen readers can navigate the document structure"
+        "HTML provides for a number of elements that allow for finer-grained semantics in HTML documents."
       ]
     },
     {
-      "kind": "item",
+      "kind": "attribution",
       "lines": [
-        "Search engines understand content hierarchy"
-      ]
-    },
-    {
-      "kind": "item",
-      "lines": [
-        "CSS and JavaScript can target meaningful regions"
+        "— W3C HTML5.2 specification"
       ]
     }
   ]

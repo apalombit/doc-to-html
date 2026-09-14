@@ -168,6 +168,96 @@ class TestTheComparisonCatchesWhatItClaimsTo:
         ]
 
 
+class TestOneGeometryFaultIsOneFinding:
+    """The whole point of pairing by geometry rather than by list position.
+
+    Compared by position, one extra Zone shifts every later Zone against the
+    wrong reference, and a single mis-drawn region reports as a Kind mismatch, a
+    Role mismatch and a Band mismatch on Zones that are individually correct.
+    Measured on `sample_css_0004`: 10 findings from one fault, of which the
+    classifier deserved none.
+    """
+
+    def expected(self) -> Document:
+        return BUILDERS["invoice_0001"]()
+
+    def findings(self, actual: Document) -> list[Mismatch]:
+        """Compare, with the Probes run over the result as a Conversion does."""
+        from doc_to_html import probes
+
+        actual.probes = probes.run(actual)
+        return compare(self.expected(), actual)
+
+    def split_in_two(self, doc: Document) -> None:
+        """Cut Zone 2 into the two halves a heading-and-body split produces."""
+        from dataclasses import replace
+
+        from doc_to_html.ir import BBox
+
+        zone = doc.zones[2]
+        assert zone.bbox is not None
+        middle = (zone.bbox.top + zone.bbox.bottom) / 2
+        top = replace(zone, bbox=BBox(zone.bbox.left, zone.bbox.top,
+                                      zone.bbox.right, middle))
+        bottom = replace(zone, bbox=BBox(zone.bbox.left, middle,
+                                         zone.bbox.right, zone.bbox.bottom))
+        doc.zones[2:3] = [top, bottom]
+        for index, other in enumerate(doc.zones):
+            other.band = index
+
+    def test_a_split_region_is_named_once(self) -> None:
+        actual = self.expected()
+        self.split_in_two(actual)
+        regions = [f for f in self.findings(actual) if f.field == "region"]
+        assert [f.where for f in regions] == ["zone 2"]
+        assert regions[0].actual.startswith("2 regions:")
+
+    def test_a_split_does_not_report_the_zones_after_it_as_wrong(self) -> None:
+        """The cascade this pairing exists to stop. Every Zone below the split is
+        untouched, and a positional comparison calls all of them wrong."""
+        actual = self.expected()
+        self.split_in_two(actual)
+        fields = {f.field for f in self.findings(actual)}
+        assert fields == {"Zone count", "region"}
+
+    def test_a_merged_region_is_named_once(self) -> None:
+        """Two references under one produced box — `invoice_0002`'s panels."""
+        from doc_to_html.ir import BBox
+
+        actual = self.expected()
+        first, second = actual.zones[2].bbox, actual.zones[3].bbox
+        assert first is not None and second is not None
+        actual.zones[2].bbox = BBox(min(first.left, second.left),
+                                    min(first.top, second.top),
+                                    max(first.right, second.right),
+                                    max(first.bottom, second.bottom))
+        del actual.zones[3]
+        regions = [f for f in self.findings(actual) if f.field == "region"]
+        assert [f.where for f in regions] == ["zone 2"]
+        assert regions[0].actual.startswith("region 2 covering")
+
+    def test_a_region_nothing_accounts_for_is_caught(self) -> None:
+        """The case the old positional comparison could not see at all: a box
+        drawn where no reference is, which under `zip` merely shifted the
+        comparison and was reported as somebody else's wrong Kind."""
+        from doc_to_html.ir import BBox
+
+        actual = self.expected()
+        actual.zones[0].bbox = BBox(0.45, 0.45, 0.55, 0.55)
+        findings = self.findings(actual)
+        assert ("zone 0", "region") in [(f.where, f.field) for f in findings]
+        assert ("document", "extra region") in [(f.where, f.field)
+                                                for f in findings]
+
+    def test_bands_are_not_compared_through_a_geometry_fault(self) -> None:
+        """Which Zones share a row is a statement about Zones both documents
+        agree exist. Comparing it across a split reports the split again."""
+        actual = self.expected()
+        self.split_in_two(actual)
+        assert not any(f.field.startswith("Zones")
+                       for f in self.findings(actual))
+
+
 class TestWhatIsDeliberatelyNotGated:
     def test_cell_text_is_not_compared(self) -> None:
         """There is no measurement infrastructure for text accuracy yet, and a
@@ -178,14 +268,24 @@ class TestWhatIsDeliberatelyNotGated:
         actual.zones[5].rows[1].cells[0].readings[0].text = "Wcbsite dcsign"
         assert compare(expected, actual) == []
 
-    def test_bounding_boxes_are_not_compared(self) -> None:
-        """They are eyeballed in the fixtures, and exact would be false precision.
-        What they are for is Correction anchoring, not text comparison."""
+    def test_how_well_a_box_fits_is_not_compared_only_which_region_it_is(
+        self,
+    ) -> None:
+        """A fixture's rectangles are derived rather than measured — off the
+        browser for this one, by snapping onto the ink for the other four — so
+        scoring how closely a box fits would be measuring the derivation.
+        Geometry is asked one question, *which region is this*, and a box that
+        is tighter or looser than its reference still answers it."""
         from doc_to_html.ir import BBox
 
         expected = BUILDERS["invoice_0001"]()
         actual = converted("invoice_0001")
-        actual.zones[0].bbox = BBox(0.5, 0.5, 0.6, 0.6)
+        for zone in actual.zones:
+            assert zone.bbox is not None
+            zone.bbox = BBox(
+                zone.bbox.left + 0.01, zone.bbox.top + 0.005,
+                zone.bbox.right - 0.01, zone.bbox.bottom - 0.005,
+            )
         assert compare(expected, actual) == []
 
     def test_band_and_column_numbering_are_not_compared_only_grouping(self) -> None:

@@ -12,143 +12,17 @@
   "hint": null,
   "zones": [
     {
-      "kind": "prose",
-      "role": "header",
-      "band": 0,
-      "column": 0,
-      "bbox": {
-        "left": 0.014,
-        "top": 0.045,
-        "right": 0.23,
-        "bottom": 0.11
-      },
-      "title": null,
-      "rows": [],
-      "pairs": [],
-      "blocks": [
-        {
-          "kind": "heading",
-          "lines": [
-            {
-              "bbox": null,
-              "readings": [
-                {
-                  "engine": "fixture",
-                  "text": "Invoice With Credit",
-                  "model": null,
-                  "prompt_version": null
-                }
-              ],
-              "state": "agreed"
-            }
-          ]
-        }
-      ],
-      "graphic_kind": null,
-      "complete": true
-    },
-    {
-      "kind": "figure",
-      "role": "header",
-      "band": 0,
-      "column": 1,
-      "bbox": {
-        "left": 0.676,
-        "top": 0.024,
-        "right": 0.742,
-        "bottom": 0.122
-      },
-      "title": null,
-      "rows": [],
-      "pairs": [],
-      "blocks": [],
-      "graphic_kind": "logo",
-      "complete": true
-    },
-    {
-      "kind": "prose",
-      "role": "header",
-      "band": 0,
-      "column": 2,
-      "bbox": {
-        "left": 0.75,
-        "top": 0.028,
-        "right": 0.9,
-        "bottom": 0.135
-      },
-      "title": null,
-      "rows": [],
-      "pairs": [],
-      "blocks": [
-        {
-          "kind": "address",
-          "lines": [
-            {
-              "bbox": null,
-              "readings": [
-                {
-                  "engine": "fixture",
-                  "text": "Acme Corporation",
-                  "model": null,
-                  "prompt_version": null
-                }
-              ],
-              "state": "agreed"
-            },
-            {
-              "bbox": null,
-              "readings": [
-                {
-                  "engine": "fixture",
-                  "text": "Software Development",
-                  "model": null,
-                  "prompt_version": null
-                }
-              ],
-              "state": "agreed"
-            },
-            {
-              "bbox": null,
-              "readings": [
-                {
-                  "engine": "fixture",
-                  "text": "Field 3, Moon",
-                  "model": null,
-                  "prompt_version": null
-                }
-              ],
-              "state": "agreed"
-            },
-            {
-              "bbox": null,
-              "readings": [
-                {
-                  "engine": "fixture",
-                  "text": "info@acme.com",
-                  "model": null,
-                  "prompt_version": null
-                }
-              ],
-              "state": "agreed"
-            }
-          ]
-        }
-      ],
-      "graphic_kind": null,
-      "complete": true
-    },
-    {
       "kind": "pairs",
       "role": "header",
-      "band": 1,
+      "band": 0,
       "column": 0,
       "bbox": {
-        "left": 0.014,
-        "top": 0.128,
-        "right": 0.3,
-        "bottom": 0.155
+        "left": 0.0146,
+        "top": 0.0627,
+        "right": 0.256,
+        "bottom": 0.1504
       },
-      "title": null,
+      "title": "Invoice With Credit",
       "rows": [],
       "pairs": [
         {
@@ -219,15 +93,105 @@
       "complete": true
     },
     {
+      "kind": "figure",
+      "role": "header",
+      "band": 0,
+      "column": 1,
+      "bbox": {
+        "left": 0.6787,
+        "top": 0.0251,
+        "right": 0.7388,
+        "bottom": 0.1226
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [],
+      "graphic_kind": "logo",
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 2,
+      "bbox": {
+        "left": 0.7474,
+        "top": 0.0306,
+        "right": 0.8694,
+        "bottom": 0.1295
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "address",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Acme Corporation",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Software Development",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "Field 3, Moon",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "fixture",
+                  "text": "info@acme.com",
+                  "model": null,
+                  "prompt_version": null
+                }
+              ],
+              "state": "agreed"
+            }
+          ]
+        }
+      ],
+      "graphic_kind": null,
+      "complete": true
+    },
+    {
       "kind": "pairs",
       "role": "body",
-      "band": 2,
+      "band": 1,
       "column": 0,
       "bbox": {
-        "left": 0.015,
-        "top": 0.168,
-        "right": 0.405,
-        "bottom": 0.455
+        "left": 0.0284,
+        "top": 0.1811,
+        "right": 0.305,
+        "bottom": 0.4276
       },
       "title": "Company Details",
       "rows": [],
@@ -457,13 +421,13 @@
     {
       "kind": "pairs",
       "role": "body",
-      "band": 2,
+      "band": 1,
       "column": 1,
       "bbox": {
-        "left": 0.43,
-        "top": 0.168,
-        "right": 0.985,
-        "bottom": 0.455
+        "left": 0.4433,
+        "top": 0.1811,
+        "right": 0.9845,
+        "bottom": 0.4554
       },
       "title": "Customer Details",
       "rows": [],
@@ -662,13 +626,13 @@
     {
       "kind": "prose",
       "role": "body",
-      "band": 3,
+      "band": 2,
       "column": 0,
       "bbox": {
-        "left": 0.015,
-        "top": 0.487,
-        "right": 0.985,
-        "bottom": 0.545
+        "left": 0.0284,
+        "top": 0.5028,
+        "right": 0.1521,
+        "bottom": 0.5223
       },
       "title": "Services / Products",
       "rows": [],
@@ -680,13 +644,13 @@
     {
       "kind": "prose",
       "role": "body",
-      "band": 4,
+      "band": 3,
       "column": 0,
       "bbox": {
-        "left": 0.015,
-        "top": 0.6,
-        "right": 0.573,
-        "bottom": 0.77
+        "left": 0.0284,
+        "top": 0.6017,
+        "right": 0.5687,
+        "bottom": 0.7423
       },
       "title": "Comments / Notes",
       "rows": [],
@@ -716,13 +680,13 @@
     {
       "kind": "prose",
       "role": "body",
-      "band": 4,
+      "band": 3,
       "column": 1,
       "bbox": {
-        "left": 0.598,
-        "top": 0.6,
-        "right": 0.985,
-        "bottom": 0.865
+        "left": 0.6091,
+        "top": 0.6003,
+        "right": 0.982,
+        "bottom": 0.8217
       },
       "title": "Payment Method",
       "rows": [],
@@ -808,13 +772,13 @@
     {
       "kind": "prose",
       "role": "footer",
-      "band": 5,
+      "band": 4,
       "column": 0,
       "bbox": {
-        "left": 0.015,
-        "top": 0.895,
-        "right": 0.3,
-        "bottom": 0.975
+        "left": 0.0137,
+        "top": 0.8997,
+        "right": 0.2113,
+        "bottom": 0.9694
       },
       "title": null,
       "rows": [],

@@ -16,8 +16,18 @@ Two details worth knowing before comparing against a real extraction:
 
 As with 0001, this is authored against the *rendered image*, not derived from
 example/invoice2.html — that file is Bootstrap markup whose tree bears no
-relation to what a reader sees. Bounding boxes are eyeballed; they matter for
-Correction anchoring, not for text comparison.
+relation to what a reader sees.
+
+**Bounding boxes are snapped onto their own ink, not eyeballed.** They were
+eyeballed once, and around the wrong thing: typed around what is *drawn* — a
+panel's shaded caption bar, a card's border — where `invoice_0001`'s are the
+ink. That cost more than it sounds. Zone 6, `Services / Products`, is a panel
+whose table is empty, so its typed full-width bar scored **0.043** against the
+text it actually contains, and `geometry_score.MATCH_IOU` is 0.50 — meaning no
+correctly drawn detection could be paired with it at all, and the fixture rather
+than the run decided the finding. Across this file the typed boxes cut through
+ink in 25 places. `tools/fixture_geometry.py --snap` moved them onto it, which
+takes those 25 to 0 and `covered` to 1.00.
 """
 
 from __future__ import annotations
@@ -77,14 +87,29 @@ def build() -> Document:
     return Document(
         source=SOURCE,
         zones=[
-            # Band 0 — document title, logo, issuer block.
+            # Band 0 — document title over its own numbers, logo, issuer block.
+            #
+            # **The title and the NO/Date line are one Zone**, because the source
+            # prints them as one block — `<div class="col-sm-8">` holding an
+            # `<h1>` and the `<h4>` beneath it — and because every other titled
+            # region in this corpus is read that way, panel captions here
+            # included. They were two Zones in two Bands, which said the `<h1>`
+            # names nothing and cost this fixture geometry findings the detector
+            # did not deserve: it groups them, correctly, and had no way to be
+            # right.
             Zone(
-                kind=Kind.PROSE,
+                kind=Kind.PAIRS,
                 role=Role.HEADER,
                 band=0,
                 column=0,
-                bbox=BBox(0.014, 0.045, 0.230, 0.110),
-                blocks=[Block(kind="heading", lines=[cell("Invoice With Credit")])],
+                bbox=BBox(0.0146, 0.0627, 0.2560, 0.1504),
+                title="Invoice With Credit",
+                pairs=[
+                    Pair(label=cell("NO"),
+                         value=cell("554775/R1", bbox=BBox(0.048, 0.130, 0.115, 0.150))),
+                    Pair(label=cell("Date"),
+                         value=cell("01/01/2015", bbox=BBox(0.175, 0.130, 0.258, 0.150))),
+                ],
                 complete=True,
             ),
             Zone(
@@ -92,7 +117,7 @@ def build() -> Document:
                 role=Role.HEADER,
                 band=0,
                 column=1,
-                bbox=BBox(0.676, 0.024, 0.742, 0.122),
+                bbox=BBox(0.6787, 0.0251, 0.7388, 0.1226),
                 graphic_kind="logo",
                 complete=True,
             ),
@@ -101,7 +126,7 @@ def build() -> Document:
                 role=Role.HEADER,
                 band=0,
                 column=2,
-                bbox=BBox(0.750, 0.028, 0.900, 0.135),
+                bbox=BBox(0.7474, 0.0306, 0.8694, 0.1295),
                 blocks=[
                     Block(
                         kind="address",
@@ -115,28 +140,13 @@ def build() -> Document:
                 ],
                 complete=True,
             ),
-            # Band 1 — two Pairs packed onto one pipe-separated line.
-            Zone(
-                kind=Kind.PAIRS,
-                role=Role.HEADER,
-                band=1,
-                column=0,
-                bbox=BBox(0.014, 0.128, 0.300, 0.155),
-                pairs=[
-                    Pair(label=cell("NO"),
-                         value=cell("554775/R1", bbox=BBox(0.048, 0.130, 0.115, 0.150))),
-                    Pair(label=cell("Date"),
-                         value=cell("01/01/2015", bbox=BBox(0.175, 0.130, 0.258, 0.150))),
-                ],
-                complete=True,
-            ),
-            # Band 2 — the case Title exists for: a caption bound to its block.
+            # Band 1 — the case Title exists for: a caption bound to its block.
             Zone(
                 kind=Kind.PAIRS,
                 role=Role.BODY,
-                band=2,
+                band=1,
                 column=0,
-                bbox=BBox(0.015, 0.168, 0.405, 0.455),
+                bbox=BBox(0.0284, 0.1811, 0.3050, 0.4276),
                 title="Company Details",
                 pairs=_pairs(_COMPANY, 0.183, 0.350),
                 complete=True,
@@ -144,30 +154,30 @@ def build() -> Document:
             Zone(
                 kind=Kind.PAIRS,
                 role=Role.BODY,
-                band=2,
+                band=1,
                 column=1,
-                bbox=BBox(0.430, 0.168, 0.985, 0.455),
+                bbox=BBox(0.4433, 0.1811, 0.9845, 0.4554),
                 title="Customer Details",
                 pairs=_pairs(_CUSTOMER, 0.590, 0.885),
                 complete=True,
             ),
-            # Band 3 — a heading with nothing under it. Empty, not failed.
+            # Band 2 — a heading with nothing under it. Empty, not failed.
+            Zone(
+                kind=Kind.PROSE,
+                role=Role.BODY,
+                band=2,
+                column=0,
+                bbox=BBox(0.0284, 0.5028, 0.1521, 0.5223),
+                title="Services / Products",
+                complete=True,
+            ),
+            # Band 3 — free prose beside a payment block.
             Zone(
                 kind=Kind.PROSE,
                 role=Role.BODY,
                 band=3,
                 column=0,
-                bbox=BBox(0.015, 0.487, 0.985, 0.545),
-                title="Services / Products",
-                complete=True,
-            ),
-            # Band 4 — free prose beside a payment block.
-            Zone(
-                kind=Kind.PROSE,
-                role=Role.BODY,
-                band=4,
-                column=0,
-                bbox=BBox(0.015, 0.600, 0.573, 0.770),
+                bbox=BBox(0.0284, 0.6017, 0.5687, 0.7423),
                 title="Comments / Notes",
                 blocks=[
                     Block(
@@ -188,9 +198,9 @@ def build() -> Document:
             Zone(
                 kind=Kind.PROSE,
                 role=Role.BODY,
-                band=4,
+                band=3,
                 column=1,
-                bbox=BBox(0.598, 0.600, 0.985, 0.865),
+                bbox=BBox(0.6091, 0.6003, 0.9820, 0.8217),
                 title="Payment Method",
                 blocks=[
                     Block(
@@ -216,13 +226,13 @@ def build() -> Document:
                 ],
                 complete=True,
             ),
-            # Band 5 — closing prose.
+            # Band 4 — closing prose.
             Zone(
                 kind=Kind.PROSE,
                 role=Role.FOOTER,
-                band=5,
+                band=4,
                 column=0,
-                bbox=BBox(0.015, 0.895, 0.300, 0.975),
+                bbox=BBox(0.0137, 0.8997, 0.2113, 0.9694),
                 blocks=[
                     Block(
                         kind="paragraph",

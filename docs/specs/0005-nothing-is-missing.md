@@ -1,23 +1,30 @@
 # Nothing is missing
 
-**Status: Change 1 built and measured, behind `DTH_CAPTION_PASS`. Changes 2-5 not
-started.** Best vector, run 72: **45 — 0, 20, 10, 15, 0**, two full matches
-against run 69's one. `invoice_0001` and `sample_table_0003` both convert
-cleanly. The flag still ships off, because the total cannot fall further until
-the grouping work lands: `invoice_0002`'s captions are already correct and score
-as errors only because it returns 9 Zones against a reference of 10.
-The measurements below are complete and reproducible. Continues
-`0004-check-the-box-against-the-ink.md` (issue #20), which ended by finding that
-"geometry is broken on four of the five fixtures" and calling that "a bigger
-problem than anything this spec set out to address". This is that problem,
-measured — and the answer turns out to be that geometry is no longer where the
-errors are.
+**Status: Change 1 built, behind `DTH_CAPTION_PASS`. Changes 2-5 not started.**
+Tracked as issue #28; this is the only live spec, and 0001-0004 are closed.
+Continues `0004-check-the-box-against-the-ink.md` (issue #20), which ended by
+finding that "geometry is broken on four of the five fixtures" and calling that
+"a bigger problem than anything this spec set out to address". This is that
+problem, measured — and the answer turns out to be that geometry is no longer
+where the errors are.
 
-**Read the numbers before the argument.** Everything here comes from four runs
-that can be re-taken: `debug/runs/65-detector-bakeoff` (offline geometry,
-2 detectors x 5 fixtures x 9 confidences), `67-detector-e2e`, `68-detector-merged`
-and `69-detector-all` (Conversions). Run directories are gitignored — regenerate
-rather than hunt.
+**What changed under this spec since it was written.** The detector is now the
+**default** (`DTH_LAYOUT_DETECTOR=heron`), which this spec listed as out of
+scope pending a run of the default path for comparison. That run was taken: the
+vision path raises `MappingError` on three of the five fixtures and matches none.
+`config.DEFAULT_LAYOUT_DETECTOR` carries the table.
+
+**The current baseline is `debug/runs/75-detector-all/`, on the shipped default:
+44 mismatches, one full match, all five convert, `covered` 1.00 and `splits` 0
+everywhere.** `CLAUDE.md` holds the per-fixture table.
+
+**Do not quote a run number from the body below.** Every figure in this file
+predates the current default, most of the runs it names no longer exist on disk,
+and several of them differ from each other on more than one flag. The *arguments*
+and *mechanisms* are what this file is for. When a number is needed, take a run:
+`FIXTURE=all tools/iterate.sh <label>`. The model is not bit-reproducible, so two
+runs of one configuration differ by a few mismatches — **a small delta is not a
+result.**
 
 ---
 
@@ -314,12 +321,24 @@ geometric rule for a semantic fact.
 
 ## Testing Decisions
 
-**Baseline to beat: 46 mismatches — 0, 20, 10, 14, 2.** Any change is scored by
-re-running `FIXTURE=all tools/iterate.sh <label>` with `DTH_LAYOUT_DETECTOR=heron`
-and comparing that vector, not a single fixture.
+**Baseline to beat: `debug/runs/75-detector-all/` — 44 mismatches, one full
+match, all five converting**, on the shipped defaults. `CLAUDE.md` holds the
+per-fixture table.
 
-**Offline suite baseline: 49 failed / 462 passed.** The 49 are the known #16
-replay-ordering failures. Any other count is a regression.
+**Score a change by re-running `FIXTURE=all tools/iterate.sh <label>` and
+comparing the whole vector, not a single fixture** — and take the *before* run
+yourself rather than reading one out of a document. If run 75 is no longer on
+disk, re-take the baseline first; a change measured against a number nobody can
+open has not been measured.
+
+**Change one flag at a time.** Historical runs moved several at once and their
+totals describe configurations that were neither the shipped one nor each other.
+
+**A small delta is not a result.** The model is not bit-reproducible: two runs of
+one configuration differ by a few mismatches with no code change between them.
+
+**Offline suite baseline: 543 passed / 0 failed.** *Any* failure is a real
+regression.
 
 **Geometry is deterministic and that is now verified on real inputs**, not
 assumed: runs 68 and 69 produced byte-identical mismatch lists for both shared

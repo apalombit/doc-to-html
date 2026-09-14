@@ -21,6 +21,7 @@ from doc_to_html.bakeoff import (
     Attempt,
     PassTiming,
     TimingTransport,
+    engines_for,
     load_acceptance_set,
     main,
     report,
@@ -32,6 +33,18 @@ from doc_to_html.engines.transport import Response, Transport
 from .replay import ReplayTransport, break_zone, recorded_for
 
 REPO = Path(__file__).resolve().parent.parent
+
+REPLAYING = Settings(layout_detector="")
+"""Settings for a replayed run: the vision layout path, which ships off.
+
+Replay answers a recorded `layout` response, so these tests need the pass that
+asks for one. The shipped default is `heron`, which finds Zones from the pixels
+and makes no layout call at all — under it every recording here would be read
+against geometry nobody recorded, and the layout answer would go unclaimed.
+
+The detector has its own tests, against a fake detector, in
+`test_layout_detector.py`. This constant is what keeps the two paths from being
+tested through each other."""
 
 
 def replaying(model: str, fixture: str) -> Transport:
@@ -81,7 +94,7 @@ class TestWhatARunProduces:
         self, acceptance: dict[str, object]
     ) -> None:
         attempts = run(
-            ["model-a", "model-b"], acceptance, Settings(),  # type: ignore[arg-type]
+            ["model-a", "model-b"], acceptance, REPLAYING,  # type: ignore[arg-type]
             transport_for=replaying, resident_for=sized,
         )
         assert len(attempts) == 10
@@ -94,7 +107,7 @@ class TestWhatARunProduces:
         reload each time — and that reload would be timed as if it belonged to the
         document."""
         attempts = run(
-            ["model-a", "model-b"], acceptance, Settings(),  # type: ignore[arg-type]
+            ["model-a", "model-b"], acceptance, REPLAYING,  # type: ignore[arg-type]
             transport_for=replaying, resident_for=sized,
         )
         order = [a.model for a in attempts]
@@ -104,7 +117,7 @@ class TestWhatARunProduces:
         self, acceptance: dict[str, object]
     ) -> None:
         attempts = run(
-            ["model-a"], acceptance, Settings(),  # type: ignore[arg-type]
+            ["model-a"], acceptance, REPLAYING,  # type: ignore[arg-type]
             transport_for=replaying, resident_for=sized,
         )
         assert [a.verdict for a in attempts] == ["match"] * 5
@@ -114,7 +127,7 @@ class TestWhatARunProduces:
         self, acceptance: dict[str, object]
     ) -> None:
         attempts = run(
-            ["model-a"], acceptance, Settings(),  # type: ignore[arg-type]
+            ["model-a"], acceptance, REPLAYING,  # type: ignore[arg-type]
             transport_for=replaying, resident_for=sized,
         )
         invoice = next(a for a in attempts if a.fixture == "invoice_0001")
@@ -143,7 +156,7 @@ class TestWhatARunProduces:
             orchestrator.resolution_caveat = lambda image, zone: "read at reduced resolution: test"  # type: ignore[assignment]
             attempts = run(
                 ["model-a"], {"invoice_0001": acceptance["invoice_0001"]},  # type: ignore[arg-type,dict-item]
-                Settings(), transport_for=replaying, resident_for=sized,
+                REPLAYING, transport_for=replaying, resident_for=sized,
             )
         finally:
             orchestrator.resolution_caveat = real  # type: ignore[assignment]
@@ -163,7 +176,7 @@ class TestWhatARunProduces:
 
         attempts = run(
             ["model-a"], {"invoice_0001": acceptance["invoice_0001"]},  # type: ignore[arg-type,dict-item]
-            Settings(), transport_for=one_bad_zone, resident_for=sized,
+            REPLAYING, transport_for=one_bad_zone, resident_for=sized,
         )
         assert attempts[0].verdict != "match"
         assert any(m.field == "extraction" for m in attempts[0].mismatches)
@@ -174,7 +187,7 @@ class TestWhatARunProduces:
         """Ten minutes of measurement thrown away because the last document
         errored would be a bad trade."""
         attempts = run(
-            ["broken"], acceptance, Settings(),  # type: ignore[arg-type]
+            ["broken"], acceptance, REPLAYING,  # type: ignore[arg-type]
             transport_for=failing, resident_for=sized,
         )
         assert len(attempts) == 5
@@ -283,6 +296,58 @@ class TestTheCommandLine:
         assert "qwen3-vl:4b" in CANDIDATES
         assert "qwen3-vl:2b" in CANDIDATES
         assert any("granite" in model for model in CANDIDATES)
+
+
+class TestTheBakeOffBuildsTheSameLayoutEngineAsAConversion:
+    """`tools/iterate.sh` runs the bake-off, so this is the path every measured
+    run takes — and it assembles its own `EngineSet` rather than calling
+    `orchestrator._layout_engine`.
+
+    **This is not hypothetical.** `DTH_HEADING_RULE` was added, reached
+    `Settings`, was recorded into the run directory's `dth_env.txt`, and never
+    reached the detector, because `engines_for` passed `from_name` the two
+    arguments it knew about. The run announced itself as the arm it was not and
+    came back byte-identical to its baseline — which reads as a change that does
+    nothing rather than a change that did not run, and is the most expensive kind
+    of wrong answer this project can produce.
+    """
+
+    @staticmethod
+    def _both(settings: Settings) -> tuple[object, object]:
+        from doc_to_html.orchestrator import _layout_engine
+
+        transport = ReplayTransport(recorded_for("invoice_0001"))
+        return (engines_for("qwen3-vl:4b", settings, transport).layout,
+                _layout_engine(settings))
+
+    @pytest.mark.parametrize("settings", [
+        Settings(layout_detector="heron"),
+        Settings(layout_detector="heron", heading_rule="relative"),
+        Settings(layout_detector="heron", detector_confidence=0.25),
+    ])
+    def test_every_detector_setting_reaches_both_paths(
+        self, settings: Settings
+    ) -> None:
+        mine, theirs = self._both(settings)
+
+        for field in ("confidence", "heading_rule", "model"):
+            assert getattr(mine, field) == getattr(theirs, field), field
+
+    def test_a_new_detector_setting_cannot_be_forwarded_by_only_one_path(
+        self,
+    ) -> None:
+        """The general form, so the next setting is covered before it is added.
+
+        Compares every public attribute of the two engines rather than a list
+        somebody has to remember to extend — which is exactly what failed.
+        """
+        mine, theirs = self._both(
+            Settings(layout_detector="heron", heading_rule="relative"))
+
+        assert {name: value for name, value in vars(mine).items()
+                if not name.startswith("_")} == {
+            name: value for name, value in vars(theirs).items()
+            if not name.startswith("_")}
 
 
 class TestItIsNotPartOfTheDefaultSuite:

@@ -1,10 +1,21 @@
 # Make one image work: `example/invoice.png`
 
-**Status:** open — the epic, tracked as GitHub issue #10. `invoice.png` is at 2
-mismatches, not 0, so this is not done. But the *live* work is two specs further
-on: `0002-structure-not-geometry.md` (closed) and then
-`0003-classify-from-the-crop.md` (issue #12, current). Read this one for the run
-history and everything already tried and rejected.
+**Status: closed — history, not work in flight.** Issue #10 is closed. The epic
+succeeded: `invoice_0001` converts with **zero mismatches** on both layout paths
+— run 49 on the shipped VLM path and runs 69/72 on the detector — rendering every
+string with no skeletons, no Failures and no Caveats, its column-sum Probe
+reconciling at **385.00**. Read this one for the run history and everything
+already tried and rejected.
+
+**Treat runs before 50 as superseded and do not cite them as evidence.** Every
+number in this file predates that line.
+
+The live work is four specs on: `0005-nothing-is-missing.md`, which measures the
+other four fixtures. This spec's deliberate narrowing to one image is what
+produced the crossover experiments and the trace tooling — and its bill came due
+at issue #19, because no prompt change was checked against the other four
+fixtures for the whole of that time, and `invoice_0002` turned out never to have
+completed a Conversion at all.
 
 ## Why this exists
 

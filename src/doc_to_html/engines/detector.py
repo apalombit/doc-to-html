@@ -45,6 +45,7 @@ from __future__ import annotations
 
 import ast
 import json
+import statistics
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
@@ -148,39 +149,75 @@ Both vocabularies are covered: `section_header` / `caption` are heron's,
 HEADING_GAP = 0.05
 """How far below a heading its content may start, as a fraction of page height.
 
-**Measured on the four fixtures that have headings at all.** Every gap that
-should close and every gap that should not, sorted:
+**The shipped rule, and a number nobody can defend.** Kept as the default until
+`DTH_HEADING_RULE=relative` has been measured in a live Conversion; the
+replacement is `HEADING_GAP_RATIO` below, and the evidence against this one is
+recorded there rather than repeated here.
 
-    merge      0.011  0.024  0.025  0.028  0.029  0.030  0.032  0.038  0.040  0.044
-    leave      0.056  0.064  0.081  0.147
+**Both of the lists this docstring used to carry were wrong**, and so was spec
+0005's correction of them. They were taken post-snap, while `attach_headings`
+runs on raw detections — see the order in `LayoutEngine.detect_zones` — and their
+verdicts were read off the fixtures' typed rectangles rather than off the Zone
+contents those rectangles were supposed to describe. Re-derived pre-snap, this
+constant makes **4 wrong calls of 14**: it merges `invoice_0002`'s `Invoice`
+title into the line below it and `sample_semantic_0005`'s masthead into the nav
+bar, and it fails to merge either of `sample_css_0004`'s two cards.
+"""
 
-0.05 sits in the gap, with 1.13x margin below and 1.13x above — thin, and stated
-rather than hidden. The widest true attachment is a panel caption over an
-indented block; the narrowest false one is a heading whose own panel is empty, so
-the nearest box below it belongs to the *next* section.
+HEADING_GAP_RATIO = 1.9
+"""How much further below a heading its content may sit than the heading sits
+below whatever precedes it.
 
-A fraction of page **height** rather than of the short edge or of pixels, because
-that is what separated the two groups: in raw pixels they overlap (a 32px gap
-that should close, a 30px gap that should not), since these fixtures scale their
-type with the page.
+**A heading is closer to what it names than to what it follows.** That is the
+whole rule, and it is a fact about typesetting rather than about these five
+pages, which is what `HEADING_GAP` never was.
 
-**This docstring and `docs/specs/0005` disagree, and the spec is right.** The two
-gaps listed above under `leave` as 0.056 and 0.064 are `sample_css_0004`'s two
-heading-to-body gaps, measured there as 0.058 and 0.065 — and the reference has
-each heading and its body as **one** Zone, so they belong under `merge`. They
-were filed here as "leave" before any Conversion had run, from geometry alone.
-That mistake is the whole of spec 0005's Change 2: with them moved, the boundary
-sits between 0.065 and 0.081 rather than around 0.05, and `sample_css_0004`'s two
-headings fail to merge because this constant is too tight.
+The measurement, pre-snap, heron at 0.40, over all 14 heading cases in the
+corpus, with each verdict read from the fixture builder's Zone *contents*:
 
-**Do not retune this without settling the disagreement first**, and settle it by
-re-deriving the gaps rather than by trusting either list. Whichever way it lands,
-one of the two documents is currently wrong and a reader who consults only the
-other will draw the opposite conclusion.
+    gap alone       merge  0.011 0.024 0.028 0.029 0.030 0.038 0.040 0.044 0.056 0.064
+                    leave  0.025 0.032 0.081 0.147          <- interleaved
+
+No absolute threshold separates those, and the best one possible still gets two
+wrong. Nor does either candidate spec 0006 proposed: `gap / heading height`
+leaves 3 wrong and `gap / median line gap` leaves 3 and is undefined on 6 of 14,
+because a single-line box has no leading of its own to divide by.
+
+Against the gap above, they separate: every true merge sits at **1.293 or less**
+(`Company Details` over its panel body) and the nearest false one at **2.89**
+(`sample_table_0003`'s page title over the table that is not its body). 1.9 is
+central, with 1.47x margin below and 1.52x above, against `HEADING_GAP`'s 1.13x.
+
+**It is a plateau rather than a point**, which is the part worth trusting: every
+combination of this in {1.4, 1.6, 1.9, 2.2, 2.5, 2.8} with `HEADING_GAP_MAX` in
+{0.08, 0.10, 0.12} produces an identical answer on all five fixtures.
+
+**Two cases it still gets wrong, and they cost nothing.** `invoice_0002`'s
+`Invoice` and `sample_semantic_0005`'s `The Weekly Digest` are page titles above
+a metadata line, and both merge when the reference says leave. Simulated end to
+end, un-merging them changes no finding on either fixture — the references split
+`<header><h1>+<nav>` into two Zones while making `<div class="card"><h2>+<p>` one,
+and that inconsistency is a fixture question, filed in spec 0006 and deliberately
+not answered inside a geometry change.
+"""
+
+HEADING_GAP_MAX = 0.10
+"""An outer bound on the ratio, as a fraction of page height.
+
+`HEADING_GAP_RATIO` is the test; this only says that no heading names a region a
+tenth of a page away however much white space precedes it. It exists for one
+real case — `invoice_0002`'s `Services / Products`, whose own panel is empty, so
+the nearest box below it is the *next* section's body at a gap of 0.147.
+
+The window is 0.064 (the widest true merge, `sample_css_0004`'s second card) to
+0.147, so 0.10 has 1.56x below and 1.47x above. Without it the ratio alone has to
+carry that case and its upper bound tightens to 1.992, which is where the old
+1.13x-margin problem starts again.
 """
 
 
-def attach_headings(found: list[Detection]) -> list[Detection]:
+def attach_headings(found: list[Detection], *,
+                    relative: bool = False) -> list[Detection]:
     """Fold each heading into the region it names.
 
     Run 67 is why this exists. With every heading standing as its own Zone,
@@ -198,13 +235,18 @@ def attach_headings(found: list[Detection]) -> list[Detection]:
     Both directions matter: without the first, two panel captions in a column
     swallow the same block; without the second, a heading merges into a region
     that already has one above it.
+
+    `relative` picks which test decides how far is too far: `HEADING_GAP` by
+    default, `HEADING_GAP_RATIO` against the gap above when set. Everything else
+    here is the same either way — the flag changes one predicate, not the
+    claiming.
     """
     order = sorted(range(len(found)), key=lambda i: (found[i].top, found[i].left))
     claimed: dict[int, int] = {}
     for index in order:
         if found[index].label not in HEADINGS:
             continue
-        target = _region_below(found, index)
+        target = _region_below(found, index, relative=relative)
         if target is not None and target not in claimed.values():
             claimed[index] = target
 
@@ -218,13 +260,20 @@ def attach_headings(found: list[Detection]) -> list[Detection]:
     return merged
 
 
-def _region_below(found: list[Detection], heading: int) -> int | None:
+def _region_below(found: list[Detection], heading: int, *,
+                  relative: bool = False) -> int | None:
     """The nearest non-heading box under this one, near enough to belong to it.
 
     "Under" is any horizontal overlap at all rather than a share of the width:
     a panel caption is short and left-aligned while the block it names is
     indented, and requiring 30% overlap missed `Company Details` over its own
     panel by three percentage points.
+
+    **Nearness is decided after the candidate is chosen, not while choosing
+    it.** The nearest box below a heading is the only one that can be its body,
+    so the distance test belongs to that box rather than to the search — and
+    written the other way, a heading whose body is too far away silently adopts
+    the box below *that* one instead.
     """
     above = found[heading]
     below = [
@@ -232,12 +281,45 @@ def _region_below(found: list[Detection], heading: int) -> int | None:
         if index != heading
         and box.label not in HEADINGS
         and box.top >= above.bottom - 0.01
-        and box.top - above.bottom <= HEADING_GAP
         and min(box.right, above.right) > max(box.left, above.left)
     ]
     if not below:
         return None
-    return min(below, key=lambda index: (found[index].top, found[index].left))
+
+    nearest = min(below, key=lambda index: (found[index].top, found[index].left))
+    gap = found[nearest].top - above.bottom
+    if not relative:
+        return nearest if gap <= HEADING_GAP else None
+    return (nearest if gap <= HEADING_GAP_RATIO * _gap_above(found, heading)
+            and gap <= HEADING_GAP_MAX else None)
+
+
+def _gap_above(found: list[Detection], heading: int) -> float:
+    """White space between this heading and whatever is printed above it.
+
+    **The top of the page counts as a box.** Without that fallback the rule is
+    not total: four of the corpus's fourteen headings have nothing above them
+    that overlaps horizontally — a panel title in the right-hand column, a
+    masthead — and their gaps below are non-monotonic in every absolute measure
+    (leave at 0.025, leave at 0.032, *merge* at 0.044, leave at 0.081), so no
+    threshold can order them. Measured to the page edge they separate with the
+    same ratio as everything else.
+
+    **Never negative.** "Above" tolerates the same 0.01 of overlap `_region_below`
+    does, because detector edges disagree by a few pixels on boxes that plainly
+    stack — so a box that slightly overlaps this heading would otherwise return a
+    negative distance, and a negative threshold rejects even a region the heading
+    sits directly on top of. No box in the corpus reaches that; it is clamped so
+    the rule cannot invert rather than because something inverted it.
+    """
+    box = found[heading]
+    above = [
+        other.bottom for index, other in enumerate(found)
+        if index != heading
+        and other.bottom <= box.top + 0.01
+        and min(other.right, box.right) > max(other.left, box.left)
+    ]
+    return max(0.0, box.top - max(above) if above else box.top)
 
 
 def _union(first: Detection, second: Detection) -> Detection:
@@ -335,6 +417,160 @@ def split_containers(kept: list[Detection], pool: list[Detection],
         else:
             split.append(parent)
     return split
+
+
+PAGE_LEVEL = frozenset({"form"})
+"""Detector classes that describe the sheet of paper rather than a region on it.
+
+`heron` reports `form` at a very low score over most of a document, and on
+`sample_css_0004` over **the whole of it** — `(0.001, 0.000, 0.998, 1.000)`. It
+is a true statement and a useless one: every region on the page is inside it, so
+`prefer_container` offered the chance would collapse the document to one Zone.
+
+Not a substitute for `CONTAINER_HEIGHT`, which catches the same shape wearing a
+different label — `picture` at 0.06, also spanning the full page. Each is worth
+one finding on top of the other; both are kept.
+"""
+
+CONTAINER_HEIGHT = 0.25
+"""How tall a sub-threshold container may be before it is not a Zone, as a
+fraction of page height.
+
+**The guard that keeps `invoice_0001` at zero**, which is the one condition spec
+0006 makes mandatory. Without it `prefer_container` adopts a `table` at 0.09
+spanning **0.444** of the page — both printed tables read as one region, undoing
+what `split_containers` exists to do — and a `picture` at 0.06 spanning **1.000**.
+
+Measured over every candidate the rule considers on all five fixtures:
+
+    adopt      0.039  0.048  0.092  0.124        <- correct, every one
+    refuse     0.444  1.000                      <- both wrong
+
+0.25 sits between them with **2.0x margin below and 1.8x above**, and it is a
+plateau rather than a point: every value from 0.15 to 0.35 gives an identical
+answer on all five fixtures. That is the widest margin any constant in this
+project rests on, and it is stated here rather than smoothed over.
+
+**It bounds the candidate, not the Zone.** `sample_table_0003`'s table is 0.83 of
+its page and is one Zone; nothing here forbids that. The bound says only that a
+region the detector was *unsure* about, spanning a quarter of the page, is not
+evidence enough to overrule boxes it was sure about.
+"""
+
+
+def _stacked(parts: list[Detection]) -> bool:
+    """Whether these boxes sit one above another rather than side by side.
+
+    **The signal that decides which way to regroup, and the only one that
+    worked.** Over every case in the corpus, boxes inside a container that are
+    stacked belong to one region printed as lines — a list, a quote over its
+    attribution, a footer block — while boxes that sit side by side are a *Band*
+    the detector drew one rectangle around. Class agreement separates none of
+    them: two of the five correct merges hold mixed classes.
+
+    Read as "no two of them are vertical neighbours", so a single box is stacked
+    trivially and the caller's two-box minimum is what makes that moot.
+    """
+    return not any(
+        min(first.bottom, second.bottom) > max(first.top, second.top)
+        and min(first.right, second.right) <= max(first.left, second.left)
+        for first in parts for second in parts if first is not second
+    )
+
+
+def _spans_two_things(box: Detection, mask: ImageArray,
+                      leading: float | None) -> bool:
+    """Whether this box holds two masses parted by far more white than its own
+    leading — `geometry_score`'s `doubles` test, asked before the fact.
+
+    That field is how the pre-registered gate detects over-merge after a run.
+    Asking the same question of a candidate *before* adopting it is the cheapest
+    way to not cause one, and it reuses the factor rather than choosing another.
+    """
+    from ..geometry_score import DOUBLE_GAP_FACTOR, _gaps_down, _pixel_rect
+
+    height, width = mask.shape[:2]
+    left, top, right, bottom = _pixel_rect(
+        BBox(box.left, box.top, box.right, box.bottom), width, height)
+    gaps = _gaps_down(mask[top:bottom, left:right])
+    if not gaps:
+        return False
+    own = statistics.median(gaps) if len(gaps) >= 2 else leading
+    return own is not None and max(gaps) > DOUBLE_GAP_FACTOR * own
+
+
+def prefer_container(kept: list[Detection], pool: list[Detection],
+                     mask: ImageArray, confidence: float) -> list[Detection]:
+    """Adopt a sub-threshold container over the stack of boxes it holds.
+
+    **The mirror of `split_containers`, and the other half of the same fact.**
+    That function re-opens a container the threshold kept; this one restores a
+    container the threshold *dropped*. Both read detections below the confidence
+    floor on purpose — inference runs once per page and confidence is a filter
+    over its result, so this costs arithmetic and no second forward pass.
+
+    The five over-splits left in the corpus all have their container already in
+    the pool, at 0.05 to 0.27 against a 0.40 threshold and IoU 0.55 to 0.97
+    against the reference. `outermost` never saw them: it runs on the boxes that
+    survived the threshold, so a container the detector was unsure about is gone
+    before the question of nesting is asked.
+
+    Every guard below is load-bearing — dropping either the class rule or the
+    `doubles` test costs a finding, and dropping `CONTAINER_HEIGHT` costs
+    `invoice_0001` its zero-mismatch Conversion.
+
+    **Runs after `attach_headings`**, which is not cosmetic: before it, a
+    candidate spanning a heading and its body re-does that merge with a
+    detector-drawn box instead of the union, and three of this rule's adoptions
+    were doing exactly that.
+    """
+    from ..geometry_score import _gaps_down, _pixel_rect
+
+    height, width = mask.shape[:2]
+    pooled = [
+        gap for box in kept
+        for gap in _gaps_down(mask[
+            _pixel_rect(BBox(box.left, box.top, box.right, box.bottom),
+                        width, height)[1]:
+            _pixel_rect(BBox(box.left, box.top, box.right, box.bottom),
+                        width, height)[3],
+            _pixel_rect(BBox(box.left, box.top, box.right, box.bottom),
+                        width, height)[0]:
+            _pixel_rect(BBox(box.left, box.top, box.right, box.bottom),
+                        width, height)[2]])
+    ]
+    leading = statistics.median(pooled) if pooled else None
+
+    claimed: set[int] = set()
+    adopted: list[Detection] = []
+    candidates = [d for d in pool
+                  if d.score < confidence and d.label not in PAGE_LEVEL
+                  and d.bottom - d.top <= CONTAINER_HEIGHT]
+    # Largest first, so a container that holds another container's boxes claims
+    # them before the smaller one can, and `claimed` settles the overlap.
+    for candidate in sorted(candidates, key=lambda d: -_area(d)):
+        inside = [index for index, box in enumerate(kept)
+                  if index not in claimed
+                  and _covered_by(box, candidate) >= CONTAINED]
+        if len(inside) < 2:
+            continue
+        parts = [kept[index] for index in inside]
+        if not _stacked(parts):
+            continue
+        # The parts must account for the candidate's ink, and the candidate must
+        # bring none of its own — the second test is what stops it reaching past
+        # them into a neighbour.
+        if _ink_share(mask, [candidate]) > 1.02 * _ink_share(mask, parts):
+            continue
+        if _ink_share(mask, parts) < SPLIT_INK * _ink_share(mask, [candidate]):
+            continue
+        if _spans_two_things(candidate, mask, leading):
+            continue
+        claimed.update(inside)
+        adopted.append(candidate)
+
+    return adopted + [box for index, box in enumerate(kept)
+                      if index not in claimed]
 
 
 def attach_trailing_rows(found: list[Detection]) -> list[Detection]:
@@ -660,9 +896,13 @@ class LayoutEngine:
     zero without moving coverage.
     """
 
-    def __init__(self, detector: Detector, confidence: float | None = None) -> None:
+    def __init__(self, detector: Detector, confidence: float | None = None,
+                 *, heading_rule: str = "absolute",
+                 prefer_container: bool = False) -> None:
         self.detector = detector
         self.confidence = detector.confidence if confidence is None else confidence
+        self.heading_rule = heading_rule
+        self.prefer_container = prefer_container
         self.name = f"detector:{detector.name}"
         self.model = detector.name
 
@@ -681,7 +921,10 @@ class LayoutEngine:
         found = outermost([d for d in pool if d.score >= self.confidence])
         found = split_containers(found, pool, content_ink(image))
         found = attach_trailing_rows(found)
-        found = attach_headings(found)
+        found = attach_headings(found, relative=self.heading_rule == "relative")
+        if self.prefer_container:
+            found = prefer_container(found, pool, content_ink(image),
+                                     self.confidence)
         found.sort(key=lambda d: (round(d.top, 3), d.left))
 
         boxes = snap_to_ink(image, [BBox(d.left, d.top, d.right, d.bottom)
@@ -723,11 +966,14 @@ def _role(label: str, band: int) -> Role:
     return Role.BODY
 
 
-def from_name(name: str, confidence: float | None = None) -> LayoutEngine:
+def from_name(name: str, confidence: float | None = None, *,
+              heading_rule: str = "absolute",
+              prefer_container: bool = False) -> LayoutEngine:
     """The named detector, or a message naming the ones that exist."""
     if name not in DETECTORS:
         raise DetectorUnavailable(
             f"unknown layout detector {name!r}; "
             f"known: {', '.join(sorted(DETECTORS))}"
         )
-    return LayoutEngine(DETECTORS[name], confidence)
+    return LayoutEngine(DETECTORS[name], confidence, heading_rule=heading_rule,
+                        prefer_container=prefer_container)

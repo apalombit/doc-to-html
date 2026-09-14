@@ -1,15 +1,9 @@
 {
   "blocks": [
     {
-      "kind": "quote",
+      "kind": "paragraph",
       "lines": [
-        "HTML provides for a number of elements that allow for finer-grained semantics in HTML documents."
-      ]
-    },
-    {
-      "kind": "attribution",
-      "lines": [
-        "— W3C HTML5.2 specification"
+        "Tags: html, web, standards"
       ]
     }
   ]

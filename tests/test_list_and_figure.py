@@ -69,10 +69,15 @@ class TestLists:
 
     def test_a_navigation_row_is_a_list_by_structure(self, article: Document) -> None:
         """Structure decides the IR; the header Role is what makes it render as a
-        row. Modelling it as prose would lose that it is a set of peers."""
-        nav = article.zones[1]
+        row. Modelling it as prose would lose that it is a set of peers.
+
+        It shares a Zone with the masthead `<h1>` that names it, which is the
+        `<header>` read the way a card and a panel are read — so the heading is
+        this Zone's Title and the four links are its whole content."""
+        nav = article.zones[0]
         assert nav.kind is Kind.LIST
         assert nav.role is Role.HEADER
+        assert nav.title == "The Weekly Digest"
         assert len(nav.blocks) == 4
         assert all(block.kind == "item" for block in nav.blocks)
 

@@ -293,6 +293,19 @@ def engines_for(model: str, settings: Settings,
     mean the flag could be measured by a probe and never by a Conversion, which
     is the thing it exists to make possible. The other three roles still share
     `model`, and `--models` still means what it says about them.
+
+    **Every detector setting has to be forwarded, not just the name**, and this
+    is written down because it has already gone wrong once. `DTH_HEADING_RULE`
+    was added, reached `Settings`, was recorded into `dth_env.txt`, and never
+    reached the detector — because this function assembled its own arguments to
+    `from_name` and simply did not know about the new one. The run announced
+    itself as the arm it was not, and its answers came back byte-identical to the
+    baseline it was supposed to differ from, which reads as "the change does
+    nothing" rather than "the change did not run".
+
+    So the settings travel as one object. A detector setting added to
+    `Settings` and forwarded by `orchestrator._layout_engine` is now carried here
+    by construction; the two paths cannot drift apart one argument at a time.
     """
     def engine() -> OllamaEngine:
         return OllamaEngine.from_settings(settings, model, transport=transport)
@@ -300,7 +313,9 @@ def engines_for(model: str, settings: Settings,
     layout: LayoutEngine = engine()
     if settings.layout_detector:
         layout = from_name(settings.layout_detector,
-                           settings.detector_confidence or None)
+                           settings.detector_confidence or None,
+                           heading_rule=settings.heading_rule,
+                           prefer_container=settings.prefer_container)
 
     return EngineSet(layout=layout, classify=engine(), extract=engine(),
                      audit=engine())

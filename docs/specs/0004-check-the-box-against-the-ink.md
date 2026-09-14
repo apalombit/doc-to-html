@@ -1,10 +1,18 @@
 # Check the box against the ink
 
-**Status: built, and the premise below is refuted.** Issue #20; #21-#27 are all
-closed. Read this header before the spec — the body is left as written, because
-what it argued and how it turned out are both worth having, but three of its
-load-bearing claims are false and one of its conclusions inverts once the
-measurement is done properly.
+**Status: closed — built, and the premise below is refuted.** Issue #20 is
+closed, as are its children #21-#27. Read this header before the spec — the body
+is left as written, because what it argued and how it turned out are both worth
+having, but three of its load-bearing claims are false and one of its conclusions
+inverts once the measurement is done properly.
+
+**Treat runs before 50 as superseded and do not cite them as evidence.** Every
+run this spec argues from — 26-28, 32, 42 — is below that line.
+
+The problem it ended on — "geometry is broken on four of the five fixtures", a
+bigger problem than anything this spec set out to address — is measured in
+`0005-nothing-is-missing.md`, and the answer is that geometry is no longer where
+the errors are: `covered` 1.00 and `splits` 0 on all five.
 
 **1. The crops were never the problem.** Run 42
 (`tools/classify_truth_probe.py`) handed the classifier the exact Zone

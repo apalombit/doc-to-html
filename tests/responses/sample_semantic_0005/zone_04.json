@@ -1,9 +1,21 @@
 {
   "blocks": [
     {
-      "kind": "paragraph",
+      "kind": "item",
       "lines": [
-        "Semantic tags improve accessibility, SEO, and code clarity."
+        "Screen readers can navigate the document structure"
+      ]
+    },
+    {
+      "kind": "item",
+      "lines": [
+        "Search engines understand content hierarchy"
+      ]
+    },
+    {
+      "kind": "item",
+      "lines": [
+        "CSS and JavaScript can target meaningful regions"
       ]
     }
   ]

@@ -101,6 +101,53 @@ class TestNumbers:
             resolve(DTH_NUM_CTX="lots")
 
 
+class TestTheHeadingRule:
+    """`DTH_HEADING_RULE` chooses between two segmentations of a page, so an
+    unrecognised value has to be an error rather than a fallback: a run launched
+    as one arm and silently measuring the other is the exact failure
+    `debug/runs/<label>/dth_env.txt` exists to make impossible."""
+
+    def test_it_ships_relative(self) -> None:
+        assert resolve().heading_rule == config.DEFAULT_HEADING_RULE == "relative"
+
+    def test_the_absolute_rule_is_still_reachable(self) -> None:
+        """The rule it replaced stays selectable, so the pair can be measured
+        against each other again without reverting a default."""
+        assert resolve(DTH_HEADING_RULE="absolute").heading_rule == "absolute"
+
+    def test_case_and_spacing_do_not_matter(self) -> None:
+        assert resolve(DTH_HEADING_RULE=" Absolute ").heading_rule == "absolute"
+
+    def test_an_unknown_rule_names_the_variable_and_the_alternatives(self) -> None:
+        with pytest.raises(config.ConfigError, match="DTH_HEADING_RULE"):
+            resolve(DTH_HEADING_RULE="ratio")
+
+    def test_the_rule_reaches_the_layout_engine(self) -> None:
+        """The setting is worth nothing if it stops at `Settings`."""
+        from doc_to_html.orchestrator import _layout_engine
+
+        assert _layout_engine(resolve()).heading_rule == "relative"
+        assert _layout_engine(
+            resolve(DTH_HEADING_RULE="absolute")).heading_rule == "absolute"
+
+
+class TestPreferringAContainer:
+    """Adopting a sub-threshold container over the stack of boxes it holds.
+    Shipped since run 81, alongside the relative heading rule — the two tie on
+    the finding count and differ in the documents, which only reading them
+    showed."""
+
+    def test_it_ships_on(self) -> None:
+        assert resolve().prefer_container is config.DEFAULT_PREFER_CONTAINER is True
+
+    def test_it_reaches_the_layout_engine(self) -> None:
+        from doc_to_html.orchestrator import _layout_engine
+
+        assert _layout_engine(resolve()).prefer_container is True
+        assert _layout_engine(
+            resolve(DTH_PREFER_CONTAINER="0")).prefer_container is False
+
+
 class TestReporting:
     def test_the_report_shows_where_each_value_came_from(self) -> None:
         lines = config.describe(resolve(DTH_LAYOUT_MODEL="qwen3-vl:2b"))
@@ -123,7 +170,11 @@ class TestReporting:
 
 class TestEngineSet:
     def test_engines_are_built_from_resolved_configuration(self) -> None:
+        # The layout role reaches a *model* only on the vision path, which is no
+        # longer the default. This asks about model routing, so it asks on the
+        # path where layout has a model at all.
         settings = resolve(
+            DTH_LAYOUT_DETECTOR="none",
             DTH_LAYOUT_MODEL="layout-model",
             DTH_CLASSIFY_MODEL="classify-model",
             DTH_EXTRACT_MODEL="extract-model",
@@ -150,7 +201,7 @@ class TestEngineSet:
     def test_the_classifier_can_still_be_pointed_somewhere_else(self) -> None:
         """The point of the role existing. Sharing a default must not quietly
         become sharing a value."""
-        settings = resolve(DTH_CLASSIFY_MODEL="a-classifier")
+        settings = resolve(DTH_LAYOUT_DETECTOR="none", DTH_CLASSIFY_MODEL="a-classifier")
         engines = default_engines(settings)
         assert engines.classify.model == "a-classifier"
         assert engines.layout.model == config.DEFAULT_LAYOUT_MODEL
@@ -174,7 +225,9 @@ class TestEngineSet:
         assert "headers" not in engine.client_kwargs()
 
     def test_inference_settings_reach_the_engine(self) -> None:
-        engine = default_engines(resolve(DTH_NUM_CTX="2048", DTH_TIMEOUT_S="9")).layout
+        engine = default_engines(resolve(
+            DTH_LAYOUT_DETECTOR="none", DTH_NUM_CTX="2048", DTH_TIMEOUT_S="9",
+        )).layout
         assert isinstance(engine, OllamaEngine)
         assert engine.num_ctx == 2048
         assert engine.timeout_s == 9.0

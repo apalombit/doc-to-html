@@ -5,9 +5,15 @@ example/invoice.html. That source is layout-table soup: the header is a table,
 the address block is a table, nested three deep. A tree derived from that markup
 would have nothing to do with what a reader sees, which is what the IR describes.
 
-Bounding boxes are eyeballed to roughly the right place. They matter for
-Correction anchoring and Zone geometry, not for text comparison, so approximate
-is fine here and exact would be false precision.
+**Bounding boxes here are not eyeballed, and this is the only fixture that can
+say so.** `tools/fixture_geometry.py` reads them off the browser that renders
+`example/invoice.html`, as the union of the client rects of every text node and
+image in the Zone — the ink, not the elements' border boxes — and checks that
+the re-render still matches `example/invoice.png` pixel for pixel before it
+believes a single coordinate. The other four fixtures cannot be re-rendered
+(different fonts, and Bootstrap over the network), so they reach the same
+convention by snapping onto their own ink instead; `--snap` refuses this one,
+because an approximation would be a downgrade here.
 """
 
 from __future__ import annotations

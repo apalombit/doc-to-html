@@ -94,6 +94,182 @@ def mean_best_iou(got: Sequence[BBox], want: Sequence[BBox]) -> float:
     return statistics.fmean(best_match(box, want)[1] for box in got)
 
 
+MATCH_IOU = 0.50
+"""How well two rectangles must agree before they are the same region.
+
+The same value `tools/inspect_run.py` has printed `matches want N` at since the
+contact sheet existed, moved here rather than re-chosen, so a verdict on the
+sheet and a finding in `acceptance.compare` cannot disagree about which box
+stands for which.
+
+Loose on purpose, and the reason has changed while the value has not. The
+reference rectangles used to be typed by hand at 0.605 to 0.854 against their
+own ink, and a tight threshold would have been measuring the fixtures. They are
+now derived — read off the browser for `invoice_0001`, snapped onto their own
+ink for the other four — so the slop is smaller, but it is not zero: snapping is
+an approximation of the browser truth, and where both exist it scores **0.916**
+against it. A threshold tight enough to be a statement about accuracy would
+still be measuring the derivation. This is asked one question only: *is this the
+same region.*
+"""
+
+FRAGMENT_COVERAGE = 0.80
+"""How much of a box must lie inside a reference before it is a piece of it.
+
+The asymmetric test, and the reason both are kept. A box with low IoU and high
+coverage is half of a Zone the layout cut in two; one with low IoU and low
+coverage is a region nothing on the page accounts for. Ranked by IoU alone the
+two look identical — which is how spec 0001 came to record a Zone as "invented"
+when it held the last line item and the total.
+
+Read in both directions. `covered_by(got, want)` asks whether a produced box is a
+*fragment*; `covered_by(want, got)` asks whether it has *swallowed* a reference,
+which is the same error the other way up.
+"""
+
+
+@dataclass(frozen=True)
+class Correspondence:
+    """Which produced box stands for which reference box, and how it fails to.
+
+    Built so a caller can report each geometry fault **once**. Comparing two
+    documents by position — `zip(expected.zones, actual.zones)` — reports one
+    extra region as a wrong Kind, a wrong Role and a wrong Band on every Zone
+    after it, and there is no way to read the count back to the single cause. A
+    correspondence says the cause directly and leaves the fields to be compared
+    only where there is a pair to compare them on.
+
+    Every index is a position in the list it names: keys of `matched` and
+    `fragments`, and members of `spurious`, index the produced boxes; their
+    values, and `missing`, index the references.
+    """
+
+    matched: dict[int, int]
+    """got -> want, one to one, agreeing at `MATCH_IOU` or better."""
+
+    fragments: dict[int, int]
+    """got -> the want it is a piece of. A region cut into parts. See `split`."""
+
+    spurious: tuple[int, ...]
+    """Produced boxes no reference accounts for, in any way."""
+
+    missing: tuple[int, ...]
+    """References nothing matched, held no fragment of, and did not swallow."""
+
+    merged: dict[int, tuple[int, ...]]
+    """got -> the two or more references it covers. A region under-segmented."""
+
+    @property
+    def exact(self) -> bool:
+        """Whether every box pairs off, so grouping can be compared at all.
+
+        Band structure is a statement about *which Zones* share a row, so it is
+        meaningless while the two documents disagree about what the Zones are.
+        A caller that compares Bands anyway reports the geometry fault a second
+        time, wearing different words.
+        """
+        return not (self.fragments or self.spurious or self.missing or self.merged)
+
+    def split(self) -> dict[int, tuple[int, ...]]:
+        """want -> every produced box claiming it, for references claimed twice.
+
+        A reference claimed once is **not** here however loosely that one box
+        fits, because a single box over a single region is the right answer about
+        the structure whatever its edges do. Only a second claimant makes it a
+        split. `align` promotes the lone-claimant case to `matched` for exactly
+        that reason; this handles the remaining shape, where one box matched
+        outright and another lies inside the same reference.
+        """
+        pieces: dict[int, list[int]] = {}
+        for part, whole in sorted(self.fragments.items()):
+            pieces.setdefault(whole, []).append(part)
+        for part, whole in sorted(self.matched.items()):
+            if whole in pieces:
+                pieces[whole].insert(0, part)
+        return {whole: tuple(parts) for whole, parts in sorted(pieces.items())
+                if len(parts) > 1}
+
+
+def align(got: Sequence[BBox], want: Sequence[BBox]) -> Correspondence:
+    """Pair produced boxes with the references they stand for, by geometry.
+
+    Three passes, in an order that matters. Matches are taken first and greedily
+    by IoU, so of two boxes over one reference the better one claims it and the
+    other is left to be judged as a fragment — the reverse order lets a poor box
+    take a reference its neighbour fits, and reports both errors in the wrong
+    place. Fragments are then whatever a reference contains but did not match.
+    Merges are read over *every* produced box rather than the leftovers, because
+    a box can legitimately match one reference and still have swallowed its
+    neighbour, which is exactly `invoice_0002`'s panels.
+    """
+    scored = sorted(
+        (
+            (iou(produced, reference), first, second)
+            for first, produced in enumerate(got)
+            for second, reference in enumerate(want)
+        ),
+        key=lambda scoring: (-scoring[0], scoring[1], scoring[2]),
+    )
+    matched: dict[int, int] = {}
+    claimed: set[int] = set()
+    for score, first, second in scored:
+        if score < MATCH_IOU:
+            break
+        if first in matched or second in claimed:
+            continue
+        matched[first] = second
+        claimed.add(second)
+
+    fragments: dict[int, int] = {}
+    spurious: list[int] = []
+    for first, produced in enumerate(got):
+        if first in matched:
+            continue
+        shares = [
+            (covered_by(produced, reference), -second)
+            for second, reference in enumerate(want)
+        ]
+        share, negated = max(shares, default=(0.0, 0))
+        if share >= FRAGMENT_COVERAGE:
+            fragments[first] = -negated
+        else:
+            spurious.append(first)
+
+    # A reference with exactly one claimant is matched, however loosely that box
+    # fits it. The alternative reports every tight box inside a loose reference
+    # as a structural fault, and a reference is a derivation rather than a
+    # measurement — so that would be scoring how it was derived. Two claimants
+    # is what makes a split; `Correspondence.split` says so too.
+    lone = [
+        (part, whole) for part, whole in sorted(fragments.items())
+        if whole not in claimed
+        and sum(1 for other in fragments.values() if other == whole) == 1
+    ]
+    for part, whole in lone:
+        matched[part] = fragments.pop(part)
+        claimed.add(whole)
+
+    merged = {}
+    for first, produced in enumerate(got):
+        swallowed = tuple(
+            second for second, reference in enumerate(want)
+            if covered_by(reference, produced) >= FRAGMENT_COVERAGE
+        )
+        if len(swallowed) > 1:
+            merged[first] = swallowed
+
+    accounted = claimed | set(fragments.values())
+    accounted.update(second for group in merged.values() for second in group)
+    return Correspondence(
+        matched=matched,
+        fragments=fragments,
+        spurious=tuple(spurious),
+        missing=tuple(second for second in range(len(want))
+                      if second not in accounted),
+        merged=merged,
+    )
+
+
 DOUBLE_GAP_FACTOR = 3.0
 """How many times a box's own median line gap a band of whitespace must exceed
 before the box is holding two separate things rather than one.
@@ -270,9 +446,12 @@ def score_geometry(got: Sequence[BBox], want: Sequence[BBox], image: ImageArray,
                    *, valid: bool | None = None) -> GeometryScore:
     """Score one method's boxes against the reference **and against the ink**.
 
-    The reference rectangles were typed by hand, so the three ink-aware fields
-    are the only ones here that do not inherit the fixture's slop: `covered`,
-    `splits` and `doubles` ask the page, not the person who eyeballed it.
+    A reference rectangle is derived rather than measured, so the three
+    ink-aware fields are still the only ones here that inherit none of that:
+    `covered`, `splits` and `doubles` ask the page itself. They are also how the
+    derivation was checked — every fixture's own references now score `covered`
+    1.00 and `splits` 0 against their Source Image, which the hand-typed ones
+    did not.
     """
     mask = content_ink(image)
     return GeometryScore(
@@ -307,10 +486,12 @@ class ExpectedZone:
 def expected_zones(path: Path) -> list[ExpectedZone]:
     """Every Zone of an expected IR, in the order it wrote them.
 
-    The rectangles in every fixture were typed by hand — both builders say they
-    are "eyeballed to roughly the right place" — so this is a ruler with unknown
-    slop, and spec 0004's Stage 0 exists to measure how much. Nothing here
-    pretends otherwise; it only reads what is written.
+    The rectangles are no longer typed by hand. `tools/fixture_geometry.py`
+    derives them — off the browser for `invoice_0001`, by snapping onto the
+    Source Image's own ink for the other four — so all five now mean the same
+    thing, *where the ink is*, rather than the mixture of ink and drawn
+    containers they used to be. The slop is bounded rather than unknown: see
+    `MATCH_IOU`. Nothing here does any of that; it only reads what is written.
     """
     data: dict[str, Any] = json.loads(path.read_text())
     found = []

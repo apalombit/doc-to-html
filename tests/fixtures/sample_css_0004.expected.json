@@ -17,10 +17,10 @@
       "band": 0,
       "column": 0,
       "bbox": {
-        "left": 0.043,
-        "top": 0.062,
-        "right": 0.313,
-        "bottom": 0.14
+        "left": 0.0456,
+        "top": 0.073,
+        "right": 0.3118,
+        "bottom": 0.1311
       },
       "title": null,
       "rows": [],
@@ -53,10 +53,10 @@
       "band": 0,
       "column": 1,
       "bbox": {
-        "left": 0.323,
-        "top": 0.082,
-        "right": 0.376,
-        "bottom": 0.132
+        "left": 0.3219,
+        "top": 0.0861,
+        "right": 0.3777,
+        "bottom": 0.1348
       },
       "title": null,
       "rows": [],
@@ -89,10 +89,10 @@
       "band": 1,
       "column": 0,
       "bbox": {
-        "left": 0.043,
-        "top": 0.208,
-        "right": 0.905,
-        "bottom": 0.245
+        "left": 0.0431,
+        "top": 0.2097,
+        "right": 0.9024,
+        "bottom": 0.2416
       },
       "title": null,
       "rows": [],
@@ -125,10 +125,10 @@
       "band": 2,
       "column": 0,
       "bbox": {
-        "left": 0.043,
-        "top": 0.283,
-        "right": 0.957,
-        "bottom": 0.588
+        "left": 0.071,
+        "top": 0.3895,
+        "right": 0.7997,
+        "bottom": 0.5225
       },
       "title": "Card heading",
       "rows": [],
@@ -161,10 +161,10 @@
       "band": 3,
       "column": 0,
       "bbox": {
-        "left": 0.043,
-        "top": 0.62,
-        "right": 0.957,
-        "bottom": 0.93
+        "left": 0.071,
+        "top": 0.7322,
+        "right": 0.6324,
+        "bottom": 0.8633
       },
       "title": "Another card",
       "rows": [],

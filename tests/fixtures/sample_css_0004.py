@@ -51,7 +51,7 @@ def build() -> Document:
                 role=Role.HEADER,
                 band=0,
                 column=0,
-                bbox=BBox(0.043, 0.062, 0.313, 0.140),
+                bbox=BBox(0.0456, 0.0730, 0.3118, 0.1311),
                 blocks=[Block(kind="heading", lines=[cell("Sample HTML")])],
                 complete=True,
             ),
@@ -60,7 +60,7 @@ def build() -> Document:
                 role=Role.HEADER,
                 band=0,
                 column=1,
-                bbox=BBox(0.323, 0.082, 0.376, 0.132),
+                bbox=BBox(0.3219, 0.0861, 0.3777, 0.1348),
                 graphic_kind="badge",
                 blocks=[Block(kind="caption", lines=[cell("CSS")])],
                 complete=True,
@@ -70,7 +70,7 @@ def build() -> Document:
                 role=Role.BODY,
                 band=1,
                 column=0,
-                bbox=BBox(0.043, 0.208, 0.905, 0.245),
+                bbox=BBox(0.0431, 0.2097, 0.9024, 0.2416),
                 blocks=[
                     Block(
                         kind="paragraph",
@@ -89,7 +89,7 @@ def build() -> Document:
                 role=Role.BODY,
                 band=2,
                 column=0,
-                bbox=BBox(0.043, 0.283, 0.957, 0.588),
+                bbox=BBox(0.0710, 0.3895, 0.7997, 0.5225),
                 title="Card heading",
                 blocks=[
                     Block(
@@ -109,7 +109,7 @@ def build() -> Document:
                 role=Role.BODY,
                 band=3,
                 column=0,
-                bbox=BBox(0.043, 0.620, 0.957, 0.930),
+                bbox=BBox(0.0710, 0.7322, 0.6324, 0.8633),
                 title="Another card",
                 blocks=[
                     Block(

@@ -93,7 +93,7 @@ def build() -> Document:
                 role=Role.HEADER,
                 band=0,
                 column=0,
-                bbox=BBox(0.026, 0.025, 0.310, 0.075),
+                bbox=BBox(0.0292, 0.0290, 0.3052, 0.0725),
                 blocks=[Block(kind="heading", lines=[cell("Country statistics")])],
                 complete=True,
             ),
@@ -102,7 +102,7 @@ def build() -> Document:
                 role=Role.BODY,
                 band=1,
                 column=0,
-                bbox=BBox(0.020, 0.110, 0.980, 0.970),
+                bbox=BBox(0.0375, 0.1188, 0.8917, 0.9522),
                 title="Population and GDP (millions of USD)",
                 rows=[
                     Row(role=RowRole.HEADER, cells=[cell(text) for text in HEADER]),

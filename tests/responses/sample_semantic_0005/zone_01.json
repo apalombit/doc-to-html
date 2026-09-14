@@ -1,27 +1,15 @@
 {
   "blocks": [
     {
-      "kind": "item",
+      "kind": "heading",
       "lines": [
-        "Home"
+        "Why semantic HTML matters"
       ]
     },
     {
-      "kind": "item",
+      "kind": "paragraph",
       "lines": [
-        "Archive"
-      ]
-    },
-    {
-      "kind": "item",
-      "lines": [
-        "About"
-      ]
-    },
-    {
-      "kind": "item",
-      "lines": [
-        "Contact"
+        "May 9, 2026 · by Jane Author"
       ]
     }
   ]

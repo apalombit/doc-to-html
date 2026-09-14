@@ -24,8 +24,11 @@ def invoice2() -> Document:
 
 class TestStructure:
     def test_band_layout(self, invoice2: Document) -> None:
+        """Five Bands, not six. The `<h1>` and the NO/Date line beneath it are
+        one Zone in Band 0 — the same reading every other titled region in this
+        corpus gets — so the Band that held the numbers alone is gone."""
         bands = invoice2.bands()
-        assert [len(band) for band in bands] == [3, 1, 2, 1, 2, 1]
+        assert [len(band) for band in bands] == [3, 2, 1, 2, 1]
 
     def test_kinds_present(self, invoice2: Document) -> None:
         kinds = {zone.kind for zone in invoice2.zones}
@@ -33,7 +36,12 @@ class TestStructure:
         assert Kind.TABLE not in kinds
 
     def test_dense_pairs_are_captured(self, invoice2: Document) -> None:
-        panels = [z for z in invoice2.zones if z.kind is Kind.PAIRS and z.title]
+        """The two boxed panels, which is what "dense" means here. Selected by
+        Role as well as Kind, because the document title is now a titled Pairs
+        Zone too — two Pairs on one line, in the header, which is a different
+        thing from a seven-row panel."""
+        panels = [z for z in invoice2.zones
+                  if z.kind is Kind.PAIRS and z.title and z.role is Role.BODY]
         assert [len(z.pairs) for z in panels] == [7, 6]
 
     def test_footer_role_is_assigned(self, invoice2: Document) -> None:

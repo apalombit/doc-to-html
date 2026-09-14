@@ -344,37 +344,49 @@ See `engines.ollama.with_regions`.
 `preprocess.REGION_GAP` for what the ruler is calibrated against, which is two
 fixtures and not the other three."""
 
-DEFAULT_LAYOUT_DETECTOR = ""
+DEFAULT_LAYOUT_DETECTOR = "heron"
 """Which trained detector finds the Zones, or empty for the vision model.
 
-**Empty**, so an unset environment builds the Engine set exactly as it was and a
-run is byte-identical to one from before this existed. `heron` and
-`doclayout_yolo` are the names; see `engines.detector`.
+**`heron`**, because the vision model cannot do this job and the two runs that
+say so were taken against each other, one flag apart, on the same machine and the
+same day. `doclayout_yolo` is the other name; see `engines.detector`.
 
-**What it replaces.** The VLM layout pass is the least stable step in the
-pipeline, and structurally so. At `DTH_LAYOUT_LONG_EDGE=384`, Qwen3-VL resolves
+**The measurement this default rests on**, all five fixtures, `qwen3-vl:4b`:
+
+| fixture | VLM (`""`) | `heron` |
+|---|---|---|
+| `invoice_0001` | 4 off | **match** |
+| `invoice_0002` | **MappingError** | 18 off |
+| `sample_css_0004` | 9 off | 10 off |
+| `sample_semantic_0005` | **MappingError** | 14 off |
+| `sample_table_0003` | **MappingError** | 2 off |
+| | 0 matched, 3 never convert | 44 total, 1 match, all five convert |
+
+**The VLM path crashes on three of five fixtures**, all three in Band 0 — two
+Zones sharing a column, or two Zones that do not overlap vertically being called
+side by side. It also loses `invoice_0001`'s column-sum Probe. There is no
+reading of that table on which the vision model is the better default.
+
+**Why it fails, structurally.** At `DTH_LAYOUT_LONG_EDGE=384` Qwen3-VL resolves
 the whole page into roughly 12x8 visual tokens and then decodes box coordinates
-as text, with no localization objective in the loop. Three prompt instructions
-have been measured ignored, resolution changed nothing across 2.25x the linear
-pixels, and a measured ceiling was read as a target.
+as text, with no localization objective anywhere in the loop. Three prompt
+instructions have been measured ignored and resolution changed nothing across
+2.25x the linear pixels. `engines/detector.py` has the full account.
 
-**What it is measured to do.** `debug/runs/65-detector-bakeoff`, both candidates,
-five fixtures, nine confidences, scored on the shared ruler. At one threshold
-across the corpus: **covered 1.00 and splits 0 on all five**, against the VLM's
-worst-covered 0.42 and 173 splits. `invoice_0001` comes back as exactly its six
-regions with Bands matching the expected IR, and `invoice_0002` — which has never
-converted — gets a layout that describes the page. Inference is 0.6s on the CPU,
-where the VLM pass costs 187s and once cost 2498s.
+**On the detector path `covered` is 1.00 and `splits` is 0 on all five**, so
+nothing is ever lost — every remaining mismatch is content that arrived and was
+mis-grouped or mis-named. Inference is well under a second on the CPU, and this
+flag removes the layout model call entirely.
 
-**What is not measured: a live Conversion**, which is what this flag exists to
-make possible. Until one completes, the evidence is offline only.
+**What it over-counts, and why that is the recoverable direction.** It returns
+more Zones than the reference on the two dense fixtures, each one a heading box
+sitting above its own content or a run of list items belonging to one list. With
+coverage at 1.00 nothing is lost, only mis-grouped: a Zone too many renders as
+two blocks, where a Zone missing loses content for good. `doubles` is the field
+that catches the opposite error, and it reads 3 on `invoice_0002`.
 
-**What it over-counts, and why that is the recoverable direction.** 14 Zones
-against a true 10 on `invoice_0002`, 17 against 9 on `sample_semantic_0005` —
-every one of them a heading box sitting above its own content, or a run of list
-items that belong to one list. With coverage at 1.00 and splits at 0 nothing is
-lost, only mis-grouped: a Zone too many renders as two blocks, where a Zone
-missing loses content for good."""
+**This flag no longer reads `DTH_LAYOUT_LONG_EDGE`.** The detector never sees it.
+That setting now applies only when this one is set back to `""`."""
 
 DEFAULT_DETECTOR_CONFIDENCE = 0.0
 """Confidence floor for the layout detector, or 0 for the detector's own.
@@ -383,6 +395,72 @@ Zero rather than a number, because the right threshold is a property of the
 model and not of the pipeline: `heron` wants 0.40 and `doclayout_yolo` 0.15, and
 each is recorded on its own class with what was measured at it. This exists so a
 sweep does not need a code edit."""
+
+DEFAULT_HEADING_RULE = "relative"
+"""How the detector decides a heading belongs to the region under it.
+
+`absolute` is `engines.detector.HEADING_GAP`, a fitted fraction of page height.
+`relative` is `HEADING_GAP_RATIO` — the gap below the heading against the gap
+above it — bounded by `HEADING_GAP_MAX`.
+
+**Ships `relative` since run 81**, having been measured live first — run 78
+against 76, then as part of the shipped pair in 81. `absolute` remains reachable
+and is a strictly worse rule: re-derived pre-snap against the fixtures' own Zone
+contents it is wrong on 4 of the corpus's 14 headings, where `relative` is wrong
+on 2.
+
+**What the offline evidence says**, which is why the flag exists at all rather
+than the constant simply being replaced. Geometry is deterministic, so this is a
+prediction and not a result — findings counted the way `acceptance.compare`
+counts them, against the reference rectangles as they now stand:
+
+| fixture | `absolute` | `relative` |
+|---|---|---|
+| `invoice_0001` | 0 | 0 |
+| `invoice_0002` | 5 | 5 |
+| `sample_table_0003` | 0 | 0 |
+| `sample_css_0004` | 4 | **2** |
+| `sample_semantic_0005` | 7 | 7 |
+
+`covered` stays 1.00, `splits` 0 and `doubles` unchanged on all five either way.
+The whole of the difference is `sample_css_0004`'s two cards ceasing to be split
+off their own headings. **Expect its total not to fall by two**: those two Zones
+become comparable for the first time, and no pass writes `zone.title` on the
+shipped path, so the finding moves from geometry to Title rather than
+disappearing. That is the point — a Title finding is one `DTH_CAPTION_PASS` can
+act on, and a split region is not."""
+
+DEFAULT_PREFER_CONTAINER = True
+"""Whether to adopt a sub-threshold container over the stack of boxes it holds.
+
+**On since run 81**, measured live one flag apart first — run 80 against 79 took
+the corpus from 23 findings to 21 and geometry from 11 to 6, with every gate
+holding and **ten fewer model calls**.
+
+**Why it ships alongside `DTH_HEADING_RULE=relative` rather than instead of it.**
+The two tie on the count — 6 geometry findings with either alone and with both —
+but not in the output: `sample_css_0004` keeps its first card split under this
+rule alone and is whole with both, the zone-count finding simply standing in for
+the split finding. Equal totals were not equal answers, and only reading the
+documents showed it.
+
+**What it is for.** Five of the nine geometry findings left on the corpus are
+over-splits whose right container is already in the detector's pool, scoring 0.05
+to 0.27 against a 0.40 threshold — so `outermost` never saw it. See
+`engines.detector.prefer_container`.
+
+Derived offline against run 79's references, with `DTH_HEADING_RULE=relative`:
+
+| fixture | off | on |
+|---|---|---|
+| `invoice_0001` | 0 | 0 |
+| `invoice_0002` | 2 | 2 |
+| `sample_table_0003` | 0 | 0 |
+| `sample_css_0004` | 2 | 2 |
+| `sample_semantic_0005` | 5 | **2** |
+| | **9** | **6** |
+
+`covered` 1.00, `splits` 0 and `doubles` unchanged on all five either way."""
 
 DOTENV = Path(".env")
 """Looked for in the working directory. Absent is the normal case, not an error."""
@@ -436,6 +514,8 @@ class Settings:
     derive_bands: bool = DEFAULT_DERIVE_BANDS
     layout_detector: str = DEFAULT_LAYOUT_DETECTOR
     detector_confidence: float = DEFAULT_DETECTOR_CONFIDENCE
+    heading_rule: str = DEFAULT_HEADING_RULE
+    prefer_container: bool = DEFAULT_PREFER_CONTAINER
 
     origins: dict[str, Setting] = field(default_factory=dict)
     """Variable name -> what resolved and from where. Declaration order."""
@@ -495,6 +575,28 @@ def _flag(setting: Setting) -> bool:
     )
 
 
+HEADING_RULES = ("absolute", "relative")
+"""The two values `DTH_HEADING_RULE` accepts. See `DEFAULT_HEADING_RULE`."""
+
+
+def _heading_rule(setting: Setting) -> str:
+    """Parse the heading rule, naming the alternatives when it will not.
+
+    Named values and nothing else, following `_flag`. This one earns the strict
+    reading twice over: it chooses between two segmentations of the page, and a
+    typo that fell back to the default would produce a run that looks like the
+    arm it was launched as and measures the arm it was not — which is the single
+    failure mode `debug/runs/<label>/dth_env.txt` exists to prevent.
+    """
+    value = setting.value.strip().lower()
+    if value in HEADING_RULES:
+        return value
+    raise ConfigError(
+        f"{setting.name}={setting.value!r} from {setting.source} is not one of "
+        f"{', '.join(HEADING_RULES)}"
+    )
+
+
 def load(
     env: Mapping[str, str] | None = None,
     *,
@@ -540,6 +642,8 @@ def load(
             resolve("DTH_DERIVE_BANDS", DEFAULT_DERIVE_BANDS),
             resolve("DTH_LAYOUT_DETECTOR", DEFAULT_LAYOUT_DETECTOR),
             resolve("DTH_DETECTOR_CONFIDENCE", DEFAULT_DETECTOR_CONFIDENCE),
+            resolve("DTH_HEADING_RULE", DEFAULT_HEADING_RULE),
+            resolve("DTH_PREFER_CONTAINER", DEFAULT_PREFER_CONTAINER),
         )
     }
 
@@ -562,6 +666,8 @@ def load(
         derive_bands=_flag(origins["DTH_DERIVE_BANDS"]),
         layout_detector=origins["DTH_LAYOUT_DETECTOR"].value,
         detector_confidence=_number(origins["DTH_DETECTOR_CONFIDENCE"], float),
+        heading_rule=_heading_rule(origins["DTH_HEADING_RULE"]),
+        prefer_container=_flag(origins["DTH_PREFER_CONTAINER"]),
         origins=origins,
     )
 

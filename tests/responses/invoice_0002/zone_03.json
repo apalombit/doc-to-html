@@ -1,12 +1,32 @@
 {
   "pairs": [
     {
-      "label": "NO",
-      "value": "554775/R1"
+      "label": "Name",
+      "value": "Acme Corporation"
     },
     {
-      "label": "Date",
-      "value": "01/01/2015"
+      "label": "Industry",
+      "value": "Software Development"
+    },
+    {
+      "label": "Address",
+      "value": "Field 3, Moon"
+    },
+    {
+      "label": "Phone",
+      "value": "123.4456.4567"
+    },
+    {
+      "label": "Email",
+      "value": "mainl@acme.com"
+    },
+    {
+      "label": "Tax NO",
+      "value": "123456789"
+    },
+    {
+      "label": "Tax Office",
+      "value": "A' Moon"
     }
   ]
 }

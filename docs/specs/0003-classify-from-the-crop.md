@@ -1,11 +1,34 @@
 # Classify from the crop, not from the downscaled page
 
-**Status:** open, and **amended by measurement twice** — runs 18, 19 and 20
-(issue #13, the blocking probe), then run 22 (the first end-to-end conversion
-with the split, which made it worse). Continues `0002-structure-not-geometry.md`,
-which holds the run history and the four rejected prompt attempts. Read this for
-*what to build*, and read "What the first end-to-end run measured" before
+**Status: closed — history, not work in flight.** Issue #12 is closed, with
+children #16, #18 and #19; only #17 remains open, and its own comment thread
+explains why it should be re-scoped rather than started. Continues
+`0002-structure-not-geometry.md`, which holds the run history and the four
+rejected prompt attempts. The live work is `0005-nothing-is-missing.md`.
+
+**Treat runs before 50 as superseded and do not cite them as evidence.** Every
+run named in this file — 18, 19, 20, 22 and the ten before them — is below that
+line. It was already **amended by measurement twice** while open (issue #13's
+blocking probe, then run 22, the first end-to-end conversion with the split,
+which made it worse); read "What the first end-to-end run measured" before
 believing any prediction in it.
+
+**The premise turned out half wrong, and which half matters.** This spec argued
+that resolution was the cause — that a Kind decided at 2.24x less linear
+resolution than the Extractor's crop was the whole problem. Run 42
+(`tools/classify_truth_probe.py`) refuted it: handed the exact Zone rectangles
+read off `example/invoice.html`, zones 3 and 4 came back `pairs` and `pairs`,
+identical to what the model's own boxes produce. **Perfect geometry moved neither
+mismatch.**
+
+What actually fixed them was `CLASSIFY_PROMPT` making typesetting decisive — the
+*heading's words* were deciding `table` vs `pairs`, proved 12/12 under a crossover
+with the layout held pixel-identical — plus `DTH_TABLE_GRID_HINT` stating the
+measured grid in the prompt.
+
+Splitting the pass was still right, for #17's reason rather than this spec's: it
+stops an edit to what a Kind means from breaking Band numbering as collateral,
+which five of six `LAYOUT_PROMPT` edits had done.
 
 ## What the blocking experiment measured
 

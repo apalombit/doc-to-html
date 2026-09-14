@@ -57,12 +57,13 @@ Everything, per (detector, fixture, threshold) cell:
 this fixture while describing a different page; a mean IoU cannot tell you
 whether a detector's idea of a region matches a reader's, and the pictures can.
 
-**The reference rectangles are only exact for `invoice_0001`**, which
-`tools/fixture_geometry.py` reads off the browser that rendered it. The other
-four are hand-typed and measure 0.605-0.854 against their own ink (#23), so their
-`boxes.png` says so on the image itself and their `iou` column is parenthesised.
-`covered`, `crowded`, `splits` and `zones` are computed from the ink and are
-trustworthy on all five.
+**The reference rectangles are only read off the browser for `invoice_0001`**,
+by `tools/fixture_geometry.py`. The other four cannot be re-rendered, so that
+tool snaps their rectangles onto their own ink instead — the same convention,
+a weaker derivation, scoring 0.916 against the browser truth where both exist.
+Their `boxes.png` says so on the image itself and their `iou` column is
+parenthesised. `covered`, `crowded`, `splits` and `zones` are computed from the
+ink and are trustworthy on all five.
 """
 
 from __future__ import annotations
@@ -102,9 +103,9 @@ EXACT_REFERENCE = "invoice_0001"
 `tools/fixture_geometry.py` re-renders `example/invoice.html` and takes the
 client rects, checking the render still matches the screenshot pixel for pixel.
 Nothing like that exists for the other four (#19), so their `iou` is scored
-against boxes somebody eyeballed and is reported as such rather than dropped —
-a missing column reads as "not measured", and this is "measured against a soft
-ruler", which is a different thing.
+against boxes snapped onto their own ink and is reported as such rather than
+dropped — a missing column reads as "not measured", and this is "measured
+against a derived ruler", which is a different thing.
 """
 
 THRESHOLDS = (0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8)
@@ -261,9 +262,10 @@ def draw_boxes(image: np.ndarray, cell: Cell, want: list[BBox]) -> np.ndarray:
     """Detections against the reference, each box named and scored.
 
     Reference in green, detections in red. On the four fixtures whose reference
-    was typed by hand the warning is drawn **into the image**, not just written
-    in a report next to it: these files get opened on their own, and a reader who
-    reads green as truth will blame the detector for the fixture's slop.
+    is snapped rather than read off the browser, the warning is drawn **into the
+    image**, not just written in a report next to it: these files get opened on
+    their own, and a reader who reads green as truth will blame the detector for
+    the derivation's slop.
     """
     canvas = image.copy()
     height, width = canvas.shape[:2]
@@ -285,8 +287,8 @@ def draw_boxes(image: np.ndarray, cell: Cell, want: list[BBox]) -> np.ndarray:
     lines.append(
         ("green = reference, read off the browser that rendered the page", GREEN)
         if cell.exact else
-        ("green = reference, TYPED BY HAND (0.605-0.854 IoU vs its own ink) "
-         "- approximate, do not read as truth", GREEN)
+        ("green = reference, SNAPPED TO ITS OWN INK (0.916 vs browser truth "
+         "where known) - derived, do not read as exact", GREEN)
     )
     return caption(canvas, lines)
 
@@ -549,10 +551,11 @@ def contact_sheet(cells: list[Cell], out: Path, expected: dict[str, int]) -> Non
         "ink two or more boxes claimed, grey is ink exactly one box claimed "
         "(correct), magenta rings a mass of ink some box cuts through.</p>",
         "<p class=note>Only <code>invoice_0001</code> has an exact reference, "
-        "read off the browser that rendered it. The other four are hand-typed "
-        "and measure 0.605-0.854 against their own ink, so their <code>iou</code> "
-        "is parenthesised and their <b>boxes.png</b> carries the warning on the "
-        "image. Everything derived from the ink is trustworthy on all five.</p>",
+        "read off the browser that rendered it. The other four cannot be "
+        "re-rendered, so their rectangles are snapped onto their own ink "
+        "instead \u2014 same convention, weaker derivation \u2014 and their "
+        "<code>iou</code> is parenthesised with the warning drawn on the image. "
+        "Everything derived from the ink is trustworthy on all five.</p>",
     ]
 
     for fixture in sorted({cell.fixture for cell in cells}):
@@ -666,8 +669,8 @@ def main() -> int:
     report = "\n".join([
         f"detector bakeoff — {args.label}",
         "",
-        "iou in parentheses is scored against hand-typed reference rectangles",
-        "(0.605-0.854 against their own ink). covered/crowded/splits come from",
+        "iou in parentheses is scored against reference rectangles snapped onto",
+        "their own ink, not read off a browser. covered/crowded/splits come from",
         "the ink and are trustworthy everywhere. covered counts ink exactly one",
         "box claims; crowded counts ink two or more claim.",
         "",

@@ -2,7 +2,7 @@
   "pairs": [
     {
       "label": "Name",
-      "value": "Acme Corporation"
+      "value": "Microsoft Corporation"
     },
     {
       "label": "Industry",
@@ -10,23 +10,19 @@
     },
     {
       "label": "Address",
-      "value": "Field 3, Moon"
+      "value": "One Microsoft Way Redmond, WA 98052-7329, USA"
     },
     {
       "label": "Phone",
-      "value": "123.4456.4567"
+      "value": "(425) 882-8080"
     },
     {
       "label": "Email",
-      "value": "mainl@acme.com"
+      "value": "contact@microsoft.com"
     },
     {
       "label": "Tax NO",
       "value": "123456789"
-    },
-    {
-      "label": "Tax Office",
-      "value": "A' Moon"
     }
   ]
 }

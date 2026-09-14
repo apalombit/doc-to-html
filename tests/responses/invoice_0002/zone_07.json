@@ -3,7 +3,15 @@
     {
       "kind": "paragraph",
       "lines": [
-        "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Odit repudiandae numquam sit facere blanditiis, quasi distinctio ipsam? Libero odit ex expedita, facere sunt, possimus consectetur dolore, nobis iure amet vero."
+        "For your convenience, you may deposit the final amount at one of our banks"
+      ]
+    },
+    {
+      "kind": "paragraph",
+      "lines": [
+        "Alpha Bank - MO123456789456123",
+        "Beta Bank - MO123456789456123",
+        "Gamma Bank - MO123456789456123"
       ]
     }
   ]

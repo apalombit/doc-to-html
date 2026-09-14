@@ -1,15 +1,9 @@
 {
   "blocks": [
     {
-      "kind": "heading",
-      "lines": [
-        "Why semantic HTML matters"
-      ]
-    },
-    {
       "kind": "paragraph",
       "lines": [
-        "May 9, 2026 · by Jane Author"
+        "Modern HTML5 introduced semantic elements like <article>, <section>, and <nav> that describe the meaning of content rather than its appearance."
       ]
     }
   ]

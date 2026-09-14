@@ -1,10 +1,12 @@
 {
-  "blocks": [
+  "pairs": [
     {
-      "kind": "heading",
-      "lines": [
-        "Invoice With Credit"
-      ]
+      "label": "NO",
+      "value": "554775/R1"
+    },
+    {
+      "label": "Date",
+      "value": "01/01/2015"
     }
   ]
 }

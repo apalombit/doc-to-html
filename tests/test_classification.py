@@ -304,7 +304,13 @@ class TestTheOrchestratorClassifiesBetweenGeometryAndExtraction:
         """A model that locates blocks well and one that reads them well need
         not be the same one. They are the same one today; what #15 bought is
         that changing it is a setting rather than an edit here."""
-        settings = load(env={"DTH_CLASSIFY_MODEL": "a-classifier"}, dotenv_path=NOWHERE)
+        settings = load(
+            # Layout reaches a *model* only on the vision path, which no longer
+            # ships. The claim under test is that classify and layout are
+            # separately routable, so it is asked where both have a model.
+            env={"DTH_CLASSIFY_MODEL": "a-classifier", "DTH_LAYOUT_DETECTOR": "none"},
+            dotenv_path=NOWHERE,
+        )
         engines = orchestrator.default_engines(settings)
 
         assert engines.classify.model == "a-classifier"
