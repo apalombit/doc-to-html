@@ -27,9 +27,11 @@ run directory, and never reached the detector. Suite green at 573.
 **What this spec leaves open**, decomposed by measurement rather than estimated:
 two stacked splits with **no container anywhere in the pool** at any confidence,
 and two side-by-side merges whose parts already clear the threshold and are
-discarded by `outermost`. **Titles are now the largest category — 12 of the 22 —
-and they are the next piece of work**, because grouping a region correctly is
-what makes its Title comparable in the first place.
+discarded by `outermost`. **Titles became the largest category as this spec
+closed — 13 of 23 once the last convention question was settled — because
+grouping a region correctly is what makes its Title comparable in the first
+place.** That was not a cost: it was the whole of what `DTH_CAPTION_PASS` then
+took, 23 findings to 10 over runs 82-84. See `config.DEFAULT_CAPTION_PASS`.
 
 **One sentence:** the detector segments *ink* and the references segment *DOM*, so
 regions come back at the wrong level of nesting — and that one fault accounts for
@@ -352,8 +354,11 @@ All five guards are load-bearing — dropping the page-level class rule or the
   heading rule on as well (4 Zones). The zone-count finding replaces the split
   finding, so the total hides it.
 - **One new finding:** `sample_semantic_0005` zone 7 reports `role expected
-  footer, got body`. `_role` reads Role off the Band index, and regrouping moved
-  a Band under it.
+  footer, got body`. Not the Band — `_role` uses that only for `band == 0`. The
+  colophon was `footnote` + `key_value_region`, and `footnote` is in `FOOTERS`;
+  the adopted container is a `key_value_region`, which is in neither set. **A
+  container is adopted with its own class, so anything keyed on a class is
+  downstream of the grouping.**
 
 **Gate.** All of it held: `invoice_0001` a full match with the Probe at 385.00,
 no fixture's count rose, `covered` 1.00, `splits` 0, `doubles` unchanged.

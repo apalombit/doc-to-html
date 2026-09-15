@@ -230,10 +230,16 @@ What run 81 changed in the output, against run 79:
   side-by-side merge and the split footer, and neither flag addresses either.
 
 **One new finding, and it is real:** `sample_semantic_0005` zone 7 reports `role
-expected footer, got body`. `_role` reads `Role` off the Band index and the class
-name, so regrouping moved a Band under it. Small — `Role` is a CSS class in
-`render.py` and the Probes navigate by `RowRole` — but it is the first sign that
-Band-derived Role is sensitive to grouping changes.
+expected footer, got body`. **The cause is the adopted box's class, not its
+Band** — `_role` uses the Band only for `band == 0 -> HEADER` and has no
+last-Band rule at all, so the extra Zone shifting every later Band changes
+nothing here. What changed is which box won: the colophon was `footnote@0.864`
+plus `key_value_region@0.898`, and `footnote` is in `FOOTERS`. `prefer_container`
+adopts one `key_value_region` over both, and that class is in neither set, so the
+Role falls back to `BODY`. Small — `Role` is a CSS class in `render.py` and the
+Probes navigate by `RowRole` — but it is the shape to watch: **adopting a
+container inherits the container's class, and any rule keyed on a class is
+downstream of which box the grouping picked.**
 
 ### What the baseline says
 
