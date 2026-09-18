@@ -1,5 +1,14 @@
 # Structural fidelity, not pixel fidelity
 
+> **Partly superseded by [ADR 0005](0005-style-is-measured-from-the-pixels.md)
+> (2026-09-18).** The rejection of absolute-positioned facsimile below stands.
+> The sentence *"No styling is ever extracted from the Source Image"* does not:
+> style is now measured from pixels, because the IR had nowhere to put the
+> visual weight this ADR promised and a stylesheet cannot react to a quantity
+> nothing records. Read this for the facsimile decision; read 0005 for what
+> replaced the rest.
+
+
 The output reproduces a document's *structure* — semantic markup, Zone ordering, side-by-side arrangement via Bands — rendered through this project's own stylesheet. It does not reproduce the document's appearance. Fonts, spacing and colour are the browser's, so two invoices from different vendors render looking like siblings rather than like their originals.
 
 The alternative was absolute-positioned text runs at detected coordinates, overlaying the original almost exactly. We rejected it on two grounds: it is extremely brittle on photographs, where a couple of degrees of skew smears the whole page; and it is semantically inert — a `<table>` becomes a cloud of positioned `<span>`s, so copy-paste, screen readers and any downstream consumer get nothing.

@@ -1,5 +1,23 @@
 # Status
 
+> **Superseded as a statement of where the project is, 2026-09-18.**
+> Everything below describes the project as measured by
+> `acceptance.compare()` against a hand-typed reference IR. **That harness is
+> deleted**, along with `tests/fixtures/*.py`, every `*.expected.json` and
+> `tools/write_expected_ir.py`. Every mismatch total in this file — "0
+> mismatches", "2 → 3", "the measure of success" — is a count of a quantity
+> this project no longer optimises, and none of them is citable.
+>
+> **For where the project actually is, read `CLAUDE.md`'s "READ THIS FIRST",
+> then [`docs/specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
+> (issue #30).** The target is now whether the rendered output looks and reads
+> like the source document, scored on six axes by `doc_to_html.scoring` and
+> reviewed in `debug/runs/<label>/report.html`.
+>
+> This file is kept because the *module inventory*, the *rejected
+> alternatives* and the account of how each default was reached are still
+> accurate and still useful. Read it for those and not for the numbers.
+
 Snapshot of what exists, what does not, and what is known to be missing. Updated
 at checkpoints; `CONTEXT.md` holds the vocabulary and `docs/adr/` the decisions,
 neither of which belongs here.
@@ -137,8 +155,12 @@ Everything below describes the ground this stands on.
 | `render.py` | **implemented** | IR → self-contained HTML, tolerates partial IR, content-driven column alignment |
 | `checkpoints.py` | **implemented** | `Question`/`Answer`, `NullHandler`, `ScriptedHandler` |
 | `config.py` | **implemented** | Every `.env.example` variable, with a code default and recorded provenance; the only reader of the environment. `DTH_CLASSIFY_MODEL` is the one role that does not default to the layout model |
-| `acceptance.py` | **implemented** | What "structurally correct" means, in one place. Used by the harness and the bake-off |
-| `bakeoff.py` | **implemented** | Opt-in measurement of real models. Run partially; see "What the first bake-off found" |
+| `acceptance.py` | **deleted** | Was: what "structurally correct" meant. Retired by spec 0007 Thread 0 along with the typed reference it compared against |
+| `corpus.py` | **implemented** | What the corpus is: fifteen documents, an HTML file and a screenshot each, split *iterate* / *sweep* |
+| `projection.py` | **implemented** | `project()` — one page as a reader perceives it, read off headless Chrome. One function, applied to both sides |
+| `scoring.py` | **implemented** | The six axes between two projections. T1/T2/T3 a hard tier, T1 a ratchet |
+| `report.py` | **implemented** | `debug/runs/<label>/report.html` — source vs render, every document, one page. The review surface |
+| `bakeoff.py` | **implemented** | Opt-in conversion of the corpus with real models. No longer scores anything |
 | `cli.py` | **partial** | `render`, `config` and `convert` work end to end; `--review` exits cleanly |
 | `preprocess.py` | **implemented** | Page-quad detection, perspective warp, deskew, illumination flattening, cropping, slice planning. Owns `zone_pixels`, so the classifier and the Extractors cut identical pixels. Slice *stitching* is not built |
 | `engines/base.py` | **implemented** | `VisionEngine` (five methods) and `BoxEngine` Protocols — the seam everything else depends on |
@@ -148,6 +170,14 @@ Everything below describes the ground this stands on.
 | `orchestrator.py` | **partial** | Geometry, classification and extraction run in that order, each with the failure contract, plus Probes. Classification is routable to its own model and runs once per Conversion. The Coverage Audit and the Ladder are deliberate no-ops for this slice |
 
 ## Fixtures
+
+> **The corpus is fifteen documents now, and none of them has a hand-authored
+> expected IR.** A document is an HTML file and a screenshot of it;
+> `doc_to_html.corpus` is the registry, and it names each one's archetype and
+> the awkward feature it carries. Adding one is writing the HTML and running
+> `tools/shoot_corpus.py`. The table below covers the original five, which
+> remain the *iterate* split — and which are, precisely, the documents every
+> prompt in this project was tuned on, which is why *sweep* exists.
 
 Five documents, each with hand-authored expected IR. All are clean screenshots,
 so they exercise structure and say nothing about photographs.
@@ -328,27 +358,27 @@ calls leak into Extractors.
 
 ```bash
 uv venv && uv pip install -e '.[dev]'
-pytest                        # 327 tests, no model, no Ollama, no network
+pytest                        # no model, no Ollama, no network
 mypy                          # strict, over src/
 
 doc-to-html config            # what resolved, and from where
-doc-to-html render tests/fixtures/invoice_0001.expected.json -o out.html
 doc-to-html convert example/invoice.png -o out.html   # needs Ollama
 ```
 
-Two generated artifacts are committed and have tools that rewrite them. Both are
-checked by the suite, so drift is caught rather than discovered:
+One generated artifact is committed and has a tool that rewrites it:
 
 ```bash
-python tools/write_expected_ir.py    # tests/fixtures/*.expected.json
 python tools/record_responses.py     # tests/responses/
+python tools/shoot_corpus.py         # example/*.png, for a new document
 ```
 
-The bake-off needs a running Ollama with the models pulled, and is the only thing
-here that does:
+The bake-off and the loop need a running Ollama with the models pulled, and are
+the only things here that do:
 
 ```bash
 python -m doc_to_html.bakeoff --fixtures invoice_0001 --models qwen3-vl:4b
+tools/iterate.sh my-label            # then open debug/runs/my-label/report.html
+FIXTURE=sweep tools/iterate.sh my-gate
 ```
 
 Python is pinned to 3.12 via `.python-version`. All declared dependencies

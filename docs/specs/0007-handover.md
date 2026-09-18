@@ -14,7 +14,42 @@ thread to do.
 
 ---
 
-## Thread 0 — the ruler, the corpus, and the report
+## Thread 0 — the ruler, the corpus, and the report — **DONE 2026-09-18**
+
+Landed. The prompt is kept below as a record of what was asked for.
+
+**What exists now:** `corpus.py` (fifteen documents, *iterate* / *sweep*),
+`projection.py` (`project()`, one function over both sides, colour scheme
+pinned light), `scoring.py` (six axes, T1/T2/T3 hard tier, T1 a ratchet),
+`report.py` (`debug/runs/<label>/report.html`). Unit tests in
+`tests/test_scoring.py` and `tests/test_projection.py` run offline against
+`tests/frozen/run84/`.
+
+**Three things a later thread should know**, all of them surprises:
+
+1. The scorer reports the Zone-Title duplication in **four** documents where
+   the spec says three. It is right: `sample_table_0003`'s caption is repeated
+   by the same mechanism and the spec had filed it separately under the lost
+   header.
+2. Three faults were in the *rendering harness*, not the IR — inherited dark
+   mode, a 500px layout floor, and a screenshot at exactly the page height
+   dropping its last row. See `CLAUDE.md`'s first lesson. Each is pinned by a
+   test.
+3. T1 as specified — token recall and precision — **cannot see the
+   `invoice_0001` label mis-split**, which the spec's ratchet paragraph claims
+   it catches: `Invoice #: 123` read as label `Invoice`, value `#: 123` has
+   exactly the right tokens in the right order. `Completeness.join_recall`, the
+   adjacent-word pairs, is what catches it, and it is reported beside recall
+   and precision for that reason.
+
+**What Thread 0 did not finish:** `OllamaEngine.detect_zones` and
+`LAYOUT_PROMPT` survive as the seam the recorded-response suite replays
+against. They are unreachable from a Conversion. Removing them means replacing
+the layout stage of nine test modules and is bookkeeping, not a measurement
+question.
+
+<details>
+<summary>The prompt as it was given</summary>
 
 ```
 Read docs/specs/0007-look-like-the-document.md in full before anything else.
@@ -50,6 +85,8 @@ report renders all fifteen documents in one page; a checkpoint run exists.
 When the gate is met, take the checkpoint run and stop. I will review the report
 before Thread 1/A starts.
 ```
+
+</details>
 
 ---
 

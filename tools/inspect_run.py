@@ -1,14 +1,22 @@
 """Turn a `--dump` directory into pictures you can look at.
 
     python tools/inspect_run.py /tmp/dth-dump/qwen3-vl_4b/invoice_0001 \
-        --source example/invoice.png \
-        --expected tests/fixtures/invoice_0001.expected.json
+        --source example/invoice.png
 
 Writes a folder of PNGs and an `index.html` contact sheet. Open that one file
-and you see, in order: the page as the layout model saw it, the boxes it
-returned drawn on the page, the boxes the fixture says are right, the two
-superimposed, **the output HTML rasterised**, and the actual crop each
-extraction pass was given beside the text it returned from that crop.
+and you see, in order: the page as the layout pass saw it, the boxes it
+returned drawn on the page, **the output HTML rasterised**, and the actual crop
+each extraction pass was given beside the text it returned from that crop.
+
+**This is the per-document view, and it answers one question: how was *this*
+document converted, step by step.** The comparative question — how does every
+document's render look beside its source — is
+`debug/runs/<label>/report.html`, built by `doc_to_html.report`, and that is
+the one to open first. Both come out of the same run.
+
+`--expected` is still accepted and nothing passes it any more: the committed
+`*.expected.json` were the serialised acceptance set and spec 0007 Thread 0
+deleted them. The two panels it feeds are skipped when it is absent.
 
 The rendered panel is the only one showing the artefact a reader would be handed
 rather than an intermediate stage, and docs/adr/0002 asks for structural

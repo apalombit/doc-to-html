@@ -5,49 +5,66 @@ that carries the same content and the same structure. An invoice and an
 inventory sheet are the same kind of input: the system never classifies
 documents.
 
-**Status: working proof of concept — `example/invoice.png` converts with zero
-mismatches against a real model.** A Source Image is rectified, laid out,
-classified and extracted Zone by Zone from full-resolution crops, checked by
-Probes and rendered. Photographs distorted by known amounts come back straight.
+**Status: working proof of concept, being rebuilt against a new measure.** A
+Source Image is rectified, laid out, classified and extracted Zone by Zone from
+full-resolution crops, checked by Probes and rendered. Photographs distorted by
+known amounts come back straight.
 
-Against a **real** `qwen3-vl:4b`, `example/invoice.png` matches its expected IR
-exactly: all six Zones get the right Kind, every string on the page reaches the
-render, no Zone renders as a skeleton, and the column-sum Probe reconciles at
-385.00. Measured in `debug/runs/49-table-grid-hint/`, and the shipped defaults
-are the ones that run used.
+**The target changed on 2026-09-17, and the reason is worth a paragraph.** The
+project used to be scored on whether the IR agreed with a hand-typed reference
+IR. That measure saturated and then inverted: it scored `sample_table_0003` a
+**full match** while that document had deleted every column header of its only
+table, because it compared row *roles* and never compared cell *content*. Over
+the same stretch of runs the total improved 23 → 10 while duplicated titles
+appeared in three of five documents. Nobody had opened a rendered page beside
+its source in eighty runs.
 
-**One document, and only one.** The other four acceptance fixtures have not been
-measured against the changes that got it there, and the replay suite is red by
-design while recorded responses are re-taken. Both are tracked and neither is a
-surprise — see CLAUDE.md.
-
-The work in flight:
-**[docs/specs/0003-classify-from-the-crop.md](docs/specs/0003-classify-from-the-crop.md)**
-(issue #12). Measurement showed the layout pass is being asked two questions at
-once — where a region is, and what it structurally is — so classification became
-a pass of its own, against each Zone's own pixels.
-
-**It has made things worse so far, and the spec records why.** The count was 2
-before the split. Narrowing the question to one Zone fixed the Zone it was aimed
-at and broke a different one: an address block with no street and no city in it,
-judged with no neighbouring block to compare against, reads as `label: value`
-pairs. Isolation cuts both ways, which the spec had not anticipated. The
-measurements are in it, including the ~95s per document the extra calls cost.
-
-**What this PoC is testing** is one narrow bet: that a 3–4B vision model on 8GB of
-unified memory can recover a document's structure well enough to rebuild it as
-HTML, with no per-document-type code anywhere. Scope is deliberately one page, one
-image, vision only. Success is `invoice.png` at 0 mismatches, then the same
-prompts held to the other four fixtures without regressing.
+**So the project is now measured on whether the rendered output looks and reads
+like the source document**, compared against `example/*.html` and `example/*.png`
+directly. See
+**[docs/specs/0007-look-like-the-document.md](docs/specs/0007-look-like-the-document.md)**
+(issue #30) — it is the live spec and the plan.
 
 ## What it aims at
 
-Structural fidelity, not a pixel clone. A `<table>` is a real `<table>`, Zone
-ordering is preserved, and side-by-side blocks stay side by side — but styling
-comes from this project's stylesheet, so two invoices from different vendors
-render looking like siblings rather than like their originals.
+Structural fidelity **and** measured style — not a pixel clone, and no longer
+structure alone. A `<table>` is a real `<table>` and Zone ordering is preserved;
+palette, type scale, borders and column proportion are measured from the Source
+Image's pixels rather than invented by a stylesheet. Absolute-positioned
+facsimile stays rejected: it is brittle under skew and semantically inert. See
+[ADR 0005](docs/adr/0005-style-is-measured-from-the-pixels.md), which supersedes
+part of [ADR 0002](docs/adr/0002-structural-over-pixel-fidelity.md).
 
 Output is one self-contained HTML file with the IR embedded in it as JSON.
+
+## How it is measured
+
+Six axes, scored source-image against rendered-output by
+`doc_to_html.scoring`:
+
+| # | axis | asks |
+|---|---|---|
+| 1 | **Completeness** | Is every printed string present, exactly once? Nothing invented? |
+| 2 | **Order & grouping** | Right reading order; things that belong together are together |
+| 3 | **Layout skeleton** | What sits beside what; column proportions; height ratio at matched width |
+| 4 | **Typographic weight** | Heading hierarchy; emphasis; alignment |
+| 5 | **Palette & texture** | Background, ink, accent, shaded bands, borders, cards |
+| 6 | **Inline detail** | Links, code spans, badges, marks |
+
+**Axes 1-3 are a hard tier**: a regression on any of them fails a phase
+regardless of what improved elsewhere. **Completeness is a ratchet** — it may
+never decrease between phases, for any reason.
+
+**Ground truth is derived, not typed.** `example/invoice.png` is a screenshot of
+`example/invoice.html`, so the expected answer is already on disk. One
+`project()` function runs over the source page and the rendered output alike —
+returning text in reading order, a role per block, and rectangles from the
+browser's own client rects — and the two projections are diffed. It never
+compares markup: demanding that the output reproduce the source's `div` nesting
+would be a worse overfit than the one being escaped.
+
+Adding a document is therefore writing an HTML file and running
+`tools/shoot_corpus.py`. That is what let the corpus leave five.
 
 ## Reading order
 
@@ -57,12 +74,13 @@ Output is one self-contained HTML file with the IR embedded in it as JSON.
   missing, and what was rejected.
 - **[docs/specs/](docs/specs/)** — the piece of work currently in flight, with its
   measured numbers. Start here if you are picking the project up.
-- **[docs/adr/](docs/adr/)** — four decisions that look arbitrary without their
+- **[docs/adr/](docs/adr/)** — five decisions that look arbitrary without their
   reasons:
   - [0001](docs/adr/0001-no-document-types.md) — no document types
   - [0002](docs/adr/0002-structural-over-pixel-fidelity.md) — structural, not pixel, fidelity
   - [0003](docs/adr/0003-synthetic-first-evaluation.md) — synthetic-first evaluation
   - [0004](docs/adr/0004-probes-never-supply-expected-values.md) — Probes never supply expected values
+  - [0005](docs/adr/0005-style-is-measured-from-the-pixels.md) — style is measured from the pixels
 
 ## Shape
 
@@ -71,8 +89,8 @@ Source Image
   │  rectify: page quad → perspective warp → orientation → equalise
   ▼
 Rectified Image ──────────────────────────────── all coordinates live here
-  │  layout pass (vision, downscaled page): Bands, Zones, Kind, Role, bbox
-  │  classification (per-Zone full-res crop): Kind, Title    [built, not wired — #15]
+  │  layout: a trained ONNX detector finds the Zones — no model call
+  │  classification (per-Zone full-res crop): Kind, Title
   │  per-Zone extraction from full-res crops, sliced with overlap if dense
   │  coverage audit (different model family): content no Zone covers   [not built]
   ▼
@@ -80,6 +98,9 @@ IR ── Probes: does a column of data rows sum to a summary row?
   │    Ladder: read → upscale → other engine → ask human
   ▼
 one self-contained HTML file, IR embedded
+  │
+  ▼
+project() over the output and over example/foo.html ── six axes ── report.html
 ```
 
 Layout: `src/doc_to_html/`
@@ -95,8 +116,11 @@ Layout: `src/doc_to_html/`
 | `render.py` | IR → HTML. Tolerates a partial IR |
 | `checkpoints.py` | where a human is asked; `NullHandler` for unattended runs |
 | `wire.py` | what a model is asked for, and how it becomes IR |
-| `acceptance.py` | what "structurally correct" means, in one place |
-| `bakeoff.py` | opt-in measurement of real models |
+| `corpus.py` | what the corpus is — fifteen documents, *iterate* and *sweep* |
+| `projection.py` | `project()` — one page as a reader sees it, off the browser |
+| `scoring.py` | the six axes, between two projections |
+| `report.py` | `report.html` — source vs render, every document, one page |
+| `bakeoff.py` | opt-in conversion of the corpus with real models |
 | `cli.py` | thin wrapper over the library |
 
 ## Try it
@@ -106,22 +130,31 @@ recorded in `tests/responses/`. Everything else is the code that ships:
 
 ```bash
 uv venv && uv pip install -e '.[dev]'
-pytest                        # 327 tests, no model, no Ollama, no network
-doc-to-html render tests/fixtures/invoice_0001.expected.json -o out.html
+pytest                        # no model, no Ollama, no network
 ```
+
+The scorer's own tests need headless Chrome and nothing else — they run over
+`tests/frozen/run84/`, five output documents kept from the run that prompted
+spec 0007, and they check that the scorer finds that run's known faults without
+being told where to look.
 
 With Ollama running and a model pulled, the front half works too:
 
 ```bash
-doc-to-html config                                    # what resolved, and from where
+doc-to-html config                                  # what resolved, and from where
 doc-to-html convert example/invoice.png -o out.html
-python -m doc_to_html.bakeoff --fixtures invoice_0001 # measure a model
+tools/iterate.sh my-label                           # one document, end to end
+FIXTURE=sweep tools/iterate.sh my-gate              # all fifteen
 ```
 
-Five documents in [`example/`](example/) have hand-authored expected IR in
-`tests/fixtures/` — two invoices, a statistics table, a card layout and an
-article. Each is authored against the *rendered image*, deliberately not derived
-from the source HTML, whose markup tree bears no relation to what a reader sees.
+Either way, open `debug/runs/<label>/report.html`.
+
+Fifteen documents live in [`example/`](example/), each an HTML file and a
+screenshot of it: two invoices, a statistics table, a card layout, an article, a
+bank statement, an application form, a newspaper page, a dark report, a thermal
+receipt, a corporate report, a restaurant menu, a CV, a Greek invoice and a
+product grid. Each carries one awkward feature the others do not —
+`doc_to_html.corpus` names it.
 
 [`docs/status.md`](docs/status.md) tracks what is implemented, what is stubbed,
 and what is known to be missing.

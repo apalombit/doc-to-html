@@ -1,6 +1,7 @@
 # Look like the document
 
-**Status: open.** Opened 2026-09-17. This spec changes what the project is
+**Status: open. Thread 0 landed 2026-09-18; Thread 1/A is next.** Opened
+2026-09-17. Tracking issue **#30**. This spec changes what the project is
 measured against. It supersedes ADR 0002, retires `acceptance.compare()` and the
 five typed fixture builders, and replaces a single mismatch total with a six-axis
 rubric under a hard content ratchet.
@@ -291,7 +292,34 @@ Checkpoint runs after **0, A0, A, B, C**. Each produces a comparison report.
 
 ---
 
-### Thread 0 — the ruler, the corpus, and the report
+### Thread 0 — the ruler, the corpus, and the report — **DONE 2026-09-18**
+
+**What landed**, and the three places it differs from what is written below.
+
+- `corpus.py`, `projection.py`, `scoring.py`, `report.py`. Unit tests in
+  `tests/test_scoring.py` and `tests/test_projection.py`, offline against
+  `tests/frozen/run84/`.
+- **The scorer finds the Title duplication in four documents, not three.** It
+  is right and this spec was not: `sample_table_0003`'s caption is repeated by
+  the same mechanism, and this spec filed it separately under the lost header
+  because that is what someone noticed rather than what is there.
+- **T1 as specified cannot see the `invoice_0001` mis-split.** The ratchet
+  paragraph below claims it catches all three shipped faults; `Invoice #: 123`
+  read as label `Invoice`, value `#: 123` has exactly the source's tokens in
+  the source's order, so recall, precision and tau are all perfect.
+  `Completeness.join_recall` — the adjacent-word pairs — is what catches it,
+  and it is reported beside the other two for that reason.
+- **Three faults were in the rendering harness, not the IR**, and none was
+  visible in any number: headless Chrome inheriting the host's dark mode, a
+  500px layout floor that cropped a narrow document's own screenshot, and a
+  screenshot at exactly the page height dropping its last row while
+  `project()` still reported that row present. The last is T1 and the pixels
+  disagreeing about whether content exists — the failure this spec warns about,
+  arriving from the tooling. See `CLAUDE.md`'s first lesson.
+- **Not finished:** `OllamaEngine.detect_zones` and `LAYOUT_PROMPT` survive as
+  the seam the recorded-response suite replays against. Unreachable from a
+  Conversion; removing them means replacing the layout stage of nine test
+  modules.
 
 Nothing else can be believed until this exists. It builds the measure, grows the
 corpus past the five documents the system was built against, and produces the

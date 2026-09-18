@@ -25,12 +25,12 @@ numbers and what has already been tried and rejected.
 ## READ THIS FIRST — the target changed on 2026-09-17
 
 **`docs/specs/0007-look-like-the-document.md` is authoritative. Where this file
-disagrees with it, the spec wins.**
+disagrees with it, the spec wins.** Its tracking issue is **#30**.
 
 The project no longer optimises agreement between the IR and a hand-typed
 reference IR. **It optimises whether the rendered output looks and reads like the
 source document.** `acceptance.compare()`, `tests/fixtures/*.py` and every
-mismatch total this file used to carry are retired.
+mismatch total this file used to carry are deleted.
 
 **Why, in one paragraph.** Someone finally opened
 `debug/runs/84-rule-not-a-line/<fixture>/05_rendered.png` beside
@@ -45,8 +45,8 @@ line that caused the deletion.
 **Work order — one thread at a time, each ending at a gate:**
 
 ```
-Thread 0    Scorer, corpus, report        <- start here
-Thread 1/A  The IR (A0 stop the bleeding, A1 inline, A2 geometry, A3 figures)
+Thread 0    Scorer, corpus, report        DONE 2026-09-18
+Thread 1/A  The IR (A0 stop the bleeding, A1 inline, A2 geometry, A3 figures)  <- next
 Thread 2/B  Style record (all CV, zero model calls)
 Thread 3/C  Repair loop (re-scoped against A+B residuals first)
 Thread 4/D  Human corrections (unscheduled)
@@ -54,9 +54,30 @@ Thread 4/D  Human corrections (unscheduled)
 
 `docs/specs/0007-handover.md` holds a ready prompt per thread.
 
-**Until Thread 0 lands, the old harness is still in the tree.** Sections below
-marked *retiring* describe machinery that exists today and is scheduled for
-deletion. Do not build on them. Do not optimise their numbers.
+### What Thread 0 built, and where it lives
+
+| module | what it is |
+|---|---|
+| `corpus.py` | what the corpus is: fifteen documents, an HTML file and a screenshot each, split *iterate* / *sweep* |
+| `projection.py` | `project()` — one page as a reader perceives it, read off headless Chrome. **One function, both sides.** |
+| `scoring.py` | `score_document()` — six axes between two projections. T1/T2/T3 hard tier, T1 a ratchet. |
+| `report.py` | `debug/runs/<label>/report.html` — the review surface |
+
+**`report.html` is what gets reviewed.** One page, every document, source left
+and render right at matched width, scores above each pair with the delta
+against the previous run, intermediate steps collapsed.
+`tools/inspect_run.py`'s per-fixture `index.html` stays as it is and answers a
+different question: how one document was converted, step by step.
+
+**The scorer is developable with no model running.** `tests/frozen/run84/`
+holds run 84's five output documents, copied in before `debug/runs/` was
+cleared, and `tests/test_scoring.py` is Thread 0's exit gate: asked only
+general questions, the scorer finds the deleted table header, the repeated Zone
+Titles and the hard line breaks.
+
+**Adding a document is writing an HTML file and running
+`tools/shoot_corpus.py`.** No Python, no transcription. That is what let the
+corpus leave five.
 
 ### The new criteria, in brief
 
@@ -188,32 +209,68 @@ bottom** when diagnosing one document; open `report.html` when comparing them al
 
 ---
 
-## Retiring in Thread 0 — do not build on these
+## Retired in Thread 0 — gone, and why
 
-- **`acceptance.compare()` and `tests/fixtures/*.py`.** The typed-reference
-  harness. `geometry_score.align()` survives as a component of the new T3; the
-  rest is deleted. Its last baseline was `debug/runs/84-rule-not-a-line/`, and
-  spec 0007's problem statement is the permanent record of what that run actually
-  produced. **Thread 0 Step 1 copies — never moves — run 84's five
-  `document.html` into `tests/frozen/run84/` before anything is deleted.**
-- **The vision layout path.** `DTH_LAYOUT_DETECTOR=heron` is the default;
-  `DTH_LAYOUT_DETECTOR=none` reaches the vision pass, which raises `MappingError`
-  on three of five fixtures and matches none. Thread 0 deletes it, along with
-  `DTH_LAYOUT_LONG_EDGE` — which exists only to serve it, has no docstring, and
-  ships at a value no recorded run used.
-- **Issue #17** (`LAYOUT_PROMPT` still asks for `kind`, `title` and `graphic`) is
-  closed by that deletion; its thread already said to re-scope it because the pass
-  it edits may not survive.
+- **`acceptance.compare()`, `tests/test_acceptance.py`, `tests/test_fixture_0002.py`
+  and every `*.expected.json`.** The typed-reference harness and its serialised
+  reference. `geometry_score.align()` survives as a component of T3.
+  `tests/frozen/run84/` holds run 84's five output documents, copied in before
+  anything was deleted; spec 0007's problem statement is the rest of the record.
+- **`tests/fixtures/` is now `tests/documents/`, and `BUILDERS` is
+  `SAMPLE_DOCUMENTS`.** The hand-built `Document` objects survive **only as
+  input** to render, probe and replay tests. With the comparison function and
+  every serialised reference deleted, nothing can score against them. **Never
+  score against them** — doing so rebuilds the harness spec 0007 deleted. They
+  no longer have to be *true* IR, only plausible IR.
+- **The vision layout path.** Geometry comes from a detector in every
+  Conversion. `DTH_LAYOUT_DETECTOR=none` now **refuses by name** rather than
+  being handed to `from_name` as if it were a detector, so a stale value in
+  somebody's shell says so instead of failing somewhere obscure.
+  `DTH_LAYOUT_LONG_EDGE`, which served only that pass, is gone;
+  `preprocess.LAYOUT_LONG_EDGE` is the remaining constant and is not a setting.
+- **The probes bound to the retired reference**: `layout_probe.py` (measured
+  the vision pass), `snap_probe.py`, `classify_truth_probe.py`,
+  `fixture_geometry.py` (derived rectangles *for* the expected IR) and
+  `write_expected_ir.py`. `cv_layout_probe.py` and `detector_probe.py` are
+  **kept** and repointed — see the OpenCV rectangle finder note above, which
+  Thread 2/B needs.
 
-**Tracker state.** `docs/specs/0007` is the live spec and **needs a GitHub
-issue**; so does `0006`, which never got one. `#28` (spec 0005) and `#17` are both
-closed by Thread 0 — 0005's remaining Changes 4 and 5 measure against a harness
-that no longer exists. Specs 0001–0006 are closed history.
+**One thing Thread 0 did not finish, named so it is not mistaken for done.**
+`OllamaEngine.detect_zones` and `LAYOUT_PROMPT` are still in the tree as the
+seam the recorded-response suite replays against, documented as that. They are
+unreachable from a Conversion, so nothing they ask for can influence any
+output. Removing the seam means replacing the layout stage of nine test
+modules; it is bookkeeping, not a measurement question.
+
+**Tracker state.** **#30** is spec 0007 and the only open issue. #29 records
+spec 0006 retrospectively (closed). #28 (spec 0005) and #17 (the vision layout
+prompt) were closed by Thread 0. Specs 0001–0006 are closed history.
 
 ---
 
 ## Lessons that generalise
 
+- **The tool between you and the artefact is part of the measurement, and it
+  lies quietly.** Thread 0 found three faults in the *rendering harness*, none
+  visible in any number, each found by looking at a picture after the numbers
+  said everything was fine. (1) Headless Chrome inherits the host's dark mode,
+  so `render.py`'s `@media (prefers-color-scheme: dark)` fired and **every
+  visual comparison eyeballed in this project before 2026-09-18 was an inverted
+  page beside a light source**. (2) Chrome lays out no page narrower than 500px
+  but crops the screenshot to the width you asked for, so a 340px document
+  became a 500px layout with its right-hand column cut off. (3) A screenshot
+  taken at *exactly* the page height renders the last row blank —
+  `invoice_0001`'s `Total: $385.00` had zero dark pixels while `project()`
+  reported it present at y 551-569. The third is the dangerous shape: **T1 and
+  the pixels disagreeing about whether content exists**, which is the failure
+  spec 0007 warns about, arriving from the tooling rather than from the IR. All
+  three are pinned in `tests/test_projection.py`.
+- **A corpus document that hides its own text is not ground truth.**
+  `newsletter_0008`'s CSS multicol balanced its content into a box shorter than
+  the content and cut a line in half. The text stays in the DOM, so the
+  projection reports it and T1 demands the model read it, while the picture
+  does not contain it. Invisible in the page height, obvious in the PNG. It now
+  uses three explicit columns, which cannot do that.
 - **A metric can saturate and then invert, and nothing inside it will say so.**
   Runs 81→84 moved the total 23→10. Over those same runs, duplicated titles
   appeared in three of five documents and `sample_table_0003` lost every column
@@ -289,16 +346,30 @@ that no longer exists. Specs 0001–0006 are closed history.
 
 ## The loop
 
-`tools/iterate.sh <label>` — one document on the shipped defaults, which is what a
-status question should be answered with. `FIXTURE=all tools/iterate.sh <label>`
-runs the *iterate* set. Set a `DTH_*` only to change **one** axis against that
-baseline, and say which one when reporting the result.
+```
+tools/iterate.sh <label>                  # one document, shipped defaults
+FIXTURE=iterate tools/iterate.sh <label>  # the five, ~17 min
+FIXTURE=sweep   tools/iterate.sh <label>  # all fifteen, at a phase gate
+FIXTURE=invoice_0001,cv_0013 tools/iterate.sh <label>
+```
 
-**Corpus split** (from Thread 0): *iterate* = the original five, ~17 min of model
-time, run on every change. *sweep* = all fifteen, ~50 min, run at phase gates.
-Per-document model time on `qwen3-vl:4b`: `invoice_0002` 301s,
-`sample_semantic_0005` 300s, `invoice_0001` 174s, `sample_table_0003` 132s,
-`sample_css_0004` 128s.
+Set a `DTH_*` only to change **one** axis against that baseline, and say which
+one when reporting the result.
+
+**Open `debug/runs/<label>/report.html`.** It is built by the run, it holds
+every document, and it carries the delta against the previous run's
+`scores.json` plus a pass/fail on the hard tier. A run's numbers are in
+`scores.json` beside it.
+
+**Corpus split.** *iterate* = the original five, run on every change. *sweep* =
+all fifteen, run at phase gates. `doc_to_html.corpus` is the one place that
+says which is which. Per-document model time on `qwen3-vl:4b`, measured from
+run 84: `invoice_0002` 301s, `sample_semantic_0005` 300s, `invoice_0001` 174s,
+`sample_table_0003` 132s, `sample_css_0004` 128s.
+
+**The five original documents are the ones every prompt was tuned on.** That is
+why *sweep* exists and why a phase gate is not allowed to be decided on
+*iterate*.
 
 Runs live in `debug/runs/<label>/`, which is **gitignored** and gets cleared —
 regenerate rather than hunt, and never quote a run you cannot open. Nothing in the
