@@ -480,6 +480,12 @@ class OllamaEngine:
     host: str = DEFAULT_OLLAMA_HOST
     api_key: str = ""
     layout_long_edge: int = LAYOUT_LONG_EDGE
+    """What the retired vision layout pass downscaled a page to.
+
+    No longer configurable: `DTH_LAYOUT_LONG_EDGE` served only that pass and
+    spec 0007 Thread 0 retired it. The constant stays because `detect_zones`
+    stays as the seam the recorded-response suite replays against.
+    """
     num_ctx: int = DEFAULT_NUM_CTX
     timeout_s: float = DEFAULT_TIMEOUT_S
     transport: Transport | None = None
@@ -521,7 +527,6 @@ class OllamaEngine:
             model=model,
             host=settings.ollama_host,
             api_key=settings.ollama_api_key,
-            layout_long_edge=settings.layout_long_edge,
             num_ctx=settings.num_ctx,
             timeout_s=settings.timeout_s,
             transport=transport,

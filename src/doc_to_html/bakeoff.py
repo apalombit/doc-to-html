@@ -1,8 +1,18 @@
-"""Measure real models against the acceptance set.
+"""Run real models over the corpus and write out what they produced.
 
     python -m doc_to_html.bakeoff                     # every candidate
     python -m doc_to_html.bakeoff --models qwen3-vl:2b
     python -m doc_to_html.bakeoff --fixtures invoice_0001
+    python -m doc_to_html.bakeoff --fixtures sweep    # all fifteen
+
+**It no longer scores anything.** It used to compare each converted IR against
+a hand-typed reference with `acceptance.compare()` and print a mismatch total,
+and spec 0007 retired that: the measure is now `scoring.score_document()`,
+which compares the *rendered page* against the *source page*, and the review
+surface is `report.html`. What is left here is what was always underneath — a
+harness that converts every document with a real model, times every pass, and
+writes the artefacts. Timing and failure are its output; the verdict is
+somebody else's.
 
 The evidence the whole slice exists to produce. Everything else in this project
 is tested against recorded responses, which exercises the pipeline and says
@@ -43,19 +53,14 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Iterable
 
-from .acceptance import Mismatch, compare
 from .config import Settings, configure_logging, load
+from .corpus import SOURCES, names
 from .engines.base import LayoutEngine
-from .engines.detector import from_name
 from .engines.ollama import OllamaEngine
 from .engines.transport import OllamaTransport, Response, Transport
-from .ir import Document
-from .orchestrator import Conversion, EngineSet
+from .orchestrator import Conversion, EngineSet, _layout_engine
 from .render import render
 from .trace import Call, Trace
-
-ACCEPTANCE_SET = Path("tests/fixtures")
-"""Where the committed expected IR lives. Each file names its own Source Image."""
 
 CANDIDATES = ("qwen3-vl:4b", "qwen3-vl:2b", "granite3.2-vision:latest")
 """The models `docs/status.md` has open questions about.
@@ -170,7 +175,13 @@ class Attempt:
     fixture: str
     model: str
     timings: list[PassTiming] = field(default_factory=list)
-    mismatches: list[Mismatch] = field(default_factory=list)
+    failures: list[str] = field(default_factory=list)
+    """Zones the Conversion could not read at all, in its own words.
+
+    Not a score. A Zone that raised is a Zone with no content, and that is a
+    fact about the run rather than a judgement about the output — the
+    judgement is `scoring.score_document()`'s and appears in `report.html`."""
+
     caveats: list[str] = field(default_factory=list)
     answers: list[tuple[str, str, str]] = field(default_factory=list)
     html: str | None = None
@@ -209,27 +220,38 @@ class Attempt:
 
     @property
     def verdict(self) -> str:
+        """Whether the Conversion finished, which is all this can say now.
+
+        Deliberately not a quality word. "match" used to appear here and it is
+        exactly the word that let `sample_table_0003` look fine while missing
+        every column header of its only table.
+        """
         if self.error:
             return "error"
-        return "match" if not self.mismatches else f"{len(self.mismatches)} off"
+        if self.failures:
+            return f"{len(self.failures)} zone(s) unread"
+        return "converted"
 
 
-def load_acceptance_set(root: Path) -> dict[str, tuple[Path, Document]]:
-    """The committed expected IR, keyed by fixture name.
+def load_corpus(root: Path, wanted: Iterable[str]) -> dict[str, Path]:
+    """The Source Image of each named document, keyed by name.
 
-    Read from the JSON rather than from the Python builders so that nothing in the
-    package imports the test suite. Each file records its own Source Image path,
-    which is what makes it portable.
+    A name and a picture, and nothing else. There used to be an expected
+    `Document` beside each one and a comparison at the end; `doc_to_html.corpus`
+    now says what the corpus is and `doc_to_html.scoring` says how it is judged.
     """
     found = {}
-    for path in sorted((root / ACCEPTANCE_SET).glob("*.expected.json")):
-        document = Document.from_json(path.read_text())
-        found[path.name.removesuffix(".expected.json")] = (
-            root / document.source.path,
-            document,
-        )
+    for name in wanted:
+        source = SOURCES[name]
+        png = source.png_path(root)
+        if not png.is_file():
+            raise SystemExit(
+                f"{name}: no Source Image at {source.png} — run "
+                f"tools/shoot_corpus.py"
+            )
+        found[name] = png
     if not found:
-        raise SystemExit(f"no expected IR found under {root / ACCEPTANCE_SET}")
+        raise SystemExit("no documents selected")
     return found
 
 
@@ -287,12 +309,12 @@ def engines_for(model: str, settings: Settings,
     b for classification". Measuring a combination is issue #19's job, and it
     needs a way to say so that does not exist here yet.
 
-    **`DTH_LAYOUT_DETECTOR` is the one exception, and it has to be.** With it
-    set, geometry comes from a trained ONNX detector rather than from `model`,
-    and this is the only path `tools/iterate.sh` runs — so ignoring it here would
-    mean the flag could be measured by a probe and never by a Conversion, which
-    is the thing it exists to make possible. The other three roles still share
-    `model`, and `--models` still means what it says about them.
+    **Geometry is the one exception, and it has to be.** It comes from a
+    trained ONNX detector rather than from `model`, and this is the only path
+    `tools/iterate.sh` runs — so ignoring `DTH_LAYOUT_DETECTOR` here would mean
+    a detector setting could be measured by a probe and never by a Conversion,
+    which is the thing it exists to make possible. The other three roles still
+    share `model`, and `--models` still means what it says about them.
 
     **Every detector setting has to be forwarded, not just the name**, and this
     is written down because it has already gone wrong once. `DTH_HEADING_RULE`
@@ -310,12 +332,7 @@ def engines_for(model: str, settings: Settings,
     def engine() -> OllamaEngine:
         return OllamaEngine.from_settings(settings, model, transport=transport)
 
-    layout: LayoutEngine = engine()
-    if settings.layout_detector:
-        layout = from_name(settings.layout_detector,
-                           settings.detector_confidence or None,
-                           heading_rule=settings.heading_rule,
-                           prefer_container=settings.prefer_container)
+    layout: LayoutEngine = _layout_engine(settings)
 
     return EngineSet(layout=layout, classify=engine(), extract=engine(),
                      audit=engine())
@@ -334,7 +351,7 @@ def ollama_transport_for(settings: Settings) -> TransportFor:
     return build
 
 
-def run(models: Iterable[str], acceptance: dict[str, tuple[Path, Document]],
+def run(models: Iterable[str], corpus: dict[str, Path],
         settings: Settings, *,
         transport_for: TransportFor | None = None,
         resident_for: ResidentFor | None = None) -> list[Attempt]:
@@ -347,7 +364,7 @@ def run(models: Iterable[str], acceptance: dict[str, tuple[Path, Document]],
     measure = resident_for or ollama_resident_for(settings)
     attempts = []
     for model in models:
-        for name, (image, expected) in acceptance.items():
+        for name, image in corpus.items():
             # One Trace, shared: the Conversion appends its steps, the transport
             # appends the calls those steps made. Built here rather than taken
             # off the Conversion afterwards because the transport is wrapped
@@ -386,12 +403,11 @@ def run(models: Iterable[str], acceptance: dict[str, tuple[Path, Document]],
                     ],
                     indent=2,
                 )
-                attempt.mismatches = compare(expected, actual)
-                for failure in actual.failures:
-                    attempt.mismatches.append(
-                        Mismatch(f"zone {failure.zone_index}", "extraction",
-                                 "content", failure.reason)
-                    )
+                attempt.failures = [
+                    f"zone {failure.zone_index} ({failure.kind}): "
+                    f"{failure.reason}"
+                    for failure in actual.failures
+                ]
                 # Caveats deliberately do not count against a model. A table too
                 # tall for the model's input was read at reduced resolution because
                 # slice stitching is not built, which is this project's limitation
@@ -431,7 +447,7 @@ def report(attempts: list[Attempt]) -> str:
         return "no attempts"
 
     per_document = _table(
-        ["model", "document", "structure", "passes", "total s", "slowest pass"],
+        ["model", "document", "outcome", "passes", "total s", "slowest pass"],
         [
             [
                 attempt.model,
@@ -470,12 +486,12 @@ def report(attempts: list[Attempt]) -> str:
     )
 
     summary = _table(
-        ["model", "documents", "matched", "mean s", "resident MB"],
+        ["model", "documents", "converted", "mean s", "resident MB"],
         [
             [
                 model,
                 str(len(group)),
-                str(sum(1 for a in group if not a.mismatches and not a.error)),
+                str(sum(1 for a in group if not a.failures and not a.error)),
                 f"{sum(a.seconds for a in group) / len(group):.1f}",
                 next(
                     (f"{a.resident_mb:.0f}" for a in group
@@ -490,9 +506,9 @@ def report(attempts: list[Attempt]) -> str:
     details = [
         f"\n{attempt.model} / {attempt.fixture}:"
         + (f"\n  error: {attempt.error}" if attempt.error else "")
-        + "".join(f"\n  - {mismatch}" for mismatch in attempt.mismatches)
+        + "".join(f"\n  - {failure}" for failure in attempt.failures)
         for attempt in attempts
-        if attempt.mismatches or attempt.error
+        if attempt.failures or attempt.error
     ]
 
     caveats = [
@@ -503,7 +519,7 @@ def report(attempts: list[Attempt]) -> str:
 
     return "\n\n".join(
         ["Per document", per_document, "Per pass", per_pass, "Per model", summary]
-        + (["What did not match", "".join(details).strip()] if details else [])
+        + (["What did not convert", "".join(details).strip()] if details else [])
         + (["Read with a caveat (this project's limitation, not the model's)",
             "\n".join(caveats)] if caveats else [])
     )
@@ -512,15 +528,16 @@ def report(attempts: list[Attempt]) -> str:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="python -m doc_to_html.bakeoff",
-        description="Measure real models against the acceptance set. Needs Ollama.",
+        description="Convert the corpus with real models. Needs Ollama.",
     )
     parser.add_argument("--models", default="",
                        help="comma-separated model names; default is every "
                             "configured model plus the open questions' candidates")
-    parser.add_argument("--fixtures", default="",
-                       help="comma-separated fixture names; default is all")
+    parser.add_argument("--fixtures", default="iterate",
+                       help="a split (iterate, sweep), 'all', or a "
+                            "comma-separated list of document names")
     parser.add_argument("--root", type=Path, default=Path.cwd(),
-                       help="repository root, for finding the acceptance set")
+                       help="repository root, for finding the Source Images")
     parser.add_argument("--json", action="store_true",
                        help="emit machine-readable results as well as the table")
     parser.add_argument("--dump", type=Path, default=None,
@@ -530,25 +547,23 @@ def main(argv: list[str] | None = None) -> int:
 
     settings = load()
     configure_logging(settings)
-    acceptance = load_acceptance_set(args.root)
-    if args.fixtures:
-        wanted = args.fixtures.split(",")
-        missing = [name for name in wanted if name not in acceptance]
-        if missing:
-            raise SystemExit(f"unknown fixture(s): {', '.join(missing)}")
-        acceptance = {name: acceptance[name] for name in wanted}
+    try:
+        wanted = names(args.fixtures)
+    except KeyError as error:
+        raise SystemExit(str(error)) from error
+    corpus = load_corpus(args.root, wanted)
 
     models = (
         [model.strip() for model in args.models.split(",") if model.strip()]
         or models_to_measure(settings)
     )
     print(
-        f"{len(models)} model(s) over {len(acceptance)} document(s) "
+        f"{len(models)} model(s) over {len(corpus)} document(s) "
         f"against {settings.ollama_host}\n",
         file=sys.stderr,
     )
 
-    attempts = run(models, acceptance, settings)
+    attempts = run(models, corpus, settings)
     print(report(attempts))
 
     if args.dump:
@@ -579,7 +594,7 @@ def main(argv: list[str] | None = None) -> int:
                         {"pass": t.pass_name, "seconds": round(t.seconds, 3)}
                         for t in a.timings
                     ],
-                    "mismatches": [str(m) for m in a.mismatches],
+                    "failures": list(a.failures),
                     "resident_mb": a.resident_mb,
                     "error": a.error,
                 }

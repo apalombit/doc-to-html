@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Receipt</title>
+<style>
+  /* A 300px slip on a wider ground, because headless Chrome lays out no
+     page narrower than 500px — asked for 340 it silently used 500 and
+     cropped the screenshot, which put every price off the right edge of a
+     picture that still claimed to be the document. A receipt photographed on
+     a counter is what this looks like anyway. */
+  body { font:12px/1.35 "Courier New", Courier, monospace; color:#1a1a1a;
+         background:#cfccc6; margin:0; padding:18px 0; }
+  .slip { width:300px; margin:0 auto; background:#fff; padding:14px 16px;
+          box-shadow:0 1px 4px rgba(0,0,0,.22); }
+  .centre { text-align:center; }
+  h1 { font-size:15px; margin:0 0 1px; letter-spacing:.14em; }
+  .addr { font-size:11px; margin:0; }
+  .sep { border:0; border-top:1px dashed #1a1a1a; margin:7px 0; }
+  .sep.solid { border-top:1px solid #1a1a1a; }
+  table { width:100%; border-collapse:collapse; font-size:11px; }
+  td { padding:1px 0; vertical-align:top; }
+  .qty { width:22px; }
+  .amt { text-align:right; width:56px; font-variant-numeric:tabular-nums; }
+  .desc { padding-right:6px; }
+  .mod { padding-left:12px; color:#444; font-size:10px; }
+  .tot td { font-weight:700; font-size:12px; padding-top:3px; }
+  .meta { font-size:10px; }
+  .meta td:last-child { text-align:right; }
+  .barcode { margin:9px auto 3px; height:34px; width:150px;
+             background:repeating-linear-gradient(90deg,
+               #1a1a1a 0 2px, #fff 2px 4px, #1a1a1a 4px 5px, #fff 5px 9px,
+               #1a1a1a 9px 12px, #fff 12px 13px); }
+  .thanks { font-size:11px; letter-spacing:.04em; }
+  .small { font-size:9px; color:#444; }
+</style>
+</head>
+<body>
+<div class="slip">
+<div class="centre">
+  <h1>ELDER STREET CAFE</h1>
+  <p class="addr">12 Elder Street<br>Castleton CT9 2BN<br>01632 960 118</p>
+</div>
+<hr class="sep">
+<table class="meta">
+  <tr><td>Till 02  Op. NADIA</td><td>29/08/2026</td></tr>
+  <tr><td>Order 00418</td><td>13:47</td></tr>
+</table>
+<hr class="sep">
+<table>
+  <tr><td class="qty">1</td><td class="desc">Flat white</td><td class="amt">3.40</td></tr>
+  <tr><td class="qty"></td><td class="desc mod">oat milk</td><td class="amt">0.40</td></tr>
+  <tr><td class="qty">2</td><td class="desc">Cortado</td><td class="amt">6.20</td></tr>
+  <tr><td class="qty">1</td><td class="desc">Toast, sourdough</td><td class="amt">3.10</td></tr>
+  <tr><td class="qty"></td><td class="desc mod">extra butter</td><td class="amt">0.30</td></tr>
+  <tr><td class="qty">1</td><td class="desc">Bacon roll</td><td class="amt">5.75</td></tr>
+  <tr><td class="qty">3</td><td class="desc">Shortbread</td><td class="amt">4.50</td></tr>
+  <tr><td class="qty">1</td><td class="desc">Elderflower press</td><td class="amt">2.80</td></tr>
+</table>
+<hr class="sep">
+<table>
+  <tr><td class="desc">Subtotal</td><td class="amt">26.45</td></tr>
+  <tr><td class="desc">Service 10%</td><td class="amt">2.65</td></tr>
+  <tr><td class="desc">VAT @ 20%</td><td class="amt">4.85</td></tr>
+</table>
+<hr class="sep solid">
+<table>
+  <tr class="tot"><td class="desc">TOTAL</td><td class="amt">29.10</td></tr>
+  <tr><td class="desc">Card ****4417</td><td class="amt">29.10</td></tr>
+  <tr><td class="desc">Change</td><td class="amt">0.00</td></tr>
+</table>
+<hr class="sep">
+<table class="meta">
+  <tr><td>AID A0000000031010</td><td></td></tr>
+  <tr><td>Auth 084417</td><td>CONTACTLESS</td></tr>
+</table>
+<hr class="sep">
+<div class="centre">
+  <p class="thanks">THANK YOU &mdash; PLEASE CALL AGAIN</p>
+  <div class="barcode"></div>
+  <p class="small">0 04418 29102 6</p>
+  <p class="small">VAT reg. 442 7719 03<br>Retain for your records</p>
+</div>
+</div>
+</body>
+</html>

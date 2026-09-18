@@ -73,7 +73,6 @@ What #15 actually bought is that this is a *setting*: `DTH_CLASSIFY_MODEL` picks
 the classifier independently of the layout and extraction models, so evaluating
 models per step — and combinations across steps — is configuration rather than
 code. That evaluation is issue #19."""
-DEFAULT_LAYOUT_LONG_EDGE = 512
 DEFAULT_NUM_CTX = 8192
 DEFAULT_TIMEOUT_S = 180.0
 DEFAULT_LOG_LEVEL = "INFO"
@@ -431,8 +430,11 @@ coverage at 1.00 nothing is lost, only mis-grouped: a Zone too many renders as
 two blocks, where a Zone missing loses content for good. `doubles` is the field
 that catches the opposite error, and it reads 3 on `invoice_0002`.
 
-**This flag no longer reads `DTH_LAYOUT_LONG_EDGE`.** The detector never sees it.
-That setting now applies only when this one is set back to `""`."""
+**`DTH_LAYOUT_LONG_EDGE` is gone.** It existed only to set the resolution of
+the vision layout pass, it had no docstring, it shipped at a value no recorded
+run used, and spec 0007 Thread 0 retired the pass it served. The detector never
+read it. `preprocess.LAYOUT_LONG_EDGE` is the remaining constant and it is not
+a setting."""
 
 DEFAULT_DETECTOR_CONFIDENCE = 0.0
 """Confidence floor for the layout detector, or 0 for the detector's own.
@@ -548,7 +550,6 @@ class Settings:
     classify_model: str = DEFAULT_CLASSIFY_MODEL
     extract_model: str = DEFAULT_EXTRACT_MODEL
     audit_model: str = DEFAULT_AUDIT_MODEL
-    layout_long_edge: int = DEFAULT_LAYOUT_LONG_EDGE
     num_ctx: int = DEFAULT_NUM_CTX
     timeout_s: float = DEFAULT_TIMEOUT_S
     log_level: str = DEFAULT_LOG_LEVEL
@@ -676,7 +677,6 @@ def load(
             resolve("DTH_CLASSIFY_MODEL", DEFAULT_CLASSIFY_MODEL),
             resolve("DTH_EXTRACT_MODEL", DEFAULT_EXTRACT_MODEL),
             resolve("DTH_AUDIT_MODEL", DEFAULT_AUDIT_MODEL),
-            resolve("DTH_LAYOUT_LONG_EDGE", DEFAULT_LAYOUT_LONG_EDGE),
             resolve("DTH_NUM_CTX", DEFAULT_NUM_CTX),
             resolve("DTH_TIMEOUT_S", DEFAULT_TIMEOUT_S),
             resolve("DTH_LOG_LEVEL", DEFAULT_LOG_LEVEL),
@@ -700,7 +700,6 @@ def load(
         classify_model=origins["DTH_CLASSIFY_MODEL"].value,
         extract_model=origins["DTH_EXTRACT_MODEL"].value,
         audit_model=origins["DTH_AUDIT_MODEL"].value,
-        layout_long_edge=_number(origins["DTH_LAYOUT_LONG_EDGE"], int),
         num_ctx=_number(origins["DTH_NUM_CTX"], int),
         timeout_s=_number(origins["DTH_TIMEOUT_S"], float),
         log_level=origins["DTH_LOG_LEVEL"].value,

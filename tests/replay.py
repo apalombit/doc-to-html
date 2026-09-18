@@ -6,9 +6,18 @@ assembly and the real renderer; only the call to a model is replaced. That is
 what makes the response parser exercised by the same tests that exercise the
 pipeline, rather than verified separately and hoped about.
 
-The recorded responses live in `tests/responses/` and are derived from the
-hand-authored expected IR by `tools/record_responses.py`. See that file for what
-replaying them does and does not prove.
+The recorded responses live in `tests/responses/` and are derived by
+`tools/record_responses.py`. See that file for what replaying them does and does
+not prove.
+
+**Each fixture's `zones.json` is what makes this work without the old
+acceptance set.** Replaying needs two things the response files themselves do
+not carry: the Kind of every Zone, because `_classify` asks about each one in
+turn and the answers have to line up, and which Zones have an Extractor wired.
+Both used to be read off the hand-typed `Document` builders. They are now
+frozen beside the responses they belong to, which is where they should always
+have been — a recording that depends on a live object in the test suite breaks
+the moment that object is edited for an unrelated reason.
 """
 
 from __future__ import annotations
@@ -25,6 +34,11 @@ from doc_to_html.ir import Document
 from doc_to_html.orchestrator import Conversion, EngineSet, convert
 
 RESPONSES = Path(__file__).resolve().parent / "responses"
+
+
+def manifest(fixture: str) -> dict[str, Any]:
+    """The Zone Kinds and the wired Zone indices for one recorded fixture."""
+    return json.loads((RESPONSES / fixture / "zones.json").read_text())  # type: ignore[no-any-return]
 
 
 @dataclass
@@ -126,10 +140,8 @@ def recorded(fixture: str, zones: list[int] | None = None
     same reason `tools/record_responses.py` derives everything else that way: a
     recording taken from a model captures that model's mistakes.
     """
-    from .fixtures import BUILDERS
-
     directory = RESPONSES / fixture
-    document = BUILDERS[fixture]()
+    described = manifest(fixture)["zones"]
     indices = (
         range(len(list(directory.glob("zone_*.json")))) if zones is None else zones
     )
@@ -137,9 +149,8 @@ def recorded(fixture: str, zones: list[int] | None = None
     queues: dict[str, list[Response]] = {
         "layout": [text((directory / "layout.json").read_text())],
         "classify": [
-            text(json.dumps({"kind": zone.kind.value,
-                             "graphic": zone.graphic_kind or ""}))
-            for zone in document.zones
+            text(json.dumps({"kind": zone["kind"], "graphic": zone["graphic"]}))
+            for zone in described
         ],
     }
     # **One entry per Zone that is actually asked, not per Zone.** A crop holding
@@ -156,7 +167,7 @@ def recorded(fixture: str, zones: list[int] | None = None
             for answer in json.loads(captions.read_text())
         ]
     for index in indices:
-        queues.setdefault(document.zones[index].kind.value, []).append(
+        queues.setdefault(described[index]["kind"], []).append(
             text((directory / f"zone_{index:02d}.json").read_text())
         )
     return queues
@@ -174,18 +185,19 @@ def layout_only(fixture: str) -> list[Response]:
 def wired_zones(fixture: str) -> list[int]:
     """The Zones of a fixture whose Kind has an Extractor wired.
 
-    Derived rather than written down, because a Kind gaining an Extractor changes
-    which Zones reach a model and every test that replays this document would
-    otherwise need editing to keep its responses in step.
+    Derived from the Kinds rather than written down, because a Kind gaining an
+    Extractor changes which Zones reach a model and every test that replays
+    this document would otherwise need editing to keep its responses in step.
+    The manifest records the answer taken when the responses were recorded as
+    well, so a divergence between the two is visible rather than silent.
     """
+    from doc_to_html.ir import Kind
     from doc_to_html.wire import EXTRACTION_SCHEMAS
-
-    from .fixtures import BUILDERS
 
     return [
         index
-        for index, zone in enumerate(BUILDERS[fixture]().zones)
-        if zone.kind in EXTRACTION_SCHEMAS
+        for index, zone in enumerate(manifest(fixture)["zones"])
+        if Kind(zone["kind"]) in EXTRACTION_SCHEMAS
     ]
 
 
@@ -204,9 +216,7 @@ def break_zone(replies: dict[str, list[Response]], fixture: str,
     first place. Queues per pass let the Zone be named, and the position within
     its own Kind's queue is derived here rather than at each call site.
     """
-    from .fixtures import BUILDERS
-
-    kinds = [zone.kind.value for zone in BUILDERS[fixture]().zones]
+    kinds = [zone["kind"] for zone in manifest(fixture)["zones"]]
     wired = wired_zones(fixture)
     kind = kinds[zone_index]
     position = sum(1 for index in wired
@@ -262,6 +272,6 @@ def convert_replaying(
 
 def convert_fixture(fixture: str, root: Path) -> Document:
     """Convert a fixture's own Source Image against its own recorded responses."""
-    from .fixtures import IMAGES
+    from doc_to_html.corpus import SOURCES
 
-    return convert_replaying(root / IMAGES[fixture], recorded_for(fixture))
+    return convert_replaying(root / SOURCES[fixture].png, recorded_for(fixture))

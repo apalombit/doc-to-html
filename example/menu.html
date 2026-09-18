@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The Copper Pot</title>
+<style>
+  body { font:13px/1.5 "Baskerville", "Palatino Linotype", Georgia, serif;
+         color:#2b2118; background:#fdfaf4; margin:0; padding:26px 34px; }
+  header { text-align:center; }
+  h1 { font-size:34px; margin:0; font-weight:400; letter-spacing:.14em;
+       font-variant:small-caps; }
+  .est { font-size:10px; letter-spacing:.34em; text-transform:uppercase;
+         color:#8a7a63; margin-top:3px; }
+  .flourish { border:0; border-top:1px solid #b9a689; width:180px;
+              margin:11px auto; position:relative; }
+  .flourish::after { content:"\2766"; position:absolute; top:-10px; left:50%;
+                     transform:translateX(-50%); background:#fdfaf4;
+                     padding:0 8px; color:#b9a689; font-size:14px; }
+  .cols { display:flex; gap:38px; margin-top:6px; }
+  .cols > section { flex:1; }
+  h2 { font-size:15px; font-variant:small-caps; letter-spacing:.1em;
+       margin:16px 0 8px; text-align:center; color:#6b4f2a; }
+  h2:first-child { margin-top:0; }
+  .dish { display:flex; align-items:baseline; margin-bottom:2px; }
+  .dish .name { white-space:nowrap; }
+  .dish .dots { flex:1; border-bottom:1.5px dotted #b9a689;
+                margin:0 5px 3px; min-width:12px; }
+  .dish .price { white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .note { font-size:10.5px; font-style:italic; color:#7b6a55;
+          margin:0 0 7px; padding-right:52px; }
+  .vg { font-size:9px; letter-spacing:.1em; color:#4e6b3a; }
+  footer { text-align:center; margin-top:20px; font-size:10px; color:#8a7a63;
+           border-top:1px solid #e2d6c2; padding-top:9px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>The Copper Pot</h1>
+  <div class="est">Kitchen &amp; Cellar · Est. 1961</div>
+  <hr class="flourish">
+</header>
+
+<div class="cols">
+  <section>
+    <h2>To begin</h2>
+    <div class="dish"><span class="name">Potted brown shrimp</span>
+      <span class="dots"></span><span class="price">9.50</span></div>
+    <p class="note">with mace butter and toasted rye</p>
+
+    <div class="dish"><span class="name">Celeriac and apple soup <span class="vg">VG</span></span>
+      <span class="dots"></span><span class="price">7.00</span></div>
+    <p class="note">hazelnut oil, chervil</p>
+
+    <div class="dish"><span class="name">Ox tongue, sauce gribiche</span>
+      <span class="dots"></span><span class="price">10.25</span></div>
+
+    <div class="dish"><span class="name">Burrata, late tomatoes</span>
+      <span class="dots"></span><span class="price">11.00</span></div>
+    <p class="note">basil, aged balsamic</p>
+
+    <h2>From the grill</h2>
+    <div class="dish"><span class="name">Rib of beef, for two</span>
+      <span class="dots"></span><span class="price">62.00</span></div>
+    <p class="note">dripping chips, watercress, béarnaise</p>
+
+    <div class="dish"><span class="name">Lamb cutlets</span>
+      <span class="dots"></span><span class="price">26.50</span></div>
+
+    <div class="dish"><span class="name">Whole plaice on the bone</span>
+      <span class="dots"></span><span class="price">24.00</span></div>
+    <p class="note">brown butter, capers, lemon</p>
+  </section>
+
+  <section>
+    <h2>Main courses</h2>
+    <div class="dish"><span class="name">Braised shin, bone marrow</span>
+      <span class="dots"></span><span class="price">23.00</span></div>
+    <p class="note">mashed potato, red wine</p>
+
+    <div class="dish"><span class="name">Guinea fowl, autumn roots</span>
+      <span class="dots"></span><span class="price">21.50</span></div>
+
+    <div class="dish"><span class="name">Squash and sage gnocchi <span class="vg">VG</span></span>
+      <span class="dots"></span><span class="price">18.00</span></div>
+    <p class="note">crisp sage, toasted pumpkin seed</p>
+
+    <div class="dish"><span class="name">Fish pie of the day</span>
+      <span class="dots"></span><span class="price">19.75</span></div>
+
+    <h2>Puddings</h2>
+    <div class="dish"><span class="name">Treacle tart, clotted cream</span>
+      <span class="dots"></span><span class="price">8.50</span></div>
+    <div class="dish"><span class="name">Poached quince, custard</span>
+      <span class="dots"></span><span class="price">8.00</span></div>
+    <div class="dish"><span class="name">Chocolate pot, sea salt</span>
+      <span class="dots"></span><span class="price">8.50</span></div>
+    <div class="dish"><span class="name">Cheese, three from the board</span>
+      <span class="dots"></span><span class="price">12.00</span></div>
+    <p class="note">quince paste, oat biscuits</p>
+  </section>
+</div>
+
+<footer>
+  A discretionary service charge of 12.5% is added to tables of six or more.<br>
+  Please tell us of any allergy before ordering.
+</footer>
+</body>
+</html>

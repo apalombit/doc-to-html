@@ -48,9 +48,15 @@ from doc_to_html.wire import (  # noqa: E402
     WireZone,
 )
 
-from tests.fixtures import BUILDERS, IMAGES  # noqa: E402
+from doc_to_html.corpus import SOURCES  # noqa: E402
+from tests.documents import SAMPLE_DOCUMENTS as BUILDERS  # noqa: E402
 
-# `tests.fixtures.BUILDERS` is the single list of what the acceptance set is.
+IMAGES = {name: SOURCES[name].png for name in BUILDERS}
+
+# `tests.documents.SAMPLE_DOCUMENTS` is the list of documents that have a
+# hand-built IR to derive answers from. It is no longer an acceptance set:
+# nothing scores against these, and spec 0007 Thread 0 deleted the harness
+# that did. See `tests/documents/__init__.py`.
 # A second copy here is how a sixth fixture ends up recorded by one tool and not
 # the other.
 

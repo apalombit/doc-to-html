@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Account statement</title>
+<style>
+  body { font: 13px/1.45 "Helvetica Neue", Arial, sans-serif; color:#16202b;
+         background:#fff; margin:0; padding:26px 30px; }
+  header { display:flex; justify-content:space-between; align-items:flex-start;
+           border-bottom:2px solid #16202b; padding-bottom:10px; }
+  h1 { font-size:20px; margin:0 0 2px; letter-spacing:.02em; }
+  .bank { font-size:11px; text-transform:uppercase; letter-spacing:.18em;
+          color:#5b6b7c; }
+  .meta { text-align:right; font-size:12px; color:#40505f; }
+  .meta strong { color:#16202b; }
+  table { border-collapse:collapse; width:100%; margin-top:16px; font-size:12px; }
+  caption { caption-side:top; text-align:left; font-weight:700; font-size:13px;
+            padding:14px 0 6px; }
+  th { text-align:left; background:#16202b; color:#fff; font-weight:600;
+       padding:6px 8px; font-size:11px; letter-spacing:.05em; }
+  td { padding:4px 8px; border-bottom:1px solid #e6ebef; }
+  tbody tr:nth-child(even) { background:#f4f7f9; }
+  .num { text-align:right; font-variant-numeric:tabular-nums; }
+  .debit { color:#9b1c1c; }
+  .credit { color:#14632b; }
+  tfoot td { font-weight:700; border-top:2px solid #16202b; border-bottom:none;
+             padding-top:7px; }
+  .summary { margin-top:18px; display:flex; gap:34px; font-size:12px; }
+  .summary div { border-left:3px solid #c9d4dd; padding-left:10px; }
+  .summary span { display:block; color:#5b6b7c; font-size:10px;
+                  text-transform:uppercase; letter-spacing:.12em; }
+  .summary b { font-size:16px; }
+  footer { margin-top:20px; font-size:10px; color:#77858f;
+           border-top:1px solid #e6ebef; padding-top:8px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="bank">Northgate Mutual</div>
+    <h1>Current account statement</h1>
+  </div>
+  <div class="meta">
+    Account <strong>40-21-88 / 60114427</strong><br>
+    Period <strong>1 – 31 August 2026</strong><br>
+    Statement <strong>No. 142</strong>
+  </div>
+</header>
+
+<div class="summary">
+  <div><span>Opening balance</span><b>2,418.50</b></div>
+  <div><span>Paid in</span><b class="credit">6,940.00</b></div>
+  <div><span>Paid out</span><b class="debit">5,772.36</b></div>
+  <div><span>Closing balance</span><b>3,586.14</b></div>
+</div>
+
+<table>
+  <caption>Transactions in date order</caption>
+  <thead>
+    <tr><th>Date</th><th>Description</th><th>Type</th>
+        <th class="num">Paid out</th><th class="num">Paid in</th>
+        <th class="num">Balance</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>01 Aug</td><td>Opening balance</td><td></td><td class="num"></td><td class="num"></td><td class="num">2,418.50</td></tr>
+    <tr><td>01 Aug</td><td>Fernway Properties</td><td>DD</td><td class="num debit">1,180.00</td><td class="num"></td><td class="num">1,238.50</td></tr>
+    <tr><td>02 Aug</td><td>Cordell Energy</td><td>DD</td><td class="num debit">94.20</td><td class="num"></td><td class="num">1,144.30</td></tr>
+    <tr><td>02 Aug</td><td>Hale &amp; Prentice Ltd</td><td>BAC</td><td class="num"></td><td class="num credit">3,470.00</td><td class="num">4,614.30</td></tr>
+    <tr><td>03 Aug</td><td>Marchmont Grocers</td><td>CRD</td><td class="num debit">62.41</td><td class="num"></td><td class="num">4,551.89</td></tr>
+    <tr><td>04 Aug</td><td>Transit Authority</td><td>CRD</td><td class="num debit">28.00</td><td class="num"></td><td class="num">4,523.89</td></tr>
+    <tr><td>05 Aug</td><td>Elder Street Cafe</td><td>CRD</td><td class="num debit">11.75</td><td class="num"></td><td class="num">4,512.14</td></tr>
+    <tr><td>06 Aug</td><td>Quillon Books</td><td>CRD</td><td class="num debit">43.90</td><td class="num"></td><td class="num">4,468.24</td></tr>
+    <tr><td>07 Aug</td><td>Wexford Insurance</td><td>DD</td><td class="num debit">216.08</td><td class="num"></td><td class="num">4,252.16</td></tr>
+    <tr><td>08 Aug</td><td>Cash withdrawal, Bridge St</td><td>ATM</td><td class="num debit">120.00</td><td class="num"></td><td class="num">4,132.16</td></tr>
+    <tr><td>09 Aug</td><td>Marchmont Grocers</td><td>CRD</td><td class="num debit">78.33</td><td class="num"></td><td class="num">4,053.83</td></tr>
+    <tr><td>10 Aug</td><td>Ridley Telecom</td><td>DD</td><td class="num debit">39.99</td><td class="num"></td><td class="num">4,013.84</td></tr>
+    <tr><td>11 Aug</td><td>Saltmarsh Design</td><td>FPO</td><td class="num debit">450.00</td><td class="num"></td><td class="num">3,563.84</td></tr>
+    <tr><td>12 Aug</td><td>Refund, Quillon Books</td><td>CRD</td><td class="num"></td><td class="num credit">43.90</td><td class="num">3,607.74</td></tr>
+    <tr><td>13 Aug</td><td>Elder Street Cafe</td><td>CRD</td><td class="num debit">9.20</td><td class="num"></td><td class="num">3,598.54</td></tr>
+    <tr><td>14 Aug</td><td>Ferry &amp; Dock Co</td><td>CRD</td><td class="num debit">31.50</td><td class="num"></td><td class="num">3,567.04</td></tr>
+    <tr><td>15 Aug</td><td>Hale &amp; Prentice Ltd</td><td>BAC</td><td class="num"></td><td class="num credit">1,940.00</td><td class="num">5,507.04</td></tr>
+    <tr><td>15 Aug</td><td>Northgate Mutual, fee</td><td>CHG</td><td class="num debit">5.00</td><td class="num"></td><td class="num">5,502.04</td></tr>
+    <tr><td>16 Aug</td><td>Marchmont Grocers</td><td>CRD</td><td class="num debit">104.66</td><td class="num"></td><td class="num">5,397.38</td></tr>
+    <tr><td>17 Aug</td><td>Ashgrove Dental</td><td>CRD</td><td class="num debit">185.00</td><td class="num"></td><td class="num">5,212.38</td></tr>
+    <tr><td>18 Aug</td><td>Transit Authority</td><td>CRD</td><td class="num debit">28.00</td><td class="num"></td><td class="num">5,184.38</td></tr>
+    <tr><td>19 Aug</td><td>Pemberton Hardware</td><td>CRD</td><td class="num debit">77.12</td><td class="num"></td><td class="num">5,107.26</td></tr>
+    <tr><td>20 Aug</td><td>Cash withdrawal, Bridge St</td><td>ATM</td><td class="num debit">80.00</td><td class="num"></td><td class="num">5,027.26</td></tr>
+    <tr><td>21 Aug</td><td>Lindow Pharmacy</td><td>CRD</td><td class="num debit">18.45</td><td class="num"></td><td class="num">5,008.81</td></tr>
+    <tr><td>22 Aug</td><td>Fernway Properties</td><td>DD</td><td class="num debit">1,180.00</td><td class="num"></td><td class="num">3,828.81</td></tr>
+    <tr><td>23 Aug</td><td>Elder Street Cafe</td><td>CRD</td><td class="num debit">14.60</td><td class="num"></td><td class="num">3,814.21</td></tr>
+    <tr><td>23 Aug</td><td>Marchmont Grocers</td><td>CRD</td><td class="num debit">55.08</td><td class="num"></td><td class="num">3,759.13</td></tr>
+    <tr><td>24 Aug</td><td>Halcyon Streaming</td><td>DD</td><td class="num debit">12.99</td><td class="num"></td><td class="num">3,746.14</td></tr>
+    <tr><td>25 Aug</td><td>Castleton Council, tax</td><td>DD</td><td class="num debit">198.00</td><td class="num"></td><td class="num">3,548.14</td></tr>
+    <tr><td>26 Aug</td><td>Wrenfield Garage</td><td>CRD</td><td class="num debit">262.40</td><td class="num"></td><td class="num">3,285.74</td></tr>
+    <tr><td>27 Aug</td><td>Interest paid</td><td>INT</td><td class="num"></td><td class="num credit">1.24</td><td class="num">3,286.98</td></tr>
+    <tr><td>27 Aug</td><td>Transit Authority</td><td>CRD</td><td class="num debit">28.00</td><td class="num"></td><td class="num">3,258.98</td></tr>
+    <tr><td>28 Aug</td><td>Barrowden Wines</td><td>CRD</td><td class="num debit">46.80</td><td class="num"></td><td class="num">3,212.18</td></tr>
+    <tr><td>28 Aug</td><td>Hale &amp; Prentice Ltd</td><td>BAC</td><td class="num"></td><td class="num credit">1,484.86</td><td class="num">4,697.04</td></tr>
+    <tr><td>29 Aug</td><td>Marchmont Grocers</td><td>CRD</td><td class="num debit">91.27</td><td class="num"></td><td class="num">4,605.77</td></tr>
+    <tr><td>29 Aug</td><td>Saltmarsh Design</td><td>FPO</td><td class="num debit">450.00</td><td class="num"></td><td class="num">4,155.77</td></tr>
+    <tr><td>30 Aug</td><td>Kestrel Mobile</td><td>DD</td><td class="num debit">22.50</td><td class="num"></td><td class="num">4,133.27</td></tr>
+    <tr><td>30 Aug</td><td>Elder Street Cafe</td><td>CRD</td><td class="num debit">10.85</td><td class="num"></td><td class="num">4,122.42</td></tr>
+    <tr><td>31 Aug</td><td>Pemberton Hardware</td><td>CRD</td><td class="num debit">134.19</td><td class="num"></td><td class="num">3,988.23</td></tr>
+    <tr><td>31 Aug</td><td>Vantage Pension Plan</td><td>SO</td><td class="num debit">402.09</td><td class="num"></td><td class="num">3,586.14</td></tr>
+  </tbody>
+  <tfoot>
+    <tr><td colspan="3">Totals for the period</td>
+        <td class="num debit">5,772.36</td><td class="num credit">6,940.00</td>
+        <td class="num">3,586.14</td></tr>
+  </tfoot>
+</table>
+
+<footer>
+  Northgate Mutual is a trading name of Northgate Mutual Banking plc.
+  Interest is calculated daily and paid monthly. Please check this statement
+  and tell us within 60 days if anything appears to be wrong.
+</footer>
+</body>
+</html>

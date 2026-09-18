@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The Castleton Chronicle</title>
+<style>
+  body { font:12px/1.55 Georgia, "Times New Roman", serif; color:#14110e;
+         background:#fbfaf7; margin:0; padding:22px 26px; }
+  .masthead { text-align:center; border-bottom:3px double #14110e;
+              padding-bottom:8px; }
+  .masthead h1 { font-size:40px; margin:0; letter-spacing:.04em;
+                 font-weight:400; font-variant:small-caps; }
+  .masthead .strap { font-size:10px; letter-spacing:.3em; text-transform:uppercase;
+                     color:#5a5148; margin-top:4px; }
+  .dateline { display:flex; justify-content:space-between; font-size:10px;
+              letter-spacing:.08em; text-transform:uppercase; color:#5a5148;
+              border-bottom:1px solid #14110e; padding:5px 0; }
+  h2.lead { font-size:26px; line-height:1.12; margin:14px 0 2px;
+            font-weight:400; }
+  .byline { font-size:10px; text-transform:uppercase; letter-spacing:.14em;
+            color:#5a5148; border-bottom:1px solid #d6cfc5; padding-bottom:8px; }
+  /* Three explicit columns, not CSS multicol.
+     `column-count` balanced its content into a box shorter than the content
+     itself and cut the last line of a column in half — visible in the PNG and
+     invisible in every measurement, because the text is still in the DOM and
+     the page height does not change. A corpus document that hides its own
+     text is unusable as ground truth, so the layout that cannot do that is
+     the one this uses. The reader sees the same three columns either way. */
+  .columns { display:flex; gap:20px; margin-top:12px; align-items:stretch; }
+  .columns > .col { flex:1; text-align:justify; hyphens:auto; min-width:0;
+                    padding-right:20px; border-right:1px solid #d6cfc5; }
+  .columns > .col:last-child { padding-right:0; border-right:none; }
+  .columns p { margin:0 0 .55em; }
+  .columns p.first::first-letter {
+    float:left; font-size:44px; line-height:.82; padding:3px 6px 0 0;
+    font-weight:700; }
+  h3 { font-size:13px; margin:.9em 0 .3em; font-variant:small-caps;
+       letter-spacing:.05em; }
+  blockquote.pull { margin:0 0 .7em; padding:8px 0;
+                    border-top:2px solid #14110e; border-bottom:2px solid #14110e;
+                    font-size:16px; line-height:1.3; font-style:italic;
+                    text-align:left; }
+  blockquote.pull cite { display:block; font-size:10px; font-style:normal;
+                         letter-spacing:.12em; text-transform:uppercase;
+                         color:#5a5148; margin-top:5px; }
+  .kicker { font-size:9px; letter-spacing:.2em; text-transform:uppercase;
+            color:#8a2b18; }
+  footer { border-top:1px solid #14110e; margin-top:12px; padding-top:6px;
+           font-size:9px; color:#5a5148; display:flex;
+           justify-content:space-between; }
+</style>
+</head>
+<body>
+<div class="masthead">
+  <h1>The Castleton Chronicle</h1>
+  <div class="strap">Established 1874 · Published weekly</div>
+</div>
+<div class="dateline">
+  <span>Vol. CLII, No. 31</span>
+  <span>Thursday, 10 September 2026</span>
+  <span>Price 80p</span>
+</div>
+
+<p class="kicker">Riverside</p>
+<h2 class="lead">Boathouse reach to reopen after eighteen months of repair</h2>
+<p class="byline">By Adela Fenn, Local Government Correspondent</p>
+
+<div class="columns">
+<div class="col">
+  <p class="first">The stretch of towpath between Bridge Street and the old
+  lock will reopen to the public on the first of October, the borough council
+  confirmed on Tuesday, bringing to an end a closure that has lasted rather
+  longer than anyone intended.</p>
+
+  <p>Work began in March of last year after a survey found that the retaining
+  wall had moved by nearly forty millimetres. What was scheduled as a nine-month
+  job ran into the winter floods, and then into a dispute over who owned the
+  culvert beneath the eastern end.</p>
+
+  <p>The final cost is put at £1.42 million, against an original estimate of
+  £860,000. Councillor Ruth Amberley, who chairs the environment committee,
+  described the overrun as regrettable but unavoidable.</p>
+
+</div>
+<div class="col">
+  <blockquote class="pull">We found three problems the survey could not have
+  seen, and each one had to be solved before the next became visible.
+  <cite>Cllr Ruth Amberley</cite></blockquote>
+
+  <h3>What reopens, and when</h3>
+  <p>The towpath itself opens on the first. The two slipways follow a fortnight
+  later, once the new handrails have been tested. The boathouse café, closed
+  since the scaffolding went up, expects to trade again before the half-term
+  holiday.</p>
+
+  <p>Castleton Rowing Club, which has trained from a temporary landing stage
+  upstream throughout, will move its equipment back over the last weekend of
+  the month. The club's captain said the arrangement had cost it perhaps a
+  dozen members.</p>
+
+</div>
+<div class="col">
+  <h3>The culvert question</h3>
+  <p>The dispute that added four months to the schedule concerned a brick
+  culvert running under the path near the lock. Neither the council nor the
+  navigation authority had it on a drawing, and neither wished to pay to
+  rebuild it.</p>
+
+  <p>It was settled in June by a joint agreement under which the cost is shared
+  in the same proportion as the two bodies' frontage. The culvert has been
+  relined rather than replaced, which is expected to give it another forty
+  years.</p>
+
+  <p>A commemorative plaque, paid for by public subscription, will be unveiled
+  at eleven o'clock on the morning of the reopening. The mayor will attend.
+  There will be tea.</p>
+</div>
+</div>
+
+<footer>
+  <span>The Castleton Chronicle · Printed at the Bridge Street Works</span>
+  <span>Page 1</span>
+</footer>
+</body>
+</html>

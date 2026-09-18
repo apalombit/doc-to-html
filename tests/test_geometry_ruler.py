@@ -22,7 +22,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from doc_to_html.geometry_score import expected_boxes, score_geometry
+from doc_to_html.geometry_score import score_geometry
 from doc_to_html.ir import BBox
 from doc_to_html.preprocess import rectify
 
@@ -273,8 +273,18 @@ class TestTheMeasuredPage:
         return rectify(REPO / "example" / "invoice.png").image
 
     def reference(self) -> list[BBox]:
-        return expected_boxes(REPO / "tests" / "fixtures"
-                              / "invoice_0001.expected.json")
+        """`invoice_0001`'s rectangles, off the sample document.
+
+        They used to be loaded from `invoice_0001.expected.json`, which was
+        the serialised acceptance set and is deleted. The numbers are the same
+        ones — `tools/fixture_geometry.py` read them off `example/invoice.html`
+        as the browser laid it out — and here they are a *known-clean set of
+        rectangles to exercise the ruler with*, not an answer to score against.
+        """
+        from .documents import SAMPLE_DOCUMENTS
+
+        return [zone.bbox for zone in SAMPLE_DOCUMENTS["invoice_0001"]().zones
+                if zone.bbox is not None]
 
     def test_the_reference_is_the_floor_and_it_is_clean(self) -> None:
         """What the fixture's own rectangles score, before anything is read

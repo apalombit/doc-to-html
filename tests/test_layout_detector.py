@@ -494,21 +494,30 @@ class TestChoosingTheLayoutEngine:
         assert isinstance(default_engines(load(env={})).layout, LayoutEngine)
 
     @pytest.mark.parametrize("spelling", ["none", "off", "NONE", " none "])
-    def test_the_vision_model_is_reachable_by_name(self, spelling: str) -> None:
-        """The path is worse, not gone."""
+    def test_asking_for_the_vision_model_by_name_now_refuses(
+        self, spelling: str
+    ) -> None:
+        """The path is gone, and saying so beats failing somewhere obscure.
+
+        Spec 0007 Thread 0 deleted the vision layout path from every
+        Conversion: it raised `MappingError` on three of five documents and
+        matched none. A `DTH_LAYOUT_DETECTOR=none` left in somebody's shell or
+        dotenv must not be handed to `from_name` as if it were a detector's
+        name — it is a stale instruction and it is told so.
+        """
         settings = load(env={"DTH_LAYOUT_DETECTOR": spelling})
-        assert isinstance(default_engines(settings).layout, OllamaEngine)
+        with pytest.raises(ValueError, match="retired"):
+            default_engines(settings)
 
-    def test_an_empty_flag_still_means_the_vision_model_in_code(self) -> None:
-        """`Settings(layout_detector="")` is how the suite replays recordings."""
-        assert isinstance(
-            default_engines(Settings(layout_detector="")).layout, OllamaEngine
-        )
+    def test_an_empty_flag_in_code_refuses_for_the_same_reason(self) -> None:
+        """`Settings(layout_detector="")` used to be how the suite replayed
+        recordings. `test_bakeoff.py`'s stub detector is how it does now."""
+        with pytest.raises(ValueError, match="retired"):
+            default_engines(Settings(layout_detector=""))
 
-    def test_an_empty_environment_variable_cannot_reach_the_vision_model(self) -> None:
-        """Not a bug to fix here — the deliberate rule that an empty variable
-        reads as unset, meeting a default that is no longer empty. It is why
-        `orchestrator.VISION` accepts a name, and asserting it stops someone
+    def test_an_empty_environment_variable_still_reads_as_unset(self) -> None:
+        """The deliberate rule that an empty variable means "I left this
+        alone", meeting a default that is not empty. Asserting it stops someone
         "fixing" `DTH_LAYOUT_DETECTOR=` by loosening that rule for every key."""
         assert load(env={"DTH_LAYOUT_DETECTOR": ""}).layout_detector == "heron"
 

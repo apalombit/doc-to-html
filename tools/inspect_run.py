@@ -184,11 +184,13 @@ def boxes_from_layout(dump: Path) -> list[Box]:
 
 
 def boxes_from_expected(path: Path) -> list[Box]:
-    """The hand-authored reference IR, which stores a `bbox` object per Zone.
+    """Reference rectangles out of an IR-shaped JSON, when one is supplied.
 
-    Read through the shared loader, so the rectangles this draws are the same
-    rectangles the probes score against — a picture that disagreed with the
-    number under it would be worse than no picture.
+    Nothing supplies one any more. `tools/iterate.sh` stopped passing
+    `--expected` when spec 0007 Thread 0 deleted the committed
+    `*.expected.json` files, and the panels this feeds are skipped when the
+    argument is absent. Kept because the shape is `Document.to_json()`'s, so
+    anyone diagnosing a run against a saved IR still has a way to draw it.
     """
     found = []
     for zone in geometry_score.expected_zones(path):
@@ -328,6 +330,20 @@ def crop_for(page: Image.Image, box: Box, *,
 
 CHROME = Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 
+LIGHT = "--blink-settings=preferredColorScheme=1"
+"""Pin `prefers-color-scheme` to light. Spec 0007 Thread 0, step 4.
+
+This call shelled out with no colour-scheme flag, so it inherited the host's
+dark mode and `render.py`'s `@media (prefers-color-scheme: dark)` fired. The
+Source Image beside it is light, which means **every visual comparison
+eyeballed in this project before 2026-09-18 was against an inverted page**.
+Measured on this machine: without the flag,
+`matchMedia('(prefers-color-scheme: dark)').matches` is `true`.
+
+`doc_to_html.projection.LIGHT` is the same flag, and both sides of every
+comparison go through one or the other.
+"""
+
 
 def rasterise(html: Path, out: Path, width: int) -> Image.Image | None:
     """Screenshot the rendered document, so it can be seen beside its source.
@@ -348,7 +364,7 @@ def rasterise(html: Path, out: Path, width: int) -> Image.Image | None:
 
     shot = out / "05_rendered.png"
     result = subprocess.run(
-        [str(CHROME), "--headless", "--disable-gpu", "--hide-scrollbars",
+        [str(CHROME), "--headless", "--disable-gpu", "--hide-scrollbars", LIGHT,
          f"--screenshot={shot}", f"--window-size={width},2400",
          html.resolve().as_uri()],
         capture_output=True, timeout=90,

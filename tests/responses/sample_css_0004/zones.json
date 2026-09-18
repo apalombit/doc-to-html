@@ -1,0 +1,32 @@
+{
+  "_why": "What replaying this fixture's recorded responses needs and the response files do not carry: the Kind of every Zone, because _classify asks about each one in turn and the answers have to line up, and which Zones have an Extractor wired. Frozen here rather than read off a live object in the test suite, which is what it used to do. See tests/replay.py.",
+  "zones": [
+    {
+      "kind": "prose",
+      "graphic": ""
+    },
+    {
+      "kind": "figure",
+      "graphic": "badge"
+    },
+    {
+      "kind": "prose",
+      "graphic": ""
+    },
+    {
+      "kind": "prose",
+      "graphic": ""
+    },
+    {
+      "kind": "prose",
+      "graphic": ""
+    }
+  ],
+  "wired": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ]
+}

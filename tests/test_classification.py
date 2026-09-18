@@ -311,17 +311,18 @@ class TestTheOrchestratorClassifiesBetweenGeometryAndExtraction:
         not be the same one. They are the same one today; what #15 bought is
         that changing it is a setting rather than an edit here."""
         settings = load(
-            # Layout reaches a *model* only on the vision path, which no longer
-            # ships. The claim under test is that classify and layout are
-            # separately routable, so it is asked where both have a model.
-            env={"DTH_CLASSIFY_MODEL": "a-classifier", "DTH_LAYOUT_DETECTOR": "none"},
+            # Asked against extraction rather than layout. Layout reached a
+            # model only on the vision path, which spec 0007 Thread 0 retired;
+            # the claim under test is that a role can be pointed somewhere of
+            # its own, and extraction is a role that still has a model.
+            env={"DTH_CLASSIFY_MODEL": "a-classifier"},
             dotenv_path=NOWHERE,
         )
         engines = orchestrator.default_engines(settings)
 
         assert engines.classify.model == "a-classifier"
-        assert engines.layout.model == settings.layout_model
-        assert engines.classify.model != engines.layout.model
+        assert engines.extract.model == settings.extract_model
+        assert engines.classify.model != engines.extract.model
 
     def test_classification_runs_once_per_conversion_not_once_per_round(
         self,

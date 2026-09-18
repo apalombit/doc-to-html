@@ -122,37 +122,40 @@ def default_engines(settings: Settings | None = None) -> EngineSet:
     )
 
 
-VISION = frozenset({"", "none", "off"})
-"""`DTH_LAYOUT_DETECTOR` values that select the vision model instead of a detector.
+RETIRED_LAYOUT = frozenset({"", "none", "off"})
+"""Spellings that used to select the vision model for geometry. Retired.
 
-`""` is the in-code spelling and `none`/`off` are the ones that work from a shell.
-**Both are needed, and the second is not a convenience.** `config.load` treats an
-empty environment variable as unset — a deliberate rule, so that `DTH_NUM_CTX=` in
-a dotenv reads as "I left this alone" rather than as a value that fails to parse.
-Once the detector became the default, that rule made `DTH_LAYOUT_DETECTOR=`
-resolve straight back to `heron`, leaving the vision path reachable from Python
-but not from the environment. A named value is the way back."""
+Spec 0007 Thread 0 deleted the vision layout path from every Conversion. It
+raised `MappingError` on three of the five documents it was measured on and
+matched none of them, where the detector converts all five, and keeping it
+alive meant maintaining `LAYOUT_PROMPT`'s schema through every IR change in
+Thread A for no measured benefit.
+
+Kept as a *name* so that a `DTH_LAYOUT_DETECTOR=none` left in somebody's shell
+or dotenv says so, instead of being passed to `from_name` as the name of a
+detector and failing somewhere less obvious."""
 
 
 def _layout_engine(settings: Settings) -> LayoutEngine:
-    """A trained detector unless the vision model is asked for by name.
+    """A trained detector. There is no longer another option.
 
-    **The detector is the default**, because the vision path raises
-    `MappingError` on three of the five fixtures and matches none, where the
-    detector converts all five. `config.DEFAULT_LAYOUT_DETECTOR` carries the
-    table. The vision path is still reachable — `DTH_LAYOUT_DETECTOR=none` — and
-    is what the recorded responses in the suite replay against.
+    `config.DEFAULT_LAYOUT_DETECTOR` carries the measurement that decided it.
 
     Imported inside the call so `onnxruntime` stays an optional extra: a package
     that fails at import because a detector nobody asked for is unavailable
     would make the extra mandatory in practice.
     """
-    if settings.layout_detector.strip().lower() in VISION:
-        return OllamaEngine.from_settings(settings, settings.layout_model)
-
     from .engines.detector import from_name
 
-    return from_name(settings.layout_detector,
+    wanted = settings.layout_detector.strip()
+    if wanted.lower() in RETIRED_LAYOUT:
+        raise ValueError(
+            f"DTH_LAYOUT_DETECTOR={settings.layout_detector!r} asks for the "
+            "vision layout pass, which spec 0007 Thread 0 retired. Unset it, "
+            f"or name a detector: heron, doclayout_yolo."
+        )
+
+    return from_name(wanted,
                      settings.detector_confidence or None,
                      heading_rule=settings.heading_rule,
                      prefer_container=settings.prefer_container)

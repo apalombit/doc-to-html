@@ -30,7 +30,7 @@ from doc_to_html.preprocess import (
 from doc_to_html.render import render
 from doc_to_html.wire import MappingError, TableResponse, contents_into
 
-from .fixtures import BUILDERS
+from .documents import SAMPLE_DOCUMENTS
 from .replay import (
     break_zone,
     Call,
@@ -501,7 +501,7 @@ class TestAZoneTooDenseToReadWhole:
         has content and a note."""
         from doc_to_html.ir import Caveat
 
-        document = BUILDERS["invoice_0001"]()
+        document = SAMPLE_DOCUMENTS["invoice_0001"]()
         document.caveats = [
             Caveat(zone_index=5, kind="table",
                    note="read at reduced resolution: 4000px tall")
@@ -539,15 +539,22 @@ class TestMeasuringTheGridFromThePixels:
     """
 
     def crop_of(self, fixture: str, index: int) -> object:
-        expected = json.loads(
-            (REPO / "tests" / "fixtures" / f"{fixture}.expected.json").read_text()
-        )
-        box = expected["zones"][index]["bbox"]
-        image = rectify(REPO / expected["source"]["path"]).image
-        return zone_pixels(image, Zone(
-            kind=Kind.TABLE, bbox=BBox(box["left"], box["top"],
-                                       box["right"], box["bottom"]),
-        ))
+        """One Zone's pixels, from the sample document's own rectangle.
+
+        Read off the sample `Document` rather than off a committed
+        `*.expected.json`: those files were the serialised acceptance set and
+        Thread 0 deleted them. The rectangles are the same ones, and they are
+        used here as *realistic geometry to crop with*, never as an answer to
+        score against.
+        """
+        from doc_to_html.corpus import SOURCES
+
+        from .documents import SAMPLE_DOCUMENTS
+
+        zone = SAMPLE_DOCUMENTS[fixture]().zones[index]
+        assert zone.bbox is not None
+        image = rectify(REPO / SOURCES[fixture].png).image
+        return zone_pixels(image, Zone(kind=Kind.TABLE, bbox=zone.bbox))
 
     def test_a_two_row_table_measures_two_rows(self) -> None:
         """`invoice_0001`'s Zone 4 — the Zone the model returns as four rows."""

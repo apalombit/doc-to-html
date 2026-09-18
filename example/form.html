@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Membership application</title>
+<style>
+  body { font:13px/1.5 Arial, Helvetica, sans-serif; color:#111; background:#fff;
+         margin:0; padding:24px 28px; }
+  h1 { font-size:19px; margin:0 0 2px; }
+  .sub { font-size:11px; color:#555; margin:0 0 4px; }
+  .official { float:right; border:1px solid #111; padding:6px 10px;
+              font-size:10px; text-align:center; width:132px; }
+  .official strong { display:block; font-size:11px; letter-spacing:.06em; }
+  .rule { border:0; border-top:2px solid #111; margin:10px 0 14px; }
+  h2 { font-size:12px; text-transform:uppercase; letter-spacing:.1em;
+       background:#ececec; padding:4px 7px; margin:16px 0 10px;
+       border-left:4px solid #111; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 22px; }
+  .field { font-size:11px; color:#333; }
+  .field label { display:block; margin-bottom:2px; }
+  .box { border:1px solid #767676; height:21px; background:#fdfdfd;
+         padding:2px 5px; font-size:13px; color:#111; line-height:19px; }
+  .box.empty { background:#fff; }
+  .wide { grid-column:1 / -1; }
+  .ruled { border:0; border-bottom:1px solid #111; height:19px;
+           font-size:13px; padding-left:3px; }
+  .boxes { display:flex; gap:3px; }
+  .boxes span { border:1px solid #767676; width:19px; height:21px;
+                display:inline-block; text-align:center; line-height:20px;
+                font-size:13px; }
+  .checks { display:flex; gap:20px; flex-wrap:wrap; font-size:12px;
+            margin-top:2px; }
+  .checks label { display:flex; align-items:center; gap:5px; }
+  .tick { width:12px; height:12px; border:1px solid #111; display:inline-block;
+          text-align:center; line-height:11px; font-size:11px; }
+  .tick.on::after { content:"\2715"; }
+  .note { font-size:10px; color:#555; margin:4px 0 0; }
+  .sign { display:flex; gap:26px; margin-top:20px; align-items:flex-end; }
+  .sign div { flex:1; }
+  .sign .line { border-bottom:1px solid #111; height:26px; }
+  .sign .cap { font-size:10px; color:#555; margin-top:3px; }
+  footer { margin-top:18px; font-size:9px; color:#666; border-top:1px solid #ccc;
+           padding-top:6px; }
+</style>
+</head>
+<body>
+<div class="official"><strong>OFFICE USE</strong>Ref. ____________<br>Date stamp</div>
+<h1>Application for full membership</h1>
+<p class="sub">Castleton Rowing Club · Form M-2 (revised April 2026)</p>
+<hr class="rule">
+
+<h2>1. Applicant details</h2>
+<div class="grid">
+  <div class="field"><label>Family name</label><div class="box">Whitlock</div></div>
+  <div class="field"><label>Given names</label><div class="box">Marion Elspeth</div></div>
+  <div class="field"><label>Date of birth (DD MM YYYY)</label>
+    <div class="boxes"><span>1</span><span>4</span><span>0</span><span>6</span>
+      <span>1</span><span>9</span><span>9</span><span>1</span></div></div>
+  <div class="field"><label>Membership number (if renewing)</label>
+    <div class="box empty">&nbsp;</div></div>
+  <div class="field wide"><label>Address</label>
+    <div class="box">17 Bellwether Lane, Castleton</div></div>
+  <div class="field"><label>Postcode</label><div class="box">CT9 4RD</div></div>
+  <div class="field"><label>Telephone</label><div class="box empty">&nbsp;</div></div>
+  <div class="field wide"><label>Email</label>
+    <div class="box">m.whitlock@fernpost.example</div></div>
+</div>
+
+<h2>2. Membership category</h2>
+<div class="checks">
+  <label><span class="tick on"></span> Full rowing</label>
+  <label><span class="tick"></span> Social</label>
+  <label><span class="tick"></span> Junior (under 18)</label>
+  <label><span class="tick"></span> Country</label>
+  <label><span class="tick on"></span> Locker required</label>
+</div>
+<p class="note">Tick one category. Locker allocation is subject to availability.</p>
+
+<h2>3. Experience</h2>
+<div class="grid">
+  <div class="field"><label>Years rowing</label><div class="box">6</div></div>
+  <div class="field"><label>Previous club</label>
+    <div class="box">Ashgrove ARC</div></div>
+  <div class="field wide"><label>Highest level of competition reached</label>
+    <div class="ruled">Regional championships, coxed four, 2024</div></div>
+  <div class="field wide"><label>Any medical condition we should know about</label>
+    <div class="ruled">&nbsp;</div></div>
+  <div class="field wide"><label>&nbsp;</label><div class="ruled">&nbsp;</div></div>
+</div>
+
+<h2>4. Emergency contact</h2>
+<div class="grid">
+  <div class="field"><label>Name</label><div class="box">Peter Whitlock</div></div>
+  <div class="field"><label>Relationship</label><div class="box">Father</div></div>
+  <div class="field"><label>Daytime telephone</label>
+    <div class="box">01632 960 774</div></div>
+  <div class="field"><label>Alternative telephone</label>
+    <div class="box empty">&nbsp;</div></div>
+</div>
+
+<h2>5. Declaration</h2>
+<div class="checks">
+  <label><span class="tick on"></span> I can swim 100 metres in light clothing</label>
+  <label><span class="tick on"></span> I accept the club rules</label>
+  <label><span class="tick"></span> I consent to photographs being published</label>
+</div>
+
+<div class="sign">
+  <div><div class="line"></div><div class="cap">Signature of applicant</div></div>
+  <div><div class="line"></div><div class="cap">Date</div></div>
+  <div><div class="line"></div><div class="cap">Proposer (existing member)</div></div>
+</div>
+
+<footer>
+  Return this form to the Membership Secretary, Castleton Rowing Club,
+  Boathouse Reach, Castleton CT9 1AA. Incomplete forms cannot be processed.
+</footer>
+</body>
+</html>

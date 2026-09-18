@@ -15,14 +15,13 @@ from pathlib import Path
 
 import pytest
 
-from doc_to_html.acceptance import Mismatch
 from doc_to_html.bakeoff import (
     CANDIDATES,
     Attempt,
     PassTiming,
     TimingTransport,
     engines_for,
-    load_acceptance_set,
+    load_corpus,
     main,
     report,
     run,
@@ -34,17 +33,77 @@ from .replay import ReplayTransport, break_zone, recorded_for
 
 REPO = Path(__file__).resolve().parent.parent
 
-REPLAYING = Settings(layout_detector="")
-"""Settings for a replayed run: the vision layout path, which ships off.
+REPLAYING = Settings(layout_detector="stub")
+"""Settings for a replayed run, with geometry from a stub rather than a model.
 
-Replay answers a recorded `layout` response, so these tests need the pass that
-asks for one. The shipped default is `heron`, which finds Zones from the pixels
-and makes no layout call at all — under it every recording here would be read
-against geometry nobody recorded, and the layout answer would go unclaimed.
+The vision layout path is gone — spec 0007 Thread 0 retired it — so there is no
+longer a configuration under which a recorded `layout` response is asked for.
+Geometry now always comes from a detector, and a detector needs a 171MB ONNX
+file this suite must not require, so `stub_detector` below stands in for one
+and serves each document's recorded boxes.
 
-The detector has its own tests, against a fake detector, in
-`test_layout_detector.py`. This constant is what keeps the two paths from being
-tested through each other."""
+The real detector has its own tests, against its own fake, in
+`test_layout_detector.py`. The stub here exists so the *bake-off* can be
+exercised end to end offline; it is not a second detector."""
+
+
+@pytest.fixture(autouse=True)
+def stub_detector(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Serve each document's recorded Zone boxes in place of the ONNX detector.
+
+    Patched at `orchestrator.from_name`, which is the single place both the
+    Conversion path and the bake-off path now reach a detector through — so a
+    stub here cannot accidentally cover only one of them, which is the whole
+    point of `TestTheBakeOffBuildsTheSameLayoutEngineAsAConversion` below.
+    """
+    from doc_to_html.engines import detector as detector_module
+    from doc_to_html.ir import Zone
+
+    from .documents import SAMPLE_DOCUMENTS
+
+    def zones_of(fixture: str) -> list[Zone]:
+        return [
+            Zone(kind=zone.kind, role=zone.role, band=zone.band,
+                 column=zone.column, bbox=zone.bbox)
+            for zone in SAMPLE_DOCUMENTS[fixture]().zones
+            if zone.bbox is not None
+        ]
+
+    from PIL import Image as PILImage
+
+    from doc_to_html.corpus import SOURCES
+
+    by_shape = {
+        PILImage.open(SOURCES[name].png_path(REPO)).size[::-1]: name
+        for name in SAMPLE_DOCUMENTS
+    }
+
+    class StubDetector:
+        """Geometry without a 171MB download. Not a second detector.
+
+        Which document it has been handed is decided by the image's shape,
+        because `detect_zones` is given pixels and nothing else. Returning one
+        document's Zones for every page would put the recorded answers against
+        the wrong questions: the queues are keyed per pass, so a page that
+        detects six Zones where nine were recorded leaves three unread.
+        """
+
+        name = "detector:stub"
+        model = "stub"
+        confidence = 0.0
+        heading_rule = "absolute"
+        prefer_container = False
+
+        def detect_zones(self, image: object, hint: object = None,
+                         region_ceiling: object = None) -> list[Zone]:
+            shape = getattr(image, "shape", (0, 0))[:2]
+            return zones_of(by_shape[shape])
+
+    def stub_from_name(name: str, confidence: float | None = None,
+                       **kwargs: object) -> StubDetector:
+        return StubDetector()
+
+    monkeypatch.setattr(detector_module, "from_name", stub_from_name)
 
 
 def replaying(model: str, fixture: str) -> Transport:
@@ -53,7 +112,18 @@ def replaying(model: str, fixture: str) -> Transport:
 
 
 def failing(model: str, fixture: str) -> Transport:
-    return ReplayTransport([Response(content='{"zones": []}', truncated=False)])
+    """A model that falls over on the first thing it is asked.
+
+    It used to be an empty `{"zones": []}` layout answer, which made the
+    Conversion raise "no Zones". There is no layout call any more — geometry
+    comes from a detector — so falling over has to be expressed as the
+    transport itself refusing, which is also what an unreachable Ollama
+    actually looks like.
+    """
+    def refuse(**_: object) -> Response:
+        raise RuntimeError("model is not loaded")
+
+    return refuse  # type: ignore[return-value]
 
 
 SIZES = {"model-a": 3300.0, "model-b": 1900.0}
@@ -69,65 +139,85 @@ def sized(model: str) -> float | None:
 
 
 @pytest.fixture
-def acceptance() -> dict[str, object]:
-    return load_acceptance_set(REPO)  # type: ignore[return-value]
+def corpus() -> dict[str, object]:
+    from doc_to_html.corpus import ITERATE
+
+    return load_corpus(REPO, ITERATE)  # type: ignore[return-value]
 
 
-class TestTheAcceptanceSetLoadsFromDisk:
-    def test_all_five_documents_are_found_with_their_images(
-        self, acceptance: dict[str, object]
+class TestTheCorpusLoadsFromDisk:
+    def test_the_iterate_split_is_five_documents_with_their_images(
+        self, corpus: dict[str, object]
     ) -> None:
-        """Read from the committed JSON rather than the Python builders, so nothing
-        in the package imports the test suite."""
-        assert len(acceptance) == 5
-        for image, expected in acceptance.values():  # type: ignore[misc]
-            assert image.is_file()
-            assert expected.zones
+        """A name and a picture, and nothing else.
 
-    def test_a_root_with_no_fixtures_says_so(self, tmp_path: Path) -> None:
-        with pytest.raises(SystemExit, match="no expected IR"):
-            load_acceptance_set(tmp_path)
+        There used to be an expected `Document` beside each one and a
+        comparison at the end. `doc_to_html.corpus` now says what the corpus
+        is and `doc_to_html.scoring` says how it is judged.
+        """
+        assert len(corpus) == 5
+        for image in corpus.values():
+            assert image.is_file()  # type: ignore[attr-defined]
+
+    def test_the_whole_sweep_is_fifteen(self) -> None:
+        from doc_to_html.corpus import SWEEP
+
+        assert len(load_corpus(REPO, SWEEP)) == 15
+
+    def test_a_root_with_no_images_says_which_document_is_missing(
+        self, tmp_path: Path
+    ) -> None:
+        with pytest.raises(SystemExit, match="invoice_0001"):
+            load_corpus(tmp_path, ["invoice_0001"])
 
 
 class TestWhatARunProduces:
     def test_every_model_meets_every_document(
-        self, acceptance: dict[str, object]
+        self, corpus: dict[str, object]
     ) -> None:
         attempts = run(
-            ["model-a", "model-b"], acceptance, REPLAYING,  # type: ignore[arg-type]
+            ["model-a", "model-b"], corpus, REPLAYING,  # type: ignore[arg-type]
             transport_for=replaying, resident_for=sized,
         )
         assert len(attempts) == 10
         assert [a.model for a in attempts[:5]] == ["model-a"] * 5
 
     def test_models_are_batched_rather_than_alternated(
-        self, acceptance: dict[str, object]
+        self, corpus: dict[str, object]
     ) -> None:
         """Two vision models cannot stay resident in 8 GB, so alternating costs a
         reload each time — and that reload would be timed as if it belonged to the
         document."""
         attempts = run(
-            ["model-a", "model-b"], acceptance, REPLAYING,  # type: ignore[arg-type]
+            ["model-a", "model-b"], corpus, REPLAYING,  # type: ignore[arg-type]
             transport_for=replaying, resident_for=sized,
         )
         order = [a.model for a in attempts]
         assert order == sorted(order, key=["model-a", "model-b"].index)
 
-    def test_a_correct_reading_matches_the_expected_structure(
-        self, acceptance: dict[str, object]
+    def test_every_document_converts_without_the_run_falling_over(
+        self, corpus: dict[str, object]
     ) -> None:
+        """The bake-off's whole job now: convert, time, and write it out.
+
+        It used to assert five matches, which was a claim about
+        `acceptance.compare()`. There is no verdict here any more — quality is
+        `scoring.score_document()`'s answer and it appears in `report.html` —
+        so what is left to pin is that every document reaches the end.
+        """
         attempts = run(
-            ["model-a"], acceptance, REPLAYING,  # type: ignore[arg-type]
+            ["model-a"], corpus, REPLAYING,  # type: ignore[arg-type]
             transport_for=replaying, resident_for=sized,
         )
-        assert [a.verdict for a in attempts] == ["match"] * 5
+        assert len(attempts) == 5
         assert all(a.error is None for a in attempts)
+        assert all(a.html for a in attempts)
 
     def test_each_pass_is_timed_and_named(
-        self, acceptance: dict[str, object]
+        self, corpus: dict[str, object]
     ) -> None:
         attempts = run(
-            ["model-a"], acceptance, REPLAYING,  # type: ignore[arg-type]
+            ["model-a"], corpus, REPLAYING,  # type: ignore[arg-type]
             transport_for=replaying, resident_for=sized,
         )
         invoice = next(a for a in attempts if a.fixture == "invoice_0001")
@@ -136,8 +226,10 @@ class TestWhatARunProduces:
         # refuses to ask about it and there are five captions against six
         # classifications — the asymmetry is the guard in `preprocess`
         # doing its job, and a flat `["caption"] * 6` would assert it away.
+        # No `layout` call any more: geometry comes from a detector, which
+        # makes no model call at all. That is the whole of what spec 0007
+        # Thread 0's deletion of the vision layout path changes here.
         assert [t.pass_name for t in invoice.timings] == [
-            "layout",
             "classify",
             *["caption", "classify"] * 5,
             "figure", "pairs", "prose", "prose", "table", "table",
@@ -148,7 +240,7 @@ class TestWhatARunProduces:
         )
 
     def test_a_caveat_does_not_count_against_the_model(
-        self, acceptance: dict[str, object]
+        self, corpus: dict[str, object]
     ) -> None:
         """A table read at reduced resolution is this project's limitation — slice
         stitching is not built — and charging the model for it would make a model
@@ -161,44 +253,53 @@ class TestWhatARunProduces:
         try:
             orchestrator.resolution_caveat = lambda image, zone: "read at reduced resolution: test"  # type: ignore[assignment]
             attempts = run(
-                ["model-a"], {"invoice_0001": acceptance["invoice_0001"]},  # type: ignore[arg-type,dict-item]
+                ["model-a"], {"invoice_0001": corpus["invoice_0001"]},  # type: ignore[arg-type,dict-item]
                 REPLAYING, transport_for=replaying, resident_for=sized,
             )
         finally:
             orchestrator.resolution_caveat = real  # type: ignore[assignment]
 
-        assert attempts[0].verdict == "match"
+        assert attempts[0].verdict == "converted"
         assert attempts[0].caveats
         assert Caveat  # the concept exists in the IR, distinct from Failure
 
-    def test_a_failed_extraction_counts_against_the_model(
-        self, acceptance: dict[str, object]
+    def test_a_zone_that_could_not_be_read_is_named_in_the_run(
+        self, corpus: dict[str, object]
     ) -> None:
-        """A Zone left as a skeleton is not a match, however well the rest read."""
+        """A Zone left as a skeleton is a fact about the run, not a score.
+
+        It is reported so a reader knows the output is incomplete before they
+        judge it — `report.html` would otherwise show a page with a hole in it
+        and no explanation of where the hole came from.
+        """
         def one_bad_zone(model: str, fixture: str) -> Transport:
             replies = break_zone(recorded_for(fixture), fixture, 4,
                                  '{"rows": []}')
             return ReplayTransport(replies)
 
         attempts = run(
-            ["model-a"], {"invoice_0001": acceptance["invoice_0001"]},  # type: ignore[arg-type,dict-item]
+            ["model-a"], {"invoice_0001": corpus["invoice_0001"]},  # type: ignore[arg-type,dict-item]
             REPLAYING, transport_for=one_bad_zone, resident_for=sized,
         )
-        assert attempts[0].verdict != "match"
-        assert any(m.field == "extraction" for m in attempts[0].mismatches)
+        assert attempts[0].failures
+        assert "zone 4" in attempts[0].failures[0]
 
     def test_one_model_falling_over_does_not_end_the_run(
-        self, acceptance: dict[str, object]
+        self, corpus: dict[str, object]
     ) -> None:
         """Ten minutes of measurement thrown away because the last document
         errored would be a bad trade."""
         attempts = run(
-            ["broken"], acceptance, REPLAYING,  # type: ignore[arg-type]
+            ["broken"], corpus, REPLAYING,  # type: ignore[arg-type]
             transport_for=failing, resident_for=sized,
         )
         assert len(attempts) == 5
-        assert all(a.verdict == "error" for a in attempts)
-        assert all("no Zones" in (a.error or "") for a in attempts)
+        # Every Zone unread rather than the Conversion dying: the Orchestrator
+        # catches a refused extraction per Zone and records a Failure, so a
+        # model that is simply not there produces five complete Attempts, each
+        # one saying exactly how much of its document went unread.
+        assert all("unread" in a.verdict for a in attempts)
+        assert all(a.failures for a in attempts)
 
 
 class TestTiming:
@@ -236,7 +337,7 @@ class TestTheReportIsSomethingToActOn:
             Attempt(
                 fixture="invoice_0001", model="qwen3-vl:2b",
                 timings=[PassTiming("layout", 5.0), PassTiming("table", 9.0)],
-                mismatches=[Mismatch("zone 4", "kind", "table", "pairs")],
+                failures=["zone 4 (table): MappingError: no rows"],
                 resident_mb=1900.0,
             ),
         ]
@@ -259,14 +360,14 @@ class TestTheReportIsSomethingToActOn:
         assert "resident MB" in text
         assert "3300" in text and "1900" in text
 
-    def test_it_says_what_did_not_match_and_where(self) -> None:
+    def test_it_says_what_did_not_convert_and_where(self) -> None:
         text = report(self.attempts())
-        assert "What did not match" in text
-        assert "zone 4: kind expected table, got pairs" in text
+        assert "What did not convert" in text
+        assert "zone 4 (table): MappingError: no rows" in text
 
     def test_a_clean_sweep_omits_the_details_section(self) -> None:
-        clean = [a for a in self.attempts() if not a.mismatches]
-        assert "What did not match" not in report(clean)
+        clean = [a for a in self.attempts() if not a.failures]
+        assert "What did not convert" not in report(clean)
 
     def test_unknown_resident_memory_is_labelled_not_blank(self) -> None:
         text = report([Attempt(fixture="f", model="m",
@@ -280,7 +381,7 @@ class TestTheReportIsSomethingToActOn:
 class TestTheCommandLine:
     def test_an_unknown_fixture_is_refused_before_any_model_runs(self) -> None:
         """Discovering a typo after loading a 3 GB model is a poor trade."""
-        with pytest.raises(SystemExit, match="unknown fixture"):
+        with pytest.raises(SystemExit, match="unknown document"):
             main(["--fixtures", "invoice_0003", "--root", str(REPO)])
 
     def test_the_configured_models_are_measured_too(self) -> None:
@@ -327,9 +428,9 @@ class TestTheBakeOffBuildsTheSameLayoutEngineAsAConversion:
                 _layout_engine(settings))
 
     @pytest.mark.parametrize("settings", [
-        Settings(layout_detector="heron"),
-        Settings(layout_detector="heron", heading_rule="relative"),
-        Settings(layout_detector="heron", detector_confidence=0.25),
+        Settings(layout_detector="stub"),
+        Settings(layout_detector="stub", heading_rule="relative"),
+        Settings(layout_detector="stub", detector_confidence=0.25),
     ])
     def test_every_detector_setting_reaches_both_paths(
         self, settings: Settings
@@ -348,7 +449,7 @@ class TestTheBakeOffBuildsTheSameLayoutEngineAsAConversion:
         somebody has to remember to extend — which is exactly what failed.
         """
         mine, theirs = self._both(
-            Settings(layout_detector="heron", heading_rule="relative"))
+            Settings(layout_detector="stub", heading_rule="relative"))
 
         assert {name: value for name, value in vars(mine).items()
                 if not name.startswith("_")} == {
@@ -372,7 +473,7 @@ class TestASettingThatBypassesTheEngineSetStillReachesTheBakeOff:
 
     @staticmethod
     def _captions_asked(settings: Settings,
-                        acceptance: dict[str, object]) -> int:
+                        corpus: dict[str, object]) -> int:
         """Caption calls made by a real `bakeoff.run`, not by a copy of it.
 
         Asserted on the calls rather than on an attribute, because the question
@@ -392,24 +493,24 @@ class TestASettingThatBypassesTheEngineSetStillReachesTheBakeOff:
             seen.append(transport)
             return transport
 
-        run(["model-a"], {"invoice_0001": acceptance["invoice_0001"]},
+        run(["model-a"], {"invoice_0001": corpus["invoice_0001"]},
             settings, transport_for=counting, resident_for=sized)
         return sum(1 for t in seen for c in t.calls if c.pass_name == "caption")
 
     def test_the_flag_reaches_the_conversion_the_bakeoff_runs(
-        self, acceptance: dict[str, object]
+        self, corpus: dict[str, object]
     ) -> None:
         asked = self._captions_asked(
-            Settings(layout_detector="", caption_pass=True), acceptance)
+            Settings(layout_detector="stub", caption_pass=True), corpus)
 
         assert asked > 0
 
     def test_and_switching_it_off_reaches_it_too(
-        self, acceptance: dict[str, object]
+        self, corpus: dict[str, object]
     ) -> None:
         """The other direction, so a rule that always asks cannot pass this."""
         asked = self._captions_asked(
-            Settings(layout_detector="", caption_pass=False), acceptance)
+            Settings(layout_detector="stub", caption_pass=False), corpus)
 
         assert asked == 0
 

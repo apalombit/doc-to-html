@@ -44,11 +44,10 @@ import numpy as np
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
-sys.path.insert(0, str(REPO / "tools"))
+sys.path.insert(0, str(REPO))
 
 from doc_to_html.geometry_score import (  # noqa: E402
-    expected_boxes,
-    expected_zones,
+
     mean_best_iou,
     score_geometry,
 )
@@ -58,7 +57,49 @@ from doc_to_html.preprocess import (  # noqa: E402
     rectify,
     regions_from_xy_cut,
 )
-from layout_probe import FIXTURE, SOURCE  # noqa: E402
+from doc_to_html.corpus import SOURCES  # noqa: E402
+
+FIXTURE = "invoice_0001"
+"""The document this probe's recorded numbers are all against.
+
+It used to import a path to `tests/fixtures/invoice_0001.expected.json` from
+`tools/layout_probe.py`. Both are gone — that file was the serialised
+acceptance set and that probe measured the vision layout pass, and spec 0007
+Thread 0 retired the reference and the pass. The rectangles now come off the
+sample `Document`, which is where the same numbers live.
+"""
+
+SOURCE = SOURCES[FIXTURE].png_path(REPO)
+
+
+def reference_boxes(fixture: str) -> list["BBox"]:
+    """The document's own Zone rectangles, as something to compare against.
+
+    Not a score. **The rectangle finder below is the reason this file is
+    kept**: spec 0006 Change 3 built it, measured it, and did not ship it
+    because Change 2 had already spent its value on grouping — it locates
+    exactly `invoice_0002`'s four panels and `sample_css_0004`'s two cards and
+    nothing on the other three pages. Spec 0007 Thread 2/B reuses it to measure
+    borders, rules and card treatment for the style record, which is a use its
+    value has not been spent on. Keep its guard: a rectangle covering more than
+    0.80 of the page is the page, and unguarded it took `invoice_0001` from six
+    Zones to one.
+    """
+    from tests.documents import SAMPLE_DOCUMENTS
+
+    return [zone.bbox for zone in SAMPLE_DOCUMENTS[fixture]().zones
+            if zone.bbox is not None]
+
+
+def expected_bands(fixture: str) -> list[tuple[int, int]]:
+    """The sample document's own Band and column numbering, in Zone order."""
+    from tests.documents import SAMPLE_DOCUMENTS
+
+    return [
+        (zone.band if zone.band is not None else -1,
+         zone.column if zone.column is not None else -1)
+        for zone in SAMPLE_DOCUMENTS[fixture]().zones
+    ]
 
 
 def ink_mask(image: np.ndarray) -> np.ndarray:
@@ -99,15 +140,6 @@ def zones_from_morphology(image: np.ndarray, kx: float, ky: float,
             continue
         boxes.append(BBox(x / width, y / height, (x + w) / width, (y + h) / height))
     return sorted(boxes, key=lambda b: (round(b.top, 2), b.left))
-
-
-def expected_bands(path: Path) -> list[tuple[int, int]]:
-    """The reference IR's own Band and column numbering, in Zone order."""
-    return [
-        (zone.band if zone.band is not None else -1,
-         zone.column if zone.column is not None else -1)
-        for zone in expected_zones(path)
-    ]
 
 
 def xy_cut_report(image: np.ndarray, want: list[BBox],
@@ -166,7 +198,7 @@ def main() -> int:
 
     rectified = rectify(SOURCE)
     image = rectified.image
-    want = expected_boxes(FIXTURE)
+    want = reference_boxes(FIXTURE)
     height, width = image.shape[:2]
 
     # Swept rather than tuned. A single hand-picked kernel that scored well would

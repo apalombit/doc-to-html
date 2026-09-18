@@ -114,22 +114,29 @@ def test_scoring_against_no_reference_scores_zero() -> None:
     assert mean_best_iou([WHOLE], []) == 0.0
 
 
-def test_the_reference_rectangles_come_off_the_expected_ir() -> None:
+def test_the_loader_reads_rectangles_out_of_any_ir_shaped_json(
+    tmp_path: Path,
+) -> None:
     """Read verbatim, whatever they say.
 
-    Not pinned to particular coordinates: `invoice_0001`'s are now derived from
-    `example/invoice.html` by `tools/fixture_geometry.py`, and a test asserting
-    the old hand-typed numbers would have to be edited every time the truth got
-    better, which is the wrong way round.
+    There is no longer a committed `*.expected.json` to read — those were the
+    serialised acceptance set and Thread 0 deleted them — so this writes one.
+    The loader survives because the shape is `Document.to_json()`'s, and a
+    probe that wants rectangles out of a saved IR still has a way to get them.
     """
-    path = FIXTURES / "invoice_0001.expected.json"
-    boxes = expected_boxes(path)
-    written = json.loads(path.read_text())
+    path = tmp_path / "written.expected.json"
+    path.write_text(json.dumps({
+        "zones": [
+            {"kind": "prose", "role": "header", "band": 0, "column": 0,
+             "bbox": {"left": 0.05, "top": 0.07, "right": 0.38, "bottom": 0.13}},
+            {"kind": "table", "role": "body", "band": 1, "column": 0,
+             "bbox": {"left": 0.04, "top": 0.21, "right": 0.90, "bottom": 0.94}},
+        ]
+    }))
 
-    assert len(boxes) == len(written["zones"])
-    first = written["zones"][0]["bbox"]
-    assert boxes[0] == BBox(first["left"], first["top"],
-                            first["right"], first["bottom"])
+    boxes = expected_boxes(path)
+    assert len(boxes) == 2
+    assert boxes[0] == BBox(0.05, 0.07, 0.38, 0.13)
 
 
 def _fixture_missing_one_box(tmp_path: Path) -> Path:

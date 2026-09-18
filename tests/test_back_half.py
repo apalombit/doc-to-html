@@ -25,7 +25,7 @@ from doc_to_html.ir import (
 from doc_to_html.render import render
 from doc_to_html.probes import parse_number
 
-from .fixtures.invoice_0001 import build
+from .documents.invoice_0001 import build
 
 
 @pytest.fixture

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Platform review</title>
+<style>
+  body { font:14px/1.6 "Inter", "Helvetica Neue", Arial, sans-serif;
+         color:#e9edf2; background:#12161c; margin:0; padding:30px 34px; }
+  header { border-bottom:1px solid #2a323d; padding-bottom:14px;
+           display:flex; justify-content:space-between; align-items:baseline; }
+  h1 { font-size:26px; margin:0; font-weight:600; letter-spacing:-.01em; }
+  .quarter { color:#7d8b9c; font-size:12px; letter-spacing:.16em;
+             text-transform:uppercase; }
+  .lede { color:#aab6c4; font-size:15px; margin:16px 0 22px; max-width:46em; }
+  .tiles { display:flex; gap:14px; margin-bottom:24px; }
+  .tile { flex:1; background:#1a2029; border:1px solid #2a323d; border-radius:6px;
+          padding:13px 15px; }
+  .tile span { display:block; color:#7d8b9c; font-size:10px;
+               letter-spacing:.14em; text-transform:uppercase; }
+  .tile b { display:block; font-size:24px; font-weight:600; margin-top:4px; }
+  .tile .up { color:#4ad295; font-size:12px; font-weight:500; }
+  .tile .down { color:#ff7a7a; font-size:12px; font-weight:500; }
+  .split { display:flex; gap:26px; align-items:flex-start; }
+  main { flex:1 1 62%; }
+  aside { flex:0 0 31%; background:#1a2029; border:1px solid #2a323d;
+          border-radius:6px; padding:14px 16px; }
+  aside h3 { margin:0 0 8px; font-size:12px; letter-spacing:.14em;
+             text-transform:uppercase; color:#7d8b9c; font-weight:600; }
+  aside ul { margin:0; padding-left:17px; color:#c3cddb; font-size:13px; }
+  aside li { margin-bottom:6px; }
+  h2 { font-size:17px; margin:0 0 8px; font-weight:600; color:#f4f7fa; }
+  h2 + p { margin-top:0; }
+  p { color:#c3cddb; }
+  table { border-collapse:collapse; width:100%; margin:14px 0 20px;
+          font-size:13px; }
+  th { text-align:left; color:#7d8b9c; font-weight:600; font-size:10px;
+       letter-spacing:.12em; text-transform:uppercase;
+       border-bottom:1px solid #2a323d; padding:6px 8px; }
+  td { padding:6px 8px; border-bottom:1px solid #222932; color:#d7dfe9; }
+  .num { text-align:right; font-variant-numeric:tabular-nums; }
+  .pill { display:inline-block; padding:1px 8px; border-radius:10px;
+          font-size:11px; font-weight:600; }
+  .ok { background:#12402f; color:#4ad295; }
+  .risk { background:#43201f; color:#ff9b8a; }
+  footer { margin-top:26px; border-top:1px solid #2a323d; padding-top:10px;
+           color:#6c7a8b; font-size:11px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Platform review</h1>
+  <div class="quarter">Q3 2026 · Internal</div>
+</header>
+
+<p class="lede">Ingest held through the August peak without a paging incident.
+The remaining risk is concentrated in the export path, where a single queue
+carries every tenant.</p>
+
+<div class="tiles">
+  <div class="tile"><span>Availability</span><b>99.97%</b>
+    <div class="up">+0.04 pts</div></div>
+  <div class="tile"><span>P95 latency</span><b>184 ms</b>
+    <div class="up">&minus;31 ms</div></div>
+  <div class="tile"><span>Ingest volume</span><b>4.8 bn</b>
+    <div class="up">+18%</div></div>
+  <div class="tile"><span>Cost per million</span><b>$2.14</b>
+    <div class="down">+9%</div></div>
+</div>
+
+<div class="split">
+  <main>
+    <h2>Where the quarter went</h2>
+    <p>Two of the three planned workstreams shipped. The shard rebalancer
+    landed in July and has since moved 41 terabytes with no read errors. The
+    schema registry went to general availability in August.</p>
+    <p>The export rewrite did not ship. It is roughly two thirds complete and
+    is now the largest single item carried into Q4.</p>
+
+    <h2>Service level by component</h2>
+    <table>
+      <thead>
+        <tr><th>Component</th><th>Owner</th><th class="num">Availability</th>
+            <th class="num">P95</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Ingest gateway</td><td>Platform</td><td class="num">99.99%</td>
+            <td class="num">62 ms</td><td><span class="pill ok">Healthy</span></td></tr>
+        <tr><td>Stream router</td><td>Platform</td><td class="num">99.98%</td>
+            <td class="num">88 ms</td><td><span class="pill ok">Healthy</span></td></tr>
+        <tr><td>Schema registry</td><td>Data</td><td class="num">99.99%</td>
+            <td class="num">21 ms</td><td><span class="pill ok">Healthy</span></td></tr>
+        <tr><td>Query service</td><td>Data</td><td class="num">99.94%</td>
+            <td class="num">184 ms</td><td><span class="pill ok">Healthy</span></td></tr>
+        <tr><td>Export queue</td><td>Platform</td><td class="num">99.71%</td>
+            <td class="num">2,410 ms</td><td><span class="pill risk">At risk</span></td></tr>
+        <tr><td>Archive tier</td><td>Storage</td><td class="num">99.96%</td>
+            <td class="num">740 ms</td><td><span class="pill ok">Healthy</span></td></tr>
+      </tbody>
+    </table>
+
+    <h2>What Q4 commits to</h2>
+    <p>Finish the export rewrite and split the queue per tenant. Nothing else
+    is scheduled against the same team until that is done.</p>
+  </main>
+
+  <aside>
+    <h3>Open risks</h3>
+    <ul>
+      <li>One export queue serves every tenant; a single slow consumer stalls
+      the rest.</li>
+      <li>Cost per million rose 9% against a flat plan.</li>
+      <li>The archive tier has no tested restore above 10 TB.</li>
+      <li>Two of four on-call engineers leave the rota in November.</li>
+    </ul>
+    <h3>Decisions wanted</h3>
+    <ul>
+      <li>Approve two contractors for the export split.</li>
+      <li>Accept or reject the 9% cost variance.</li>
+    </ul>
+  </aside>
+</div>
+
+<footer>Prepared by the platform group · Circulated to engineering leads only</footer>
+</body>
+</html>

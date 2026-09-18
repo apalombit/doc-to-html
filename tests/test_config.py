@@ -183,19 +183,22 @@ class TestReporting:
 
 class TestEngineSet:
     def test_engines_are_built_from_resolved_configuration(self) -> None:
-        # The layout role reaches a *model* only on the vision path, which is no
-        # longer the default. This asks about model routing, so it asks on the
-        # path where layout has a model at all.
+        """Model routing per role.
+
+        The layout role no longer reaches a model at all — geometry comes from
+        a detector and spec 0007 Thread 0 deleted the vision path — so
+        `DTH_LAYOUT_MODEL` is asserted to reach `Settings` and no further.
+        """
         settings = resolve(
-            DTH_LAYOUT_DETECTOR="none",
             DTH_LAYOUT_MODEL="layout-model",
             DTH_CLASSIFY_MODEL="classify-model",
             DTH_EXTRACT_MODEL="extract-model",
             DTH_AUDIT_MODEL="audit-model",
         )
+        assert settings.layout_model == "layout-model"
+
         engines = default_engines(settings)
         assert isinstance(engines, EngineSet)
-        assert engines.layout.model == "layout-model"
         assert engines.classify.model == "classify-model"
         assert engines.extract.model == "extract-model"
         assert engines.audit.model == "audit-model"
@@ -214,10 +217,10 @@ class TestEngineSet:
     def test_the_classifier_can_still_be_pointed_somewhere_else(self) -> None:
         """The point of the role existing. Sharing a default must not quietly
         become sharing a value."""
-        settings = resolve(DTH_LAYOUT_DETECTOR="none", DTH_CLASSIFY_MODEL="a-classifier")
+        settings = resolve(DTH_CLASSIFY_MODEL="a-classifier")
         engines = default_engines(settings)
         assert engines.classify.model == "a-classifier"
-        assert engines.layout.model == config.DEFAULT_LAYOUT_MODEL
+        assert engines.extract.model == config.DEFAULT_EXTRACT_MODEL
 
     def test_a_cloud_host_and_key_reach_the_client(self) -> None:
         """The promise is that Ollama Cloud is a configuration change. If the
@@ -238,9 +241,15 @@ class TestEngineSet:
         assert "headers" not in engine.client_kwargs()
 
     def test_inference_settings_reach_the_engine(self) -> None:
+        """Asked of extraction, which is where a model still is.
+
+        Layout used to be the natural place to ask and no longer has a model
+        at all: geometry comes from a detector, which makes no inference call
+        and has no context window or timeout to set.
+        """
         engine = default_engines(resolve(
-            DTH_LAYOUT_DETECTOR="none", DTH_NUM_CTX="2048", DTH_TIMEOUT_S="9",
-        )).layout
+            DTH_NUM_CTX="2048", DTH_TIMEOUT_S="9",
+        )).extract
         assert isinstance(engine, OllamaEngine)
         assert engine.num_ctx == 2048
         assert engine.timeout_s == 9.0

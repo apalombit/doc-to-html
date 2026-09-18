@@ -84,7 +84,25 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "tools"))
 
-from doc_to_html.geometry_score import expected_zones, score_geometry  # noqa: E402
+from doc_to_html.geometry_score import ExpectedZone, score_geometry  # noqa: E402
+
+
+def _reference_zones(fixture: str) -> list[ExpectedZone]:
+    """Reference rectangles, off the sample document rather than off a file.
+
+    They used to be read from `tests/fixtures/<name>.expected.json`, which was
+    the serialised acceptance set and spec 0007 Thread 0 deleted. The numbers
+    are the same; what is gone is the harness that scored against them. Here
+    they are *rectangles to compare a detector's guesses with*, which is the
+    job this probe has always had.
+    """
+    from tests.documents import SAMPLE_DOCUMENTS
+
+    return [
+        ExpectedZone(index=index, box=zone.bbox, kind=zone.kind.value,
+                     role=zone.role.value, band=zone.band, column=zone.column)
+        for index, zone in enumerate(SAMPLE_DOCUMENTS[fixture]().zones)
+    ]
 from doc_to_html.ir import BBox  # noqa: E402
 from doc_to_html.preprocess import content_ink, rectify, snap_to_ink  # noqa: E402
 from doc_to_html.wire import bands_from_boxes  # noqa: E402
@@ -93,7 +111,15 @@ from doc_to_html.engines.detector import (  # noqa: E402
     Detection,
     outermost,
 )
-from tests.fixtures import IMAGES  # noqa: E402
+from doc_to_html.corpus import SOURCES  # noqa: E402
+from tests.documents import SAMPLE_DOCUMENTS  # noqa: E402
+
+IMAGES = {name: SOURCES[name].png for name in SAMPLE_DOCUMENTS}
+"""The five documents this probe was tuned against, as name -> Source Image.
+
+The corpus is fifteen now; this probe's recorded numbers are all against these
+five, so it keeps naming them rather than silently changing what it measures.
+"""
 
 FIXTURES = REPO / "tests" / "fixtures"
 
@@ -161,7 +187,7 @@ def reference(fixture: str) -> tuple[list[BBox], list[tuple[int, int]]]:
     one rectangle should still contribute its other four rather than take the
     whole run down.
     """
-    zones = [zone for zone in expected_zones(FIXTURES / f"{fixture}.expected.json")
+    zones = [zone for zone in _reference_zones(fixture)
              if zone.box is not None]
     return (
         [zone.box for zone in zones if zone.box is not None],

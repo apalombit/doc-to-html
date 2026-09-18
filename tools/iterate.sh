@@ -2,9 +2,10 @@
 #
 # One turn of the prompt-iteration loop, from scratch.
 #
-#     tools/iterate.sh 03-some-label
-#     FIXTURE=all tools/iterate.sh 11-baseline        # every fixture
-#     FIXTURE=invoice_0001,invoice_0002 tools/iterate.sh 12-two
+#     tools/iterate.sh 03-some-label                 # one document
+#     FIXTURE=iterate tools/iterate.sh 11-baseline    # the five, ~17 min
+#     FIXTURE=sweep tools/iterate.sh 12-gate          # all fifteen, ~50 min
+#     FIXTURE=invoice_0001,cv_0013 tools/iterate.sh 13-two
 #
 # Runs the whole document against a real model — every pass, no shortcuts, about
 # three minutes each on the 8 GB M1 — then draws what came back. Everything lands
@@ -12,18 +13,26 @@
 # it, so two turns can be compared months later without a git archaeology session.
 #
 #     debug/runs/<label>/
-#       layout_prompt_sent.txt   the layout prompt, snapshotted before the run
+#       classify_prompt_sent.txt the classify prompt, snapshotted before the run
 #       ollama_ps_before.txt     proof nothing else was resident
 #       ollama_ps_after.txt      proof our own model got the GPU, or did not
 #       fixtures.txt             which documents this turn covered
-#       bakeoff.stdout.txt       the acceptance table and mismatches, all fixtures
+#       bakeoff.stdout.txt       what converted and what did not, per document
 #       bakeoff.stderr.txt       per-pass timings
 #       dump/<model>/<fixture>/  every raw answer, and the prompt beside it
-#       index.html               the contact sheet — start here
+#       report.html              source vs render, every document  <- start here
+#       scores.json              the six axes, for the next run to diff against
+#       index.html               the per-document contact sheet
 #       *.png                    the same pictures as files
 #
-# One fixture keeps that flat layout. A set puts the contact sheet and pictures
-# under <label>/<fixture>/ instead, with the acceptance table still at the top.
+# **`report.html` is the review surface.** One page, every document, source
+# left and render right at matched width, scores above each pair and the delta
+# against the previous run. `index.html` is the other question — how one
+# document was converted, step by step — and both come out of the same run.
+#
+# One fixture keeps the flat layout. A set puts the per-document contact sheet
+# and pictures under <label>/<fixture>/ instead, with the report still at the
+# top covering all of them.
 #
 # Memory presents as latency: with an unrelated model resident one layout pass
 # took 180s and timed out, against 4.5s alone. This refuses to run rather than
@@ -38,25 +47,23 @@ LABEL="${1:?usage: tools/iterate.sh <label>, e.g. 03-fewer-fields}"
 # ten edits did to the other four was never once measured.
 FIXTURE="${FIXTURE:-invoice_0001}"
 MODEL="${MODEL:-qwen3-vl:4b}"
-# Exported so the run and the diagnostic agree about what the model was shown.
-# The default is read from config rather than written here: this script records
-# the number into layout_long_edge.txt and hands it to inspect_run.py, so a third
-# copy of the literal would let a retune silently stamp every run directory with
-# a figure the run was not taken at — the one thing these directories exist to
-# make impossible.
-LONG_EDGE="${DTH_LAYOUT_LONG_EDGE:-$(python -c \
-    'from doc_to_html.config import DEFAULT_LAYOUT_LONG_EDGE as d; print(d)')}"
-export DTH_LAYOUT_LONG_EDGE="$LONG_EDGE"
+# What the layout crop is downscaled to, for the contact sheet's own caption.
+# No longer a setting: `DTH_LAYOUT_LONG_EDGE` served the vision layout pass and
+# spec 0007 Thread 0 retired both. Read from the one remaining constant so this
+# script cannot stamp a run directory with a figure the run was not taken at.
+LONG_EDGE="$(python -c \
+    'from doc_to_html.preprocess import LAYOUT_LONG_EDGE as d; print(d)')"
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUT="$ROOT/debug/runs/$LABEL"
 cd "$ROOT"
 
-if [ "$FIXTURE" = all ]; then
-    FIXTURE="$(ls tests/fixtures/*.expected.json \
-               | sed 's|.*/||; s|\.expected\.json$||' | paste -sd, -)"
-fi
-FIXTURES="${FIXTURE//,/ }"
+# A split name, "all", or a comma-separated list — `doc_to_html.corpus` is the
+# one place that says what those mean, so this script and the bake-off cannot
+# disagree about which documents a run covered.
+FIXTURES="$(python -c "
+from doc_to_html.corpus import names
+print(' '.join(names('$FIXTURE')))")"
 COUNT="$(printf '%s\n' $FIXTURES | wc -l | tr -d ' ')"
 
 if [ -e "$OUT" ]; then
@@ -102,8 +109,12 @@ fi
 mkdir -p "$OUT"
 OLLAMA_HOST="$HOST" ollama ps > "$OUT/ollama_ps_before.txt" 2>&1 || true
 echo "$HOST" > "$OUT/host.txt"
-python -c "from doc_to_html.engines.ollama import LAYOUT_PROMPT
-open('$OUT/layout_prompt_sent.txt','w').write(LAYOUT_PROMPT)"
+# The prompts this turn was taken under, so the directory stays self-describing
+# when one of them is edited. No layout prompt: geometry comes from a detector
+# and makes no model call at all.
+python -c "
+from doc_to_html.engines.ollama import CLASSIFY_PROMPT
+open('$OUT/classify_prompt_sent.txt','w').write(CLASSIFY_PROMPT)"
 git rev-parse HEAD > "$OUT/commit.txt" 2>/dev/null || true
 
 echo "=> $LABEL: $MODEL over $COUNT fixture(s) at layout long edge $LONG_EDGE," \
@@ -121,7 +132,7 @@ env | grep '^DTH_' | sort > "$OUT/dth_env.txt" || true
 # comparable with a single-fixture run's. Mismatch counts are unaffected, and on
 # a multi-fixture run those are the point.
 DTH_LOG_LEVEL=INFO python -m doc_to_html.bakeoff \
-    --fixtures "$FIXTURE" --models "$MODEL" --dump "$OUT/dump" \
+    --fixtures "${FIXTURES// /,}" --models "$MODEL" --dump "$OUT/dump" \
     > "$OUT/bakeoff.stdout.txt" 2> "$OUT/bakeoff.stderr.txt" || true
 
 # The guard above proves no *other* model was resident. It cannot prove our own
@@ -146,18 +157,20 @@ fi
 # the top covering all of them.
 for fixture in $FIXTURES; do
     if [ "$COUNT" = 1 ]; then dest="$OUT"; else dest="$OUT/$fixture"; mkdir -p "$dest"; fi
-    # Each expected IR names its own Source Image, so the set needs no table here.
-    source="${SOURCE:-$(python -c "import json,sys
-print(json.load(open('tests/fixtures/$fixture.expected.json'))['source']['path'])")}"
+    # The corpus names each document's Source Image, so the set needs no table.
+    source="${SOURCE:-$(python -c "
+from doc_to_html.corpus import SOURCES
+print(SOURCES['$fixture'].png)")}"
     # Its stderr is kept, not discarded. Run 69 converted all five fixtures and
     # produced no contact sheet for any of them: the diagnostic refused, said why
     # on stderr, and `2>/dev/null || true` threw the sentence away — leaving five
     # empty geometry.txt files and no sign that anything had gone wrong. A tool
     # that cannot draw the run is not fatal, but it must be audible.
+    # No `--expected`: the committed reference IR is gone with the harness that
+    # scored against it, and the panels it fed are skipped when it is absent.
     if ! python tools/inspect_run.py \
         "$OUT/dump/${MODEL//:/_}/$fixture" \
         --source "$source" \
-        --expected "tests/fixtures/$fixture.expected.json" \
         --long-edge "$LONG_EDGE" \
         --out "$dest" > "$dest/geometry.txt" 2>"$dest/geometry.stderr.txt"
     then
@@ -165,6 +178,19 @@ print(json.load(open('tests/fixtures/$fixture.expected.json'))['source']['path']
         sed 's/^/  /' "$dest/geometry.stderr.txt" >&2
     fi
 done
+
+# The comparison report — the thing that actually gets reviewed. Built after
+# the conversions so it can score every document the run produced, and against
+# the newest previous run's scores.json so the T1 ratchet has something to
+# ratchet against. Its stderr is kept for the same reason the contact sheet's
+# is: a review surface that silently failed to build is worse than one that
+# says why.
+if ! python -m doc_to_html.report "$OUT" --model "$MODEL" \
+        > "$OUT/report.stdout.txt" 2>"$OUT/report.stderr.txt"
+then
+    echo "WARNING: no comparison report:" >&2
+    sed 's/^/  /' "$OUT/report.stderr.txt" >&2
+fi
 
 cat "$OUT/bakeoff.stdout.txt"
 echo
@@ -181,8 +207,9 @@ fi
 cat <<EOF
 
 ------------------------------------------------------------------
-prompt used   $OUT/layout_prompt_sent.txt
+report        $OUT/report.html      <- open this
+scores        $OUT/scores.json
 raw dump      $OUT/dump/${MODEL//:/_}/
-diagnostic    $sheet      <- open this
+per-document  $sheet
 ------------------------------------------------------------------
 EOF

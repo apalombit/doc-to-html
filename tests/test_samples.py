@@ -14,9 +14,9 @@ from doc_to_html.ir import Document, Kind, Role, RowRole
 from doc_to_html.probes import parse_number
 from doc_to_html.render import render
 
-from .fixtures.sample_css_0004 import build as build_css
-from .fixtures.sample_semantic_0005 import build as build_semantic
-from .fixtures.sample_table_0003 import build as build_table
+from .documents.sample_css_0004 import build as build_css
+from .documents.sample_semantic_0005 import build as build_semantic
+from .documents.sample_table_0003 import build as build_table
 
 
 @pytest.fixture

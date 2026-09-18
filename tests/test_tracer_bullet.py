@@ -395,16 +395,15 @@ class TestBandsDerivedFromTheBoxes:
         page through a seven-thousandth overlap; see `bands_from_boxes` for why
         the shortest member closes a Band.
         """
-        expected = json.loads(
-            (REPO / "tests" / "fixtures" / f"{fixture}.expected.json").read_text()
-        )["zones"]
-        boxes = [
-            BBox(z["bbox"]["left"], z["bbox"]["top"],
-                 z["bbox"]["right"], z["bbox"]["bottom"])
-            for z in expected
+        from .documents import SAMPLE_DOCUMENTS
+
+        zones = [
+            zone for zone in SAMPLE_DOCUMENTS[fixture]().zones
+            if zone.bbox is not None
         ]
+        boxes = [zone.bbox for zone in zones]
         assert bands_from_boxes(boxes) == [
-            (z["band"], z["column"]) for z in expected
+            (zone.band, zone.column) for zone in zones
         ]
 
 
