@@ -131,8 +131,19 @@ citable**, and no conclusion may rest on them:
 - `debug/runs/` is cleared regularly, so most of those runs cannot be re-opened.
 - Historical runs differed on several flags at once, so their totals describe
   configurations that are neither the shipped one nor each other.
-- The model is not bit-reproducible. Two runs of one configuration differ by a
-  few mismatches, so **a small delta is not a result.**
+- Historical totals are not comparable *even where the pipeline is*, for the
+  reasons above and below. **On the determinism question specifically, the old
+  claim here was wrong and has been measured:** `transport.py` asks Ollama for
+  `temperature: 0`, and on 2026-09-18 the five original documents came back
+  **byte-identical** to the copies frozen in `tests/frozen/run84/` — all five,
+  md5 for md5, on a later commit and with the model partly on the CPU. So on
+  one machine, one model and one pipeline, *the conversion is reproducible*,
+  and a byte-identical arm means **the change did nothing** rather than "noise
+  swamped it". That is a legitimate comparison rather than a cited run: the
+  frozen files are committed inputs, and the run was taken in the same sitting.
+  It also confirms from the other side that the CPU/GPU split moves timings
+  only. **This licenses nothing across machines, Ollama versions or models**,
+  and says nothing about the other ten documents, which have no prior run.
 - **Every total recorded before 2026-09-17 also measures a quantity this project
   no longer optimises.** Three separate breaks — the comparison changed
   (2026-09-11), the reference rectangles changed (2026-09-14), and the target

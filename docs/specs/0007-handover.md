@@ -95,6 +95,43 @@ before Thread 1/A starts.
 Use only after Thread 0's gate is met and its checkpoint report has been
 reviewed.
 
+### What the Thread 0 checkpoint changed about this thread
+
+Read this before running the prompt below. Three things came out of the
+checkpoint sweep that were not knowable when A0 was scoped, because A0 was
+scoped against the original five.
+
+**1. A0's stated gate is now out of reach, and the number needs a decision.**
+The prompt below pre-registers *T1 = 1.00 recall and precision on the sweep
+set*. That was written when the sweep set did not exist. On the checkpoint,
+several of the ten new documents lose most of their content outright — whole
+Zones rejected, not cells mis-split — and no amount of fixing A0's three
+content faults reaches 1.00 on them. The three faults A0 names are real and
+still worth fixing first; what cannot stand is the *scope* of the number
+attached to them. **Do not quietly relax it, and do not quietly fail it.**
+Either re-register A0's gate as 1.00 on the *iterate* set with the sweep set
+reported but not gating, or split the whole-Zone failures out as their own
+phase ahead of A0. That is Alessandro's call, not the thread's.
+
+**2. The whole-Zone failures are a different fault from the three A0 names.**
+A0's three faults are content being *mis-read* — a header dropped, a title
+repeated, a line broken. What the new documents show is content never being
+*attempted*: a table Extractor raising `MappingError` on a row-width mismatch
+and the Zone being abandoned. Those are unrelated causes, and lumping them
+together under "stop the bleeding" will make A0 look like it failed when its
+own three fixes worked.
+
+**3. `DTH_SNAP_ZONES` is silently not applying to a meaningful share of the
+corpus.** On the checkpoint it moved boxes onto their ink and then invalidated
+the Bands on four of the fifteen documents, so those four converted on the
+Engine's unsnapped geometry. Two shapes: a full-width Zone with a narrow box
+strictly inside it (enclosure the validator is right to refuse), and two Zones
+snapping onto nearly the same span. Both are A2 questions about *grouping*
+before they are snap questions. **The snap is one of the four defaults that
+must not be deleted** — the finding is that it is not being applied, which is
+a different fact from it being harmful. Worth surfacing in `report.html` as a
+finding rather than leaving it in `bakeoff.stderr.txt`.
+
 ```
 Read docs/specs/0007-look-like-the-document.md, then implement Thread 1/A only.
 Stop at its gate.
