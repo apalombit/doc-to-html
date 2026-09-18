@@ -392,6 +392,12 @@ MEASURE = r"""
     if (style.overflow === 'visible' && style.overflowY === 'visible'
         && style.overflowX === 'visible') continue;
     if (style.display === 'none') continue;
+    // Only content counts. `menu_0012`'s decorative rule is a zero-height
+    // `hr` whose ornament is drawn by a `::after`, so its scrollHeight is 11
+    // against a clientHeight of 0 — overflowing, and hiding nothing a reader
+    // or the scorer will ever ask for.
+    if (!element.textContent.trim()
+        && !element.querySelector('img, svg, canvas')) continue;
     if (element.scrollHeight > element.clientHeight + 2
         || element.scrollWidth > element.clientWidth + 2) clipped += 1;
   }

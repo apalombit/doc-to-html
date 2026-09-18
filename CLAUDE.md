@@ -90,10 +90,25 @@ phase regardless of what improved elsewhere.
 reason.** Not a target to optimise; a floor never to cross. It is the rule that
 would have caught all three faults that shipped as improvements.
 
+**T1 reports three numbers, and the third is not decoration.** Recall and
+precision are token multisets, so they cannot see text that is all present, in
+the right order, and *cut in the wrong place*: `Invoice #: 123` read as label
+`Invoice` and value `#: 123` scores 1.000, 1.000 and tau 1.000.
+`join_recall` — the adjacent-word pairs — is the only one that catches it, and
+`Completeness.broken_joins` names the join that was cut.
+
 Ground truth is **derived, not typed**: `example/foo.png` is a screenshot of
 `example/foo.html`, so the expected answer is already on disk. One `project()`
 function runs over source and output alike and the projections are diffed. Adding
 a document is writing an HTML file — which is what lets the corpus leave five.
+
+**The source and its screenshot agree exactly for the ten authored documents
+and approximately for four of the original five.** Only `invoice.html` still
+re-renders to its screenshot (0.74% of pixels differing); the other four differ
+by 6.9–14.1%, in content *height* rather than position, because of fonts on
+this machine — and `invoice2.html` additionally wants a CDN. So `height_ratio`
+is measured against the **PNG's** own height, which is what the model was
+shown, while T3's relations and column shares come from the re-rendered source.
 
 ### The review surface
 
@@ -128,6 +143,15 @@ Compare only runs taken against each other, one change apart, in one sitting.
 a rubric score from one session and a rubric score from another are not
 comparable and must never be tabulated together. Judge pairwise — previous render
 against new render, both against the source, side by side, now.
+
+**The one exception, and it is narrow.** Scores over `tests/frozen/run84/` *are*
+citable: the inputs are committed files, the scorer runs offline over them with
+no model, and `tests/frozen/run84/README.md` tabulates them. They are the fixed
+point every later measurement can be described against. Nothing from a *run* —
+including `scores.json` — joins that exception, because a run involves the
+model. A run's `report.html` computes its delta against the previous run's
+`scores.json`, which is the pairwise comparison this section asks for, taken
+automatically and in one sitting.
 
 ---
 

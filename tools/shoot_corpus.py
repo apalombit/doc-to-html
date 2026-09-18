@@ -55,6 +55,65 @@ the one that breaks a renderer whose house column is a fixed 52rem.
 """
 
 
+def check() -> int:
+    """Score each document against its own HTML. It must come out perfect.
+
+    **The strongest single check on the whole measure**, and it costs one
+    command. `project(source)` and `project(output)` are the same function over
+    the same bytes, so every axis has a known answer: recall, precision, joins,
+    tau and side-by-side agreement are exactly 1.00, column error exactly 0.00,
+    and nothing is lost on T6. Anything else is a bug in the scorer or a
+    document that cannot be scored — and it finds both without a model, a run
+    or a judgement.
+
+    `height_ratio` is the one axis that is *not* exactly 1.00, and the reason is
+    the corpus rather than the scorer: it divides by the **PNG's** height, which
+    is what the model was shown, and only `invoice.html` still re-renders to its
+    screenshot. The other four originals differ by 6.9-14.1% in content height —
+    fonts on this machine, and `invoice2.html` additionally wants a CDN. The ten
+    authored documents were screenshotted by this tool on this machine, so they
+    come out at 1.00 and are held to it.
+    """
+    from doc_to_html.corpus import ITERATE, SWEEP
+    from doc_to_html.scoring import score_document
+
+    work = REPO / "debug" / "selfcheck"
+    print(f"{'document':22s} {'recall':>7s} {'prec':>6s} {'joins':>6s} {'tau':>6s}"
+          f" {'beside':>7s} {'colerr':>7s} {'h_ratio':>8s}")
+    failed = []
+    for name in SWEEP:
+        source = SOURCES[name]
+        if not source.png_path(REPO).is_file():
+            print(f"{name:22s} not shot")
+            failed.append(name)
+            continue
+        score = score_document(source, source.html_path(REPO), work=work,
+                               root=REPO)
+        done, layout = score.completeness, score.layout
+        # The originals are allowed their measured drift; anything authored
+        # here was shot from the same file on the same machine and is not.
+        slack = 0.15 if name in ITERATE else 0.01
+        wrong = (
+            done.recall < 1.0 or done.precision < 1.0 or done.join_recall < 1.0
+            or score.order.tau < 0.999 or layout.beside_agreement < 0.999
+            or layout.column_error > 0.001
+            or abs(layout.height_ratio - 1.0) > slack
+        )
+        if wrong:
+            failed.append(name)
+        print(f"{name:22s} {done.recall:7.3f} {done.precision:6.3f} "
+              f"{done.join_recall:6.3f} {score.order.tau:6.3f} "
+              f"{layout.beside_agreement:7.2f} {layout.column_error:7.2f} "
+              f"{layout.height_ratio:8.2f}" + ("   <-- WRONG" if wrong else ""))
+
+    if failed:
+        print(f"\n{len(failed)} document(s) do not score perfectly against "
+              f"themselves: {', '.join(failed)}", file=sys.stderr)
+        return 1
+    print("\nevery document scores perfectly against itself", file=sys.stderr)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--force", default="",
@@ -62,6 +121,10 @@ def main(argv: list[str] | None = None) -> int:
                              "a PNG exists")
     parser.add_argument("--list", action="store_true",
                         help="say what each document is and whether it is shot")
+    parser.add_argument("--check", action="store_true",
+                        help="score every document against ITSELF, which must "
+                             "come out perfect; anything less is a broken "
+                             "document or a broken scorer")
     args = parser.parse_args(argv)
 
     if args.list:
@@ -74,6 +137,9 @@ def main(argv: list[str] | None = None) -> int:
     if not projection.available():
         print(f"no headless Chrome at {projection.CHROME}", file=sys.stderr)
         return 1
+
+    if args.check:
+        return check()
 
     forced = {name.strip() for name in args.force.split(",") if name.strip()}
     unknown = forced - set(SOURCES)

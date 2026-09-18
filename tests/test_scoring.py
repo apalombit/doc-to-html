@@ -294,3 +294,81 @@ class TestTheNormalisationRules:
         it would make an empty conversion look like a scrambled one."""
         assert kendall_tau([(0, 0)]) == 1.0
         assert kendall_tau([]) == 1.0
+
+
+class TestADocumentScoredAgainstItself:
+    """The strongest single check on the measure, and it needs no model.
+
+    `project(source)` and `project(output)` are the same function over the same
+    bytes, so every axis has a known answer. A scorer that cannot return 1.00
+    when the two sides are identical is broken in a way no run would reveal,
+    and a *document* that cannot reach 1.00 against itself cannot be scored at
+    all — which is how a page that clips its own text gets caught.
+
+    Four documents here rather than fifteen, because each costs three browser
+    launches. `tools/shoot_corpus.py --check` runs the whole corpus and is what
+    to use after adding a document; all fifteen pass it.
+    """
+
+    @needs_chrome
+    @pytest.mark.parametrize("name", [
+        "sample_table_0003",  # a dense table
+        "darkdeck_0009",      # light ink on a dark ground
+        "nonlatin_0014",      # Greek, which normalisation must not flatten
+        "receipt_0010",       # narrow, monospace, below the browser's floor
+    ])
+    def test_every_axis_is_perfect(self, name: str,
+                                   tmp_path: Path) -> None:
+        source = SOURCES[name]
+        score = score_document(source, source.html_path(REPO), work=tmp_path,
+                               root=REPO)
+
+        assert score.completeness.recall == 1.0
+        assert score.completeness.precision == 1.0
+        assert score.completeness.join_recall == 1.0
+        assert score.completeness.duplicated == ()
+        assert score.completeness.surplus_breaks == 0
+        assert score.order.tau == 1.0
+        assert score.layout.beside_agreement == 1.0
+        assert score.layout.column_error == pytest.approx(0.0, abs=1e-6)
+        assert score.inline.rate == 1.0
+
+    @needs_chrome
+    def test_an_authored_document_re_renders_to_its_own_screenshot(
+        self, tmp_path: Path
+    ) -> None:
+        """Which is what makes `height_ratio` mean anything for the new ten.
+
+        Only `invoice.html` of the original five still does — the other four
+        differ by 6.9 to 14.1% in content height, from fonts on this machine,
+        and `invoice2.html` additionally wants a CDN. Everything authored under
+        spec 0007 was screenshotted from the same file on the same machine, so
+        it is held exactly.
+        """
+        source = SOURCES["cv_0013"]
+        score = score_document(source, source.html_path(REPO), work=tmp_path,
+                               root=REPO)
+        assert score.layout.height_ratio == pytest.approx(1.0, abs=0.01)
+
+    @needs_chrome
+    def test_no_corpus_document_hides_its_own_text(self) -> None:
+        """A page that clips content is not usable as ground truth.
+
+        The text stays in the DOM, so the projection reports it and T1 demands
+        the model read it, while the picture does not contain it.
+        `newsletter_0008` did exactly this with CSS multicol — invisible in the
+        page height, obvious in the PNG — and now uses explicit columns.
+        """
+        from doc_to_html.corpus import SWEEP
+        from doc_to_html.projection import project
+
+        from PIL import Image
+
+        clipping = []
+        for name in SWEEP:
+            source = SOURCES[name]
+            width = Image.open(source.png_path(REPO)).size[0]
+            page = project(source.html_path(REPO), width=width)
+            if page.clipped:
+                clipping.append(name)
+        assert clipping == []
