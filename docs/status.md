@@ -1,385 +1,176 @@
-# Status
+# Status — 2026-09-19
 
-> **Superseded as a statement of where the project is, 2026-09-18.**
-> Everything below describes the project as measured by
-> `acceptance.compare()` against a hand-typed reference IR. **That harness is
-> deleted**, along with `tests/fixtures/*.py`, every `*.expected.json` and
-> `tools/write_expected_ir.py`. Every mismatch total in this file — "0
-> mismatches", "2 → 3", "the measure of success" — is a count of a quantity
-> this project no longer optimises, and none of them is citable.
->
-> **For where the project actually is, read `CLAUDE.md`'s "READ THIS FIRST",
-> then [`docs/specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
-> (issue #30).** The target is now whether the rendered output looks and reads
-> like the source document, scored on six axes by `doc_to_html.scoring` and
-> reviewed in `debug/runs/<label>/report.html`.
->
-> This file is kept because the *module inventory*, the *rejected
-> alternatives* and the account of how each default was reached are still
-> accurate and still useful. Read it for those and not for the numbers.
+**Live document.** This is where the project actually is. When it goes stale,
+rewrite it; do not add a banner and leave it.
 
-Snapshot of what exists, what does not, and what is known to be missing. Updated
-at checkpoints; `CONTEXT.md` holds the vocabulary and `docs/adr/` the decisions,
-neither of which belongs here.
+Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
+[`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
+(authoritative), then
+[`specs/0007-handover.md`](specs/0007-handover.md) (the per-thread prompts and
+the full Phase A-1 scope). This file is the summary, not the source.
 
-## Where this is, in one paragraph
+Branch `scaffold`, clean at **`dba0b9e`**. 565 tests pass, `mypy src/` clean.
 
-**The PoC works end to end and `example/invoice.png` now converts with zero
-mismatches.** A Source Image is rectified, laid out by a vision Engine, classified
-Zone by Zone from its own crop, extracted from the same crop, checked by Probes
-and rendered as one self-contained HTML file with the IR embedded. Against a real
-`qwen3-vl:4b` the invoice matches its expected IR exactly — all six Kinds right,
-every string on the page rendered, no skeletons, no Failures, and the column-sum
-Probe reconciling at 385.00. Run 49, `debug/runs/49-table-grid-hint/`, and the
-shipped defaults now match the ones that run used.
+---
 
-**Everything below this paragraph predates that result** and describes the
-document at 2 and 3 mismatches. It is kept as the record of how the count moved
-and what was rejected on the way; `CLAUDE.md` and
-`docs/specs/0003-classify-from-the-crop.md` carry the current state. The three
-standing caveats are that only this one fixture is measured, and that the replay
-suite is red by design until #16 re-records it.
+## Where we are
 
-The count went up, not down. The classification split (#12) was predicted to take
-it from 2 to 1; run 22 measured 3. It fixed the Zone it was designed to fix and
-broke one it was not designed to touch — see below, and
-`docs/specs/0003-classify-from-the-crop.md` for the numbers.
+**Thread 0 is complete and its gate is met.** The project no longer optimises
+agreement with a hand-typed reference IR; it measures whether the rendered
+output looks and reads like the source document. The measure, the corpus and
+the review surface all exist and are tested.
 
-### What the PoC is deliberately proving, and what it is not
+**Thread 1/A has not started.** Its first phase has been re-scoped from the
+checkpoint review and is approved but not begun. Nothing in `src/` has been
+changed to improve any score.
 
-The bet this whole slice tests is narrow: **that a 3–4B vision model on 8GB of
-unified memory can recover a document's structure well enough to rebuild it as
-HTML, without any per-document-type code.** So the scope is one image, one model,
-one page, vision only. Not multi-page, not photographs, not handwriting, not
-tesseract, not a correction UI — all of those are listed under "Known gaps" and
-none of them is in flight.
+## Thread 0 — done, with the gate evidence
 
-The measure of success is `example/invoice.png` at **0 mismatches** against a real
-model, then the same prompts held to the other four fixtures without regressing.
+| | |
+|---|---|
+| `corpus.py` | fifteen documents, HTML + screenshot each, split *iterate* (the original five) / *sweep* (all fifteen) |
+| `projection.py` | `project()` — one page as a reader perceives it, off headless Chrome. One function, both sides. |
+| `scoring.py` | `score_document()` — six axes. T1/T2/T3 hard tier, T1 a ratchet. |
+| `report.py` | `debug/runs/<label>/report.html` — the review surface |
 
-### What is being worked on right now
+The three gate conditions, all met:
 
-**`docs/specs/0003-classify-from-the-crop.md` — issue #12.** Every remaining
-mismatch is a Zone getting the wrong Kind. When there were two of them, issue #13
-measured why: the layout pass is being asked two different questions about two
-different things at once.
+1. **The scorer finds run 84's faults unaided.** `tests/test_scoring.py`, no
+   model, no network. Asked only general questions it reports
+   `sample_table_0003`'s deleted column headers, a Zone Title repeated inside
+   its own body in four documents, four surplus hard breaks on
+   `sample_semantic_0005`, and `invoice | 123` as a broken join that recall,
+   precision and tau all score 1.000.
+2. **The report renders all fifteen in one page** — verified structurally,
+   fifteen `<section class="doc">`, one per document.
+3. **A checkpoint run exists** — `85-thread-0-checkpoint`, taken 2026-09-18.
 
-- Zone 1 (`Invoice #` / `Created` / `Due`) is fixed by **isolation** — asked on
-  its own it answers `pairs` correctly even at 96×38px; it only answers `prose`
-  when asked as one of seven regions.
-- Zone 4 (a shaded `Payment Method | Check #` row over one data row) needs **both**
-  a full-resolution crop **and** a model that can use it: `qwen3.5:4b` flips
-  `pairs`→`table` between the two resolutions, `qwen3-vl:4b` answers `pairs` at
-  both, 6/6.
+**The checkpoint run itself is gone or going.** `debug/runs/` is gitignored and
+gets cleared. Its numbers are not re-citable and nothing below rests on them —
+what is recorded here is *structural* and re-derivable: which fault, which
+cause, which line of code. Re-take a sweep when you need numbers.
 
-So the fix is to split the layout pass into geometry and classification, and to
-make classification routable to its own model. Progress: #13, #14 and #15 are
-done — the Engine can classify one Zone from its crop, and the Orchestrator now
-runs geometry → classify → extract.
+## What the checkpoint showed, reviewed document by document
 
-**The routing shipped; the model swap did not.** `DTH_CLASSIFY_MODEL` defaults
-to `qwen3-vl:4b`, one model in every step — decided 2026-07-29, against 0003's
-recommendation. Not because the probe was wrong but because it was thin:
-`qwen3.5:4b` has never run the layout pass, touched the other four fixtures, or
-converted a document, so defaulting to it would generalise from one measurement
-on one fixture. Evaluating models per step and combinations across steps is #19.
+Reviewed by Alessandro against the sources on 2026-09-19, render beside
+source, all fifteen. **T1 was clean on none of them.** The ten new documents
+fail in ways the original five never exposed, and they are four unrelated
+causes, not one:
 
-**Run 22 is the first conversion with the split, and it made `invoice_0001`
-worse: 2 mismatches → 3.** Baseline is run 21 at the commit before the split;
-same model, same fixture, same long edge, both at the same 41%/59% CPU/GPU split.
-
-- **Zone 1 is fixed**, `prose` → `pairs`, exactly as the isolation finding
-  predicted.
-- **Zone 4 is unchanged.** `qwen3-vl:4b` answers `pairs` from a crop where the
-  shaded heading row is plainly legible — now 7/7 wrong, counting this run.
-  It needs a different model, which is #19.
-- **Zone 3 regressed**, `prose` → `pairs`, and this was not predicted by anything.
-  Zones 2 and 3 are the two address blocks in Band 1. Zone 2 (`Sparksuite, Inc.`
-  / a street / a city) still reads `prose`; Zone 3 (`Acme Corp.` / `John Doe` /
-  `john@example.com`) has no street and no city in it, and asked with no
-  neighbour to compare against it reads `pairs`. **Isolation cuts both ways** —
-  narrowing the question also removes the evidence that lives between Zones. That
-  is a fourth mechanism on top of #13's three, and 0003 did not have it.
-- **A wrong Kind is not confined to the Kind.** Zone 3 went to the Pairs
-  extractor and raised `MappingError` on an unlabelled value. The failure
-  contract held — that Zone renders as a skeleton with an "Unresolved" finding,
-  the other five convert — but the document lost a block it used to render.
-
-**Classification costs ~95s per document**: 6 calls, 15.8s mean, 17.4s worst, on
-a 219.3s baseline. The document total rose only 27.2s, and that discount is an
-artefact of the wrong Kinds — three Zones went to the cheaper Pairs prompt
-instead of Prose. Quote the 95s.
-
-**The replay suite is red, by design**: replay serves recorded responses by
-order, so the extra call per Zone puts all five fixtures out of step. #16
-re-records them and is next.
-
-**A second spec is now open against the same three mismatches from the other
-end** — `docs/specs/0004-check-the-box-against-the-ink.md`, issue #20. 0003 asks
-which model names a Zone's Kind; 0004 asks whether the crop that Kind is judged
-from is the Zone at all. Runs 26-32 measured geometry itself at **mean best IoU
-0.56**, invariant to resolution and worse under prompt framing, with no check
-anywhere comparing a box to ink. Its first gate decides whether #12's and #19's
-comparisons are being run on inputs that are themselves wrong.
-
-| Issue | | |
+| cause | documents | signature |
 |---|---|---|
-| **#10** | open | Make one image work: `invoice.png`. The live epic. |
-| **#12** | open | Classify from the crop. The current spec, child of #10. |
-| #13, #14, #15 | closed | Experiment; `classify_zone` behind `VisionEngine`; the Orchestrator driving it. |
-| **#16** | open | **Next.** Re-record the five fixtures. Shares a branch with #15; the suite is red between them by design. |
-| #17 | open | Delete Kind from the layout prompt. |
-| #18 | open | Show each classification beside its crop. |
-| #19 | open | Measure latency and all five fixtures. |
-| **#20** | open | Check the box against the ink — spec 0004. Geometry itself, measured: IoU 0.56 on the shipped path, and its Gate 1 decides whether #12/#19 are measuring the wrong inputs. |
+| Table read, then discarded whole | `statement_0006`, `cv_0013` | `MappingError: table row 1 has 6 cells but the header has 7` |
+| Content outside every detected box, dropped | `receipt_0010`, `form_0007`, `nonlatin_0014` | finding says *"may be a mark"* — on the receipt that is 77 of 103 tokens |
+| Whole page detected as **one** Zone, silently | `darkdeck_0009` | one Zone, **no finding at all** |
+| Columns collapse to one | `form`, `menu`, `cv`, `catalogue`, `newsletter` | `beside_agreement` 0.03–0.40 |
 
-Closed and not coming back: **#1** (the end-to-end slice — built) and **#11**
-(structure-not-geometry — took invoice.png from 3 mismatches to 2 and handed the
-rest to #12).
+**Two findings that change what the fix costs, both established by looking:**
 
-The specs are the memory, and carry what was tried and rejected:
-`0001-one-image-at-a-time.md` (run history), `0002-structure-not-geometry.md`
-(the four rejected prompt attempts), `0003-classify-from-the-crop.md` (current).
-Runs are on disk in `debug/runs/`, newest highest, and are gitignored.
+- **`statement_0006` did not fail to read its table.** The model returned all
+  36 transaction rows correctly and the pipeline threw them away because one
+  row disagreed with the header on cell count. The content existed. This is
+  the cheapest recall in the corpus and it is a reconciliation bug, not a
+  perception problem.
+- **`darkdeck_0009` is not a bad document.** It was checked for fairness
+  first — ordinary contrast, ordinary structure, and it scores perfectly
+  against itself. The cause is ours and it is exact: `preprocess._ink()`
+  thresholds with `cv2.THRESH_BINARY_INV + THRESH_OTSU`, which treats dark
+  pixels as ink, and `darkdeck.png` is **96.2%** below mid-grey, so nearly the
+  whole page reads as one ink blob.
 
-Everything below describes the ground this stands on.
+## Two corrections made to standing documents
 
-## Module state
+- **The conversion is reproducible, and `CLAUDE.md` said the opposite.**
+  `transport.py` asks Ollama for `temperature: 0`, and the five original
+  documents came back **byte-identical** to the copies frozen in
+  `tests/frozen/run84/` — all five, md5 for md5, on a later commit and with
+  the model partly on the CPU. This matters in the dangerous direction: a
+  byte-identical arm means **the change did nothing**, not that noise swamped
+  it. Scoped to this machine and model; says nothing about the other ten
+  documents, which have no prior run.
+- **`DTH_SNAP_ZONES` is silently not applying to four of fifteen documents.**
+  It moves the boxes onto their ink, the Bands then fail validation, and the
+  Conversion falls back to unsnapped geometry. Two shapes: a full-width Zone
+  with a narrow box strictly inside it, and two Zones landing on nearly the
+  same span. Both are *grouping* questions before they are snap questions.
+  The snap is one of the four defaults that must not be deleted — the finding
+  is that it is **not being applied**, which is a different fact from it being
+  harmful.
 
-| Module | State | Notes |
-| --- | --- | --- |
-| `ir.py` | **implemented** | Bands, Kind/Role, Row Roles, Title, Corrections, Failures, Caveats, versioning, JSON round-trip |
-| `wire.py` | **implemented** | Wire schemas for all five passes; layout mapping with geometric validation |
-| `engines/transport.py` | **implemented** | The one call to Ollama, and the suite's only fake |
-| `probes.py` | **implemented** | column-sum, row-product, number parsing across both decimal conventions |
-| `render.py` | **implemented** | IR → self-contained HTML, tolerates partial IR, content-driven column alignment |
-| `checkpoints.py` | **implemented** | `Question`/`Answer`, `NullHandler`, `ScriptedHandler` |
-| `config.py` | **implemented** | Every `.env.example` variable, with a code default and recorded provenance; the only reader of the environment. `DTH_CLASSIFY_MODEL` is the one role that does not default to the layout model |
-| `acceptance.py` | **deleted** | Was: what "structurally correct" meant. Retired by spec 0007 Thread 0 along with the typed reference it compared against |
-| `corpus.py` | **implemented** | What the corpus is: fifteen documents, an HTML file and a screenshot each, split *iterate* / *sweep* |
-| `projection.py` | **implemented** | `project()` — one page as a reader perceives it, read off headless Chrome. One function, applied to both sides |
-| `scoring.py` | **implemented** | The six axes between two projections. T1/T2/T3 a hard tier, T1 a ratchet |
-| `report.py` | **implemented** | `debug/runs/<label>/report.html` — source vs render, every document, one page. The review surface |
-| `bakeoff.py` | **implemented** | Opt-in conversion of the corpus with real models. No longer scores anything |
-| `cli.py` | **partial** | `render`, `config` and `convert` work end to end; `--review` exits cleanly |
-| `preprocess.py` | **implemented** | Page-quad detection, perspective warp, deskew, illumination flattening, cropping, slice planning. Owns `zone_pixels`, so the classifier and the Extractors cut identical pixels. Slice *stitching* is not built |
-| `engines/base.py` | **implemented** | `VisionEngine` (five methods) and `BoxEngine` Protocols — the seam everything else depends on |
-| `engines/ollama.py` | **partial** | `detect_zones`, `classify_zone` and `extract_zone` for all five Kinds are real, with the truncation retry; `read_cell` and `audit_coverage` raise |
-| `engines/tesseract.py` | **stub** | deliberately — see "Open questions" |
-| `extractors.py` | **implemented** | All five crop their Zone and hand it to the Engine; only `TableExtractor.stitch` raises |
-| `orchestrator.py` | **partial** | Geometry, classification and extraction run in that order, each with the failure contract, plus Probes. Classification is routable to its own model and runs once per Conversion. The Coverage Audit and the Ladder are deliberate no-ops for this slice |
+## Next — Phase A-1, scoped and approved, not started
 
-## Fixtures
+Full scope is in `specs/0007-handover.md`. In brief: **a new phase ahead of
+A0**, because A0's three faults are content being *mis-read* while these are
+content not surviving at all, and merging them would make A0 look like it
+failed when its own fixes worked.
 
-> **The corpus is fifteen documents now, and none of them has a hand-authored
-> expected IR.** A document is an HTML file and a screenshot of it;
-> `doc_to_html.corpus` is the registry, and it names each one's archetype and
-> the awkward feature it carries. Adding one is writing the HTML and running
-> `tools/shoot_corpus.py`. The table below covers the original five, which
-> remain the *iterate* split — and which are, precisely, the documents every
-> prompt in this project was tuned on, which is why *sweep* exists.
+All three content-loss causes above are in scope. **The phase's real gate is
+the honesty rule:** content that does not reach the output must produce a
+finding that says so and says how much. `darkdeck_0009` lost 80% of its
+document and reported nothing; `receipt_0010` lost 75% and called it a
+possible mark. A-1 is not done while any document can lose content quietly.
 
-Five documents, each with hand-authored expected IR. All are clean screenshots,
-so they exercise structure and say nothing about photographs.
+A-1 reports T1 on the sweep set but does **not** gate on 1.00 — that stays
+A0's, measured after A-1 lands.
 
-| Fixture | Zones | Bands | Probes | Covers |
-| --- | --- | --- | --- | --- |
-| `invoice_0001` | 6 | 4 | column-sum ✓ 385.00 | A totals row inside its table. The only fixture with a passing Probe. |
-| `invoice_0002` | 10 | 6 | none | Dense Pairs, titled panels, an empty section, no arithmetic anywhere |
-| `sample_table_0003` | 2 | 2 | none | 15 rows, thousands separators, Title on a table, no summary row |
-| `sample_css_0004` | 5 | 4 | none | Captioned cards, a badge, inline code, decorative rules producing nothing |
-| `sample_semantic_0005` | 9 | 8 | none | Bulleted list, nav bar, blockquote with attribution, two-column callout |
+**Deferred on purpose, with the reason, so they are not read as new faults:**
 
-"None" is asserted, not incidental: a document with nothing to reconcile must
-attract no Probe rather than a failing one.
+- **The renderer's cards wait for Thread 2/B.** `render.py`'s
+  `section.titled` borders every titled Zone unconditionally, so a flowing
+  document like `report_0011` renders as a stack of cards and the source is
+  never consulted. 2/B measures borders from pixels and will draw a card only
+  where the source has one; an interim guess would be undone. Expect
+  card-chopped renders until then.
+- **Column collapse waits for A2.** Accepted interim state: **content
+  complete and reading order correct, in one column.** So A1 (inline) runs
+  before A2 (geometry). Do not trade T1 for column shape.
 
-Two traps preserved on purpose. Fixture 0002's bank account is
-`MO123456789456123` — letter O, not zero, near-identical at render size, and
-with no arithmetic anywhere to catch a misreading. Fixture 0003's thousands
-separators move a value three orders of magnitude if misread.
+## Open — needs Alessandro, before or at A-1's start
 
-## Known gaps
+1. **Where the ratchet's starting notch sits.** A-1 will move T1 on documents
+   A0 is supposed to gate, so A0's "1.00 on iterate" would be measured against
+   a different baseline than the spec assumes. Proposal: take A-1's checkpoint
+   as the notch and re-baseline A0 against it. This is the second
+   pre-registered number this work has had to move, so it should be set
+   deliberately rather than inferred.
+2. **The honesty rule may fail documents that currently pass.**
+   `invoice_0001` scores T1 1.000 and has a broken join; `sample_css_0004`
+   scores 1.000 recall with two duplicated titles. Enforced strictly, some of
+   the original five start producing findings they do not produce today. That
+   is correct behaviour, but it will look like a regression the first time it
+   appears on the report.
 
-**Ollama Cloud is plumbed but unverified.** `config.py` resolves the host and
-API key and `OllamaEngine.client_kwargs()` carries them to the client, so a
-cloud host needs no code change. Nobody has run a Conversion against it.
+## Invariants — do not break these
 
-**Rectification is untestable against the fixture set.** All five sources are
-white documents filling a white frame, so no page quadrilateral exists to
-detect and the documented fallback is what fires. Seam 2 —
-`tests/test_rectification.py`, which distorts a fixture by known amounts —
-carries the rectifier's correctness alone. Landmarks come back within 8px of
-where they sit in the undistorted rectification, on an 862px-wide page.
+- **Never cite or analyse a past run.** Only a run taken in the current
+  session counts. A run number is not evidence. The one exception is
+  `tests/frozen/run84/`: committed inputs, scored offline, tabulated in its
+  own README.
+- **`debug/runs/84-rule-not-a-line/` must be left intact.** Verified present
+  and untouched as of 2026-09-19.
+- **`tests/documents/SAMPLE_DOCUMENTS` is test input only — never score
+  against it.** Doing so rebuilds the harness spec 0007 deleted.
+- **Do not delete** the two dormant safety nets (`wire._without_empty_rows`,
+  `_reread_as_prose`) or the four shipped defaults (`DTH_SNAP_ZONES`,
+  `DTH_TABLE_GRID_HINT`, `CLASSIFY_PROMPT`, `_reread_as_prose`).
+  `_without_empty_rows` has a real `if row.cells` bug — that is **A0's** to
+  fix, not A-1's, and the net stays.
+- **Keep the OpenCV rectangle finder** for Thread 2/B, with its
+  >0.80-of-the-page guard.
+- **`project()` compares a normalised view** — text runs in reading order,
+  block roles, client rects — and never raw markup. A scorer that demands our
+  output reproduce the source's div nesting or class names is a worse overfit
+  than the one being escaped.
+- **`report.html` is a required deliverable of every run**, not a nicety.
 
-**Orientation is not corrected, only tilt.** A page photographed sideways or
-upside down stays that way. Telling 90° from 270° means knowing which way up the
-text runs, which means reading it — an Engine's job, and a rectifier that guesses
-wrong ruins every coordinate in the IR. Deliberately narrower than the ticket
-asked for.
+## The loop
 
-**`TARGET_LONG_EDGE` is a ceiling, not a target.** The ticket said "the long edge
-resized to the working resolution"; `resize_long_edge` never enlarges, so the five
-fixtures stay at their own size and only a photograph bigger than 3508px is
-scaled. Enlarging adds no detail and multiplies the cost of every crop taken from
-it. A deliberate reading of "working resolution" as a cap, pinned by
-`test_a_small_screenshot_is_not_enlarged`.
-
-**No graphic kind covers a handwritten annotation.** `CONTEXT.md`'s **Mark** entry
-names one as an example, but `wire.GRAPHIC_KINDS` offers only `logo`, `chart`,
-`signature`, `stamp` and `badge`, so a model has nowhere to report one. Adding a
-value is cheap; deciding what to call it without colliding with the glossary's
-`_Avoid_` list for Mark is the part that needs a moment's thought.
-
-**Nothing tells an operator their photograph was not warped.** `Rectified.warped`
-records it and only tests read it. An unwarped photograph of a page shot at an
-angle explains a bad render, and the render does not say so.
-
-**No real photographs, no multi-page, no handwriting** in the fixtures. The
-distortions Seam 2 uses are synthetic: geometry, not paper texture, camera noise
-or focus. Real photographs arrive with the synthetic corpus generator, which
-depends on the slice existing first.
-
-**Extracted cells carry no bounding box.** The extraction schemas are flat and
-ask for text, not per-cell geometry, so `Cell.bbox` is None for everything a
-model read. Corrections anchor to cell geometry, which nothing in this slice
-creates — but a Correction UI needs this before it can work.
-
-**`Structural Fidelity` is a glossary term with no code referent.** This is
-correct: it names a standard that lives in `docs/adr/0002`, not a code concept.
-Recorded here so it is not "fixed" later.
-
-## Open questions, deliberately unanswered
-
-- **Whether tesseract earns a place.** The slice runs vision-only and is
-  therefore the control condition. Its accuracy is the number tesseract has to
-  beat.
-- **Which model wins — still open, and shipping as one model until it is not.**
-  `qwen3-vl:4b` reads text correctly on `invoice.png` but cannot tell a shaded
-  heading row from a label/value pair at any resolution (issue #13, 6/6 wrong;
-  7/7 counting run 22's full conversion).
-  `qwen3.5:4b` gets that Kind right from a full-resolution crop, and is 3.4GB
-  against 3.3GB, so it fits the same budget. **Its geometry has never been
-  measured** — it has not run the layout pass or touched the other four fixtures.
-  So "classification wants a different model from extraction" remains a measured
-  claim about two Zones, not about the pipeline, and #15 shipped the *ability* to
-  act on it rather than the act: one model fills all three roles today, and
-  `DTH_CLASSIFY_MODEL` is what a future answer changes. #19 is where the
-  evaluation — per step, and across combinations — happens.
-- **Whether the latency is tolerable.** `invoice_0001` converts in ~175s on
-  `qwen3-vl:4b` with the whole GPU. Adding one classification call per Zone costs
-  **~95s per document** — 6 calls at 15.8s mean, measured in run 22 at a 41%/59%
-  CPU/GPU split, so the absolute figures are inflated but the ratio to that run's
-  own baseline is not. The "it is only one enum out" argument does not hold: the
-  cost is encoding the crop and prefilling the prompt, and classification pays it
-  in full and then makes the Extractor pay it again on the same pixels. #19 still
-  owes two runs on a whole GPU. Tolerable for a batch, not for an interactive
-  tool — and memory pressure can make any of these figures 40x worse, so no
-  number taken without checking `ollama ps` first means anything.
-- **Whether the split is even the cheapest fix.** Untested rival: one pass at a
-  higher `LAYOUT_LONG_EDGE` on `qwen3.5:4b` might fix Zone 4 with no extra call
-  per Zone at all. The isolation finding argues against it — Zone 1 needs the
-  question narrowed, not the page enlarged — but that is an argument, not a
-  measurement. Recorded in spec 0003, and run 22 strengthens the rival's case: a
-  single pass is the only one of the two that can see two address blocks at once.
-- **What a Zone judged alone is owed.** Run 22's Zone 3 says a Kind decided from
-  one crop can be wrong precisely because it is alone — the block beside it was
-  the evidence. Three candidate answers, none measured: widen `CLASSIFY_PROMPT`'s
-  `prose` cue (which is the move 0002 records four failures of, so not on one
-  run); give the classifier the Role and Band position it already has and does
-  not use; or treat a neighbourless Kind as provisional and let something else
-  break the tie, which is what the Coverage Audit was for. #19 decides.
-- **Multi-page.** A Conversion is strictly one Source Image; admitting page 2
-  means growing the IR a `pages` array and revising every fixture.
-
-## What the first bake-off found
-
-Four things, none of which argument would have produced.
-
-**Memory is the binding constraint, and it presents as latency.** With an
-unrelated `llama3.2:3b` resident, one layout pass took **180s and timed out**. With
-nothing else loaded, the same pass took **4.5s**. A 40x difference from memory
-pressure alone, on a machine with 8 GB and ~76 MB free. Any latency figure taken
-without checking `ollama ps` first is meaningless.
-
-**Ollama routes `qwen3-vl`'s structured output to the reasoning channel.** With
-`think=False` the model answers correctly and quickly, but the JSON arrives in
-`message.thinking` with `message.content` empty. Reading only `content` — the
-obvious thing, and what the transport did — makes a working model indistinguishable
-from a hang. `Response.answer` now takes whichever channel carried it.
-
-**`think=False` is not reliably honoured.** On one document `qwen3-vl:2b` answered
-with no reasoning at all; on another it spent 5,609 characters reasoning and never
-answered, filling a 4096-token budget. `ThinkingNotDisabled` names that case
-because a bigger budget buys more reasoning, which is the opposite of the fix.
-
-**The layout pass had never been downscaled.** `MODEL_INPUT_LONG_EDGE` was 1024 and
-every fixture is smaller, so the documented "layout runs on a downscaled page"
-design was a no-op. `LAYOUT_LONG_EDGE` (512) now separates the layout budget from
-extraction's, and that alone is what got `invoice_0001` through all eight passes
-without aborting — 322.9s for the whole document on `qwen3-vl:4b`.
-
-**The layout pass returned schematic geometry.** Boxes came back snapped to a 0.05
-grid, tiling the page in uniform strips rather than locating content — one strip
-being full-width and enclosing the Zone beside it. The mapper's plausibility
-checks cannot catch that, because tiling strips satisfy all of them.
-
-*Since fixed enough to stop being the cause.* The boxes are now roughly right and
-every string reads correctly; what is left is **IoU 0.56**, with Zones 0–3
-identical at 384/512/768/862 — the geometry pass emitting a prior instead of
-measuring. That is a real defect and is **explicitly out of scope** for spec 0003,
-which is about Kind, not boxes. Nothing is in flight against it.
-
-Two claims I made earlier here were wrong and are withdrawn. "Neither candidate
-follows the Band and column instruction" was generalised from one document — on
-`invoice_0001` the 4B model numbers Bands correctly. And deriving Bands from
-geometry, proposed as the fix, is **worse** in a measured case: on
-`sample_table_0003` the 2B model's boxes overlap vertically and derivation collapses
-two Bands into one.
-
-## Rejected, with reasons recorded
-
-- **Agent frameworks** (LangGraph, CrewAI). Extractors are deliberately
-  autonomy-free and all retry policy lives in one Orchestrator — the property
-  those frameworks exist to remove. The control flow is ~60 lines.
-- **LiteLLM.** Its value is one interface across providers; this project is
-  Ollama-only, and local vs cloud is already the same API. It would also put a
-  translation layer between us and Ollama's constrained decoding, which is the
-  thing that makes malformed JSON impossible, and re-normalise image passing.
-  If a frontier model is ever wanted, it goes behind `VisionEngine` as one more
-  class.
-- **A database.** The IR travels inside the HTML file.
-
-Both framework rejections rest on the same insurance: `VisionEngine` is a
-five-method Protocol, so adopting any of them later is a change behind a seam
-rather than a rewrite. The thing that would make it a rewrite is letting Ollama
-calls leak into Extractors.
-
-## Running what exists
-
-```bash
-uv venv && uv pip install -e '.[dev]'
-pytest                        # no model, no Ollama, no network
-mypy                          # strict, over src/
-
-doc-to-html config            # what resolved, and from where
-doc-to-html convert example/invoice.png -o out.html   # needs Ollama
+```
+tools/iterate.sh <label>                  # one document, shipped defaults
+FIXTURE=iterate tools/iterate.sh <label>  # the five, ~17 min
+FIXTURE=sweep   tools/iterate.sh <label>  # all fifteen, ~90 min, at a phase gate
 ```
 
-One generated artifact is committed and has a tool that rewrites it:
-
-```bash
-python tools/record_responses.py     # tests/responses/
-python tools/shoot_corpus.py         # example/*.png, for a new document
-```
-
-The bake-off and the loop need a running Ollama with the models pulled, and are
-the only things here that do:
-
-```bash
-python -m doc_to_html.bakeoff --fixtures invoice_0001 --models qwen3-vl:4b
-tools/iterate.sh my-label            # then open debug/runs/my-label/report.html
-FIXTURE=sweep tools/iterate.sh my-gate
-```
-
-Python is pinned to 3.12 via `.python-version`. All declared dependencies
-install cleanly there, including OpenCV 5.0.
+A sweep took ~90 minutes on 2026-09-18, not the ~50 the old note estimated —
+that figure predated the ten new documents. Then open
+`debug/runs/<label>/report.html`.

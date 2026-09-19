@@ -52,7 +52,13 @@ Thread 3/C  Repair loop (re-scoped against A+B residuals first)
 Thread 4/D  Human corrections (unscheduled)
 ```
 
-`docs/specs/0007-handover.md` holds a ready prompt per thread.
+`docs/specs/0007-handover.md` holds a ready prompt per thread and the full
+scope of Phase A-1.
+
+**[`docs/status.md`](docs/status.md) is the live status — read it second, after
+this section.** It says what is done, what the last checkpoint showed, what is
+deferred and why, and what is still waiting on a decision. It is maintained,
+not archived: when it goes stale, rewrite it rather than banner it.
 
 ### What Thread 0 built, and where it lives
 
@@ -398,7 +404,9 @@ every document, and it carries the delta against the previous run's
 
 **Corpus split.** *iterate* = the original five, run on every change. *sweep* =
 all fifteen, run at phase gates. `doc_to_html.corpus` is the one place that
-says which is which. Per-document model time on `qwen3-vl:4b`, measured from
+says which is which. **A sweep takes about 90 minutes** — measured
+2026-09-18, on a machine where the model was partly on the CPU. Budget for it
+before starting one. Per-document model time on `qwen3-vl:4b`, measured from
 run 84: `invoice_0002` 301s, `sample_semantic_0005` 300s, `invoice_0001` 174s,
 `sample_table_0003` 132s, `sample_css_0004` 128s.
 
