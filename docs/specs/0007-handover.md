@@ -101,25 +101,81 @@ Read this before running the prompt below. Three things came out of the
 checkpoint sweep that were not knowable when A0 was scoped, because A0 was
 scoped against the original five.
 
-**1. A0's stated gate is now out of reach, and the number needs a decision.**
-The prompt below pre-registers *T1 = 1.00 recall and precision on the sweep
-set*. That was written when the sweep set did not exist. On the checkpoint,
-several of the ten new documents lose most of their content outright — whole
-Zones rejected, not cells mis-split — and no amount of fixing A0's three
-content faults reaches 1.00 on them. The three faults A0 names are real and
-still worth fixing first; what cannot stand is the *scope* of the number
-attached to them. **Do not quietly relax it, and do not quietly fail it.**
-Either re-register A0's gate as 1.00 on the *iterate* set with the sweep set
-reported but not gating, or split the whole-Zone failures out as their own
-phase ahead of A0. That is Alessandro's call, not the thread's.
+**1. A0's stated gate was out of reach, and has been re-scoped — decided
+2026-09-19.** The prompt below pre-registers *T1 = 1.00 recall and precision
+on the sweep set*, written when the sweep set did not exist. Several of the
+ten new documents lose most of their content outright, and no amount of fixing
+A0's three content faults reaches 1.00 on them. **Alessandro's decision: split
+the whole-Zone failures out as their own phase ahead of A0** — Phase A-1
+below. A0 keeps its three faults and its 1.00, measured after A-1 has run.
 
-**2. The whole-Zone failures are a different fault from the three A0 names.**
-A0's three faults are content being *mis-read* — a header dropped, a title
-repeated, a line broken. What the new documents show is content never being
-*attempted*: a table Extractor raising `MappingError` on a row-width mismatch
-and the Zone being abandoned. Those are unrelated causes, and lumping them
-together under "stop the bleeding" will make A0 look like it failed when its
-own three fixes worked.
+**2. The whole-Zone failures are a different fault from the three A0 names,
+and they are now Phase A-1.** A0's three faults are content being *mis-read* —
+a header dropped, a title repeated, a line broken. What the new documents show
+is content never surviving at all. Lumping them together would make A0 look
+like it failed when its own three fixes worked.
+
+### Phase A-1 — nothing silently loses content
+
+Runs before A0. Scoped from the Thread 0 checkpoint, reviewed document by
+document on 2026-09-19. **Three causes, all in scope, plus an honesty rule.**
+
+**Cause 1 — a table is read, then discarded whole.** `MappingError: table row
+1 has 6 cells but the header has 7`. The rows came back; one row disagreed
+with the header on width and the entire Zone was abandoned. This alone is
+almost all of `statement_0006` (36 transaction rows, recall 0.097) and a chunk
+of `cv_0013`. The content existed and was thrown away, so it is the cheapest
+recall in the corpus. Reconcile the row against the header — pad short, flag
+long — rather than rejecting the Zone. **`wire._without_empty_rows` is a
+related but separate net and must not be deleted**; its own `if row.cells` bug
+is A0's, not A-1's.
+
+**Cause 2 — content outside every detected box is dropped, and the finding
+understates it.** `receipt_0010` keeps its header and loses everything from
+the first line item to the barcode: 77 of 103 tokens, reported as *"Content
+found outside every detected region: found by ink coverage, so it may be a
+mark."* Also `form_0007` and `nonlatin_0014`, where the missing piece is the
+document's own title. Two things wrong: the detector does not cover the page,
+and the finding calls a majority of the document a possible mark.
+
+**Cause 3 — the whole page comes back as one Zone, silently.**
+`darkdeck_0009`: one Zone, recall 0.201, **no finding at all**. Cause is
+established, not suspected: `preprocess._ink()` thresholds with
+`cv2.THRESH_BINARY_INV + THRESH_OTSU`, which treats dark pixels as ink, and
+`darkdeck.png` is 96.2% below mid-grey, so nearly the whole page reads as one
+ink blob. The document was checked first and is fair — ordinary contrast,
+ordinary structure, and it scores perfectly against itself. **Detect ground
+polarity and invert before thresholding.** Thread 2/B computes modal
+background anyway, so the test is shared; do not build a second one.
+
+**The honesty rule, which is the phase's real gate.** Content that does not
+reach the output must produce a finding that says so and says how much. A
+silent loss is worse than a loud failure: `darkdeck_0009` lost 80% of its
+document and reported nothing, and `receipt_0010` lost 75% and called it a
+mark. **A-1 is not done while any document can lose content quietly.** Pair
+the phase with a test that asserts, over the sweep set, that a drop in token
+recall is accompanied by a finding naming the Zone.
+
+**Gate.** No document loses content without saying so, and the three causes
+above are fixed. T1 is reported on the sweep set but **A-1 does not gate on
+1.00** — that stays A0's, measured after this phase lands. The T1 ratchet
+applies from A-1's checkpoint onward.
+
+### Deferred deliberately, with the reason
+
+- **The renderer's card treatment waits for Thread 2/B.** `render.py`'s
+  `section.titled` gives every titled Zone a border and shaded title bar
+  unconditionally, so a flowing document like `report_0011` renders as a stack
+  of cards and the source is never consulted. It affects roughly ten
+  documents. It is *not* being fixed early: 2/B measures borders from pixels
+  with the OpenCV rectangle finder and will draw a card only where the source
+  has one, and an interim guess would be undone. Expect card-chopped renders
+  until then and do not read them as a new fault.
+- **Column collapse waits for A2.** `form_0007`, `menu_0012`, `cv_0013`,
+  `catalogue_0015` and `newsletter_0008` put side-by-side content into one
+  column (`beside_agreement` 0.03–0.40). Accepted interim state: **content
+  complete and reading order correct, in one column.** So A1 (inline) runs
+  before A2 (geometry). Do not trade T1 for column shape.
 
 **3. `DTH_SNAP_ZONES` is silently not applying to a meaningful share of the
 corpus.** On the checkpoint it moved boxes onto their ink and then invalidated
