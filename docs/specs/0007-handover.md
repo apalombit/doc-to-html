@@ -161,6 +161,20 @@ above are fixed. T1 is reported on the sweep set but **A-1 does not gate on
 1.00** — that stays A0's, measured after this phase lands. The T1 ratchet
 applies from A-1's checkpoint onward.
 
+**Two decisions are Alessandro's and must be asked, not inferred.** Both were
+raised on 2026-09-19 and deliberately left open. Ask before either binds; if
+the session is non-interactive, stop rather than choose.
+
+1. **Where the ratchet's starting notch sits.** A-1 moves T1 on documents A0
+   is supposed to gate, so A0's "1.00 on iterate" would be measured against a
+   different baseline than the spec assumes. This is the second pre-registered
+   number this work has had to move, so it gets set deliberately.
+2. **The honesty rule will fail documents that pass today.** `invoice_0001`
+   scores T1 1.000 and has a broken join; `sample_css_0004` scores 1.000
+   recall with two duplicated titles. Enforced strictly, some of the original
+   five start producing findings they do not produce now. Correct behaviour,
+   but it reads as a regression the first time it appears on the report.
+
 ### Deferred deliberately, with the reason
 
 - **The renderer's card treatment waits for Thread 2/B.** `render.py`'s
