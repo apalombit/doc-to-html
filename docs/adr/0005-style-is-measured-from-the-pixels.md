@@ -43,8 +43,22 @@ perception, and the pixels are already in hand.
 Sampling a pixel is exact, free, deterministic and cannot hallucinate. Asking a
 4B model what colour a band was is worse on every one of those four. So Thread
 2/B adds **zero model calls**: modal background, modal ink, most-saturated
-non-neutral, ink-band heights for the type scale, the OpenCV rectangle finder
-for borders and cards, ink centroid for alignment.
+non-neutral, ink-band heights for the type scale, an OpenCV rectangle finder for
+borders and cards, ink centroid for alignment.
+
+**Correction, 2026-09-20 — the rectangle finder has to be built.** This decision
+was written as though it were in hand. It is not in the tree and never was:
+`git log -S findContours` across all history returns only `find_page_quad`,
+which is page-edge detection for rectification.
+`tools/cv_layout_probe.py`'s `zones_from_morphology` dilates ink into blocks and
+cannot see a drawn border. Spec 0006 Change 3's measurement lived in a scratch
+script that was never committed.
+
+**Nothing above changes** — measuring borders from pixels is still right, and is
+still cheaper and more reliable than asking a model. Only the cost changes, and
+only for the one quantity. The guard recorded with it (*a rectangle covering
+more than 0.80 of the page is the page*) is knowledge worth keeping and worth
+**re-measuring** rather than citing.
 
 That also makes the style record fully deterministic and unit-testable against
 `tests/frozen/run84/` with nothing running.

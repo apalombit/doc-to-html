@@ -1,4 +1,4 @@
-# Status — 2026-09-19
+# Status — 2026-09-20 (Phase A-1 done; Thread 2/B next)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it.
@@ -9,7 +9,7 @@ Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-handover.md`](specs/0007-handover.md) (the per-thread prompts and
 the full Phase A-1 scope). This file is the summary, not the source.
 
-Branch `scaffold`, clean at **`dba0b9e`**. 565 tests pass, `mypy src/` clean.
+Branch `scaffold`. 609 tests pass, `mypy src/` clean. Phase A-1's code is in the tree; its checkpoint scores are frozen at `tests/frozen/a1-checkpoint/`.
 
 ---
 
@@ -20,9 +20,149 @@ agreement with a hand-typed reference IR; it measures whether the rendered
 output looks and reads like the source document. The measure, the corpus and
 the review surface all exist and are tested.
 
-**Thread 1/A has not started.** Its first phase has been re-scoped from the
-checkpoint review and is approved but not begun. Nothing in `src/` has been
-changed to improve any score.
+**Phase A-1 is built and its three causes are fixed. Its gate is NOT met**, and
+the reason is now measured rather than suspected — see below. Checkpoint run
+`88-a1-checkpoint`, all fifteen documents, taken 2026-09-19 in one sitting. It
+is the ratchet's starting notch by decision 1 below, and the report says so:
+there is no previous run to compare it against, because no earlier run was
+taken in this sitting.
+
+**Thread 2/B is next, ahead of A0 — decided 2026-09-20.** A0 moves precision
+(0.91–0.98 across the corpus), which is real but small, and its own gate is
+disproved (below). Meanwhile `height_ratio` runs from 1.03 to **3.70** and the
+renderer draws a card round every titled Zone on roughly ten documents. 2/B is
+also the only remaining thread that adds **no model call**, so it is
+deterministic, testable offline, and cannot threaten the ratchet A-1 just set.
+
+**A0's pre-registered gate is dead, and is not being replaced yet.** T1 = 1.00
+on the sweep set is disproved by A-1's own checkpoint: `receipt_0010` sits at
+recall 0.175 and `catalogue_0015` at 0.571, and none of A0's three faults — a
+deleted table header, a Title repeated in its own body, a hard line break —
+touches either. The replacement is set **when A0 begins, from that sitting's
+measurements**. The number has moved twice already; guessing a third value now
+is how it moves a fourth time.
+
+**The notch now lives in the repository.** A-1's checkpoint scores are the T1
+ratchet's floor and were sitting in `debug/runs/`, which is gitignored and gets
+cleared. They are frozen at **`tests/frozen/a1-checkpoint/scores.json`**, and a
+checkpoint ratchets against them by path:
+
+```
+python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
+    --previous tests/frozen/a1-checkpoint/scores.json
+```
+
+## Phase A-1 — what landed
+
+| cause | fix | evidence, taken this sitting |
+|---|---|---|
+| a table read then discarded | `wire.rows_from_table` reconciles instead of raising: short rows padded with cells carrying **no Reading**, long rows kept whole, `table_repairs` declares both | fires on `darkdeck_0009` — *"row 7 came back 4 cell(s) short of the header's 5 and was padded rather than discarded"*; that Zone used to be abandoned |
+| light ink on dark ground | `preprocess.ground_is_dark` + `rectify` turning the page over **before** `equalise` | `darkdeck_0009` goes from **1 detected region to 13**, and converts at recall 0.929 |
+| ink outside every box | `orchestrator.recovered_zones` gives it a Zone; `preprocess.uncovered_regions` bounds it to its own ink and measures it | `nonlatin_0014` recovers its title; the original five gain nothing, which is right — their coverage was already complete |
+| loss declared without saying how much | `ir.Shortfall`, plus `ink_share` on `Gap` and `Failure`; `honesty.py` joins the scorer's ground truth to the pipeline's self-reporting and gates the run | `receipt_0010` now declares *"Zone 1 (table) was read short — 19 printed lines, 3 returned [50% of the page's ink]"* where it used to say "may be a mark" |
+
+**Two corrections to the scoping, both found by measuring and neither
+inherited.**
+
+- **`receipt_0010` is not a coverage failure.** On the shipped configuration
+  the detector covers that page — three Zones, the middle one holding 50% of
+  its ink — and the only ink outside every box is a dotted rule 1px tall. Its
+  loss is content covered and then read short. Same for `form_0007`'s title,
+  whose ink lies inside a neighbouring Zone's padded crop. The document where
+  cause 2 is real is `nonlatin_0014`.
+- **Gap findings were measured over the wrong thing, twice.** The rectangle
+  rather than the ink (a page-spanning box reported 100% of the page's ink
+  where the truth was 18%), and then the uncovered total rather than the page's
+  (a 2px sliver reported 100%). Both are fixed in `uncovered_regions`, and a
+  third instance — `ir._decode_document` dropping `ink_share` on the way back
+  in, so a Gap whose own note read 18.5% reported 0.0 to anything reading the
+  IR — is fixed in the decoder.
+
+## Phase A-1's gate — failed, and why
+
+**Nine of fifteen documents still lose content quietly.** The gate is wired
+into `report.html` and is failing honestly, which is the mechanism working;
+what it has established is a ceiling on the rule itself.
+
+**The loss that remains is *within* lines, and no line count can see it.**
+Every quiet-loss document returned **as many printed lines as the crop holds,
+or more**, while losing words inside them: `catalogue_0015` read 28 lines where
+20 are printed and lost 43% of its tokens; `menu_0012` read 31 for 18 and lost
+17%.
+
+**Two pixel-side detectors were built and measured before this was concluded,
+and both were rejected** for firing on correct documents while missing the
+worst real loss — ink per character against the page median (`sample_css_0004`
+lost nothing and peaks at 6.2x; `catalogue_0015` lost 43% and peaks at 2.6x),
+and characters expected from ink normalised by the Zone's own type height
+(`invoice_0001` lost nothing and reads 3.4x; `newsletter_0008` reads 8.0x
+having lost 5.7%). `honesty.py`'s docstring carries the table. **Do not build a
+third without a new kind of evidence.**
+
+**What would reach it** is two readings of one crop compared against each
+other. The IR already has `CellState.DISPUTED` and the Ladder, and
+`_climb_ladders` already says it waits on a second Engine. That is model time
+and a decision for a later thread.
+
+**What this settles about Thread 3/C.** 3/C's gate classifies each residual
+error as (a) the IR cannot express it, (b) a pass read it wrong and would again,
+or (c) it needs a second look at the whole page — and the repair loop is built
+**only if (c) is a material share**. This residue is **(b)**: the conversion is
+deterministic at `temperature: 0`, so a loop re-reading the same crop gets the
+identical wrong answer back. **Do not plan on 3/C to recover recall**, and do
+not let that hope justify deferring reading quality. On current evidence 3/C
+closes unbuilt, the way spec 0006's Change 3 did.
+
+## One docs fault found while planning 2/B — 2026-09-20
+
+**The OpenCV rectangle finder is not in the tree and never was.** `CLAUDE.md`,
+spec 0007 and ADR 0005 each told the next session it existed, worked, and must
+not be rebuilt. `git log -S findContours` across all history returns exactly one
+introduction — `preprocess.find_page_quad`, page-edge detection for
+rectification. `tools/cv_layout_probe.py`'s `zones_from_morphology` dilates ink
+into blocks and cannot see a drawn border.
+
+Spec 0006 Change 3 measured it in a scratch script that was never committed, and
+three documents carried the claim forward as fact. **Thread 2/B has to build
+it**, and the two things recorded about it — the panel and card counts, and the
+0.80-of-the-page guard — are a starting point to re-measure rather than results
+to cite. All three documents are corrected.
+
+It is the same fault this project keeps recording about itself, turned inward:
+*a claim that nothing verifies*. The `dth_env.txt` lesson says prove the arm was
+armed before believing a null result; this says prove the code is there before
+planning around it.
+
+## Checkpoint numbers — run `88-a1-checkpoint`, 2026-09-19
+
+Citable only against a run taken in the same sitting. There was no such earlier
+run, which is why the report says "no previous run" rather than showing deltas
+against a run from another day.
+
+| document | T1 recall | T1 prec | T2 tau | T3 beside | T3 height | declares its loss |
+|---|---|---|---|---|---|---|
+| `invoice_0001` | 1.000 | 0.980 | 1.000 | 1.00 | 1.14 | nothing lost |
+| `invoice_0002` | 0.966 | 0.923 | 0.849 | 0.64 | 1.63 | **no** |
+| `sample_table_0003` | 0.974 | 0.981 | 1.000 | 1.00 | 1.26 | **no** |
+| `sample_css_0004` | 1.000 | 0.917 | 1.000 | 1.00 | 1.26 | nothing lost |
+| `sample_semantic_0005` | 0.990 | 0.936 | 0.953 | 0.88 | 1.22 | **no** |
+| `statement_0006` | 0.928 | 0.970 | 0.999 | 1.00 | 3.70 | **no** |
+| `form_0007` | 0.729 | 0.939 | 0.954 | 0.03 | 1.09 | yes |
+| `newsletter_0008` | 0.943 | 0.945 | 0.832 | 0.40 | 3.19 | yes |
+| `darkdeck_0009` | 0.929 | 0.980 | 0.799 | 0.87 | 2.26 | yes |
+| `receipt_0010` | 0.175 | 0.692 | 1.000 | 1.00 | 1.39 | yes |
+| `report_0011` | 0.948 | 0.912 | 1.000 | 1.00 | 2.30 | **no** |
+| `menu_0012` | 0.833 | 0.951 | 0.829 | 0.35 | 2.77 | **no** |
+| `cv_0013` | 0.882 | 0.974 | 0.917 | 0.45 | 2.43 | **no** |
+| `nonlatin_0014` | 0.900 | 0.914 | 0.959 | 0.91 | 1.82 | **no** |
+| `catalogue_0015` | 0.571 | 1.000 | 0.943 | 0.23 | 1.03 | **no** |
+
+**T1 is reported, not gated** — A0 owns the 1.00, measured after A-1. The
+`beside` and `height` columns are the deferred work below and must not be read
+as A-1 regressions: column collapse waits for A2 and the renderer's cards for
+Thread 2/B.
+
+The model was 54%/46% CPU/GPU for this run. That affects timings only.
 
 ## Thread 0 — done, with the gate evidence
 
@@ -115,37 +255,45 @@ A0's, measured after A-1 lands.
 
 **Deferred on purpose, with the reason, so they are not read as new faults:**
 
-- **The renderer's cards wait for Thread 2/B.** `render.py`'s
-  `section.titled` borders every titled Zone unconditionally, so a flowing
-  document like `report_0011` renders as a stack of cards and the source is
-  never consulted. 2/B measures borders from pixels and will draw a card only
-  where the source has one; an interim guess would be undone. Expect
-  card-chopped renders until then.
-- **Column collapse waits for A2.** Accepted interim state: **content
-  complete and reading order correct, in one column.** So A1 (inline) runs
-  before A2 (geometry). Do not trade T1 for column shape.
+- **The renderer's cards — no longer deferred, they are 2/B's first job.**
+  `render.py`'s `section.titled` borders every titled Zone unconditionally, so
+  a flowing document like `report_0011` renders as a stack of cards and the
+  source is never consulted. 2/B draws a card only where the source has one.
+- **Page width — no longer deferred either, moved from A2 into 2/B.**
+  `.doc { max-width:52rem }` is ~832px and 9 of 15 sources are wider, up to
+  1164px, so those pages render narrower than the source and therefore taller.
+  That inflates `height_ratio`, which is 2/B's own gate, so the item moves with
+  the thread that is gated on it. **`Zone.align` does not move** — it stays in
+  A2, even though ADR 0005's table lists alignment under B.
+- **Column collapse still waits for A2.** Accepted interim state: **content
+  complete and reading order correct, in one column.** Do not trade T1 for
+  column shape.
 
-## Open — needs Alessandro, before or at A-1's start
+## Decided — both open questions, 2026-09-19
 
-1. **Where the ratchet's starting notch sits.** A-1 will move T1 on documents
-   A0 is supposed to gate, so A0's "1.00 on iterate" would be measured against
-   a different baseline than the spec assumes. Proposal: take A-1's checkpoint
-   as the notch and re-baseline A0 against it. This is the second
-   pre-registered number this work has had to move, so it should be set
-   deliberately rather than inferred.
-2. **The honesty rule may fail documents that currently pass.**
-   `invoice_0001` scores T1 1.000 and has a broken join; `sample_css_0004`
-   scores 1.000 recall with two duplicated titles. Enforced strictly, some of
-   the original five start producing findings they do not produce today. That
-   is correct behaviour, but it will look like a regression the first time it
-   appears on the report.
+Asked before either bound, and now written into
+[`specs/0007-handover.md`](specs/0007-handover.md) with what was rejected.
+
+1. **The ratchet's starting notch is A-1's checkpoint.** Every phase from A-1
+   onward is measured against it, and A0's pre-registered "T1 = 1.00 on the
+   sweep set" is re-baselined and measured *after* A-1. Rejected: leaving the
+   notch at A0, which would have let A-1 move T1 with no floor under it.
+2. **The honesty rule covers loss and only loss** — token recall, and content
+   that never arrived. Duplication is a precision fault and a mis-split a join
+   fault; neither is content that failed to arrive, and the pipeline has no
+   ground truth with which to detect a mis-split at all. Both stay A0's to
+   **fix** rather than A-1's to announce. **So the regression worry does not
+   materialise:** `invoice_0001` and `sample_css_0004` produce no new findings
+   under this scope.
 
 ## Invariants — do not break these
 
 - **Never cite or analyse a past run.** Only a run taken in the current
-  session counts. A run number is not evidence. The one exception is
-  `tests/frozen/run84/`: committed inputs, scored offline, tabulated in its
-  own README.
+  session counts. A run number is not evidence. Two exceptions, both committed
+  and both narrow: `tests/frozen/run84/` (five output documents, scored offline
+  with no model) and `tests/frozen/a1-checkpoint/` (A-1's scores, **the T1
+  ratchet's floor**). The second is a floor to ratchet against, not a result to
+  quote in an argument.
 - **`debug/runs/84-rule-not-a-line/` must be left intact.** Verified present
   and untouched as of 2026-09-19.
 - **`tests/documents/SAMPLE_DOCUMENTS` is test input only — never score
@@ -155,8 +303,9 @@ A0's, measured after A-1 lands.
   `DTH_TABLE_GRID_HINT`, `CLASSIFY_PROMPT`, `_reread_as_prose`).
   `_without_empty_rows` has a real `if row.cells` bug — that is **A0's** to
   fix, not A-1's, and the net stays.
-- **Keep the OpenCV rectangle finder** for Thread 2/B, with its
-  >0.80-of-the-page guard.
+- **The OpenCV rectangle finder has to be BUILT in Thread 2/B** — it is not in
+  the tree and never was (see the docs fault above). Keep its recorded
+  >0.80-of-the-page guard, and re-measure it rather than citing it.
 - **`project()` compares a normalised view** — text runs in reading order,
   block roles, client rects — and never raw markup. A scorer that demands our
   output reproduce the source's div nesting or class names is a worse overfit

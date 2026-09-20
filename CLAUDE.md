@@ -46,11 +46,19 @@ line that caused the deletion.
 
 ```
 Thread 0    Scorer, corpus, report        DONE 2026-09-18
-Thread 1/A  The IR (A0 stop the bleeding, A1 inline, A2 geometry, A3 figures)  <- next
-Thread 2/B  Style record (all CV, zero model calls)
+Phase A-1   Nothing loses content quietly DONE 2026-09-19, gate NOT met
+Thread 2/B  Style record (all CV, zero model calls)                     <- next
+Phase A0    Stop the bleeding (its T1 = 1.00 gate is disproved; re-scope on entry)
+Phase A1/A2/A3  Inline runs, geometry, figure pixels
 Thread 3/C  Repair loop (re-scoped against A+B residuals first)
 Thread 4/D  Human corrections (unscheduled)
 ```
+
+**2/B runs before A0, decided 2026-09-20**, on A-1's checkpoint evidence: A0
+moves precision (0.91–0.98) while `height_ratio` runs 1.03 to **3.70** and the
+renderer cards every titled Zone on roughly ten documents — and 2/B is the only
+thread whose gains need no model call, so it is deterministic and cannot
+threaten the T1 ratchet.
 
 `docs/specs/0007-handover.md` holds a ready prompt per thread and the full
 scope of Phase A-1.
@@ -170,6 +178,23 @@ model. A run's `report.html` computes its delta against the previous run's
 `scores.json`, which is the pairwise comparison this section asks for, taken
 automatically and in one sitting.
 
+**The second exception, added 2026-09-20: `tests/frozen/a1-checkpoint/`.** It
+holds Phase A-1's checkpoint scores, which are **the T1 ratchet's starting
+notch**, and it is committed for one reason — the notch was set on a run
+directory, and `debug/` is gitignored and gets cleared, so the floor every later
+phase is measured against was living in the one place guaranteed not to survive.
+Ratchet against it by path:
+
+```
+python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
+    --previous tests/frozen/a1-checkpoint/scores.json
+```
+
+Its README states the provenance exactly, including that the run was taken from
+an uncommitted tree and why the numbers are sound anyway. **It is a floor, not a
+result to quote in an argument** — the distinction the rest of this section is
+about.
+
 ---
 
 ## Knowledge that survives the target change
@@ -211,18 +236,34 @@ rejects wholesale.
 a 17th row of empty strings. The drop tests cell **count**, not cell **content**.
 Fix the condition; do not delete the net.
 
-### The OpenCV rectangle finder — Thread 2/B reuses it
+### The OpenCV rectangle finder — Thread 2/B must BUILD it
 
-Built for spec 0006 Change 3, measured, and not shipped **because its value was
-already spent by Change 2, on grouping.** It works: it locates exactly
-`invoice_0002`'s four panels and `sample_css_0004`'s two cards, and nothing on the
-other three pages. Wired into grouping it produced byte-identical boxes on all
-five fixtures — **do not rebuild it for grouping expecting a different answer.**
+**Corrected 2026-09-20. This section used to say the finder was in the tree and
+must not be rebuilt. It is not in the tree and never was.** `git log -S
+findContours` across all history returns exactly one introduction, and it is
+`preprocess.find_page_quad` — page-edge detection for rectification, a different
+job. `tools/cv_layout_probe.py` holds `zones_from_morphology`, which dilates ink
+and takes connected components; it groups ink into blocks and **cannot see a
+drawn border at all**.
 
-Its value in Thread B is different and unspent: it is how borders, rules and card
-treatment get measured for the style record. **Keep its guard** — a rectangle
-covering more than 0.80 of the page is the page, and unguarded it took
-`invoice_0001` from 6 Zones to 1.
+What spec 0006 Change 3 measured was measured in a scratch script that was never
+committed, and three documents — this file, spec 0007 and ADR 0005 — then spent
+a year telling the next session to reuse it. **That is the project's own
+recurring fault applied to itself: a claim in the docs that nothing verifies.**
+The lesson beside `dth_env.txt` is the same shape — before relying on something,
+prove it is there.
+
+What survives as *knowledge* rather than as code: a rectangle finder was
+observed to locate exactly `invoice_0002`'s four panels and `sample_css_0004`'s
+two cards and nothing on the other three pages, and **its guard** — a rectangle
+covering more than 0.80 of the page is the page, unguarded it took
+`invoice_0001` from 6 Zones to 1. Treat both as a starting point to re-measure,
+not as a result to cite.
+
+**Do not rebuild it for *grouping*** — that much is still settled, and for a
+separate reason: wired into grouping, morphology produced byte-identical boxes
+on all five fixtures. Thread 2/B's use is borders, rules and card treatment for
+the style record, which is a different question.
 
 ### Runs explain themselves
 
@@ -282,6 +323,37 @@ seam the recorded-response suite replays against, documented as that. They are
 unreachable from a Conversion, so nothing they ask for can influence any
 output. Removing the seam means replacing the layout stage of nine test
 modules; it is bookkeeping, not a measurement question.
+
+### What Phase A-1 settled, including what it could not do
+
+Its three causes are fixed — a table reconciled against its header instead of
+discarded, a light-on-dark page turned over before `equalise`, and ink no box
+covers given a Zone. **Its honesty gate is not met**, and the reason bounds what
+any later thread should attempt.
+
+**The pipeline can declare structural loss and cannot declare loss inside a
+line.** Nine of fifteen documents lost 2–43% of their tokens while returning *as
+many printed lines as the crop holds, or more* — `catalogue_0015` read 28 lines
+where 20 are printed and lost 43% of its words. Two pixel-side detectors were
+built and measured against the checkpoint's own documents and both were
+rejected for firing on clean documents while missing the worst real loss;
+`src/doc_to_html/honesty.py` carries the table and the numbers. **Do not build a
+third without a new kind of evidence.**
+
+**What that means for Thread 3/C, stated in full because the shorthand was
+useless.** 3/C's re-scoping gate classifies each residual error as (a) the IR
+cannot express it, (b) a pass read it wrong and would again, or (c) it needs a
+second look at the whole page — and the loop gets built **only if (c) is a
+material share**. This residue is **(b)**: the conversion is deterministic at
+`temperature: 0`, so a loop that re-examines the same crop gets the identical
+wrong answer back. **Do not plan on the repair loop to recover recall**, and do
+not let that expectation justify deferring reading quality. On current evidence
+3/C closes unbuilt, exactly as spec 0006's Change 3 did.
+
+What *would* reach intra-line loss is two readings of one crop compared against
+each other — `CellState.DISPUTED` and the Ladder are already the vocabulary for
+it, and `_climb_ladders` already records that it waits on a second Engine. That
+is model time and a thread's decision, not a detector.
 
 **Tracker state.** **#30** is spec 0007 and the only open issue. #29 records
 spec 0006 retrospectively (closed). #28 (spec 0005) and #17 (the vision layout

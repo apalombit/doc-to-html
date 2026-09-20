@@ -57,8 +57,12 @@ A graphically rendered element that nonetheless carries document meaning — a P
 _Avoid_: Annotation, overlay, stamp
 
 **Structural Fidelity**:
-The standard the output is held to: semantic markup and correct Zone ordering, rendered through the project's own stylesheet. Explicitly not a pixel-level reproduction — fonts, spacing and coordinates are the browser's.
+The standard the output is held to: semantic markup and correct Zone ordering, rendered through the project's own stylesheet, **now driven by the Style Record measured off the Source Image**. Still explicitly not a pixel-level reproduction — a `<table>` stays a `<table>` and absolute-positioned facsimile stays rejected — but "fonts, spacing and colour are the browser's" no longer holds. See ADR 0005, which supersedes that half of ADR 0002.
 _Avoid_: Accuracy, faithfulness, visual fidelity
+
+**Style Record**:
+What a page looks like, measured from its own pixels and never asked of a model: ground, ink and accent colour, shaded bands, borders and card treatment, type scale, and the page's width. It is part of the IR, so the renderer reacts to it exactly as it reacts to Kind, Role and Title. Measuring rather than asking is the decision, not an implementation detail — colour is perception, and this project has established that a model complies with instructions to decide differently and ignores instructions to perceive differently.
+_Avoid_: Theme, stylesheet, CSS, design tokens, styling
 
 **Probe**:
 A type-agnostic arithmetic check run over an extracted table — a column that should sum to a stated value, a row whose factors should give its product. Probes know nothing about invoices; they test structural relationships between numbers.

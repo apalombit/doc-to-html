@@ -107,7 +107,13 @@ on the sweep set*, written when the sweep set did not exist. Several of the
 ten new documents lose most of their content outright, and no amount of fixing
 A0's three content faults reaches 1.00 on them. **Alessandro's decision: split
 the whole-Zone failures out as their own phase ahead of A0** — Phase A-1
-below. A0 keeps its three faults and its 1.00, measured after A-1 has run.
+below. A0 keeps its three faults.
+
+**Superseded 2026-09-20 on the second half of that sentence.** A0 does *not*
+keep its 1.00: A-1 ran, and the checkpoint disproves the number rather than
+merely rebasing it — `receipt_0010` at recall 0.175 and `catalogue_0015` at
+0.571, neither touched by any of A0's three faults. A0's gate is set on entry,
+against precision. See the A-1 outcome section below.
 
 **2. The whole-Zone failures are a different fault from the three A0 names,
 and they are now Phase A-1.** A0's three faults are content being *mis-read* —
@@ -161,19 +167,62 @@ above are fixed. T1 is reported on the sweep set but **A-1 does not gate on
 1.00** — that stays A0's, measured after this phase lands. The T1 ratchet
 applies from A-1's checkpoint onward.
 
-**Two decisions are Alessandro's and must be asked, not inferred.** Both were
-raised on 2026-09-19 and deliberately left open. Ask before either binds; if
-the session is non-interactive, stop rather than choose.
+### Outcome — 2026-09-19: three causes fixed, gate NOT met
 
-1. **Where the ratchet's starting notch sits.** A-1 moves T1 on documents A0
-   is supposed to gate, so A0's "1.00 on iterate" would be measured against a
-   different baseline than the spec assumes. This is the second pre-registered
-   number this work has had to move, so it gets set deliberately.
-2. **The honesty rule will fail documents that pass today.** `invoice_0001`
-   scores T1 1.000 and has a broken join; `sample_css_0004` scores 1.000
-   recall with two duplicated titles. Enforced strictly, some of the original
-   five start producing findings they do not produce now. Correct behaviour,
-   but it reads as a regression the first time it appears on the report.
+Checkpoint `88-a1-checkpoint`, all fifteen, scores frozen at
+`tests/frozen/a1-checkpoint/`. The three causes are fixed and declaration now
+carries magnitude — `receipt_0010` says *"Zone 1 (table) was read short — 19
+printed lines, 3 returned [50% of the page's ink]"* where it used to say "may be
+a mark". `darkdeck_0009` went from **1 detected region to 13**.
+
+**Nine of fifteen still lose content quietly, and the reason is a ceiling on the
+rule rather than a missing fix.** The remaining loss is *within* lines: every
+quiet-loss document returned as many printed lines as its crop holds or more
+while dropping words inside them — `catalogue_0015` read 28 lines where 20 are
+printed and lost 43% of its tokens. Two pixel-side detectors were built and
+measured and both were rejected for firing on clean documents while missing the
+worst real loss; the table is in `src/doc_to_html/honesty.py`. **Do not build a
+third without a new kind of evidence.**
+
+**What this settles about Thread 3/C, written out because the shorthand was
+useless.** 3/C's gate classifies each residual as (a) the IR cannot express it,
+(b) a pass read it wrong and would again, or (c) it needs a second look at the
+whole page — and the loop is built **only if (c) is a material share**. This
+residue is **(b)**: the conversion is deterministic at `temperature: 0`, so a
+loop re-reading the same crop gets the identical wrong answer back. **Do not
+plan on 3/C to recover recall**, and do not let that hope justify deferring
+reading quality. On this evidence 3/C closes unbuilt, as spec 0006's Change 3
+did. What would actually reach intra-line loss is two readings of one crop
+compared — `CellState.DISPUTED` and the Ladder already exist for it, and
+`_climb_ladders` already says it waits on a second Engine.
+
+**Two decisions were Alessandro's, were asked, and are now taken — 2026-09-19.**
+Both bound during A-1's implementation. Recorded here with what was rejected,
+because both move a pre-registered number.
+
+1. **The ratchet's starting notch is A-1's checkpoint.** Every phase from A-1
+   onward is measured against it, and **A0's "T1 = 1.00 on the sweep set" is
+   re-baselined and measured after A-1 has landed** rather than against the
+   number the spec pre-registered. *Rejected:* leaving the notch at A0, which
+   would have let A-1 make large T1 moves with no floor under them — an A-1
+   sub-change losing content on one document while gaining on another would
+   have had nothing to catch it, which is the exact failure the ratchet exists
+   for. This is the second pre-registered number this work has moved, which is
+   why it is written down rather than inferred.
+
+2. **The honesty rule covers loss and only loss** — token recall, and content
+   that never arrived. *Rejected:* covering all of T1. Two reasons, and the
+   second is the decisive one. Duplication is a precision fault and a mis-split
+   is a join fault, and neither is content that failed to arrive:
+   `invoice_0001` at recall 1.000 with a broken join has lost nothing. And the
+   pipeline has no ground truth, so it cannot know it split `Invoice #: 123` at
+   the wrong point — a rule requiring it to say so would be a rule no pipeline
+   change could meet. Those two faults stay **A0's to fix**, and A0 fixes them
+   rather than announcing them.
+
+   **So the worry that prompted the question does not materialise:**
+   `invoice_0001` and `sample_css_0004` produce no new findings under this
+   scope, and nothing on the report reads as a regression that is not one.
 
 ### Deferred deliberately, with the reason
 
@@ -181,10 +230,9 @@ the session is non-interactive, stop rather than choose.
   `section.titled` gives every titled Zone a border and shaded title bar
   unconditionally, so a flowing document like `report_0011` renders as a stack
   of cards and the source is never consulted. It affects roughly ten
-  documents. It is *not* being fixed early: 2/B measures borders from pixels
-  with the OpenCV rectangle finder and will draw a card only where the source
-  has one, and an interim guess would be undone. Expect card-chopped renders
-  until then and do not read them as a new fault.
+  documents. **2/B now runs before A0, so this is the next thing fixed rather
+  than a standing deferral:** 2/B measures borders from pixels and draws a card
+  only where the source has one.
 - **Column collapse waits for A2.** `form_0007`, `menu_0012`, `cv_0013`,
   `catalogue_0015` and `newsletter_0008` put side-by-side content into one
   column (`beside_agreement` 0.03–0.40). Accepted interim state: **content
@@ -208,11 +256,18 @@ Stop at its gate.
 
 Phase A0 first and on its own — the three content faults plus the
 wire._without_empty_rows `if row.cells` bug. Take a checkpoint run at the end of
-A0 before starting A1: A0's gate is T1 = 1.00 recall and precision on the sweep
-set, and it is the ratchet's starting notch, so every later phase is measured
-against it. Not "improved" — 1.00.
+A0 before starting A1.
 
-Then A1 (inline runs), A2 (align, width, page width), A3 (figure pixels).
+A0's gate is NOT "T1 = 1.00 on the sweep set" any more, and it is NOT the
+ratchet's notch. Both were superseded: the notch is Phase A-1's checkpoint,
+committed at tests/frozen/a1-checkpoint/, and the 1.00 is disproved — A-1 left
+receipt_0010 at recall 0.175 and catalogue_0015 at 0.571, and none of A0's three
+faults touches either document. SET A0's GATE ON ENTRY, from measurements taken
+in that sitting, against precision (0.91-0.98 at the A-1 checkpoint), which is
+what A0 actually moves. Do not inherit a number from this file.
+
+Then A1 (inline runs), A2 (align, column width), A3 (figure pixels). Page width
+is no longer here: it moved into Thread 2/B, which runs before A0.
 
 The T1 ratchet applies between every phase. If a phase improves its own axis and
 lowers completeness, it has failed and must be reworked, whatever else moved.
@@ -224,27 +279,51 @@ Report at A0's checkpoint and again at Thread A's gate.
 
 ---
 
-## Thread 2/B — the style record
+## Thread 2/B — the style record — **NEXT, ahead of A0**
+
+Moved ahead of A0 on 2026-09-20. A0 moves precision (0.91–0.98) while
+`height_ratio` runs 1.03–3.70 and the renderer cards every titled Zone on ~10
+documents; 2/B is also the only thread adding no model call, so it is
+deterministic and cannot threaten the ratchet A-1 set.
 
 ```
 Read docs/specs/0007-look-like-the-document.md, then implement Thread 2/B only.
 Stop at its gate.
 
 All CV, zero added model calls — this is decided, not a starting position. Do not
-add a style prompt or a style pass call. Colour, type size, borders, widths and
-alignment are all measurable from pixels already in hand, and the spec's table
-says how each one is obtained.
+add a style prompt or a style pass call. Colour, type size, borders and widths are
+all measurable from pixels already in hand, and the spec's table says how each one
+is obtained.
 
-The OpenCV rectangle finder built for spec 0006 Change 3 is reused here. It works
-— it located exactly invoice_0002's four panels and sample_css_0004's two cards —
-and was shelved only because Change 2 had already spent its value on grouping.
-Keep its guard: a rectangle covering more than 0.80 of the page is the page.
+THE RECTANGLE FINDER HAS TO BE BUILT. This prompt used to say it existed and must
+be reused. It is not in the tree and never was — `git log -S findContours` returns
+only preprocess.find_page_quad, which is page-edge detection for rectification,
+and tools/cv_layout_probe.py's zones_from_morphology dilates ink into blocks and
+cannot see a drawn border. Spec 0006 Change 3 measured it in a scratch script that
+was never committed. Two things were recorded about it and both are a starting
+point to RE-MEASURE rather than results to cite: that it found exactly
+invoice_0002's four panels and sample_css_0004's two cards, and the guard that a
+rectangle covering more than 0.80 of the page is the page.
+
+Two scope boundaries, both decided rather than drifted:
+  - Document.page_px moves INTO this thread from A2. The 52rem house column is
+    ~832px and 9 of 15 sources are wider, so those pages render narrower than the
+    source and therefore taller — which inflates this thread's own gate.
+  - Zone.align does NOT move. It stays in A2, even though ADR 0005's table lists
+    alignment here.
+
+Reuse rather than re-implement: preprocess.ground_level/ground_is_dark (the shared
+modal-background test, written in A-1), preprocess.content_ink/ink_bands for the
+type scale, scoring._modal for the bucketed mode, preprocess.zone_pixels for crops.
 
 Font family is de-prioritised and does not gate the phase. Cheap guess, sans
 fallback, move on.
 
-Primary target is height_ratio moving toward 1.0 across the sweep set.
-invoice_0002 was at 1.54. Report at the gate.
+Gate: height_ratio toward 1.0 across the sweep set, palette delta falls, and
+T1/T2/T3 do not regress against tests/frozen/a1-checkpoint/scores.json — pass it
+to the report with --previous, because debug/runs is cleared and the notch lives
+in the repository now. Expect width alone not to close the height gap: menu_0012
+is 760px wide, inside the house column, and still sits at 2.77.
 ```
 
 ---
