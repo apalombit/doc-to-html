@@ -306,11 +306,17 @@ invoice_0002's four panels and sample_css_0004's two cards, and the guard that a
 rectangle covering more than 0.80 of the page is the page.
 
 Two scope boundaries, both decided rather than drifted:
-  - Document.page_px moves INTO this thread from A2. The 52rem house column is
-    ~832px and 9 of 15 sources are wider, so those pages render narrower than the
-    source and therefore taller — which inflates this thread's own gate.
-  - Zone.align does NOT move. It stays in A2, even though ADR 0005's table lists
-    alignment here.
+  - Document.page_px is MEASURED here and DRAWN by A2. It moved into this thread
+    on 2026-09-20 and the measurement sent it back the same day: run
+    89-style-record set .doc to the source's width and invoice_0002's
+    beside_agreement fell 0.640 -> 0.295, the hard tier, for height_ratio
+    1.63 -> 1.60 on that one document and nothing on the other four. Isolated by
+    re-rendering that run's own IR four ways with the palette held fixed. The
+    cause is flex:1 1 12rem approximating the source's columns by accident, so
+    it is A2's band model. page_px is in the IR, traced and round-tripped;
+    render._style_css holds the note and what would have to become true.
+  - Zone.align does NOT move either. It stays in A2, even though ADR 0005's
+    table lists alignment here.
 
 Reuse rather than re-implement: preprocess.ground_level/ground_is_dark (the shared
 modal-background test, written in A-1), preprocess.content_ink/ink_bands for the

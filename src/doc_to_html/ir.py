@@ -321,6 +321,30 @@ class Caveat:
 
 
 @dataclass
+class Style:
+    """What the page looks like, measured from its own pixels. See ADR 0005.
+
+    Part of the IR rather than a renderer detail, for the reason ADR 0005
+    gives: a stylesheet cannot react to a quantity nothing records. The
+    renderer reacts to this exactly as it reacts to Kind, Role and Title.
+
+    Every field has a default that is the renderer's own existing look, so a
+    `Document` with no Style — a hand-built one in a test, an older IR read back
+    off disk — renders as it always did.
+
+    `accent` and `shade` are `None` when the page has neither, and that is a
+    statement rather than a gap: a page with no hue anywhere must not have one
+    invented for it, because the scorer will then find an accent in our output
+    that the source does not have. See `style.MIN_ACCENT_SHARE`.
+    """
+
+    page_bg: tuple[int, int, int] = (255, 255, 255)
+    ink: tuple[int, int, int] = (26, 26, 26)
+    accent: tuple[int, int, int] | None = None
+    shade: tuple[int, int, int] | None = None
+
+
+@dataclass
 class Source:
     """Provenance of the pixels."""
 
@@ -341,6 +365,23 @@ class Document:
     rectifier_version: int = RECTIFIER_VERSION
     hint: str | None = None
     """Free prose from the operator. Reaches prompts; branches nothing."""
+
+    page_px: int | None = None
+    """How wide the Source Image is, so the render can be that wide.
+
+    `render.py` used to cap every document at a 52rem house column — about
+    832px — and nine of the fifteen corpus sources are wider than that, up to
+    1164px. Those pages rendered narrower than the source and therefore taller,
+    which inflated `height_ratio`, which is the single best diagnostic the
+    scorer produces. Width is carried and height is left to fall out; ADR 0005
+    records why a *fixed* height is refused.
+
+    `None` renders at the house column, so a Document built without one looks
+    as it always did.
+    """
+
+    style: Style | None = None
+    """The page's palette, measured from its pixels. `None` means not measured."""
 
     zones: list[Zone] = field(default_factory=list)
     corrections: list[Correction] = field(default_factory=list)
@@ -384,6 +425,20 @@ def _encode(value: Any) -> Any:
     if isinstance(value, Enum):
         return value.value
     raise TypeError(f"not JSON-serialisable: {type(value).__name__}")
+
+
+def _colour(value: Any) -> tuple[int, int, int] | None:
+    return None if value is None else (int(value[0]), int(value[1]), int(value[2]))
+
+
+def _style(data: dict[str, Any] | None) -> Style | None:
+    if not data:
+        return None
+    ground = _colour(data.get("page_bg")) or (255, 255, 255)
+    ink = _colour(data.get("ink")) or (26, 26, 26)
+    return Style(page_bg=ground, ink=ink,
+                 accent=_colour(data.get("accent")),
+                 shade=_colour(data.get("shade")))
 
 
 def _bbox(data: dict[str, Any] | None) -> BBox | None:
@@ -457,6 +512,13 @@ def _decode_document(data: dict[str, Any]) -> Document:
                 ink_share=g.get("ink_share", 0.0))
             for g in data.get("gaps", [])
         ],
+        page_px=data.get("page_px"),
+        # Tuples come back from JSON as lists, so a `Style(**data["style"])`
+        # would put `[255, 255, 255]` where a colour belongs and the renderer
+        # would emit `rgb([255, 255, 255])`. A-1 shipped the same class of bug
+        # once already, in this same function, by building `Gap` field by field
+        # and forgetting one.
+        style=_style(data.get("style")),
         failures=[Failure(**f) for f in data.get("failures", [])],
         caveats=[Caveat(**c) for c in data.get("caveats", [])],
         shortfalls=[Shortfall(**s) for s in data.get("shortfalls", [])],

@@ -358,6 +358,29 @@ from the boxes it is checked against. A document that would have been thrown awa
 converts instead. That is the intent, and it is also a real loss of a signal that
 has caught genuine nonsense before."""
 
+DEFAULT_STYLE_RECORD = True
+"""Whether a page's own colours and width are measured and carried into the IR.
+
+**On**, and unlike the other four defaults this one is not a prompt or a
+geometry heuristic — it makes **no model call at all**. ADR 0005 is the
+decision: colour is perception, this project has measured that a model complies
+with instructions to decide differently and ignores instructions to perceive
+differently, and the pixels are already in hand.
+
+**What it changes.** `Document.style` and `Document.page_px` are filled, and
+`render` emits a second `<style>` that overrides the house palette and sets
+`.doc`'s width from the source's. With it off, the render is the fixed
+`#1a1a1a`-on-white column at `max-width: 52rem` it has always been — which is
+the arm to run when asking whether a T3 or T5 move came from here.
+
+**Width is measured here and drawn by nobody.** `Document.page_px` is filled
+whenever this is on, and `render` deliberately does not act on it: setting
+`.doc` to the source's width cost `invoice_0002` `beside_agreement` 0.640 ->
+0.295, which is the hard tier, for `height_ratio` 1.63 -> 1.60 on that one
+document. The cause is the band model, so the *measurement* belongs here and
+the *rule* belongs to A2. `render._style_css` carries the numbers and what
+would have to become true for it to be re-tried."""
+
 DEFAULT_COVER_THE_PAGE = True
 """Whether ink no detected box covers becomes a Zone of its own.
 
@@ -587,6 +610,7 @@ class Settings:
     caption_pass: bool = DEFAULT_CAPTION_PASS
     layout_region_hint: bool = DEFAULT_LAYOUT_REGION_HINT
     cover_the_page: bool = DEFAULT_COVER_THE_PAGE
+    style_record: bool = DEFAULT_STYLE_RECORD
     derive_bands: bool = DEFAULT_DERIVE_BANDS
     layout_detector: str = DEFAULT_LAYOUT_DETECTOR
     detector_confidence: float = DEFAULT_DETECTOR_CONFIDENCE
@@ -715,6 +739,7 @@ def load(
             resolve("DTH_CAPTION_PASS", DEFAULT_CAPTION_PASS),
             resolve("DTH_LAYOUT_REGION_HINT", DEFAULT_LAYOUT_REGION_HINT),
             resolve("DTH_COVER_THE_PAGE", DEFAULT_COVER_THE_PAGE),
+            resolve("DTH_STYLE_RECORD", DEFAULT_STYLE_RECORD),
             resolve("DTH_DERIVE_BANDS", DEFAULT_DERIVE_BANDS),
             resolve("DTH_LAYOUT_DETECTOR", DEFAULT_LAYOUT_DETECTOR),
             resolve("DTH_DETECTOR_CONFIDENCE", DEFAULT_DETECTOR_CONFIDENCE),
@@ -739,6 +764,7 @@ def load(
         caption_pass=_flag(origins["DTH_CAPTION_PASS"]),
         layout_region_hint=_flag(origins["DTH_LAYOUT_REGION_HINT"]),
         cover_the_page=_flag(origins["DTH_COVER_THE_PAGE"]),
+        style_record=_flag(origins["DTH_STYLE_RECORD"]),
         derive_bands=_flag(origins["DTH_DERIVE_BANDS"]),
         layout_detector=origins["DTH_LAYOUT_DETECTOR"].value,
         detector_confidence=_number(origins["DTH_DETECTOR_CONFIDENCE"], float),

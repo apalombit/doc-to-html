@@ -59,6 +59,7 @@ from . import geometry_score
 from .corpus import ITERATE, Source
 from .ir import BBox
 from .projection import Block, Projection, project, screenshot
+from .style import modal
 
 NARROW = 0.62
 """How far the page is squeezed when asking whether its text reflows.
@@ -606,36 +607,6 @@ class Palette:
     output_texture: float
 
 
-BUCKET = 8
-"""How coarsely a colour is rounded before the modal one is counted.
-
-Eight levels per channel, not more. An antialiased page holds thousands of
-near-identical shades and the true mode of the raw pixels is a coin toss
-between them; bucketing collapses those into one. Coarser than this and a
-light shaded band merges with the page it sits on, which is the distinction
-`invoice_0002`'s caption bars exist to make.
-"""
-
-
-def _modal(pixels: Any) -> tuple[int, int, int]:
-    """The commonest colour, bucketed. int64 throughout, and that matters.
-
-    The obvious packing — `r * 65536 + g * 256 + b` — overflows an int16 array
-    at `g * 256` and comes back as a colour the image does not contain. It is
-    silent, it is plausible, and it reported every page in the corpus as having
-    the same background.
-    """
-    import numpy as np
-
-    flat = ((np.asarray(pixels, dtype=np.int64) // BUCKET) * BUCKET).reshape(-1, 3)
-    if not flat.size:
-        return 0, 0, 0
-    keys = flat[:, 0] * 65536 + flat[:, 1] * 256 + flat[:, 2]
-    values, counts = np.unique(keys, return_counts=True)
-    key = int(values[int(np.argmax(counts))])
-    return (key >> 16) & 0xFF, (key >> 8) & 0xFF, key & 0xFF
-
-
 GROUND_NEAR = 60
 """Channel-sum distance within which a pixel is still the page, not a mark."""
 
@@ -651,11 +622,11 @@ def _sample(path: Path) -> tuple[tuple[int, int, int], tuple[int, int, int],
     image = Image.open(path).convert("RGB")
     image.thumbnail((600, 6000))
     pixels = np.asarray(image, dtype=np.int64)
-    ground = _modal(pixels)
+    ground = modal(pixels)
 
     from_ground = np.abs(pixels - np.array(ground)).sum(axis=2)
     marked = from_ground > INK_NEAR
-    ink = _modal(pixels[marked]) if marked.any() else ground
+    ink = modal(pixels[marked]) if marked.any() else ground
 
     # Texture is everything that is neither the page nor its type: shaded
     # caption bars, rules, zebra striping, card fills. A page with none of it
@@ -667,7 +638,7 @@ def _sample(path: Path) -> tuple[tuple[int, int, int], tuple[int, int, int],
 
     saturation = pixels.max(axis=2) - pixels.min(axis=2)
     vivid = saturation > 60
-    accent = _modal(pixels[vivid]) if vivid.mean() > 0.002 else None
+    accent = modal(pixels[vivid]) if vivid.mean() > 0.002 else None
     return ground, ink, accent, texture
 
 

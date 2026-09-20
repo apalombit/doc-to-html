@@ -295,11 +295,16 @@ runs from 1.03 to **3.70** and the renderer cards every titled Zone on roughly
 ten documents. 2/B is also the only thread that adds no model call, so it is
 deterministic, testable offline, and cannot threaten the ratchet A-1 just set.
 
-**`Document.page_px` moves with it, from A2 into 2/B.** `render.py` caps every
-page at a 52rem house column (~832px) and 9 of the 15 sources are wider, up to
-1164px, so those pages render narrower than the source and therefore taller —
-inflating the single number 2/B is gated on. **`Zone.align` does not move**; it
-stays in A2. Both are decisions, recorded so neither reads as drift.
+**`Document.page_px` is measured in 2/B and drawn in A2** — it moved out of A2
+on 2026-09-20 and measurement sent it back. The reasoning for moving it was
+that `render.py` caps every page at a 52rem house column (~832px) while 9 of
+the 15 sources are wider, up to 1164px. Carrying the true width does close that
+gap, and it costs `invoice_0002` `beside_agreement` 0.640 → 0.295 — **the hard
+tier** — for `height_ratio` 1.63 → 1.60 on that same document and nothing on
+the other four. The cause is `flex:1 1 12rem` approximating the source's
+columns by accident, which is A2's band model, so 2/B keeps the measurement and
+A2 gets the rule. **`Zone.align` never moved**; it stays in A2 too. All of it
+is recorded so none of it reads as drift.
 
 Checkpoint runs after **0, A-1, B, A0, A, C**. Each produces a comparison report.
 
@@ -495,7 +500,7 @@ one of those.
 | `page_bg`, `ink`, `accent`, `shade` | sample pixels — modal background, modal ink, most-saturated non-neutral |
 | `body_px`, `heading_px`, heading scale | ink-band heights, from the banding `preprocess` already does |
 | borders, rules, cards | an OpenCV rectangle finder, **which has to be built** — see the correction below. Keep the guard: a rectangle covering more than 0.80 of the page is the page. |
-| page width | `Document.page_px`, carried from the Source Image. Moved here from A2 on 2026-09-20 because the 52rem house column inflates `height_ratio`, which is this thread's own gate. |
+| page width | `Document.page_px`, carried from the Source Image — **measured here, drawn in A2.** Moved here on 2026-09-20 and returned the same day: the CSS rule costs `invoice_0002` a hard-tier `beside_agreement`. See above. |
 | column widths | the detected boxes, already computed |
 | alignment | ink centroid against the Zone box |
 | `family: serif \| sans \| mono` | cheap stroke-terminal guess, **sans fallback** |

@@ -1,4 +1,4 @@
-# Status — 2026-09-20 (Phase A-1 done; Thread 2/B next)
+# Status — 2026-09-20 (Phase A-1 done; Thread 2/B, increment 1 in the tree)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it.
@@ -9,7 +9,10 @@ Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-handover.md`](specs/0007-handover.md) (the per-thread prompts and
 the full Phase A-1 scope). This file is the summary, not the source.
 
-Branch `scaffold`. 609 tests pass, `mypy src/` clean. Phase A-1's code is in the tree; its checkpoint scores are frozen at `tests/frozen/a1-checkpoint/`.
+Branch `scaffold`. 636 tests pass, `mypy src/` clean. Phase A-1's code is in
+the tree and its checkpoint scores are frozen at `tests/frozen/a1-checkpoint/`;
+Thread 2/B's first increment — palette and page width — is in the tree behind
+`DTH_STYLE_RECORD`, default on.
 
 ---
 
@@ -133,6 +136,125 @@ It is the same fault this project keeps recording about itself, turned inward:
 armed before believing a null result; this says prove the code is there before
 planning around it.
 
+## Thread 2/B increment 1 — palette and page width — 2026-09-20
+
+**What shipped.** `style.py` measures a page's ground, ink, accent and shaded
+furniture from its own pixels — no model call, ADR 0005 — and `Document.style`
+carries them into the render, which emits a second `<style>` overriding the
+house palette. Behind `DTH_STYLE_RECORD`, default on, named explicitly on the
+bake-off's `Conversion` so the arm is provably armed rather than resolved a
+second time from the environment. **`Document.page_px` is measured, traced and
+round-tripped but the renderer does not act on it** — see the width section
+below, which is the run's main result.
+
+Two details that are decisions rather than plumbing:
+
+- **`inverted` is passed, not inferred.** `rectify` has already turned a
+  light-on-dark page over, so `darkdeck_0009` arrives at `measure` as a light
+  page. Measuring it as it stands reports white paper for a near-black
+  document.
+- **`--muted` and `--rule` are derived from the measured pair, not fixed.**
+  `#666` and `#e0e0e0` are grey-on-white by design; on a black ground the muted
+  text goes near-invisible and the hairline rule becomes the brightest thing on
+  the page. On a white ground the derivation lands within 3/255 of the
+  constants it replaces, so the fourteen light documents do not move.
+
+**What is deliberately not in it: the type scale.** Measured across the corpus
+on 2026-09-20 — per-Zone pooled ink-band mode is a median 0.93 of the true CSS
+size, inside 0.75–1.13 on thirteen of fifteen — but `catalogue_0015` reads
+**2.40×** and no confidence signal tried separates it from `form_0007`, whose
+0.40 agreement accompanies an accurate estimate. Shipping it would set 24px type
+on a document whose real body is 10px, and `catalogue_0015` currently has the
+corpus's best `height_ratio` at 1.03. The numbers and the rejected signals are
+in `style.py`'s module docstring.
+
+### Page width: measured, and held back — it fails the hard tier
+
+**This is the increment's main result and it reverses a boundary decision made
+on 2026-09-20.** Width moved from A2 into 2/B on the reasoning that nine of
+fifteen sources are wider than the old 832px column, so those pages render
+narrower and therefore taller. The reasoning was sound and the measurement does
+not support it.
+
+Run `89-style-record` (the five, `qwen3-vl:4b`, 2026-09-20) against the notch:
+
+| document | `beside_agreement` | `height_ratio` |
+|---|---|---|
+| `invoice_0002` | 0.640 → **0.295** | 1.63 → 1.60 |
+| the other four | unchanged | unchanged |
+
+`beside_agreement` is **T3, the hard tier**, and the rule is that a regression
+there fails a phase regardless of what improved elsewhere. What it bought was
+`height_ratio` 1.63 → 1.60 on that same document and nothing at all on the
+other four.
+
+**Isolated, not inferred.** That run's own IR was re-rendered four ways —
+palette and width, palette only, width only, neither — with the model's answers
+held fixed. `beside_agreement` is 0.640 in both arms without the width and
+0.295 in both arms with it. The palette is not involved.
+
+**The cause is the band model, not the width.** Naming the lost pairs shows our
+`dl` rows re-wrapping at the wider column and drifting out of line with the
+source's panels: `Email` beside `Phone`, `Phone` beside `One Microsoft Way`,
+and six more the source has side by side stop overlapping vertically in ours.
+`flex:1 1 12rem` was approximating the source's columns by accident, and the
+true width takes the accident away. **Column shares and `Zone.align` stayed in
+A2** — so the item should not have moved, and it moves back.
+
+**What would have to become true** (written down so it is re-tried rather than
+forgotten, per the `DTH_CAPTION_PASS` lesson): A2 gives a Band a real column
+model, and `invoice_0002`'s `beside_agreement` at the source's width matches or
+beats its value at 52rem. `Document.page_px` stays measured and in the IR
+waiting for that; only the CSS rule is withheld, and `render.py` carries the
+same note.
+
+### Where the height actually is: the card chrome
+
+Measured offline in this sitting over the five committed `tests/frozen/run84/`
+outputs — re-rendered from their own embedded IR, scored through `project()`,
+no model involved:
+
+| document | `height_ratio` with width | with the cards also flattened |
+|---|---|---|
+| `invoice_0001` | 1.11 | 1.06 |
+| `invoice_0002` | 1.45 | 1.11 |
+| `sample_css_0004` | 1.25 | 0.97 |
+| `sample_semantic_0005` | 1.27 | 0.92 |
+| `sample_table_0003` | 1.21 | 1.17 |
+
+The card chrome `section.titled` draws round every titled Zone is four to eight
+times the width's effect, and unlike the width it does not touch `beside`
+relations. **That is where 2/B's gate is won.**
+
+**And the fix must be per-Zone.** Flattening every card takes two documents past
+1.0 to 0.97 and 0.92 — a blanket removal overshoots as badly as the blanket card
+does. That is the detector increment's justification: build it, do not simply
+delete the CSS.
+
+### What the palette did — run `89b-palette-only`, the shipped configuration
+
+Run `89-style-record`'s conversions re-rendered through the shipped renderer
+(width withheld) and re-scored against the notch in the same sitting. **T1, T2
+and T3 are identical to the notch on all five documents** — the ratchet holds
+and the hard tier is clean, which is what a zero-model-call thread should be
+able to promise.
+
+| document | `ink_delta` | `accent_delta` |
+|---|---|---|
+| `sample_css_0004` | 0.496 → **0.031** | 1.000 → **0.031** |
+| `sample_semantic_0005` | 0.471 → **0.000** | 1.000 → **0.318** |
+| `sample_table_0003` | 0.282 → **0.220** | — |
+| `invoice_0002` | unchanged | — |
+| `invoice_0001` | 0.188 → **0.345** | — |
+
+`invoice_0001` is the one document the measured palette makes worse, and the
+disagreement is about scale rather than about the page. Its body ink measures
+`(72,72,72)` at full resolution; `scoring._sample` thumbnails the page to 600px
+before taking its mode and reads `(112,112,112)`. Both are correct about what
+they sampled. **Matching the scorer's sampling rather than the page's pixels was
+rejected** — it would be measuring the measurement, and the three documents that
+improved did so by measuring the page.
+
 ## Checkpoint numbers — run `88-a1-checkpoint`, 2026-09-19
 
 Citable only against a run taken in the same sitting. There was no such earlier
@@ -237,34 +359,43 @@ causes, not one:
   is that it is **not being applied**, which is a different fact from it being
   harmful.
 
-## Next — Phase A-1, scoped and approved, not started
+## Next — Thread 2/B increment 2, the border and card detector
 
-Full scope is in `specs/0007-handover.md`. In brief: **a new phase ahead of
-A0**, because A0's three faults are content being *mis-read* while these are
-content not surviving at all, and merging them would make A0 look like it
-failed when its own fixes worked.
+Full scope is in `specs/0007-handover.md`. **This is now the thread's main
+event rather than a tidy-up**, on the measurement in the increment-1 section
+above: flattening the cards moves `height_ratio` four to eight times as far as
+the page width did, and `height_ratio` is what 2/B is gated on.
 
-All three content-loss causes above are in scope. **The phase's real gate is
-the honesty rule:** content that does not reach the output must produce a
-finding that says so and says how much. `darkdeck_0009` lost 80% of its
-document and reported nothing; `receipt_0010` lost 75% and called it a
-possible mark. A-1 is not done while any document can lose content quietly.
+It has to be **built**, not reused — the OpenCV rectangle finder three
+documents said was in the tree is not, see the docs-fault section above. Ground
+truth needs no model and is on disk: `invoice_0002` has four panels,
+`sample_css_0004` two cards, `catalogue_0015` nine, and `invoice_0001`,
+`sample_table_0003` and `sample_semantic_0005` have **none**. The zero case is
+the one that matters — a detector that cards everything is the fault being
+fixed, and the flattening measurement says a detector that cards *nothing*
+overshoots to 0.92 on `sample_semantic_0005`.
 
-A-1 reports T1 on the sweep set but does **not** gate on 1.00 — that stays
-A0's, measured after A-1 lands.
+Re-measure the inherited 0.80-of-the-page guard on `invoice_0001` while
+building it and record the number taken in that sitting; it describes code that
+never existed.
+
+**After that, still in 2/B:** the type scale, gated on `height_ratio` directly
+rather than on agreement with the CSS size, for the reason in the increment-1
+section.
 
 **Deferred on purpose, with the reason, so they are not read as new faults:**
 
-- **The renderer's cards — no longer deferred, they are 2/B's first job.**
-  `render.py`'s `section.titled` borders every titled Zone unconditionally, so
-  a flowing document like `report_0011` renders as a stack of cards and the
-  source is never consulted. 2/B draws a card only where the source has one.
-- **Page width — no longer deferred either, moved from A2 into 2/B.**
-  `.doc { max-width:52rem }` is ~832px and 9 of 15 sources are wider, up to
-  1164px, so those pages render narrower than the source and therefore taller.
-  That inflates `height_ratio`, which is 2/B's own gate, so the item moves with
-  the thread that is gated on it. **`Zone.align` does not move** — it stays in
-  A2, even though ADR 0005's table lists alignment under B.
+- **The renderer's cards — no longer deferred, and no longer next-but-one:
+  they are the item above.** `render.py`'s `section.titled` still borders every
+  titled Zone unconditionally, so a flowing document like `report_0011` renders
+  as a stack of cards and the source is never consulted.
+- **Page width — measured and back in A2's hands.** It moved from A2 into 2/B
+  on width reasoning that measurement did not support; the CSS rule costs
+  `invoice_0002` a hard-tier metric and the cause is A2's band model. See the
+  width section above for the isolation and for what would have to become true.
+  `Document.page_px` is in the IR and traced, so A2 inherits the measurement
+  rather than the work. **`Zone.align` never moved** — it stays in A2 too, even
+  though ADR 0005's table lists alignment under B.
 - **Column collapse still waits for A2.** Accepted interim state: **content
   complete and reading order correct, in one column.** Do not trade T1 for
   column shape.

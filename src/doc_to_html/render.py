@@ -25,14 +25,15 @@ from .wire import MARKS
 
 STYLESHEET = """
 :root { --ink:#1a1a1a; --muted:#666; --rule:#e0e0e0; --shade:#f4f4f4;
+        --page-bg:#fff; --accent:inherit;
         --flag:#b45309; --flag-bg:#fff7ed; }
 @media (prefers-color-scheme: dark) {
   :root { --ink:#e8e8e8; --muted:#9a9a9a; --rule:#333; --shade:#1e1e1e;
+          --page-bg:#111;
           --flag:#fbbf24; --flag-bg:#2a1f0a; }
-  body { background:#111; }
 }
 body { font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-       color:var(--ink); margin:0; padding:2rem 1rem; }
+       color:var(--ink); background:var(--page-bg); margin:0; padding:2rem 1rem; }
 .doc { max-width:52rem; margin:0 auto; }
 .band { display:flex; gap:2rem; align-items:flex-start;
         margin-bottom:1.75rem; flex-wrap:wrap; }
@@ -98,10 +99,108 @@ def render(document: Document, *, title: str | None = None) -> str:
         '<html lang="en">\n<head>\n<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
         f"<title>{html.escape(heading)}</title>\n"
-        f"<style>{STYLESHEET}</style>\n</head>\n<body>\n"
+        f"<style>{STYLESHEET}</style>\n"
+        f"{_style_css(document)}"
+        "</head>\n<body>\n"
         f'<div class="doc">\n{"".join(filter(None, body))}\n</div>\n'
         f"{_embedded_ir(document)}\n</body>\n</html>\n"
     )
+
+
+def _rgb(colour: tuple[int, int, int]) -> str:
+    return f"rgb({colour[0]},{colour[1]},{colour[2]})"
+
+
+def _mix(ink: tuple[int, int, int], ground: tuple[int, int, int], part: float) -> str:
+    """Ink moved `part` of the way toward the ground.
+
+    Muted text and rules are not measured — they are quieter versions of the
+    ink, and the only thing that makes them quiet is how close to the ground
+    they sit. Hard-coding them cannot work once the ground moves: `--muted:#666`
+    is grey-on-white by design and near-invisible on `darkdeck_0009`'s black,
+    while `--rule:#e0e0e0` stops being a hairline and becomes the brightest
+    thing on that page.
+    """
+    return _rgb(
+        tuple(  # type: ignore[arg-type]
+            round(i + (g - i) * part) for i, g in zip(ink, ground)
+        )
+    )
+
+
+def _style_css(document: Document) -> str:
+    """The measured Style Record, as CSS that overrides the house defaults.
+
+    **A second `<style>` after the first, and that is deliberate.** The base
+    stylesheet carries a `prefers-color-scheme: dark` block, and a measured
+    palette written into `:root` above it would lose to that block on any
+    machine in dark mode — which is precisely the harness fault Thread 0 spent a
+    day finding, arriving by a different route. Later rules win, so these do.
+
+    Emitted only for what was actually measured. A `Document` with neither a
+    Style nor a width — a hand-built one in a test, an IR written before this
+    existed — gets nothing here and renders exactly as it always did.
+
+    `accent` and `shade` are omitted when the page has neither, rather than
+    given a fallback. Inventing an accent would put a saturated colour in our
+    output that the source does not have, and the scorer would find it: T5
+    compares the most-saturated non-neutral on each side, so a fabricated
+    accent turns a clean 0.00 into a finding.
+    """
+    # `document.page_px` is measured, traced and carried in the IR, and the
+    # renderer deliberately does **not** act on it yet. Run `89-style-record`
+    # set `.doc` to the source's own width and `invoice_0002`'s
+    # `beside_agreement` fell 0.640 -> 0.295 — a hard-tier regression, isolated
+    # to the width by re-rendering that run's own IR four ways with the palette
+    # held fixed. It bought `height_ratio` 1.63 -> 1.60 on that one document and
+    # nothing on the other four, which do not wrap at either width.
+    #
+    # The cause is the band model rather than the number: at the wider column
+    # our `dl` rows re-wrap and stop lining up row for row with the source's
+    # panels, so pairs the source has beside each other — `Email` beside
+    # `Phone`, and six more — stop overlapping vertically in ours. That is
+    # column shares and `Zone.align`, which stayed in **A2**.
+    #
+    # **What would have to become true**, written down so this is re-tried
+    # rather than forgotten: A2 gives a Band a real column model instead of
+    # `flex:1 1 12rem`, and `invoice_0002`'s `beside_agreement` at the source's
+    # width matches or beats its value at 52rem. The width is already in the IR
+    # waiting for that.
+    rules: list[str] = []
+
+    style = document.style
+    if style is None:
+        return _wrap([], rules)
+
+    root = [
+        f"--page-bg:{_rgb(style.page_bg)}",
+        f"--ink:{_rgb(style.ink)}",
+        f"--muted:{_mix(style.ink, style.page_bg, 0.33)}",
+        f"--rule:{_mix(style.ink, style.page_bg, 0.85)}",
+    ]
+    # A page with no measured shade still needs one, because the renderer shades
+    # table header rows whether or not the source does. A whisper of ink into
+    # the ground is the least wrong answer: on a light page it lands near the
+    # #f4f4f4 this replaces, and on a dark one it stays dark.
+    root.append(
+        f"--shade:{_rgb(style.shade) if style.shade is not None else _mix(style.ink, style.page_bg, 0.94)}"
+    )
+    if style.accent is not None:
+        root.append(f"--accent:{_rgb(style.accent)}")
+        # The one place an accent is spent. A page's accent is most often its
+        # headings, and h1 is the only element guaranteed to be big enough for
+        # the colour to survive antialiasing into the scorer's sample.
+        rules.append("h1 { color:var(--accent); }")
+
+    return _wrap(root, rules)
+
+
+def _wrap(root: list[str], rules: list[str]) -> str:
+    """Custom properties and rules as one `<style>`, or nothing at all."""
+    if not root and not rules:
+        return ""
+    declared = f":root {{ {'; '.join(root)}; }}\n" if root else ""
+    return f"<style>{declared}" + "\n".join(rules) + "</style>\n"
 
 
 def _infer_title(document: Document) -> str | None:

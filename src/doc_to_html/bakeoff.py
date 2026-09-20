@@ -400,6 +400,7 @@ def run(models: Iterable[str], corpus: dict[str, Path],
                     # re-resolution that nothing recorded. `DTH_HEADING_RULE`
                     # is what this project already paid to learn that with.
                     caption_pass=settings.caption_pass,
+                    style_record=settings.style_record,
                 )
                 actual = conversion.run()
                 attempt.html = render(actual)

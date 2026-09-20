@@ -19,6 +19,7 @@ from enum import Enum
 from pathlib import Path
 
 from . import probes as probe_module
+from . import style as style_module
 from .checkpoints import Answer, CheckpointHandler, NullHandler, Question
 from .config import Settings, load
 from .engines.base import LayoutEngine, VisionEngine
@@ -666,6 +667,13 @@ class Conversion:
     `config.DEFAULT_COVER_THE_PAGE` and `recovered_zones`.
     """
 
+    style_record: bool = field(default_factory=lambda: load().style_record)
+    """Whether the page's own colours and width are measured into the IR.
+
+    Resolved per Conversion for the same reason as `snap_zones` above. See
+    `config.DEFAULT_STYLE_RECORD`, `style.measure` and ADR 0005.
+    """
+
     caption_pass: bool = field(default_factory=lambda: load().caption_pass)
     """Whether `_classify` reads each Zone's Title before asking its Kind.
 
@@ -741,6 +749,7 @@ class Conversion:
 
         document = Document(source=rectified.source, hint=hint)
         self.document = document
+        self._measure_style(rectified, document)
 
         for round_number in range(MAX_ROUNDS):
             self._layout(rectified, document)
@@ -794,6 +803,59 @@ class Conversion:
             )
         )
         return answer.note or None
+
+    def _measure_style(self, rectified: Rectified, document: Document) -> None:
+        """Read the page's palette and width off its pixels. See `style.measure`.
+
+        Once per Conversion, outside the round loop and before `_layout`,
+        because nothing it measures depends on where the Zones are: the ground,
+        the ink and the accent are the page's, and the width is the Source
+        Image's. When the border and card detector arrives it will need a
+        *second* step, after layout, because a Zone's own fill is a per-Zone
+        measurement — the two are not one pass that got moved.
+
+        **The width is the source's, not the rectified image's.** `rectify`
+        resizes the long edge to `TARGET_LONG_EDGE` for the model's benefit, so
+        the rectified width is an artefact of that resize; what the reader saw
+        is `rectified.source.width`, and `height_ratio` is scored against the
+        source screenshot.
+
+        **The polarity flag is passed through rather than re-derived.**
+        `rectify` already turned a light-on-dark page over, so the image here is
+        dark-ink-on-light whatever the page was. Measuring it as it stands would
+        report every dark page as a light one; `inverted` is what lets `measure`
+        turn the answer back.
+
+        Recorded either way, like `_cover_the_page`: a run whose render came out
+        the house colours needs to be able to say whether the step was off or
+        measured white.
+        """
+        if not self.style_record:
+            self.trace.record(
+                Stage.RECTIFY, "style_record", Disposition.SKIPPED,
+                enabled=False,
+                reason="DTH_STYLE_RECORD is off, so the render keeps the house "
+                       "palette and its fixed 52rem column",
+            )
+            return
+
+        started = time.perf_counter()
+        measured = style_module.measure(
+            rectified.image, inverted=rectified.inverted
+        )
+        document.style = measured
+        document.page_px = rectified.source.width
+        self.trace.record(
+            Stage.RECTIFY, "style_record", Disposition.ACCEPTED,
+            seconds=time.perf_counter() - started,
+            enabled=True,
+            page_px=document.page_px,
+            inverted=rectified.inverted,
+            page_bg=list(measured.page_bg),
+            ink=list(measured.ink),
+            accent=None if measured.accent is None else list(measured.accent),
+            shade=None if measured.shade is None else list(measured.shade),
+        )
 
     def _layout(self, rectified: Rectified, document: Document) -> None:
         """Detect Zones — Band, column, Role, bbox — on a downscaled page.

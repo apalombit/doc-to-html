@@ -305,7 +305,7 @@ GROUND_BUCKET = 8
 
 An antialiased page holds thousands of near-identical shades and the true mode
 of the raw levels is a coin toss between them. Eight levels, matching
-`scoring.BUCKET`, because these are the same measurement taken for two purposes
+`style.BUCKET`, because these are the same measurement taken for two purposes
 and two different roundings would eventually disagree about one page.
 """
 
