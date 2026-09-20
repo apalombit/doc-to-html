@@ -113,9 +113,20 @@ def _infer_title(document: Document) -> str | None:
 
 
 def _findings(document: Document) -> str:
-    """Surface failed Probes, unresolved Gaps and Caveats at the top of the render.
+    """Surface failed Probes, Gaps, Failures, Shortfalls and Caveats at the top.
 
     A reader should not have to open the IR to learn the system was unsure.
+
+    **Every finding about missing content says how much**, as a share of the
+    page's printed ink. That is spec 0007 Phase A-1's honesty rule, and the
+    reason it is a rule: `receipt_0010` lost 77 of its 103 tokens under "found
+    by ink coverage, so it may be a mark", and `darkdeck_0009` lost most of its
+    document and printed nothing here at all.
+
+    The panel is excluded from `projection.project` by class name, so nothing
+    written here is ever scored as content the model invented — see
+    `projection.MEASURE`'s `CHROME_SELECTORS`. That is what makes it safe for a
+    finding to be honest at length.
 
     Two blocks, not one, because the two say opposite things about whether the
     content below can be relied on. "Unresolved" means something is missing or
@@ -141,7 +152,20 @@ def _findings(document: Document) -> str:
     items += [
         f"Zone {f.zone_index} (<code>{html.escape(f.kind)}</code>) could not "
         f"be read: {html.escape(f.reason)}"
+        + (f" — this Zone holds {f.ink_share * 100:.0f}% of the page's printed "
+           "ink, and none of it reached this document" if f.ink_share else "")
         for f in document.failures
+    ]
+    # Read, and read short. Under "Unresolved" rather than under the Caveats
+    # below, because content that did not arrive is not a qualifier on content
+    # that did — see `ir.Shortfall`.
+    items += [
+        f"Zone {s.zone_index} (<code>{html.escape(s.kind)}</code>) was read "
+        f"short: {s.printed_lines} lines are printed in it and the reading "
+        f"returned {s.read_lines}"
+        + (f", over {s.ink_share * 100:.0f}% of the page's printed ink"
+           if s.ink_share else "")
+        for s in document.shortfalls
     ]
     caveats = [
         f"Zone {c.zone_index} (<code>{html.escape(c.kind)}</code>) "

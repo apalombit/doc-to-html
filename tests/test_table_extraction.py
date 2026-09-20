@@ -28,7 +28,12 @@ from doc_to_html.preprocess import (
     zone_pixels,
 )
 from doc_to_html.render import render
-from doc_to_html.wire import MappingError, TableResponse, contents_into
+from doc_to_html.wire import (
+    MappingError,
+    TableResponse,
+    contents_into,
+    table_repairs,
+)
 
 from .documents import SAMPLE_DOCUMENTS
 from .replay import (
@@ -273,13 +278,23 @@ class TestMappingATableResponse:
         with pytest.raises(MappingError, match="no rows"):
             table_zone('{"rows": []}')
 
-    def test_a_data_row_must_match_the_header_width(self) -> None:
-        with pytest.raises(MappingError, match="row 2 has 3 cells.*header has 2"):
-            table_zone(
-                '{"rows": [{"role": "header", "cells": ["a", "b"]},'
-                ' {"role": "data", "cells": ["1", "2"]},'
-                ' {"role": "data", "cells": ["1", "2", "3"]}]}'
-            )
+    def test_a_row_wider_than_the_header_is_kept_whole_and_flagged(self) -> None:
+        """It used to raise, and raising cost `statement_0006` 36 read rows.
+
+        Spec 0007 Phase A-1. Dropping the surplus cell would be the one repair
+        available here that loses content, so every cell is kept and the row is
+        named by `table_repairs` instead.
+        """
+        zone = table_zone(
+            '{"rows": [{"role": "header", "cells": ["a", "b"]},'
+            ' {"role": "data", "cells": ["1", "2"]},'
+            ' {"role": "data", "cells": ["1", "2", "3"]}]}'
+        )
+        assert [[c.text for c in r.cells] for r in zone.rows] == [
+            ["a", "b"], ["1", "2"], ["1", "2", "3"],
+        ]
+        assert any("row 2" in note and "3 cells" in note
+                   for note in table_repairs(zone))
 
     def test_a_summary_row_may_be_narrower_because_totals_rows_merge_cells(
         self,
@@ -343,18 +358,26 @@ class TestARowWithNoCellsAtAll:
             ["", "Total: $385.00"],
         ]
 
-    def test_a_row_short_of_the_header_is_still_rejected(self) -> None:
-        """The dangerous case, and the reason this is not a blanket repair.
+    def test_a_row_short_of_the_header_is_padded_and_declared(self) -> None:
+        """The dangerous case, and it is now kept rather than thrown away.
 
-        One cell out of two could belong to either column. Guessing would put a
-        price under a description and leave the number individually plausible,
-        which is the failure the width check was written for.
+        One cell out of two could belong to either column, and that is still
+        true — what changed in spec 0007 Phase A-1 is the price of saying so.
+        Rejecting the row rejected the Zone, and on `statement_0006` that meant
+        discarding 36 transaction rows the model had read correctly to protest
+        about one. So the row is padded at the end, the pad carries **no
+        Reading** — which is what distinguishes it from a cell read as empty —
+        and `table_repairs` says the row is suspect and by how much.
         """
-        with pytest.raises(MappingError, match="row 1 has 1 cells.*header has 2"):
-            table_zone(
-                '{"rows": [{"role": "header", "cells": ["a", "b"]},'
-                ' {"role": "data", "cells": ["1"]}]}'
-            )
+        zone = table_zone(
+            '{"rows": [{"role": "header", "cells": ["a", "b"]},'
+            ' {"role": "data", "cells": ["1"]}]}'
+        )
+        assert [len(r.cells) for r in zone.rows] == [2, 2]
+        assert [c.text for c in zone.rows[1].cells] == ["1", ""]
+        assert zone.rows[1].cells[1].readings == [], "a pad is not a reading"
+        assert any("row 1" in note and "short" in note
+                   for note in table_repairs(zone))
 
     def test_a_response_that_is_nothing_but_empty_rows_is_still_a_failure(
         self,
@@ -405,13 +428,23 @@ class TestAHeaderRowSplitOneCellPerRow:
 
     def test_two_headers_that_disagree_are_not_merged(self) -> None:
         """Both filled at position 0 is not one row split in two, and guessing
-        which to keep would silently drop a heading."""
-        with pytest.raises(MappingError, match="row 1 has 1 cells"):
-            table_zone(
-                '{"rows": [{"role": "header", "cells": ["Item", ""]},'
-                ' {"role": "header", "cells": ["Price"]},'
-                ' {"role": "data", "cells": ["Design", "$300.00"]}]}'
-            )
+        which to keep would silently drop a heading.
+
+        The join still refuses, which is what this pins. What follows the
+        refusal changed in Phase A-1: the second header row is padded and
+        declared rather than taking the whole Zone down with it, so `Price`
+        survives as its own row instead of being lost along with `Item` and
+        `Design`.
+        """
+        zone = table_zone(
+            '{"rows": [{"role": "header", "cells": ["Item", ""]},'
+            ' {"role": "header", "cells": ["Price"]},'
+            ' {"role": "data", "cells": ["Design", "$300.00"]}]}'
+        )
+        assert [[c.text for c in r.cells] for r in zone.rows] == [
+            ["Item", ""], ["Price", ""], ["Design", "$300.00"],
+        ]
+        assert any("row 1" in note for note in table_repairs(zone))
 
     def test_a_single_header_row_is_left_alone(self) -> None:
         zone = table_zone(

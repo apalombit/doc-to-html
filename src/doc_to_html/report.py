@@ -41,6 +41,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from .corpus import SOURCES, Source, split_of
+from .honesty import Accounting, account, document_in, loss_findings
 from .projection import available, screenshot
 from .scoring import DocumentScore, normalise, score_document
 
@@ -209,6 +210,13 @@ table.summary td { padding:5px 9px; border-bottom:1px solid #eef1f4;
 table.summary td.name { font-weight:600; }
 table.summary tr.regressed td { background:#fdf1f0; }
 .delta { font-size:11px; margin-left:4px; }
+.account { margin:10px 0 0; padding:8px 10px; border-radius:6px;
+           font-size:12px; line-height:1.5; }
+.account p { margin:.3em 0 0; }
+.account ul { margin:.3em 0 0; padding-left:1.1em; }
+.account.declared { background:var(--page); border-left:3px solid var(--warn); }
+.account.quiet { background:#fdeceb; border-left:3px solid var(--bad);
+                 font-weight:500; }
 .delta.up { color:var(--good); } .delta.down { color:var(--bad); }
 section.doc { background:var(--card); border-radius:6px; padding:16px 18px 18px;
               margin-bottom:22px; box-shadow:0 1px 2px rgba(0,0,0,.06); }
@@ -321,7 +329,8 @@ def _findings_html(score: DocumentScore) -> str:
 
 def _document_section(source: Source, score: DocumentScore, *,
                       source_png: Path, render_png: Path | None,
-                      document_html: str, before: DocumentScore | None) -> str:
+                      document_html: str, before: DocumentScore | None,
+                      account: Accounting | None = None) -> str:
     done = score.completeness
     axes = [
         _axis("T1 recall", f"{done.recall:.3f}", hard=True, ok=done.recall >= 1.0,
@@ -404,7 +413,7 @@ def _document_section(source: Source, score: DocumentScore, *,
            f'<img src="{right}" alt="render"></figure>'
            if right else '<div class="error">no render</div>')
         + _findings_html(score)
-        + "</div>" + collapsed + "</section>"
+        + "</div>" + _account_html(account) + collapsed + "</section>"
     )
 
 
@@ -503,6 +512,67 @@ def _gate_html(scores: list[DocumentScore],
     )
 
 
+def _honesty_html(accounts: list[Accounting]) -> str:
+    """Phase A-1's gate, stated beside the ratchet rather than under it.
+
+    The two are different questions and a reader must not have to work out
+    which one failed. The ratchet asks *did this run lose ground against the
+    last one*; this asks *did any document lose content without saying so*, and
+    it has no previous run in it at all — a first run can fail this one.
+    """
+    if not accounts:
+        return ""
+    quiet = [entry for entry in accounts if not entry.ok]
+    lost = [entry for entry in accounts if entry.lost and entry.ok]
+    if not quiet:
+        declared = (
+            f" {len(lost)} document(s) lost content and every one of them says "
+            "so, with the share of the page it lost."
+            if lost else
+            " No document lost content."
+        )
+        return (
+            '<div class="gate pass"><b>Nothing was lost quietly.</b>'
+            + declared + "</div>"
+        )
+    return (
+        '<div class="gate fail"><b>Phase A-1 gate FAILED.</b> A document lost '
+        "content and the output says nothing about it. A silent loss is worse "
+        "than a loud failure:<ul>"
+        + "".join(
+            f"<li><a href=\"#{html.escape(entry.name)}\">"
+            f"{html.escape(entry.name)}</a>: {html.escape(entry.reason)}</li>"
+            for entry in quiet
+        )
+        + "</ul></div>"
+    )
+
+
+def _account_html(account: Accounting | None) -> str:
+    """What one document declared about its own loss, under its pair."""
+    if account is None:
+        return ""
+    if not account.lost:
+        return ""
+    css = "declared" if account.ok else "quiet"
+    heading = (
+        f"Declared its loss ({len(account.findings)} finding(s))" if account.ok
+        else "LOST CONTENT QUIETLY — nothing in the output says so"
+    )
+    return (
+        f'<div class="account {css}"><b>{heading}</b>'
+        f"<p>{html.escape(account.reason)}</p>"
+        + (
+            "<ul>"
+            + "".join(f"<li>{html.escape(item)}</li>"
+                      for item in account.findings[:6])
+            + "</ul>"
+            if account.findings else ""
+        )
+        + "</div>"
+    )
+
+
 def _previous(path: Path | None) -> dict[str, DocumentScore]:
     """Last run's scores, for the deltas. Missing or unreadable is not fatal."""
     if path is None or not path.is_file():
@@ -565,6 +635,7 @@ def build(run: Path, *, model: str, documents: Iterable[str],
 
     scores: list[DocumentScore] = []
     sections: list[str] = []
+    accounts: list[Accounting] = []
     for name in documents:
         source = SOURCES.get(name)
         if source is None:
@@ -578,8 +649,15 @@ def build(run: Path, *, model: str, documents: Iterable[str],
                 f"Conversion did not get that far.</p></section>"
             )
             continue
+        output_html = output.read_text(encoding="utf-8")
         score = score_document(source, output, work=work)
         scores.append(score)
+        # The honesty rule, taken off the IR the render embeds rather than off
+        # the findings panel's prose. See `honesty.document_in`.
+        embedded = document_in(output_html)
+        accounts.append(account(
+            score, loss_findings(embedded) if embedded is not None else ()
+        ))
         render = work / f"{name}_render.png"
         if not render.is_file():
             try:
@@ -590,8 +668,9 @@ def build(run: Path, *, model: str, documents: Iterable[str],
         sections.append(_document_section(
             source, score, source_png=source.png_path(),
             render_png=render if render.is_file() else None,
-            document_html=output.read_text(encoding="utf-8"),
+            document_html=output_html,
             before=was.get(name),
+            account=accounts[-1],
         ))
 
     taken = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
@@ -609,6 +688,7 @@ def build(run: Path, *, model: str, documents: Iterable[str],
            if previous and previous.is_file() else " · no previous run")
         + "</p>"
         + _gate_html(scores, was)
+        + _honesty_html(accounts)
         + _summary_table(scores, was)
         + "".join(sections)
         + "</div>\n</body>\n</html>\n"

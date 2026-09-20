@@ -358,6 +358,34 @@ from the boxes it is checked against. A document that would have been thrown awa
 converts instead. That is the intent, and it is also a real loss of a signal that
 has caught genuine nonsense before."""
 
+DEFAULT_COVER_THE_PAGE = True
+"""Whether ink no detected box covers becomes a Zone of its own.
+
+**On**, and it is spec 0007 Phase A-1's second cause. The detector does not
+cover the whole page, and until this existed the ink it missed was reported as a
+Gap and then dropped: `receipt_0010` kept its header and lost everything from
+the first line item to the barcode — 77 of 103 tokens — under a finding reading
+*"found by ink coverage, so it may be a mark"*. `form_0007` and `nonlatin_0014`
+lose their own titles the same way. `covered` was 1.00 on all five original
+documents, which is why this never showed up before the corpus left five.
+
+**Why a new Zone rather than a wider box.** Growing a neighbouring detection to
+swallow the ink would change a region the detector was right about; a Zone of
+its own leaves every correct box alone and is refused outright when it cannot be
+placed without breaking a Band. The recovered region is classified and extracted
+like any other, so nothing here decides what the content *is*.
+
+**What it costs when it is wrong.** A decorative mark becomes a Zone, gets
+classified `figure`, and renders as a placeholder. That is the recoverable
+direction: the same mark uncovered is content silently dropped. The guards are
+in `orchestrator.recovered_zones` — a minimum area, a ceiling on how many, a
+refusal of anything covering most of the page, and a refusal of any box that
+cannot sit in a valid Band.
+
+**A flag rather than unconditional** so a run can isolate it: it adds Zones, and
+a geometry change in this project is measured one axis at a time.
+"""
+
 DEFAULT_LAYOUT_REGION_HINT = False
 """Whether to tell the layout pass how many regions the page holds, at most.
 
@@ -558,6 +586,7 @@ class Settings:
     table_grid_hint: bool = DEFAULT_TABLE_GRID_HINT
     caption_pass: bool = DEFAULT_CAPTION_PASS
     layout_region_hint: bool = DEFAULT_LAYOUT_REGION_HINT
+    cover_the_page: bool = DEFAULT_COVER_THE_PAGE
     derive_bands: bool = DEFAULT_DERIVE_BANDS
     layout_detector: str = DEFAULT_LAYOUT_DETECTOR
     detector_confidence: float = DEFAULT_DETECTOR_CONFIDENCE
@@ -685,6 +714,7 @@ def load(
             resolve("DTH_TABLE_GRID_HINT", DEFAULT_TABLE_GRID_HINT),
             resolve("DTH_CAPTION_PASS", DEFAULT_CAPTION_PASS),
             resolve("DTH_LAYOUT_REGION_HINT", DEFAULT_LAYOUT_REGION_HINT),
+            resolve("DTH_COVER_THE_PAGE", DEFAULT_COVER_THE_PAGE),
             resolve("DTH_DERIVE_BANDS", DEFAULT_DERIVE_BANDS),
             resolve("DTH_LAYOUT_DETECTOR", DEFAULT_LAYOUT_DETECTOR),
             resolve("DTH_DETECTOR_CONFIDENCE", DEFAULT_DETECTOR_CONFIDENCE),
@@ -708,6 +738,7 @@ def load(
         table_grid_hint=_flag(origins["DTH_TABLE_GRID_HINT"]),
         caption_pass=_flag(origins["DTH_CAPTION_PASS"]),
         layout_region_hint=_flag(origins["DTH_LAYOUT_REGION_HINT"]),
+        cover_the_page=_flag(origins["DTH_COVER_THE_PAGE"]),
         derive_bands=_flag(origins["DTH_DERIVE_BANDS"]),
         layout_detector=origins["DTH_LAYOUT_DETECTOR"].value,
         detector_confidence=_number(origins["DTH_DETECTOR_CONFIDENCE"], float),

@@ -13,6 +13,7 @@ in ir.py — otherwise stored Corrections silently point at the wrong pixels.
 from __future__ import annotations
 
 import hashlib
+import logging
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -22,6 +23,8 @@ import numpy as np
 from numpy.typing import NDArray
 
 from .ir import BBox, Source, Zone
+
+log = logging.getLogger(__name__)
 
 ImageArray = NDArray[Any]
 """Pixels as OpenCV hands them over: (H, W, 3), BGR, uint8."""
@@ -71,6 +74,15 @@ class Rectified:
     False means the image was used as-is, which is the normal answer for a scan or
     a screenshot. Worth knowing when a render comes out badly: an unwarped
     photograph of a page shot at an angle explains a great deal.
+    """
+
+    inverted: bool = False
+    """Whether the page was printed light on dark and has been turned over.
+
+    Recorded rather than left implicit, because it changes the pixels every later
+    pass reads *and* the pixels the model is shown. A render that comes back in
+    the wrong polarity, or a palette that reads as paper-white on a page that is
+    not, starts here. See `ground_is_dark`.
     """
 
 
@@ -288,10 +300,105 @@ would be a coin flip that destroys every coordinate downstream.
 """
 
 
+GROUND_BUCKET = 8
+"""How coarsely grey is rounded before the page's own level is counted.
+
+An antialiased page holds thousands of near-identical shades and the true mode
+of the raw levels is a coin toss between them. Eight levels, matching
+`scoring.BUCKET`, because these are the same measurement taken for two purposes
+and two different roundings would eventually disagree about one page.
+"""
+
+GROUND_DARK = 128
+"""Below this level, the page's own ground is dark and the ink on it is light."""
+
+GROUND_MAJORITY = 0.25
+"""How much of the image the modal level must hold before it is read as ground.
+
+**What this guard does and does not do.** It refuses to call a page dark when no
+level dominates it — a photograph with a shadow gradient, a scan of a heavily
+illustrated page — because there the mode is close to a coin toss between
+neighbouring buckets and acting on it would invert an image on the strength of
+noise. It does **not** distinguish a page that is dark from a crop that is
+mostly mark: a tile 80% covered in ink has a dominant dark level and is
+indistinguishable from a dark page by histogram alone. That is why polarity is
+decided once, on the whole page, in `rectify` — where "mostly dark" really does
+mean a dark page — and never per crop.
+
+Measured on the corpus: `darkdeck_0009`'s raw page holds its modal level over
+0.745 of the frame and every light page over 0.84, so no document in the corpus
+is anywhere near this bound.
+"""
+
+
+def ground_level(image: ImageArray) -> int:
+    """The grey level this image's own ground sits at, bucketed.
+
+    **One measurement, two callers.** `ground_is_dark` below uses it to decide
+    polarity; Thread 2/B needs the same modal background for the style record.
+    Building a second one is how the binarisation and the palette end up
+    disagreeing about what colour a page is.
+    """
+    cv2 = _cv2()
+    if image.size == 0:
+        return 255
+    grey = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) if image.ndim == 3 else image
+    counts = np.bincount((grey // GROUND_BUCKET).ravel(),
+                         minlength=256 // GROUND_BUCKET)
+    return int(np.argmax(counts)) * GROUND_BUCKET
+
+
+def ground_is_dark(image: ImageArray) -> bool:
+    """Whether this page is printed light on dark.
+
+    **The fault this exists for, measured.** Every binarisation in this file
+    treats dark pixels as ink, which is a claim about the page and not about
+    printing. `darkdeck_0009` is 96.2% below mid-grey, so read that way nearly
+    the whole page is one mass of ink: `count_regions` returns **1** for a page
+    with ten regions, the detector's grouping has nothing to work with, and the
+    document converted as a single Zone with no finding of any kind against it.
+
+    **Why polarity is tested before `equalise` and not after.** Equalisation
+    divides lightness by a closed estimate of the illumination, which on a dark
+    page divides dark by dark and blows the result out. Measured on
+    `darkdeck.png` in one sitting on 2026-09-19: raw modal level **16** over
+    0.745 of the frame, and after equalisation modal **248** with 55% of the
+    page reading as ink and one region found. Inverting first and then
+    equalising gives modal 248 over 0.89 of the page, 5.0% ink, and **10**
+    regions. The same test on `invoice_0001` reads modal 248 and does not fire.
+
+    **Ask it about a page, not about a crop.** A tile mostly covered in ink has
+    a dominant dark level too, and nothing in a histogram separates the two —
+    which is why `rectify` settles polarity once for the whole page and no crop
+    is ever asked again. See `GROUND_MAJORITY` for what the majority guard does
+    instead, which is to decline when no level dominates at all.
+    """
+    cv2 = _cv2()
+    if image.size == 0:
+        return False
+    grey = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) if image.ndim == 3 else image
+    counts = np.bincount((grey // GROUND_BUCKET).ravel(),
+                         minlength=256 // GROUND_BUCKET)
+    level = int(np.argmax(counts)) * GROUND_BUCKET
+    share = float(counts.max()) / grey.size
+    return level < GROUND_DARK and share >= GROUND_MAJORITY
+
+
+def with_dark_ink(image: ImageArray) -> ImageArray:
+    """The same page with its ink dark, turned over if it was not.
+
+    Every threshold downstream of this reads dark as ink. Normalising polarity
+    once, here, is what lets all of them keep saying so.
+    """
+    inverted: ImageArray = 255 - image
+    return inverted if ground_is_dark(image) else image
+
+
 def _ink(gray: ImageArray) -> ImageArray:
     """Dark pixels, as a binary mask. Deterministic: Otsu, no sampling."""
     cv2 = _cv2()
-    _, mask = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+    _, mask = cv2.threshold(with_dark_ink(gray), 0, 255,
+                            cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
     binary: ImageArray = mask
     return binary
 
@@ -546,6 +653,48 @@ def table_grid(crop: ImageArray) -> TableGrid:
     columns = ink_bands(mask.sum(axis=0), MIN_COLUMN_GAP, MIN_BAND)
     return TableGrid(rows=len(rows), columns=len(columns),
                      row_bands=rows, column_bands=columns)
+
+
+def printed_lines(crop: ImageArray) -> int:
+    """How many lines of type are printed in this crop. No model, no reading.
+
+    The measurement behind spec 0007 Phase A-1's honesty rule. A Zone that was
+    read *at all* satisfies every other check in the system — it has content, it
+    is `complete`, no Failure names it — and a reading that came back with two
+    of its thirty-six rows looks exactly like a reading of a two-row region.
+    Counting bands of ink is the one cheap thing that can disagree with the
+    answer, because it is not the answer: it is the same projection `table_grid`
+    does, over the same mask, with the vertical rules taken out first for the
+    reason `_without_vertical_rules` gives.
+
+    It counts *printed lines*, which is not the same as rows, blocks or pairs —
+    a wrapped table cell is two printed lines in one row, and a caption is a
+    line that is not a row at all. So it is only ever safe as a floor under a
+    gross shortfall, never as an expected count. `orchestrator.shortfall` is
+    where that judgement lives, and it is deliberately coarse.
+    """
+    mask = _without_vertical_rules(content_ink(crop))
+    return len(ink_bands(mask.sum(axis=1), MIN_ROW_GAP, MIN_BAND))
+
+
+def ink_share(image: ImageArray, box: BBox) -> float:
+    """How much of the page's content ink lies inside this box.
+
+    A share of the *ink*, not of the area, because that is the quantity a
+    finding needs to be honest about: "a region covering 6% of the page" says
+    nothing a reader can act on when the page is mostly margin, while "12% of
+    what is printed on this page" is the sentence that would have stopped
+    `receipt_0010`'s 77 lost tokens being filed as a possible mark.
+    """
+    mask = content_ink(image)
+    total = float((mask > 0).sum())
+    if total <= 0:
+        return 0.0
+    height, width = mask.shape[:2]
+    left, right = int(box.left * width), int(box.right * width)
+    top, bottom = int(box.top * height), int(box.bottom * height)
+    inside = mask[max(0, top):max(0, bottom), max(0, left):max(0, right)]
+    return float((inside > 0).sum()) / total
 
 
 @dataclass(frozen=True)
@@ -903,6 +1052,88 @@ def _cap(box: BBox, others: list[BBox], direction: str,
     return round((neighbour + here) / 2 * span)
 
 
+def uncovered_regions(image: ImageArray, boxes: list[BBox]
+                      ) -> list[tuple[BBox, float]]:
+    """Patches of uncovered ink, each bounded to its own ink and measured.
+
+    The same search `uncovered_ink` has always done, reporting two things it
+    could not: a box drawn round the **ink** rather than round the dilation that
+    grouped it, and how much of the page's ink is actually in there.
+
+    **Both matter, and both were found by looking at three documents.** The
+    grouping kernel spreads ink by 2% of the page across and 4% down before
+    components are taken — without that, components are *words* — so the
+    component's own box overlaps whatever sits within that margin. On
+    `form_0007` and `nonlatin_0014` the missing title's box bled into the Zones
+    above and below it, and a box that overlaps its neighbours cannot be placed
+    in a valid Band, so the one region worth recovering on each page was the one
+    region refused. Re-bounding to the ink inside the component removes the
+    bleed without touching the grouping that found it.
+
+    The share is measured the same way, over the pixels rather than the
+    rectangle, and that is what stops a finding lying. On `receipt_0010` the
+    dilation welds the page's leftover edges into a single component whose box
+    is the whole page; asked about the rectangle, it holds 100% of the page's
+    ink, and a finding saying so would be false in the direction this phase
+    exists to prevent. Asked about the uncovered pixels, it holds 1.5%.
+    """
+    cv2 = _cv2()
+    height, width = image.shape[:2]
+    mask = _uncovered_mask(image, boxes)
+
+    kernel = cv2.getStructuringElement(
+        cv2.MORPH_RECT,
+        (max(1, int(width * GAP_MERGE_X)), max(1, int(height * GAP_MERGE_Y))),
+    )
+    count, labels, stats, _ = cv2.connectedComponentsWithStats(
+        cv2.dilate(mask, kernel), connectivity=8
+    )
+    # Of the *page's* ink, not of the uncovered ink. Dividing by the uncovered
+    # total would make every region a large share of a small thing — a 2px
+    # sliver on `form_0007` reported 100%, which as a finding is a lie in the
+    # direction this phase exists to prevent.
+    total = float((content_ink(image) > 0).sum())
+    found: list[tuple[BBox, float]] = []
+    for i in range(1, count):
+        x, y, w, h, _ = stats[i]
+        if (w * h) / (width * height) < MIN_GAP_AREA:
+            continue
+        # The ink this component grouped, as opposed to the area it spread over.
+        inside = np.argwhere((labels == i) & (mask > 0))
+        if not inside.size:
+            continue
+        top, left = inside.min(axis=0)
+        bottom, right = inside.max(axis=0)
+        found.append((
+            BBox(float(left) / width, float(top) / height,
+                 float(right + 1) / width, float(bottom + 1) / height),
+            float(inside.shape[0]) / total if total else 0.0,
+        ))
+    return found
+
+
+def _uncovered_mask(image: ImageArray, boxes: list[BBox]) -> ImageArray:
+    """Content ink with every box's padded footprint removed.
+
+    Boxes are subtracted with the same padding `crop` adds, so ink the Extractor
+    was actually shown is not then reported as ink nobody covered.
+
+    Separators come off the whole page, before any box is subtracted. Doing it
+    the other way round leaves a rule that a box happens to overlap broken into
+    stubs too short for the aspect test to recognise, so the half of a rule
+    nobody covered would be reported as content nobody covered.
+    """
+    height, width = image.shape[:2]
+    mask = content_ink(image)
+    for box in boxes:
+        left = int(max(0.0, box.left - PAD_X) * width)
+        right = int(min(1.0, box.right + PAD_X) * width)
+        top = int(max(0.0, box.top - PAD_Y) * height)
+        bottom = int(min(1.0, box.bottom + PAD_Y) * height)
+        mask[top:bottom, left:right] = 0
+    return mask
+
+
 def uncovered_ink(image: ImageArray, boxes: list[BBox]) -> list[BBox]:
     """Patches of ink that no box contains — candidate Gaps.
 
@@ -921,39 +1152,12 @@ def uncovered_ink(image: ImageArray, boxes: list[BBox]) -> list[BBox]:
 
     Boxes are subtracted with the same padding `crop` adds, so ink the Extractor
     was actually shown is not then reported as ink nobody covered.
+
+    The rectangles come back bounded to their own ink rather than to the
+    dilation that grouped it, and `uncovered_regions` — which this is now a thin
+    reading of — says why that matters and reports the share alongside.
     """
-    cv2 = _cv2()
-    height, width = image.shape[:2]
-
-    # Separators come off the whole page, before any box is subtracted. Doing it
-    # the other way round leaves a rule that a box happens to overlap broken into
-    # stubs too short for the aspect test to recognise, so the half of a rule
-    # nobody covered would be reported as content nobody covered.
-    mask = content_ink(image)
-
-    for box in boxes:
-        left = int(max(0.0, box.left - PAD_X) * width)
-        right = int(min(1.0, box.right + PAD_X) * width)
-        top = int(max(0.0, box.top - PAD_Y) * height)
-        bottom = int(min(1.0, box.bottom + PAD_Y) * height)
-        mask[top:bottom, left:right] = 0
-
-    kernel = cv2.getStructuringElement(
-        cv2.MORPH_RECT,
-        (max(1, int(width * GAP_MERGE_X)), max(1, int(height * GAP_MERGE_Y))),
-    )
-    count, _, stats, _ = cv2.connectedComponentsWithStats(
-        cv2.dilate(mask, kernel), connectivity=8
-    )
-    found = []
-    for i in range(1, count):
-        x, y, w, h, _ = stats[i]
-        if (w * h) / (width * height) < MIN_GAP_AREA:
-            continue
-        found.append(
-            BBox(x / width, y / height, (x + w) / width, (y + h) / height)
-        )
-    return found
+    return [box for box, _ in uncovered_regions(image, boxes)]
 
 
 def _runs_of_blank(profile: ImageArray, least: int) -> list[tuple[int, int]]:
@@ -1254,9 +1458,17 @@ def rectify(path: Path) -> Rectified:
     Steps, in order:
       1. find the page quadrilateral (contour detection on a downscaled copy)
       2. perspective-warp it to a flat rectangle
-      3. rotate a residual tilt out of the text
-      4. equalise intensity (CLAHE) to flatten shadows and uneven lighting
-      5. resize so the long edge is at most TARGET_LONG_EDGE
+      3. turn the page over if it is printed light on dark
+      4. rotate a residual tilt out of the text
+      5. equalise intensity (CLAHE) to flatten shadows and uneven lighting
+      6. resize so the long edge is at most TARGET_LONG_EDGE
+
+    Step 3 is before both of the steps that follow it, and that order is the
+    whole of it: `equalise` divides lightness by an estimate of the illumination
+    and blows out a dark page, and every threshold after it reads dark as ink.
+    See `ground_is_dark` for what that cost `darkdeck_0009` and for the
+    measurement. It changes the pixels the model is shown as well as the pixels
+    the CV reads, which is why `Rectified.inverted` records that it happened.
 
     A page whose quadrilateral cannot be found is used as-is rather than guessed
     at — a bad warp is worse than no warp, because it silently distorts every
@@ -1284,11 +1496,17 @@ def rectify(path: Path) -> Rectified:
 
     quad = find_page_quad(image)
     flattened = image if quad is None else warp_to_quad(image, quad)
+    inverted = ground_is_dark(flattened)
+    if inverted:
+        log.info("the page is printed light on dark, so it is turned over "
+                 "before equalisation")
+        flattened = 255 - flattened
     rectified = resize_long_edge(equalise(deskew(flattened)), TARGET_LONG_EDGE)
 
     return Rectified(
         image=rectified,
         warped=quad is not None,
+        inverted=inverted,
         source=Source(
             path=str(path),
             sha256=sha256_of(path),

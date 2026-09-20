@@ -548,17 +548,37 @@ def caption_into(zone: Zone, content: str) -> Zone:
 
 
 def rows_from_table(response: TableResponse, *, read: Read) -> list[Row]:
-    """Map a table response onto Rows.
+    """Map a table response onto Rows, reconciling any row against the header.
 
-    Two things a schema cannot check are checked here. That the region had any
-    rows at all: an empty table rendered as a table looks like a document that
-    had one. And that data rows are as wide as the header, which is how a dropped
-    or invented cell shows up — it shifts every value after it into the wrong
-    column, and the numbers stay individually plausible.
+    One thing a schema cannot check is still checked here: that the region had
+    any rows at all, because an empty table rendered as a table looks like a
+    document that had one.
 
-    A summary row is allowed to be narrower. Totals rows merge cells as a matter
-    of course, and rejecting that would reject the fixture this project is held
-    to.
+    **Width is reconciled rather than enforced, as of spec 0007 Phase A-1.** It
+    used to raise, and the cost of that is measured: on `statement_0006` the
+    model returned all 36 transaction rows correctly, one of them disagreed with
+    the header on cell count, `_extract` caught the `MappingError` and the whole
+    Zone became a skeleton — recall 0.097 on a document whose content had
+    already been read. A row a cell short is a cell that was dropped; throwing
+    away the other thirty-five rows to protest about it is not a proportionate
+    answer, and it is the single cheapest recall in the corpus to recover.
+
+    What the old check was *right* about survives, and it is the reason a short
+    row is padded at the **end** and marked rather than quietly filled: a
+    dropped cell shifts every value after it into the wrong column, and the
+    numbers stay individually plausible. So the padding is a `Cell` with no
+    Reading at all — distinguishable from a cell read as empty — and
+    `table_repairs` turns that into a finding naming the row and the shortfall.
+    A reader is told the row is suspect; nothing is thrown away to tell them.
+
+    - **Short row:** padded to the header's width with unread Cells.
+    - **Long row:** kept whole, every cell, and flagged. Dropping the surplus
+      would be the one repair here that loses content, which is the thing this
+      phase exists to stop.
+    - **Summary row:** left exactly as it arrived. Narrower is normal — totals
+      rows merge cells as a matter of course — and this is the one allowance
+      the old check already made, so padding it now would change behaviour the
+      column-sum Probe was measured against for no gain.
 
     A header row split one cell per row is put back together first — see
     `_join_split_header_row`.
@@ -574,23 +594,54 @@ def rows_from_table(response: TableResponse, *, read: Read) -> list[Row]:
     width = len(header.cells) if header else None
 
     rows = []
-    for index, wire in enumerate(wire_rows):
-        if width is not None and (
-            len(wire.cells) > width
-            or (wire.role != "summary" and len(wire.cells) != width)
-        ):
-            raise MappingError(
-                f"table row {index} has {len(wire.cells)} cells but the header "
-                f"has {width} — a dropped or invented cell shifts every value "
-                "after it into the wrong column"
-            )
-        rows.append(
-            Row(
-                role=RowRole(wire.role),
-                cells=[Cell(readings=[read(text)]) for text in wire.cells],
-            )
-        )
+    for wire in wire_rows:
+        cells = [Cell(readings=[read(text)]) for text in wire.cells]
+        if width is not None and wire.role != "summary" and len(cells) < width:
+            # An unread Cell, not an empty one. `Cell.text` is "" either way, so
+            # the render is unchanged; what differs is that this one carries no
+            # Reading, which is what `table_repairs` counts and what keeps the
+            # pad honest rather than invisible.
+            cells += [Cell(readings=[]) for _ in range(width - len(cells))]
+        rows.append(Row(role=RowRole(wire.role), cells=cells))
     return rows
+
+
+def table_repairs(zone: Zone) -> list[str]:
+    """What reconciling this Zone's rows against its header had to do, in words.
+
+    Derived from the Zone rather than reported out of `rows_from_table`, which
+    is the same argument `_record_extract` already makes about the wire-level
+    repairs: `wire.py` maps a response without knowing which Zone it belongs to,
+    and threading a collector down through `contents_into` would put diagnostic
+    plumbing in the shipping path. The IR already holds the evidence — a padded
+    Cell has no Reading, and a long row is longer than the header — so this
+    reads it back off the answer instead.
+
+    Returns one sentence per repaired row, each naming the row and how much.
+    Empty for a table that needed none, which is the normal case.
+    """
+    header = next((row for row in zone.rows if row.role is RowRole.HEADER), None)
+    if header is None:
+        return []
+    width = len(header.cells)
+    notes = []
+    for index, row in enumerate(zone.rows):
+        if row.role is RowRole.SUMMARY:
+            continue
+        unread = sum(1 for cell in row.cells if not cell.readings)
+        if unread:
+            notes.append(
+                f"row {index} came back {unread} cell(s) short of the header's "
+                f"{width} and was padded rather than discarded — the values it "
+                "does have may sit in the wrong columns"
+            )
+        elif len(row.cells) > width:
+            notes.append(
+                f"row {index} came back with {len(row.cells)} cells against the "
+                f"header's {width} and was kept whole — every value is present, "
+                "and the surplus means some of them may sit in the wrong columns"
+            )
+    return notes
 
 
 def _join_split_header_row(rows: list[WireRow]) -> list[WireRow]:

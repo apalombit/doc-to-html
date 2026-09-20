@@ -20,13 +20,19 @@ from typing import Any
 IR_VERSION = 1
 """Bump when the shape below changes incompatibly. Written into every IR."""
 
-RECTIFIER_VERSION = 2
+RECTIFIER_VERSION = 3
 """Bump when rectification changes geometrically.
 
 Corrections are anchored to coordinates in the rectified space. If rectification
 starts producing a different mapping from source pixels, previously recorded
 Corrections point somewhere else — so they must be treated as orphaned rather
 than silently re-attached to the wrong cell.
+
+**3** is spec 0007 Phase A-1 turning a light-on-dark page over before
+equalisation — see `preprocess.ground_is_dark`. The coordinates are untouched,
+so this bump is stricter than the rule above requires; the *values* at those
+coordinates change, and a human ruling made against a dark page was made against
+different pixels.
 """
 
 
@@ -236,6 +242,21 @@ class Gap:
     note: str | None = None
     resolved: bool = False
 
+    ink_share: float = 0.0
+    """How much of the page's printed ink is in here, from 0 to 1.
+
+    Spec 0007 Phase A-1's honesty rule: a finding about missing content has to
+    say *how much*. Without it, one sentence — "found by ink coverage, so it may
+    be a mark" — stood over every Gap at every size, which is right about a
+    stray glyph and a lie about a page.
+
+    **Of the uncovered ink, not of the rectangle**, and `preprocess`
+    `uncovered_regions` is what measures it. On `receipt_0010` the grouping
+    kernel welds the page's leftover edges into one component whose box is the
+    whole page; measured over the box it holds 100% of the page's ink, and
+    measured over the pixels, 18%.
+    """
+
 
 @dataclass
 class Failure:
@@ -251,6 +272,37 @@ class Failure:
     zone_index: int
     kind: str
     reason: str
+    ink_share: float = 0.0
+    """How much of the page's printed ink this Zone holds. See `Gap.ink_share`."""
+
+
+@dataclass
+class Shortfall:
+    """A Zone that was read, and read short.
+
+    The finding with no other home. A Failure has no content and renders a
+    skeleton; a Caveat has content and a qualifier on how it was obtained. This
+    is a Zone that has content, is marked `complete`, is named by no Failure —
+    and holds visibly less than the crop it was read from. Every other check in
+    the system passes it, because every other check reasons from the answer
+    outward and the answer is internally consistent.
+
+    Filed under "Unresolved" in the render rather than under "Read with a
+    caveat", because content that did not arrive is not a qualifier on content
+    that did. That distinction is the whole of spec 0007 Phase A-1's honesty
+    rule: `darkdeck_0009` lost 80% of its document and said nothing at all.
+
+    `printed_lines` is measured off the pixels by `preprocess.printed_lines` and
+    is a floor, not an expectation — a wrapped cell is two printed lines in one
+    row. See `orchestrator.shortfall` for how coarse the comparison deliberately
+    is.
+    """
+
+    zone_index: int
+    kind: str
+    printed_lines: int
+    read_lines: int
+    ink_share: float = 0.0
 
 
 @dataclass
@@ -296,6 +348,7 @@ class Document:
     gaps: list[Gap] = field(default_factory=list)
     failures: list[Failure] = field(default_factory=list)
     caveats: list[Caveat] = field(default_factory=list)
+    shortfalls: list[Shortfall] = field(default_factory=list)
 
     def bands(self) -> list[list[Zone]]:
         """Zones grouped into Bands and ordered for rendering."""
@@ -392,11 +445,21 @@ def _decode_document(data: dict[str, Any]) -> Document:
         ],
         probes=[ProbeResult(**p) for p in data.get("probes", [])],
         gaps=[
-            Gap(bbox=BBox(**g["bbox"]), note=g.get("note"), resolved=g.get("resolved", False))
+            # Field by field rather than `Gap(**g)` because `bbox` is a nested
+            # object — which is also how `ink_share` came to be dropped on the
+            # way back in, so that a Gap whose own note read "18.5% of this
+            # page's printed ink" reported the share as 0.0 to anything reading
+            # the IR instead of the prose. A finding and the number beside it
+            # disagreeing is the exact shape of fault Phase A-1 exists to
+            # remove, arriving through a decoder.
+            Gap(bbox=BBox(**g["bbox"]), note=g.get("note"),
+                resolved=g.get("resolved", False),
+                ink_share=g.get("ink_share", 0.0))
             for g in data.get("gaps", [])
         ],
         failures=[Failure(**f) for f in data.get("failures", [])],
         caveats=[Caveat(**c) for c in data.get("caveats", [])],
+        shortfalls=[Shortfall(**s) for s in data.get("shortfalls", [])],
     )
 
 

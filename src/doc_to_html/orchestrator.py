@@ -24,7 +24,7 @@ from .config import Settings, load
 from .engines.base import LayoutEngine, VisionEngine
 from .engines.ollama import OllamaEngine
 from .extractors import for_kind, resolution_caveat
-from .ir import Caveat, Document, Failure, Gap, Kind, Zone
+from .ir import Caveat, Document, Failure, Gap, Kind, Role, Shortfall, Zone
 from .preprocess import (
     LAYOUT_LONG_EDGE,
     MIN_ZONE_INK,
@@ -36,19 +36,29 @@ from .preprocess import (
     ImageArray,
     Rectified,
     caption_band,
+    content_ink,
     count_regions,
     crop_row_as_fraction,
     ink_fraction,
+    ink_share,
+    printed_lines,
     snap_to_ink,
     table_grid,
     long_edge_over_input_budget,
     rectify,
     uncovered_ink,
+    uncovered_regions,
     zone_pixels,
 )
 from .render import render
 from .trace import Change, Disposition, Stage, Trace
-from .wire import MappingError, NotPairs, validate_bands
+from .wire import (
+    MappingError,
+    NotPairs,
+    bands_from_boxes,
+    table_repairs,
+    validate_bands,
+)
 
 log = logging.getLogger(__name__)
 
@@ -161,7 +171,8 @@ def _layout_engine(settings: Settings) -> LayoutEngine:
                      prefer_container=settings.prefer_container)
 
 
-def failed(index: int, zone: Zone, error: Exception) -> Failure:
+def failed(index: int, zone: Zone, error: Exception, *,
+           share: float = 0.0) -> Failure:
     """Record what went wrong on one Zone, in the form both passes report.
 
     Classification and extraction fail differently but report identically, and
@@ -169,12 +180,24 @@ def failed(index: int, zone: Zone, error: Exception) -> Failure:
     render should not have to know which pass gave up on a Zone to find out that
     one did. Naming the exception type matters — `MappingError` and
     `TruncatedResponse` are different problems with different fixes.
+
+    `share` is how much of the page's ink the Zone holds, so the finding says
+    how much was lost and not only that something was. Spec 0007 Phase A-1's
+    honesty rule. It defaults to zero rather than being required, because a
+    caller without the pixels to hand — a replayed response, a test — should
+    still be able to record the failure it has.
     """
     return Failure(
         zone_index=index,
         kind=zone.kind.value,
         reason=f"{type(error).__name__}: {error}",
+        ink_share=share,
     )
+
+
+def _share_of(image: ImageArray, zone: Zone) -> float:
+    """How much of the page's ink this Zone holds, or zero with no geometry."""
+    return 0.0 if zone.bbox is None else ink_share(image, zone.bbox)
 
 
 def _box_data(zone: Zone) -> dict[str, float] | None:
@@ -310,6 +333,229 @@ def snapped_or_original(image: ImageArray, zones: list[Zone]) -> list[Zone]:
     return moved
 
 
+GAP_IS_CONTENT = 0.05
+"""Above this share of the page's ink, a Gap is content rather than a mark.
+
+A mark is a stamp, a signature, a logo's flourish — a small thing. Nothing that
+holds a twentieth of everything printed on a page is one, and calling it one is
+what let `receipt_0010` lose 77 of 103 tokens under a finding that hedged.
+
+The threshold decides only the *wording* of a finding; the share is printed
+either way, so a reader is never relying on where this sits.
+"""
+
+MIN_RECOVERED_INK = 0.02
+"""How much of the page's ink a region must hold to be worth reading.
+
+Below this it is not a block somebody missed; it is the edge of one. Measured
+over the corpus on 2026-09-19, the only three documents with any uncovered ink
+at all: `nonlatin_0014`'s unread title holds 0.037, `form_0007`'s 0.032, and
+`receipt_0010`'s leftover dotted rules 0.015.
+"""
+
+MIN_RECOVERED_PX = 8
+"""And it must be at least this tall, or there is nothing there to read.
+
+**The guard the measurements asked for, and the one that is easy to leave
+out.** Re-bounding a region to its own ink can produce a box two pixels tall —
+`form_0007`'s is 2px by 585px — and that is not a region that was missed. It is
+the top and bottom overflow of glyphs whose bodies lie inside a neighbouring
+Zone's padded crop, which is to say ink the Extractor *was* shown. Promoting it
+to a Zone would crop two pixels of paper, ask a vision model what it says, and
+get an answer, which is the failure `empty_zone` exists to prevent arriving by
+a new route.
+
+Eight pixels is under the height of any line of type on a rectified page in
+this corpus and over the height of a glyph's overflow, and nothing in the
+corpus sits near it: the regions measured are 2px, 1px and 15px.
+"""
+
+MAX_RECOVERED = 6
+"""How many Zones one page may gain from uncovered ink.
+
+A ceiling on a repair, in the spirit of `_layout_again`'s region ceiling: a
+detector that has missed six separate regions has not missed a block, it has
+failed, and adding a seventh Zone is not the answer to that. The largest are
+kept, because ink area is the only ranking available before anything is read.
+"""
+
+MAX_RECOVERED_SHARE = 0.80
+"""A recovered box covering more than this much of the page is the page.
+
+The same guard, and the same number, as the OpenCV rectangle finder's. It was
+written there because an unguarded whole-page rectangle took `invoice_0001` from
+6 Zones to 1; here it stops a page whose detector returned almost nothing from
+being "recovered" as a single Zone holding everything, which is exactly the
+silent whole-page failure `darkdeck_0009` already showed.
+"""
+
+
+def recovered_zones(image: ImageArray, zones: list[Zone]) -> list[Zone]:
+    """The Zones, plus one for each substantial patch of ink none of them covers.
+
+    **What this fixes.** `uncovered_ink` has always been able to see content the
+    layout pass missed — it is the only check in the system that can — and until
+    spec 0007 Phase A-1 the only thing done with it was to print a Gap saying so
+    and carry on. On `receipt_0010` that meant keeping the header and dropping
+    everything from the first line item to the barcode, 77 of 103 tokens, under
+    a finding that called it a possible mark. The ink was found. Nothing read it.
+
+    **The repair is to ask, not to assume.** A recovered box becomes an ordinary
+    Zone with a placeholder Kind, so `_classify` decides what it is from its own
+    crop and an Extractor reads it, exactly as for a detected region. Nothing
+    here judges content.
+
+    Five guards, each refusing in the direction that costs least:
+
+    - `uncovered_regions`' own `MIN_GAP_AREA`, which is what separates a patch
+      from a stray word.
+    - `MIN_RECOVERED_INK` and `MIN_RECOVERED_PX`, which together are the
+      difference between a block somebody missed and the two-pixel overflow of
+      glyphs whose bodies are inside a neighbouring crop.
+    - `MAX_RECOVERED_SHARE`, so a box that is the page is not mistaken for a
+      region of it.
+    - `MAX_RECOVERED`, so a detector that failed wholesale is reported rather
+      than papered over.
+    - **Bands must stay valid.** The combined boxes are renumbered by
+      `bands_from_boxes` and validated; a recovered box that cannot sit in a
+      legal Band is dropped — the one holding least ink first — until the rest
+      can. A Zone recovered at the cost of invalidating the page's whole Band
+      structure is not a repair.
+
+    Returns the Zones unchanged when nothing qualifies, which is the normal
+    answer on a page the detector covered — all five original documents.
+    """
+    boxes = [zone.bbox for zone in zones if zone.bbox is not None]
+    if len(boxes) != len(zones) or not zones:
+        # Nothing to subtract from, so nothing here can be called uncovered.
+        return zones
+
+    height = image.shape[0]
+    found = [
+        (box, share) for box, share in uncovered_regions(image, boxes)
+        if (box.right - box.left) * (box.bottom - box.top) <= MAX_RECOVERED_SHARE
+        and share >= MIN_RECOVERED_INK
+        and (box.bottom - box.top) * height >= MIN_RECOVERED_PX
+    ]
+    # Ranked by the ink each holds rather than by area, so the ceiling keeps the
+    # regions that carry the most content and not the ones that are widest.
+    found.sort(key=lambda item: item[1], reverse=True)
+    candidates = [box for box, _ in found[:MAX_RECOVERED]]
+
+    while candidates:
+        combined = zones + [
+            Zone(kind=Kind.PROSE, role=Role.BODY, bbox=box) for box in candidates
+        ]
+        placed = bands_from_boxes([zone.bbox for zone in combined
+                                   if zone.bbox is not None])
+        renumbered = [
+            replace(zone, band=band, column=column)
+            for zone, (band, column) in zip(combined, placed)
+        ]
+        # A recovered Zone landing in Band 0 is a header, matching
+        # `detector._role`'s rule that the top Band of a page is its header.
+        # Only ever a promotion: a detected Zone that keeps a Role it was given
+        # by its own class name keeps it, because that reading is better
+        # evidence than a Band index. Role is a CSS class in `render.py` and
+        # nothing navigates by it, so little rests on either.
+        renumbered = [
+            replace(zone, role=Role.HEADER if zone.band == 0 else zone.role)
+            if zone.role is Role.BODY else zone
+            for zone in renumbered
+        ]
+        try:
+            validate_bands(renumbered)
+        except MappingError as exc:
+            log.info("a recovered region cannot sit in a valid Band (%s), so "
+                     "the one holding least ink is dropped and the rest "
+                     "retried", exc)
+            candidates.pop()
+            continue
+        return renumbered
+    return zones
+
+
+SHORTFALL_RATIO = 0.6
+"""How much of a crop's printed lines a reading may fail to return before the
+Zone is reported as read short.
+
+**Deliberately coarse, and coarse in one direction.** `printed_lines` counts
+bands of ink and a reading counts rows, pairs or lines, and the two disagree
+honestly all the time: a wrapped table cell is two printed lines in one row, a
+caption is a line that is no row at all, and a `pairs` region puts a label and
+its value on one line. Every one of those makes the reading look short when it
+is not. So this is set where only a gross shortfall survives — a reading that
+returned less than three fifths of what is printed, and at least
+`SHORTFALL_LINES` lines fewer.
+
+The number it exists to catch is not near the boundary: `statement_0006`'s
+discarded table was 36 rows against 2, and `darkdeck_0009` was a whole page
+against one Zone's worth. A finding that fires on a wrapped cell would be a
+finding nobody reads.
+"""
+
+SHORTFALL_LINES = 2
+"""And at least this many lines short, so a one-line disagreement cannot trip it.
+
+**Two rather than three, and the measurement that moved it.** On the A-1 smoke
+run over `darkdeck_0009`, taken 2026-09-19, the per-Zone counts were within one
+line either way on ten of thirteen Zones — Zones 0 and 3 read *more* lines than
+are printed, which is what a wrapped line looks like from this side — and Zone 4
+read **one of its three**. At three lines short that Zone said nothing and the
+document lost 7% of its tokens in silence; at two it declares itself.
+
+One line short stays invisible on purpose. The counts genuinely disagree by one
+in both directions, so a finding there would fire on correct readings, and a
+list of findings that includes correct readings is a list nobody finishes.
+"""
+
+
+def read_lines(zone: Zone) -> int:
+    """How many lines of content this Zone's reading came back with.
+
+    Counted per Kind because the Kinds count differently, and a Title counts as
+    the printed line it is: `printed_lines` sees it, so a comparison that did
+    not would report every captioned Zone as one line short.
+    """
+    lines = 1 if zone.title else 0
+    if zone.kind is Kind.TABLE:
+        return lines + len(zone.rows)
+    if zone.kind is Kind.PAIRS:
+        return lines + len(zone.pairs)
+    return lines + sum(len(block.lines) for block in zone.blocks)
+
+
+def shortfall(image: ImageArray, zone: Zone, index: int) -> Shortfall | None:
+    """Whether this Zone was read short of what is printed in it.
+
+    The honesty rule's last mile, and the only check in the system that can see
+    a Zone which was read, marked complete, and came back holding a fraction of
+    its own crop. Everything else reasons from the answer outward, so a reading
+    that dropped thirty rows is internally consistent with itself.
+
+    **`figure` Zones are exempt, and that is not a loophole.** A Graphic's
+    wordmark is part of the artwork and is deliberately not read — see
+    `wire.MARKS` — so a logo tile reads as several printed lines and zero
+    content by design. Flagging it would put a finding on correct behaviour, and
+    a finding that fires on correct behaviour is how the whole list stops being
+    read.
+
+    An incomplete Zone is exempt too: it already has a Failure naming it, and
+    two findings for one loss is one finding too many.
+    """
+    if zone.kind is Kind.FIGURE or not zone.complete or zone.bbox is None:
+        return None
+    printed = printed_lines(zone_pixels(image, zone))
+    got = read_lines(zone)
+    if printed - got < SHORTFALL_LINES or got >= SHORTFALL_RATIO * printed:
+        return None
+    return Shortfall(
+        zone_index=index, kind=zone.kind.value,
+        printed_lines=printed, read_lines=got,
+        ink_share=ink_share(image, zone.bbox),
+    )
+
+
 def empty_zone(image: ImageArray, zone: Zone) -> EmptyZone | None:
     """Whether this Zone's crop is blank, and so holds nothing to classify.
 
@@ -409,6 +655,15 @@ class Conversion:
     Orchestrator's: it owns the Rectified Image and the Trace, so measuring once
     here is what keeps the number in the prompt and the number in `trace.json`
     provably the same one. See `config.DEFAULT_LAYOUT_REGION_HINT`.
+    """
+
+    cover_the_page: bool = field(default_factory=lambda: load().cover_the_page)
+    """Whether `_layout` gives uncovered ink a Zone of its own.
+
+    Resolved per Conversion for the same reason as `snap_zones` above, and it
+    lives here rather than on the Engine because the measurement is the
+    Orchestrator's: it owns the Rectified Image and the Trace. See
+    `config.DEFAULT_COVER_THE_PAGE` and `recovered_zones`.
     """
 
     caption_pass: bool = field(default_factory=lambda: load().caption_pass)
@@ -582,6 +837,8 @@ class Conversion:
         if overrun or failure:
             zones = self._layout_again(rectified, document, ceiling, failure)
 
+        zones = self._cover_the_page(rectified, zones)
+
         if self.snap_zones:
             log.info("DTH_SNAP_ZONES is on: moving %d boxes onto their ink", len(zones))
             before = [_box_data(zone) for zone in zones]
@@ -612,6 +869,47 @@ class Conversion:
                        "as returned",
             )
         document.zones = zones
+
+    def _cover_the_page(self, rectified: Rectified,
+                        zones: list[Zone]) -> list[Zone]:
+        """Give ink no detected box covers a Zone of its own. See `recovered_zones`.
+
+        Runs before the snap rather than after it, so a recovered box is snapped
+        onto its own ink by the same pass that snaps every other box — one place
+        that moves a box onto its ink, not two.
+
+        Recorded either way, like `_region_ceiling`: a step that ran and found
+        nothing and a step that was switched off are different facts, and a
+        Conversion that lost content needs to be able to say which.
+        """
+        if not self.cover_the_page:
+            self.trace.record(
+                Stage.LAYOUT, "cover_the_page", Disposition.SKIPPED,
+                enabled=False,
+                reason="DTH_COVER_THE_PAGE is off, so ink outside every "
+                       "detected box is reported as a Gap and not read",
+            )
+            return zones
+
+        before = [_box_data(zone) for zone in zones]
+        started = time.perf_counter()
+        covered = recovered_zones(rectified.image, zones)
+        gained = len(covered) - len(zones)
+        if gained:
+            log.info("DTH_COVER_THE_PAGE is on: %d region(s) of ink no detected "
+                     "box covers became Zones", gained)
+        self.trace.record(
+            Stage.LAYOUT, "cover_the_page",
+            Disposition.OVERRIDDEN if gained else Disposition.KEPT,
+            seconds=time.perf_counter() - started,
+            enabled=True, recovered=gained,
+            before=before, after=[_box_data(zone) for zone in covered],
+            reason=None if gained else (
+                "every patch of ink is inside a detected box, or none that is "
+                "not could be placed in a valid Band"
+            ),
+        )
+        return covered
 
     def _layout_again(self, rectified: Rectified, document: Document,
                       ceiling: int | None, failure: Exception | None) -> list[Zone]:
@@ -843,7 +1141,10 @@ class Conversion:
                                 "no question to ask about this Zone",
                 )
                 self.unclassified.add(index)
-                self.classification_failures.append(failed(index, zone, error))
+                self.classification_failures.append(
+                    failed(index, zone, error,
+                           share=_share_of(rectified.image, zone))
+                )
                 continue
 
             classified = document.zones[index]
@@ -913,13 +1214,19 @@ class Conversion:
                 try:
                     self._reread_as_prose(rectified, document, index, diagnosis)
                 except Exception as error:
-                    document.failures.append(failed(index, zone, error))
+                    document.failures.append(
+                        failed(index, zone, error,
+                               share=_share_of(rectified.image, zone))
+                    )
                     continue
             except Exception as error:
                 self._record_extract(index, asked, extractor, rectified, zone,
                                      mark, started, Disposition.REJECTED,
                                      error=f"{type(error).__name__}: {error}")
-                document.failures.append(failed(index, zone, error))
+                document.failures.append(
+                    failed(index, zone, error,
+                           share=_share_of(rectified.image, zone))
+                )
                 continue
             else:
                 self._record_extract(index, asked, extractor, rectified, zone,
@@ -934,6 +1241,50 @@ class Conversion:
                     Stage.EXTRACT, "resolution_caveat", Disposition.ACCEPTED,
                     zone_index=index, kind=zone.kind.value, note=note,
                 )
+
+            # A table whose rows were reconciled against its header says so.
+            # Read back off the IR rather than reported out of `wire.py` — see
+            # `wire.table_repairs` for why that seam stays where it is.
+            for repair in table_repairs(zone) if zone.kind is Kind.TABLE else []:
+                document.caveats.append(
+                    Caveat(zone_index=index, kind=zone.kind.value, note=repair)
+                )
+                self.trace.record(
+                    Stage.EXTRACT, "table_repair", Disposition.ACCEPTED,
+                    zone_index=index, kind=zone.kind.value, note=repair,
+                )
+
+        self._measure_shortfalls(rectified, document)
+
+    def _measure_shortfalls(self, rectified: Rectified,
+                            document: Document) -> None:
+        """Which Zones came back holding less than their own crop.
+
+        **Over every complete Zone, not only the ones this round extracted.**
+        The loop above skips a Zone that is already complete, so computing this
+        inside it would record a shortfall on round one and lose it on round
+        two — the same shape as the bug `classification_failures` exists to
+        avoid, and invisible today only because an unattended Conversion
+        converges in one round. A finding that disappears when a later round
+        happens to run is worse than one that was never made, because the run it
+        vanishes from is the run somebody trusted.
+        """
+        document.shortfalls = []
+        for index, zone in enumerate(document.zones):
+            short = shortfall(rectified.image, zone, index)
+            if short is None:
+                continue
+            document.shortfalls.append(short)
+            self.trace.record(
+                Stage.EXTRACT, "shortfall", Disposition.REJECTED,
+                zone_index=index, kind=zone.kind.value,
+                printed_lines=short.printed_lines,
+                read_lines=short.read_lines,
+                ink_share=short.ink_share,
+                consequence="the Zone was read, and read short: the finding "
+                            "says so rather than the render quietly holding "
+                            "less than the page",
+            )
 
     def _record_extract(self, index: int, asked: str, extractor: object,
                         rectified: Rectified, zone: Zone, mark: int,
@@ -1067,12 +1418,27 @@ class Conversion:
         """
         boxes = [zone.bbox for zone in document.zones if zone.bbox is not None]
         # The note says how the finding was made, because that is what bounds
-        # how far to trust it. `_findings` already prints that something lies
-        # outside every Zone; what it cannot say is that a threshold on dark
-        # pixels found it, and so this may be a Mark rather than lost content.
+        # how far to trust it — a threshold on dark pixels found this, so a
+        # small patch may be a Mark rather than lost content.
+        #
+        # **And it says how much, which it did not until spec 0007 Phase A-1.**
+        # The old note was "found by ink coverage, so it may be a mark" at every
+        # size, and on `receipt_0010` that sentence stood over three quarters of
+        # the document. A hedge that is right about a stray glyph is a lie about
+        # a page, so the hedge is now attached to the size it is true of.
+        # The share is of the *uncovered ink*, not of the rectangle. Asked about
+        # the rectangle, `receipt_0010`'s grouped edge scraps come back as the
+        # whole page holding 100% of its ink — a finding that would be false in
+        # the one direction this phase exists to prevent.
         document.gaps = [
-            Gap(bbox=box, note="found by ink coverage, so it may be a mark")
-            for box in uncovered_ink(rectified.image, boxes)
+            Gap(bbox=box, ink_share=share,
+                note=(
+                    f"{share * 100:.1f}% of this page's printed ink is in here "
+                    + ("— far too much to be a mark, so this is content nothing "
+                       "read" if share >= GAP_IS_CONTENT else
+                       "— found by ink coverage, so it may be a mark")
+                ))
+            for box, share in uncovered_regions(rectified.image, boxes)
         ]
 
     def _climb_ladders(self, rectified: Rectified, document: Document) -> None:

@@ -182,9 +182,15 @@ class TestTheOrchestratorRecordsWhatItDid:
 
     def test_a_rejected_extraction_records_the_rule_that_rejected_it(self) -> None:
         """The message is the finding. A Zone that renders as a skeleton with
-        "MappingError" and no rule is exactly the dead end this closes."""
-        engine = Answers(table='{"rows": [{"role": "header", "cells": ["a", "b"]},'
-                               ' {"role": "data", "cells": ["1"]}]}')
+        "MappingError" and no rule is exactly the dead end this closes.
+
+        The provocation is an *empty* answer rather than a narrow row: spec 0007
+        Phase A-1 reconciles a row against its header instead of rejecting the
+        Zone, so a narrow row no longer reaches this path. What is pinned here
+        is the contract — a rejection names its rule and the pixels it was given
+        — and the Zone with no rows at all is the one that still fails loudly.
+        """
+        engine = Answers(table='{"rows": []}')
         run = conversion(engine)
         run.classification_ran = True
         document = Document(source=source())
@@ -194,8 +200,28 @@ class TestTheOrchestratorRecordsWhatItDid:
 
         event = next(e for e in run.trace.events if e.step == "extract")
         assert event.disposition is Disposition.REJECTED
-        assert "header has 2" in event.data["error"]
+        assert "no rows" in event.data["error"]
         assert event.data["crop"]["width"] > 0, "which pixels it was given"
+
+    def test_a_reconciled_table_row_is_recorded_as_a_repair(self) -> None:
+        """The row survives, and the Trace says it was patched to get there.
+
+        The other half of the change above. A repair nobody records is a repair
+        that becomes indistinguishable from a clean read the moment the run is
+        over, and this one moves values between columns.
+        """
+        engine = Answers(table='{"rows": [{"role": "header", "cells": ["a", "b"]},'
+                               ' {"role": "data", "cells": ["1"]}]}')
+        run = conversion(engine)
+        run.classification_ran = True
+        document = Document(source=source())
+        document.zones = one_zone(Kind.TABLE)
+
+        run._extract(rectified(), document)
+
+        event = next(e for e in run.trace.events if e.step == "table_repair")
+        assert "short of the header" in event.data["note"]
+        assert [c.text for c in document.zones[0].rows[1].cells] == ["1", ""]
 
     def test_the_reroute_reads_as_two_steps_in_sequence(self) -> None:
         """Cause and effect, in the order they happened. One merged entry would

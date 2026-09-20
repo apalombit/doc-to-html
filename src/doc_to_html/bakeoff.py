@@ -183,6 +183,16 @@ class Attempt:
     judgement is `scoring.score_document()`'s and appears in `report.html`."""
 
     caveats: list[str] = field(default_factory=list)
+
+    shortfalls: list[str] = field(default_factory=list)
+    """Zones that were read and came back holding less than their own crop.
+
+    Kept apart from `failures`, which have no content, and from `caveats`, which
+    are a qualifier on content that arrived. This is content that did not, on a
+    Zone nothing else in the run complains about — spec 0007 Phase A-1's honesty
+    rule, and the reason `verdict` below can no longer say "converted" and stop
+    there."""
+
     answers: list[tuple[str, str, str]] = field(default_factory=list)
     html: str | None = None
     """The document as it actually rendered, when the Conversion got that far.
@@ -230,6 +240,8 @@ class Attempt:
             return "error"
         if self.failures:
             return f"{len(self.failures)} zone(s) unread"
+        if self.shortfalls:
+            return f"{len(self.shortfalls)} zone(s) read short"
         return "converted"
 
 
@@ -413,6 +425,13 @@ def run(models: Iterable[str], corpus: dict[str, Path],
                 # slice stitching is not built, which is this project's limitation
                 # and not the model's.
                 attempt.caveats = [c.note for c in actual.caveats]
+                attempt.shortfalls = [
+                    f"zone {short.zone_index} ({short.kind}): "
+                    f"{short.printed_lines} printed lines, "
+                    f"{short.read_lines} returned, over "
+                    f"{short.ink_share * 100:.0f}% of the page's ink"
+                    for short in actual.shortfalls
+                ]
             except Exception as error:
                 attempt.error = f"{type(error).__name__}: {error}"
             attempt.timings = timing.timings
@@ -517,9 +536,17 @@ def report(attempts: list[Attempt]) -> str:
         for note in attempt.caveats
     ]
 
+    short = [
+        f"  - {attempt.model} / {attempt.fixture}: {note}"
+        for attempt in attempts
+        for note in attempt.shortfalls
+    ]
+
     return "\n\n".join(
         ["Per document", per_document, "Per pass", per_pass, "Per model", summary]
         + (["What did not convert", "".join(details).strip()] if details else [])
+        + (["Read short — content that did not reach the output",
+            "\n".join(short)] if short else [])
         + (["Read with a caveat (this project's limitation, not the model's)",
             "\n".join(caveats)] if caveats else [])
     )
@@ -595,6 +622,7 @@ def main(argv: list[str] | None = None) -> int:
                         for t in a.timings
                     ],
                     "failures": list(a.failures),
+                    "shortfalls": list(a.shortfalls),
                     "resident_mb": a.resident_mb,
                     "error": a.error,
                 }
