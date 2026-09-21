@@ -217,13 +217,41 @@ class TestTextThatCouldBreakThePage:
         assert "<a " not in html
 
 
+def _boxed_sections(html: str) -> list[str]:
+    """The `<section>` tags carrying the boxed class, and nothing else.
+
+    Three other things in a render contain the word: the stylesheet's
+    `section.boxed` rule, the embedded IR's `"boxed"` key, and any Zone Role
+    that happens to share a substring. Matching the tag is the only test that
+    means what it says.
+    """
+    return re.findall(r'<section class="[^"]*\bboxed\b[^"]*"', html)
+
+
 class TestCards:
-    def test_both_cards_are_captioned_panels(self, cards: Document) -> None:
+    def test_both_cards_keep_their_captions(self, cards: Document) -> None:
+        """The caption binding is the thing under test, not the panel.
+
+        This used to also assert the `titled` class that made every captioned
+        Zone a bordered panel; chrome is now measured per Zone rather than
+        implied by having a Title. See `render._zone`.
+        """
         html = render(cards)
         assert html.count('class="zone-title"') == 2
-        assert html.count('class="zone zone-body titled"') == 2
         for title in ("Card heading", "Another card"):
             assert f'<h2 class="zone-title">{title}</h2>' in html
+
+    def test_a_measured_card_is_drawn_and_an_unmeasured_one_is_not(
+            self, cards: Document) -> None:
+        """The same two Zones, once plain and once measured as cards."""
+        assert not _boxed_sections(render(cards))
+        for zone in cards.zones:
+            zone.boxed, zone.fill = True, (240, 240, 240)
+        html = render(cards)
+        # Every Zone, not only the captioned ones — a card is a card whether or
+        # not it has a heading, which is the coupling this change breaks.
+        assert len(_boxed_sections(html)) == len(cards.zones)
+        assert html.count("background:rgb(240,240,240)") == len(cards.zones)
 
 
 def _source() -> object:

@@ -78,9 +78,23 @@ class TestLargeTable:
 
 class TestCards:
     def test_card_headings_are_titles(self, css_doc: Document) -> None:
+        """A Title is a Title. It is no longer also a card.
+
+        This used to assert `zone zone-body titled`, the class that turned every
+        captioned Zone into a bordered panel with a shaded bar. That rule drew
+        chrome on roughly ten of the fifteen corpus documents that their sources
+        do not draw — a full-width blue banner across these very cards. The
+        border and the fill now come from `Zone.boxed` / `Zone.fill` /
+        `Zone.title_fill`, measured off the Source Image, and this hand-built
+        Document measures nothing, so it gets none.
+        """
         html = render(css_doc)
         assert html.count('class="zone-title"') == 2
-        assert html.count('class="zone zone-body titled"') == 2
+        # Matched against the markup, not the whole file: the stylesheet
+        # defines `section.boxed`, so a bare substring test always passes.
+        assert 'class="zone zone-body"' in html
+        assert "zone-body titled" not in html
+        assert "zone-body boxed" not in html and "zone-body filled" not in html
 
     def test_a_badge_keeps_its_text(self, css_doc: Document) -> None:
         """Unlike a logo's wordmark, a badge carries text a reader reads."""

@@ -64,9 +64,30 @@ class Rectified:
     """The normalised image and its provenance."""
 
     image: ImageArray
-    """A numpy array (H, W, 3)."""
+    """A numpy array (H, W, 3). Warped, turned over, deskewed, **equalised**
+    and resized — what every reading pass and the model itself are shown."""
 
     source: Source
+
+    plain: ImageArray | None = None
+    """The same pixels in the same geometry, without `equalise`.
+
+    **Colour must be measured here and nowhere else.** `equalise` is CLAHE: it
+    divides lightness by an estimate of the illumination, which is exactly right
+    for making faint type legible and exactly wrong for reading what colour
+    something was. Measured on `darkdeck_0009`'s first KPI card on 2026-09-21:
+    the card stands **31** channel-sum away from its page in the source and
+    **5** after equalisation — under `style.SAME_COLOUR`, so every card on that
+    page read as unfilled. The palette suffers the same way more quietly, the
+    page's true near-black `(18,22,28)` reading as `(0,0,6)`.
+
+    Identical geometry is the point: a Zone's `BBox` indexes either array, so
+    `zone_pixels` can crop one and `style.chrome` measure the other without a
+    second coordinate space to keep in step.
+
+    Optional so a `Rectified` built by hand in a test is still valid; callers
+    fall back to `image`, which is wrong about colour but never absent.
+    """
 
     warped: bool = False
     """Whether a page quadrilateral was found and the page flattened to it.
@@ -1463,6 +1484,11 @@ def rectify(path: Path) -> Rectified:
       5. equalise intensity (CLAHE) to flatten shadows and uneven lighting
       6. resize so the long edge is at most TARGET_LONG_EDGE
 
+    Step 5 is also kept *undone*, in `Rectified.plain`: equalisation is what
+    makes faint type readable and what makes colour unreadable, so the passes
+    that read and the passes that measure colour are given different arrays of
+    the same pixels. See `Rectified.plain` for the measurement.
+
     Step 3 is before both of the steps that follow it, and that order is the
     whole of it: `equalise` divides lightness by an estimate of the illumination
     and blows out a dark page, and every threshold after it reads dark as ink.
@@ -1501,10 +1527,14 @@ def rectify(path: Path) -> Rectified:
         log.info("the page is printed light on dark, so it is turned over "
                  "before equalisation")
         flattened = 255 - flattened
-    rectified = resize_long_edge(equalise(deskew(flattened)), TARGET_LONG_EDGE)
+    straight = deskew(flattened)
+    rectified = resize_long_edge(equalise(straight), TARGET_LONG_EDGE)
+    # Same geometry, none of the photometry. See `Rectified.plain`.
+    plain = resize_long_edge(straight, TARGET_LONG_EDGE)
 
     return Rectified(
         image=rectified,
+        plain=plain,
         warped=quad is not None,
         inverted=inverted,
         source=Source(

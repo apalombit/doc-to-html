@@ -194,6 +194,32 @@ class Zone:
     A decorative rule is not among them: a Separator produces no Zone at all.
     """
 
+    fill: tuple[int, int, int] | None = None
+    """The Zone's own background, where the source draws one. See `style.chrome`.
+
+    `None` means the Zone sits directly on the page, which is what most Zones in
+    the corpus do — so an unmeasured Zone and a plain one render identically,
+    and nothing invents a fill.
+    """
+
+    title_fill: tuple[int, int, int] | None = None
+    """The Title band's own background, where it differs from the Zone's.
+
+    Separate from `fill` because they are separate observations and the
+    renderer got this exact thing wrong: it shaded every Zone Title
+    unconditionally, painting a full-width blue banner across
+    `sample_css_0004`'s cards and heavy grey bars over `receipt_0010`, which
+    draws no fill anywhere on the page.
+    """
+
+    boxed: bool = False
+    """Whether the source draws a rule around this Zone. See `style.chrome`.
+
+    `False` by default for the same reason as `fill`: `render.py` borders every
+    titled Zone unconditionally, and the default must not reintroduce the fault
+    it exists to fix.
+    """
+
     complete: bool = False
     """False while a Zone is detected but not yet extracted.
 
@@ -477,6 +503,12 @@ def _zone(data: dict[str, Any]) -> Zone:
             for b in data.get("blocks", [])
         ],
         graphic_kind=data.get("graphic_kind"),
+        # Named one by one, like every other field here, and the reason is on
+        # record: A-1 shipped a decoder that silently dropped `Gap.ink_share`
+        # because this function builds each object field by field.
+        fill=_colour(data.get("fill")),
+        title_fill=_colour(data.get("title_fill")),
+        boxed=data.get("boxed", False),
         complete=data.get("complete", False),
     )
 

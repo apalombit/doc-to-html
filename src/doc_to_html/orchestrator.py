@@ -753,6 +753,7 @@ class Conversion:
 
         for round_number in range(MAX_ROUNDS):
             self._layout(rectified, document)
+            self._measure_chrome(rectified, document)
             self._classify(rectified, document)
             self._extract(rectified, document)
 
@@ -840,8 +841,13 @@ class Conversion:
             return
 
         started = time.perf_counter()
+        # `plain`, never `image`. See `Rectified.plain`: equalisation is what
+        # makes faint type readable and colour unreadable, and this is the pass
+        # that reads colour.
         measured = style_module.measure(
-            rectified.image, inverted=rectified.inverted
+            rectified.plain if rectified.plain is not None else rectified.image,
+            inverted=rectified.inverted,
+            read=rectified.image,
         )
         document.style = measured
         document.page_px = rectified.source.width
@@ -855,6 +861,57 @@ class Conversion:
             ink=list(measured.ink),
             accent=None if measured.accent is None else list(measured.accent),
             shade=None if measured.shade is None else list(measured.shade),
+        )
+
+    def _measure_chrome(self, rectified: Rectified, document: Document) -> None:
+        """What the source draws around each Zone. See `style.chrome`.
+
+        A *second* style step, after layout rather than with `_measure_style`,
+        and the split is real: the palette is the page's and needs no Zones,
+        while a fill and a border are per-region and need the boxes. Running
+        after `_classify` rather than before it would be wrong in the other
+        direction — the crop is the same either way, and a Kind that changes on
+        a later round must not silently change what colour a card was.
+
+        `title_rows` comes from `caption_band`, which already measures a crop's
+        first printed line for the caption pass. Nothing new is asked of the
+        pixels; the same band that decides whether to *ask* for a Title decides
+        how much of the region the bar could occupy.
+        """
+        if not self.style_record or document.style is None:
+            return
+
+        started = time.perf_counter()
+        measured = 0
+        for index, zone in enumerate(document.zones):
+            if zone.bbox is None:
+                continue
+            # The band is measured on the read image and the colour on the
+            # plain one — the same geometry, so the same crop twice.
+            band = caption_band(zone_pixels(rectified.image, zone))
+            crop = zone_pixels(
+                rectified.plain if rectified.plain is not None else rectified.image,
+                zone,
+            )
+            found = style_module.chrome(
+                crop, ground=document.style.page_bg,
+                inverted=rectified.inverted,
+                title_rows=band.bottom if band is not None and zone.title else 0,
+            )
+            zone.fill, zone.title_fill, zone.boxed = (
+                found.fill, found.title_fill, found.bordered
+            )
+            if found.fill or found.title_fill or found.bordered:
+                measured += 1
+        self.trace.record(
+            Stage.LAYOUT, "zone_chrome", Disposition.ACCEPTED,
+            seconds=time.perf_counter() - started,
+            zones=len(document.zones), with_chrome=measured,
+            detail=[
+                {"zone": i, "fill": z.fill, "title_fill": z.title_fill,
+                 "boxed": z.boxed}
+                for i, z in enumerate(document.zones)
+            ],
         )
 
     def _layout(self, rectified: Rectified, document: Document) -> None:

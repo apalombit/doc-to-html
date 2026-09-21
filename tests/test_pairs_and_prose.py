@@ -8,6 +8,8 @@ attract no Probe at all.
 
 from __future__ import annotations
 
+import re
+
 from pathlib import Path
 
 import pytest
@@ -63,7 +65,12 @@ class TestTitledPanels:
         height; binding it to the block holds regardless."""
         html = render(invoice2)
         for title in ("Company Details", "Customer Details"):
-            panel = html.split(f'<h2 class="zone-title">{title}</h2>')[1]
+            # Matched loosely on purpose. The Title's own tag now carries
+            # whatever chrome was *measured* for that Zone — this page really
+            # does draw grey caption bars, and the detector finds them — so an
+            # exact-string split would be asserting the colour rather than the
+            # binding, which is what this test is about.
+            panel = re.split(rf"<h2[^>]*>{re.escape(title)}</h2>", html)[1]
             assert panel.startswith('<div class="zone-body"><dl class="pairs">')
 
         band = [z for z in invoice2.zones if z.band == 1]

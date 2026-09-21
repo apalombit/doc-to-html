@@ -41,12 +41,15 @@ body { font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 .zone-header { font-size:1.05em; }
 .zone-footer { color:var(--muted); font-size:.875em; }
 h1 { font-size:1.6em; margin:0 0 .35em; letter-spacing:.01em; }
-section.titled { border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
-h2.zone-title { font-size:.95em; font-weight:600; margin:0;
-                padding:.55em .9em; background:var(--shade);
-                border-bottom:1px solid var(--rule); }
-.zone-body { padding:.9em; }
-.zone-body > .table-wrap { margin:-.9em; }
+section.boxed { border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
+section.filled { border-radius:4px; overflow:hidden; }
+h2.zone-title { font-size:.95em; font-weight:600; margin:0; padding:.55em 0; }
+h2.zone-title.barred { padding:.55em .9em; }
+section.boxed > h2.zone-title, section.filled > h2.zone-title { padding:.55em .9em; }
+.zone-body { padding:0; }
+section.boxed > .zone-body, section.filled > .zone-body { padding:.9em; }
+section.boxed > .zone-body > .table-wrap,
+section.filled > .zone-body > .table-wrap { margin:-.9em; }
 blockquote { margin:.6em 0 .3em 1.5em; }
 p.attribution { color:var(--muted); font-size:.85em; margin:0 0 .4em; }
 ul { margin:0 0 .4em; padding-left:1.3em; }
@@ -178,19 +181,35 @@ def _style_css(document: Document) -> str:
         f"--muted:{_mix(style.ink, style.page_bg, 0.33)}",
         f"--rule:{_mix(style.ink, style.page_bg, 0.85)}",
     ]
-    # A page with no measured shade still needs one, because the renderer shades
-    # table header rows whether or not the source does. A whisper of ink into
-    # the ground is the least wrong answer: on a light page it lands near the
-    # #f4f4f4 this replaces, and on a dark one it stays dark.
-    root.append(
-        f"--shade:{_rgb(style.shade) if style.shade is not None else _mix(style.ink, style.page_bg, 0.94)}"
-    )
+    # **`--shade` is derived, never the measured `Style.shade`.** The renderer
+    # shades table header rows whether or not the source does, so the token has
+    # to exist — but filling it with a page-wide measurement puts a colour on
+    # the page that nothing on the page is: `receipt_0010` got heavy beige bars
+    # and `menu_0012` tan ones, on sources with no fill anywhere, and
+    # `cv_0013`'s came out accent blue. Two discriminators were built to tell a
+    # real shaded band from antialiasing and texture — coverage share, and the
+    # longest run of rows that are mostly the colour — and **neither separated
+    # them** on the corpus (`receipt_0010` 2.7% against `invoice_0002`'s real
+    # 1.9%; runs of 0-2 across the board). A-1's rule applies: do not build a
+    # third without a new kind of evidence.
+    #
+    # A whisper of ink into the ground is the least wrong answer — it lands
+    # near the `#f4f4f4` it replaces on a light page and stays dark on a dark
+    # one, and it can never introduce a hue. **The measured fills are not
+    # discarded**: they are per-Zone, they were accurate on `invoice_0002`,
+    # `nonlatin_0014`, `form_0007` and `darkdeck_0009`, and they are emitted as
+    # inline styles by `_inline_style`. Region colour is a region measurement.
+    root.append(f"--shade:{_mix(style.ink, style.page_bg, 0.94)}")
     if style.accent is not None:
+        # Declared and deliberately **not spent**. Every rule tried so far
+        # invented the colour somewhere the source does not put it: colouring
+        # `h1` text turned all of `sample_css_0004`'s dark navy headings blue,
+        # and underlining `h1` instead put three rules on `sample_semantic_0005`
+        # that its source does not draw. The measurement is sound and is in the
+        # IR; where a page *puts* its accent is a detection problem this thread
+        # has not solved. The token stays so a later pass can spend it without
+        # re-measuring, and so the IR and the CSS agree about what was found.
         root.append(f"--accent:{_rgb(style.accent)}")
-        # The one place an accent is spent. A page's accent is most often its
-        # headings, and h1 is the only element guaranteed to be big enough for
-        # the colour to survive antialiasing into the scorer's sample.
-        rules.append("h1 { color:var(--accent); }")
 
     return _wrap(root, rules)
 
@@ -286,17 +305,55 @@ def _findings_block(heading: str, css: str, items: list[str]) -> str:
     )
 
 
-def _zone(zone: Zone, document: Document) -> str:
-    """Render one Zone.
+def _inline_style(zone: Zone) -> str:
+    """A Zone's measured fill, as an inline style.
 
-    A Title turns the Zone into a bordered panel with a shaded title bar. That
-    is not decoration for its own sake: documents that caption a block that way
-    read as panels, and the render is held to matching the original's visual
-    weight even though it matches none of its actual styling.
+    Inline rather than a class, because the colour is per Zone: one document can
+    hold a white card, a grey card and a tinted one, and there is no fixed set
+    of classes that covers what a page might do. The palette-wide values stay in
+    custom properties on `:root`; only what varies Zone by Zone lands here.
     """
-    classes = f"zone zone-{zone.role.value}" + (" titled" if zone.title else "")
+    if zone.fill is None:
+        return ""
+    return f' style="background:{_rgb(zone.fill)}"'
+
+
+def _inline_title_style(zone: Zone) -> str:
+    """The Title bar's measured fill, when the source draws one."""
+    if zone.title_fill is None:
+        return ""
+    return f' style="background:{_rgb(zone.title_fill)}"'
+
+
+def _zone(zone: Zone, document: Document) -> str:
+    """Render one Zone, with the chrome the **source** draws and no other.
+
+    **This used to key off the Title, and that was the fault.** Having a caption
+    turned a Zone into a bordered panel with a shaded title bar, on the
+    reasoning that documents which caption a block that way read as panels.
+    Some do. Most of this corpus does not, and the rule drew a card round every
+    titled Zone on roughly ten documents — a full-width blue banner across
+    `sample_css_0004`'s cards, and heavy grey bars over `receipt_0010`, which
+    draws no fill anywhere on the page. It was invisible in every scored axis
+    and obvious the moment a render was opened beside its source.
+
+    So the border comes from `Zone.boxed`, the panel fill from `Zone.fill` and
+    the bar from `Zone.title_fill` — all three measured off the Source Image by
+    `style.chrome`, all three defaulting to nothing. A Zone nobody measured
+    renders as plain text on the page, which is what the majority of real Zones
+    actually are.
+    """
+    classes = f"zone zone-{zone.role.value}"
+    if zone.boxed:
+        classes += " boxed"
+    elif zone.fill is not None:
+        classes += " filled"
+
+    bar = ' class="zone-title barred"' if zone.title_fill else ' class="zone-title"'
+    style_of = _inline_style(zone)
     title = (
-        f'<h2 class="zone-title">{html.escape(zone.title)}</h2>' if zone.title else ""
+        f"<h2{bar}{_inline_title_style(zone)}>{html.escape(zone.title)}</h2>"
+        if zone.title else ""
     )
 
     if not zone.complete and zone.kind is not Kind.FIGURE:
@@ -315,7 +372,7 @@ def _zone(zone: Zone, document: Document) -> str:
 
     if zone.title:
         body = f'<div class="zone-body">{body}</div>'
-    return f'<section class="{classes}">{title}{body}</section>'
+    return f'<section class="{classes}"{style_of}>{title}{body}</section>'
 
 
 def _numeric_columns(zone: Zone) -> set[int]:

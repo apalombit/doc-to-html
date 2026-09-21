@@ -22,7 +22,7 @@ from doc_to_html.corpus import SOURCES
 from doc_to_html.ir import Document, Kind, Source, Style, Zone
 from doc_to_html.preprocess import rectify
 from doc_to_html.render import render
-from doc_to_html.style import MIN_ACCENT_SHARE, measure, modal
+from doc_to_html.style import MIN_ACCENT_SHARE, dominant, measure, modal
 
 REPO = Path(__file__).resolve().parent.parent
 
@@ -76,10 +76,42 @@ class TestTheModalColour:
         assert modal(np.zeros((0, 3), dtype=np.int64)) == (0, 0, 0)
 
 
+class TestTheDominantColour:
+    """`dominant` is what gets emitted as CSS, and it must be the page's own
+    colour rather than the bucket's floor."""
+
+    def test_a_white_page_is_white_and_not_nearly_white(self) -> None:
+        """Reported from looking at a render beside its source: every white
+        document was being laid on `#f8f8f8`, because `255 // 8 * 8` is 248.
+        Invisible in `background_delta`, obvious on the screen."""
+        assert dominant(np.full((10, 10, 3), 255, dtype=np.uint8)) == (255, 255, 255)
+        assert modal(np.full((10, 10, 3), 255, dtype=np.uint8)) == (248, 248, 248)
+
+    def test_a_black_page_is_black(self) -> None:
+        assert dominant(np.zeros((10, 10, 3), dtype=np.uint8)) == (0, 0, 0)
+
+    def test_the_bucket_still_picks_the_winner(self) -> None:
+        """The bucketing is not abandoned, only stopped from naming the colour:
+        near-identical antialiased shades still count as one, and the winner's
+        own pixels then say what it is."""
+        pixels = np.full((10, 10, 3), 250, dtype=np.int64)
+        pixels[0, 0] = 251
+        pixels[0, 1] = 252   # same bucket as 250, so the ground is one thing
+        pixels[1:4, :] = 10  # a smaller, darker region
+        assert dominant(pixels) == (250, 250, 250)
+
+    def test_no_pixels_is_not_an_exception(self) -> None:
+        assert dominant(np.zeros((0, 3), dtype=np.int64)) == (0, 0, 0)
+
+
 class TestMeasuringAPage:
+    def test_a_white_page_renders_on_white(self) -> None:
+        measured = measure(page((255, 255, 255), [((26, 26, 26), (10, 10, 190, 60))]))
+        assert measured.page_bg == (255, 255, 255)
+
     def test_a_light_page_reads_light(self) -> None:
         measured = measure(page((255, 255, 255), [((26, 26, 26), (10, 10, 190, 60))]))
-        assert measured.page_bg == (248, 248, 248)
+        assert measured.page_bg == (255, 255, 255)
         assert sum(measured.ink) < 120
 
     def test_a_dark_page_read_through_rectification_stays_dark(self) -> None:
@@ -275,24 +307,45 @@ class TestTheRendererReacts:
         assert abs(sum_of(declared["--shade"]) - 0xF4 * 3) < 12  # was #f4f4f4
         assert abs(sum_of(declared["--muted"]) - 0x66 * 3) < 12  # was #666
 
-    def test_an_accent_is_spent_on_the_heading(self) -> None:
+    def test_an_accent_is_declared_and_deliberately_not_spent(self) -> None:
+        """Measured, recorded, and applied to nothing — for now.
+
+        Two spends were tried and both invented the colour somewhere the source
+        does not put it: colouring `h1` text turned all of `sample_css_0004`'s
+        dark navy headings blue, and underlining `h1` instead drew three rules
+        on `sample_semantic_0005` that its source does not have. Where a page
+        puts its accent is a detection problem, not a palette one. The token
+        stays so a later pass can spend it without re-measuring.
+        """
         html = render(document(style=Style(page_bg=(255, 255, 255),
                                            ink=(26, 26, 26),
                                            accent=(11, 87, 208))))
         assert "--accent:rgb(11,87,208)" in html
-        assert "h1 { color:var(--accent); }" in html
+        assert "var(--accent)" not in html.split("</style>")[-1]
+        assert "h1 { color:var(--accent)" not in html
+        assert "border-bottom:2px solid var(--accent)" not in html
 
     def test_a_page_with_no_accent_declares_none(self) -> None:
         html = render(document(style=Style(page_bg=(255, 255, 255),
                                            ink=(26, 26, 26))))
         assert "--accent:rgb" not in html
-        assert "h1 { color:var(--accent); }" not in html
+        assert "var(--accent)" not in html.split("</style>")[-1]
+        assert "border-bottom:2px solid var(--accent)" not in html
 
-    def test_an_unshaded_page_still_gets_a_shade_to_draw_header_rows_with(
-            self) -> None:
-        """The renderer shades table header rows whether or not the source
-        does, so the token has to exist; what it must not be is the fixed light
-        grey on a dark page."""
+    def test_the_shade_token_is_derived_and_never_the_measured_one(self) -> None:
+        """A page-wide shade measurement is not evidence that the page has a
+        fill, and using it as one put beige bars on `receipt_0010` and tan ones
+        on `menu_0012`, whose sources draw no fill anywhere. The token is
+        derived from the measured pair instead — it can never introduce a hue —
+        and real fills travel per Zone, inline. See `render._style_css`."""
+        measured = Style(page_bg=(255, 255, 255), ink=(26, 26, 26),
+                         shade=(185, 166, 137))
+        declared = tokens(render(document(style=measured)))
+        assert declared["--shade"] != "rgb(185,166,137)"
+        red, green, blue = (int(n) for n in re.findall(r"\d+", declared["--shade"]))
+        assert red == green == blue, "a derived shade cannot carry a hue"
+
+    def test_a_dark_page_gets_a_dark_shade(self) -> None:
         declared = tokens(render(document(style=Style(page_bg=(0, 0, 0),
                                                       ink=(192, 200, 216)))))
         assert sum_of(declared["--shade"]) < 120
