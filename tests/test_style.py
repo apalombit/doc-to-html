@@ -4,11 +4,12 @@ Every test here runs offline with no model, which is the point of the thread:
 ADR 0005 measures style from pixels precisely so that it is deterministic and
 testable without Ollama.
 
-**What this increment covers and what it does not.** Palette and page width.
-The type scale is measured and deliberately unshipped — `style.py`'s module
-docstring holds the numbers and the reason — and the border and card detector
-is the next increment, so `section.titled` still cards unconditionally and no
-test here pretends otherwise.
+**What this increment covers and what it does not.** Palette, page width and
+the border finder. The type scale is measured and deliberately unshipped —
+`style.py`'s module docstring holds the numbers and the reason.
+
+The border finder's one end-to-end test, through a real Conversion, lives in
+`tests/test_list_and_figure.py::TestCards` beside the render it has to reach.
 """
 
 from __future__ import annotations
@@ -18,11 +19,19 @@ from pathlib import Path
 
 import numpy as np
 
-from doc_to_html.corpus import SOURCES
-from doc_to_html.ir import Document, Kind, Source, Style, Zone
+from doc_to_html.corpus import SOURCES, SWEEP
+from doc_to_html.ir import BBox, Document, Kind, Source, Style, Zone
 from doc_to_html.preprocess import rectify
 from doc_to_html.render import render
-from doc_to_html.style import MIN_ACCENT_SHARE, dominant, measure, modal
+from doc_to_html.style import (
+    MIN_ACCENT_SHARE,
+    box_around,
+    chrome,
+    dominant,
+    measure,
+    modal,
+    rectangles,
+)
 
 REPO = Path(__file__).resolve().parent.parent
 
@@ -359,3 +368,195 @@ class TestTheRendererReacts:
                                            ink=(26, 26, 26))))
         assert '<div class="doc">' in html
         assert "<section" in html
+
+
+# --- the border finder ------------------------------------------------------
+
+
+def sheet(width: int = 400, height: int = 400,
+          ground: tuple[int, int, int] = (255, 255, 255)) -> np.ndarray:
+    image = np.full((height, width, 3), 0, dtype=np.uint8)
+    image[:, :] = ground[::-1]
+    return image
+
+
+def draw_box(image: np.ndarray, box: tuple[int, int, int, int],
+             rule: tuple[int, int, int] = (225, 232, 237),
+             fill: tuple[int, int, int] | None = None,
+             thickness: int = 1) -> None:
+    """A rule around a rectangle, optionally over a fill, in the real colours.
+
+    `#e1e8ed` on `#f7f9fb` is `sample_css_0004`'s actual card: the rule's grey
+    is 230, well above `preprocess.INK_LEVEL`, so it is not ink and never
+    reaches the mask the Zone box is snapped against.
+    """
+    left, top, right, bottom = box
+    if fill is not None:
+        image[top:bottom, left:right] = fill[::-1]
+    for t in range(thickness):
+        image[top + t, left:right] = rule[::-1]
+        image[bottom - 1 - t, left:right] = rule[::-1]
+        image[top:bottom, left + t] = rule[::-1]
+        image[top:bottom, right - 1 - t] = rule[::-1]
+
+
+def write_text(image: np.ndarray, rows: list[tuple[int, int, int]]) -> None:
+    """Dark bars standing in for lines of type."""
+    for top, left, right in rows:
+        image[top:top + 6, left:right] = (26, 26, 26)
+
+
+class TestFindingTheDrawnBoxes:
+    """A rule is a property of the page, not of a Zone's crop.
+
+    The crop is snapped onto content ink and `preprocess.content_ink` deletes
+    separators from that mask by name — "a horizontal rule, a panel border, a
+    column divider" — so the rule is not merely outside the box, it is
+    invisible to the thing that placed the box.
+    """
+
+    def test_a_drawn_card_is_found_where_it_is_drawn(self) -> None:
+        image = sheet()
+        draw_box(image, (40, 40, 360, 200), fill=(247, 249, 251))
+        write_text(image, [(70, 60, 300), (90, 60, 250)])
+
+        found = rectangles(image, ground=(255, 255, 255))
+
+        assert len(found) == 1
+        box = found[0]
+        assert box.left * 400 == 40 and box.top * 400 == 40
+        assert round(box.right * 400) == 360 and round(box.bottom * 400) == 200
+
+    def test_a_rectangle_bigger_than_the_page_guard_is_the_page(self) -> None:
+        """`invoice_0001`'s only drawn box is the frame round the whole
+        invoice, at 0.981 of the page. Unguarded, every Zone on that page sits
+        inside it and every Zone is a card."""
+        image = sheet()
+        draw_box(image, (4, 4, 396, 396))
+        write_text(image, [(60, 40, 300)])
+
+        assert rectangles(image, ground=(255, 255, 255)) == ()
+
+    def test_a_tick_box_is_drawn_and_is_not_a_panel(self) -> None:
+        """`form_0007` draws 30 full boxes and 16 are checkboxes and
+        single-character cells. Reporting them would card every tick."""
+        image = sheet()
+        draw_box(image, (40, 40, 54, 54))
+
+        assert rectangles(image, ground=(255, 255, 255)) == ()
+
+    def test_prose_is_not_a_rectangle(self) -> None:
+        """What separates a card from a block of text, with no second
+        detector: a paragraph's bounding box has ink on a small fraction of
+        each edge, and `_bordered` wants 80%."""
+        image = sheet()
+        write_text(image, [(60 + n * 20, 40, 340 - (n % 3) * 40) for n in range(8)])
+
+        assert rectangles(image, ground=(255, 255, 255)) == ()
+
+    def test_two_cards_do_not_weld_into_one(self) -> None:
+        image = sheet(height=500)
+        draw_box(image, (40, 40, 360, 200), fill=(247, 249, 251))
+        draw_box(image, (40, 230, 360, 400), fill=(247, 249, 251))
+
+        assert len(rectangles(image, ground=(255, 255, 255))) == 2
+
+    def test_a_dark_page_is_measured_on_its_own_polarity(self) -> None:
+        """`darkdeck_0009` and `cv_0013` are printed light on dark, and
+        `rectify` turns them over before anything downstream sees them."""
+        image = sheet(ground=(18, 22, 28))
+        draw_box(image, (40, 40, 360, 200), rule=(70, 78, 90),
+                 fill=(30, 36, 44))
+        turned = 255 - image
+
+        found = rectangles(turned, ground=(18, 22, 28), inverted=True)
+
+        assert len(found) == 1
+
+
+class TestGivingAZoneItsBox:
+    def test_the_smallest_containing_rectangle_wins(self) -> None:
+        """A card inside a panel inside a page is three containers and only
+        the nearest one is this Zone's own chrome."""
+        outer = BBox(0.0, 0.0, 1.0, 1.0)
+        inner = BBox(0.1, 0.1, 0.5, 0.5)
+        zone = BBox(0.2, 0.2, 0.3, 0.3)
+
+        assert box_around(zone, (outer, inner)) == inner
+
+    def test_a_zone_no_rectangle_holds_gets_none(self) -> None:
+        assert box_around(BBox(0.6, 0.6, 0.9, 0.9),
+                          (BBox(0.1, 0.1, 0.5, 0.5),)) is None
+
+    def test_a_zone_straddling_two_cards_is_not_boxed(self) -> None:
+        left = BBox(0.05, 0.1, 0.45, 0.9)
+        right = BBox(0.55, 0.1, 0.95, 0.9)
+
+        assert box_around(BBox(0.1, 0.2, 0.9, 0.8), (left, right)) is None
+
+    def test_a_zone_snapped_a_pixel_outside_its_rounded_corner_keeps_it(self) -> None:
+        card = BBox(0.10, 0.10, 0.50, 0.50)
+
+        assert box_around(BBox(0.099, 0.10, 0.50, 0.50), (card,)) == card
+
+
+class TestChromeNoLongerGuessesABorder:
+    def test_a_tight_line_of_type_is_not_a_bordered_region(self) -> None:
+        """Asking a crop directly was not merely blind, it was wrong: a crop
+        cut tight around one line of type has ink on all four of its edges."""
+        line = np.full((8, 120, 3), 255, dtype=np.uint8)
+        line[1:7, 2:118] = 26
+
+        assert chrome(line, ground=(255, 255, 255)).bordered is False
+
+    def test_what_the_page_found_is_what_is_reported(self) -> None:
+        plain = np.full((40, 200, 3), 255, dtype=np.uint8)
+
+        assert chrome(plain, ground=(255, 255, 255), bordered=True).bordered
+        assert not chrome(plain, ground=(255, 255, 255)).bordered
+
+
+class TestFindingBoxesInTheCorpus:
+    """Synthetic pages cannot fail the way a real one can, and the fault this
+    increment replaces was a detector that answered zero on all fifteen."""
+
+    def test_the_carded_documents_get_their_cards(self) -> None:
+        for name, expected in (("sample_css_0004", 2), ("darkdeck_0009", 5),
+                               ("nonlatin_0014", 2), ("catalogue_0015", 9)):
+            rectified = rectify(REPO / SOURCES[name].png)
+            plain = rectified.plain if rectified.plain is not None \
+                else rectified.image
+            ground = measure(plain, inverted=rectified.inverted).page_bg
+            found = rectangles(plain, ground=ground,
+                               inverted=rectified.inverted)
+            assert len(found) == expected, f"{name}: {len(found)} rectangles"
+
+    def test_documents_that_draw_no_box_get_none(self) -> None:
+        """The failure mode this replaces went the other way — the old
+        `section.titled` rule carded roughly ten of fifteen documents whose
+        sources draw nothing of the kind."""
+        for name in ("sample_table_0003", "statement_0006", "receipt_0010",
+                     "menu_0012", "cv_0013", "report_0011",
+                     "newsletter_0008", "sample_semantic_0005"):
+            rectified = rectify(REPO / SOURCES[name].png)
+            plain = rectified.plain if rectified.plain is not None \
+                else rectified.image
+            ground = measure(plain, inverted=rectified.inverted).page_bg
+            found = rectangles(plain, ground=ground,
+                               inverted=rectified.inverted)
+            assert found == (), f"{name}: invented {len(found)} rectangles"
+
+    def test_every_sweep_document_is_covered_by_one_of_those_lists(self) -> None:
+        """So a document added to the corpus cannot quietly go unchecked."""
+        carded = {"sample_css_0004", "darkdeck_0009", "nonlatin_0014",
+                  "catalogue_0015"}
+        plain_pages = {"sample_table_0003", "statement_0006", "receipt_0010",
+                       "menu_0012", "cv_0013", "report_0011",
+                       "newsletter_0008", "sample_semantic_0005"}
+        # invoice_0001 is the page-guard case and invoice_0002 and form_0007
+        # are counted in the run report rather than pinned here: form_0007
+        # finds 13 of its 14 in-range boxes and that number is a measurement,
+        # not a target.
+        known = carded | plain_pages | {"invoice_0001", "invoice_0002",
+                                        "form_0007"}
+        assert set(SWEEP) - known == set()

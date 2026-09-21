@@ -17,8 +17,19 @@ the original polarity back.
 
 ## What is here, and what is deliberately not
 
-Here: ground, ink, accent and shade. Each is a modal colour over a class of
-pixel, which is the cheapest honest statement about a page's palette.
+Here: ground, ink, accent and shade — each a modal colour over a class of
+pixel, which is the cheapest honest statement about a page's palette — and per
+region, its fill, its Title bar and whether the page draws a box around it.
+
+**A border is found on the page, never grown from a Zone.** `rectangles()`
+reads every drawn rectangle off the whole page and `box_around` says which
+Zone each one belongs to. The obvious alternative — dilate a Zone's crop until
+its rule comes into view — was measured on 2026-09-21 and cannot work: the
+Zone's box has been snapped onto its *content* ink, `preprocess.content_ink`
+deletes panel borders from that mask by name, and on `sample_css_0004` the
+snapped box sits up to 256px inside its card because the text does not reach
+the card's right edge. See `rectangles()` for the numbers and the corpus
+result.
 
 **Not here yet: the type scale.** It was measured across the corpus on
 2026-09-20 and it is not safe to ship. Ink-band height tracks the true CSS font
@@ -42,8 +53,8 @@ from typing import Any
 
 import numpy as np
 
-from .ir import Style
-from .preprocess import ImageArray, content_ink
+from .ir import BBox, Style
+from .preprocess import ImageArray, _cv2, content_ink
 
 BUCKET = 8
 """How coarsely a colour is rounded before the modal one is counted.
@@ -299,6 +310,44 @@ by a pixel is still a card, and requiring all four made `sample_css_0004`'s two
 cards read as none. Two would accept an L of rules that nobody drew as a box.
 """
 
+PAGE_SHARE = 0.80
+"""A rectangle covering more than this much of the page **is** the page.
+
+Re-measured 2026-09-21, and the guard earns its place on the corpus as it
+stands: `invoice_0001`'s only drawn box is `div.invoice-box` at **0.981** of
+the page — the frame around the whole invoice. Unguarded, every Zone on that
+page sits inside it and every Zone is a card.
+
+The figure was carried in this project's documents for a year as a result to
+cite, attached to a finder that **was never in the tree**. It is a re-measured
+number now, on this corpus, in this sitting.
+"""
+
+MIN_RECT_SHARE = 0.004
+"""Smaller than this much of the page is not a panel.
+
+`form_0007` draws 30 full boxes and 16 of them are `span.tick` checkboxes and
+single-character entry cells at 0.000-0.001 of the page. They are *drawn* and
+they are not containers: reporting them as Zone chrome would card every tick
+box on the form. The fourteen `div.box` fields sit at 0.011-0.023, well clear.
+"""
+
+CONTAINED = 0.98
+"""How much of a Zone must sit inside a rectangle for that rectangle to be its
+box.
+
+Not 1.0: a Zone snapped onto its ink can end a pixel outside a rounded corner,
+and a Zone must not lose its card to antialiasing.
+"""
+
+CLOSE_PX = 3
+"""Kernel for closing a rule broken by antialiasing before components are taken.
+
+A 1px `#e1e8ed` border on `#f7f9fb` is not a solid run of identical pixels; it
+is a run with gaps where the renderer softened it. Three is enough to bridge
+them and too small to weld two adjacent cards into one.
+"""
+
 
 @dataclass
 class Chrome:
@@ -365,8 +414,88 @@ def _bordered(pixels: Any, fill: tuple[int, int, int]) -> bool:
     return drawn >= BORDER_EDGES
 
 
+def rectangles(image: ImageArray, *, ground: tuple[int, int, int],
+               inverted: bool = False) -> tuple[BBox, ...]:
+    """Every box the page draws, as normalised rectangles.
+
+    **Found on the page, never grown from a Zone.** The obvious first attempt —
+    dilate a Zone's crop by a few pixels until its rule comes into view — was
+    measured on 2026-09-21 and cannot work. `DTH_SNAP_ZONES` snaps a box onto
+    its *content* ink, and `preprocess.content_ink` deletes separators from the
+    mask by name ("a horizontal rule, a panel border, a column divider"), so
+    the rule is not merely outside the box, it is invisible to the thing that
+    placed the box. On `sample_css_0004`'s two cards `_bordered` answers
+    **True** on the card's own rectangle and **False** on the snapped box, and
+    the inset is L21 T58 R124 B38 and L21 T58 R256 B37 — the text simply does
+    not reach the card's right edge. No dilation reaches 256px without
+    swallowing the neighbouring column.
+
+    So: threshold everything that is not the page, close the antialiasing gaps
+    in a 1px rule, take connected components, and keep a component whose
+    bounding box is between `MIN_RECT_SHARE` and `PAGE_SHARE` of the page and
+    whose edges pass `_bordered`. Text fails that last test — a paragraph's
+    bounding box has ink on a small fraction of each edge — which is what
+    separates a card from a block of prose without a second detector.
+
+    Measured over the fifteen documents against the drawn boxes read out of
+    each source with `getComputedStyle`: exact on `invoice_0002` (5),
+    `sample_css_0004` (2), `darkdeck_0009` (5), `nonlatin_0014` (2) and
+    `catalogue_0015` (9); 13 of `form_0007`'s 14 in-range boxes; and **zero on
+    all eight documents that draw none**. On the ten documents whose HTML and
+    screenshot agree exactly, every match is IoU 0.91 or better.
+    """
+    cv2 = _cv2()
+    pixels = np.asarray(image, dtype=np.int64)
+    if pixels.ndim != 3 or pixels.shape[2] != 3:
+        return ()
+    if inverted:
+        pixels = 255 - pixels
+    height, width = pixels.shape[:2]
+    if height < 4 or width < 4:
+        return ()
+    rgb = pixels[:, :, ::-1]
+
+    far = np.abs(rgb - np.array(ground)).sum(axis=2) > SAME_COLOUR
+    mask = (far.astype(np.uint8)) * 255
+    mask = cv2.morphologyEx(
+        mask, cv2.MORPH_CLOSE,
+        cv2.getStructuringElement(cv2.MORPH_RECT, (CLOSE_PX, CLOSE_PX)))
+    count, _, stats, _ = cv2.connectedComponentsWithStats(mask, connectivity=8)
+
+    page = float(width * height)
+    found: list[BBox] = []
+    for index in range(1, count):
+        x, y, w, h, _ = stats[index]
+        share = (w * h) / page
+        if share < MIN_RECT_SHARE or share > PAGE_SHARE:
+            continue
+        block = rgb[y:y + h, x:x + w]
+        if min(block.shape[:2]) < 4:
+            continue
+        if _bordered(block, _filled_with(block, ground) or ground):
+            found.append(BBox(x / width, y / height,
+                              (x + w) / width, (y + h) / height))
+    return tuple(sorted(found, key=lambda b: (round(b.top, 3), b.left)))
+
+
+def _area(box: BBox) -> float:
+    return max(0.0, box.right - box.left) * max(0.0, box.bottom - box.top)
+
+
+def box_around(zone: BBox, boxes: tuple[BBox, ...]) -> BBox | None:
+    """The smallest drawn rectangle this Zone sits inside, if any.
+
+    Smallest, because a card inside a panel inside a page is three containers
+    and only the nearest one is this Zone's own chrome.
+    """
+    holding = [box for box in boxes
+               if zone.overlap_ratio(box) >= CONTAINED and _area(box) > 0]
+    return min(holding, key=_area) if holding else None
+
+
 def chrome(crop: ImageArray, *, ground: tuple[int, int, int],
-           inverted: bool = False, title_rows: int = 0) -> Chrome:
+           inverted: bool = False, title_rows: int = 0,
+           bordered: bool = False) -> Chrome:
     """What the page draws around one region. See `Chrome`.
 
     `crop` is the region's own pixels as `preprocess.zone_pixels` returns them —
@@ -378,6 +507,15 @@ def chrome(crop: ImageArray, *, ground: tuple[int, int, int],
     `ground` is the page's own measured colour and `title_rows` how many of the
     region's first rows its Title occupies — zero when it has none, in which
     case no bar is looked for and none can be invented.
+
+    `bordered` is **passed in, not measured here**, and that is the point of
+    the border increment. A rule is a property of the page, not of a crop: the
+    crop is snapped onto content ink and `content_ink` deletes borders by name,
+    so the rule is not in these pixels to find. `rectangles()` reads the page
+    once and `box_around` says which Zone each rectangle belongs to. Asking a
+    crop directly was also actively wrong rather than merely blind — a crop cut
+    tight around a single line of type has ink on all four edges and answers
+    **True**.
     """
     pixels = np.asarray(crop, dtype=np.int64)
     if inverted:
@@ -400,5 +538,4 @@ def chrome(crop: ImageArray, *, ground: tuple[int, int, int],
                                  sum(abs(a - b) for a, b in zip(band, body)) > SAME_COLOUR):
             title_fill = band
 
-    return Chrome(fill=fill, title_fill=title_fill,
-                  bordered=_bordered(region, fill or ground))
+    return Chrome(fill=fill, title_fill=title_fill, bordered=bordered)

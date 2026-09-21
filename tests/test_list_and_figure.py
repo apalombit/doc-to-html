@@ -241,17 +241,39 @@ class TestCards:
         for title in ("Card heading", "Another card"):
             assert f'<h2 class="zone-title">{title}</h2>' in html
 
-    def test_a_measured_card_is_drawn_and_an_unmeasured_one_is_not(
+    def test_only_the_zones_the_page_cards_come_back_boxed(
             self, cards: Document) -> None:
-        """The same two Zones, once plain and once measured as cards."""
-        assert not _boxed_sections(render(cards))
+        """End to end through a real Conversion, and the border finder's only
+        test that runs one.
+
+        `sample_css_0004` draws exactly two `.card` rectangles. The heading,
+        the badge figure and the intro prose sit on bare paper. Before the
+        finder this was 0 of 5, because the box each Zone is measured in has
+        been snapped onto its content ink and `preprocess.content_ink` deletes
+        panel borders from that mask by name.
+        """
+        boxed = [zone for zone in cards.zones if zone.boxed]
+
+        assert [zone.title for zone in boxed] == ["Card heading", "Another card"]
+        assert all(zone.fill == (246, 248, 250) for zone in boxed)
+        assert len(_boxed_sections(render(cards))) == 2
+
+    def test_a_page_that_draws_no_card_gets_none(self, article: Document) -> None:
+        """The fault this replaces went the other way: `section.titled` drew a
+        bordered panel round every captioned Zone, on roughly ten of fifteen
+        documents whose sources draw nothing of the kind."""
+        assert not any(zone.boxed for zone in article.zones)
+        assert not _boxed_sections(render(article))
+
+    def test_an_unmeasured_zone_is_never_drawn_as_a_card(
+            self, cards: Document) -> None:
+        """A Zone nothing measured and a Zone measured as plain must render
+        identically — an unmeasured default is how chrome nobody asked for
+        gets reintroduced."""
         for zone in cards.zones:
-            zone.boxed, zone.fill = True, (240, 240, 240)
-        html = render(cards)
-        # Every Zone, not only the captioned ones — a card is a card whether or
-        # not it has a heading, which is the coupling this change breaks.
-        assert len(_boxed_sections(html)) == len(cards.zones)
-        assert html.count("background:rgb(240,240,240)") == len(cards.zones)
+            zone.boxed, zone.fill, zone.title_fill = False, None, None
+
+        assert not _boxed_sections(render(cards))
 
 
 def _source() -> object:

@@ -1,120 +1,214 @@
 ---
 name: visual-review
-description: Look at a run's rendered output beside the source document and come back with findings a person can act on. Use when reviewing what a conversion produced, comparing a run against the previous one, checking whether a render still matches its page, or when a change is about to be judged on scores alone.
+description: Review a conversion run by looking at the rendered pages beside the source documents, and report findings per document on a fixed rubric. Use when asked to review a run's output, to check whether a change improved or damaged the pages, to compare a run against the previous one, or before accepting a change that has only been judged on scores.
 ---
 
 # Visual review
 
-**Look at the artefact, not only at the number.** A measure can saturate and
-then invert while every number improves: `sample_table_0003` scored a full
-match having deleted every column header of its only table, and nobody had
-opened a render beside its source in eighty runs. `report.html` answers *what
-do the numbers say*. This answers *what does it look like*, and the two catch
-different things — on 2026-09-21 a single pass found nine cross-cutting faults
-that **no scored axis had reported**.
+Compare each rendered page against the document it was made from, and report
+what differs, per document, on a fixed rubric.
 
-The evidence, the rationale and the open gaps are in
-[`docs/agents/visual-review.md`](../../../docs/agents/visual-review.md). Read
-it when you want to know *why*; this file is *how*.
+This exists because the numbers cannot see everything. A run once scored a
+document a **full match** while its only table had lost all five column
+headers, because the scorer compared row *roles* and never row *content*. The
+first time anyone ran this review over all fifteen documents it found nine
+faults that no scored axis had reported. So: a score is not a review, and this
+is the step that opens the pictures.
 
-## Three rules that bind every run of this skill
+---
 
-- **The reference is the PNG**, never the re-rendered source HTML. The
-  screenshot is what the model was shown. Four of the five original documents
-  re-render 6.9–14.1% different from their own screenshots on this machine.
+## Before you start
+
+- **Chrome is required.** `python -c "from doc_to_html.projection import available; print(available())"` must print `True`.
+- **A run directory is required**: `debug/runs/<label>/`, containing
+  `dump/<model>/<document>/document.html`. A run produces one.
+- **Know which previous run to compare against**, if any. `ls debug/runs/`.
+
+---
+
+## Step 1 — Build the sheets
+
+```bash
+# against the source only
+python tools/visual_review.py debug/runs/94-borders-baseline
+
+# against the source AND the previous run's render  <- prefer this
+python tools/visual_review.py debug/runs/95-borders \
+    --previous debug/runs/94-borders-baseline
+
+# a few documents while iterating
+python tools/visual_review.py debug/runs/95-borders --documents cv_0013,menu_0012
+
+# two arbitrary files, outside any run
+python tools/visual_review.py --pair example/invoice.png /tmp/mine.html --out /tmp/rev
+```
+
+**Pass `--previous` whenever a previous run exists.** Source-against-render
+tells you how far the output is from the page. Render-against-render tells you
+whether your change *moved* it, which is the only thing that answers "did this
+help".
+
+Everything lands in `<run>/_review/`:
+
+| file | what it is |
+|---|---|
+| `NN-<document>.png` | the sheet to look at |
+| `NN-<document>-p1.png`, `-p2.png` … | a tall document, cut into parts |
+| `findings.json` | the form **you** fill in |
+| `review.md` | the same form for a person to read |
+| `numbers.md` | the scored axes, for quoting only |
+
+---
+
+## Step 2 — Open every sheet
+
+Read each PNG with the Read tool, one at a time. **This is the only step that
+finds anything.** Do not skip a document because its numbers look fine — the
+worst document in the corpus once had the corpus's *best* height ratio.
+
+### What you are looking at
+
+Each sheet is one document, panels side by side, every panel at the **source's
+width** so line wrapping and column behaviour are comparable:
+
+```
+┌─ SOURCE (the page) ─┬─ RENDER 94-baseline ─┬─ RENDER 95-borders ─┐
+│                     │                      │                     │
+│  the screenshot of  │  the previous run's  │  this run's output  │
+│  the real document  │  output (--previous) │                     │
+│                     │                      │                     │
+└─────────────────────┴──────────────────────┴─────────────────────┘
+```
+
+- **Left is always the source.** It is the screenshot the model was shown, and
+  it is the truth. Never treat the render as the reference.
+- **The middle panel only appears with `--previous`.**
+- A grey bar across the top of every panel names it and stamps the run and
+  date. If you cannot see that bar, you are looking at the wrong file.
+- **Tall documents arrive as several parts.** Part 2 of the source is paired
+  with part 2 of each render by content, not by height, so the parts line up
+  approximately even when a render is five times taller. Read all the parts.
+
+---
+
+## Step 3 — Diagnose before you write
+
+- **Trace a fault to its cause.** "The page looks grey", "the cards are
+  missing" and "the page is tinted" were once reported as three faults. They
+  were two bugs, and reporting them separately would have produced three wrong
+  fixes.
+- **A uniform result across every document is a broken instrument, not a
+  finding about the corpus.** `boxed` came back `False` on all fifteen
+  documents; the detector was looking in the wrong place. Suspect the tool
+  before the subject.
+- **Check what the render itself admits.** A render may print its own caveats
+  ("18.5% of ink unread"). Where the picture agrees with the caveat, that is
+  the honesty machinery working, not a new fault.
+
+---
+
+## Step 4 — Fill in `findings.json`
+
+One block per document. Every axis gets a **verdict** and a **note**.
+
+### The severity ladder
+
+| verdict | means |
+|---|---|
+| `match` | a reader comparing the two would not remark on this axis |
+| `minor` | a visible difference that does not change what the document says or how it is read |
+| `major` | content is missing or invented, **or** the difference changes how the document reads |
+
+### The axes, with what each verdict looks like
+
+| axis | the question | `minor` looks like | `major` looks like |
+|---|---|---|---|
+| `content` | is anything in the source missing from the render, or anything in the render not in the source | the footer's copyright line is gone | the whole dark sidebar is absent, including the name |
+| `order` | same things, same sequence, bound to the same headings | two label/value pairs in the header are swapped | the last two bullets of the Benefits list appear under the *next* heading |
+| `columns` | what sits beside what | the aside is half the width where the source gives it a third | the source's two columns render as one stack |
+| `chrome` | borders, cards, rules, fills — drawn where the source draws them **and nowhere else** | a card's rule is drawn but its fill is missing | every titled section is drawn as a bordered card; the source draws two |
+| `type` | is the size and weight hierarchy the same shape | `h2` and `h3` render at the same size | body type is 2–3× the source, so the page runs three times the height |
+| `colour` | ground, ink, accent, shaded bands | ink is `#555` where the source is `#1a1a1a` | the whole page is rendered on the *card's* colour |
+| `rhythm` | spacing and density | paragraph spacing is roughly doubled | forty-one near-identical lines fill the page |
+| `changed` | **only with `--previous`**: `better` / `same` / `worse` against the middle panel | — | a `worse` is a ratchet event: say exactly what was there before and is not now |
+
+### Writing a note that is worth reading
+
+**Name the element. Quote the text. Say where on the page.** One sentence.
+
+```
+✗  "content — major — a lot of text is missing."
+✗  "chrome — minor — the styling looks off."
+✗  "type — major — the typography is wrong."
+
+✓  "content — major — the whole dark left sidebar is absent: the name
+    'Ines Halloran', the contact block and the skills list."
+✓  "chrome — major — all six sections are drawn as bordered grey cards;
+    the source draws no border anywhere on this page."
+✓  "type — major — body copy renders at roughly 24px against the source's
+    10px, which is what makes the page run to five screens."
+```
+
+A note that could have been written from `numbers.md` without opening the
+picture has not done the job.
+
+### `worst` and `owner`
+
+- `worst` — the axis carrying the worst fault on that document.
+- `owner` — who fixes it. Pick from: `A-1`, `A0`, `A1`, `A2`, `A3`, `2/B`,
+  `3/C`, `4/D`, or `new` when nothing owns it yet. Current assignments:
+  doubled titles and content loss → `A0`; column collapse and alignment →
+  `A2`; figures as placeholders → `A3`; the type scale → `2/B`; repeated
+  caveat lines → `A-1`.
+
+`owner` is what turns a list of complaints into work: it separates *fix now*
+from *already scheduled* from *nobody knew about this*.
+
+**An axis the rubric does not declare is accepted and counted as a trial
+axis.** If a fault has no home, add one rather than bending it into an axis
+that does not fit.
+
+---
+
+## Step 5 — Tally and report
+
+```bash
+python tools/visual_review.py debug/runs/95-borders --check
+```
+
+This rewrites `review.md` from your answers and prints:
+
+- **faults no scored axis reported** — a `major` sitting beside scored ratios
+  that are all at 1.000, which is the "full match with the headers deleted"
+  failure, caught;
+- **which axes fired**, and which never did;
+- **the owner tally**.
+
+Then report in the conversation, and nowhere else:
+
+1. the worst fault per document, one line each;
+2. every `worse` on the `changed` axis, with what was lost;
+3. the faults no scored axis reported;
+4. the owner tally.
+
+---
+
+## Rules that bind every run of this skill
+
+- **The left panel is the truth.** It is the screenshot the model was shown.
+  Never compare against a re-rendered source HTML — several corpus documents
+  re-render 7–14% different from their own screenshots on this machine, and
+  one wants a CDN this machine does not fetch.
 - **Every panel is laid out at the source's width.** A page compared against
   itself at two widths is two different pages.
-- **Judgements are pairwise and in-session only.** A reading from another
-  session is not comparable with yours and must never join it in a table. Both
-  images go in front of you now, or the comparison is not made. Every sheet and
-  form carries a stamp for exactly this reason.
-
-## Steps
-
-### 1. Build the sheets
-
-```
-python tools/visual_review.py debug/runs/<label>                         # against the source
-python tools/visual_review.py debug/runs/<label> --previous debug/runs/<older>
-python tools/visual_review.py --pair <source.png> <render.html> --out <dir>
-```
-
-**Pass `--previous` whenever a previous run exists.** Source against render
-says how far the output sits from the page; render against render says whether
-it *moved*, which is the comparison the T1 ratchet is built on and the only one
-that can catch a change that improved the numbers and damaged the page.
-
-Writes to `<run>/_review/`: one PNG per document (several, `-p1`/`-p2`, for a
-tall one), `findings.json` to answer, `review.md` mirroring it for a person,
-and `numbers.md`. An existing `findings.json` is never overwritten.
-
-*Done when* every document the run converted has a sheet, or is named in
-`review.md`'s **Skipped** list.
-
-### 2. Open every sheet
-
-Read each PNG, **one at a time, all of them**. This is the only step that finds
-anything, and it is the only step that cannot be delegated to a number.
-
-*Done when* every file listed in step 1 has been opened. A document you did not
-open is not a document you reviewed — leave its axes unanswered rather than
-guessing them from `numbers.md`.
-
-### 3. Trace each fault to its cause before writing it down
-
-"The page looks grey" was one bucketing bug. "The cards are missing" and "the
-page is tinted" were *the same* ground-measurement bug, and reporting them
-separately would have produced two wrong fixes.
-
-- **A uniform zero is a bug in the instrument, not a finding about the corpus.**
-  `boxed` came back `False` on all fifteen documents. Suspect the instrument
-  before the subject.
-- **Check the honesty findings against what you can see.** A document that
-  declared "18.5% of ink unread" and looks it is the honesty rule working.
-- **A document that looks bad and one that measures bad are different lists.**
-  `catalogue_0015` has the corpus's best `height_ratio` and is missing its page
-  title and most of its prices.
-
-### 4. Answer `findings.json`
-
-Per document, per axis: `match` / `minor` / `major`, and **one sentence naming
-an element**, not an impression. Then `worst` and `owner` — which thread or
-phase owns the fault, or `new`.
-
-`owner` is what makes the output actionable rather than a list of complaints:
-it sorts faults into *fix now*, *already scheduled*, and *nobody knew about
-this*.
-
-With `--previous`, the extra `changed` axis takes `better` / `same` / `worse`
-against the middle panel. **A `worse` is a ratchet event** — say what content or
-chrome was there before and is not now.
-
-An axis the rubric does not declare is accepted and reported as a trial axis.
-Add one when a fault has no home; do not bend a fault into an axis that does
-not fit it.
-
-*Done when* every opened document has every axis answered, an `owner`, and no
-note that could have been written from `numbers.md` alone.
-
-### 5. Tally, and name the blind spots
-
-```
-python tools/visual_review.py debug/runs/<label> --check
-```
-
-Rewrites `review.md` from your answers with three things: **faults no scored
-axis reported** — a `major` sitting beside scored ratios that are all at 1.000,
-which is the `sample_table_0003` failure stated as a fact rather than against a
-threshold somebody chose; **which axes fired**; and the owner tally.
-
-*Done when* you have reported, in the conversation: the worst fault per
-document, the blind spots, the owner tally, and — with `--previous` — every
-`worse`.
-
-## The rubric is provisional
-
-`content`, `order`, `columns`, `chrome`, `type`, `colour`, `rhythm`. Two passes
-behind it. **Do not freeze it**: `--check` reports which axes never fired so a
-later session can cut the ones that do not earn their context, and trial axes
-are kept rather than rejected. It does not score out of ten and it never
-tabulates across sessions.
+- **Judge pairwise and in-session.** A verdict from another session is not
+  comparable with yours and must never be put in the same table. Both images
+  go in front of you now, or the comparison is not made. Every sheet is
+  stamped with its run and date for this reason.
+- **No scores out of ten.** The output is observations, not a grade.
+- **Do not report the deliberately deferred as new faults**: column collapse,
+  the type scale, `Zone.align`, and figures rendered as placeholders. Record
+  them with their owner and move on.
+- **The rubric is provisional.** Seven axes with a handful of passes behind
+  them. `--check` reports which never fired so it can be cut down later. Do
+  not treat the current seven as settled.

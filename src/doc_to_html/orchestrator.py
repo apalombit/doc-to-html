@@ -883,20 +883,24 @@ class Conversion:
 
         started = time.perf_counter()
         measured = 0
+        plain = rectified.plain if rectified.plain is not None else rectified.image
+        # Rules are read off the whole page, once. A Zone's crop is snapped
+        # onto its content ink and `content_ink` deletes borders by name, so
+        # the rule a card is drawn with is not in that crop to be found.
+        drawn = style_module.rectangles(
+            plain, ground=document.style.page_bg, inverted=rectified.inverted)
         for index, zone in enumerate(document.zones):
             if zone.bbox is None:
                 continue
             # The band is measured on the read image and the colour on the
             # plain one — the same geometry, so the same crop twice.
             band = caption_band(zone_pixels(rectified.image, zone))
-            crop = zone_pixels(
-                rectified.plain if rectified.plain is not None else rectified.image,
-                zone,
-            )
+            crop = zone_pixels(plain, zone)
             found = style_module.chrome(
                 crop, ground=document.style.page_bg,
                 inverted=rectified.inverted,
                 title_rows=band.bottom if band is not None and zone.title else 0,
+                bordered=style_module.box_around(zone.bbox, drawn) is not None,
             )
             zone.fill, zone.title_fill, zone.boxed = (
                 found.fill, found.title_fill, found.bordered
@@ -907,6 +911,7 @@ class Conversion:
             Stage.LAYOUT, "zone_chrome", Disposition.ACCEPTED,
             seconds=time.perf_counter() - started,
             zones=len(document.zones), with_chrome=measured,
+            rectangles=len(drawn),
             detail=[
                 {"zone": i, "fill": z.fill, "title_fill": z.title_fill,
                  "boxed": z.boxed}
