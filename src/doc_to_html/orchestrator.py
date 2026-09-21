@@ -753,8 +753,12 @@ class Conversion:
 
         for round_number in range(MAX_ROUNDS):
             self._layout(rectified, document)
-            self._measure_chrome(rectified, document)
             self._classify(rectified, document)
+            # After `_classify`, not before it: the caption pass is what sets
+            # `Zone.title`, and a Title is how `_measure_chrome` knows how many
+            # of a region's first rows a bar could occupy. Running it first
+            # made `title_rows` zero on every Zone of every document.
+            self._measure_chrome(rectified, document)
             self._extract(rectified, document)
 
             document.probes = probe_module.run(document)
@@ -868,10 +872,24 @@ class Conversion:
 
         A *second* style step, after layout rather than with `_measure_style`,
         and the split is real: the palette is the page's and needs no Zones,
-        while a fill and a border are per-region and need the boxes. Running
-        after `_classify` rather than before it would be wrong in the other
-        direction — the crop is the same either way, and a Kind that changes on
-        a later round must not silently change what colour a card was.
+        while a fill and a border are per-region and need the boxes.
+
+        **It runs after `_classify`, and it used to run before it.** The
+        earlier order was chosen so that a Kind changing on a later round could
+        not silently change what colour a card was — but this measures no Kind,
+        so the argument protected nothing, and it cost the feature beside it.
+        `title_rows` comes from `Zone.title`, `Zone.title_fill` is only ever set
+        when `title_rows` is non-zero, and the caption pass that sets a Title is
+        inside `_classify`. Measured on the 2026-09-21 baseline sweep:
+        `zone_chrome` at trace seq 6, the first `read_caption` at seq 7, and
+        `title_fill` set on **0 of 119 Zones** across the corpus. The bar had
+        shipped, been tested offline and never once fired in a conversion —
+        which is this project's own lesson that a flag that does not arrive
+        looks exactly like a flag that does nothing.
+
+        Moving it moves no model call: this stage asks the model nothing, and
+        nothing between the two reads `fill`, `title_fill` or `boxed`. So the
+        answers are unchanged and the effect is measurable offline.
 
         `title_rows` comes from `caption_band`, which already measures a crop's
         first printed line for the caption pass. Nothing new is asked of the
@@ -889,6 +907,9 @@ class Conversion:
         # the rule a card is drawn with is not in that crop to be found.
         drawn = style_module.rectangles(
             plain, ground=document.style.page_bg, inverted=rectified.inverted)
+        # One rectangle, one Zone: a box several Zones sit inside belongs to
+        # their grouping and to none of them. See `style.boxes_for`.
+        own = style_module.boxes_for([z.bbox for z in document.zones], drawn)
         for index, zone in enumerate(document.zones):
             if zone.bbox is None:
                 continue
@@ -900,7 +921,7 @@ class Conversion:
                 crop, ground=document.style.page_bg,
                 inverted=rectified.inverted,
                 title_rows=band.bottom if band is not None and zone.title else 0,
-                bordered=style_module.box_around(zone.bbox, drawn) is not None,
+                bordered=own[index] is not None,
             )
             zone.fill, zone.title_fill, zone.boxed = (
                 found.fill, found.title_fill, found.bordered

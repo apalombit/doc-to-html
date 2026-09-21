@@ -26,6 +26,7 @@ from doc_to_html.render import render
 from doc_to_html.style import (
     MIN_ACCENT_SHARE,
     box_around,
+    boxes_for,
     chrome,
     dominant,
     measure,
@@ -560,3 +561,39 @@ class TestFindingBoxesInTheCorpus:
         known = carded | plain_pages | {"invoice_0001", "invoice_0002",
                                         "form_0007"}
         assert set(SWEEP) - known == set()
+
+
+class TestOneRectangleOneZone:
+    """A rectangle several Zones sit inside is a container, and no Zone's own
+    chrome. `darkdeck_0009`'s OPEN RISKS panel holds six Zones; giving it to
+    each draws six boxes where the page draws one."""
+
+    def test_a_panel_holding_several_zones_is_given_to_none_of_them(self) -> None:
+        panel = BBox(0.6, 0.3, 0.97, 0.65)
+        inside = [BBox(0.62, 0.32, 0.95, 0.38), BBox(0.62, 0.40, 0.95, 0.46),
+                  BBox(0.62, 0.48, 0.95, 0.54)]
+
+        assert boxes_for(inside, (panel,)) == [None, None, None]
+
+    def test_a_card_holding_one_zone_keeps_it(self) -> None:
+        card = BBox(0.05, 0.1, 0.45, 0.5)
+
+        assert boxes_for([BBox(0.07, 0.12, 0.43, 0.48)], (card,)) == [card]
+
+    def test_a_zone_with_no_box_does_not_take_one_from_a_neighbour(self) -> None:
+        card = BBox(0.05, 0.1, 0.45, 0.5)
+        zones = [BBox(0.07, 0.12, 0.43, 0.48), BBox(0.55, 0.1, 0.95, 0.5)]
+
+        assert boxes_for(zones, (card,)) == [card, None]
+
+    def test_a_zone_without_geometry_is_carried_through(self) -> None:
+        assert boxes_for([None], (BBox(0.1, 0.1, 0.9, 0.9),)) == [None]
+
+    def test_a_thin_bordered_strip_is_kept_however_little_of_it_is_ink(self) -> None:
+        """A ratio test was measured and rejected: `sample_css_0004`'s genuine
+        cards sit at 0.26-0.34 of their rectangle, `darkdeck_0009`'s false ones
+        at 0.03-0.15, and `invoice_0002`'s real `Services / Products` strip at
+        0.04. Only the number of claimants separates them."""
+        strip = BBox(0.03, 0.30, 0.97, 0.34)
+
+        assert boxes_for([BBox(0.04, 0.305, 0.20, 0.335)], (strip,)) == [strip]

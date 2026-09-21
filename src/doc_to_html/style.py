@@ -48,8 +48,9 @@ gets its own increment, measured against `height_ratio` directly.
 
 from __future__ import annotations
 
+from collections import Counter
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Sequence
 
 import numpy as np
 
@@ -491,6 +492,32 @@ def box_around(zone: BBox, boxes: tuple[BBox, ...]) -> BBox | None:
     holding = [box for box in boxes
                if zone.overlap_ratio(box) >= CONTAINED and _area(box) > 0]
     return min(holding, key=_area) if holding else None
+
+
+def boxes_for(zones: Sequence[BBox | None],
+              boxes: tuple[BBox, ...]) -> list[BBox | None]:
+    """Each Zone's own drawn box — one rectangle, one Zone.
+
+    **A rectangle several Zones sit inside is a container, and no Zone's own
+    chrome.** `darkdeck_0009`'s OPEN RISKS panel at (643,302)-(966,610) holds
+    six Zones, each covering 3-15% of it; giving the panel to each of them
+    draws six boxes where the page draws one, which is the fault this whole
+    increment exists to stop making. `ir.Zone` never nests, so the IR has no
+    way to say "these six share a box" — and inventing six is worse than
+    drawing none.
+
+    A ratio test was measured instead and does not separate the two:
+    `sample_css_0004`'s genuine cards sit at 0.26 and 0.34 of their rectangle
+    while `darkdeck_0009`'s false ones run 0.03-0.15, and `invoice_0002`'s
+    `Services / Products` is a real bordered strip at **0.04**. How many Zones
+    claim the rectangle separates them exactly; how much of it they fill does
+    not.
+    """
+    claims = [box_around(zone, boxes) if zone is not None else None
+              for zone in zones]
+    held = Counter(claim for claim in claims if claim is not None)
+    return [claim if claim is not None and held[claim] == 1 else None
+            for claim in claims]
 
 
 def chrome(crop: ImageArray, *, ground: tuple[int, int, int],

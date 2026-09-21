@@ -432,7 +432,12 @@ prompt) were closed by Thread 0. Specs 0001–0006 are closed history.
   runs the bake-off, so *every measured run in this project takes that path.*
   **Before believing a null result, prove the arm was actually armed.**
   `TestTheBakeOffBuildsTheSameLayoutEngineAsAConversion` compares the two paths
-  attribute by attribute.
+  attribute by attribute. **It happened again, found 2026-09-21:**
+  `Zone.title_fill` shipped, was verified offline and had never once been set
+  in a conversion, because `_measure_chrome` ran *before* the `_classify` pass
+  that sets `Zone.title` and `title_rows` was therefore always zero — 0 of 119
+  Zones across the corpus. A stage's *position* is as much a way for a feature
+  not to arrive as an unread flag.
 - **An instruction is reachable only if it asks the model to decide differently,
   not to perceive differently.** Two prompt attempts to stop the model splitting a
   wide table row failed, and one run's answers were **byte-identical** to the run

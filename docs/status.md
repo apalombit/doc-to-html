@@ -1,4 +1,4 @@
-# Status — 2026-09-21 (Thread 2/B: palette, per-Zone chrome and the review skill shipped; borders next)
+# Status — 2026-09-21 (Thread 2/B complete bar the type scale; A0 next)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it.
@@ -9,7 +9,7 @@ Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`agents/visual-review.md`](agents/visual-review.md) if you are going to look at
 output — and you should.
 
-Branch `scaffold`. **669 tests pass, `mypy src/` clean.**
+Branch `scaffold`. **691 tests pass, `mypy src/` clean.**
 
 ---
 
@@ -28,9 +28,9 @@ Thread 2/B  Style record, all CV, no model      IN PROGRESS   <- you are here
   |- palette + page width                       DONE 2026-09-20
   |- per-Zone chrome (fills, title bars)        DONE 2026-09-21
   |- review workflow -> reusable skill          DONE 2026-09-21
-  |- borders (Zone.boxed is 0 on all fifteen)   NEXT
+  |- borders + the title-bar ordering bug       DONE 2026-09-21
   \- type scale                                 deferred, reasons below
-Phase A0    Stop the bleeding                   after 2/B
+Phase A0    Stop the bleeding                   NEXT   <- you are here
 Phase A1/A2/A3, Thread 3/C, Thread 4/D          unchanged
 ```
 
@@ -182,7 +182,7 @@ and will be cleared** — the table below is the part that survives.
 | 2 | **Severe content loss** | 5, below | A0 / A-1 residue |
 | 3 | **Type scale 2-3x too large** — main driver of height | ~all | 2/B, deferred |
 | 4 | Columns collapse | 10 of 15 | A2, known |
-| 5 | **No border is ever drawn** (`Zone.boxed` = 0 on all fifteen) | all | **2/B, next** |
+| 5 | ~~No border is ever drawn~~ **fixed 2026-09-21** — and title bars with it | — | 2/B, done |
 | 6 | Figures are dotted placeholders | 3 | A3 |
 | 7 | **Caveat spam** — `statement_0006` prints 41 near-identical lines | 1 | **A-1 residue, ours** |
 
@@ -226,27 +226,54 @@ Two of the fixes were found by *using* the tool rather than reasoning about it:
 an ink-mass cut left `statement_0006` a 3316px part, and a summary with no
 `scores.json` claimed the numbers had caught everything.
 
-### 2. Finish 2/B: the border detector  <- next
+### 2. Finish 2/B: the border detector — DONE 2026-09-21
 
-`Zone.boxed` is `False` on all fifteen documents. The likely cause is named and
-**unverified**: `DTH_SNAP_ZONES` snaps each box onto its **ink**, which sits
-inside any border the source drew, so `_bordered`'s edge test never sees the
-rule. Verify that before changing the test — dilating the crop by a few pixels
-before measuring edges is the obvious first attempt.
+**The named hypothesis was right in mechanism and wrong in magnitude.** The
+snap does put the box inside the rule, but the suggested fix — dilate by a few
+pixels — cannot work. `style._bordered` answers **True** on
+`sample_css_0004`'s card rectangle and **False** on the box snapped onto its
+content ink, and the inset is L21 T58 R124 B38 and L21 T58 R256 B37: the text
+does not reach the card's right edge. `preprocess.content_ink` also deletes
+separators from the mask *by name*, and the card's `1px #e1e8ed` rule is grey
+230, above `INK_LEVEL` 200 — not ink at all.
 
-It has to be **built**, not reused: the OpenCV rectangle finder three documents
-claimed was in the tree is not there and never was. What survives as knowledge
-rather than code — a finder was observed to locate `invoice_0002`'s four panels
-and `sample_css_0004`'s two cards and nothing on the other three, with a guard
-that a rectangle covering more than 0.80 of the page is the page — is a starting
-point to **re-measure**, not a result to cite. Record the number taken in that
-sitting.
+So `style.rectangles()` reads the drawn boxes off the whole page and
+`style.boxes_for()` assigns them, one rectangle to one Zone. Measured against
+the boxes read out of each source with `getComputedStyle`: exact on
+`invoice_0002` (5), `darkdeck_0009` (5), `sample_css_0004` (2),
+`nonlatin_0014` (2) and `catalogue_0015` (9); 13 of `form_0007`'s 14 in-range
+boxes; **zero on all eight documents that draw none**. IoU 0.91 or better on
+the ten documents whose HTML and screenshot agree exactly. `PAGE_SHARE` 0.80
+is re-measured, not cited — `invoice_0001`'s only box is the frame round the
+whole invoice at **0.981**.
 
-Note `style.chrome` already finds fills correctly on `darkdeck_0009` (7),
-`sample_css_0004` (2), `invoice_0002` (1), `cv_0013` (1) and
-`sample_semantic_0005` (1), so borders are the missing half, not the whole job.
+**One rectangle, one Zone.** `darkdeck_0009`'s OPEN RISKS panel holds six
+Zones; giving it to each drew six boxes where the page draws one. A ratio test
+was measured and does not separate the cases — genuine cards run 0.26-0.34 of
+their rectangle, the false ones 0.03-0.15, and `invoice_0002`'s real
+`Services / Products` strip is 0.04. The number of claimants separates them
+exactly.
 
-### 3. Then A0 — starting with the doubled Title
+**And the title bar had never fired in a conversion.** `_measure_chrome` ran
+*before* `_classify`, and the caption pass inside `_classify` is what sets
+`Zone.title`; `title_rows` was therefore 0 on every Zone of every document and
+`Zone.title_fill` could never be set. Measured on the baseline sweep:
+`zone_chrome` at trace seq 6, first `read_caption` at seq 7, `title_fill` on
+**0 of 119 Zones**. Moving the stage moves no model call — this stage asks the
+model nothing and nothing between the two reads `fill`, `title_fill` or
+`boxed` — so the fix is verifiable offline.
+
+Across the corpus, measured this session: **`boxed` 0 → 17 Zones on four
+documents, `title_fill` 0 → 6 on three**, and no T1 or hard-tier movement at
+all. `height_ratio` moves +0.007 to +0.089 on the four documents that gained
+chrome and improves on `catalogue_0015`.
+
+**`tools/remeasure_style.py`** re-measures a sweep's pixel-derived fields
+against its own IRs and re-renders with no model, which is how all of the
+above was checked without a second sweep. It cannot move anything the model
+decided and says so.
+
+### 3. A0 — starting with the doubled Title  <- next
 
 The single most pervasive visual fault in the corpus, 13 of 15 documents, and
 already diagnosed: a Zone carrying a Title must not also carry a Block repeating

@@ -65,8 +65,9 @@ def remeasure(document: Document, png: Path) -> tuple[int, int]:
     document.style = style_module.measure(plain, inverted=rectified.inverted)
     drawn = style_module.rectangles(
         plain, ground=document.style.page_bg, inverted=rectified.inverted)
+    own = style_module.boxes_for([z.bbox for z in document.zones], drawn)
     boxed = 0
-    for zone in document.zones:
+    for index, zone in enumerate(document.zones):
         if zone.bbox is None:
             continue
         band = caption_band(zone_pixels(rectified.image, zone))
@@ -75,7 +76,7 @@ def remeasure(document: Document, png: Path) -> tuple[int, int]:
             ground=document.style.page_bg,
             inverted=rectified.inverted,
             title_rows=band.bottom if band is not None and zone.title else 0,
-            bordered=style_module.box_around(zone.bbox, drawn) is not None,
+            bordered=own[index] is not None,
         )
         zone.fill, zone.title_fill, zone.boxed = (
             found.fill, found.title_fill, found.bordered)
