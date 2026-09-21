@@ -222,8 +222,16 @@ __marimo__/
 
 # Agent skill infrastructure (not this project's code)
 .agents/
-.claude/
 skills-lock.json
+
+# `.claude/*` rather than `.claude/`, because git does not descend into an
+# excluded directory and a negation inside one can never re-include anything.
+# Everything installed from elsewhere stays ignored; the skills this project
+# wrote about its own work are named, because they have to survive a clone.
+.claude/*
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/visual-review/
 
 # Visual troubleshooting output from tools/inspect_run.py
 debug/

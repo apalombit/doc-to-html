@@ -1,4 +1,4 @@
-# Status — 2026-09-21 (Thread 2/B: palette and per-Zone chrome shipped; borders next)
+# Status — 2026-09-21 (Thread 2/B: palette, per-Zone chrome and the review skill shipped; borders next)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it.
@@ -9,7 +9,7 @@ Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`agents/visual-review.md`](agents/visual-review.md) if you are going to look at
 output — and you should.
 
-Branch `scaffold`, head `0d9fde8`. **643 tests pass, `mypy src/` clean.**
+Branch `scaffold`. **669 tests pass, `mypy src/` clean.**
 
 ---
 
@@ -27,8 +27,8 @@ Phase A-1   Nothing loses content quietly       DONE 2026-09-19, gate NOT met
 Thread 2/B  Style record, all CV, no model      IN PROGRESS   <- you are here
   |- palette + page width                       DONE 2026-09-20
   |- per-Zone chrome (fills, title bars)        DONE 2026-09-21
-  |- review workflow -> reusable skill          NEXT (decided 2026-09-21)
-  |- borders (Zone.boxed is 0 on all fifteen)   then this
+  |- review workflow -> reusable skill          DONE 2026-09-21
+  |- borders (Zone.boxed is 0 on all fifteen)   NEXT
   \- type scale                                 deferred, reasons below
 Phase A0    Stop the bleeding                   after 2/B
 Phase A1/A2/A3, Thread 3/C, Thread 4/D          unchanged
@@ -56,9 +56,11 @@ the Style Record, Zone chrome — can be measured post-hoc and the IRs re-render
 offline, so one sweep serves many render iterations. That is how three fixes
 were verified across fifteen documents this session with zero model time.
 
-Read [`agents/visual-review.md`](agents/visual-review.md) before using it. It
-carries the workflow, the rubric, what the rubric must never become, and a
-"Known gaps" list that is the next piece of work.
+The workflow is now the **`visual-review` skill**
+(`.claude/skills/visual-review/`), backed by `doc_to_html.review` and
+`tests/test_review.py`. [`agents/visual-review.md`](agents/visual-review.md) is
+the record behind it: the evidence for its rules, what the rubric must never
+become, and what it still cannot do.
 
 ---
 
@@ -201,16 +203,30 @@ correct, two single-letter slips. **Worst:** `cv_0013`.
 
 ## Next, in order — decided 2026-09-21
 
-### 1. Harden the review workflow into a reusable skill
+### 1. Harden the review workflow into a reusable skill — DONE 2026-09-21
 
-**Before feature work**, because every later judgement rests on it and it found
-what nine scored axes did not. The gap list is in
-[`agents/visual-review.md`](agents/visual-review.md); the highest-value item is
-that it cannot yet answer **"what changed since last time"** — it compares
-render against source, never render against previous render, which is the
-comparison the ratchet is built on.
+Five of the six gaps closed. **`--previous <run>` is the one that mattered**:
+each sheet now carries source, the previous run's render and this run's render,
+and the form gains a `changed` axis taking `better` / `same` / `worse` — the
+render-against-render comparison the ratchet is built on, which the workflow
+could not make before.
 
-### 2. Finish 2/B: the border detector
+Also: `findings.json` as the answered form and `--check` to tally it, naming
+every `major` that sits beside scored ratios all at 1.000 (the
+`sample_table_0003` failure, stated against the ceiling rather than a threshold
+somebody chose); tall documents cut into capped, content-paired parts;
+`--pair` for two arbitrary files; and twenty-six tests, none of which needs a
+browser.
+
+**The rubric stays open on purpose** — seven axes, two passes. `--check` reports
+which axes never fired, and an undeclared axis is kept as a trial rather than
+rejected, so the evidence accumulates without anyone having to edit the module.
+
+Two of the fixes were found by *using* the tool rather than reasoning about it:
+an ink-mass cut left `statement_0006` a 3316px part, and a summary with no
+`scores.json` claimed the numbers had caught everything.
+
+### 2. Finish 2/B: the border detector  <- next
 
 `Zone.boxed` is `False` on all fifteen documents. The likely cause is named and
 **unverified**: `DTH_SNAP_ZONES` snaps each box onto its **ink**, which sits
@@ -285,7 +301,8 @@ FIXTURE=sweep tools/iterate.sh <label>        # all fifteen, ~90 min — default
 FIXTURE=iterate tools/iterate.sh <label>      # the five, ~17 min — throwaway checks only
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
     --previous tests/frozen/a1-checkpoint/scores.json
-python tools/visual_review.py debug/runs/<label>
+python tools/visual_review.py debug/runs/<label> --previous debug/runs/<older>
+python tools/visual_review.py debug/runs/<label> --check   # after answering findings.json
 ```
 
 A renderer-only change needs no new run: copy a sweep's directory, re-measure

@@ -16,11 +16,21 @@ Single-context — `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agen
 
 ### Visual review
 
-**Look at the output, not only at the numbers.** `tools/visual_review.py` builds
-a source-beside-render sheet per document plus a seven-axis rubric. Run over all
-fifteen documents on 2026-09-21 it found nine cross-cutting faults that **no
-scored axis had reported**. See `docs/agents/visual-review.md` — including what
-the rubric must never become, and the gap list that is the next piece of work.
+**Look at the output, not only at the numbers.** The `visual-review` skill
+(`.claude/skills/visual-review/`) builds one sheet per document — source,
+optionally the previous run's render, and this run's render, all at the source's
+width — and a rubric to answer by opening them. Run over all fifteen documents
+on 2026-09-21 it found nine cross-cutting faults that **no scored axis had
+reported**.
+
+`doc_to_html.review` is the code and `tests/test_review.py` pins it;
+`tools/visual_review.py` is the command line. `--previous <run>` is the
+render-against-render comparison the T1 ratchet is built on; `--check` tallies
+the answered `findings.json` and names every `major` that sits beside scored
+ratios all at 1.000. `docs/agents/visual-review.md` is the record: the evidence
+behind the rules, what the rubric must never become, and the remaining gaps.
+**The rubric is not frozen** — seven axes with two passes behind them, and a
+trial axis is kept rather than rejected.
 
 ### Specs
 
