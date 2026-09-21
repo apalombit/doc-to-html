@@ -14,6 +14,14 @@ The five canonical triage roles, each label string equal to its name. See `docs/
 
 Single-context — `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
 
+### Visual review
+
+**Look at the output, not only at the numbers.** `tools/visual_review.py` builds
+a source-beside-render sheet per document plus a seven-axis rubric. Run over all
+fifteen documents on 2026-09-21 it found nine cross-cutting faults that **no
+scored axis had reported**. See `docs/agents/visual-review.md` — including what
+the rubric must never become, and the gap list that is the next piece of work.
+
 ### Specs
 
 Work in flight has a spec in `docs/specs/`, one file per piece of work, each tracked
@@ -47,7 +55,9 @@ line that caused the deletion.
 ```
 Thread 0    Scorer, corpus, report        DONE 2026-09-18
 Phase A-1   Nothing loses content quietly DONE 2026-09-19, gate NOT met
-Thread 2/B  Style record (all CV, zero model calls)                     <- next
+Thread 2/B  Style record (all CV, zero model calls)                     <- in progress
+              palette DONE, per-Zone chrome DONE, page width measured-not-drawn,
+              borders next, type scale deferred
 Phase A0    Stop the bleeding (its T1 = 1.00 gate is disproved; re-scope on entry)
 Phase A1/A2/A3  Inline runs, geometry, figure pixels
 Thread 3/C  Repair loop (re-scoped against A+B residuals first)
@@ -474,7 +484,16 @@ every document, and it carries the delta against the previous run's
 `scores.json` plus a pass/fail on the hard tier. A run's numbers are in
 `scores.json` beside it.
 
-**Corpus split.** *iterate* = the original five, run on every change. *sweep* =
+**Any run whose output will be reviewed is a `sweep`.** Decided 2026-09-21,
+after reviewing the five found four real faults in one pass and the five turned
+out to be the least representative sample in the corpus — all light-grounded,
+all similar, none of the ten documents authored after the target changed. The
+~90 minutes is budgeted for. `iterate` is for a throwaway check nobody will draw
+a conclusion from. **A renderer-only change needs no new run at all:** every
+pixel-derived field can be re-measured and the IRs re-rendered offline, so one
+sweep serves many render iterations.
+
+**Corpus split.** *iterate* = the original five. *sweep* =
 all fifteen, run at phase gates. `doc_to_html.corpus` is the one place that
 says which is which. **A sweep takes about 90 minutes** — measured
 2026-09-18, on a machine where the model was partly on the CPU. Budget for it
