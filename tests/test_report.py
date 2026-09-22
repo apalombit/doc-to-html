@@ -47,6 +47,7 @@ def a_score(name: str = "invoice_0001", **overrides: Any) -> DocumentScore:
             beside_agreement=1.0, beside_pairs=7, column_error=0.0,
             columns_within_tolerance=1.0, height_ratio=1.0, matched_blocks=16,
             of_blocks=16, split_regions=0, merged_regions=0,
+            clipped=0, source_clipped=0,
         ),
         typography=Typography(
             source_scale=1.0, output_scale=1.0, scale_error=0.0,

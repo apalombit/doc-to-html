@@ -9,7 +9,7 @@ Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`agents/visual-review.md`](agents/visual-review.md) if you are going to look at
 output — and you should.
 
-Branch `scaffold`. **691 tests pass, `mypy src/` clean.**
+Branch `scaffold`. **699 tests pass, `mypy src/` clean.**
 
 ---
 
@@ -184,7 +184,7 @@ and will be cleared** — the table below is the part that survives.
 | 4 | Columns collapse | 10 of 15 | A2, known |
 | 5 | ~~No border is ever drawn~~ **fixed 2026-09-21** — and title bars with it | — | 2/B, done |
 | 6 | Figures are dotted placeholders | 3 | A3 |
-| 7 | **Caveat spam** — `statement_0006` prints 41 near-identical lines | 1 | **A-1 residue, ours** |
+| 7 | **Caveat spam** — `statement_0006` prints 41 near-identical lines | 1 | **A-1 residue, ours, still open** |
 
 Severe content loss, in order:
 
@@ -272,6 +272,44 @@ chrome and improves on `catalogue_0015`.
 against its own IRs and re-renders with no model, which is how all of the
 above was checked without a second sweep. It cannot move anything the model
 decided and says so.
+
+### 2b. Three renderer faults the full review turned up — DONE 2026-09-22
+
+Found by reviewing all fifteen documents against their sources, fixed with no
+model time, verified by re-rendering the baseline sweep's own IRs.
+
+**`Layout.clipped` is now reported.** `projection.project()` had always
+measured it — elements whose content is wider than the box holding it — and
+**nothing had ever read it**. It fired on exactly the three renders whose
+tables and pairs lists were cut off and on none of the fifteen sources. That is
+the two-tiers-disagreeing failure spec 0007 warns about, and it was sitting in
+the projection the whole time. Reported, **not gated**: one run is not enough
+to ratchet on.
+
+**A Zone reserves the width its content needs.** `render.COLUMN_REM` = 6,
+swept: 5 fixes nothing, 6 clears `statement_0006` and `darkdeck_0009` **and
+improves** mean `beside_agreement` 0.717 -> 0.719, 7 starts prising
+`catalogue_0015`'s card grid apart (0.227 -> 0.200) and 10 destroys it (0.085).
+**A narrow window, not a plateau** — re-measure rather than nudge.
+`statement_0006`'s `height_ratio` falls **3.657 -> 2.914** and every column of
+its transactions table is in the picture for the first time.
+
+**`render.PAIRS_REM` is 0 — measured and declined.** Every value large enough
+to stop `cv_0013`'s sidebar clipping costs the hard tier: 24 fixes the clip and
+takes `cv_0013` 0.450 -> 0.409, 28 takes `invoice_0002` 0.640 -> 0.250. A pairs
+list has no column count to reserve against; knowing its real width is A2's
+question. The clip stays and is now a reported number.
+
+**A filled Zone chooses its ink against its own fill.** `cv_0013`'s page ground
+reads white, its ink (38,51,63), and its sidebar's measured fill **(38,51,63) —
+the same colour**. The sidebar was rendered invisible, and the review recorded
+it as lost content. It was never lost: with the fix the email, phone,
+registration, software, languages and interests all appear. **Only "Ines
+Halloran" and "STRUCTURAL ENGINEER" are genuinely missing** — correct that
+entry wherever the earlier reading is quoted.
+
+No T1 or hard-tier regression on any document; `catalogue_0015`'s
+`beside_agreement` improves 0.227 -> 0.262.
 
 ### 3. A0 — starting with the doubled Title  <- next
 

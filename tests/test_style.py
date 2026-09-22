@@ -20,7 +20,16 @@ from pathlib import Path
 import numpy as np
 
 from doc_to_html.corpus import SOURCES, SWEEP
-from doc_to_html.ir import BBox, Document, Kind, Source, Style, Zone
+from doc_to_html.ir import (
+    BBox,
+    Cell,
+    Document,
+    Kind,
+    Row,
+    Source,
+    Style,
+    Zone,
+)
 from doc_to_html.preprocess import rectify
 from doc_to_html.render import render
 from doc_to_html.style import (
@@ -597,3 +606,81 @@ class TestOneRectangleOneZone:
         strip = BBox(0.03, 0.30, 0.97, 0.34)
 
         assert boxes_for([BBox(0.04, 0.305, 0.20, 0.335)], (strip,)) == [strip]
+
+
+# --- the renderer's own legibility and width rules --------------------------
+
+
+class TestInkAgainstTheZonesOwnFill:
+    """An ink measured against the *page* says nothing about a region the page
+    does not share a colour with.
+
+    `cv_0013`'s page ground reads white, its ink reads (38,51,63), and its
+    sidebar Zone's measured fill is **(38,51,63) — the same colour**. The
+    renderer painted the panel and set the type on it in the panel's own
+    colour, so the whole sidebar arrived invisible while T1 counted every word
+    of it as present.
+    """
+
+    def test_ink_equal_to_the_fill_is_replaced(self) -> None:
+        from doc_to_html.render import INK_ON_DARK, _readable_on
+
+        assert _readable_on((38, 51, 63), (38, 51, 63)) == INK_ON_DARK
+
+    def test_a_light_fill_that_the_page_ink_suits_is_left_alone(self) -> None:
+        from doc_to_html.render import _readable_on
+
+        assert _readable_on((246, 248, 250), (26, 26, 26)) is None
+
+    def test_a_dark_fill_takes_light_ink_and_a_light_one_dark(self) -> None:
+        from doc_to_html.render import INK_ON_DARK, INK_ON_LIGHT, _readable_on
+
+        assert _readable_on((18, 22, 28), (18, 22, 28)) == INK_ON_DARK
+        assert _readable_on((250, 250, 250), (250, 250, 250)) == INK_ON_LIGHT
+
+    def test_the_override_reaches_the_rendered_zone(self) -> None:
+        from doc_to_html.ir import Style
+        from doc_to_html.render import render
+
+        doc = document(style=Style(page_bg=(255, 255, 255), ink=(38, 51, 63),
+                                   accent=None, shade=(230, 230, 230)))
+        doc.zones = [Zone(kind=Kind.PROSE, fill=(38, 51, 63))]
+
+        assert "color:rgb(232,232,232)" in render(doc)
+
+
+class TestReservingRoomForWideContent:
+    """`.band > * { flex:1 1 12rem; min-width:0 }` lets a flex child shrink
+    below its own content, and `.table-wrap`'s `overflow-x:auto` then clips it
+    — silently, in a screenshot. Three renders clipped and no source did."""
+
+    def test_a_table_reserves_room_per_column(self) -> None:
+        from doc_to_html.render import COLUMN_REM, _reserved
+
+        zone = Zone(kind=Kind.TABLE,
+                    rows=[Row(cells=[Cell() for _ in range(7)])])
+
+        assert _reserved(zone) == 7 * COLUMN_REM
+
+    def test_a_pairs_list_reserves_nothing_and_that_is_measured(self) -> None:
+        """Every reservation large enough to stop `cv_0013`'s sidebar clipping
+        cost `beside_agreement`, which is the hard tier. See `PAIRS_REM`."""
+        from doc_to_html.render import PAIRS_REM, _reserved
+
+        assert PAIRS_REM == 0.0
+        assert _reserved(Zone(kind=Kind.PAIRS)) == 0.0
+
+    def test_prose_reserves_nothing(self) -> None:
+        from doc_to_html.render import _reserved
+
+        assert _reserved(Zone(kind=Kind.PROSE)) == 0.0
+
+    def test_the_reservation_is_capped_at_the_band(self) -> None:
+        """A twenty-column table must not push the page wider than itself."""
+        from doc_to_html.render import render
+
+        doc = document()
+        doc.zones = [Zone(kind=Kind.TABLE,
+                          rows=[Row(cells=[Cell() for _ in range(20)])])]
+
+        assert "min-width:min(120rem,100%)" in render(doc)

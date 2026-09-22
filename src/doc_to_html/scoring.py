@@ -353,6 +353,22 @@ class Layout:
     merged_regions: int
     """Source regions the output welded together. The same fault, inverted."""
 
+    clipped: int
+    """Elements in the output whose content is wider than the box holding it.
+
+    **Reported, not gated** — one run is not enough evidence to ratchet on. It
+    is here because `project()` has always measured it and nothing has ever
+    read it, and on 2026-09-22 it fired on exactly the three renders whose
+    tables and pairs lists were cut off at the right edge, and on none of the
+    fifteen sources. That is the two-tiers-disagreeing failure spec 0007 warns
+    about — recall says the text is present and the picture does not contain
+    it — and it was sitting in the projection the whole time.
+    """
+
+    source_clipped: int
+    """The same count for the source page, so a document that clips its own
+    content is not reported as our fault."""
+
 
 def _pair_blocks(source: Projection, output: Projection
                  ) -> list[tuple[Block, Block]]:
@@ -503,6 +519,8 @@ def layout(source: Projection, output: Projection, *,
         of_blocks=len(source.blocks),
         split_regions=len(correspondence.split()),
         merged_regions=len(correspondence.merged),
+        clipped=output.clipped,
+        source_clipped=source.clipped,
     )
 
 

@@ -305,17 +305,129 @@ def _findings_block(heading: str, css: str, items: list[str]) -> str:
     )
 
 
-def _inline_style(zone: Zone) -> str:
+MIN_ON_FILL = 0.35
+"""How far a Zone's ink must sit from its own fill before it is legible.
+
+The same figure as `style.MIN_INK_CONTRAST`, and the same reasoning: below it
+the two colours are not telling a reader anything apart. Measured on
+`cv_0013`, whose page ground reads white, whose ink reads **(38,51,63)**, and
+whose sidebar Zone's measured fill is **(38,51,63) — the same colour**. The
+renderer painted the panel and then set the type on it in the panel's own
+colour, so the whole sidebar arrived invisible.
+
+An ink measured against the *page* says nothing about a region the page does
+not share a colour with. A filled Zone chooses its own.
+"""
+
+INK_ON_DARK = (232, 232, 232)
+INK_ON_LIGHT = (26, 26, 26)
+"""The two safe defaults, used only when the document's own ink is unreadable
+on a Zone's fill. Not a palette: a legibility floor."""
+
+
+def _readable_on(fill: tuple[int, int, int],
+                 ink: tuple[int, int, int] | None = None) -> tuple[int, int, int] | None:
+    """An ink for this fill, or None to leave the document's own ink alone.
+
+    Returns a colour only when the document's ink would be illegible on this
+    fill — the common case is a Zone whose fill is close to the page's, where
+    the page's ink is exactly right and overriding it would invent a colour.
+    """
+    from .style import _contrast  # local import: render owns no CV of its own
+
+    if ink is not None and _contrast(ink, fill) >= MIN_ON_FILL:
+        return None
+    lighter = sum(fill) > 382
+    return INK_ON_LIGHT if lighter else INK_ON_DARK
+
+
+COLUMN_REM = 6.0
+"""Width a table column is assumed to want, when a Zone reserves room.
+
+**Measured on 2026-09-22, and it sits in a narrow window rather than on a
+plateau — say so before moving it.** `.band > * { flex:1 1 12rem; min-width:0 }`
+lets a flex child shrink below its own content and `.table-wrap`'s
+`overflow-x:auto` then clips the overflow, which in a screenshot is silent.
+Three of fifteen renders clipped and none of the fifteen sources did:
+`statement_0006`'s transactions table had 256px for the 569px it needed,
+`darkdeck_0009`'s service table 400 for 467, and `cv_0013`'s sidebar pairs 256
+for 368. Recall said the text was present; the picture did not contain it.
+
+Reserving `columns x COLUMN_REM` lets `.band`'s existing `flex-wrap` put a wide
+Zone on its own line instead of crushing it. Swept over the corpus with
+everything else held fixed, counting clips against `beside_agreement`:
+
+| rem | clips left | beside | what it costs |
+|---|---|---|---|
+| 0 | 3 | 0.717 | — |
+| 5 | 3 | 0.717 | nothing, and fixes nothing |
+| **6** | **1** | **0.719** | **nothing** |
+| 7 | 1 | 0.715 | `catalogue_0015` 0.227 -> 0.200 |
+| 8 | 1 | 0.708 | and `darkdeck_0009` 0.867 -> 0.856 |
+| 10 | 1 | 0.706 | `catalogue_0015` down to 0.085 |
+
+Six clears `statement_0006` and `darkdeck_0009` and **improves** the hard tier.
+Seven begins prising `catalogue_0015`'s nine-card grid apart. Five does
+nothing. There is no plateau here, so re-measure rather than nudge.
+"""
+
+PAIRS_REM = 0.0
+"""The same reservation for a label/value list — **measured, and not shipped.**
+
+`cv_0013`'s sidebar is the corpus's only clipped pairs list, 256px for the
+368px it wants, and every reservation large enough to fix it costs the hard
+tier. Swept with `COLUMN_REM` held at 0:
+
+| rem | cv_0013 clip | beside | what it costs |
+|---|---|---|---|
+| 18, 20 | still clipped | 0.717 | nothing, and fixes nothing |
+| 22 | still clipped | 0.715 | `cv_0013` 0.450 -> 0.429 |
+| 24 | **fixed** | 0.712 | `cv_0013` 0.450 -> 0.409, `catalogue_0015` 0.227 -> 0.194 |
+| 28 | fixed | 0.678 | `invoice_0002` 0.640 -> 0.250, `nonlatin_0014` 0.912 -> 0.662 |
+
+Buying the clip by breaking `beside_agreement` is a T3 regression, and spec
+0007 fails a phase on the hard tier regardless of what improved. A pairs list
+has no column count to reserve against, so the fix is not a bigger number — it
+is knowing how wide the list actually is, which is A2's question. Left at zero
+and **reported** instead: `Layout.clipped` now carries it, so it is a number on
+the report rather than something only a picture shows.
+"""
+
+
+def _reserved(zone: Zone) -> float:
+    """How many rem this Zone's content needs before it starts being clipped."""
+    if zone.kind is Kind.TABLE:
+        columns = max((len(row.cells) for row in zone.rows), default=0)
+        return columns * COLUMN_REM
+    if zone.kind is Kind.PAIRS:
+        return PAIRS_REM
+    return 0.0
+
+
+def _inline_style(zone: Zone,
+                  document_ink: tuple[int, int, int] | None = None) -> str:
     """A Zone's measured fill, as an inline style.
 
     Inline rather than a class, because the colour is per Zone: one document can
     hold a white card, a grey card and a tinted one, and there is no fixed set
     of classes that covers what a page might do. The palette-wide values stay in
     custom properties on `:root`; only what varies Zone by Zone lands here.
+
+    Carries two more per-Zone facts for the same reason. **The ink is chosen
+    against the Zone's own fill, not the page's ground** — see `_readable_on`.
+    And a Zone reserves the width its content needs, so the band wraps around
+    it instead of clipping it — see `COLUMN_REM`.
     """
-    if zone.fill is None:
-        return ""
-    return f' style="background:{_rgb(zone.fill)}"'
+    parts = []
+    if zone.fill is not None:
+        parts.append(f"background:{_rgb(zone.fill)}")
+        ink = _readable_on(zone.fill, document_ink)
+        if ink is not None:
+            parts.append(f"color:{_rgb(ink)}")
+    reserved = _reserved(zone)
+    if reserved:
+        parts.append(f"min-width:min({reserved:g}rem,100%)")
+    return f' style="{";".join(parts)}"' if parts else ""
 
 
 def _inline_title_style(zone: Zone) -> str:
@@ -350,7 +462,8 @@ def _zone(zone: Zone, document: Document) -> str:
         classes += " filled"
 
     bar = ' class="zone-title barred"' if zone.title_fill else ' class="zone-title"'
-    style_of = _inline_style(zone)
+    style_of = _inline_style(
+        zone, document.style.ink if document.style else None)
     title = (
         f"<h2{bar}{_inline_title_style(zone)}>{html.escape(zone.title)}</h2>"
         if zone.title else ""
