@@ -65,20 +65,20 @@ line that caused the deletion.
 ```
 Thread 0    Scorer, corpus, report        DONE 2026-09-18
 Phase A-1   Nothing loses content quietly DONE 2026-09-19, gate NOT met
-Thread 2/B  Style record (all CV, zero model calls)                     <- in progress
-              palette DONE, per-Zone chrome DONE, page width measured-not-drawn,
-              borders next, type scale deferred
-Phase A0    Stop the bleeding (its T1 = 1.00 gate is disproved; re-scope on entry)
+Thread 2/B  Style record (all CV, zero model calls)   DONE 2026-09-22
+              palette, per-Zone chrome, borders, clipping, width reservation
+              and ink contrast all shipped; page width measured-not-drawn;
+              type scale deferred with its numbers in style.py
+Phase A0    Stop the bleeding                          <- next
+              its T1 = 1.00 gate is disproved; set the replacement from
+              tests/frozen/a0-checkpoint/ before changing any code
 Phase A1/A2/A3  Inline runs, geometry, figure pixels
 Thread 3/C  Repair loop (re-scoped against A+B residuals first)
 Thread 4/D  Human corrections (unscheduled)
 ```
 
-**2/B runs before A0, decided 2026-09-20**, on A-1's checkpoint evidence: A0
-moves precision (0.91–0.98) while `height_ratio` runs 1.03 to **3.70** and the
-renderer cards every titled Zone on roughly ten documents — and 2/B is the only
-thread whose gains need no model call, so it is deterministic and cannot
-threaten the T1 ratchet.
+**2/B ran before A0** and closed on 2026-09-22. `docs/status.md` indexes what
+it shipped and where each measurement lives.
 
 `docs/specs/0007-handover.md` holds a ready prompt per thread and the full
 scope of Phase A-1.
@@ -197,6 +197,12 @@ including `scores.json` — joins that exception, because a run involves the
 model. A run's `report.html` computes its delta against the previous run's
 `scores.json`, which is the pairwise comparison this section asks for, taken
 automatically and in one sitting.
+
+**A third exception, added 2026-09-22: `tests/frozen/a0-checkpoint/`** — Phase
+A0's starting notch, and the floor for A0 and everything after it. Its README
+states its provenance exactly, including that its model answers come from a
+real sweep and its renders from `tools/remeasure_style.py` at a later commit,
+and why that is sound. `a1-checkpoint/` stays as A-1's notch.
 
 **The second exception, added 2026-09-20: `tests/frozen/a1-checkpoint/`.** It
 holds Phase A-1's checkpoint scores, which are **the T1 ratchet's starting

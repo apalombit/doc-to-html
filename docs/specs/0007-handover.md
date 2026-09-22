@@ -279,7 +279,7 @@ Report at A0's checkpoint and again at Thread A's gate.
 
 ---
 
-## Thread 2/B — the style record — **NEXT, ahead of A0**
+## Thread 2/B — the style record — **DONE 2026-09-22, bar the type scale**
 
 Moved ahead of A0 on 2026-09-20. A0 moves precision (0.91–0.98) while
 `height_ratio` runs 1.03–3.70 and the renderer cards every titled Zone on ~10
@@ -330,6 +330,110 @@ T1/T2/T3 do not regress against tests/frozen/a1-checkpoint/scores.json — pass 
 to the report with --previous, because debug/runs is cleared and the notch lives
 in the repository now. Expect width alone not to close the height gap: menu_0012
 is 760px wide, inside the house column, and still sits at 2.77.
+```
+
+---
+
+## Phase A0 — stop the bleeding — **NEXT**
+
+Starts 2026-09-22, after Thread 2/B. Its notch is
+`tests/frozen/a0-checkpoint/scores.json`, committed, with its provenance in
+that directory's README.
+
+**Its pre-registered `T1 = 1.00` gate is disproved, not merely moved.**
+`receipt_0010` sits at 0.175 recall and `catalogue_0015` at 0.571, and none of
+A0's three faults touches either. The prompt below asks for the replacement to
+be set from the checkpoint's own numbers, before any code changes.
+
+**One warning that matters more than the rest**, because it is this project's
+own recurring fault pointed at A0: `Completeness.duplicated` — the obvious
+thing to gate the doubled Title on — **under-reports it**. It totals 29
+repeated strings over twelve documents and comes back **empty for
+`report_0011`, which prints all eight of its numbered headings twice** and
+whose `output_tokens` are 477 against the source's 459. Gating on a measure
+that cannot see the fault is exactly what spec 0007 was opened over.
+
+```
+Read CLAUDE.md's "READ THIS FIRST", then docs/status.md, then
+docs/specs/0007-look-like-the-document.md (authoritative where anything
+disagrees). Implement Phase A0 only. Stop at its gate and report.
+
+Branch scaffold at 09f56d3. 699 tests, mypy src/ clean. Thread 2/B is closed
+bar the type scale; do not redo any of it.
+
+SET THE GATE FIRST, FROM MEASUREMENTS, BEFORE CHANGING ANY CODE.
+A0's pre-registered T1 = 1.00 is disproved: receipt_0010 is at 0.175 recall and
+catalogue_0015 at 0.571 and A0 touches neither. tests/frozen/a0-checkpoint/ is
+the starting notch (means: recall 0.851, precision 0.934, join_recall 0.809,
+tau 0.936). Propose the replacement, say what each clause is for, and get it
+agreed before you write anything.
+
+Beware the obvious gate. Completeness.duplicated totals 29 over twelve
+documents and is EMPTY for report_0011, which visibly prints all eight of its
+numbered headings twice. Find out why before gating on that field. If it
+cannot see the fault, fix the measure or gate on something else — improving a
+measure that is blind in a direction is unconstrained in that direction, which
+is the whole reason this spec exists.
+
+THREE FAULTS, ALL DIAGNOSED. Take them in this order:
+
+1. THE DOUBLED TITLE — 12 of 15 documents, the corpus's most pervasive visual
+   fault. A Zone carrying a Title must not also carry a Block repeating it.
+   DTH_CAPTION_PASS sets Zone.title and nothing removes the corresponding
+   Block. Worst on report_0011 (8 headings, each twice, the duplicate rendered
+   LARGER than the title level so the hierarchy inverts).
+
+2. wire._without_empty_rows FILTERS ON `if row.cells`, which is truthy for
+   ['', '', '', '', '']. sample_table_0003 gets a 17th row of empty strings.
+   The drop tests cell COUNT, not cell CONTENT. Fix the condition. DO NOT
+   DELETE THE NET — four runs established the behaviour it guards, two of
+   which lost a whole table and the 385.00 Probe to one such row.
+
+3. DTH_CAPTION_PASS withholds the caption band from the KIND question but NOT
+   from the Extractor's crop, while with_grid(titled=) subtracts the caption's
+   printed line from the row budget. The crop still shows 17 lines, the prompt
+   says "return exactly 16", and the model drops the real header and keeps the
+   caption. sample_table_0003 still has no column headers today — verify that
+   in the current output before you touch it. Arithmetic and picture must both
+   agree with the page, not merely with each other.
+
+MEASURING IT. A0 changes prompts and extraction, so it needs a real sweep:
+FIXTURE=sweep tools/iterate.sh <label>, all fifteen, ~90 minutes. Alessandro
+has said he will wait. tools/remeasure_style.py DOES NOT serve A0 — it reuses
+the model's answers and cannot move anything A0 changes. Say which of the two
+produced any number you report.
+
+REVIEWING IT. Use the visual-review skill, with --previous pointing at the
+baseline you took. Read every sheet. The doubled title is a "content" major on
+9 of 15 today; it should be a match afterwards.
+
+STANDING RULES.
+- Never cite or analyse a past run. Only a run taken in your session counts.
+  Three exceptions, all committed: tests/frozen/run84/,
+  tests/frozen/a1-checkpoint/, tests/frozen/a0-checkpoint/.
+- Leave debug/runs/84-rule-not-a-line/ intact.
+- Never score against tests/documents/SAMPLE_DOCUMENTS.
+- Do not delete the two dormant safety nets or the four shipped defaults.
+- project() compares a normalised view, never raw markup.
+- Every run must produce debug/runs/<label>/report.html.
+- Rubric judgements are pairwise and in-session only.
+
+DEFERRED — do not "fix" and do not read as new faults: column collapse (A2),
+the type scale (its own increment), Zone.align (A2), figures as placeholders
+(A3), cv_0013's clipped sidebar values (A2, render.PAIRS_REM says why).
+
+ALSO OPEN, NOT A0's, DO NOT ABSORB THEM:
+- statement_0006's 41 near-identical caveat lines should aggregate to one.
+  Ours, from A-1, no model time. Offer it; do not do it inside A0.
+- receipt_0010 is the worst document (0.175 recall) and has one untested lead:
+  preprocess.resize_long_edge never enlarges, and receipt_0010 rectifies to
+  335x547, so the extractor sees ~300px across 19 monospace lines. A decision
+  change, not a perception instruction. One document, ~6 min to probe.
+- nonlatin_0014's dark-blue table header row renders unshaded. Do not build a
+  third detector; point chrome()'s existing title-band measurement at the row
+  RowRole.header already names.
+
+Ask before binding anything docs/status.md leaves open.
 ```
 
 ---
