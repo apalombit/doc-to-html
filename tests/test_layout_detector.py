@@ -364,6 +364,46 @@ class TestGivingATableItsSummaryRowBack:
         strip = box(0.70, 0.31, 0.95, 0.34, "key_value_region")
         assert len(attach_trailing_rows([prose, strip])) == 2
 
+    def test_a_heading_under_a_table_is_never_its_summary_row(self) -> None:
+        """The fix for a content loss the T1 ratchet caught — spec 0007 A0.
+
+        `darkdeck_0009` prints `<h2>What Q4 commits to</h2>` directly under its
+        component table, and heron reports it as its own `section_header`. It is
+        short and it is close, so it met every other test here and was folded
+        into the table — and `attach_headings`, which runs after this, then had
+        nothing left to attach to the paragraph below. The heading stopped being
+        printed at all.
+
+        A heading names the region *beneath* it rather than being one. So it can
+        never be the last row of the region above, whatever its proportions.
+        """
+        table = box(0.05, 0.30, 0.95, 0.80, "table")
+        heading = box(0.05, 0.82, 0.40, 0.84, "section_header")
+
+        assert len(attach_trailing_rows([table, heading])) == 2
+
+    def test_every_heading_class_is_refused_not_just_section_header(
+        self,
+    ) -> None:
+        """`report_0011`'s absorbed heading is a table caption, and the two
+        detectors spell that differently — heron's `caption` against
+        DocStructBench's `table_caption`. The guard is on the whole vocabulary
+        `attach_headings` claims, or it fixes one detector and not the other."""
+        table = box(0.05, 0.30, 0.95, 0.80, "table")
+
+        for label in ("section_header", "title", "caption",
+                      "table_caption", "figure_caption"):
+            heading = box(0.05, 0.82, 0.40, 0.84, label)
+            assert len(attach_trailing_rows([table, heading])) == 2, label
+
+    def test_the_total_it_exists_for_still_attaches(self) -> None:
+        """Narrowing the rule must not narrow what it already caught: two runs
+        lost `invoice_0001`'s table and its 385.00 Probe to this."""
+        table = box(0.05, 0.30, 0.95, 0.80, "table")
+        total = box(0.70, 0.82, 0.95, 0.85, "key_value_region")
+
+        assert len(attach_trailing_rows([table, total])) == 1
+
 
 class TestBoxesBecomeZones:
     """What the adapter must produce for the rest of the pipeline to work."""

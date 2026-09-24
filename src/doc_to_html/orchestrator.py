@@ -1141,6 +1141,15 @@ class Conversion:
         opposite pixels: the Title needs the caption band in frame and the Kind is
         measurably wrong while it is there. See `config.DEFAULT_CAPTION_PASS`.
 
+        **The Extractor is deliberately not given this number** — spec 0007
+        Phase A0, 2026-09-22, and it was tried the other way first. Withholding
+        the band from extraction as well deletes real content wherever this pass
+        took a Title from something that was not a caption, and it has no
+        reliable test for that; `engines.ollama.OllamaEngine.extract_zone`
+        carries the measurement and the three documents it was rejected on. The
+        caption is therefore read twice, and `wire._without_title_echo` drops
+        the second copy after the fact.
+
         **The band measurement decides whether to ask at all**, and that guard is
         structural rather than a judgement: `caption_band` returns `None` unless
         something is printed *below* the first line, so a Zone that is only a

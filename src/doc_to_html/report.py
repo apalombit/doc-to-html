@@ -34,6 +34,7 @@ import base64
 import html
 import io
 import json
+import math
 import re
 from dataclasses import asdict
 from datetime import datetime, timezone
@@ -259,7 +260,10 @@ details .steps img { border:1px solid var(--rule); display:block;
 
 def _delta_html(now: float, before: float | None, *, higher_is_better: bool,
                 places: int = 3) -> str:
-    if before is None:
+    # `nan` is an axis the previous run predates — see `_MISSING`. It must draw
+    # no arrow at all: every comparison against it is False, so an unguarded
+    # `nan` renders as a fall, which is the one reading it must never have.
+    if before is None or math.isnan(before) or math.isnan(now):
         return ""
     change = now - before
     if abs(change) < 10 ** -(places + 1):
@@ -333,7 +337,13 @@ def _document_section(source: Source, score: DocumentScore, *,
                       account: Accounting | None = None) -> str:
     done = score.completeness
     axes = [
-        _axis("T1 recall", f"{done.recall:.3f}", hard=True, ok=done.recall >= 1.0,
+        _axis("T1 vocabulary", f"{done.vocabulary_recall:.3f}", hard=True,
+              ok=done.vocabulary_recall >= 1.0,
+              delta=_delta_html(
+                  done.vocabulary_recall,
+                  before.completeness.vocabulary_recall if before else None,
+                  higher_is_better=True)),
+        _axis("T1 recall", f"{done.recall:.3f}", hard=False, ok=done.recall >= 1.0,
               delta=_delta_html(done.recall,
                                 before.completeness.recall if before else None,
                                 higher_is_better=True)),
@@ -417,14 +427,41 @@ def _document_section(source: Source, score: DocumentScore, *,
     )
 
 
+def _stopped_printing(now: DocumentScore, was: DocumentScore) -> list[str]:
+    """Source words the previous run printed and this one does not.
+
+    **The ratchet's recall leg, in one place**, because `_gate_html` and
+    `_summary_table` must fail a document on the same test: a green row above a
+    failed gate is a reader having to work out which one is lying.
+
+    Word by word rather than ratio against ratio. A document may lose two words
+    and gain five, and `vocabulary_recall` then *rises* while the page has
+    stopped printing something it printed before — which is the trade the
+    ratchet exists to forbid, and which `darkdeck_0009` did on Phase A0's own
+    checkpoint run.
+
+    Empty when the previous run predates the field: `nan` means unmeasured, and
+    a document cannot have stopped printing a word nobody measured.
+    """
+    if math.isnan(was.completeness.vocabulary_recall):
+        return []
+    return sorted(set(now.completeness.vanished)
+                  - set(was.completeness.vanished))
+
+
 def _summary_table(scores: list[DocumentScore],
                    before: dict[str, DocumentScore]) -> str:
     rows = []
     for score in scores:
         was = before.get(score.name)
+        # The *same* rule `_ratchet_html` fails the phase on, word for word and
+        # not ratio against ratio — or a reader sees a clean table above a
+        # failed gate. `darkdeck_0009` is the case: it stopped printing two
+        # words and started printing five, so its `vocabulary_recall` rose
+        # while the ratchet was broken.
         regressed = bool(
             was
-            and (score.completeness.recall < was.completeness.recall - 1e-9
+            and (_stopped_printing(score, was)
                  or score.completeness.precision < was.completeness.precision - 1e-9
                  or score.order.tau < was.order.tau - 1e-9
                  or score.layout.beside_agreement
@@ -435,6 +472,8 @@ def _summary_table(scores: list[DocumentScore],
             f'<td class="name"><a href="#{html.escape(score.name)}">'
             f"{html.escape(score.name)}</a></td>"
             f"<td>{score.split}</td>"
+            f"<td>{score.completeness.vocabulary_recall:.3f}"
+            f"{_delta_html(score.completeness.vocabulary_recall, was.completeness.vocabulary_recall if was else None, higher_is_better=True)}</td>"
             f"<td>{score.completeness.recall:.3f}"
             f"{_delta_html(score.completeness.recall, was.completeness.recall if was else None, higher_is_better=True)}</td>"
             f"<td>{score.completeness.precision:.3f}"
@@ -452,7 +491,8 @@ def _summary_table(scores: list[DocumentScore],
         )
     return (
         '<table class="summary"><thead><tr>'
-        "<th>document</th><th>split</th><th>T1 recall</th><th>T1 prec</th>"
+        "<th>document</th><th>split</th><th>T1 vocab</th><th>T1 recall</th>"
+        "<th>T1 prec</th>"
         "<th>T1 joins</th><th>T2 tau</th><th>T3 beside</th><th>T3 height</th>"
         "<th>T4 align</th><th>T6 inline</th><th>dupes</th><th>breaks</th>"
         f'</tr></thead><tbody>{"".join(rows)}</tbody></table>'
@@ -467,21 +507,40 @@ def _gate_html(scores: list[DocumentScore],
     target to optimise — a floor never to cross, and the rule that would have
     caught all three of the faults that shipped as improvements in runs 81 to
     84.
+
+    **The recall leg is `vocabulary_recall`, not `recall` — spec 0007 Phase A0,
+    2026-09-22.** The floor is *no source word the output prints today stops
+    being printed*, per document. The multiset `recall` is still shown on every
+    pair and a fall in it is still worth reading; it is not the floor, because
+    a duplicate deleted where the page never had one lowers it while nothing
+    leaves the page. `scoring.Completeness.vocabulary_recall` carries the
+    measurement that forced the change.
+
+    A previous side that predates the field is `nan` and is reported as
+    unmeasured rather than compared — see `_MISSING`.
     """
     if not before:
         return (
             '<div class="gate pass"><b>No previous run to ratchet against.</b> '
             "This run becomes the notch the next one may not fall below.</div>"
         )
-    broken = []
+    broken: list[str] = []
+    unmeasured: list[str] = []
     for score in scores:
         was = before.get(score.name)
         if not was:
             continue
-        if score.completeness.recall < was.completeness.recall - 1e-9:
+        before_vocab = was.completeness.vocabulary_recall
+        if math.isnan(before_vocab):
+            unmeasured.append(score.name)
+        stopped = _stopped_printing(score, was)
+        if stopped:
             broken.append(
-                f"{score.name}: T1 recall {was.completeness.recall:.3f} → "
-                f"{score.completeness.recall:.3f}"
+                f"{score.name}: stopped printing "
+                + ", ".join(stopped[:12])
+                + (f" (+{len(stopped) - 12} more)" if len(stopped) > 12 else "")
+                + f" — T1 vocabulary {before_vocab:.3f} → "
+                f"{score.completeness.vocabulary_recall:.3f}"
             )
         if score.completeness.precision < was.completeness.precision - 1e-9:
             broken.append(
@@ -498,17 +557,23 @@ def _gate_html(scores: list[DocumentScore],
                 f"{score.name}: T3 beside {was.layout.beside_agreement:.2f} "
                 f"→ {score.layout.beside_agreement:.2f}"
             )
+    note = (
+        "<br><small>Vocabulary was unmeasured in the previous run for "
+        + html.escape(", ".join(unmeasured))
+        + " — those documents were ratcheted on order and layout only.</small>"
+        if unmeasured else ""
+    )
     if not broken:
         return (
-            '<div class="gate pass"><b>Hard tier holds.</b> No document lost '
-            "completeness, reading order or side-by-side structure against the "
-            "previous run.</div>"
+            '<div class="gate pass"><b>Hard tier holds.</b> No document stopped '
+            "printing a word it printed before, and none lost reading order or "
+            "side-by-side structure against the previous run." + note + "</div>"
         )
     return (
         '<div class="gate fail"><b>Phase gate FAILED.</b> The hard tier '
         "regressed, which fails the phase whatever improved elsewhere:<ul>"
-        + "".join(f"<li>{item}</li>" for item in broken)
-        + "</ul></div>"
+        + "".join(f"<li>{html.escape(item)}</li>" for item in broken)
+        + "</ul>" + note + "</div>"
     )
 
 
@@ -590,20 +655,58 @@ def _previous(path: Path | None) -> dict[str, DocumentScore]:
     return found
 
 
+_MISSING: dict[tuple[str, str], Any] = {
+    ("Completeness", "vocabulary_recall"): math.nan,
+    ("Completeness", "vanished"): (),
+}
+"""What to put in a field a stored `scores.json` predates, by class and name.
+
+**`nan` for a ratio, and it is chosen rather than convenient.** It means
+*unmeasured*, and `_ratchet_html` says so by name instead of comparing against
+it: a zero would read as a catastrophic previous run that any output improves
+on, and the ratchet would then pass for the wrong reason on exactly the
+checkpoint it was pointed at. A tuple's empty value is safe because every one
+here is a list of findings, and no findings is what a run that could not have
+had any would have reported.
+"""
+
+
+def _is_a_field(spec: Any) -> bool:
+    """Whether a dataclass field is stored rather than derived."""
+    return getattr(spec, "init", True)
+
+
 def _score_from(entry: dict[str, Any]) -> DocumentScore:
-    """Rebuild a score from JSON, for comparing against a previous run."""
+    """Rebuild a score from JSON, for comparing against a previous run.
+
+    **A field the stored run predates is filled from its own dataclass
+    default**, so a scorer that grows an axis can still ratchet against a
+    checkpoint taken before that axis existed. `tests/frozen/a1-checkpoint/` is
+    the live case: it was written before `vocabulary_recall`, and crashing on it
+    would make the ratchet unusable against exactly the notch it was committed
+    to defend. A default is honest here because every such field is reported
+    beside the run it came from — what it must never do is *invent* a previous
+    value the ratchet would then be measured against, which is why
+    `_ratchet_html` skips a comparison whose previous side is unmeasured rather
+    than treating a default as a reading.
+    """
     from .scoring import Completeness, Inline, Layout, Order, Palette, Typography
 
     def build(kind: Any, data: Any) -> Any:
         if data is None:
             return None
-        fields = {field.name for field in kind.__dataclass_fields__.values()}
-        return kind(**{
+        spec = kind.__dataclass_fields__
+        known = {
             key: (tuple(tuple(item) if isinstance(item, list) else item
                         for item in value)
                   if isinstance(value, list) else value)
-            for key, value in data.items() if key in fields
-        })
+            for key, value in data.items() if key in spec
+        }
+        for name, field_spec in spec.items():
+            if name in known or not _is_a_field(field_spec):
+                continue
+            known[name] = _MISSING.get((kind.__name__, name), None)
+        return kind(**known)
 
     return DocumentScore(
         name=entry["name"], split=entry.get("split", "iterate"),

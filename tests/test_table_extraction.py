@@ -21,6 +21,7 @@ from doc_to_html.ir import BBox, Document, Kind, RowRole, Zone
 from doc_to_html.preprocess import (
     MIN_BAND,
     TableGrid,
+    caption_band,
     content_ink,
     ink_bands,
     rectify,
@@ -314,7 +315,7 @@ class TestMappingATableResponse:
 
 
 class TestARowWithNoCellsAtAll:
-    """A row carrying nothing is dropped, and takes nothing with it.
+    """A row saying nothing is dropped, and takes nothing with it.
 
     The width check exists because a row with the *wrong* number of cells hides a
     dropped or invented one, and every value after it lands in the wrong column.
@@ -389,6 +390,138 @@ class TestARowWithNoCellsAtAll:
                 '{"rows": [{"role": "data", "cells": []},'
                 ' {"role": "data", "cells": []}]}'
             )
+
+    def test_a_row_of_empty_strings_is_a_row_saying_nothing(self) -> None:
+        """The condition was on cell **count** and had to be on cell **content**.
+
+        `if row.cells` is truthy for `['', '', '', '']`: five cells that say
+        nothing passed the net that exists to drop them, passed the width check
+        on their width, and rendered as a blank line inside the table.
+        `report_0011`'s berth table carried one. Spec 0007 Phase A0.
+        """
+        zone = table_zone(
+            '{"rows": [{"role": "header", "cells": ["Berth", "Movements"]},'
+            ' {"role": "data", "cells": ["Aggregates", "412"]},'
+            ' {"role": "data", "cells": ["", ""]},'
+            ' {"role": "data", "cells": ["Timber", "228"]}]}'
+        )
+
+        assert [[c.text for c in r.cells] for r in zone.rows] == [
+            ["Berth", "Movements"], ["Aggregates", "412"], ["Timber", "228"],
+        ]
+
+    def test_whitespace_is_not_content_either(self) -> None:
+        """Or the same row comes back whenever the model pads with a space."""
+        zone = table_zone(
+            '{"rows": [{"role": "data", "cells": ["a", "b"]},'
+            ' {"role": "data", "cells": [" ", "  "]}]}'
+        )
+
+        assert len(zone.rows) == 1
+
+    def test_a_row_with_one_value_and_one_blank_is_still_kept(self) -> None:
+        """The net stays narrow. A row with *some* content is ambiguous, not
+        empty, and dropping it would lose a value the page prints."""
+        zone = table_zone(
+            '{"rows": [{"role": "header", "cells": ["a", "b"]},'
+            ' {"role": "data", "cells": ["", "1"]}]}'
+        )
+
+        assert [[c.text for c in r.cells] for r in zone.rows] == [
+            ["a", "b"], ["", "1"],
+        ]
+
+    def test_the_net_still_catches_the_row_that_cost_the_invoice_table(
+        self,
+    ) -> None:
+        """Widening the test must not narrow what it already caught."""
+        zone = table_zone(self.MEASURED)
+
+        assert len(zone.rows) == 5
+
+
+class TestAHeaderRepeatedToPadTheRowCount:
+    """The model complies with *how many* and fills the surplus by repeating.
+
+    `table_grid` counts bands of ink and cannot tell a caption from a heading
+    row, so a crop whose first line is a caption measures one row more than the
+    table has — and `with_grid` states that number. Measured over the corpus,
+    exactly two tables padded, and both repeated the header verbatim:
+    `darkdeck_0009`'s Service level table and `report_0011`'s berth table.
+    """
+
+    MEASURED = (
+        '{"rows": [{"role": "header", "cells": ["Berth", "Movements", "Change"]},'
+        ' {"role": "data", "cells": ["Aggregates", "412", "+57%"]},'
+        ' {"role": "data", "cells": ["Fishing", "1,946", "+1%"]},'
+        ' {"role": "header", "cells": ["Berth", "Movements", "Change"]}]}'
+    )
+    """`report_0011`'s berth table, in the shape run 99 returned it."""
+
+    def test_the_repeat_is_dropped_and_the_first_header_kept(self) -> None:
+        zone = table_zone(self.MEASURED)
+
+        assert [[c.text for c in r.cells] for r in zone.rows] == [
+            ["Berth", "Movements", "Change"],
+            ["Aggregates", "412", "+57%"],
+            ["Fishing", "1,946", "+1%"],
+        ]
+        assert [r.role for r in zone.rows] == [
+            RowRole.HEADER, RowRole.DATA, RowRole.DATA,
+        ]
+
+    def test_a_data_row_repeating_another_is_a_real_shape_and_is_kept(
+        self,
+    ) -> None:
+        """Two months with identical figures are two rows, not a pad."""
+        zone = table_zone(
+            '{"rows": [{"role": "header", "cells": ["Month", "Total"]},'
+            ' {"role": "data", "cells": ["May", "0.00"]},'
+            ' {"role": "data", "cells": ["May", "0.00"]}]}'
+        )
+
+        assert len(zone.rows) == 3
+
+    def test_a_second_heading_tier_is_not_a_repeat(self) -> None:
+        """A header differing by one cell is a different row and stays."""
+        zone = table_zone(
+            '{"rows": [{"role": "header", "cells": ["Berth", "Movements"]},'
+            ' {"role": "data", "cells": ["Aggregates", "412"]},'
+            ' {"role": "header", "cells": ["Berth", "Revenue"]}]}'
+        )
+
+        assert len(zone.rows) == 3
+
+    def test_spelling_is_case_and_whitespace_only(self) -> None:
+        zone = table_zone(
+            '{"rows": [{"role": "header", "cells": ["Berth", "Movements"]},'
+            ' {"role": "data", "cells": ["Aggregates", "412"]},'
+            ' {"role": "header", "cells": ["  BERTH ", "movements"]}]}'
+        )
+
+        assert len(zone.rows) == 2
+
+    def test_a_split_header_is_rejoined_before_it_is_compared(self) -> None:
+        """Order matters: `_join_split_header_row` runs first, so a header that
+        arrived one cell per row is one row by the time this sees it and cannot
+        be mistaken for a repeat of itself."""
+        zone = table_zone(
+            '{"rows": [{"role": "header", "cells": ["Item", ""]},'
+            ' {"role": "header", "cells": ["", "Price"]},'
+            ' {"role": "data", "cells": ["Website design", "$300.00"]}]}'
+        )
+
+        assert [[c.text for c in r.cells] for r in zone.rows] == [
+            ["Item", "Price"], ["Website design", "$300.00"],
+        ]
+
+    def test_a_table_with_no_header_at_all_is_untouched(self) -> None:
+        zone = table_zone(
+            '{"rows": [{"role": "data", "cells": ["a", "b"]},'
+            ' {"role": "data", "cells": ["a", "b"]}]}'
+        )
+
+        assert len(zone.rows) == 2
 
 
 class TestAHeaderRowSplitOneCellPerRow:
@@ -616,25 +749,76 @@ class TestMeasuringTheGridFromThePixels:
                                       int(mask.shape[1] * 0.04), MIN_BAND))
         assert as_a_fraction == 2, "the fraction is what this test exists to reject"
 
-    def test_a_title_is_a_printed_line_and_not_a_row(self) -> None:
-        """The one inaccuracy this ruler has, and where it belongs.
+    def test_a_title_is_a_printed_line_and_the_prompt_no_longer_hides_it(
+        self,
+    ) -> None:
+        """The ruler and the picture must measure the same pixels.
 
         `sample_table_0003` prints "Population and GDP (millions of USD)" above
         its grid. That is the Zone's Title in the IR — not a row — but it is a
-        band of ink like any other, so the projection counts 17 where the table
-        has 16. Both numbers are right; they count different things.
+        band of ink like any other, so the crop counts 17 where the table has
+        16. Both numbers are right; they count different things.
 
-        The ruler is left alone and `with_grid` subtracts, because that is the
-        seam where a claim about a *crop* becomes a claim about a *table*, and it
-        is the first place `zone.title` is known — classification fills it before
-        extraction runs. Neither of `invoice_0001`'s tables has a Title, which is
-        why the count was exact there and this never surfaced until run 49.
+        **The old correction was `with_grid(titled=True)` taking one off the
+        stated count while the caption stayed in the Extractor's picture, and it
+        shipped a deletion** — spec 0007 Phase A0. The crop showed 17 lines, the
+        prompt said "return exactly 16", and the model resolved the
+        disagreement by dropping the real header row and keeping the caption.
+        All five of this table's column headers went that way and the harness
+        scored it a full match.
+
+        So the prompt now states what the crop holds, and the caption comes back
+        as a row that `wire._without_title_echo` drops after it has been read.
         """
         crop = self.crop_of("sample_table_0003", 1)
         assert table_grid(crop).rows == 17, "the crop really does hold 17 lines"
 
-        titled = with_grid(TABLE_PROMPT, table_grid(crop), titled=True)
-        assert "it holds 16 rows and 5 columns" in titled
+        asked = with_grid(TABLE_PROMPT, table_grid(crop))
+        assert "it holds 17 rows and 5 columns" in asked, (
+            "the count describes the picture that is sent, caption included"
+        )
+
+    def test_the_prompt_quotes_the_pixels_the_model_is_sent(self) -> None:
+        """The property the subtraction could not have, pinned end to end.
+
+        On `with_grid` alone it would not have caught the fault: the count was
+        corrected in one place and the crop left alone in another, and nothing
+        checked that the two described one page.
+        """
+        from doc_to_html.corpus import SOURCES
+
+        from .documents import SAMPLE_DOCUMENTS
+
+        zone = SAMPLE_DOCUMENTS["sample_table_0003"]().zones[1]
+        assert zone.bbox is not None
+        zone.title = "Population and GDP (millions of USD)"
+        crop = zone_pixels(rectify(REPO / SOURCES["sample_table_0003"].png).image,
+                           zone)
+
+        engine, transport = engine_with(
+            '{"rows": [{"role": "header", "cells": ["Country", "ISO",'
+            ' "Population", "GDP (USD M)", "Currency"]}]}'
+        )
+        engine.table_grid_hint = True
+        engine.extract_zone(crop, zone)
+
+        assert transport.last is not None
+        sent = np.asarray(Image.open(io.BytesIO(transport.last.images[0])))
+        grid = table_grid(sent)
+        assert f"it holds {grid.rows} rows and {grid.columns} columns" \
+            in transport.last.prompt
+
+    def test_a_titled_table_is_no_longer_asked_for_one_row_fewer(self) -> None:
+        """The regression test for the deletion itself.
+
+        A Title on the Zone must change nothing about the count, because the
+        Title is still in the picture. Both of `invoice_0001`'s tables lack one,
+        which is why the count was exact there and this never surfaced until a
+        titled table was measured.
+        """
+        grid = TableGrid(rows=17, columns=5, row_bands=[], column_bands=[])
+
+        assert "it holds 17 rows" in with_grid(TABLE_PROMPT, grid)
 
 
 class TestStatingTheGridInThePrompt:

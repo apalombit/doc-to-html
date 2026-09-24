@@ -23,7 +23,7 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from doc_to_html.ir import BBox, Kind, Zone
+from doc_to_html.ir import BBox, Kind, Reading, Zone
 from doc_to_html.orchestrator import Conversion
 from doc_to_html.preprocess import (
     PAD_Y,
@@ -34,6 +34,12 @@ from doc_to_html.preprocess import (
     zone_pixels,
 )
 from doc_to_html.trace import Disposition, Stage
+from doc_to_html.wire import contents_into
+
+
+def a_reading(content: str) -> Reading:
+    """The `Read` a mapper is injected with, so these stay pure. See `wire.Read`."""
+    return Reading(engine="test", text=content)
 
 from .replay import ReplayTransport, engines_replaying, recorded_for, text
 
@@ -487,3 +493,147 @@ class TestTheTraceExplainsTheStep:
             zone = document.zones[event.zone_index]
             assert zone.bbox is not None
             assert event.data["crop"]["box"]["top"] > zone.bbox.top
+
+
+class TestATitleIsNeverPrintedTwice:
+    """A Zone carrying a Title must not also carry an entry repeating it.
+
+    **The corpus's most pervasive visual fault, and spec 0007 Phase A0's first.**
+    Over Phase A0's checkpoint, 34 Zones of 45 titled ones carried an echo across
+    12 of the 15 documents, and `report_0011` printed all eight of its numbered
+    headings twice — the duplicate rendered *larger* than the Title level, so the
+    hierarchy inverted.
+
+    The cause is that the caption pass lifts the first printed line into
+    `Zone.title` and then leaves it in the Extractor's crop, so the model is
+    shown it twice and answers honestly both times. The remedy is here, in
+    `wire.py`, rather than as a filter in `render.py`, because anything reading
+    the IR rather than the page would otherwise see the heading twice as well.
+
+    **`Completeness.duplicated` is not what this is measured against** and was
+    rejected as A0's gate: it reports only strings the *source projection* also
+    carries, and `report_0011`'s section numbers are CSS `::before` counters that
+    the projection cannot see, so it came back empty for the worst document in
+    the corpus. This is counted in the IR instead, where nothing can be blind.
+    """
+
+    def zone(self, **fields: object) -> Zone:
+        return Zone(kind=Kind.PROSE, title="Deferred works", **fields)  # type: ignore[arg-type]
+
+    def test_a_block_repeating_the_title_is_dropped(self) -> None:
+        zone = contents_into(
+            self.zone(),
+            '{"blocks": [{"kind": "heading", "lines": ["Deferred works"]},'
+            ' {"kind": "paragraph", "lines": ["The gates were last surveyed."]}]}',
+            read=a_reading,
+        )
+
+        assert [line.text for block in zone.blocks for line in block.lines] == [
+            "The gates were last surveyed."
+        ]
+        assert zone.title == "Deferred works", "the Title is what survives"
+
+    def test_the_spelling_rule_is_case_and_whitespace_only(self) -> None:
+        """Punctuation is deliberately kept. A Title and a Block differing by a
+        colon are two different printed lines, and the echo is a verbatim
+        repeat."""
+        kept = contents_into(
+            self.zone(),
+            '{"blocks": [{"kind": "heading", "lines": ["Deferred works:"]}]}',
+            read=a_reading,
+        )
+        assert len(kept.blocks) == 1, "a colon makes it a different line"
+
+        dropped = contents_into(
+            self.zone(),
+            '{"blocks": [{"kind": "heading", "lines": ["  DEFERRED   WORKS "]},'
+            ' {"kind": "paragraph", "lines": ["body"]}]}',
+            read=a_reading,
+        )
+        assert [line.text for b in dropped.blocks for line in b.lines] == ["body"]
+
+    def test_only_the_first_block_is_ever_looked_at(self) -> None:
+        """Measured rather than chosen: every one of the checkpoint's 27 Block
+        echoes was `blocks[0]`, with nothing between 0.80 similarity and an
+        exact match. A rule that scanned the body would catch none of them that
+        this does not, and would be free to delete a legitimate repetition."""
+        zone = contents_into(
+            self.zone(),
+            '{"blocks": [{"kind": "paragraph", "lines": ["Three schemes ran."]},'
+            ' {"kind": "paragraph", "lines": ["Deferred works"]}]}',
+            read=a_reading,
+        )
+
+        assert len(zone.blocks) == 2, "a repeat further down is content"
+
+    def test_a_table_caption_returned_as_its_first_row_is_dropped(self) -> None:
+        zone = contents_into(
+            Zone(kind=Kind.TABLE, title="Population and GDP (millions of USD)"),
+            '{"rows": [{"role": "header",'
+            ' "cells": ["Population and GDP (millions of USD)", "", ""]},'
+            ' {"role": "header", "cells": ["Country", "ISO", "Population"]},'
+            ' {"role": "data", "cells": ["United States", "USA", "331,900,000"]}]}',
+            read=a_reading,
+        )
+
+        assert [[c.text for c in r.cells] for r in zone.rows] == [
+            ["Country", "ISO", "Population"],
+            ["United States", "USA", "331,900,000"],
+        ]
+
+    def test_a_real_heading_row_that_starts_with_the_title_is_kept(self) -> None:
+        """The bound that makes the row rule safe, and it is a live case.
+
+        `darkdeck_0009`'s Zone 2 is four metric cards whose labels read
+        `AVAILABILITY / P95 LATENCY / INGEST VOLUME / COST PER MILLION`, and the
+        caption pass takes the first of them as the Zone's Title. The row is not
+        an echo of that Title — it is the Title plus three more labels — so the
+        test is on the row's *whole* text and the row stays. Dropping it would
+        delete three labels the page prints.
+        """
+        zone = contents_into(
+            Zone(kind=Kind.TABLE, title="AVAILABILITY"),
+            '{"rows": [{"role": "header", "cells": ["AVAILABILITY",'
+            ' "P95 LATENCY", "INGEST VOLUME", "COST PER MILLION"]},'
+            ' {"role": "data", "cells": ["99.97%", "184 ms", "4.8 bn", "$2.14"]}]}',
+            read=a_reading,
+        )
+
+        assert len(zone.rows) == 2
+        assert zone.rows[0].cells[1].text == "P95 LATENCY"
+
+    def test_a_pair_repeating_the_title_is_dropped(self) -> None:
+        zone = contents_into(
+            Zone(kind=Kind.PAIRS, title="Comments / Notes"),
+            '{"pairs": [{"label": "Comments / Notes", "value": ""},'
+            ' {"label": "Terms", "value": "30 days"}]}',
+            read=a_reading,
+        )
+
+        assert [(p.label.text, p.value.text) for p in zone.pairs] == [
+            ("Terms", "30 days")
+        ]
+
+    def test_an_untitled_zone_is_untouched(self) -> None:
+        zone = contents_into(
+            Zone(kind=Kind.PROSE),
+            '{"blocks": [{"kind": "heading", "lines": ["Deferred works"]},'
+            ' {"kind": "paragraph", "lines": ["body"]}]}',
+            read=a_reading,
+        )
+
+        assert len(zone.blocks) == 2
+
+    def test_a_zone_whose_only_block_was_the_echo_keeps_its_title(self) -> None:
+        """A titled section with nothing under it is a real thing on a page, and
+        `contents_into` already allows it. Emptying the body here must not turn
+        that into a failure after the fact."""
+        zone = contents_into(
+            self.zone(),
+            '{"blocks": [{"kind": "heading", "lines": ["Deferred works"]}]}',
+            read=a_reading,
+        )
+
+        assert zone.blocks == []
+        assert zone.title == "Deferred works"
+        assert zone.complete

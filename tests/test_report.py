@@ -37,7 +37,9 @@ def a_score(name: str = "invoice_0001", **overrides: Any) -> DocumentScore:
         name=name, split="iterate", width=862, source_height=563,
         output_height=580,
         completeness=Completeness(
-            recall=1.0, precision=1.0, join_recall=1.0, source_tokens=120,
+            recall=1.0, precision=1.0, join_recall=1.0,
+            vocabulary_recall=1.0, vanished=(),
+            source_tokens=120,
             output_tokens=120, lost=(), duplicated=(), invented=(),
             broken_joins=(), figures_lost=0, hard_breaks=6,
             source_hard_breaks=6, short_lines=6, source_short_lines=6,
@@ -69,7 +71,29 @@ def a_score(name: str = "invoice_0001", **overrides: Any) -> DocumentScore:
 class TestTheT1Ratchet:
     """Completeness may never decrease between phases, for any reason."""
 
-    def test_a_fall_in_recall_fails_the_phase_even_when_everything_else_improves(
+    def test_a_word_lost_fails_it_even_when_more_words_are_gained(self) -> None:
+        """Word by word, not ratio against ratio — and this is a live case.
+
+        On Phase A0's own checkpoint run `darkdeck_0009` stopped printing the
+        heading "What Q4 commits to" and gained the five figures of its delta
+        row, so its `vocabulary_recall` *rose* from 0.910 to 0.928 while the
+        page had stopped printing something it printed before. A ratio
+        comparison passes that; the ratchet is a floor, not a budget to trade
+        against.
+        """
+        before = {"invoice_0001": a_score(
+            completeness=replace(a_score().completeness,
+                                 vocabulary_recall=0.910,
+                                 vanished=("alpha", "beta", "gamma")))}
+        traded = a_score(completeness=replace(
+            a_score().completeness, vocabulary_recall=0.928,
+            vanished=("commits", "what")))
+
+        gate = _gate_html([traded], before)
+        assert "FAILED" in gate
+        assert "stopped printing commits, what" in gate
+
+    def test_a_word_no_longer_printed_fails_the_phase_whatever_else_improved(
         self,
     ) -> None:
         """This is the whole rule, and the case that makes it worth having.
@@ -81,7 +105,8 @@ class TestTheT1Ratchet:
         """
         before = {"invoice_0001": a_score()}
         worse = a_score(
-            completeness=replace(a_score().completeness, recall=0.95),
+            completeness=replace(a_score().completeness,
+                                 vocabulary_recall=0.95, vanished=("total",)),
             layout=replace(a_score().layout, beside_agreement=1.0,
                            height_ratio=1.0),
             typography=replace(a_score().typography, alignment_agreement=1.0),
@@ -89,7 +114,63 @@ class TestTheT1Ratchet:
 
         gate = _gate_html([worse], before)
         assert "FAILED" in gate
-        assert "T1 recall 1.000 &rarr; 0.950" in gate or "1.000 → 0.950" in gate
+        assert "stopped printing total" in gate
+
+    def test_the_failure_names_the_words_that_stopped_being_printed(
+        self,
+    ) -> None:
+        """A ratio that moved is not a finding. The words are.
+
+        `Completeness.vanished` is what the clause is short by, so the message
+        built from it says what was caught rather than only that a number fell.
+        """
+        before = {"invoice_0001": a_score()}
+        worse = a_score(
+            completeness=replace(a_score().completeness,
+                                 vocabulary_recall=0.9,
+                                 vanished=("currency", "iso")))
+
+        gate = _gate_html([worse], before)
+        assert "currency" in gate and "iso" in gate
+
+    def test_a_fall_in_multiset_recall_alone_does_not_fail_it(self) -> None:
+        """Spec 0007 Phase A0, 2026-09-22 — and it is the change, not a relaxation.
+
+        Removing a doubled Zone Title lowers multiset recall on six of the
+        fifteen documents while nothing leaves the page: the echo had been
+        standing in, numerically, for a genuine occurrence elsewhere that the
+        output never read. `newsletter_0008` prints "Castleton Chronicle" twice
+        and printed both copies in its masthead Zone. The floor is what the page
+        still shows, so a multiset fall with no word vanishing is not a
+        regression — it is the count finally reporting the truth.
+        """
+        before = {"invoice_0001": a_score()}
+        worse = a_score(
+            completeness=replace(a_score().completeness, recall=0.95))
+
+        gate = _gate_html([worse], before)
+        assert "holds" in gate
+        assert "FAILED" not in gate
+
+    def test_a_previous_run_predating_the_field_is_reported_not_compared(
+        self,
+    ) -> None:
+        """`nan` means unmeasured, and must never read as a previous score.
+
+        `tests/frozen/a1-checkpoint/` was written before `vocabulary_recall`
+        existed. Treating its absence as 0.0 would make every later run pass
+        this clause for the wrong reason, on exactly the notch it defends.
+        """
+        import math
+        before = {"invoice_0001": a_score(
+            completeness=replace(a_score().completeness,
+                                 vocabulary_recall=math.nan))}
+
+        gate = _gate_html([a_score(
+            completeness=replace(a_score().completeness,
+                                 vocabulary_recall=0.4))], before)
+        assert "FAILED" not in gate
+        assert "unmeasured" in gate
 
     def test_a_fall_in_precision_fails_it_too(self) -> None:
         """Precision below 1.00 means content duplicated or invented, which is
@@ -146,9 +227,38 @@ class TestTheT1Ratchet:
     def test_a_regressed_document_is_marked_in_the_summary_row(self) -> None:
         before = {"invoice_0001": a_score()}
         worse = a_score(
-            completeness=replace(a_score().completeness, recall=0.95))
+            completeness=replace(a_score().completeness,
+                                 vocabulary_recall=0.95, vanished=("total",)))
 
         assert 'class="regressed"' in _summary_table([worse], before)
+
+    def test_the_summary_marks_a_row_on_the_same_rule_the_gate_fails_on(
+        self,
+    ) -> None:
+        """Or a reader sees a clean table above a failed gate, and vice versa."""
+        before = {"invoice_0001": a_score()}
+        worse = a_score(
+            completeness=replace(a_score().completeness, recall=0.95))
+
+        assert 'class="regressed"' not in _summary_table([worse], before)
+        assert "holds" in _gate_html([worse], before)
+
+    def test_the_summary_marks_the_row_a_traded_word_loss_fails_the_gate_on(
+        self,
+    ) -> None:
+        """The case the two came apart on: `darkdeck_0009` lost two words and
+        gained five, so the ratio rose. Flagging the row on the ratio left a
+        green table above a failed gate."""
+        before = {"invoice_0001": a_score(
+            completeness=replace(a_score().completeness,
+                                 vocabulary_recall=0.910,
+                                 vanished=("alpha", "beta", "gamma")))}
+        traded = a_score(completeness=replace(
+            a_score().completeness, vocabulary_recall=0.928,
+            vanished=("commits", "what")))
+
+        assert "FAILED" in _gate_html([traded], before)
+        assert 'class="regressed"' in _summary_table([traded], before)
 
 
 class TestScoresRoundTrip:

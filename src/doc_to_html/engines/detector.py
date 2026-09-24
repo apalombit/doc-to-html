@@ -581,9 +581,24 @@ def attach_trailing_rows(found: list[Detection]) -> list[Detection]:
     them into one rule would hide that one of them is a fact about the
     vocabulary and the other a fact about the page.
 
-    Guarded three ways, all of which must hold: the region above is a table, the
-    strip below is not (so a table stacked under a table stays its own region),
-    and the strip is both close to it and a small fraction of its height.
+    Guarded four ways, all of which must hold: the region above is a table, the
+    strip below is neither a table (so a table stacked under a table stays its
+    own region) nor a heading, and the strip is both close to it and a small
+    fraction of its height.
+
+    **The heading guard was added in spec 0007 Phase A0, 2026-09-22, and it is
+    the fix for a content loss the T1 ratchet caught.** A heading *names the
+    region beneath it rather than being one* — that is `attach_headings`' whole
+    premise and this module's own vocabulary — so it can never be the last row
+    of the region above, however close it sits and however short it is. Without
+    the guard this rule ran first and ate the heading, and `attach_headings`
+    then had nothing left to attach to the paragraph below.
+
+    Measured over all fifteen documents: **2 absorptions were headings and 4
+    were not.** The two were `darkdeck_0009`'s `What Q4 commits to` and
+    `report_0011`'s table caption, both `section_header`; the four are the case
+    this rule exists for and are untouched, `invoice_0001`'s `key_value_region`
+    — the `Total: $385.00` strip — among them.
     """
     absorbed: set[int] = set()
     merged: list[Detection] = []
@@ -610,6 +625,7 @@ def _trailing_row(found: list[Detection], parent: int,
         index for index, box in enumerate(found)
         if index != parent and index not in absorbed
         and box.label not in SPLITTABLE
+        and box.label not in HEADINGS
         and 0 <= box.top - table.bottom <= TRAILING_GAP
         and (box.bottom - box.top) <= TRAILING_HEIGHT * height
         and min(box.right, table.right) > max(box.left, table.left)

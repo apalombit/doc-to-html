@@ -23,6 +23,7 @@ Document looks exactly like a sparse document.
 from __future__ import annotations
 
 import logging
+import unicodedata
 from typing import Any, Callable, Literal, NoReturn
 
 from pydantic import BaseModel, Field, ValidationError
@@ -581,12 +582,17 @@ def rows_from_table(response: TableResponse, *, read: Read) -> list[Row]:
       column-sum Probe was measured against for no gain.
 
     A header row split one cell per row is put back together first — see
-    `_join_split_header_row`.
+    `_join_split_header_row` — and a header repeated to pad a stated row count
+    is removed after that, by `_without_repeated_header`. The order matters:
+    the split header must be rejoined before it can be compared with a repeat
+    of itself.
     """
     if not response.rows:
         _no_content("table", "no rows")
 
-    wire_rows = _join_split_header_row(_without_empty_rows(response.rows))
+    wire_rows = _without_repeated_header(
+        _join_split_header_row(_without_empty_rows(response.rows))
+    )
     if not wire_rows:
         _no_content("table", "nothing but empty rows")
 
@@ -699,16 +705,85 @@ def _join_split_header_row(rows: list[WireRow]) -> list[WireRow]:
     return joined
 
 
-def _without_empty_rows(rows: list[WireRow]) -> list[WireRow]:
-    """Drop rows carrying no cells at all, before anything is checked.
+def _without_repeated_header(rows: list[WireRow]) -> list[WireRow]:
+    """Drop a later header row that repeats the first one word for word.
 
-    A row with **zero** cells is not the failure the width check below exists to
+    **The third dormant net, and the same shape as the other two: it only ever
+    removes a row that says nothing new.** Added in spec 0007 Phase A0,
+    2026-09-22, for a padding the T1 ratchet caught.
+
+    The cause is arithmetic, not reading. `table_grid` counts bands of ink and
+    cannot tell a caption from a heading row, so a crop whose first line is a
+    caption measures one row more than the table has — and `with_grid` states
+    that number. The model complies with *how many*, which is what it reliably
+    complies with, and fills the surplus by repeating the header it has already
+    given. Measured over the whole corpus, exactly two tables did this and both
+    repeated the header verbatim: `darkdeck_0009`'s Service level table, whose
+    caption was lifted into `Zone.title`, and `report_0011`'s berth table, whose
+    caption was not lifted at all. Same fault either way.
+
+    **Why the count is not simply corrected instead.** It was, until this phase:
+    `with_grid(titled=True)` subtracted the caption's line while leaving it in
+    the picture, so the prompt asked for 16 rows of a crop showing 17 and the
+    model resolved the disagreement by dropping a *real* row —
+    `sample_table_0003` lost all five column headers that way and the harness
+    scored it a full match. A surplus row is a precision fault and a dropped
+    row is a recall fault, and recall is the top of the rubric. So the prompt
+    states what the crop holds and the surplus is removed here, after it has
+    been read.
+
+    Narrow on purpose, in the same spirit as `_join_split_header_row`:
+
+    - Both rows must be `header`. A data row repeating another is a real shape —
+      two months with identical figures — and is not this.
+    - The repeat must be **verbatim**. A second heading tier differing by one
+      cell is a different row and is kept.
+    - Only repeats of the *first* header are dropped, so a table that genuinely
+      changes its headings partway keeps both.
+
+    **A recorded risk rather than a measured defect**, stated the way
+    `_join_split_header_row` states its own: a long table that reprints its
+    header partway down — as a paper form does across a page break — meets
+    every condition here and loses the second copy. No document in the corpus
+    has that shape, and the page would then print the heading twice while the
+    output printed it once, which `Completeness.lost` would report.
+    """
+    first = next((row for row in rows if row.role == "header"), None)
+    if first is None:
+        return rows
+    spelling = [_spell(cell) for cell in first.cells]
+    return [
+        row for row in rows
+        if row is first
+        or row.role != "header"
+        or [_spell(cell) for cell in row.cells] != spelling
+    ]
+
+
+def _without_empty_rows(rows: list[WireRow]) -> list[WireRow]:
+    """Drop rows carrying no content at all, before anything is checked.
+
+    A row saying **nothing** is not the failure the width check below exists to
     catch. That check's reason is that "a dropped or invented cell shifts every
     value after it into the wrong column" — which is a statement about a row that
-    has *some* cells and the wrong number of them, where there is no way to tell
+    has *some* values and the wrong number of them, where there is no way to tell
     which column each surviving value belongs to. A row with none carries nothing
     to place, so dropping it moves no value into a wrong column. Every other row
     keeps the cells it arrived with.
+
+    **The test is on content, not on count — corrected in spec 0007 Phase A0,
+    2026-09-22.** It was `if row.cells`, which is truthy for
+    `['', '', '', '', '']`: a row of empty strings has five cells and says
+    nothing, so it passed the width check on its width and rendered as a blank
+    line inside the table. `report_0011`'s berth table carried one at row 5.
+    The two readings of "empty" had been standing in for each other because
+    every case anyone had looked at happened to be a row with literally no
+    cells.
+
+    **The net itself stays**, and the distinction matters: the finding was that
+    this filter tested the wrong thing, not that it should not exist. Four runs
+    established what it guards, two of which lost a whole table and the 385.00
+    Probe to a single such row.
 
     Measured, and the reason this exists: runs 39 and 45 both converted
     `invoice_0001` on ink-snapped geometry and both returned the correct table
@@ -721,10 +796,10 @@ def _without_empty_rows(rows: list[WireRow]) -> list[WireRow]:
     reconciles at 385.00.
 
     Narrow on purpose, in the same spirit as `_join_split_header_row`: a row with
-    one cell out of two is still ambiguous and is still rejected. This only ever
+    one value out of two is still ambiguous and is still rejected. This only ever
     removes a row that says nothing.
     """
-    return [row for row in rows if row.cells]
+    return [row for row in rows if any(cell.strip() for cell in row.cells)]
 
 
 def _no_content(kind: str, what: str) -> NoReturn:
@@ -776,6 +851,82 @@ def blocks_from_response(response: BlocksResponse, *, read: Read) -> list[Block]
     return blocks
 
 
+def _spell(text: str) -> str:
+    """One spelling of a printed string. See `_same_text` for why, exactly."""
+    return " ".join(unicodedata.normalize("NFKC", text).split()).casefold()
+
+
+def _same_text(one: str, other: str) -> bool:
+    """Whether two printed strings are the same string.
+
+    Unicode-normalised, whitespace collapsed, case folded — the same spelling
+    rule `scoring.normalise` uses, kept here rather than imported because
+    `wire.py` maps answers and must not depend on the scorer. Punctuation is
+    deliberately *not* stripped: a Title and a Block that differ by a colon are
+    two different printed lines, and the echo this guards against is a verbatim
+    repeat.
+    """
+    return bool(_spell(one)) and _spell(one) == _spell(other)
+
+
+def _without_title_echo(zone: Zone) -> Zone:
+    """Drop a Zone's first entry when it only repeats the Zone's own Title.
+
+    **The schema rule spec 0007 Phase A0 asks for: a Zone carrying a Title must
+    not also carry a Block repeating it.** Enforced here, where the contents are
+    bound to a Zone that already has its Title, rather than filtered in
+    `render.py` — the IR should not be able to hold the contradiction at all,
+    because anything reading the IR rather than the page would otherwise see the
+    heading twice.
+
+    **This is where the echo is actually removed, and deliberately after the
+    fact.** The cause is that the caption pass lifts the first printed line into
+    `Zone.title` and leaves it in the Extractor's crop, so the model is shown it
+    twice and answers honestly both times. Withholding the band from the
+    Extractor as well was tried first and rejected on measurement — it deletes
+    real content wherever the caption pass took a Title from something that was
+    not a caption, and it has no reliable test for that; the evidence is in
+    `engines.ollama.OllamaEngine.extract_zone`. So the caption is read twice and
+    the second copy is dropped here, which costs nothing and risks nothing.
+
+    **Only the first entry, and only an exact repeat.** Both bounds are measured
+    rather than chosen. Over the 45 titled Zones of Phase A0's checkpoint there
+    were 34 echoes — 27 Blocks, 5 table row-0s, 2 pair-0s — and **every one of
+    the 27 was `blocks[0]`**, with nothing at all between 0.80 similarity and an
+    exact match. So a rule confined to the first entry loses none of them, and a
+    rule that scanned the whole body would be free to delete a legitimate
+    repetition deeper down, which is the risk not worth taking for zero
+    additional catch. A table's genuine heading row survives on the same
+    evidence: `darkdeck_0009`'s `AVAILABILITY` Zone has a header row reading
+    `AVAILABILITY | P95 LATENCY | INGEST VOLUME | COST PER MILLION`, which is not
+    its Title and is not touched, while `cv_0013`'s single-cell `EDUCATION` row
+    is and goes.
+
+    A dropped row takes its `RowRole` with it. That is correct: a caption tagged
+    `header` was never the table's heading row, and the row beneath keeps
+    whatever role it was given.
+    """
+    title = zone.title
+    if not title or not title.strip():
+        return zone
+    if zone.blocks and _same_text(
+        title, " ".join(cell.text for cell in zone.blocks[0].lines)
+    ):
+        zone.blocks = zone.blocks[1:]
+    elif zone.rows and _same_text(
+        title, " ".join(cell.text for cell in zone.rows[0].cells)
+    ):
+        zone.rows = zone.rows[1:]
+    elif zone.pairs and (
+        _same_text(title, zone.pairs[0].label.text)
+        or _same_text(
+            title, f"{zone.pairs[0].label.text} {zone.pairs[0].value.text}"
+        )
+    ):
+        zone.pairs = zone.pairs[1:]
+    return zone
+
+
 def contents_into(zone: Zone, content: str, *, read: Read) -> Zone:
     """Validate an extraction response for this Zone's Kind and fill it in.
 
@@ -811,7 +962,7 @@ def contents_into(zone: Zone, content: str, *, read: Read) -> Zone:
         raise NotImplementedError(f"{zone.kind.value} extraction not yet wired")
 
     zone.complete = True
-    return zone
+    return _without_title_echo(zone)
 
 
 def figure_into(zone: Zone, response: FigureResponse, *, read: Read) -> Zone:

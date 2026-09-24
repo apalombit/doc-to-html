@@ -414,8 +414,8 @@ checkpoint run exists.
 Raises the ceiling. Nothing in Threads B or C can exceed what the IR can express,
 so this is the precondition for both.
 
-**Phase A0 — stop the bleeding.** The three content faults, first, because
-completeness is the top of the rubric and all three are currently *shipped
+**Phase A0 — stop the bleeding.** The content faults, first, because
+completeness is the top of the rubric and all of them are currently *shipped
 behaviour*.
 
 1. **Table header loss.** The caption is lifted into `Zone.title` but stays in the
@@ -428,39 +428,191 @@ behaviour*.
    repeating it. This is a schema rule, enforced in `wire.py` where the Title is
    bound, not a filter in `render.py` — the IR should not be able to hold the
    contradiction in the first place.
-3. **Hard line breaks.** `Block.lines: list[Cell]` joined by `<br>` makes reflow
-   impossible by construction. A Block's text becomes reflowable; the per-line
-   Cells stay reachable, because they are what `Correction` anchors to and what
-   makes each reading a ground-truth label.
+3. **`wire._without_empty_rows` filters on cell count, not cell content.**
+   `if row.cells` is truthy for `['', '', '', '', '']`, so an all-blank row
+   survives the net that exists to drop it. Fix the condition; the net stays.
 
-Fix `wire._without_empty_rows` here too. It filters on `if row.cells`, which is
-truthy for `['', '', '', '', '']`, so `sample_table_0003` returns a 17th row of
-empty strings. It is a completeness fault of exactly the kind the ratchet exists
-to catch.
+**Hard line breaks moved to A1 — decided 2026-09-22, and this list is three
+items rather than four because of it.** `Block.lines: list[Cell]` joined by
+`<br>` makes reflow impossible by construction, and it is a real fault:
+`newsletter_0008` emits 31 `br` against a source with none. It is also a schema
+change to `Block.lines`, and A1 already rewrites `Cell.text` into a run
+sequence — doing both at once is one migration through those structures instead
+of two. A0 keeps the three faults that stop content being lost or doubled.
 
-**Gate: ~~T1 = 1.00, recall and precision, on the sweep set~~ — DISPROVED, and
-re-scoped when A0 begins.**
+### A0's gate — set 2026-09-22, from measurements taken before any code changed
 
-**It is not the ratchet's starting notch — decided 2026-09-19.** That is Phase
-A-1's checkpoint, committed at `tests/frozen/a1-checkpoint/`.
+The pre-registered `T1 = 1.00` was disproved on 2026-09-20 and is not replaced
+by another ratio. **Three of the five clauses below are counts of a named
+structure rather than a ratio**, for the reason this spec exists: a ratio cannot
+say *which* strings came back.
 
-**And the 1.00 itself is not reachable — established 2026-09-20, by
-measurement rather than by argument.** A-1's checkpoint puts `receipt_0010` at
-recall **0.175** and `catalogue_0015` at **0.571**, and *none of A0's three
-faults touches either document*: a deleted table header, a Title repeated in its
-own body and a hard line break cannot account for three quarters of a page. The
-loss on those documents is intra-line and is not A0's to fix.
+Every number was measured offline over `tests/frozen/a0-checkpoint/`'s own
+output IRs — edited, re-rendered and re-scored with no model call — so each
+clause is a prediction that can be checked rather than a target chosen to be
+reachable.
 
-**Do not replace the number here.** A0's real target is precision — 0.91 to 0.98
-across the corpus — and the replacement gate is set **when A0 begins, from the
-measurements taken in that sitting**, not guessed now from A-1's. This figure
-has already moved twice; choosing a third value far from the evidence is how it
-moves a fourth time.
+**1. Title echoes go to zero.** A Zone carrying a Title must not also carry a
+first Block, a first row, or a first pair repeating it. **34 today** — 27
+Blocks, 5 table row-0s, 2 pair-0s — across 12 of the 15 documents. Measured in
+the IR, so it needs no source, no OCR agreement and no model.
 
-**Phase A1 — inline runs.** `Cell.text: str` becomes a sequence of runs
-(`text | link | code | em | strong | mark`). Currently a 100% loss and the most
-visible gap per unit of work: links, code spans and badges are absent from every
-document that has them. Raises T6 from zero.
+**2. `sample_table_0003` returns its five column headers.** `Country | ISO |
+Population | GDP (USD M) | Currency`, and 16 rows. Today row 0 is the caption
+`Population and GDP (millions of USD)` tagged `header` and all five column
+headers are absent — the fault this spec was opened over, still shipped.
+
+**3. No table Zone carries an all-blank row.** One today: `report_0011` z6
+row 5 = `['', '', '', '']`.
+
+**4. The T1 ratchet holds — re-pointed to distinct tokens.** No source token the
+output shows today may stop being shown, on any document; `tau` and
+`beside_agreement` may not fall. See the section below: this changes the
+ratchet's measure, and why it had to change is itself an A0 finding.
+
+**5. Precision reaches 0.975 mean and falls on no document.** 0.934 at the
+checkpoint; removing the echoes alone predicts **0.977**. This is the
+"0.91 to 0.98 against precision" the handover asked for, derived rather than
+guessed.
+
+**Standing, unchanged:** A-1's honesty gate must not newly fail, and the visual
+review's content axis must move from major to match on the doubled title,
+judged pairwise against a baseline render in one sitting.
+
+### Why the ratchet's recall leg is now distinct tokens
+
+**Decided 2026-09-22, and it is a change to this spec's central invariant.**
+
+Removing a doubled Title *lowers* multiset token recall on six of the fifteen
+documents — 0.851 to 0.848 overall, at most 0.019 on any one. Nothing leaves the
+page. The cause is that the echo was **numerically standing in for a genuine
+occurrence elsewhere that the output never read**: `newsletter_0008` prints
+"Castleton Chronicle" twice on the page, in the masthead and in the footer; the
+output printed it twice *in the masthead Zone*, and the multiset was satisfied.
+Remove the echo and the count reports what was always true — the footer copy is
+missing. The same shape holds on `darkdeck_0009`, `report_0011`,
+`statement_0006`, `form_0007` and `sample_table_0003`.
+
+Measured over all fifteen: **no source token goes from present to absent on any
+document**, and `tau` is unchanged on every one.
+
+So the ratchet's stated intent — *no content that previously converted stops
+converting* — is intact, and its measure was tripping on bookkeeping. Taken
+literally on the multiset it would have **forbidden A0's correct fix on six
+documents for making the page right**, which is the same failure, in the same
+direction, as the three this spec catalogues.
+
+Multiset recall and precision stay reported on `report.html`, where a fall is
+worth reading. The **floor** is the distinct-token one, and the report names
+every token that vanished, so the clause that fails says what it caught.
+
+*Rejected:* keeping the multiset floor and taking A0 as a written exception —
+that sets the precedent that the ratchet is overridable by argument, which is
+what it exists to prevent. *Also rejected:* leaving the echo in place wherever
+removing it would drop multiset recall — not implementable, since the pipeline
+has no source, and it would leave the fault on the two documents that show it
+worst.
+
+### Why `Completeness.duplicated` is not the gate
+
+**The obvious field under-reports, and finding out why was A0's first task.**
+`_duplicated_strings` reports only strings the *source projection* also carries
+and compares whole blocks. It sees 30 excess repeats at the checkpoint and
+**misses 18**:
+
+- **`report_0011`, 8 — all of them.** Its section numbers are CSS `::before`
+  counters, so `project()` cannot see them: the source block is
+  `Purpose and scope`, the model reads the picture and returns
+  `1. Purpose and scope`, `have` is 0, and the detector switches off for exactly
+  the document that prints all eight of its headings twice.
+- **`nonlatin_0014`, 6.** The source sets its date line as one block and the
+  output splits it into five, so no output block's text matches a source
+  block's.
+- **`invoice_0002`, 1.** `Comments / Notes` lives inside its paragraph block in
+  the source.
+
+Any OCR slip, punctuation difference or blocking difference between the model's
+reading and the source's markup turns it off. A measure blind in a direction is
+unconstrained in that direction, so the gate counts the structure in the IR
+instead.
+
+### A0's result — sweep `100-a0-gate`, 2026-09-22, **gate MET**
+
+All fifteen, against `tests/frozen/a0-checkpoint/`.
+
+| | floor | 100-a0-gate |
+|---|---|---|
+| **vocabulary recall** (the ratchet's leg) | 0.8599 | **0.8653** |
+| recall (multiset) | 0.8513 | 0.8542 |
+| **precision** | 0.9342 | **0.9765** |
+| join recall | 0.8088 | 0.8128 |
+| tau | 0.9356 | 0.9381 |
+
+Five clauses, five met: **34 title echoes → 0**; `sample_table_0003` returns
+`Country | ISO | Population | GDP (USD M) | Currency` and sixteen rows; **0**
+all-blank rows; **0** repeated header rows; no document stopped printing a
+source word it printed at the floor, and precision ≥ 0.975.
+
+Reviewed with the `visual-review` skill against `99-a0-heading-guard`, all
+fifteen sheets opened. **No `worse` on any document**, two `better`
+(`darkdeck_0009` and `report_0011` each printed a table header row twice in 99
+and print it once in 100), and — for the first time — **no `major` sitting
+beside scored ratios all at 1.000.**
+
+**What shipped:** `wire._without_title_echo`; `_without_empty_rows` testing cell
+*content* rather than cell *count*; `with_grid`'s row subtraction removed;
+`wire._without_repeated_header`; a heading guard in `detector._trailing_row`.
+
+**What was built, measured and reverted — do not rebuild it.** Withholding the
+caption band from the **Extractor's crop** was the agreed fix for fault 3 and it
+deletes real content: `darkdeck_0009` z2 is a row of four metric cards with no
+caption at all, and cutting the top band removes `P95 LATENCY`, `INGEST VOLUME`
+and `COST PER MILLION` — confirmed by opening the crop image, not inferred. It
+also moves the measured column count on three other tables. Widening
+`CaptionBand.aligns_to_grid` to a ratio instead strips four real captions
+corpus-wide. The arithmetic was corrected on the *count* side instead, which is
+the cheaper of the two repairs: dropping a count can only be wrong, where
+cutting a crop can destroy.
+
+**Found by closing fault 1, and open.** The echo rule compares a Block against
+*its own* Zone's Title, so two Zones that each read the same printed line still
+print it twice: `menu_0012` prints `To begin` twice, and `darkdeck_0009` prints
+a caption `AVAILABILITY` above a table whose first column header is
+`AVAILABILITY`. Nothing owns the across-Zone case.
+
+**Two corrections to this spec's own problem statement, both measured.**
+`sample_table_0003` was named as the document returning a 17th row of empty
+strings; it has 16 rows and none blank, and the live all-blank row was
+`report_0011` z6 row 5. And removing a title echo *lowers* multiset recall
+without anything leaving the page, which is what moved the ratchet's recall leg
+to distinct tokens — see the two sections above.
+
+### A0's notch
+
+`tests/frozen/a0-checkpoint/`, committed 2026-09-22, with its provenance in that
+directory's README. **A0's gate is not the ratchet's notch and never was** —
+`tests/frozen/a1-checkpoint/` is where the ratchet started, and it stays as the
+record of that.
+
+**A0 did not re-freeze the notch, and that is a standing decision to revisit,
+not a conclusion.** A1 therefore ratchets against `a0-checkpoint/` — the floor
+A0 cleared, not the level A0 reached. The consequence is explicit: A1 could
+give back A0's precision gain (0.9765 → 0.9342) and still pass. Freezing
+`100-a0-gate`'s scores as A1's starting notch would close that, at the cost of
+committing another `scores.json` and making every later phase answer to a
+tighter floor.
+
+**Phase A1 — inline runs, and hard line breaks.** `Cell.text: str` becomes a
+sequence of runs (`text | link | code | em | strong | mark`), and in the same
+migration `Block.lines: list[Cell]` joined by `<br>` becomes reflowable text —
+moved here from A0 on 2026-09-22 because both rewrite the same structures and
+doing them once is cheaper than doing them twice. The per-line Cells stay
+reachable, because they are what `Correction` anchors to and what makes each
+reading a ground-truth label.
+
+The run sequence is currently a 100% loss and the most visible gap per unit of
+work: links, code spans and badges are absent from every document that has
+them. Raises T6 from zero.
 
 **Phase A2 — geometry the IR cannot currently state.** `Zone.align`
 (left/right/centre), `Zone.width` as a share of its Band, and `Document.page_px`.
@@ -635,6 +787,9 @@ assumed.
 | Claude judges pairwise, in one sitting | *Numbers only* — precisely the failure mode that produced runs 81→84. *Absolute scores tracked across sessions* — not comparable, for the same reason run numbers in this repository are not. |
 | Thread B all-CV | *One whole-page VLM call* — asks a 4B model to report quantities the pixels state exactly, non-deterministically. |
 | Thread C designed now, re-scoped after B | *Defer entirely* — loses the continuity of reasoning. *Build immediately after B* — designs against errors A and B are built to delete. |
+| **A0: drop `with_grid`'s row subtraction, keep the Extractor's crop whole** | *Withhold the caption band from the crop as well* — was agreed, built, and **reverted on measurement**: it deletes `P95 LATENCY`, `INGEST VOLUME` and `COST PER MILLION` from `darkdeck_0009` z2, a card row with no caption, and moves the measured column count on three other tables. *Widen `aligns_to_grid` to a ratio* — strips four real captions corpus-wide. |
+| **A0: repair the padded header at the wire** | *Restore `with_grid`'s subtraction* — that is what deleted `sample_table_0003`'s headers in the first place. A dropped row is a recall fault; a surplus row is only a precision one, so the repair goes on the side where being wrong costs less. |
+| **A0: ratchet on `vocabulary_recall`** | *Multiset `recall`* — removing a doubled Title lowers it while nothing leaves the page, because the echo was standing in numerically for an occurrence elsewhere that was never read. *`Completeness.duplicated`* — blind in three independent ways; it is empty for `report_0011`, which prints all eight of its numbered headings twice. |
 
 ---
 

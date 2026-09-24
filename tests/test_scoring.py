@@ -25,8 +25,10 @@ import pytest
 
 from doc_to_html import projection
 from doc_to_html.corpus import ITERATE, SOURCES
+from doc_to_html.projection import Block, Projection, Run
 from doc_to_html.scoring import (
     DocumentScore,
+    completeness,
     kendall_tau,
     normalise,
     score_document,
@@ -35,6 +37,33 @@ from doc_to_html.scoring import (
 
 REPO = Path(__file__).resolve().parent.parent
 FROZEN = REPO / "tests" / "frozen" / "run84"
+
+
+def a_page(lines: list[str]) -> Projection:
+    """A projection of one block per line, built without a browser.
+
+    The two recalls are arithmetic over `runs`, so the questions this file asks
+    about them need no page rendered — and building one by hand is what lets the
+    difference between them be shown in three lines instead of a document.
+    """
+    box = (0.0, 0.0, 100.0, 20.0)
+    return Projection(
+        width=400, height=20 * len(lines), body_font_px=16.0,
+        body_color="rgb(0, 0, 0)", body_background="rgb(255, 255, 255)",
+        break_elements=0, clipped=0,
+        runs=tuple(
+            Run(order=i, text=line, role="paragraph", inline="text", block=i,
+                rect=box, lines=1, font_px=16.0)
+            for i, line in enumerate(lines)
+        ),
+        blocks=tuple(
+            Block(index=i, role="paragraph", tag="p", text=line, ink=box,
+                  box=box, lines=1, font_px=16.0, weight=400, italic=False,
+                  mono=False, color="rgb(0, 0, 0)", background="rgba(0, 0, 0, 0)")
+            for i, line in enumerate(lines)
+        ),
+        figures=(),
+    )
 
 needs_chrome = pytest.mark.skipif(
     not projection.available(), reason="no headless Chrome on this machine"
@@ -259,6 +288,52 @@ class TestTheHardTier:
         failing = [name for name, score in scored.items()
                    if not score.completeness.ok]
         assert len(failing) == len(ITERATE)
+
+
+class TestTheTwoRecallsMeasureDifferentThings:
+    """Multiset recall counts occurrences; vocabulary recall counts words.
+
+    **The ratchet is on the second — spec 0007 Phase A0, 2026-09-22.** The
+    distinction was forced by a measurement: removing a doubled Zone Title
+    lowers multiset recall on six of the fifteen documents while nothing leaves
+    the page, because the echo had been standing in numerically for a genuine
+    occurrence elsewhere that the output never read.
+    """
+
+    def test_a_word_printed_twice_and_returned_once_splits_them(self) -> None:
+        """The shape of the whole finding, in the smallest case that has it.
+
+        `newsletter_0008` prints "Castleton Chronicle" in its masthead and again
+        in its footer. The output printed it twice in the masthead Zone, so the
+        multiset was satisfied and the footer copy was missing the whole time.
+        """
+        source = a_page(["Castleton Chronicle", "body", "Castleton Chronicle"])
+        both = a_page(["Castleton Chronicle", "Castleton Chronicle", "body"])
+        one = a_page(["Castleton Chronicle", "body"])
+
+        assert completeness(source, both).recall == 1.0
+        assert completeness(source, one).recall < 1.0, "the multiset notices"
+        assert completeness(source, both).vocabulary_recall == 1.0
+        assert completeness(source, one).vocabulary_recall == 1.0, (
+            "and the page still shows every word it showed before"
+        )
+
+    def test_a_word_that_stops_being_printed_moves_both(self) -> None:
+        """Which is the case the ratchet exists for, and it must still fire."""
+        source = a_page(["Country", "ISO", "Currency"])
+        lost = a_page(["Country", "ISO"])
+
+        done = completeness(source, lost)
+        assert done.vocabulary_recall < 1.0
+        assert "currency" in done.vanished
+
+    def test_vanished_names_the_words_rather_than_counting_them(self) -> None:
+        """A ratio that moved is not a finding; the words are. The ratchet's
+        failure message is built from this."""
+        done = completeness(a_page(["Country", "ISO", "GDP"]),
+                            a_page(["Country"]))
+
+        assert done.vanished == ("gdp", "iso")
 
 
 class TestTheNormalisationRules:

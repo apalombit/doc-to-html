@@ -128,11 +128,43 @@ class Completeness:
     means content was lost; `precision` below 1.00 means content was duplicated
     or invented; `join_recall` below 1.00 means content is all present but was
     cut somewhere the source did not cut it.
+
+    **`recall` is a multiset and `vocabulary_recall` is a set, and the ratchet
+    is on the second — spec 0007 Phase A0, 2026-09-22.** Read the two together:
+    the multiset says how many times a word came back and the set says whether
+    it came back at all, and they answer different questions about a page. See
+    `vocabulary_recall` for the measurement that forced the distinction.
     """
 
     recall: float
     precision: float
     join_recall: float
+
+    vocabulary_recall: float
+    """The share of *distinct* source words the output still prints somewhere.
+
+    **The ratchet's floor, and the multiset `recall` above is not.** The change
+    was forced by a measurement rather than argued: removing a doubled Zone
+    Title *lowers* multiset recall on six of the fifteen documents, because the
+    echo had been numerically standing in for a genuine occurrence elsewhere on
+    the page that the output never read. `newsletter_0008` prints "Castleton
+    Chronicle" twice — masthead and footer — and the output printed it twice in
+    the masthead Zone; the multiset was satisfied and the footer copy was always
+    missing. Remove the echo and the count finally reports that.
+
+    So the multiset can fall while nothing leaves the page, and the ratchet's
+    stated intent is *no content that previously converted stops converting* —
+    a statement about what is printed, not about how many times. Measured over
+    all fifteen documents, that fix moves this number on **none** of them.
+
+    Both are reported. A multiset fall is worth reading; it is not a floor."""
+
+    vanished: tuple[str, ...]
+    """Distinct source words the output does not print at all.
+
+    What `vocabulary_recall` is short by, named. The ratchet's failure message
+    is built from this, so a clause that fails says which words it caught rather
+    than only that a ratio moved."""
     source_tokens: int
     output_tokens: int
     lost: tuple[tuple[str, int], ...]
@@ -235,10 +267,15 @@ def completeness(source: Projection, output: Projection) -> Completeness:
 
     lost = want - got
     extra = got - want
+    vanished = tuple(sorted(set(want) - set(got)))
     return Completeness(
         recall=sum(kept.values()) / total_want if total_want else 1.0,
         precision=sum(kept.values()) / total_got if total_got else 1.0,
         join_recall=joins_kept / joins_total if joins_total else 1.0,
+        vocabulary_recall=(
+            (len(want) - len(vanished)) / len(want) if want else 1.0
+        ),
+        vanished=vanished,
         source_tokens=total_want,
         output_tokens=total_got,
         lost=tuple(sorted(lost.items(), key=lambda item: (-item[1], item[0]))[:40]),

@@ -671,10 +671,34 @@ class OllamaEngine:
         `invoice_0002` panels from `table` to the correct `pairs`, where a prompt
         clause spelling out the difference moved 0 of 6.
 
-        **The Extractor keeps the whole crop**, caption included, and must: a
-        Title is a printed line, `table_grid` counts it as one, and
-        `with_grid(titled=True)` subtracts it. Stripping the Extractor's crop as
-        well would subtract it twice.
+        **The Extractor still keeps the whole crop, and the arithmetic stopped
+        compensating for it instead — spec 0007 Phase A0, 2026-09-22.** The
+        caption used to be subtracted from the Extractor's stated row budget by
+        `with_grid(titled=True)` while staying in its picture. Both halves were
+        individually right and together they deleted content: the crop showed 17
+        lines, the prompt said "return exactly 16", and the model dropped the
+        real header row and kept the caption. `sample_table_0003` lost all five
+        of its column headers that way and the harness scored it a full match.
+
+        **Cutting the band off the Extractor's crop as well was tried first and
+        rejected on measurement**, although spec 0007 named it the correct
+        remedy. It costs real content wherever the caption pass took a Title
+        from something that was not a caption, and the pass has no reliable test
+        for that: `darkdeck_0009`'s Zone 2 is a row of four metric cards whose
+        first band is the labels `AVAILABILITY / P95 LATENCY / INGEST VOLUME /
+        COST PER MILLION`, and cutting it deletes three of the four. Widening
+        `CaptionBand.aligns_to_grid` to catch that does not work either — over
+        all fifteen documents a ratio test in place of its equality strips
+        `The Castleton Chronicle`, `ELDER STREET CAFE`, `NORTHGATE MUTUAL` and
+        `Why semantic HTML matters`, every one of them a real caption. Cutting
+        also moved the measured *column* count on three tables, because a
+        full-width caption bridges gaps that are not column boundaries.
+
+        Removing the subtraction reaches the same property by the safer route:
+        the prompt's count and the picture are now the same pixels, measured
+        once. The caption comes back as a row, and `wire._without_title_echo`
+        drops it — a row deleted after it was read, rather than a row the model
+        was pressured into not reading.
 
         One Zone per call, like `extract_zone` and for the same reason: the loop
         is the Orchestrator's, so a Zone whose classification fails is a Failure
@@ -697,6 +721,11 @@ class OllamaEngine:
         The pixels are already this Zone's crop — the Extractor owns
         decomposition. What is chosen here is the question: one prompt and one
         schema per Kind, and no branch anywhere on what the document is.
+
+        **Every measurement the prompt quotes is taken from the pixels actually
+        sent**, which is the property `with_grid`'s row subtraction used to
+        break. See `classify_zone` for why the Kind question, and only the Kind
+        question, is shown a different picture.
         """
         prompt = EXTRACTION_PROMPTS.get(zone.kind)
         schema = EXTRACTION_SCHEMAS.get(zone.kind)
@@ -705,7 +734,7 @@ class OllamaEngine:
                 f"{zone.kind.value} extraction not yet wired"
             )
         if zone.kind is Kind.TABLE and self.table_grid_hint:
-            prompt = with_grid(prompt, table_grid(image), titled=bool(zone.title))
+            prompt = with_grid(prompt, table_grid(image))
         content = self.ask(
             zone.kind.value, with_hint(prompt, hint), image, schema_of(schema)
         )
@@ -764,7 +793,7 @@ def _ran_out_of_room(reply: Response) -> bool:
     return False
 
 
-def with_grid(prompt: str, grid: TableGrid, *, titled: bool = False) -> str:
+def with_grid(prompt: str, grid: TableGrid) -> str:
     """State the grid a table Extractor is filling in, measured from its crop.
 
     The one prompt in this project assembled from the page rather than written
@@ -774,23 +803,32 @@ def with_grid(prompt: str, grid: TableGrid, *, titled: bool = False) -> str:
     `preprocess.table_grid`, an ink projection over the very pixels about to be
     sent, so the prompt and the picture cannot disagree.
 
-    **A Title is a printed line and not a row**, which is the whole of `titled`.
-    `table_grid` counts bands of ink and cannot tell one from the other, so a
-    Zone carrying a Title measures one row too many: `sample_table_0003` prints
-    "Population and GDP (millions of USD)" above its grid and comes out at 17
-    against a true 16. The Title is known here — classification fills
-    `zone.title` before extraction runs — so the correction belongs at this seam,
-    where a claim about a *crop* becomes a claim about a *table*. Neither of
-    `invoice_0001`'s tables has one, which is why the count is exact there.
+    **A Title is a printed line and not a row, and the grid is now measured on
+    a crop that no longer holds one.** `table_grid` counts bands of ink and
+    cannot tell a caption from a heading row, so a crop carrying a caption
+    measures one row too many: `sample_table_0003` prints "Population and GDP
+    (millions of USD)" above its grid and came out at 17 against a true 16.
+
+    This used to be corrected here, by a `titled=` flag subtracting one from the
+    stated count while the caption stayed in the Extractor's picture. **That
+    correction is removed — spec 0007 Phase A0, 2026-09-22 — because it made the
+    prompt and the crop describe different pages**, and the model resolved the
+    disagreement by dropping the real header row and keeping the caption. Every
+    one of `sample_table_0003`'s five column headers went that way, and the
+    harness scored it a full match. `extract_zone` now cuts the caption band off
+    the crop, exactly as `classify_zone` does, so the count needs no correction:
+    the ruler and the picture measure the same pixels by construction, which is
+    a stronger property than agreeing arithmetically about pixels only one of
+    them has seen.
 
     Stated, not enforced. The schema is untouched, so the model can return a
-    different shape and every check behind it still runs. That tolerance is worth
-    keeping even now the count is corrected: the ruler is right on three real
-    tables and unproven on every other page in the world, and a sentence survives
-    a wrong number where a schema would force content to be dropped or invented
-    to satisfy one.
+    different shape and every check behind it still runs. That tolerance is the
+    reason the fault above cost only one document rather than every table: the
+    ruler is right on three real tables and unproven on every other page in the
+    world, and a sentence survives a wrong number where a schema would force
+    content to be dropped or invented to satisfy one. It is worth keeping.
     """
-    rows = max(1, grid.rows - 1) if titled else grid.rows
+    rows = grid.rows
     return (
         f"{prompt}\n\n"
         f"This region has been measured from the page: it holds {rows} "

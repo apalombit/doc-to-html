@@ -41,6 +41,26 @@ the record of where the ratchet started. This one is where A0 starts.
 - **What it is not:** a substitute for a sweep. Anything that moves a prompt,
   an extractor, or the layout still needs a real run.
 
+## `vocabulary_recall` was added on 2026-09-22, after the file was written
+
+Phase A0 re-pointed the T1 ratchet's recall leg from the token **multiset** to
+the token **vocabulary** — see spec 0007, "Why the ratchet's recall leg is now
+distinct tokens". This file predated the field, so the floor had nothing to be
+measured against, and the two fields were backfilled.
+
+**How, and why it is not a second measurement.** The same source and the same
+`document.html` this file already describes were re-projected and re-scored
+offline, with no model and no re-conversion, and **every number already in the
+file re-measured identically** — recall, precision, `join_recall` and both token
+counts, on all fifteen documents, to within 1e-9. That equality is the check:
+had the artefacts drifted from what this file describes, it would have failed
+rather than quietly written a number from different pixels. Nothing else in the
+file changed.
+
+| | mean over fifteen |
+|---|---|
+| `vocabulary_recall` | **0.860** |
+
 ## What it says, for the phase that starts here
 
 | | mean over fifteen |

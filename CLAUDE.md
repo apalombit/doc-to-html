@@ -69,16 +69,19 @@ Thread 2/B  Style record (all CV, zero model calls)   DONE 2026-09-22
               palette, per-Zone chrome, borders, clipping, width reservation
               and ink contrast all shipped; page width measured-not-drawn;
               type scale deferred with its numbers in style.py
-Phase A0    Stop the bleeding                          <- next
-              its T1 = 1.00 gate is disproved; set the replacement from
-              tests/frozen/a0-checkpoint/ before changing any code
-Phase A1/A2/A3  Inline runs, geometry, figure pixels
+Phase A0    Stop the bleeding          DONE 2026-09-22, gate MET
+              its pre-registered T1 = 1.00 gate was disproved and replaced
+              from tests/frozen/a0-checkpoint/ before any code changed
+Phase A1    Inline runs, and hard line breaks          <- next
+Phase A2/A3     Geometry, figure pixels
 Thread 3/C  Repair loop (re-scoped against A+B residuals first)
 Thread 4/D  Human corrections (unscheduled)
 ```
 
-**2/B ran before A0** and closed on 2026-09-22. `docs/status.md` indexes what
-it shipped and where each measurement lives.
+**2/B ran before A0** and closed on 2026-09-22; **A0 closed the same day.**
+`docs/status.md` indexes what each shipped, A0's five gate clauses and their
+result, and where every measurement lives. **The ratchet's floor is still
+`tests/frozen/a0-checkpoint/`** — A0 did not re-freeze the notch.
 
 `docs/specs/0007-handover.md` holds a ready prompt per thread and the full
 scope of Phase A-1.
@@ -122,14 +125,27 @@ phase regardless of what improved elsewhere.
 
 **The T1 ratchet: completeness may never decrease between phases, for any
 reason.** Not a target to optimise; a floor never to cross. It is the rule that
-would have caught all three faults that shipped as improvements.
+would have caught all three faults that shipped as improvements. **Its recall
+leg is `vocabulary_recall` as of 2026-09-22** — see below, and spec 0007's
+"Why the ratchet's recall leg is now distinct tokens" for what moved it.
 
-**T1 reports three numbers, and the third is not decoration.** Recall and
+**T1 reports four numbers, and none of them is decoration.** Recall and
 precision are token multisets, so they cannot see text that is all present, in
 the right order, and *cut in the wrong place*: `Invoice #: 123` read as label
 `Invoice` and value `#: 123` scores 1.000, 1.000 and tau 1.000.
 `join_recall` — the adjacent-word pairs — is the only one that catches it, and
 `Completeness.broken_joins` names the join that was cut.
+
+**`vocabulary_recall` is the fourth, and as of Phase A0 it is the one the
+ratchet is on.** Distinct source words the output still prints *somewhere*,
+against the multiset's how many times. The change was forced by measurement:
+removing a doubled Zone Title lowers multiset recall on six of the fifteen
+documents while nothing leaves the page, because the echo had been standing in
+numerically for a genuine occurrence elsewhere that the output never read.
+`newsletter_0008` prints "Castleton Chronicle" in its masthead and its footer;
+the output printed it twice in the masthead. Both are reported and a multiset
+fall is worth reading — the **floor** is *no word the page shows stops being
+shown*, and `Completeness.vanished` names what a failure caught.
 
 Ground truth is **derived, not typed**: `example/foo.png` is a screenshot of
 `example/foo.html`, so the expected answer is already on disk. One `project()`
@@ -239,9 +255,17 @@ disagreement rather than a page-reading failure is that fixing the code and
 fixing the references landed on exactly the same total.** The detector groups
 these regions; insisting they were two meant it could not be right.
 
-**Author the next document to it.** Note that spec 0007's Phase A0 adds a second
-rule on top: a Zone carrying a Title must **not** also carry a Block repeating it.
-Today it does, in three of five documents.
+**Author the next document to it.** Spec 0007's Phase A0 added a second rule on
+top: a Zone carrying a Title must **not** also carry a Block repeating it.
+`wire._without_title_echo` enforces it, and the corpus went **34 echoes to 0**
+on 2026-09-22.
+
+**That rule is about one Zone, and the across-Zone case is open.** Two Zones
+that each read the same printed line still print it twice, because the rule
+compares a Block against *its own* Zone's Title and has nothing to say about a
+neighbour. `menu_0012` prints `To begin` twice this way; `darkdeck_0009` prints
+a caption `AVAILABILITY` above a table whose first column header is
+`AVAILABILITY`. Nothing owns it — see `docs/status.md`.
 
 ### What must not be deleted
 
@@ -257,10 +281,18 @@ zero-cell row before the table width check (two runs lost a whole table and the
 385.00 Probe to one such row). `_reread_as_prose` recovers a Zone the Pairs mapper
 rejects wholesale.
 
-**`_without_empty_rows` has a real bug, and Phase A0 fixes it** — it filters on
-`if row.cells`, truthy for `['', '', '', '', '']`, so `sample_table_0003` returns
-a 17th row of empty strings. The drop tests cell **count**, not cell **content**.
-Fix the condition; do not delete the net.
+**`_without_empty_rows` filtered on cell count rather than cell content, and
+Phase A0 fixed the condition — 2026-09-22.** `if row.cells` is truthy for
+`['', '', '', '', '']`, so a row of empty strings passed the net that exists to
+drop it and rendered as a blank line inside the table. The net itself stayed:
+the finding was that it tested the wrong thing, not that it should not exist.
+
+**There are three wire-level row nets as of 2026-09-22, not one.** Each invents
+nothing and discards nothing, and each exists because a measured run lost
+content without it: `_without_empty_rows` (above), `_join_split_header_row`,
+and `_without_repeated_header` — which drops a second `role == "header"` row
+that spells the same as the first, the padding the model produces when the
+grid hint asks for more rows than the table has.
 
 ### The OpenCV rectangle finder — Thread 2/B must BUILD it
 
@@ -308,9 +340,18 @@ bottom** when diagnosing one document; open `report.html` when comparing them al
   apart" test for a table. Withholding the bar fixes it; a prompt clause
   explaining the difference moved 0 of 6.
 - **`DTH_CAPTION_PASS` ships on.** It reads each Zone's Title in its own call,
-  then withholds the caption band from the Kind question. Note that it withholds
-  the band from the *Kind* question only — **not from the Extractor's crop**, and
-  that omission is what deletes `sample_table_0003`'s header row. Phase A0.
+  then withholds the caption band from the Kind question. It withholds the band
+  from the *Kind* question only — **not from the Extractor's crop**, and that is
+  correct. **Phase A0 built the withholding, measured it, and reverted it on
+  2026-09-22**: cutting the top band off `darkdeck_0009` z2, a row of four
+  metric cards with no caption at all, deletes `P95 LATENCY`, `INGEST VOLUME`
+  and `COST PER MILLION` — confirmed by opening the crop, not inferred — and it
+  moves the measured column count on three other tables. Widening
+  `CaptionBand.aligns_to_grid` to a ratio instead strips four real captions.
+  **What shipped is only the removal of `with_grid`'s row subtraction**, so the
+  arithmetic now matches the picture it is taken from, and
+  `sample_table_0003` returns all five headers and sixteen rows. Do not rebuild
+  the cut; the docstrings in `engines/ollama.py` carry the numbers.
 - **`preprocess._without_vertical_rules`** clears full-height columns before
   banding. Without it, a 3px `border-left` inked in every row makes a crop read as
   one unbroken band, and `TL;DR` and `Introduction` were never asked for a Title.
@@ -484,7 +525,23 @@ prompt) were closed by Thread 0. Specs 0001–0006 are closed history.
   numbers were right; they counted different things. **But the subtraction is only
   safe if the caption is also removed from the crop**, and it is not — which is
   exactly how the header row gets deleted. Arithmetic and picture must agree with
-  the page, not merely with each other.
+  the page, not merely with each other. **Phase A0 resolved it the other way
+  round, 2026-09-22**: the cut was built and measured and it deletes real
+  content on a Zone with no caption, so *the subtraction went* and the crop
+  stayed whole. When a count and a picture disagree, changing the picture to
+  match the count is the more expensive of the two repairs — it can only
+  destroy, where dropping the count can only be wrong.
+
+- **A guard can be right and still create the fault it looks like.** A0's
+  heading guard stopped `attach_trailing_rows` swallowing headings, which
+  recovered `What Q4 commits to` — and shortened `darkdeck_0009`'s table crop
+  to 8 ink bands, so the prompt asked for 8 rows where the table has 7 and
+  **the model padded by repeating the header**. The tempting fix was to restore
+  `with_grid`'s subtraction, which is what deleted `sample_table_0003`'s
+  headers in the first place. It went to the wire instead
+  (`_without_repeated_header`), because **a dropped row is a recall fault and a
+  surplus row is only a precision one** — put the repair on the side where
+  being wrong costs less.
 
 ---
 
