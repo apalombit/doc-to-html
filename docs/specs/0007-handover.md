@@ -334,11 +334,13 @@ is 760px wide, inside the house column, and still sits at 2.77.
 
 ---
 
-## Phase A0 — stop the bleeding — **NEXT**
+## Phase A0 — stop the bleeding — **DONE 2026-09-22, gate MET**
 
-Starts 2026-09-22, after Thread 2/B. Its notch is
-`tests/frozen/a0-checkpoint/scores.json`, committed, with its provenance in
-that directory's README.
+Ran 2026-09-22, after Thread 2/B, against
+`tests/frozen/a0-checkpoint/scores.json`. **Outcome, the reverted caption-crop
+cut and the two corrections to the problem statement are in spec 0007 under
+"A0's result".** Commit `cc39022`. The prompt below is kept as the record of
+what was asked; A1's prompt is the next section.
 
 **Its pre-registered `T1 = 1.00` gate is disproved, not merely moved.**
 `receipt_0010` sits at 0.175 recall and `catalogue_0015` at 0.571, and none of
@@ -434,6 +436,95 @@ ALSO OPEN, NOT A0's, DO NOT ABSORB THEM:
   RowRole.header already names.
 
 Ask before binding anything docs/status.md leaves open.
+```
+
+---
+
+## Phase A1 — inline runs, and hard line breaks — **NEXT**
+
+```
+Implement Phase A1 of spec 0007. Stop at its gate and report.
+
+Read, in order: CLAUDE.md's "READ THIS FIRST", then docs/status.md, then
+docs/specs/0007-look-like-the-document.md. The spec is authoritative where
+anything disagrees.
+
+Branch scaffold, head cc39022. 731 tests pass, mypy src/ clean. Phase A0 closed
+2026-09-22 with its gate met; do not redo any of it.
+
+DECIDE THE NOTCH FIRST, BEFORE ANY CODE. docs/status.md has a section called
+"The notch" stating the mechanism, the current state and the open decision in
+full. A1 currently ratchets against tests/frozen/a0-checkpoint/ — the floor A0
+CLEARED, not the level A0 REACHED — so A1 could hand back A0's precision gain
+(0.9765 -> 0.9342) and still pass. tests/frozen/a0-result/ holds A0's actual
+scores and is committed and ready. Put the choice to Alessandro and get an
+answer before you write anything.
+
+SET A1'S GATE FROM MEASUREMENTS, BEFORE CHANGING ANY CODE. Propose it, say what
+each clause is for, and get it agreed. A0's gate is the model: three of its five
+clauses were counts of a named structure rather than ratios, because a ratio
+cannot say WHICH strings came back. join_recall is the axis A1 moves and it sits
+at 0.8128, the weakest of the four — but do not gate A1 on join_recall alone.
+Spec 0004 pre-registered a gate on exactly the fields its change was designed to
+move, passed every one, and shipped a regression.
+
+A1'S SCOPE, TWO MIGRATIONS OF THE SAME STRUCTURES:
+
+1. Cell.text: str becomes a sequence of runs (text | link | code | em | strong |
+   mark). Currently a 100% loss — links, code spans and badges are absent from
+   every document that has one. Raises T6 from zero. sample_semantic_0005 and
+   sample_css_0004 are the documents with the most to gain.
+
+2. Block.lines: list[Cell] joined by <br> becomes reflowable text. Moved here
+   from A0 on 2026-09-22 because both rewrite the same structures.
+
+   The evidence is in A0's review: newsletter_0008 renders "the borough council
+   con-" / "firmed on Tuesday", carrying the SOURCE's justified hyphenation into
+   the output as real breaks; report_0011 renders "prepared under the terms" /
+   "of the 1987 order". invoice_0001 is the other half — "Invoice #: 123" is cut
+   into a label "Invoice" and a value "#: 123" and scores 1.000 recall, 1.000
+   precision, 1.000 tau. Only join_recall and Completeness.broken_joins see it.
+
+KEEP THE PER-LINE CELLS REACHABLE. They are what Correction anchors to and what
+makes each reading a ground-truth label. Reflowing must not delete them.
+
+A1 changes the IR and the mapper, so it needs a real sweep — all fifteen,
+~90 min. tools/remeasure_style.py does NOT serve A1. If a change is entirely
+downstream of the model, verify it first by replaying a run's recorded answers
+through the shipping mapper — validated on 2026-09-22 to four decimal places on
+every mean — and only then spend the sweep.
+
+Review with the visual-review skill, --previous against your own baseline.
+
+OPEN, NOT A1'S, DO NOT ABSORB THEM:
+- The across-Zone title echo. menu_0012 prints "To begin" twice and
+  darkdeck_0009 prints a caption "AVAILABILITY" above a table whose first column
+  header is "AVAILABILITY". A0 closed the WITHIN-Zone echo; this is the other
+  one and nothing owns it.
+- statement_0006's 41 near-identical caveat lines (A-1 residue).
+- receipt_0010's untested preprocess.resize_long_edge lead — 0.175 recall,
+  rectifies to 335x547, ~6 minutes to probe.
+- nonlatin_0014's dark-blue table header row.
+- catalogue_0015 at 0.571 recall, loss NOT declared. A-1 established the
+  pipeline cannot declare loss inside a line and that two pixel-side detectors
+  were built and rejected. Do not build a third without a new kind of evidence.
+
+DEFERRED — do not "fix" and do not read as new faults: column collapse (A2), the
+type scale (2/B, its own increment), Zone.align (A2), figures as placeholders
+(A3), cv_0013's clipped sidebar values (A2).
+
+STANDING RULES:
+- Never cite or analyse a past run. Only a run taken in this session counts.
+  Four exceptions, all committed files: tests/frozen/run84/, a1-checkpoint/,
+  a0-checkpoint/ and a0-result/.
+- Leave debug/runs/84-rule-not-a-line/ intact.
+- Never score against tests/documents/SAMPLE_DOCUMENTS.
+- Do not delete the three wire-level row nets or the four shipped defaults.
+- project() compares a normalised view, never raw markup.
+- Every run must produce debug/runs/<label>/report.html.
+- Any reviewed run is a full sweep, all fifteen.
+- Rubric judgements are pairwise and in-session only.
+- Ask before binding anything docs/status.md leaves open.
 ```
 
 ---
