@@ -155,10 +155,20 @@ after firing where the fault had not happened, and put to Alessandro first.
 
 ### 1. Phase A3 — figure pixels  <- next
 
-A `FIGURE` Zone carries its crop rather than a `graphic_kind` label; logos
-currently render as dashed placeholders (`invoice_0001`, `receipt_0010`'s
-barcode) or vanish (`invoice_0002`'s ACME tile). **No prompt is written for it
-yet** in [`specs/0007-handover.md`](specs/0007-handover.md).
+**Its prompt is ready** in [`specs/0007-handover.md`](specs/0007-handover.md),
+"Phase A3", with what was measured before it was written: the scorer counts
+**two** lost figures, and they are two different faults.
+
+- `invoice_0001`'s logo is a FIGURE Zone rendered as a placeholder — downstream,
+  measurable offline against `a2-result`. `receipt_0010`'s barcode is the same
+  shape, though the scorer does not count it.
+- `invoice_0002`'s ACME tile is detected and then swallowed by `outermost`
+  into a larger box that also holds text — a grouping change, upstream, which
+  moves a crop and costs a sweep.
+- The placeholders' own text is invented text: `sparksuite`, `logo`.
+
+**Three decisions wait for Alessandro on entry:** how the IR carries pixels,
+what becomes of a placeholder's read text, and whether the ACME tile is A3's.
 
 ### 2. Open, and nothing owns it
 

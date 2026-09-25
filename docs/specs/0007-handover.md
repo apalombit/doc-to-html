@@ -857,6 +857,126 @@ STANDING RULES:
 
 ---
 
+## Phase A3 — figure pixels — **NEXT**
+
+**Measured 2026-09-25 from `tests/frozen/a2-result/`, before any A3 code.**
+The scorer counts a figure as an `<img>`, `<svg>` or `<canvas>` the page
+actually draws. By that measure the corpus loses exactly **two**, and they are
+two different faults:
+
+| document | the figure | what happens to it | where the fix sits |
+|---|---|---|---|
+| `invoice_0001` | the Sparksuite logo, an `<img>` | a FIGURE Zone exists (`graphic_kind` `logo`) and renders as a dashed `<figure class="omitted">` captioned with its read text | **downstream** of the model — the crop is already in hand |
+| `invoice_0002` | the black ACME tile, an `<img>` | the detector finds it (`picture`, 0.76) and `outermost` drops it inside a larger `picture` box that also holds the company text; that box becomes a **prose** Zone | **upstream** — a grouping change that moves a crop |
+
+Two more that the scorer does not count, and both matter to the eye:
+
+- **`receipt_0010`'s barcode** is a CSS `div` in the source, so it is not a
+  scored figure. It has a FIGURE Zone and renders as a placeholder reading
+  `logo`.
+- **The placeholders' own text is invented text.** `sparksuite` is
+  `invoice_0001`'s *only* invented token, and `logo` is one of
+  `receipt_0010`'s. The source holds neither as text — only as pixels.
+
+```
+Implement Phase A3 of spec 0007. Stop at its gate and report.
+
+Read, in order: CLAUDE.md's "READ THIS FIRST", then docs/status.md, then the
+Phase A3 paragraph of docs/specs/0007-look-like-the-document.md, then section 8
+of docs/specs/0007-a2-measurements.md for its METHOD (the layout stage run
+offline, one step at a time). The spec is authoritative where anything
+disagrees.
+
+Branch scaffold, at or after c4e9ffb. 796 tests pass, mypy src/ clean. A2
+closed 2026-09-25 with its gate met; do not redo any of it.
+
+THE FLOOR IS tests/frozen/a2-result/, and it is also the control:
+
+    python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
+        --documents sweep --previous tests/frozen/a2-result/scores.json
+
+--documents sweep is not optional. The directory holds the fifteen documents
+beside their scores; they re-score with 0 differing fields and re-render
+byte-identical. Its README has the recipe.
+
+WHAT A3 IS. A FIGURE Zone carries its crop, not just a graphic_kind label, and
+the render draws it. The handover's A3 section has the measurements: two lost
+figures, two different faults.
+
+  (a) invoice_0001's logo and receipt_0010's barcode already ARE FIGURE Zones
+      and render as placeholders. Carrying the crop is downstream of the model.
+      Measure it offline against a2-result BEFORE any sweep — and prove the
+      harness first: re-rendering a2-result's IRs unchanged must return all
+      fifteen byte-identical. The crop comes from rectify(<png>) and
+      preprocess.zone_pixels, which is what the Conversion used.
+  (b) invoice_0002's ACME tile is detected (picture, 0.76) and swallowed by
+      outermost into a larger picture box holding the company text. Splitting
+      it out NARROWS the text Zone's crop, so that Zone's reading can change:
+      it costs a sweep and the ratchet applies. The layout stage runs offline
+      in ~10 seconds for all fifteen — prove it reproduces a2-result's boxes
+      first, then measure which documents any rule touches. A2 found a rule
+      that changes exactly the boxes it names is worth more than a clever one.
+
+DECIDE ON ENTRY, WITH ALESSANDRO, BEFORE ANY CODE:
+  - How the IR carries pixels. Embedded (e.g. base64 PNG in the Zone) keeps the
+    document and report self-contained and round-trips through
+    Document.from_json; a file beside the document does not. Say what each
+    costs in IR size across the corpus — measure it.
+  - What happens to a placeholder's read text. "SPARKSUITE" and "logo" are
+    invented tokens today. Drawing the pixels instead would remove them; keeping
+    the reading as alt text keeps it reachable without printing it.
+  - Whether (b) is in A3 or its own change. It is a grouping fault, not a
+    rendering one.
+
+SET A3'S GATE FROM MEASUREMENTS, BEFORE CHANGING CODE, and get it agreed. Make
+most clauses counts of named structures, per document. A proposal to argue
+with, not adopt:
+  1. figures_lost 2 -> 0, named: invoice_0001's logo, invoice_0002's tile.
+  2. receipt_0010's barcode is drawn from its pixels.
+  3. The invented placeholder words go: sparksuite, logo.
+  4. Every document with no FIGURE Zone and no changed box renders
+     byte-identical to a2-result.
+  5. The ratchet holds against a2-result, four legs, all fifteen.
+  6. Visual review, all fifteen sheets, --previous against the control.
+  7. Structure, tests, mypy.
+
+THE LESSON A2 PAID FOR: the check that reports a fault is not where the fault
+is. Run the stages one at a time and find the one that introduces it before
+fixing the one that names it.
+
+CLOSED — DO NOT REOPEN WITHOUT A NEW KIND OF EVIDENCE: the column model and
+proportional widths, the merged Zone (menu_0012, form_0007), alignment_agreement
+as a gate. docs/status.md "Closed, with evidence" says why.
+
+OPEN, NOT A3'S, DO NOT ABSORB THEM (docs/status.md "Open"):
+- darkdeck_0009's AVAILABILITY across-Zone echo.
+- nonlatin_0014's overlapping Zones (re-reads three pairs) and its unshaded
+  table header row.
+- statement_0006's 41 near-identical caveat lines.
+- receipt_0010 at 19.8% words kept, and its untested resize_long_edge lead.
+- catalogue_0015 at 61.7%, loss not declared — do not build a third detector.
+- invoice_0001's "Invoice" / "#: 123" Pair boundary, and A1's false mark 12345.
+
+DEFERRED — do not "fix" and do not read as new faults: the type scale (2/B's
+own increment), Thread 3/C, column collapse inside one Zone.
+
+STANDING RULES:
+- Never cite or analyse a past run. Only a run taken in this session counts.
+  The exceptions are the committed tests/frozen/ directories, each for what its
+  README says it is.
+- Leave debug/runs/84-rule-not-a-line/ intact.
+- Never score against tests/documents/SAMPLE_DOCUMENTS.
+- Do not delete the four shipped defaults or the three wire-level row nets.
+- Marking may never change the words: wire._runs_for and ir.Cell.runs both stay.
+- project() compares a normalised view, never raw markup.
+- Every run must produce debug/runs/<label>/report.html.
+- Any reviewed run is a full sweep, all fifteen.
+- Rubric judgements are pairwise and in-session only.
+- Ask before binding anything docs/status.md leaves open.
+```
+
+---
+
 ## Thread 3/C — the repair loop
 
 ```

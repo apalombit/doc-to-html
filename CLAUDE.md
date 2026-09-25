@@ -98,7 +98,7 @@ gate met** — see `docs/status.md`, "What the last two phases shipped".
 there from `a0-result/` at A2's close — see `docs/status.md`, "The floor".
 
 `docs/specs/0007-handover.md` holds a ready prompt per thread and the full
-scope of Phase A-1. **A3's prompt is not written yet.**
+scope of Phase A-1. **A3's is the next one to use.**
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
 this section.** It says what is done, what the last checkpoint showed, what is
