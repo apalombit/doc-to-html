@@ -627,6 +627,12 @@ def _snap_note(trace: Path) -> str | None:
     documents had been converting unsnapped without it appearing on any surface
     a person looks at.
 
+    **It named the wrong culprit until 2026-09-25**, as "converted on UNSNAPPED
+    geometry". On all three the snap had returned every box unchanged; the
+    enclosure is in `before` — the Engine's own boxes — and came from the
+    detector's unions. So the note now says what is invalid, and the snap is
+    only where it was caught. See `detector.without_enclosed`.
+
     Read off `trace.json` rather than the IR on purpose: it costs the rendered
     document nothing. A finding written into the page would be drawn in the
     render, and a render that grows is a `height_ratio` that moved for a reason
@@ -653,10 +659,9 @@ def _snap_note(trace: Path) -> str | None:
                 f"({boxes[outer]['left']:.2f}–{boxes[outer]['right']:.2f})"
                 for outer, inner in pairs
             )
-            return (f"converted on UNSNAPPED geometry — {where}, so the "
-                    f"snapped Bands were refused")
-        return ("converted on UNSNAPPED geometry — "
-                + str(data.get("reason") or "the snapped Bands were refused"))
+            return (f"the layout's own Bands are invalid — {where} in one "
+                    "Band, so they were refused and the snap with them")
+        return str(data.get("reason") or "the snapped Bands were refused")
     return None
 
 
@@ -665,14 +670,13 @@ def _snap_html(notes: list[tuple[str, str]], *, of: int) -> str:
     if not of:
         return ""
     if not notes:
-        return ('<div class="gate pass"><b>The snap applied everywhere.</b> '
+        return ('<div class="gate pass"><b>The Bands are valid everywhere.</b> '
                 f"All {of} document(s) converted on boxes moved onto their "
                 "ink.</div>")
     return (
-        '<div class="gate fail"><b>DTH_SNAP_ZONES did not apply to '
-        f'{len(notes)} of {of} document(s).</b> The boxes were moved onto '
-        "their ink and the Bands were then refused, so these converted on the "
-        "Engine's geometry:<ul>"
+        '<div class="gate fail"><b>DTH_SNAP_ZONES could not be applied to '
+        f'{len(notes)} of {of} document(s)</b>, and the cause is named on '
+        "each — these converted on the Engine's geometry:<ul>"
         + "".join(
             f'<li><a href="#{html.escape(name)}">{html.escape(name)}</a>: '
             f"{html.escape(note)}</li>"

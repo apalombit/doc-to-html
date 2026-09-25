@@ -410,9 +410,12 @@ def validate_bands(zones: list[Zone]) -> None:
 
     It has two jobs now, depending on where the numbering came from. On the
     model's own numbering — the default — it is what it always was, the check
-    below. Under `DTH_DERIVE_BANDS` it cannot fire, because the numbers are
-    derived from the very boxes it checks them against; there it is a check on
-    the derivation, and the day that rule is changed it is what says so.
+    below. On numbers derived from the boxes — `DTH_DERIVE_BANDS`, and every
+    detector — it checks the *boxes*: `bands_from_boxes` puts a box that lies
+    inside another into that one's Band, so an enclosure fails here however the
+    Bands were numbered. **This docstring used to say it could not fire on
+    derived Bands.** It fired on three corpus documents, and the claim is part
+    of why nobody looked — see `detector.without_enclosed`.
 
     This is the check that catches a model which numbered Bands by reading order
     rather than by position, or grouped two Zones as side by side when one sits

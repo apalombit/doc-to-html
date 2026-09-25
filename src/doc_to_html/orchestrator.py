@@ -271,9 +271,20 @@ def _why_kept(zones: list[Zone]) -> str:
     identity — and they are different findings. A Zone with no geometry is a
     layout problem; Bands going invalid is the snap being overruled by the
     guard written for exactly that.
+
+    **Unless the Bands were invalid before the snap touched them.** Until
+    2026-09-25 this said "snapping made the Bands invalid" on three corpus
+    documents where the snap had returned every box unchanged: the detector
+    had already handed over one Zone enclosed by another, and the snap was
+    blamed for a fault it only reported. See `detector.without_enclosed`.
     """
     if not zones or any(zone.bbox is None for zone in zones):
         return "a Zone has no bbox, so there was nothing to snap it to"
+    try:
+        validate_bands(zones)
+    except MappingError as exc:
+        return (f"the Engine's own Bands are invalid ({exc}), so no snap of "
+                "them could be valid either")
     return "snapping made the Bands invalid, so the Engine's geometry was kept"
 
 

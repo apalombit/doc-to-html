@@ -370,8 +370,22 @@ class TestTheSnapSaysWhenItDidNotApply:
         note = _snap_note(trace)
 
         assert note is not None
-        assert "UNSNAPPED" in note
+        assert "Bands are invalid" in note
         assert "Zone 1" in note and "Zone 0" in note
+
+    def test_the_enclosure_is_not_blamed_on_the_snap(self, tmp_path: Path) -> None:
+        """The boxes it names are `before` — the Engine's own. On all three
+        corpus documents the snap returned them unchanged, and the note used
+        to say "converted on UNSNAPPED geometry", which pointed at the one
+        step that had done nothing. See `detector.without_enclosed`."""
+        trace = a_trace(tmp_path / "trace.json", boxes=[
+            box(0.38, 0.04, 0.58, 0.13),
+            box(0.38, 0.09, 0.57, 0.11),
+        ])
+
+        note = _snap_note(trace)
+
+        assert note is not None and "UNSNAPPED" not in note
 
     def test_a_document_whose_snap_applied_says_nothing(self, tmp_path: Path) -> None:
         trace = a_trace(tmp_path / "trace.json", reverted=False,
@@ -422,11 +436,11 @@ class TestTheSnapSaysWhenItDidNotApply:
                           box(0.03, 0.3, 0.97, 0.5)]) == []
 
     def test_the_summary_line_counts_the_documents(self) -> None:
-        html = _snap_html([("cv_0013", "converted on UNSNAPPED geometry")],
+        html = _snap_html([("cv_0013", "the layout's own Bands are invalid")],
                           of=15)
 
-        assert "did not apply to 1 of 15" in html
+        assert "could not be applied to 1 of 15" in html
         assert "cv_0013" in html
 
     def test_and_says_so_plainly_when_every_document_snapped(self) -> None:
-        assert "applied everywhere" in _snap_html([], of=15)
+        assert "valid everywhere" in _snap_html([], of=15)

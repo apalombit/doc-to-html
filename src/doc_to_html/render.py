@@ -569,7 +569,8 @@ def _speaks_for_its_column(filled: int, rows: int) -> bool:
     table, which has exactly one data row and belongs right-aligned. So the
     test is two cells **or** a column with nothing skipped, and measured over
     every table in the corpus it changes exactly the one case it is written
-    for and leaves the other seventeen alone.
+    for: eighteen table Zones, twenty-one right-aligned columns between them,
+    and only `cv_0013`'s two years move.
     """
     return filled >= 2 or filled == rows
 

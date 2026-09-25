@@ -138,6 +138,52 @@ def outermost(found: list[Detection]) -> list[Detection]:
     return [found[index] for index in sorted(kept)]
 
 
+def without_enclosed(found: list[Detection]) -> list[Detection]:
+    """Drop every box lying wholly inside another, once the unions have run.
+
+    **`outermost` runs first, and two of the steps after it undo its
+    guarantee.** `attach_trailing_rows` and `attach_headings` each replace two
+    boxes with their union, and a union is larger than either half — large
+    enough, on three corpus documents of fifteen, to swallow a neighbour that
+    is then left standing:
+
+        statement_0006  the table grows down to its Totals row and takes in
+                        the two amounts printed on it, 5,772.36 and 3,586.14
+        menu_0012       `To begin` inside the menu its sibling heading joined
+        cv_0013         `Senior Structural Engineer` inside EXPERIENCE
+
+    Each of the four was read **twice** — in its own crop and again in the crop
+    around it — and printed twice. `menu_0012`'s is the "To begin" echo that
+    `wire._without_title_echo` could not reach, because the two readings sit in
+    different Zones. And a Band is a stripe whose Zones are its columns, so one
+    box inside another in the same Band is not two Zones: `wire.validate_bands`
+    refused all three pages, and `DTH_SNAP_ZONES` was blamed for it. The snap
+    returned these boxes unchanged; the enclosure was here.
+
+    **Wholly inside, by its four edges — not `CONTAINED`.** Dropping a box is
+    safe exactly when all of it is inside another crop, because then no ink
+    leaves the page. Measured after the unions, over all fifteen documents: the
+    four are inside on all four edges, and the only other overlap is
+    `nonlatin_0014`'s top-right pairs box at **0.696** of its area, with nothing
+    between. `CONTAINED` would sit 0.004 above it, and dropping that box loses
+    `ΤΠΥ = 2026/0417`, which no other crop holds. So the test is the edges and
+    there is no constant to tune.
+
+    Of two identical boxes the first survives, so a region found twice is kept
+    once rather than lost.
+    """
+    def encloses(outer: int, inner: int) -> bool:
+        if not _within(found[inner], found[outer]):
+            return False
+        return _area(found[outer]) > _area(found[inner]) or outer < inner
+
+    return [
+        detection for inner, detection in enumerate(found)
+        if not any(encloses(outer, inner)
+                   for outer in range(len(found)) if outer != inner)
+    ]
+
+
 HEADINGS = frozenset({"section_header", "title", "caption",
                       "table_caption", "figure_caption"})
 """Detector classes that name the region beneath them rather than being one.
@@ -680,6 +726,12 @@ def _area(box: Detection) -> float:
     return max(0.0, box.right - box.left) * max(0.0, box.bottom - box.top)
 
 
+def _within(inner: Detection, outer: Detection) -> bool:
+    """Whether every edge of `inner` lies on or inside `outer`."""
+    return (inner.left >= outer.left and inner.top >= outer.top
+            and inner.right <= outer.right and inner.bottom <= outer.bottom)
+
+
 def _covered_by(inner: Detection, outer: Detection) -> float:
     """Share of `inner` that `outer` covers. Asymmetric, which is the point."""
     wide = min(inner.right, outer.right) - max(inner.left, outer.left)
@@ -924,14 +976,18 @@ class LayoutEngine:
 
     def detect_zones(self, image: ImageArray, hint: str | None = None,
                      region_ceiling: int | None = None) -> list[Zone]:
-        """Detections to Zones, in four steps that each undo one known error.
+        """Detections to Zones, in steps that each undo one known error.
 
         The order is not arbitrary. `outermost` first, because everything after
         it assumes one box per region. Then `split_containers`, which needs the
         *unfiltered* pool to find the parts it restores. Then `attach_headings`,
-        last of the three because it must see the split's output — on
+        after the split because it must see the split's output — on
         `sample_table_0003` the caption belongs to a table that only exists once
         the split has run.
+
+        `without_enclosed` last, because the unions before it can break
+        `outermost`'s one-box-per-region: a grown box swallows a neighbour and
+        leaves it standing, and nothing after this point would notice.
         """
         pool = self.detector.detect(image)
         found = outermost([d for d in pool if d.score >= self.confidence])
@@ -941,6 +997,7 @@ class LayoutEngine:
         if self.prefer_container:
             found = prefer_container(found, pool, content_ink(image),
                                      self.confidence)
+        found = without_enclosed(found)
         found.sort(key=lambda d: (round(d.top, 3), d.left))
 
         boxes = snap_to_ink(image, [BBox(d.left, d.top, d.right, d.bottom)

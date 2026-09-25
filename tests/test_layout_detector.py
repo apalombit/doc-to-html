@@ -39,10 +39,12 @@ from doc_to_html.engines.detector import (
     from_name,
     outermost,
     split_containers,
+    without_enclosed,
 )
 from doc_to_html.engines.ollama import OllamaEngine
 from doc_to_html.ir import Kind, Role
 from doc_to_html.orchestrator import default_engines
+from doc_to_html.wire import validate_bands
 
 
 def box(left: float, top: float, right: float, bottom: float,
@@ -122,6 +124,71 @@ class TestKeepingTheContainerAndDroppingWhatItContains:
 
     def test_nothing_in_gives_nothing_out(self) -> None:
         assert outermost([]) == []
+
+
+class TestDroppingWhatAUnionSwallowed:
+    """`outermost` runs first, and the unions after it can undo it.
+
+    `attach_trailing_rows` and `attach_headings` replace two boxes with one
+    larger one, and on three corpus documents that box swallowed a neighbour
+    which was then read twice and printed twice — `statement_0006`'s two
+    totals, `menu_0012`'s `To begin`, `cv_0013`'s `Senior Structural
+    Engineer`. See `detector.without_enclosed`.
+    """
+
+    def test_a_box_wholly_inside_another_is_dropped(self) -> None:
+        table = box(0.03, 0.13, 0.97, 0.935, "table")
+        amount = box(0.64, 0.927, 0.70, 0.935)
+        assert without_enclosed([table, amount]) == [table]
+
+    def test_an_edge_shared_with_the_container_is_still_inside(self) -> None:
+        """`cv_0013`'s heading starts on the same left edge as the block
+        around it, and its bottom edge is the table's in `statement_0006`."""
+        block = box(0.377, 0.039, 0.584, 0.132)
+        heading = box(0.377, 0.086, 0.568, 0.106, "section_header")
+        assert without_enclosed([heading, block]) == [block]
+
+    def test_a_box_mostly_but_not_wholly_inside_is_kept(self) -> None:
+        """`nonlatin_0014`'s shape, and the reason this is not `CONTAINED`:
+        0.696 of its pairs box lies inside the full-width box below, and the
+        rest holds `ΤΠΥ = 2026/0417`, which no other crop has. Dropping a box
+        is safe only when all of it is inside another."""
+        wide = box(0.034, 0.074, 0.966, 0.145, "key_value_region")
+        pairs = box(0.827, 0.044, 0.966, 0.137, "section_header")
+        assert 0.6 < _share_inside(pairs, wide) < 1.0
+        assert without_enclosed([pairs, wide]) == [pairs, wide]
+
+    def test_two_zones_side_by_side_both_survive(self) -> None:
+        left = box(0.05, 0.1, 0.48, 0.4)
+        right = box(0.52, 0.1, 0.95, 0.4)
+        assert without_enclosed([left, right]) == [left, right]
+
+    def test_one_region_found_twice_is_kept_once(self) -> None:
+        """Two identical boxes each lie inside the other; dropping both would
+        lose the region outright."""
+        first = box(0.1, 0.1, 0.9, 0.3, "text")
+        second = box(0.1, 0.1, 0.9, 0.3, "list")
+        assert without_enclosed([first, second]) == [first]
+
+    def test_nothing_in_gives_nothing_out(self) -> None:
+        assert without_enclosed([]) == []
+
+    def test_the_summary_row_union_leaves_one_valid_zone(self) -> None:
+        """End to end, `statement_0006`'s shape: the table takes the strip
+        under it and, with it, an amount printed on the same line. Without
+        this rule the page came back as two Zones in one Band, one inside the
+        other, and `wire.validate_bands` refused it."""
+        engine = LayoutEngine(Fake([
+            box(0.05, 0.30, 0.95, 0.80, "table"),
+            box(0.05, 0.82, 0.60, 0.85, "key_value_region"),
+            box(0.70, 0.82, 0.80, 0.85, "text"),
+        ]))
+        zones = engine.detect_zones(page([(30, 120, 570, 320),
+                                          (30, 328, 360, 340),
+                                          (420, 328, 480, 340)]))
+
+        assert len(zones) == 1
+        validate_bands(zones)
 
 
 def _share_inside(inner: Detection, outer: Detection) -> float:

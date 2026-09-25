@@ -21,7 +21,12 @@ from pathlib import Path
 from doc_to_html.config import DEFAULT_SNAP_ZONES
 from doc_to_html.geometry_score import iou
 from doc_to_html.ir import BBox, Document, Kind, Role, Source, Zone
-from doc_to_html.orchestrator import Conversion, EngineSet, snapped_or_original
+from doc_to_html.orchestrator import (
+    Conversion,
+    EngineSet,
+    _why_kept,
+    snapped_or_original,
+)
 from doc_to_html.preprocess import MAX_SNAP_GROWTH, Rectified, snap_to_ink
 
 HEIGHT, WIDTH = 600, 800
@@ -291,6 +296,26 @@ class TestTheOrchestratorKeepsWhatWorks:
 
     def test_no_zones_is_not_a_crash(self) -> None:
         assert snapped_or_original(page_with_one_block(), []) == []
+
+    def test_bands_invalid_before_the_snap_are_not_blamed_on_it(self) -> None:
+        """Three corpus documents were reported as "snapping made the Bands
+        invalid" when the snap had returned every box unchanged — the Engine
+        handed over one Zone inside another in the same Band. The reason must
+        say whose geometry it was. See `detector.without_enclosed`."""
+        outer, inner = self.zones([box(100, 240, 500, 340),
+                                   box(200, 260, 300, 280)])
+        inner = replace(inner, band=0, column=1)
+
+        reason = _why_kept([outer, inner])
+
+        assert "Engine's own Bands are invalid" in reason
+        assert "snapping made" not in reason
+
+    def test_bands_only_the_snap_broke_are_still_the_snaps(self) -> None:
+        """The other half, so the new wording cannot swallow the old case."""
+        valid = self.zones([box(100, 240, 500, 280), box(100, 300, 500, 340)])
+
+        assert "snapping made the Bands invalid" in _why_kept(valid)
 
 
 class TestTheFlagDecidesWhetherItRunsAtAll:

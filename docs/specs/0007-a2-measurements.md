@@ -153,7 +153,8 @@ one sweep that can be opened, it is three documents and four enclosed pairs —
 which is very likely where the four came from.
 
 **It also blocks the one renderer change that helped.** `cv_0013` is the single
-document proportional width improved — `beside_agreement` 0.450 → 0.556 — and
+document proportional width improved — `beside_agreement` 0.450 → 0.556, both
+taken before the wrap fix moved its baseline to 0.474 — and
 the guarded variant cannot apply it, because band 0 is one of the four. The
 enclosure is upstream of the snap, upstream of the column widths, and upstream
 of any lane model.
@@ -161,6 +162,10 @@ of any lane model.
 Resolving it is a **grouping** change: it decides which crops are extracted, so
 it is upstream of the model and **cannot be measured by replay**. It costs a
 sweep.
+
+**Corrected in §8, measured the same day:** the snap returns these boxes
+unchanged — the enclosure is the detector's own — and resolving it only
+*removes* crops, so its effect *was* predictable offline.
 
 ---
 
@@ -244,6 +249,137 @@ sweep, and its own phase.
 
 ---
 
+## 8. The enclosure is the detector's, and every enclosed Zone was a duplicate
+
+**Taken 2026-09-25, a second sitting, before any code changed.** Branch
+`scaffold`, head `6369bd6`. Everything here is the layout stage run offline —
+`rectify`, the detector, `_cover_the_page`, the snap, exactly as
+`Conversion._layout` calls them, with no model — or the frozen control's own
+IRs. **The harness was proved first:** offline `_layout` reproduces the
+control's boxes, Bands and columns on **15 of 15**, and fires the same three
+snap rejections, in about ten seconds.
+
+### §5 named the wrong culprit
+
+**The snap moves one box in the whole corpus**, `nonlatin_0014`'s recovered
+Zone. `LayoutEngine.detect_zones` already snaps every detection and derives the
+Bands from the snapped boxes, and the snap is idempotent, so the orchestrator's
+second pass has nothing left to move. On the three documents where it was
+"rejected" it returned every box unchanged — **the geometry that shipped was
+enclosed with the snap or without it**, and "`DTH_SNAP_ZONES` did not apply to
+3 of 15" described a step that had done nothing either way. A gate clause
+reading "the snap applies to 15 of 15" would have passed without moving a box.
+
+**The enclosure is made by two union steps in the detector**, found by running
+its steps one at a time and testing containment after each:
+
+| document | step | what the grown box swallowed |
+|---|---|---|
+| `statement_0006` | `attach_trailing_rows` | the table takes its Totals strip and, with it, two amount boxes on the same line |
+| `menu_0012` | `attach_headings` | `To begin`, inside the menu its sibling heading joined |
+| `cv_0013` | `attach_headings` | `Senior Structural Engineer`, inside EXPERIENCE |
+
+`outermost` — one box per region — runs *before* them, and nothing after them
+checked. `wire.validate_bands` never runs on a detector's output at all; its
+docstring said it *could not* fire on derived Bands, which is false for exactly
+this shape and is part of why nobody looked.
+
+### What the enclosed Zones held
+
+**All four were duplicates** of text the enclosing Zone had already read:
+
+| document | the inner Zone read | the enclosing Zone already had it as |
+|---|---|---|
+| `statement_0006` | `5,772.36`, `3,586.14` | the Totals row of the transactions table |
+| `menu_0012` | `To BEGIN` | the table's Title, `To begin` |
+| `cv_0013` | `Senior Structural Engineer` | line 1 of the EXPERIENCE paragraph |
+
+`menu_0012`'s is the "To begin" half of the open across-Zone echo: the two
+readings sit in different Zones, which is why `_without_title_echo` could not
+reach it. `darkdeck_0009`'s `AVAILABILITY` is not an overlap and is untouched.
+
+**So drop and merge are the same operation here.** The inner box lies wholly
+inside the outer, the union of the two *is* the outer, and nothing leaves any
+crop. Re-banding would keep the duplicate.
+
+### Where the threshold goes — the empty band
+
+Covered share of every overlapping pair after the unions, all fifteen:
+
+    1.000  statement_0006  text in table
+    1.000  statement_0006  text in table
+    1.000  menu_0012       section_header in document_index
+    1.000  cv_0013         section_header in text
+    0.696  nonlatin_0014   section_header in key_value_region
+           (nothing else overlaps at all)
+
+The four are inside on **all four edges**. `outermost`'s `CONTAINED` 0.70 would
+also catch exactly these four today, sitting **0.004** above `nonlatin_0014`'s
+box — whose outside part holds `ΤΠΥ = 2026/0417`, which no other crop has. So
+the rule is the edges and has no constant: `detector.without_enclosed`, run
+after the unions.
+
+`nonlatin_0014`'s is a **fifth overlap of a different shape**: its full-width
+Zone re-reads three of the four pairs in the top-right box beside it
+(`Ημερομηνία`, `Λήξη`, `Σειρά`), across two Bands, which is how it passes
+`validate_bands` — by accident, because `_cover_the_page`'s recovered title
+re-banded it. Removing that overlap means cutting a box, which changes a crop.
+**Left open by decision, 2026-09-25**, not A2's.
+
+### It was predictable offline after all
+
+§5 said resolving the enclosure "cannot be measured by replay" because it
+changes which crops are extracted. It changes that only by *removing* one:
+every surviving Zone keeps its box, so its crop and prompt are unchanged and
+at `temperature: 0` so is its answer. The effect is the control's IRs minus the
+four Zones, re-banded and re-measured. Against the floor:
+
+| | control | enclosed Zones dropped |
+|---|---|---|
+| vocabulary recall | 0.8667 | 0.8667 |
+| precision | 0.9787 | **0.9803** |
+| tau | 0.9381 | 0.9382 |
+| beside agreement | 0.7298 | 0.7316 |
+| height ratio | 1.4889 | 1.4772 |
+
+Only the three documents move, the ratchet holds on all fifteen, and **no
+side-by-side pair that agrees in the control is lost or gained on any
+document.**
+
+**Confirmed by sweep `A2-10-enclosed-sweep`, the same day:** every
+`document.html` byte-identical to this prediction, every scored field equal on
+all fifteen documents, and every surviving Zone's answer — inline runs included
+— identical to the frozen control's. Two readings of that table need care:
+
+- **`cv_0013`'s `beside_agreement` 0.474 → 0.500 recovers nothing.** The source
+  pair `Senior Structural Engineer | 2021 — present` leaves the *scored* set:
+  with the heading copy gone, that source block matches no output block. It was
+  first read as a pair coming back and a gate clause was written on it; it was
+  restated before the sweep, with this evidence.
+- **Multiset recall dips on `menu_0012` and `cv_0013`**, A0's shape exactly:
+  the source prints "Structural Engineer" four times, the output read three
+  plus the echo. `vocabulary_recall`, the ratchet's leg, does not move.
+
+### What it does not buy — re-measured, not inherited
+
+The handover called proportional `flex-grow` "the one renderer change that
+helped", blocked on `cv_0013` by the enclosure, and asked for it to be
+re-measured once unblocked. With the enclosure gone every multi-Zone Band is
+disjoint, so the guard has nothing left to exclude. Over the enclosed arm's
+IRs, one change apart:
+
+| `flex` on a multi-Zone Band | beside | `cv_0013` | ratchet |
+|---|---|---|---|
+| `1 1 12rem` (shipped) | 0.7316 | 0.500 | holds |
+| `<width share> 1 12rem` | 0.7287 | **0.474** | fails on `form_0007` 0.059 → 0.029 |
+| `<width share> 1 0` | 0.6939 | **0.474** | fails on four documents, `invoice_0002` 0.640 → 0.295 |
+
+**It lowers the document it was supposed to help**, in both forms. Whatever
+lifted `cv_0013` before the wrap fix is not there now. The route stays closed
+with §2's column model.
+
+---
+
 ## What this leaves A2
 
 **Reachable offline, no sweep, each measured above:**
@@ -253,13 +389,16 @@ sweep, and its own phase.
 - `layout.clipped` 1 → 0, which is `cv_0013`'s sidebar alone
 - the snap rejection surfaced in `report.html` instead of `bakeoff.stderr.txt`
 
-**Worth a sweep, and the only thing in A2 that is:**
+**Worth a sweep, and the only thing in A2 that was — shipped 2026-09-25, gate
+met, sweep `A2-10-enclosed-sweep`:**
 
-- **the four enclosed Zones** (§5). A Band holding a box wholly inside another
-  box is not two Zones by the Band model's own definition, so the rule is
-  deterministic and needs no detector. Fixing it makes `DTH_SNAP_ZONES` apply on
-  fifteen of fifteen instead of twelve, and unblocks the one renderer change
-  that helped — `cv_0013`'s `beside_agreement` 0.450 → 0.556.
+- **the four enclosed Zones** (§5, corrected by §8). A Band holding a box wholly
+  inside another box is not two Zones by the Band model's own definition, so
+  the rule is deterministic and needs no detector. It was written expecting to
+  make the snap apply and to unblock proportional widths; §8 found the snap had
+  never moved those boxes and that proportional widths lower `cv_0013` once
+  unblocked. What it did do is remove four duplicated readings and make the
+  Bands valid on fifteen of fifteen.
 
 **Closed unbuilt, with the evidence above, the way spec 0006's Change 3
 closed:**
