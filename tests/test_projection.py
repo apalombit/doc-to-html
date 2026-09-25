@@ -217,3 +217,62 @@ class TestABlocksAlignment:
                       color="", background="")
         assert _alignment(filling) == "fill"
         assert _alignment(right) == "right"
+
+
+class TestAValueTooLongForItsColumnWraps:
+    """`section.filled` and `section.boxed` set `overflow:hidden` to keep a
+    fill inside its own rounded corner, so content wider than the Zone is cut
+    off in the screenshot while `project()` still reports every word of it.
+    That is T1 and the pixels disagreeing about whether content exists, which
+    is the failure spec 0007 warns about, arriving from the stylesheet.
+
+    `cv_0013`'s sidebar was the corpus's one case: the `dl`'s `auto` track
+    sized itself to an email address with no break opportunity and gave the
+    Zone a 368px content width inside a 256px box.
+    """
+
+    def a_sidebar(self) -> object:
+        """A narrow Zone, narrow the way `cv_0013`'s is — by sharing its Band.
+
+        A lone Zone is page-wide and nothing can overflow it, so a fixture with
+        one Zone tests the stylesheet against no pressure at all. Four columns
+        of `flex:1 1 12rem` at `MIN_WIDTH` is what squeezes the sidebar down to
+        about a quarter of the page, which is the condition the rule exists for.
+        """
+        from doc_to_html.ir import (BBox, Document, Kind, Pair, Source, Zone,
+                                    cell)
+
+        doc = Document(source=Source(path="x.png", sha256="0" * 64,
+                                     width=900, height=900))
+        sidebar = Zone(kind=Kind.PAIRS, title="Contact", complete=True,
+                       fill=(38, 51, 63), band=0, column=0,
+                       bbox=BBox(0.0, 0.0, 0.24, 0.9),
+                       pairs=[Pair(label=cell("Email"),
+                                   value=cell("ines.halloran@fempost.example"))])
+        doc.zones = [sidebar] + [
+            Zone(kind=Kind.PAIRS, complete=True, band=0, column=index,
+                 bbox=BBox(0.25 * index, 0.0, 0.25 * index + 0.24, 0.9),
+                 pairs=[Pair(label=cell("Role"), value=cell("Engineer"))])
+            for index in (1, 2, 3)
+        ]
+        return doc
+
+    @needs_chrome
+    def test_the_long_value_is_not_hidden(self) -> None:
+        from doc_to_html.render import render
+
+        page = project(render(self.a_sidebar()), width=MIN_WIDTH)
+
+        assert page.clipped == 0
+
+    @needs_chrome
+    def test_and_every_word_of_it_is_still_printed(self) -> None:
+        """Wrapping must not be bought by dropping characters: `anywhere`
+        breaks the line, it does not shorten the string."""
+        from doc_to_html.render import render
+
+        page = project(render(self.a_sidebar()), width=MIN_WIDTH)
+
+        assert "ines.halloran@fempost.example" in " ".join(
+            block.text for block in page.blocks
+        )

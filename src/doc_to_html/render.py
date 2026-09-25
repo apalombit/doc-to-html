@@ -67,6 +67,19 @@ ul { margin:0 0 .4em; padding-left:1.3em; }
                   list-style:none; padding:0; }
 p { margin:0 0 .4em; }
 dl.pairs { display:grid; grid-template-columns:auto 1fr; gap:.15em .75em; margin:0; }
+/* A long unbreakable value must wrap, not be hidden. `section.filled` and
+   `section.boxed` both set `overflow:hidden` to keep a fill inside its own
+   rounded corner, so anything wider than the Zone is silently cut off in the
+   screenshot — recall says the text is present and the picture does not
+   contain it. `cv_0013`'s sidebar was the corpus's one case: the `auto` track
+   sized itself to `ines.halloran@fempost.example`, which has no break
+   opportunity, giving the Zone a 368px content width inside a 256px box.
+   `anywhere` rather than `break-word` because only `anywhere` lowers the
+   min-content width the grid track is measured from. Measured 2026-09-25 over
+   all fifteen: corpus `clipped` 1 -> 0, `beside_agreement` +0.0033,
+   `alignment_agreement` +0.0019, ratchet clean, and `cv_0013`'s height_ratio
+   1.77 -> 2.14, which is the wrapped address taking the lines it needs. */
+dl.pairs dt, dl.pairs dd { overflow-wrap:anywhere; }
 dl.pairs dt { color:var(--muted); }
 dl.pairs dd { margin:0; }
 .zone-summary dl.pairs dd { font-weight:600; text-align:right; }
@@ -509,18 +522,56 @@ def _numeric_columns(zone: Zone) -> set[int]:
     item column reading "Hosting (3 months)" and "Domain name (1 year)" would
     otherwise be right-aligned on the strength of the digits inside its
     descriptions.
+
+    **An empty cell votes neither way — measured 2026-09-25.** It used to vote
+    against, and a sparse money column is mostly empty: `statement_0006`'s
+    "Paid out" holds five amounts in forty rows, so it scored 5/40 and stayed
+    left-aligned beside "Paid in" and "Balance", which are dense and did not.
+    Counted over the cells that hold something it is **5 of 5**. Skipping the
+    blanks right-aligns **42 cells** in that one document — 92 `.num` cells to
+    134 — and clears all seven of its `right`-against-`left` disagreements with
+    its source.
+
+    **It moved `alignment_agreement` by exactly nothing, 0.935 to 0.935**, and
+    that is a fact about the axis rather than about the change: a right-aligned
+    cell in a cramped seven-column table has no slack between its ink and its
+    box, so `scoring._alignment` reads it as `fill`. The ratio is a function of
+    our own column widths as much as of our alignment. Gate this on a count of
+    the named columns, in the DOM — see `docs/specs/0007-a2-measurements.md`.
     """
     counts: dict[int, list[int]] = {}
     for row in zone.rows:
         if row.role is not RowRole.DATA:
             continue
         for index, cell in enumerate(row.cells):
-            seen = counts.setdefault(index, [0, 0])
+            seen = counts.setdefault(index, [0, 0, 0])
+            seen[2] += 1
+            if not cell.text.strip():
+                continue
             seen[0] += 1
             if is_numeric(cell.text):
                 seen[1] += 1
-    return {index for index, (total, numeric) in counts.items()
-            if total and numeric / total > 0.6}
+    return {index for index, (total, numeric, rows) in counts.items()
+            if _speaks_for_its_column(total, rows) and numeric / total > 0.6}
+
+
+def _speaks_for_its_column(filled: int, rows: int) -> bool:
+    """Whether this many non-empty cells can decide a whole column.
+
+    **One cell decides a column only when it *is* the column.** Skipping blanks
+    lets a single value speak for a column it is a quarter of: `cv_0013`'s
+    education table holds `2015` above three empty cells, and right-aligning
+    the years on that evidence put ink where the source does not — eight cells
+    across the corpus, on the one document whose table nobody had a reading
+    for.
+
+    A minimum of two would also have thrown away `invoice_0001`'s payment
+    table, which has exactly one data row and belongs right-aligned. So the
+    test is two cells **or** a column with nothing skipped, and measured over
+    every table in the corpus it changes exactly the one case it is written
+    for and leaves the other seventeen alone.
+    """
+    return filled >= 2 or filled == rows
 
 
 def _table(zone: Zone, document: Document) -> str:

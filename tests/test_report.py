@@ -19,7 +19,15 @@ from typing import Any
 
 import pytest
 
-from doc_to_html.report import _gate_html, _previous, _summary_table, _write_scores
+from doc_to_html.report import (
+    _enclosed,
+    _gate_html,
+    _previous,
+    _snap_html,
+    _snap_note,
+    _summary_table,
+    _write_scores,
+)
 from doc_to_html.scoring import (
     Completeness,
     DocumentScore,
@@ -326,3 +334,99 @@ class TestScoresRoundTrip:
         assert written["label"] == "85-x"
         assert written["model"] == "qwen3-vl:4b"
         assert written["taken"] == "2026-09-18 06:00 UTC"
+
+
+def box(left: float, top: float, right: float, bottom: float) -> dict[str, float]:
+    return {"left": left, "top": top, "right": right, "bottom": bottom}
+
+
+def a_trace(path: Path, *, enabled: bool = True, reverted: bool = True,
+            boxes: list[dict[str, float]] | None = None,
+            reason: str | None = None) -> Path:
+    path.write_text(json.dumps({"version": 1, "calls": [], "events": [
+        {"seq": 5, "stage": "snap", "step": "snap_to_ink",
+         "disposition": "kept" if reverted else "overridden",
+         "data": {"enabled": enabled, "reverted": reverted,
+                  "reason": reason, "before": boxes or [], "after": []}},
+    ]}), encoding="utf-8")
+    return path
+
+
+class TestTheSnapSaysWhenItDidNotApply:
+    """`DTH_SNAP_ZONES` is one of the four shipped defaults, and on three of the
+    fifteen corpus documents it was being rejected and the document converting
+    on the Engine's own boxes. The rejection was logged to `bakeoff.stderr.txt`
+    and appeared on no surface anybody reads. See `report._snap_note`.
+    """
+
+    def test_an_enclosed_zone_is_named(self, tmp_path: Path) -> None:
+        """`cv_0013`'s shape: a narrow box wholly inside a wide one, in one
+        Band. `wire.validate_bands` refuses it, which is the whole cause."""
+        trace = a_trace(tmp_path / "trace.json", boxes=[
+            box(0.38, 0.04, 0.58, 0.13),
+            box(0.38, 0.09, 0.57, 0.11),
+        ])
+
+        note = _snap_note(trace)
+
+        assert note is not None
+        assert "UNSNAPPED" in note
+        assert "Zone 1" in note and "Zone 0" in note
+
+    def test_a_document_whose_snap_applied_says_nothing(self, tmp_path: Path) -> None:
+        trace = a_trace(tmp_path / "trace.json", reverted=False,
+                        boxes=[box(0.0, 0.0, 0.4, 0.2)])
+
+        assert _snap_note(trace) is None
+
+    def test_the_snap_being_switched_off_is_not_this_finding(
+        self, tmp_path: Path
+    ) -> None:
+        """`DTH_SNAP_ZONES=0` is a choice, not a rejection, and reporting it
+        here would cry wolf on every run that turns the default off."""
+        trace = a_trace(tmp_path / "trace.json", enabled=False, reverted=False)
+
+        assert _snap_note(trace) is None
+
+    def test_a_run_with_no_trace_is_not_a_finding(self, tmp_path: Path) -> None:
+        """Older runs and replays carry no `trace.json`, and a missing file is
+        an absence of evidence rather than evidence of a rejection."""
+        assert _snap_note(tmp_path / "nothing.json") is None
+
+    def test_the_other_refusal_still_reports_its_reason(
+        self, tmp_path: Path
+    ) -> None:
+        """`snapped_or_original` has two refusals and only one is an enclosure.
+        A Zone with no bbox leaves nothing to name, and the finding must not
+        vanish for it — see `orchestrator._why_kept`."""
+        trace = a_trace(tmp_path / "trace.json", boxes=[],
+                        reason="a Zone has no bbox, so there was nothing to "
+                               "snap it to")
+
+        note = _snap_note(trace)
+
+        assert note is not None and "no bbox" in note
+
+    def test_two_zones_merely_side_by_side_are_not_enclosed(self) -> None:
+        """The test is horizontal overlap inside one Band, which is what a Band
+        forbids. Two real columns must never read as one."""
+        assert _enclosed([box(0.03, 0.1, 0.30, 0.5),
+                          box(0.35, 0.1, 0.62, 0.5)]) == []
+
+    def test_nor_are_two_zones_that_overlap_but_sit_in_different_bands(
+        self,
+    ) -> None:
+        """Every Zone in a one-column page overlaps every other horizontally,
+        and none of them is an enclosure."""
+        assert _enclosed([box(0.03, 0.0, 0.97, 0.2),
+                          box(0.03, 0.3, 0.97, 0.5)]) == []
+
+    def test_the_summary_line_counts_the_documents(self) -> None:
+        html = _snap_html([("cv_0013", "converted on UNSNAPPED geometry")],
+                          of=15)
+
+        assert "did not apply to 1 of 15" in html
+        assert "cv_0013" in html
+
+    def test_and_says_so_plainly_when_every_document_snapped(self) -> None:
+        assert "applied everywhere" in _snap_html([], of=15)

@@ -35,6 +35,7 @@ import html
 import io
 import json
 import math
+import json
 import re
 from dataclasses import asdict
 from datetime import datetime, timezone
@@ -577,6 +578,110 @@ def _gate_html(scores: list[DocumentScore],
     )
 
 
+def _enclosed(boxes: list[dict[str, Any]]) -> list[tuple[int, int]]:
+    """Index pairs of boxes that share a Band and overlap horizontally.
+
+    A Band is a horizontal stripe and its Zones are columns of it, so two of
+    them overlapping across is not two Zones side by side — it is one box
+    containing, or straddling, another. `wire.validate_bands` refuses exactly
+    this, which is why it matters here: it is what the snap is rejected for.
+
+    Banding is re-derived the same way `wire.bands_from_boxes` derives it — a
+    new Band starts once a box begins at or below where the *shortest* box in
+    the current one ended — because the trace records boxes and not Bands, and
+    reading them back is cheaper than widening what a run writes out.
+    """
+    order = sorted(range(len(boxes)),
+                   key=lambda i: (boxes[i]["top"], boxes[i]["left"]))
+    bands: list[list[int]] = []
+    current: list[int] = []
+    for index in order:
+        if current and boxes[index]["top"] >= min(boxes[j]["bottom"]
+                                                  for j in current):
+            bands.append(current)
+            current = []
+        current.append(index)
+    if current:
+        bands.append(current)
+
+    found: list[tuple[int, int]] = []
+    for band in bands:
+        for first in range(len(band)):
+            for second in range(first + 1, len(band)):
+                a, b = boxes[band[first]], boxes[band[second]]
+                lo = max(a["left"], b["left"])
+                hi = min(a["right"], b["right"])
+                if hi > lo + 0.005:
+                    found.append((band[first], band[second]))
+    return sorted(found)
+
+
+def _snap_note(trace: Path) -> str | None:
+    """What the snap did on this document, when it did not do what it should.
+
+    **Surfaced here because it was invisible.** `DTH_SNAP_ZONES` is one of the
+    four shipped defaults; it moves every box onto its ink and then hands the
+    result to `wire.validate_bands`, and when that refuses, the whole document
+    converts on the geometry the Engine returned. The refusal was logged to
+    `bakeoff.stderr.txt` and read by nobody, so three of the fifteen corpus
+    documents had been converting unsnapped without it appearing on any surface
+    a person looks at.
+
+    Read off `trace.json` rather than the IR on purpose: it costs the rendered
+    document nothing. A finding written into the page would be drawn in the
+    render, and a render that grows is a `height_ratio` that moved for a reason
+    that is not about the document.
+    """
+    if not trace.is_file():
+        return None
+    try:
+        events = json.loads(trace.read_text(encoding="utf-8"))["events"]
+    except (ValueError, KeyError, OSError):
+        return None
+    for event in events:
+        if event.get("stage") != "snap":
+            continue
+        data = event.get("data") or {}
+        if not data.get("enabled") or not data.get("reverted"):
+            continue
+        boxes = data.get("before") or []
+        pairs = _enclosed(boxes) if boxes else []
+        if pairs:
+            where = "; ".join(
+                f"Zone {inner} ({boxes[inner]['left']:.2f}–"
+                f"{boxes[inner]['right']:.2f}) overlaps Zone {outer} "
+                f"({boxes[outer]['left']:.2f}–{boxes[outer]['right']:.2f})"
+                for outer, inner in pairs
+            )
+            return (f"converted on UNSNAPPED geometry — {where}, so the "
+                    f"snapped Bands were refused")
+        return ("converted on UNSNAPPED geometry — "
+                + str(data.get("reason") or "the snapped Bands were refused"))
+    return None
+
+
+def _snap_html(notes: list[tuple[str, str]], *, of: int) -> str:
+    """The snap's own line, beside the ratchet and the honesty gate."""
+    if not of:
+        return ""
+    if not notes:
+        return ('<div class="gate pass"><b>The snap applied everywhere.</b> '
+                f"All {of} document(s) converted on boxes moved onto their "
+                "ink.</div>")
+    return (
+        '<div class="gate fail"><b>DTH_SNAP_ZONES did not apply to '
+        f'{len(notes)} of {of} document(s).</b> The boxes were moved onto '
+        "their ink and the Bands were then refused, so these converted on the "
+        "Engine's geometry:<ul>"
+        + "".join(
+            f'<li><a href="#{html.escape(name)}">{html.escape(name)}</a>: '
+            f"{html.escape(note)}</li>"
+            for name, note in notes
+        )
+        + "</ul></div>"
+    )
+
+
 def _honesty_html(accounts: list[Accounting]) -> str:
     """Phase A-1's gate, stated beside the ratchet rather than under it.
 
@@ -739,6 +844,7 @@ def build(run: Path, *, model: str, documents: Iterable[str],
     scores: list[DocumentScore] = []
     sections: list[str] = []
     accounts: list[Accounting] = []
+    unsnapped: list[tuple[str, str]] = []
     for name in documents:
         source = SOURCES.get(name)
         if source is None:
@@ -761,6 +867,9 @@ def build(run: Path, *, model: str, documents: Iterable[str],
         accounts.append(account(
             score, loss_findings(embedded) if embedded is not None else ()
         ))
+        note = _snap_note(dump / name / "trace.json")
+        if note is not None:
+            unsnapped.append((name, note))
         render = work / f"{name}_render.png"
         if not render.is_file():
             try:
@@ -792,6 +901,7 @@ def build(run: Path, *, model: str, documents: Iterable[str],
         + "</p>"
         + _gate_html(scores, was)
         + _honesty_html(accounts)
+        + _snap_html(unsnapped, of=len(scores))
         + _summary_table(scores, was)
         + "".join(sections)
         + "</div>\n</body>\n</html>\n"

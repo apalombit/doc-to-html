@@ -548,7 +548,186 @@ STANDING RULES:
 
 ---
 
-## Phase A2 — geometry: columns, alignment, clipping — **NEXT**
+## Phase A2 — measured 2026-09-25, re-scoped, **NEXT**
+
+**Its first scope did not survive its own measurements.** A2 was written as
+*geometry: columns, alignment, clipping*, on the premise that side-by-side
+content stacks because the renderer stacks it. Measured before any code was
+written: **two thirds of the fault is inside one Zone**, four renderers were
+built and scored offline and **the shipped one wins**, and the two routes that
+did work are blocked by a fault that is neither columns nor alignment.
+`docs/specs/0007-a2-measurements.md` is the full record and **is required
+reading before this prompt**. The column model and the merged Zone are **closed
+unbuilt**, with evidence, the way spec 0006's Change 3 closed.
+
+**Three wins shipped on 2026-09-25**, all proved offline against
+`tests/frozen/a1-result/`: the sparse numeric column, the clipped sidebar, and
+the snap finding surfaced in `report.html`. What is left is one change, and it
+is the only thing in A2 worth a sweep.
+
+The prompt A2 was originally run from is kept below the new one, as record.
+
+```
+Implement Phase A2 of spec 0007, re-scoped. Stop at its gate and report.
+
+Read, in order: CLAUDE.md's "READ THIS FIRST", then docs/status.md, then
+docs/specs/0007-a2-measurements.md — which is A2's own evidence and says what
+has already been tried and refused — then
+docs/specs/0007-look-like-the-document.md. The spec is authoritative where
+anything disagrees.
+
+Branch scaffold. Tests pass, mypy src/ clean. Phase A1 closed 2026-09-25 with
+its gate NOT met on clause 1 only; do not redo any of it.
+
+THE NOTCH IS SETTLED. Ratchet against tests/frozen/a0-result/scores.json:
+
+    python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
+        --documents sweep --previous tests/frozen/a0-result/scores.json
+
+--documents sweep is not optional. Without a fixtures.txt in the run directory
+the report silently defaults to the iterate five and scores a third of the
+corpus.
+
+MEASURE OFFLINE FIRST, AGAINST THE FROZEN CONTROL. tests/frozen/a1-result/
+holds the fifteen documents the shipped configuration produced AND their
+scores, and the scores re-derive from the documents exactly — 15 documents,
+0 differing fields. Copy each documents/<name>.html to
+debug/runs/<label>/dump/qwen3-vl_4b/<name>/document.html and score it; the
+directory's README has the recipe. One cycle is about 50 seconds and calls no
+model. A renderer or mapper change that has not been through that loop has not
+been measured.
+
+A2'S SCOPE — ONE CHANGE. THE ENCLOSED ZONE.
+
+A Band is a horizontal stripe and its Zones are its columns, so two Zones in
+one Band that overlap horizontally are not two Zones. There are four such
+pairs, in three documents, each an exact containment:
+
+    cv_0013        band 0   0.38-0.58 contains 0.38-0.57
+    menu_0012      band 1   0.04-0.96 contains 0.22-0.30
+    statement_0006 band 2   0.03-0.97 contains 0.64-0.70
+    statement_0006 band 2   0.03-0.97 contains 0.91-0.96
+
+They are one fault under two symptoms, and both matter:
+
+  - wire.validate_bands refuses the snapped geometry on exactly these three
+    documents, so DTH_SNAP_ZONES — one of the four shipped defaults — applies
+    to twelve of fifteen. report.html now says so on every run; that surface
+    was built on 2026-09-25 and is where you read the count.
+  - they block the one renderer change that helped. Giving a Band's Zones a
+    flex-grow from their measured widths lifted cv_0013's beside_agreement
+    0.450 -> 0.556, and the guarded form cannot apply it to cv_0013 because
+    band 0 is one of the four.
+
+The rule needs no detector and no model: it is arithmetic on boxes that are
+already in the IR. What it must decide is what to DO with an enclosure — drop
+the inner box, merge it into the outer, or re-band it — and that decision
+changes which crops are extracted, which is upstream of the model. So the rule
+is developed and measured offline on the frozen control's own boxes, and only
+then does it cost a sweep.
+
+DO NOT TRADE T1 FOR GEOMETRY. Dropping an enclosed Zone deletes whatever was
+read from it. The accepted interim state has always been "content complete and
+reading order correct, in one column". The ratchet enforces it and has already
+caught regressions worth a single word.
+
+SET A2'S GATE FROM MEASUREMENTS, BEFORE CHANGING ANY CODE. Propose it and get
+it agreed. Three things this phase already learned about writing one:
+
+  - Make most clauses COUNTS OF NAMED STRUCTURES, not ratios. A0's model.
+  - alignment_agreement is NOT gateable, and that is measured rather than
+    suspected: flipping 42 cells to right-aligned in statement_0006 moved it
+    0.935 -> 0.935, because a right-aligned cell in a cramped table has no
+    slack and re-reads as `fill`. The ratio is a function of our own column
+    widths. Clause 5 below is the shape that works.
+  - A1's clause 4 was a proxy and fired on a document where the fault had not
+    happened. State the fault directly and per document.
+
+A PROPOSED GATE, TO ARGUE WITH RATHER THAN ADOPT:
+
+  1. No Band holds two Zones whose horizontal spans overlap. 4 pairs -> 0,
+     the four named above, per document.
+  2. DTH_SNAP_ZONES applies to all fifteen. report.html's snap line reads
+     "applied everywhere"; it reads "did not apply to 3 of 15" today.
+  3. Named side-by-side pairs that must come back, listed per document BEFORE
+     the run. cv_0013's 5 cross-Zone misses are the ones the enclosure blocks.
+  4. layout.clipped stays at 0 for all fifteen, and no document rises above its
+     source_clipped.
+  5. Every table column whose non-empty data cells are all numbers is
+     right-aligned — checked in the DOM, counted, not via _alignment. It is 18
+     columns across the corpus today; the count must not fall.
+  6. The ratchet holds against a0-result on all four legs, all fifteen.
+  7. Structure, tests, mypy clean.
+
+CLOSED. DO NOT REOPEN EITHER WITHOUT NEW EVIDENCE:
+
+  - The column model. Four renderers measured offline in one sitting, all worse
+    on the hard tier: proportional grid tracks cost beside_agreement
+    0.7265 -> 0.6814 and trebled clipping; merging Bands into column runs cost
+    tau. Height was eliminated as the explanation — held at height_ratio
+    1.0284, beside_agreement was still 0.6628, below the control. Measurements
+    doc section 2 and 3.
+  - The merged Zone. menu_0012's two menu sections as one table and form_0007's
+    two-column form as one pairs list are 49 of the 66 inside-Zone pairs, and
+    three pixel-side tests were built and none separates them. form_0007's Zone
+    has ZERO interior gutters. menu_0012's one gutter is 38px against a 1px
+    runner-up locally, and 22 Zones that must NOT be split rank above it by
+    share. A third test — do the printed lines straddle the gutter — puts
+    menu_0012 at 0.86, between two genuine tables. DO NOT BUILD A FOURTH
+    DETECTOR. If it is reopened it is a MODEL question asked as "how many
+    regions", and its own phase. Measurements doc section 7.
+
+OPEN, NOT A2'S, DO NOT ABSORB THEM:
+- Reading direction for a multi-Band column region. An IR gap: the Band model
+  says what is beside what and never which way a region is read, and the same
+  merge takes newsletter_0008 from tau 0.832 to 0.968 and catalogue_0015 from
+  0.943 to 0.562. Measurements doc section 4.
+- The across-Zone title echo (menu_0012 "To begin" twice, darkdeck_0009
+  "AVAILABILITY").
+- statement_0006's 41 near-identical caveat lines.
+- receipt_0010 at 19.8% words kept, and its untested resize_long_edge lead.
+- nonlatin_0014's dark-blue table header row, and its ~8.6% invented words.
+- catalogue_0015 at 61.7%, loss NOT declared. A-1 established the pipeline
+  cannot declare loss inside a line and that two pixel-side detectors were
+  built and rejected. Do not build a third without a new kind of evidence.
+- invoice_0001's "Invoice" / "#: 123" — a Pairs label/value boundary.
+- A confirming sweep for A1's shipped 8 of 42, and its one false mark.
+
+DEFERRED — do not "fix" and do not read as new faults: the type scale (2/B, its
+own increment, and A2 measured that nothing here waits on it), figures as
+placeholders (A3), Thread 3/C.
+
+STANDING RULES:
+- Never cite or analyse a past run. Only a run taken in this session counts.
+  Five exceptions, all committed files: tests/frozen/run84/, a1-checkpoint/,
+  a0-checkpoint/, a0-result/ — the floor — and a1-result/ — the control.
+- Leave debug/runs/84-rule-not-a-line/ intact.
+- Never score against tests/documents/SAMPLE_DOCUMENTS.
+- Do not delete the four shipped defaults or the three wire-level row nets.
+- Marking may never change the words: wire._runs_for can only cut the string it
+  is given and ir.Cell.runs discards Runs that do not spell the text back.
+- project() compares a normalised view, never raw markup.
+- Every run must produce debug/runs/<label>/report.html.
+- Any reviewed run is a full sweep, all fifteen.
+- Rubric judgements are pairwise and in-session only.
+- Ask before binding anything docs/status.md leaves open.
+```
+
+### The three wins shipped on 2026-09-25
+
+All measured offline against `tests/frozen/a1-result/`, one change apart, in
+one sitting. Corpus: **`clipped` 1 → 0**, `beside_agreement` **+0.0033**,
+`alignment_agreement` **+0.0019**, every T1 leg and `tau` **unmoved**, ratchet
+clean.
+
+| change | what it fixes |
+|---|---|
+| `render._numeric_columns` skips empty cells | a sparse money column votes on the cells that hold something. `statement_0006`'s "Paid out" was 5 numbers in 40 rows and stayed left; it is 5 of 5 among the non-empty. **42 cells**, corpus `.num` 212 → 254. |
+| `render._speaks_for_its_column` | one cell decides a column only when it *is* the column. `cv_0013`'s `2015` above three blanks right-aligned eight cells the source does not. Changes **exactly one** of the corpus's eighteen table columns and leaves `invoice_0001`'s genuine one-row table alone. |
+| `dl.pairs dt, dl.pairs dd { overflow-wrap:anywhere }` | a value too long for its column wraps instead of being hidden. `section.filled` sets `overflow:hidden`, so `cv_0013`'s sidebar cut off an email at 256px of the 368px it wanted — recall said present, the picture did not contain it. |
+| `report._snap_note` / `_snap_html` | the snap rejection, read off `trace.json` and shown beside the ratchet and the honesty gate. Reads **"did not apply to 3 of 15"** today and names the enclosure on each. Off the trace rather than into the IR on purpose: a finding drawn in the page would move `height_ratio` for a reason that is not about the document. |
+
+### A2's original prompt, kept as record
 
 ```
 Implement Phase A2 of spec 0007. Stop at its gate and report.

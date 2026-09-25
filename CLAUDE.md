@@ -77,7 +77,13 @@ Phase A1    Inline runs, and hard line breaks   DONE 2026-09-25, gate NOT met
               Extractor prompts crossed the ratchet and were reverted, then
               re-asked as a SEPARATE pass (DTH_INLINE_PASS) which holds the
               ratchet and reaches only 8 of 42 — clause 1 is the open one
-Phase A2    Geometry: columns, alignment, clipping   <- next
+Phase A2    Geometry — RE-SCOPED 2026-09-25          <- in progress
+              its premise did not survive its own measurements — two thirds of
+              the fault is inside one Zone, and every renderer replacement
+              tried lost on the hard tier. The column model and the merged Zone
+              are CLOSED UNBUILT; three offline wins shipped; the enclosed Zone
+              is what is left. docs/specs/0007-a2-measurements.md is the record
+              and is required reading before the phase.
 Phase A3        Figure pixels
 Thread 3/C  Repair loop (re-scoped against A+B residuals first)
 Thread 4/D  Human corrections (unscheduled)
@@ -235,6 +241,21 @@ onward.** It was committed on 2026-09-22 as a preserved result and became the
 notch when Alessandro took the decision `docs/status.md` had left open. The
 move was measured, not argued: `a0-result` is no lower than `a0-checkpoint` on
 any ratcheted leg of any of the fifteen documents.
+
+**A fifth, added 2026-09-25: `tests/frozen/a1-result/`** — **the control, and
+not a floor.** It is the only frozen directory that holds *documents beside
+scores*: the fifteen `document.html` files the shipped configuration produced at
+A1's close, and the `scores.json` of exactly those files. Scored straight out of
+it with nothing else from the run, **15 documents, 0 differing fields** — so the
+scores are re-derivable rather than taken on trust, offline, in about fifty
+seconds, with no model.
+
+**What it buys is a loop, not a number.** Re-rendering its IRs through the
+shipping `render()` returns all fifteen files byte-identical, so a renderer
+change can be measured against it pairwise, one change apart, in one sitting,
+without a sweep. Phase A2 measured five prototype renderers that way and spent
+no model time doing it. It is *not* the ratchet's floor — that stays
+`a0-result/` — and it is not a target to match.
 
 **The second exception, added 2026-09-20: `tests/frozen/a1-checkpoint/`.** It
 holds Phase A-1's checkpoint scores, which are **the T1 ratchet's starting

@@ -17,7 +17,7 @@ import pytest
 from PIL import Image
 
 from doc_to_html.engines.ollama import TABLE_PROMPT, OllamaEngine, with_grid
-from doc_to_html.ir import BBox, Document, Kind, RowRole, Zone
+from doc_to_html.ir import BBox, Document, Kind, Row, RowRole, Source, Zone, cell
 from doc_to_html.preprocess import (
     MIN_BAND,
     TableGrid,
@@ -121,6 +121,74 @@ class TestARealTable:
         assert "<td>USA</td>" in html
         assert '<td class="num">331,900,000</td>' in html
         assert "<td>USD</td>" in html
+
+
+class TestASparseNumericColumnIsStillNumeric:
+    """An empty cell used to vote against its column being numbers.
+
+    `statement_0006`'s "Paid out" holds five amounts in forty rows, so it
+    scored 5/40 against a 0.6 threshold and stayed left-aligned beside two
+    dense money columns that did not. Counted over the cells that hold
+    something it is 5 of 5. See `render._numeric_columns`.
+    """
+
+    def a_table(self, column: list[str]) -> Zone:
+        return Zone(
+            kind=Kind.TABLE,
+            rows=[Row(role=RowRole.DATA, cells=[cell("Paid"), cell(value)])
+                  for value in column],
+        )
+
+    def test_a_sparse_money_column_is_right_aligned(self) -> None:
+        from doc_to_html.render import _numeric_columns
+
+        sparse = self.a_table(["", "", "1,180.00", "", "", "", "94.20", ""])
+
+        assert _numeric_columns(sparse) == {1}
+
+    def test_and_it_reaches_the_rendered_cells(self) -> None:
+        from doc_to_html.render import _table
+
+        html = _table(self.a_table(["", "3,470.00", "", "1,940.00"]), Document(
+            source=Source(path="x.png", sha256="0" * 64, width=9, height=9)))
+
+        assert '<td class="num"></td>' in html
+        assert '<td class="num">3,470.00</td>' in html
+
+    def test_a_column_of_words_is_still_not_numeric(self) -> None:
+        """The blanks are skipped; the test on what is left is unchanged."""
+        from doc_to_html.render import _numeric_columns
+
+        words = self.a_table(["", "Opening balance", "", "Cordell Energy"])
+
+        assert _numeric_columns(words) == set()
+
+    def test_one_value_among_blanks_does_not_decide_a_column(self) -> None:
+        """`cv_0013`'s education table: `2015` above three empty cells. One
+        cell is a quarter of that column, not a reading of it."""
+        from doc_to_html.render import _numeric_columns
+
+        thin = self.a_table(["2015", "", "", ""])
+
+        assert _numeric_columns(thin) == set()
+
+    def test_but_a_single_row_table_still_decides(self) -> None:
+        """`invoice_0001`'s payment table has one data row, so its one cell is
+        the whole column and nothing was skipped to reach it."""
+        from doc_to_html.render import _numeric_columns
+
+        assert _numeric_columns(self.a_table(["1000"])) == {1}
+
+    def test_a_column_that_is_entirely_empty_is_not_numeric(self) -> None:
+        """Skipping every cell must leave no vote at all, not a vacuous pass.
+
+        `statement_0006`'s seventh column is empty in all forty data rows, and
+        `0 / 0` is the shape that raises or right-aligns nothing depending on
+        which way the division falls.
+        """
+        from doc_to_html.render import _numeric_columns
+
+        assert _numeric_columns(self.a_table(["", "", ""])) == set()
 
 
 class TestExtractionReadsTheRightPixels:

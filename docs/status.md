@@ -1,15 +1,16 @@
-# Status — 2026-09-25 (Phase A1 closed, gate NOT met; **A2 is next**)
+# Status — 2026-09-25 (A1 closed; **A2 re-scoped, three wins shipped, one change left**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. It was last rewritten rather than
-patched on 2026-09-25, at A1's close.
+patched on 2026-09-25, at A1's close, and extended the same day when A2 was
+stopped at its gate.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file. If you are going to look at output — and you
 should — use the **`visual-review` skill**.
 
-Branch `scaffold`, head `a720482`. **769 tests pass, `mypy src/` clean.**
+Branch `scaffold`. **786 tests pass, `mypy src/` clean.**
 
 ---
 
@@ -25,7 +26,11 @@ Phase A1    Inline runs, and hard line breaks   DONE 2026-09-25, gate NOT met
   |- the hyphen: soft dropped, compound kept    shipped, 15 of 15 cases
   |- inline runs asked IN the Extractor prompts crossed the ratchet, REVERTED
   \- inline runs asked as a SEPARATE pass       shipped, 8 of 42 — clause 1 open
-Phase A2    Geometry: columns, alignment        NEXT   <- you are here
+Phase A2    Geometry — RE-SCOPED                 IN PROGRESS   <- you are here
+  |- premise did not survive its own measurements: specs/0007-a2-measurements.md
+  |- the column model and the merged Zone   CLOSED UNBUILT, with evidence
+  |- three offline wins                     SHIPPED 2026-09-25, ratchet clean
+  \- the enclosed Zone                      LEFT, and the only part worth a sweep
 Phase A3    Figure pixels
 Thread 3/C  Repair loop (re-scoped first)
 Thread 4/D  Human corrections (unscheduled)
@@ -228,11 +233,75 @@ mostly misread Greek. Everything else is under 5%.
 
 ## Next, in order
 
-### 1. Phase A2 — geometry  <- next
+### 1. Phase A2 — re-scoped to the enclosed Zone  <- next
+
+**Its prompt is rewritten** in [`specs/0007-handover.md`](specs/0007-handover.md)
+around the one change that is left. The original prompt is kept below it as
+record.
+
+#### Shipped 2026-09-25, measured offline against `tests/frozen/a1-result/`
+
+Corpus: **`clipped` 1 → 0**, `beside_agreement` **+0.0033**,
+`alignment_agreement` **+0.0019**, every T1 leg and `tau` **unmoved**, ratchet
+clean. `cv_0013`'s `height_ratio` 1.77 → 2.14, which is a wrapped address
+taking the lines it needs.
+
+| change | what it fixes |
+|---|---|
+| `render._numeric_columns` skips empty cells | `statement_0006`'s "Paid out" is 5 numbers in 40 rows and stayed left-aligned; among the non-empty it is 5 of 5. **42 cells**, corpus `.num` 212 → 254. |
+| `render._speaks_for_its_column` | one cell decides a column only when it *is* the column. `cv_0013`'s `2015` over three blanks right-aligned 8 cells the source does not. Changes **one** of the corpus's eighteen table columns; `invoice_0001`'s real one-row table is untouched. |
+| `dl.pairs { overflow-wrap:anywhere }` | `section.filled` sets `overflow:hidden`, so `cv_0013`'s sidebar hid an email at 256px of the 368px it wanted. Recall said present; the picture did not contain it. |
+| `report._snap_note` | the snap rejection, off `trace.json`, beside the ratchet and the honesty gate. **"did not apply to 3 of 15"**, naming the enclosure on each. |
+
+#### Left, and the only part worth a sweep
+
+**The enclosed Zone** — four pairs in three documents, each a Band holding a
+narrow box wholly inside a wide one. It is why `DTH_SNAP_ZONES` reaches twelve
+of fifteen, and it blocks the one renderer change that helped (`cv_0013`
+`beside_agreement` 0.450 → 0.556 under proportional widths). The rule is
+arithmetic on boxes already in the IR; what it does with an enclosure changes
+which crops are extracted, which is what costs the sweep.
+
+### 1b. Closed unbuilt, with evidence
 
 The prompt is in [`specs/0007-handover.md`](specs/0007-handover.md). It owns
 columns, `Zone.align`, and `cv_0013`'s clipped sidebar values. The table above
 is its starting measurement.
+
+The record is [`specs/0007-a2-measurements.md`](specs/0007-a2-measurements.md).
+**Do not reopen either without a new kind of evidence.** In brief:
+
+- **66 of the 113 missing side-by-side pairs are inside one Zone**, so no
+  renderer can reach them. `form_0007` (0.059) and `menu_0012` (0.349), the two
+  worst documents, are **entirely** inside-Zone.
+- **Four renderers were built and scored offline and the shipped one wins.**
+  Placing Zones at their measured proportions costs `beside_agreement`
+  0.7265 → 0.6814 and trebles clipping; merging Bands into columns costs tau.
+- **Height is not the blocker.** Held at `height_ratio` 1.0284,
+  `beside_agreement` was still 0.6628 — below the control.
+- **One fault sits under both symptoms:** four *enclosed Zones* in three
+  documents (`cv_0013`, `menu_0012`, `statement_0006`), each a Band holding a
+  narrow box wholly inside a wide one. They are the same three documents whose
+  `DTH_SNAP_ZONES` is discarded — **three of fifteen, not four as A2's prompt
+  says** — and they block the one renderer change that helped.
+- **`alignment_agreement` cannot gate the work.** Flipping 42 cells to
+  right-aligned in `statement_0006` moved it 0.935 → 0.935. **Alignment stays
+  in A2 gated on a count of named columns, checked in the DOM** — decided
+  2026-09-25.
+- **The merged Zone — the 49 biggest inside-Zone pairs — cannot be found in
+  the pixels.** `form_0007`'s Zone has **zero** interior gutters. `menu_0012`'s
+  has one clean 38px gutter against a 1px runner-up, and **22 Zones that must
+  not be split** still rank above it by share, `invoice_0001`'s two-column
+  tables at 0.759 and 0.665 among them. A third test — do the printed lines
+  straddle the gutter — puts `menu_0012` at 0.86, *between* two genuine tables.
+  **Three pixel-side tests, three failures; do not build a fourth.** Two menu
+  sections and a two-column table are the same shape, and telling them apart is
+  reading the words. If it is re-opened it is a **model** question asked as
+  *how many regions*, and its own phase.
+
+**The offline loop is proved and is the reason all of that cost no model time:**
+re-rendering a run's own embedded IRs gives 15 byte-identical documents and 0
+differing scored fields, in about 50 seconds.
 
 ### 2. Open, and nothing owns it
 
@@ -271,8 +340,12 @@ word-level ink segmentation the project does not have.
 ## Invariants — do not break these
 
 - **Never cite or analyse a past run.** Only a run taken in this session counts.
-  **Four exceptions, all committed files:** `tests/frozen/run84/`,
-  `a1-checkpoint/`, `a0-checkpoint/` and `a0-result/` — the last being the floor.
+  **Five exceptions, all committed files:** `tests/frozen/run84/`,
+  `a1-checkpoint/`, `a0-checkpoint/`, `a0-result/` — the floor — and
+  `a1-result/`, added 2026-09-25, which is **the control, not a floor**: the
+  fifteen documents A1 shipped plus their scores, proved to regenerate those
+  scores exactly (0 differing fields). It is what makes a renderer change
+  measurable offline in ~50 seconds without a sweep.
 - **Leave `debug/runs/84-rule-not-a-line/` intact.**
 - **Never score against `tests/documents/SAMPLE_DOCUMENTS`.**
 - **Do not delete the four shipped defaults or the three wire-level row nets** —
