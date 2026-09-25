@@ -176,6 +176,28 @@ is gated on `bool(zone.title)`, and `title` came back `None` from all 36 of run
 table and returned a spurious trailing `header`. Both of that fixture's
 mismatches trace to it."""
 
+DEFAULT_INLINE_PASS = True
+"""Whether to ask each `prose` or `list` Zone which of its spans are set apart.
+
+**A separate pass, and that is the whole design — Phase A1, 2026-09-24.** The
+first attempt asked for the same information *inside* the Extractor prompts and
+it crossed the T1 ratchet: `invoice_0002`'s pairs answer went from five pairs
+to one, and seven documents lost words, order or structure. See
+`engines.ollama.MARKED_CLAUSE`, which is kept with the numbers and is wired to
+nothing.
+
+**This route cannot repeat that failure, structurally.** It changes no
+Extractor prompt, so at `temperature: 0` every extraction answer is the one the
+floor already has — verified twice on 2026-09-24, on `invoice_0002` (all four
+pairs answers byte-identical) and `sample_semantic_0005` (all 27). A bad answer
+here can cost marking and nothing else: `wire._runs_for` can only cut the string
+it is given, and `ir.Cell.runs` discards Runs that do not spell the text back.
+
+`prose` and `list` only, because that is where every one of the eight runs the
+first attempt recovered came from. Tables and pairs returned **zero** usable
+runs while taking the worst of the damage, so there is nothing there to buy.
+"""
+
 DEFAULT_CAPTION_PASS = True
 """Whether to ask each Zone for its Title before asking what Kind it is.
 
@@ -608,6 +630,7 @@ class Settings:
     snap_zones: bool = DEFAULT_SNAP_ZONES
     table_grid_hint: bool = DEFAULT_TABLE_GRID_HINT
     caption_pass: bool = DEFAULT_CAPTION_PASS
+    inline_pass: bool = DEFAULT_INLINE_PASS
     layout_region_hint: bool = DEFAULT_LAYOUT_REGION_HINT
     cover_the_page: bool = DEFAULT_COVER_THE_PAGE
     style_record: bool = DEFAULT_STYLE_RECORD
@@ -737,6 +760,7 @@ def load(
             resolve("DTH_SNAP_ZONES", DEFAULT_SNAP_ZONES),
             resolve("DTH_TABLE_GRID_HINT", DEFAULT_TABLE_GRID_HINT),
             resolve("DTH_CAPTION_PASS", DEFAULT_CAPTION_PASS),
+            resolve("DTH_INLINE_PASS", DEFAULT_INLINE_PASS),
             resolve("DTH_LAYOUT_REGION_HINT", DEFAULT_LAYOUT_REGION_HINT),
             resolve("DTH_COVER_THE_PAGE", DEFAULT_COVER_THE_PAGE),
             resolve("DTH_STYLE_RECORD", DEFAULT_STYLE_RECORD),
@@ -762,6 +786,7 @@ def load(
         snap_zones=_flag(origins["DTH_SNAP_ZONES"]),
         table_grid_hint=_flag(origins["DTH_TABLE_GRID_HINT"]),
         caption_pass=_flag(origins["DTH_CAPTION_PASS"]),
+        inline_pass=_flag(origins["DTH_INLINE_PASS"]),
         layout_region_hint=_flag(origins["DTH_LAYOUT_REGION_HINT"]),
         cover_the_page=_flag(origins["DTH_COVER_THE_PAGE"]),
         style_record=_flag(origins["DTH_STYLE_RECORD"]),

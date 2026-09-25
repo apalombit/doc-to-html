@@ -42,9 +42,11 @@ from ..wire import (
     CaptionResponse,
     ClassifyResponse,
     LayoutResponse,
+    RunsResponse,
     caption_into,
     classification_into,
     contents_into,
+    runs_into,
     schema_of,
     zones_from_layout,
 )
@@ -289,6 +291,122 @@ the contact sheet. See `preprocess.caption_band`.
 **Reading before judging** is deliberate: `first_line` is decoded before
 `line_is`, so the verdict is given against a line the model has already copied
 out rather than against an impression of the crop."""
+
+RUNS_PROMPT = """You are looking at one block of text, cropped from a page.
+It has already been read. You are not being asked to read it again.
+
+Return only the spans inside it that are **set apart from the type around
+them**, each copied exactly as it is printed, with its kind:
+
+  link    underlined, or in a colour the text around it does not use — a web
+          address, an email address, or an entry in a row of navigation links
+  code    set in a monospaced typeface, as a tag, a filename or a command is
+  strong  noticeably bolder than the text beside it
+  em      italic where the text beside it is not
+  mark    printed on a band of colour, as a badge or a highlighter is
+
+Judge every span against the text beside it, not against the page. If the whole
+block is bold, nothing in it is `strong` — that is the block's own typeface. If
+the whole block is one colour, there is no link in it.
+
+Copy the span and nothing else: not the words around it, and not a whole line
+unless a whole line is genuinely set apart from the lines above and below it.
+
+Most blocks have nothing set apart in them. **Return an empty list for those.**
+An empty list is the right answer far more often than not, and a span that is
+not really there is worse than no answer at all."""
+"""Ask one Zone which of its spans are marked — and ask nothing else.
+
+**The separate pass, and the point is what it does not touch.** The first
+attempt at inline runs appended `MARKED_CLAUSE` to the four Extractor prompts
+and crossed the T1 ratchet; that constant carries the numbers. Asking here
+changes no Extractor prompt, so at `temperature: 0` every extraction answer is
+the one the floor already has, and content loss is off the table by
+construction rather than by hope.
+
+"It has already been read. You are not being asked to read it again." is
+load-bearing: the failure mode of the first attempt was the model re-doing the
+transcription differently — it returned `The two slip-ways follow...` as one
+line with the hyphen inside it, where the floor had split the line and
+`render._how_to_join` repairs the split. Here the transcription is not in
+play, because nothing this pass returns can change a Cell's text.
+
+The whole-block clauses mirror `projection.inlineOf`, which is what scores the
+answer: it compares a run against *the block it sits in*, so a wholly bold
+paragraph yields no `strong` runs. The model ignored that clause once already
+and marked five whole lines of `newsletter_0008` `strong`, so it is enforced in
+code as well, by `wire._covers_everything`.
+"""
+
+MARKED_CLAUSE = """
+marked — the spans inside the text above that are set apart from the type
+around them. Copy each one exactly as it is printed, and give its kind:
+  link    underlined, or in a colour the text around it does not use — a web
+          address, an email address, or an entry in a row of navigation links
+  code    set in a monospaced typeface, as a tag, a filename or a command is
+  strong  noticeably bolder than the text beside it
+  em      italic where the text beside it is not
+  mark    printed on a band of colour, as a badge or a highlighter is
+
+Judge each span against the text beside it, not against the page: a heading set
+entirely in bold is a heading, not a strong span, and a block printed wholly in
+one colour has no link in it. Copy the span and nothing else — not the words
+around it, and not a whole line unless the whole line is what is set apart.
+
+Return an empty list when nothing in it is set apart. That is the usual answer,
+and it is a better one than a span that is not really there."""
+"""What the Extractors ask about inline runs — **BUILT, MEASURED, REVERTED.**
+
+**Nothing sends this. Do not wire it back in without reading why.** Phase A1,
+2026-09-24: it was appended to all four Extractor prompts, swept over all
+fifteen documents, and **removed again because it crossed the T1 ratchet** —
+which is a floor never to cross for any reason, whatever else improves.
+
+**What it bought.** T6 went 0 of 42 to **8 of 42**, and every one of the eight
+came from a `prose` or `list` Zone. `table` and `pairs` returned **zero**
+usable runs.
+
+**What it cost, read off the dumps rather than off a total.**
+
+    invoice_0002 / 20_pairs.json   floor 5 pairs -> with this clause, 1
+    invoice_0002 / 18_pairs.json   floor 6 pairs -> 6, byte-identical
+
+The lost answer is exactly the fourteen words the document stopped printing —
+`alpha`, `beta`, `gamma`, `bank`, `banks`, `deposit`, `convenience`, `final`,
+`amount` and the rest of *"For your convenience, you may deposit the final
+amount at one of our banks"*. Seven documents lost words, order or side-by-side
+structure in all, including `sample_semantic_0005` losing `editor`, `example`
+and `com` — **the email address, one of the very links this clause exists to
+recover.**
+
+**The revert was measured, not assumed.** Run `A1-04-pairs-reverted`,
+`invoice_0002`, this clause dropped from `PAIRS_PROMPT` alone: **all four pairs
+answers byte-identical to the floor's**, `20_pairs` back to 5.
+
+**It also made a repairable fault unrepairable.** With the clause in, the model
+returned `The two slip-ways follow a fortnight later...` as **one line with the
+hyphen inside it**. At the floor it split the line, which `render._how_to_join`
+repairs. Nothing at the wire or the renderer can reach a hyphen in the middle
+of a single returned string.
+
+**What would have to become true before trying again.** Not the schema — the
+schema works, and `ir.Run` through `render.TAG_FOR_RUN` is proven end to end,
+with `project()` reading a rendered `<code>`/`<a>` back as `code`/`link`. It is
+the *asking* that failed, and it failed hardest where it paid nothing. The
+obvious next attempt is a **separate pass over the same crop**, the way
+`DTH_CAPTION_PASS` asks its own question without touching the Extractor's, and
+on `prose` and `list` only. That is a thread's decision and a sweep's cost, not
+a clause to re-append.
+
+Two clauses below were load-bearing and should survive into any retry, because
+both mirror `projection.inlineOf`, which is what scores the answer: *"against
+the text beside it, not against the page"* is that function's own rule, and
+*"return an empty list ... better than a span that is not really there"* exists
+because `CaptionResponse` answered `true` on 8 of 8 crops when its schema
+offered no way to say "neither". **Neither saved it**: the model marked five
+whole lines of `newsletter_0008` `strong` regardless.
+"""
+
 
 TABLE_PROMPT = """You are looking at one table, cropped from a page.
 
@@ -651,6 +769,28 @@ class OllamaEngine:
                 zone_pixels(image, zone),
                 schema_of(CaptionResponse),
             ),
+        )
+
+    def read_runs(self, image: ImageArray, zone: Zone,
+                  hint: str | None = None) -> Zone:
+        """Ask which spans of this Zone are set apart, and mark them.
+
+        Cut with `zone_pixels`, the same helper every Extractor uses, so the
+        pass judges the picture the text was read from.
+
+        Called only for `prose` and `list` Zones that already have content —
+        the Orchestrator owns that test. This method makes no judgement about
+        whether it should have been called, and none about what the Zone says:
+        `wire.runs_into` can only mark text that is already there.
+        """
+        return runs_into(
+            zone,
+            RunsResponse.model_validate_json(self.ask(
+                "runs",
+                with_hint(RUNS_PROMPT, hint),
+                zone_pixels(image, zone),
+                schema_of(RunsResponse),
+            )),
         )
 
     def classify_zone(self, image: ImageArray, zone: Zone,

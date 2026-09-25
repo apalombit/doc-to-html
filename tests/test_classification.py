@@ -291,11 +291,18 @@ class TestTheOrchestratorClassifiesBetweenGeometryAndExtraction:
         model from geometry and extraction, and two vision models resident at
         once does not fit in 8GB. Interleaving classify and extract per Zone
         would cost a model reload per Zone rather than two for the document.
+
+        **`runs` sits inside the extraction batch, and that is deliberate.** The
+        inline pass asks `engines.extract` — the same model already resident for
+        the Zone it has just read — so it costs no reload. It follows the
+        `prose` Zone and not the `pairs` one, because it asks only `prose` and
+        `list`: see `config.DEFAULT_INLINE_PASS` for what was measured on the
+        other two Kinds.
         """
         _, transport = convert_classifying(["prose", "prose"], ["prose", "pairs"])
 
         assert [call.pass_name for call in transport.calls] == [
-            "layout", "classify", "classify", "prose", "pairs",
+            "layout", "classify", "classify", "prose", "runs", "pairs",
         ]
 
     def test_the_kind_that_routes_a_zone_comes_from_classification(self) -> None:

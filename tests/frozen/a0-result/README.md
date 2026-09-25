@@ -1,4 +1,4 @@
-# `a0-result/` — Phase A0's outcome, preserved. **NOT the ratchet's notch.**
+# `a0-result/` — Phase A0's outcome, and **the T1 ratchet's floor** since 2026-09-24
 
 ## What this is
 
@@ -11,17 +11,34 @@ documents, model `qwen3-vl:4b`, the run Phase A0 was gated on.
 there, and re-taking them costs a ~90-minute sweep. Copying the file is
 reversible and costs nothing; losing it is not and does not.
 
-## What it is NOT
+## It is the notch — decided 2026-09-24, at the start of Phase A1
 
-**It is not the T1 ratchet's floor, and nothing ratchets against it.** The
-floor is still `tests/frozen/a0-checkpoint/scores.json`. Whether to move the
-floor here is an open decision — see `docs/status.md`, "The notch". Do not
-point `--previous` at this directory on the assumption that it is the notch;
-if the decision is taken, say so here and in `docs/status.md` at the same time.
+**This file is the floor.** Alessandro took the decision that `docs/status.md`
+had left open; that section now records it, and the two were updated together.
+Ratchet against it by path:
+
+```
+python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
+    --previous tests/frozen/a0-result/scores.json
+```
+
+**Why it moved, measured rather than argued.** The two candidates were compared
+per document on all four legs the gate actually tests, because the gate is per
+document and strict. `a0-result` **dominates** `a0-checkpoint`: no document is
+lower on vocabulary recall, precision, tau or beside agreement. The floor rises
+on 12 of 15 documents for precision, 3 for vocabulary, 3 for beside and 1 for
+tau, and falls on none. So the move surrenders nothing — it removes only A1's
+freedom to hand A0's gains back.
+
+`tests/frozen/a0-checkpoint/` is **not** retired as a record; it is simply no
+longer the floor.
+
+**It is a floor, not a result to quote in an argument.** `CLAUDE.md`'s "How runs
+are used here" governs this file exactly as it governs the other three.
 
 ## The numbers
 
-| | `a0-checkpoint` (the floor) | `a0-result` (this file) |
+| | `a0-checkpoint` (the previous floor) | `a0-result` (this file, the floor) |
 |---|---|---|
 | vocabulary recall | 0.8599 | 0.8653 |
 | recall (multiset) | 0.8513 | 0.8542 |

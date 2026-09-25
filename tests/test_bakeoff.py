@@ -229,10 +229,14 @@ class TestWhatARunProduces:
         # No `layout` call any more: geometry comes from a detector, which
         # makes no model call at all. That is the whole of what spec 0007
         # Thread 0's deletion of the vision layout path changes here.
+        # `runs` follows each `prose` Zone and nothing else: the inline pass
+        # asks `prose` and `list` only, so the figure, the pairs and both
+        # tables are never asked. See `config.DEFAULT_INLINE_PASS`.
         assert [t.pass_name for t in invoice.timings] == [
             "classify",
             *["caption", "classify"] * 5,
-            "figure", "pairs", "prose", "prose", "table", "table",
+            "figure", "pairs", "prose", "runs", "prose", "runs",
+            "table", "table",
         ]
         assert all(t.seconds >= 0 for t in invoice.timings)
         assert invoice.seconds == pytest.approx(

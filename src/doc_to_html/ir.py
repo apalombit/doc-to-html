@@ -100,6 +100,33 @@ class BBox:
         return (ix * iy) / area if area > 0 else 0.0
 
 
+INLINE_KINDS = ("text", "link", "code", "strong", "em", "mark")
+"""What a `Run` may be. `text` is unmarked; the rest are `scoring.INLINE_KINDS`.
+
+The set is closed and it matches the scorer's, so a kind that cannot be scored
+cannot be produced.
+"""
+
+
+@dataclass(frozen=True)
+class Run:
+    """A stretch of a Cell's text set apart from the rest of it.
+
+    **Added in Phase A1, 2026-09-24.** Before it, a Cell was a flat string and
+    every link, code span and badge in the corpus was lost — T6 scored 0 of 42
+    across eight documents, a 100% loss, because nothing downstream of the
+    model could express one.
+
+    A Run is display, never content: `"".join(run.text for run in runs)` is the
+    Cell's text, so marking cannot add or remove a word. `Cell.runs` enforces
+    that by falling back to one unmarked Run whenever the parts do not spell
+    the whole.
+    """
+
+    text: str
+    kind: str = "text"
+
+
 @dataclass
 class Reading:
     """One Engine's account of what a cell says.
@@ -112,6 +139,12 @@ class Reading:
     text: str
     model: str | None = None
     prompt_version: str | None = None
+    runs: list[Run] = field(default_factory=list)
+    """How the text is marked up, or empty for text that carries no marking.
+
+    Empty is not "unknown" — it is the ordinary case, and it renders exactly as
+    this Reading rendered before Runs existed.
+    """
 
 
 @dataclass
@@ -126,6 +159,22 @@ class Cell:
     def text(self) -> str:
         """The accepted reading. Corrections are applied by the renderer, not here."""
         return self.readings[0].text if self.readings else ""
+
+    @property
+    def runs(self) -> list[Run]:
+        """The accepted reading's marked-up form, or one unmarked Run.
+
+        **Marking may never change the words.** If the Runs do not concatenate
+        to exactly `text`, they are discarded in favour of the plain text: a
+        model that returns a span not present in what it read must not be able
+        to edit the reading through the back door. That check is the reason
+        this is a property rather than a stored field.
+        """
+        text = self.text
+        runs = self.readings[0].runs if self.readings else []
+        if runs and "".join(run.text for run in runs) == text:
+            return list(runs)
+        return [Run(text=text)] if text else []
 
 
 @dataclass
@@ -471,10 +520,27 @@ def _bbox(data: dict[str, Any] | None) -> BBox | None:
     return BBox(**data) if data else None
 
 
+def _reading(data: dict[str, Any]) -> Reading:
+    """One Reading, with its Runs rebuilt as Runs.
+
+    `Reading(**data)` would leave `runs` a list of plain dicts, which survives
+    construction — a dataclass validates nothing — and fails much later, on the
+    first `run.text` inside `Cell.runs`. Everything that reads an IR back out of
+    a rendered file goes through here: `tools/remeasure_style.py`,
+    `honesty.document_in`, `tools/inspect_run.py` and `cli --ir`.
+    """
+    fields = dict(data)
+    runs = fields.pop("runs", []) or []
+    return Reading(
+        **fields,
+        runs=[Run(text=r["text"], kind=r.get("kind", "text")) for r in runs],
+    )
+
+
 def _cell(data: dict[str, Any]) -> Cell:
     return Cell(
         bbox=_bbox(data.get("bbox")),
-        readings=[Reading(**r) for r in data.get("readings", [])],
+        readings=[_reading(r) for r in data.get("readings", [])],
         state=CellState(data.get("state", "agreed")),
     )
 

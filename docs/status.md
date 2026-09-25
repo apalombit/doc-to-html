@@ -31,9 +31,15 @@ Phase A2/A3, Thread 3/C, Thread 4/D             unchanged
 
 ---
 
-## The notch — what it is, and the open decision
+## The notch — DECIDED 2026-09-24
 
-**OPEN. Decide at the start of A1. Nothing is bound yet.**
+**The floor is `tests/frozen/a0-result/scores.json`.** Decided by Alessandro at
+the start of Phase A1. It was open until then; it is not open now.
+
+```
+python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
+    --previous tests/frozen/a0-result/scores.json
+```
 
 ### The mechanism
 
@@ -48,48 +54,53 @@ Phase A2/A3, Thread 3/C, Thread 4/D             unchanged
    directory disappears. That is why floors are copied into `tests/frozen/` and
    committed.
 
-### The state today
+### What the ratchet actually enforces, per document
+
+Not four ratios compared loosely. `_ratchet_html` fails the phase on any of:
+
+| leg | test |
+|---|---|
+| T1 recall | `_stopped_printing` — a **set difference** on `Completeness.vanished`, not a ratio |
+| T1 precision | strict decrease, any amount |
+| T2 tau | strict decrease, any amount |
+| T3 beside | strict decrease, any amount |
+
+`vocabulary_recall` is reported beside the failure to say how far it fell; it
+is not itself the comparison.
+
+### The state after the decision
 
 | directory | what it holds | is it the floor? |
 |---|---|---|
 | `tests/frozen/a1-checkpoint/` | where the ratchet started, Phase A-1 | no, historical |
-| `tests/frozen/a0-checkpoint/` | scores from **before A0 ran** | **yes, currently** |
-| `tests/frozen/a0-result/` | scores from **after A0 ran** (`100-a0-gate`) | **no** — preserved only |
+| `tests/frozen/a0-checkpoint/` | scores from **before A0 ran** | no, superseded 2026-09-24 |
+| `tests/frozen/a0-result/` | scores from **after A0 ran** (`100-a0-gate`) | **yes** |
 
-### The issue
+### Why it moved, measured rather than argued
 
-**A1 would be checked against pre-A0 numbers.** A0 raised precision
-0.9342 → 0.9765 and every other axis with it. None of that is in the floor. So
-A1 could hand all of it back, land exactly on A0's starting quality, and
-**pass the gate** — which is precisely the failure the ratchet exists to
-prevent.
+The two candidates were compared per document on all four ratcheted legs, since
+the gate is per document and strict. **`a0-result` dominates `a0-checkpoint`
+everywhere — no document is lower on any ratcheted axis.**
 
-### The decision
+| axis | floor rises on | floor falls on | largest rise |
+|---|---|---|---|
+| T1 vocabulary | 3 of 15 | **0** | `darkdeck_0009` +0.030 |
+| T1 precision | 12 of 15 | **0** | `receipt_0010` 0.692 → 0.947 |
+| T2 tau | 1 of 15 | **0** | `darkdeck_0009` 0.799 → 0.836 |
+| T3 beside | 3 of 15 | **0** | `form_0007` 0.029 → 0.059 |
 
-Move the floor to `tests/frozen/a0-result/` (already committed, already
-verified), or leave it at `a0-checkpoint/`.
+So moving the floor surrenders nothing. It removes one freedom only: A1's
+freedom to hand back A0's gains, which is the freedom the ratchet exists to
+remove.
 
-- **Move it:** A0's gain becomes permanent. Cost — every later phase answers to
-  a tighter floor, and a phase that trades precision for recall on purpose has
-  to argue for it explicitly.
-- **Leave it:** later phases have room to trade. Cost — A0's gain is
-  unprotected and can be lost silently.
+### The known risk of the tighter floor, recorded before A1 ran
 
-Recommendation: **move it.** The ratchet is meant to be a floor that only ever
-rises, and a floor that skips a phase's gains is not doing its job. But it is
-a call about how much freedom A1 should have, so it is Alessandro's.
-
-**Nothing was lost either way** — `a0-result/` is committed, so the option
-stays open after `debug/` is cleared.
-
----
-
-Until that is decided, ratchet A1 against the current floor:
-
-```
-python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --previous tests/frozen/a0-checkpoint/scores.json
-```
+A1 reflows `<br>`-joined lines, which shortens blocks and therefore moves
+geometry. The three `beside` values and the one `tau` value that rose
+incidentally during A0 could wobble back down without a word being lost, and
+that would fail the hard tier on an axis A1 never aimed at. **If that happens
+it is reported as a gate failure and brought back as a decision — the floor is
+not quietly re-cut to make a run pass.**
 
 ---
 
@@ -167,6 +178,371 @@ twelve documents and is **empty for `report_0011`**, which visibly prints all
 eight of its numbered headings twice. Three independent mechanisms make it
 blind; it saw 30 echoes and missed 18. The gate counts echoes structurally, off
 the IR.
+
+---
+
+## A1's gate — PRE-REGISTERED 2026-09-24, before any code changed
+
+Agreed with Alessandro at the start of the phase, from measurements taken
+offline against `tests/frozen/a0-result/` — the floor — and no model running.
+**Written down before the first line of A1 was written**, which is the whole
+point: spec 0004 pre-registered a gate on exactly the fields its change moved,
+passed every one, and shipped a regression.
+
+### What A1 starts from, measured
+
+| what | at the floor |
+|---|---|
+| T6 inline runs recovered | **0 of 42**, across 8 documents |
+| — by kind | link 13, code 8, strong 17, em 3, mark 1 |
+| output `hard_breaks` | 57, against 28 in the sources |
+| — the excess, by document | `newsletter_0008` +31, `darkdeck_0009` +6, `report_0011` +5, `sample_semantic_0005` +4, `cv_0013` +1 |
+| `join_recall` | 0.8128 — the weakest of the four T1 legs |
+| word-level splits | 5 real, all in `newsletter_0008` |
+
+The five split words, named, because a ratio cannot say which came back:
+`confirmed`, `navigation`, `relined`, `slipways`, `subscription`. Each is
+today one lost word plus two invented fragments (`con`+`firmed`,
+`naviga`+`tion`, `re`+`lined`, `slip`+`ways`, `sub`+`scription`).
+
+### Why the ratchet alone cannot gate this phase
+
+**The larger half of A1's target is invisible to every ratcheted axis.** A break
+at a space — `Invoice #: 123` cut into `Invoice` and `#: 123` — leaves recall,
+precision and tau all at 1.000. Only `join_recall` sees it, and `join_recall`
+is not a ratchet leg. Of the excess hard breaks, **6 are word-level splits and
+the other 29 are not**. So clauses 2–4 below exist because the hard tier is
+blind here, not as decoration on top of it.
+
+### The six clauses
+
+**Three that say A1 did its job — named counts, not ratios, which is A0's model:**
+
+1. **Inline runs recovered: T6 `found` ≥ 21 of 42**, non-zero on all eight
+   documents that have runs, and **the recovered strings reported by name**.
+   The bar is half because 21 of the 42 (`strong`, `em`, `mark`) are derived
+   from *appearance*, and this project's own evidence is that a model complies
+   with *how many* and ignores *which*. The tag-driven kinds — link 13 and
+   code 8 — are 21 on their own, so the clause is clearable by the half that
+   is reachable by deciding rather than perceiving.
+2. **The five split words print whole**, checked as strings one at a time:
+   `confirmed`, `navigation`, `relined`, `slipways`, `subscription`.
+3. **Spurious hard breaks fall** on the four documents that carry them, from
+   their named starting counts: `newsletter_0008` 31, `darkdeck_0009` 6,
+   `report_0011` 5, `sample_semantic_0005` 4.
+
+**One that says A1 did not cheat — the clause spec 0004 lacked:**
+
+4. **No over-joining.** `join_recall` counts source bigrams *found*, so a join
+   the source does not have can never lower it: **joining every line into one
+   maximises the axis A1 is optimising.** Without this clause, clause 3 is
+   gameable by deleting every break in the corpus.
+
+   **RESTATED 2026-09-24, after it fired on a document where the fault had not
+   happened.** As first written it read *"no document's `hard_breaks` may fall
+   below its `source_hard_breaks`, nor below today's value where already
+   under"*. That failed `nonlatin_0014` — and `hard_breaks` counts `<br>`
+   **elements wherever they sit**: the source's four are all in an address
+   block and a date block (`example/nonlatin.html`, lines 47–48 and 53–54),
+   while the two the output lost were in Greek paragraphs that genuinely wrap,
+   the first ending mid-clause on `με`. **The two counts were never comparing
+   the same breaks.** A count that ignores location cannot guard a claim about
+   location — the same blindness that let a full match hide five deleted table
+   headers.
+
+   The clause now reads: **every `<br>` the output still draws sits in a block
+   whose kind keeps its lines, and no such block lost one.** That is the
+   over-joining fault stated directly rather than through a proxy, and it is
+   checkable per document. It was verified before being adopted: after reflow
+   the corpus draws **8** `<br>`, and the `address` blocks account for exactly
+   8 — `invoice_0001` 4, `invoice_0002` 3, `receipt_0010` 1.
+
+   **Restating a clause after seeing the result is a real hazard**, so it is
+   recorded here rather than quietly swapped, it was put to Alessandro with the
+   evidence before anything changed, and the original wording is kept above.
+
+**Two general guards:**
+
+5. **The ratchet holds** against `tests/frozen/a0-result/`, per document: no
+   document stops printing a source word, and no fall in precision, tau or
+   beside agreement.
+6. **The structure survives the migration.** Per-line Cells stay reachable and
+   a test pins it — they are what Correction anchors to and what makes each
+   reading a ground-truth label, so reflowing must not delete them. 731+ tests
+   pass, `mypy src/` clean, and a **full-sweep** visual review against this
+   session's own baseline shows no `worse` on any document and no `major`
+   sitting beside scored ratios all at 1.000.
+
+### Where the two halves get their evidence, and what each costs
+
+A1 is two migrations of the same structures, and they are **not** the same
+kind of change:
+
+| half | where it lives | needs a sweep? |
+|---|---|---|
+| reflow — `Block.lines` joined by `<br>` becomes flowing text | `render._lines`, one function | **no** — entirely downstream of the model |
+| inline runs — `Cell.text` becomes typed runs | `wire` schema, the prompt, `ir`, `render` | **yes** — the schema cannot express a link today |
+
+So reflow is built and measured first by replaying a recorded sweep's own
+answers through the shipping mapper, which A0 validated to four decimal places
+on every mean, and only the inline half spends the ninety minutes. **The
+replay's own check comes first**: replaying the recorded answers through
+*unmodified* code must reproduce `a0-result`'s committed numbers exactly, which
+is what proves the dump still matches the floor it is named after.
+
+**Run source for inline runs: the model, via a schema that can express runs.**
+Agreed 2026-09-24. `CaptionResponse` went 4/11 to 8/11 by letting the schema
+express the true answer with no change to the reasoning asked for, and the
+schema today cannot express a link at all. Deriving runs from pixels the way
+Thread 2/B derived style was considered and not taken: attaching a run to a
+*span of text* needs word-level ink segmentation the project has no machinery
+for.
+
+---
+
+## A1's gate — THE RESULT: **NOT MET**, 2026-09-24
+
+Sweep `A1-03-sweep`, all fifteen, `qwen3-vl:4b`, against the floor
+`tests/frozen/a0-result/`. **Four of the six clauses failed.** The phase split
+cleanly in two: **the reflow migration works and the inline-run migration does
+not**, and the evidence separating them is below.
+
+**The gate was attempted twice.** The first attempt asked for inline runs
+*inside* the Extractor prompts and failed four clauses; the second asked in a
+**separate pass** and failed one. What shipped is the second.
+
+| clause | attempt 1, in-prompt | attempt 2, **shipped** |
+|---|---|---|
+| 1 inline runs ≥ 21 of 42, all 8 documents | FAILED — 8 of 42, on 3 of 8 | **FAILED — 8 of 42, on 2 of 8** |
+| 2 the five split words print whole | FAILED — 3 of 5 | **MET** |
+| 3 spurious hard breaks fall | MET | **MET** — all four to 0 |
+| 4 no over-joining | FAILED *(false positive; clause restated)* | **MET** |
+| 5 the ratchet holds | FAILED — 7 documents | **MET** |
+| 6 structure, tests, mypy | MET | **MET** — 769 tests, `mypy src/` clean |
+
+**Clause 1 fails in both, and that is the phase's real result.** The model finds
+very few of the marks that are there: **8 of 42**, all of them `link` or `code`
+and all in two documents. It returned **no `strong`, `em` or `mark` anywhere**,
+and nothing at all in `pairs` or `table` Zones. Widening the ask is what broke
+attempt 1; the ceiling is the model, not the plumbing.
+
+### Attempt 1, and why it was abandoned
+
+### The cause, confirmed at the level of the model's own answers
+
+**`MARKED_CLAUSE` — the prompt clause asking for inline runs — degraded
+extraction.** Not inferred from totals; read off the two runs' dumps:
+
+```
+invoice_0002 / 20_pairs.json     floor 5 pairs -> sweep 1 pair
+invoice_0002 / 18_pairs.json     floor 6 pairs -> sweep 6 pairs, byte-identical
+```
+
+The single lost answer is exactly the fourteen words `invoice_0002` stopped
+printing — `alpha`, `beta`, `gamma`, `bank`, `banks`, `deposit`,
+`convenience`, `final`, `amount`, and the rest of *"For your convenience, you
+may deposit the final amount at one of our banks"*. A neighbouring pairs answer
+in the same document was unchanged, so this is not drift.
+
+**The revert was then run and it restores the floor exactly.** Run
+`A1-04-pairs-reverted`, `invoice_0002`, clause removed from `PAIRS_PROMPT`
+only: **all four pairs answers byte-identical to the floor's**, `20_pairs`
+back to 5. That is both the proof of cause and a fresh confirmation that the
+conversion is deterministic at `temperature: 0` on this machine.
+
+### What the clause bought, against what it cost
+
+**8 runs of 42, and every one of them from a `prose` or `list` Zone.** Tables
+and pairs returned **zero** usable runs while taking the worst damage.
+
+| | floor | A1-03-sweep |
+|---|---|---|
+| T6 inline rate | 0.0000 | 0.1905 |
+| T1 vocabulary (mean) | 0.8653 | 0.8969 |
+| T1 precision (mean) | 0.9765 | 0.9706 |
+| T2 tau (mean) | 0.9381 | 0.9144 |
+| T3 beside (mean) | 0.7233 | 0.6685 |
+
+The means flatter it — `receipt_0010` alone moved vocabulary +0.679 — and the
+ratchet is not a mean. Seven documents lost words, order or side-by-side
+structure, including `sample_semantic_0005` losing `editor`, `example`, `com`:
+**the email address, which is one of the links the clause exists to recover.**
+
+**Decided by the standing rule, not by the trade.** The T1 ratchet is a floor
+never to cross *for any reason*. `MARKED_CLAUSE` crosses it, so it cannot ship
+whatever T6 gains. It is reverted from all four Extractor prompts.
+
+### Two faults the sweep exposed, both real, one of them ours
+
+**1. A rendering seam the picture cannot show and the scorer can — FIXED.**
+The model marked five whole lines of `newsletter_0008` `strong`. Joining the
+*rendered strings* then produced
+`<strong>...council con</strong><strong>firmed on Tuesday...</strong>`: the
+page reads **`confirmed`, correctly**, and `project()` walks **text nodes**, so
+T1 scored `con` and `firmed` and called a plainly printed word missing. It
+could not show up before, because unmarked text has no elements to leave a seam
+between. `render._SEAM` closes it and `TestATightJoinLeavesNoSeam` pins it.
+
+**2. The model stopped breaking the line at all.** With the clause in, it
+returned `The two slip-ways follow a fortnight later...` as **one line with the
+hyphen inside it**. At the floor it split across two lines, which the reflow
+repairs. Nothing at the wire or the renderer can reach a hyphen in the middle
+of a single returned string — so the clause converted a repairable fault into
+an unrepairable one.
+
+### Clause 4 failed on a false positive, and the clause is the thing at fault
+
+`nonlatin_0014`: `hard_breaks` 2 → 0 against a source that has 4.
+
+**`hard_breaks` counts `<br>` elements wherever they sit.** The source's four
+are all in an address block and a date block
+(`example/nonlatin.html` lines 47–48 and 53–54). The two the output lost were
+in **Greek paragraphs that genuinely wrap** — the first ends mid-clause on
+`με`. The counts were never comparing the same breaks, and the over-joining the
+clause exists to catch did not happen.
+
+**The positive form is checkable and it holds.** After reflow, corpus
+`hard_breaks` is **8**, and the `address` blocks account for exactly 8 —
+`invoice_0001` 4, `invoice_0002` 3, `receipt_0010` 1. Every `<br>` the output
+still draws is in a block whose kind keeps its lines, and none was lost.
+**Restating a pre-registered clause is not the implementer's call**, so it is
+left failed and put to Alessandro.
+
+### Attempt 2 — the separate pass, and what makes it safe
+
+**`DTH_INLINE_PASS`, shipped on.** A per-Zone `runs` call asking one question —
+which spans are set apart — over `prose` and `list` Zones only.
+
+**It cannot repeat attempt 1's failure, structurally.** It changes no Extractor
+prompt, so at `temperature: 0` every extraction answer is the one the floor
+already has. That was verified twice before the pass was written, by reverting
+attempt 1 and re-running: `invoice_0002`, all four pairs answers byte-identical
+to the floor; `sample_semantic_0005`, **all 27 byte-identical**. A bad answer
+here can cost marking and nothing else.
+
+**Three guards, each written against a fault the trial sweep actually
+produced**, not against an imagined one:
+
+| guard | the fault it was written for |
+|---|---|
+| `_covers_everything` | a span covering a whole line |
+| `_splits_a_word` | `T` marked, matching **`Tuesday`**'s `T`, rendering `<strong>T</strong>uesday` — the page read correctly and T1 reported `tuesday` gone. **One word, and it failed the ratchet.** |
+| `keep_runs` | `newsletter_0008`'s pull quote returned as **22 one-word `strong` marks** — every mark is a text-node boundary, so a shredded line loses every join in it |
+| one span, one Cell | `invoice_0001`'s `12345` stamped on both `12345 Sunny Road` and `Sunnyville, CA 12345` |
+
+**`keep_runs`'s threshold is "every word", and the corpus put it there.** Over
+every marked Cell of the trial sweep the marked share is bimodal with an empty
+band in the middle: genuine marks run **0.077 to 0.333**, with one genuine
+outlier at **0.750** — `editor@example.com`, three of its four words — and
+**every junk case sits at exactly 1.000**. A tidier-looking 0.5 was tried first
+and it threw that email away, which is precisely the span this phase exists to
+keep.
+
+Ten marks survive corpus-wide, **nine of them genuine** — `<article>`,
+`<section>`, `<nav>`, `<style>`, `<head>`, `Anchor links`, `Jane Author`,
+`editor@example.com` — and one false, `12345` in an address, which is the whole
+of the 0.0029 that `join_recall` gives back.
+
+| | floor | reflow only | **shipped: + inline pass** |
+|---|---|---|---|
+| T6 inline runs | 0 of 42 | 0 of 42 | **8 of 42** |
+| join recall | 0.8128 | 0.8258 | 0.8229 |
+| `hard_breaks` | 57 | 8 | 8 |
+| vocabulary recall | 0.8653 | 0.8667 | 0.8667 |
+| precision | 0.9765 | 0.9787 | 0.9787 |
+| **the ratchet** | — | holds | **holds** |
+
+**Read the last column as a replay, not as a run — this matters.** The trial
+sweep `A1-08-inline-sweep` is a real run of all fifteen, and it is what every
+guard above was measured on. The **guarded** numbers come from replaying that
+run's own recorded marks through the fixed mapper, which is sound because every
+guard is downstream of the model — but the replay rebuilt **41** spans where
+the model returned **43**, so the shipped figure could differ slightly. It was
+shipped without a confirming sweep, deliberately and with that known. **Anyone
+quoting 8 of 42 as a measured run is quoting it wrong.**
+
+---
+
+## What Phase A1 leaves in the tree
+
+**Shipped, and measured clean:**
+
+- **The reflow.** `render._lines` flows wrapped lines; `KEEPS_ITS_LINES`
+  excludes `address` only. The split was measured, not assumed: the multi-line
+  counts of every other kind sum *exactly* to each document's excess
+  (`newsletter_0008` 30 paragraph + 1 heading = its +31, `darkdeck_0009` 5 + 1
+  item = +6, `report_0011` 5, `sample_semantic_0005` 3 + 1 quote = +4,
+  `cv_0013` 1), and all eight multi-line `address` blocks sit in the three
+  documents whose sources really do print 6, 3 and 9 breaks.
+- **The hyphen rule.** `render._how_to_join` — soft hyphen dropped, compound
+  kept, drop cap joined tight. `WORDLISTS`, with light morphology, is right on
+  all 15 cases measured; **absent, every hyphen is kept**, which is the side
+  where being wrong is free.
+- **The Run machinery**, sound end to end and **fed by the inline pass**:
+  `ir.Run`, `Cell.runs` with its content-preserving guard, `wire.WireRun`,
+  `_runs_for`, `keep_runs` and `runs_into`, `render.TAG_FOR_RUN` matching
+  `projection.INLINE_BY_TAG`, round-tripping through `Document.from_json`. A
+  rendered `<code>`/`<a>` is read back by `project()` as `code`/`link`.
+- **`DTH_INLINE_PASS`, on.** The separate pass above — `engines.ollama`'s
+  `RUNS_PROMPT` and `read_runs`, `orchestrator._read_runs`. It asks only
+  `prose` and `list` Zones, and only ones that came back with blocks.
+- **`engines.ollama.MARKED_CLAUSE`, wired to nothing**, kept with attempt 1's
+  numbers in its docstring so the route is not re-tried blind.
+
+**Measured offline, with no model, against the floor** (`A1-02-reflow`,
+replaying `100-a0-gate`'s own answers, itself first proved to reproduce
+`a0-result` to the last digit):
+
+| | floor | reflow only |
+|---|---|---|
+| `hard_breaks` (corpus) | 57 | **8** |
+| join recall | 0.8128 | **0.8258** |
+| vocabulary recall | 0.8653 | 0.8667 |
+| precision | 0.9765 | 0.9787 |
+| **the ratchet** | — | **holds** |
+
+**The shipped tree was then re-measured end to end** (`A1-06-shipped`, the
+working tree with the clause reverted, replayed over `100-a0-gate`): identical
+to the table above, **ratchet holds**. And the revert restores the model's own
+answers, checked on the two documents that matter most — `invoice_0002`, all
+four pairs answers byte-identical to the floor, and `sample_semantic_0005`,
+**all 27 answers byte-identical**. So the state in the tree is the floor's
+answers plus the new renderer, and that is what the numbers above measure.
+
+`newsletter_0008` gains on four axes at once, and the reflow-only render was
+reviewed beside the source: the paragraphs flow, `confirmed`, `navigation`,
+`relined`, `slipways` and `subscription` are whole, `nine-month` keeps its
+hyphen, and `invoice_0001` is untouched with both address blocks intact.
+
+**Also fixed on the way.** `Document.from_json` rebuilt `Reading.runs` as plain
+dicts — which a dataclass accepts silently and which fails much later on the
+first `run.text`. It would have broken `tools/remeasure_style.py`,
+`honesty.document_in`, `tools/inspect_run.py` and `cli --ir` on any run
+carrying runs.
+
+### Open, and not the implementer's to close
+
+1. **Clause 4's wording**, above. Left failed rather than restated.
+2. **Clause 1's real ceiling.** The separate pass was built and it works, and
+   it still reaches only **8 of 42**. Every one is a `link` or a `code` span in
+   a `prose` Zone; the model returned **no `strong`, `em` or `mark` at all**,
+   and nothing in `pairs` or `table`. Since `strong` and `em` are 20 of the 42
+   and are derived from *appearance*, this is the shape CLAUDE.md's own lesson
+   predicts — a model complies with *how many* and ignores *which*. **Raising
+   it is a thread's question**, and the cheapest untried lever is the one
+   Thread 2/B used for colour: measure weight and monospace off the pixels
+   rather than asking. That needs word-level ink segmentation the project does
+   not have.
+3. **A confirming sweep for the shipped number.** 8 of 42 is a replay of a real
+   run's marks, not a run. One sweep pins it.
+4. **`invoice_0001`'s `12345`**, the one false mark left. It costs 0.0029 of
+   `join_recall` and nothing else, and no guard written so far reaches it
+   without also dropping genuine spans.
+5. **`invoice_0001`'s `Invoice` / `#: 123`**, which the brief cites as A1
+   evidence. It is a **Pair label/value boundary**, not a `<br>` between
+   `Block.lines` — its broken joins are `invoice|123`, `created|january`,
+   `due|february`, all label/value splits. Neither migration A1 names can reach
+   it; it needs the Pairs Extractor to choose a different split point.
 
 ---
 

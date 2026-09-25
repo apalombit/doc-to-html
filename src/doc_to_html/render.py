@@ -14,8 +14,10 @@ from __future__ import annotations
 
 import html
 import json
+import re
 from dataclasses import asdict
 from enum import Enum
+from functools import lru_cache
 from itertools import groupby
 from typing import Any
 
@@ -26,15 +28,23 @@ from .wire import MARKS
 STYLESHEET = """
 :root { --ink:#1a1a1a; --muted:#666; --rule:#e0e0e0; --shade:#f4f4f4;
         --page-bg:#fff; --accent:inherit;
-        --flag:#b45309; --flag-bg:#fff7ed; }
+        --flag:#b45309; --flag-bg:#fff7ed;
+        --link:#0645ad; --mark-bg:#fff2a8; }
 @media (prefers-color-scheme: dark) {
   :root { --ink:#e8e8e8; --muted:#9a9a9a; --rule:#333; --shade:#1e1e1e;
           --page-bg:#111;
-          --flag:#fbbf24; --flag-bg:#2a1f0a; }
+          --flag:#fbbf24; --flag-bg:#2a1f0a;
+          --link:#7aa7ff; --mark-bg:#5a4a12; }
 }
 body { font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
        color:var(--ink); background:var(--page-bg); margin:0; padding:2rem 1rem; }
 .doc { max-width:52rem; margin:0 auto; }
+/* Inline runs. `<a>` carries no href — nothing read off the page says where a
+   link goes — so it needs styling of its own to read as one. */
+a { color:var(--link); text-decoration:underline; }
+code { font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+       font-size:0.92em; }
+mark { background:var(--mark-bg); color:inherit; padding:0 0.15em; }
 .band { display:flex; gap:2rem; align-items:flex-start;
         margin-bottom:1.75rem; flex-wrap:wrap; }
 .band > * { flex:1 1 12rem; min-width:0; }
@@ -623,8 +633,174 @@ def _block(block: Block, document: Document) -> str:
     return f"<p>{_lines(block, document)}</p>"
 
 
+KEEPS_ITS_LINES = frozenset({"address"})
+"""Block kinds whose line structure is content rather than an artefact of wrapping.
+
+**Measured, not assumed — Phase A1, 2026-09-24.** Over the corpus, the extra
+lines carried by every other kind sum *exactly* to the excess hard breaks the
+scorer reports per document: `newsletter_0008` 30 paragraph + 1 heading = its
++31, `darkdeck_0009` 5 + 1 item = +6, `report_0011` 5 = +5,
+`sample_semantic_0005` 3 + 1 quote = +4, `cv_0013` 1 = +1. All eight multi-line
+`address` blocks sit in `invoice_0001`, `invoice_0002` and `receipt_0010` —
+the three documents whose sources genuinely print 6, 3 and 9 hard breaks.
+
+So reflowing everything but an address removes precisely the breaks the output
+invented and leaves every break the page really has. A postal address, a set of
+metric lines and a signature block read as lines; a paragraph does not.
+"""
+
+
+WORDLISTS = ("/usr/share/dict/words", "/usr/dict/words")
+"""Where to look for a list of English words, in order. First one wins.
+
+**A hyphen at a line end is ambiguous and the picture cannot resolve it.**
+`newsletter_0008` breaks `con-` / `firmed`, where the hyphen exists only
+because the line wrapped — the source DOM says `confirmed` — and in the same
+document breaks `nine-` / `month`, where the hyphen is part of the compound and
+the source says `nine-month`. Both look identical in the crop the model reads,
+so nothing in the pixels tells them apart. Knowing which is which is knowing
+the language, and that is what a word list is.
+
+**Absent, every hyphen is kept**, which is the side where being wrong is free:
+keeping one that should have gone leaves `con` and `firmed` exactly as they
+score today, while dropping one that should have stayed turns `nine-month` into
+`ninemonth` and costs two source words. Phase A1 measured that failure rather
+than predicting it — the T1 ratchet caught `nine` on the first replay.
+"""
+
+_PREFIXES = ("re", "un", "pre", "sub", "non", "over", "under", "mis", "dis",
+             "co", "inter", "anti")
+
+
+@lru_cache(maxsize=1)
+def _vocabulary() -> frozenset[str]:
+    for path in WORDLISTS:
+        try:
+            with open(path, encoding="utf-8", errors="ignore") as handle:
+                return frozenset(line.strip().lower() for line in handle
+                                 if line.strip())
+        except OSError:
+            continue
+    return frozenset()
+
+
+def _is_a_word(candidate: str, vocabulary: frozenset[str] | None = None) -> bool:
+    """Whether joining the two fragments spells something English.
+
+    Light morphology on top of the list, because `web2` carries lemmas: it has
+    `slipway` but not `slipways`, and `line` but not `relined`. Without the
+    suffix and prefix steps the rule strips 3 of the corpus's 5 soft hyphens
+    instead of 5, and with them it is right on all 15 cases measured — every
+    soft hyphen dropped, every compound kept.
+    """
+    words = _vocabulary() if vocabulary is None else vocabulary
+    if not words:
+        return False
+    word = candidate.lower()
+    if word in words:
+        return True
+    for suffix in ("s", "es", "d", "ed", "ing", "ly"):
+        if word.endswith(suffix) and word[: -len(suffix)] in words:
+            return True
+    for suffix in ("ed", "ing"):
+        if word.endswith(suffix) and word[: -len(suffix)] + "e" in words:
+            return True
+    for prefix in _PREFIXES:
+        if not word.startswith(prefix) or len(word) <= len(prefix) + 2:
+            continue
+        rest = word[len(prefix):]
+        if rest in words:
+            return True
+        for suffix in ("d", "ed", "s"):
+            if rest.endswith(suffix) and rest[: -len(suffix)] in words:
+                return True
+        for suffix in ("ed", "d"):
+            if rest.endswith(suffix) and rest[: -len(suffix)] + "e" in words:
+                return True
+    return False
+
+
+_LAST_WORD = re.compile(r"[^\W_]+\Z")
+_FIRST_WORD = re.compile(r"\A[^\W_]+")
+
+SPACE, TIGHT, DEHYPHENATE = "space", "tight", "dehyphenate"
+
+
+def _how_to_join(previous: str, following: str) -> str:
+    """How two wrapped lines are put back together.
+
+    `SPACE` is the ordinary case — one line wrapped into the next and the words
+    either side are whole. The other two are the cases where a word itself was
+    cut, both measured in the corpus rather than imagined:
+
+    - `TIGHT` for a **drop cap**. `newsletter_0008`'s masthead sets `T` in its
+      own box, so the model reads a line of one letter and then `he stretch of
+      towpath`. Joined with a space that scores as `t` and `he`; joined tight
+      it is `the`. `TIGHT` also covers a **compound** whose own hyphen fell at
+      the line end, where the hyphen is kept.
+    - `DEHYPHENATE` for a **soft hyphen**, which is dropped.
+    """
+    if not previous or not following or not following[:1].islower():
+        return SPACE
+    if len(previous) == 1 and previous.isalpha():
+        return TIGHT
+    if not previous.endswith("-"):
+        return SPACE
+    tail = _LAST_WORD.search(previous[:-1])
+    head = _FIRST_WORD.search(following)
+    if tail and head and _is_a_word(tail.group() + head.group()):
+        return DEHYPHENATE
+    return TIGHT
+
+
+_TRAILING_HYPHEN = re.compile(r"-(?=(?:</[a-z]+>)*\Z)")
+"""The soft hyphen at the very end of a rendered line, past any closing tags.
+
+Applied to rendered HTML rather than to `Cell.text`, because a corrected or
+disputed cell renders wrapped in a `<span>` and the hyphen is then inside it.
+"""
+
+
 def _lines(block: Block, document: Document) -> str:
-    return "<br>".join(_cell(line, document) for line in block.lines)
+    """The block's lines, reflowed unless its kind keeps them.
+
+    **Reflowing must not delete the per-line Cells** — they are what a
+    Correction anchors to and what makes each reading a ground-truth label, so
+    this joins `block.lines` for display only and leaves the IR alone. The IR
+    embedded in the rendered file still carries one Cell per printed line.
+    """
+    rendered = [_cell(line, document) for line in block.lines]
+    if block.kind in KEEPS_ITS_LINES or len(rendered) < 2:
+        return "<br>".join(rendered)
+
+    out = [rendered[0]]
+    for previous, cell, piece in zip(block.lines, block.lines[1:], rendered[1:]):
+        how = _how_to_join(previous.text.rstrip(), cell.text.lstrip())
+        if how == DEHYPHENATE:
+            out[-1] = _TRAILING_HYPHEN.sub("", out[-1])
+            out.append(piece)
+        elif how == TIGHT:
+            out.append(piece)
+        else:
+            out.append(" " + piece)
+    return _SEAM.sub("", "".join(out))
+
+
+_SEAM = re.compile(r"</([a-z]+)><\1>")
+"""Two adjacent elements of the same kind, left by a tight join.
+
+**A rendering seam the picture cannot show you and the scorer can.** When a
+word is cut across two marked lines — `...council con-` and `firmed on
+Tuesday`, both marked `strong` — joining the rendered strings gives
+`<strong>...con</strong><strong>firmed...</strong>`. The page reads
+`confirmed` correctly, and `project()` still sees **two text nodes**, so T1
+scores `con` and `firmed` and reports a word that is plainly printed as
+missing.
+
+Closing the seam merges them into one element and one text node. It can only
+fire where two runs of one kind are directly adjacent with nothing between,
+which a space join never produces — `</strong> <strong>` does not match.
+"""
 
 
 def _cell(cell: Cell, document: Document) -> str:
@@ -647,9 +823,44 @@ def _cell(cell: Cell, document: Document) -> str:
         alt = " / ".join(r.text for r in cell.readings[1:])
         return (
             f'<span class="disputed" data-alt="{html.escape(alt)}" '
-            f'title="also read as: {html.escape(alt)}">{html.escape(cell.text)}</span>'
+            f'title="also read as: {html.escape(alt)}">{_runs(cell)}</span>'
         )
-    return html.escape(cell.text)
+    return _runs(cell)
+
+
+TAG_FOR_RUN = {
+    "link": "a", "code": "code", "strong": "strong", "em": "em", "mark": "mark",
+}
+"""Which element carries each Run kind.
+
+These are `projection.INLINE_BY_TAG`'s own tags, so a Run rendered here is read
+back as the same kind the source is read as. T6 compares the two projections
+run for run, and a kind that only one side can express would score as a loss
+however the page actually looks.
+"""
+
+
+def _runs(cell: Cell) -> str:
+    """One Cell's text, with its marked spans wrapped in their elements.
+
+    An unmarked Cell renders exactly as it did before Runs existed: `Cell.runs`
+    returns a single `text` Run and this emits the escaped string and nothing
+    else.
+
+    The `<a>` carries no `href`. The output is a picture of a document, not a
+    working hypertext — a link's *destination* was never read off the page and
+    inventing one would put a guess in the output. What is being recorded is
+    that the span is set apart as a link, which is what T6 asks.
+    """
+    runs = cell.runs
+    if len(runs) == 1 and runs[0].kind == "text":
+        return html.escape(runs[0].text)
+    out = []
+    for run in runs:
+        text = html.escape(run.text)
+        tag = TAG_FOR_RUN.get(run.kind)
+        out.append(f"<{tag}>{text}</{tag}>" if tag else text)
+    return "".join(out)
 
 
 def _bbox_attr(zone: Zone) -> str:

@@ -1,4 +1,10 @@
-# Phase A0's starting notch
+# Phase A0's starting notch — **superseded as the floor, 2026-09-24**
+
+> **This is no longer the T1 ratchet's floor.** At the start of Phase A1 the
+> floor moved to `tests/frozen/a0-result/scores.json`, which holds the scores
+> A0 *reached* rather than the ones it *cleared*. See `docs/status.md`, "The
+> notch — DECIDED 2026-09-24". This directory is kept as the record of where
+> A0 began, the way `a1-checkpoint/` is kept. Do not point `--previous` here.
 
 `scores.json` here is **the state of the corpus as A0 begins**: all fifteen
 documents, the T1 ratchet's floor for A0 and everything after it.

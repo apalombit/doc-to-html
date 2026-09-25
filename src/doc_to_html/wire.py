@@ -23,12 +23,15 @@ Document looks exactly like a sparse document.
 from __future__ import annotations
 
 import logging
+import re
 import unicodedata
+from collections.abc import Sequence
 from typing import Any, Callable, Literal, NoReturn
 
 from pydantic import BaseModel, Field, ValidationError
 
-from .ir import BBox, Block, Cell, Kind, Pair, Reading, Role, Row, RowRole, Zone
+from .ir import (BBox, Block, Cell, Kind, Pair, Reading, Role, Row, RowRole,
+                 Run, Zone)
 
 log = logging.getLogger(__name__)
 
@@ -184,11 +187,36 @@ class CaptionResponse(BaseModel):
     )
 
 
+class WireRun(BaseModel):
+    """One stretch of a Zone's text that is set apart from the rest of it.
+
+    **Phase A1, 2026-09-24.** Added because the schema could not express a link
+    at all: `WireBlock.lines` was a list of plain strings, so every link, code
+    span and badge in the corpus was dropped before anything could render it —
+    T6 measured 0 of 42 across eight documents.
+
+    It is deliberately *additive*. The model still returns the same `lines` and
+    `cells` it always did, and these spans are reported beside them rather than
+    inside them. An empty list, or a span that does not occur in the text,
+    leaves the answer exactly as it was before Runs existed, so the worst case
+    of the whole feature is no change rather than a mangled reading.
+    """
+
+    text: str = Field(
+        description="The span exactly as printed, copied from the text above",
+    )
+    kind: Literal["link", "code", "strong", "em", "mark"]
+
+
 class WireRow(BaseModel):
     """One table row: a role and a flat list of cell strings."""
 
     role: Literal["header", "data", "summary"]
     cells: list[str]
+    marked: list[WireRun] = Field(
+        default_factory=list,
+        description="Spans inside this row's cells that are set apart",
+    )
 
 
 class TableResponse(BaseModel):
@@ -202,12 +230,69 @@ class TableResponse(BaseModel):
 class WirePair(BaseModel):
     label: str
     value: str
+    marked: list[WireRun] = Field(
+        default_factory=list,
+        description="Spans inside this label or value that are set apart",
+    )
 
 
 class PairsResponse(BaseModel):
     """A `pairs` Zone: label/value bindings in reading order."""
 
     pairs: list[WirePair]
+
+
+class RunsResponse(BaseModel):
+    """What the inline pass returns for one Zone: its marked spans, or none.
+
+    A Zone-level answer rather than a per-block one, because the pass is shown
+    the Zone's own crop and the blocks are the Extractor's division of it, not
+    something the model is looking at. `runs_into` places each span in whichever
+    Cell contains it.
+    """
+
+    marked: list[WireRun] = Field(default_factory=list)
+
+
+def _covers_everything(span: str, text: str) -> bool:
+    """Whether a span is the whole of the line it sits in.
+
+    **The guard the first attempt needed and did not have.** Asked inside the
+    Extractor prompt, the model marked all five lines of `newsletter_0008`'s
+    opening paragraph `strong` — the entire block. That is not emphasis, it is
+    the block's own typeface, and `projection.inlineOf` agrees: it compares a
+    run against *the block it sits in*, so a wholly bold paragraph yields no
+    `strong` runs and a span like that could never score anyway. Dropping it
+    also stops the renderer wrapping whole paragraphs in `<strong>`.
+    """
+    return _spell(span) == _spell(text)
+
+
+def runs_into(zone: Zone, response: RunsResponse) -> Zone:
+    """Attach the pass's spans to whichever Cells of this Zone contain them.
+
+    Marking only. Every Cell keeps the text it already had — `_runs_for` cuts
+    that string and never rewrites it, and `ir.Cell.runs` throws the Runs away
+    if they do not spell it back. So the worst this pass can do is mark nothing.
+    """
+    kept = [run for run in response.marked if run.text.strip()]
+    if not kept:
+        return zone
+    # **One span, one Cell.** The pass answers for the whole Zone, so a span
+    # offered once would otherwise be stamped on every line that happens to
+    # contain that text: `invoice_0001`'s `12345` marked both `12345 Sunny
+    # Road` and `Sunnyville, CA 12345`, doubling one false mark into two.
+    for block in zone.blocks:
+        for cell in block.lines:
+            if not kept:
+                return zone
+            usable = [run for run in kept
+                      if not _covers_everything(run.text, cell.text)]
+            for reading in cell.readings[:1]:
+                _marked(reading, usable)
+            placed = {run.text for run in cell.runs if run.kind != "text"}
+            kept = [run for run in kept if run.text not in placed]
+    return zone
 
 
 class WireBlock(BaseModel):
@@ -219,6 +304,10 @@ class WireBlock(BaseModel):
         "attribution", "mark",
     ]
     lines: list[str]
+    marked: list[WireRun] = Field(
+        default_factory=list,
+        description="Spans inside this block's lines that are set apart",
+    )
 
 
 class BlocksResponse(BaseModel):
@@ -601,7 +690,8 @@ def rows_from_table(response: TableResponse, *, read: Read) -> list[Row]:
 
     rows = []
     for wire in wire_rows:
-        cells = [Cell(readings=[read(text)]) for text in wire.cells]
+        cells = [Cell(readings=[_marked(read(text), wire.marked)])
+                 for text in wire.cells]
         if width is not None and wire.role != "summary" and len(cells) < width:
             # An unread Cell, not an empty one. `Cell.text` is "" either way, so
             # the render is unchanged; what differs is that this one carries no
@@ -802,6 +892,145 @@ def _without_empty_rows(rows: list[WireRow]) -> list[WireRow]:
     return [row for row in rows if any(cell.strip() for cell in row.cells)]
 
 
+
+def _runs_for(text: str, marked: Sequence[WireRun]) -> list[Run]:
+    """Split one string into Runs at the spans the model marked.
+
+    **Nothing here may change the words.** Each span is located in the text and
+    the text is cut at it; a span that does not occur is skipped, and one that
+    overlaps a span already placed is skipped. So the Runs always concatenate
+    to exactly `text`, which is the invariant `Cell.runs` re-checks before
+    rendering — twice, because this is the one place a model answer could
+    otherwise edit a reading it was only asked to annotate.
+
+    Longest span first, so marking both `editor@example.com` and `example.com`
+    keeps the longer one rather than cutting it in half. Ties go to the
+    earlier occurrence, which keeps the result independent of the order the
+    model happened to list them in.
+    """
+    if not text or not marked:
+        return []
+    taken: list[tuple[int, int, str]] = []
+    for run in sorted(marked, key=lambda r: (-len(r.text), r.text)):
+        span = run.text.strip()
+        if not span:
+            continue
+        start = 0
+        while True:
+            at = text.find(span, start)
+            if at < 0:
+                break
+            if not any(at < end and start_ < at + len(span)
+                       for start_, end, _ in taken):
+                taken.append((at, at + len(span), run.kind))
+                break
+            start = at + 1
+    if not taken:
+        return []
+
+    runs: list[Run] = []
+    cursor = 0
+    for start, end, kind in sorted(taken):
+        if _splits_a_word(text, start, end):
+            continue
+        if start > cursor:
+            runs.append(Run(text=text[cursor:start]))
+        runs.append(Run(text=text[start:end], kind=kind))
+        cursor = end
+    if cursor < len(text):
+        runs.append(Run(text=text[cursor:]))
+    return keep_runs(runs)
+
+
+def _splits_a_word(text: str, start: int, end: int) -> bool:
+    """Whether marking `text[start:end]` would cut a word in half.
+
+    **Measured, on the sweep that found it.** The inline pass marked `T` — the
+    drop cap of `newsletter_0008`'s opening paragraph — and the first `T` in
+    the block's text belongs to `Tuesday`. Rendered, that is
+    `<strong>T</strong>uesday`: the page still reads `Tuesday`, and `project()`
+    walks **text nodes**, so the word scored as `t` and `uesday` and T1
+    reported `tuesday` as no longer printed. One word, and it failed the
+    ratchet.
+
+    A mark is a typographic fact about whole words. Nothing in this corpus
+    emphasises half of one, so a span landing mid-word is the wrong span rather
+    than an unusual one.
+    """
+    before = text[start - 1] if start > 0 else " "
+    after = text[end] if end < len(text) else " "
+    head, tail = text[start], text[end - 1]
+    return ((head.isalnum() and before.isalnum())
+            or (tail.isalnum() and after.isalnum()))
+
+
+def keep_runs(runs: list[Run]) -> list[Run]:
+    """Drop marking that describes the whole passage rather than a span of it.
+
+    **The generalisation of `_covers_everything`, and the same fault one level
+    down.** Asked about `newsletter_0008`'s pull quote, the model returned
+    twenty-two marks — *every word of it*, one at a time, each `strong`. That
+    is the block's own typeface reported word by word, and it is expensive
+    rather than merely useless: every mark is a text-node boundary, so a block
+    shredded into twenty-two nodes loses every adjacent-word pair in it, and
+    `join_recall` is the one T1 leg that sees it.
+
+    So when **every** word of a Cell is marked, none of it is emphasis and all
+    of it goes. **Counted across kinds together, not kind by kind** — `Country
+    statistics` came back as `Country` `strong` plus `statistics` `em`, every
+    word of the line, and sat at exactly 50% per kind, slipping a per-kind test
+    twice over. `2021 — present` is the same shape in `cv_0013`.
+
+    **The threshold is "all of them" because the corpus put it there, not
+    because it is a round number.** Over every marked Cell of the trial sweep,
+    the marked share is bimodal with an empty band in the middle: genuine marks
+    run 0.077 to 0.333 — `<head>`, `<article>`, `Anchor links`, `myDATA` — with
+    a single genuine outlier at 0.750, `editor@example.com`, which tokenises as
+    three of a four-word line. Every junk case sits at exactly 1.000. A tidier
+    looking 0.5 would have thrown that email away, and it is precisely the kind
+    of span this whole phase exists to keep.
+
+    `projection.inlineOf` reaches the same conclusion from the other side — it
+    judges a run against the block it sits in, so a wholly marked block yields
+    no runs at all and marks like these could never score. What they do instead
+    is cost: each one is a text-node boundary, and `join_recall` sees every one.
+    """
+    marked = [run for run in runs if run.kind != "text"]
+    if not marked:
+        return runs
+    words = sum(len(_WORDS.findall(run.text)) for run in runs)
+    if not words:
+        return runs
+    if sum(len(_WORDS.findall(run.text)) for run in marked) >= words:
+        return _merged([Run(text=run.text) for run in runs])
+    return runs
+
+
+_WORDS = re.compile(r"[^\W_]+", re.UNICODE)
+
+
+def _merged(runs: list[Run]) -> list[Run]:
+    """Adjacent Runs of one kind as a single Run, so no text node is split."""
+    out: list[Run] = []
+    for run in runs:
+        if out and out[-1].kind == run.kind:
+            out[-1] = Run(text=out[-1].text + run.text, kind=run.kind)
+        else:
+            out.append(run)
+    return out
+
+
+def _marked(reading: Reading, marked: Sequence[WireRun]) -> Reading:
+    """Attach Runs to a Reading the injected `Read` has already built.
+
+    Kept separate so `Read` stays `Callable[[str], Reading]`: provenance is the
+    Engine's business and marking is the mapper's, and nine test modules build
+    a `Read` of their own.
+    """
+    reading.runs = _runs_for(reading.text, marked)
+    return reading
+
+
 def _no_content(kind: str, what: str) -> NoReturn:
     raise MappingError(
         f"{kind} Zone came back with {what} — the layout pass said there is "
@@ -827,8 +1056,9 @@ def pairs_from_response(response: PairsResponse, *, read: Read) -> list[Pair]:
                 f"pairs Zone entry {index} has no label, only {value!r} — an "
                 "unlabelled value is not a Pair, so this region was not Pairs"
             )
-        pairs.append(Pair(label=Cell(readings=[read(label)]),
-                          value=Cell(readings=[read(value)])))
+        pairs.append(Pair(
+            label=Cell(readings=[_marked(read(label), wire.marked)]),
+            value=Cell(readings=[_marked(read(value), wire.marked)])))
     return pairs
 
 
@@ -846,7 +1076,9 @@ def blocks_from_response(response: BlocksResponse, *, read: Read) -> list[Block]
         if not lines:
             continue
         blocks.append(
-            Block(kind=wire.kind, lines=[Cell(readings=[read(line)]) for line in lines])
+            Block(kind=wire.kind,
+                  lines=[Cell(readings=[_marked(read(line), wire.marked)])
+                         for line in lines])
         )
     return blocks
 

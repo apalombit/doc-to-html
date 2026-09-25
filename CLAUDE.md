@@ -72,16 +72,24 @@ Thread 2/B  Style record (all CV, zero model calls)   DONE 2026-09-22
 Phase A0    Stop the bleeding          DONE 2026-09-22, gate MET
               its pre-registered T1 = 1.00 gate was disproved and replaced
               from tests/frozen/a0-checkpoint/ before any code changed
-Phase A1    Inline runs, and hard line breaks          <- next
+Phase A1    Inline runs, and hard line breaks   DONE 2026-09-25, gate NOT met
+              reflow shipped and measured clean; inline runs asked INSIDE the
+              Extractor prompts crossed the ratchet and were reverted, then
+              re-asked as a SEPARATE pass (DTH_INLINE_PASS) which holds the
+              ratchet and reaches only 8 of 42 — clause 1 is the open one
 Phase A2/A3     Geometry, figure pixels
 Thread 3/C  Repair loop (re-scoped against A+B residuals first)
 Thread 4/D  Human corrections (unscheduled)
 ```
 
-**2/B ran before A0** and closed on 2026-09-22; **A0 closed the same day.**
+**2/B ran before A0** and closed on 2026-09-22; **A0 closed the same day;
+A1 closed 2026-09-25 with its gate NOT met** — see `docs/status.md`, "A1's
+gate — THE RESULT".
 `docs/status.md` indexes what each shipped, A0's five gate clauses and their
-result, and where every measurement lives. **The ratchet's floor is still
-`tests/frozen/a0-checkpoint/`** — A0 did not re-freeze the notch.
+result, and where every measurement lives. **The ratchet's floor moved to
+`tests/frozen/a0-result/` on 2026-09-24**, at the start of A1 — A0 did not
+re-freeze the notch, so the decision was taken separately and is recorded in
+`docs/status.md` under "The notch — DECIDED 2026-09-24".
 
 `docs/specs/0007-handover.md` holds a ready prompt per thread and the full
 scope of Phase A-1.
@@ -215,10 +223,17 @@ model. A run's `report.html` computes its delta against the previous run's
 automatically and in one sitting.
 
 **A third exception, added 2026-09-22: `tests/frozen/a0-checkpoint/`** — Phase
-A0's starting notch, and the floor for A0 and everything after it. Its README
-states its provenance exactly, including that its model answers come from a
-real sweep and its renders from `tools/remeasure_style.py` at a later commit,
-and why that is sound. `a1-checkpoint/` stays as A-1's notch.
+A0's starting notch, and the floor for A0. Its README states its provenance
+exactly, including that its model answers come from a real sweep and its
+renders from `tools/remeasure_style.py` at a later commit, and why that is
+sound. `a1-checkpoint/` stays as A-1's notch.
+
+**A fourth, added 2026-09-24: `tests/frozen/a0-result/`** — the scores A0
+*reached*, from sweep `100-a0-gate`, and **the ratchet's floor from Phase A1
+onward.** It was committed on 2026-09-22 as a preserved result and became the
+notch when Alessandro took the decision `docs/status.md` had left open. The
+move was measured, not argued: `a0-result` is no lower than `a0-checkpoint` on
+any ratcheted leg of any of the fifteen documents.
 
 **The second exception, added 2026-09-20: `tests/frozen/a1-checkpoint/`.** It
 holds Phase A-1's checkpoint scores, which are **the T1 ratchet's starting
@@ -531,6 +546,77 @@ prompt) were closed by Thread 0. Specs 0001–0006 are closed history.
   stayed whole. When a count and a picture disagree, changing the picture to
   match the count is the more expensive of the two repairs — it can only
   destroy, where dropping the count can only be wrong.
+
+- **Where you ask is a bigger lever than how you ask.** A1 asked for inline
+  runs twice with almost the same words. **Inside** the four Extractor prompts
+  it cost `invoice_0002` a whole pairs answer — five pairs to one, a
+  neighbouring answer in the same document byte-identical — and crossed the T1
+  ratchet on seven documents. Moved into a **separate pass** over the same crop,
+  changing no Extractor prompt, it holds the ratchet on all fifteen and costs
+  nothing, because at `temperature: 0` every extraction answer is then the one
+  the floor already has. Same model, same question, opposite result. When an
+  extra ask damages the primary task, **move the ask before you reword it.**
+
+- **Set a threshold from the distribution, and look for the empty band.**
+  `keep_runs` drops marking that covers a whole line. The first cut was a
+  tidy-looking 0.5 and it threw away `editor@example.com` — a genuine link that
+  is three of its line's four words. Measured across every marked Cell of the
+  trial sweep, the marked share is **bimodal with nothing in the middle**:
+  genuine marks 0.077–0.333 plus that one at 0.750, junk at **exactly 1.000**.
+  The threshold belongs in the gap, and "every word" needs no constant at all.
+  **A round number chosen before the histogram is a guess wearing a decimal
+  point.**
+
+- **When two things look identical in the picture, the information is not in
+  the picture, and neither a prompt nor a pixel will put it there.** A line
+  ending `con-` and a line ending `nine-` are the same shape: one hyphen is the
+  renderer's, inserted because the line wrapped, and the other belongs to the
+  word. `newsletter_0008` has both. Telling them apart is knowing English, so
+  the repair is a word list — and the default when there is none is to **keep**
+  the hyphen, because keeping one that should have gone costs nothing (`con`
+  and `firmed` score exactly as they already did) while dropping one that
+  should have stayed costs two source words (`nine-month` becomes
+  `ninemonth`). Same asymmetry that put `_without_repeated_header` at the wire:
+  put the repair on the side where being wrong is free.
+
+- **The ratchet earns its keep on the first replay, not at the gate.** A1's
+  reflow was measured offline before a single model call. Everything improved —
+  `hard_breaks` 57 to 8, `join_recall` 0.8128 to 0.8258, five documents better
+  on four axes — and the ratchet failed it on **one word**, `nine`. A mean
+  would have called that a clean win. **Measure downstream-of-the-model changes
+  by replay before spending a sweep**; `tools/remeasure_style.py` does it, and
+  it proved itself first by reproducing `a0-result` to the last digit.
+
+- **A prompt clause is not additive just because the schema is.** A1's
+  `marked` field was designed so that an empty answer left everything exactly
+  as before — and it did, at the schema. The *clause asking for it* still cost
+  `invoice_0002` a whole pairs answer: 5 pairs at the floor, **1** with the
+  clause, a neighbouring answer in the same document byte-identical, and all
+  five back the moment the clause was removed. **Asking a model for one more
+  thing is a change to everything it was already doing.** Where the extra ask
+  paid nothing at all — tables and pairs returned 0 usable runs — it was pure
+  loss. Budget a revert, and verify it on the document that was hurt.
+
+- **A fault can be invisible in the picture and loud in the measurement, and
+  that direction is as real as the reverse.** Joining a word across two marked
+  lines produced `<strong>...con</strong><strong>firmed...</strong>`. The page
+  reads `confirmed` — correct to any eye — while `project()` walks **text
+  nodes** and scored `con` and `firmed`, reporting a printed word as missing.
+  The usual warning here is the other way round (`Total: $385.00` present in
+  T1 and blank in the pixels). **Both directions mean the same thing: the tool
+  between you and the artefact is part of the measurement.** `render._SEAM`.
+
+- **A count that ignores location cannot guard a claim about location.** A1
+  pre-registered "no document's `hard_breaks` may fall below its
+  `source_hard_breaks`" to stop `join_recall` being gamed by joining
+  everything — `join_recall` counts source bigrams *found*, so a wrong join can
+  never lower it. The guard fired on `nonlatin_0014` and the fault had not
+  happened: `hard_breaks` counts `<br>` **elements wherever they sit**, the
+  source's four are in an address block and a date block, and the two the
+  output lost were in Greek paragraphs that genuinely wrap. Same blindness that
+  let a full match hide five deleted table headers. The positive form holds and
+  is what should have been written: **every `<br>` still drawn is in a block
+  whose kind keeps its lines, and none was lost.**
 
 - **A guard can be right and still create the fault it looks like.** A0's
   heading guard stopped `attach_trailing_rows` swallowing headings, which

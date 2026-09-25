@@ -67,6 +67,17 @@ class VisionEngine(Protocol):
         """
         ...
 
+    def read_runs(self, image: ImageArray, zone: Zone,
+                  hint: str | None = None) -> Zone:
+        """Mark which spans of one Zone are set apart — links, code, emphasis.
+
+        Its own pass because asking for this inside the Extractor prompts was
+        measured and it cost content: see `config.DEFAULT_INLINE_PASS`. Asking
+        separately leaves every extraction answer untouched, so an Engine that
+        cannot do it may return the Zone unchanged and lose only the marking.
+        """
+        ...
+
     def classify_zone(self, image: ImageArray, zone: Zone,
                       hint: str | None = None, *, skip_rows: int = 0) -> Zone:
         """Decide one Zone's Kind, and the fields that depend on reading it.

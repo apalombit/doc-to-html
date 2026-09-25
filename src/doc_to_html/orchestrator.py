@@ -675,6 +675,7 @@ class Conversion:
     """
 
     caption_pass: bool = field(default_factory=lambda: load().caption_pass)
+    inline_pass: bool = field(default_factory=lambda: load().inline_pass)
     """Whether `_classify` reads each Zone's Title before asking its Kind.
 
     Resolved per Conversion for the same reason as the two above, and it lives
@@ -1329,6 +1330,63 @@ class Conversion:
                     zone_index=index, kind=classified.kind.value, note=note,
                 )
 
+    def _read_runs(self, rectified: Rectified, document: Document,
+                   index: int) -> None:
+        """Mark this Zone's links, code spans and emphasis. Costs nothing if it fails.
+
+        **A separate pass on purpose — see `config.DEFAULT_INLINE_PASS`.** The
+        same question asked inside the Extractor prompts crossed the T1 ratchet
+        and was reverted; `engines.ollama.MARKED_CLAUSE` keeps the numbers.
+        Asking it here touches no Extractor prompt, so extraction answers are
+        unchanged, and a failure costs marking and nothing else.
+
+        `prose` and `list` only, and only once a Zone has blocks to mark: every
+        run the first attempt recovered came from those two Kinds, and tables
+        and pairs returned none at all while taking the worst of the damage.
+
+        A raised exception is recorded and swallowed. The Zone keeps its text —
+        which is all of its content — so there is nothing here worth failing a
+        Zone over.
+        """
+        zone = document.zones[index]
+        if not self.inline_pass or zone.bbox is None:
+            return
+        if zone.kind not in (Kind.PROSE, Kind.LIST) or not zone.blocks:
+            self.trace.record(
+                Stage.EXTRACT, "read_runs", Disposition.SKIPPED,
+                zone_index=index, kind=zone.kind.value,
+                reason="the inline pass asks only prose and list Zones that "
+                       "came back with blocks to mark",
+            )
+            return
+
+        mark, started = self.trace.next_call, time.perf_counter()
+        try:
+            document.zones[index] = self.engines.extract.read_runs(
+                rectified.image, zone, document.hint
+            )
+        except Exception as error:
+            call, made = self.trace.calls_since(mark)
+            self.trace.record(
+                Stage.EXTRACT, "read_runs", Disposition.REJECTED,
+                zone_index=index, seconds=time.perf_counter() - started,
+                call=call, calls=made, kind=zone.kind.value,
+                error=f"{type(error).__name__}: {error}",
+                consequence="the Zone keeps every word it read and renders "
+                            "with no inline marking",
+            )
+            return
+
+        call, made = self.trace.calls_since(mark)
+        marked = sum(1 for block in document.zones[index].blocks
+                     for cell in block.lines
+                     for run in cell.runs if run.kind != "text")
+        self.trace.record(
+            Stage.EXTRACT, "read_runs", Disposition.ACCEPTED,
+            zone_index=index, seconds=time.perf_counter() - started,
+            call=call, calls=made, kind=zone.kind.value, runs=marked,
+        )
+
     def _extract(self, rectified: Rectified, document: Document) -> None:
         """Fill each incomplete Zone from a full-resolution crop of it.
 
@@ -1385,6 +1443,7 @@ class Conversion:
             else:
                 self._record_extract(index, asked, extractor, rectified, zone,
                                      mark, started, Disposition.ACCEPTED)
+                self._read_runs(rectified, document, index)
 
             note = resolution_caveat(rectified.image, zone)
             if note is not None:
