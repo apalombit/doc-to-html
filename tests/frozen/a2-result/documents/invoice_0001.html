@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Document</title>
+<style>
+:root { --ink:#1a1a1a; --muted:#666; --rule:#e0e0e0; --shade:#f4f4f4;
+        --page-bg:#fff; --accent:inherit;
+        --flag:#b45309; --flag-bg:#fff7ed;
+        --link:#0645ad; --mark-bg:#fff2a8; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink:#e8e8e8; --muted:#9a9a9a; --rule:#333; --shade:#1e1e1e;
+          --page-bg:#111;
+          --flag:#fbbf24; --flag-bg:#2a1f0a;
+          --link:#7aa7ff; --mark-bg:#5a4a12; }
+}
+body { font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+       color:var(--ink); background:var(--page-bg); margin:0; padding:2rem 1rem; }
+.doc { max-width:52rem; margin:0 auto; }
+/* Inline runs. `<a>` carries no href — nothing read off the page says where a
+   link goes — so it needs styling of its own to read as one. */
+a { color:var(--link); text-decoration:underline; }
+code { font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+       font-size:0.92em; }
+mark { background:var(--mark-bg); color:inherit; padding:0 0.15em; }
+.band { display:flex; gap:2rem; align-items:flex-start;
+        margin-bottom:1.75rem; flex-wrap:wrap; }
+.band > * { flex:1 1 12rem; min-width:0; }
+.zone-header { font-size:1.05em; }
+.zone-footer { color:var(--muted); font-size:.875em; }
+h1 { font-size:1.6em; margin:0 0 .35em; letter-spacing:.01em; }
+section.boxed { border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
+section.filled { border-radius:4px; overflow:hidden; }
+h2.zone-title { font-size:.95em; font-weight:600; margin:0; padding:.55em 0; }
+h2.zone-title.barred { padding:.55em .9em; }
+section.boxed > h2.zone-title, section.filled > h2.zone-title { padding:.55em .9em; }
+.zone-body { padding:0; }
+section.boxed > .zone-body, section.filled > .zone-body { padding:.9em; }
+section.boxed > .zone-body > .table-wrap,
+section.filled > .zone-body > .table-wrap { margin:-.9em; }
+blockquote { margin:.6em 0 .3em 1.5em; }
+p.attribution { color:var(--muted); font-size:.85em; margin:0 0 .4em; }
+ul { margin:0 0 .4em; padding-left:1.3em; }
+.zone-header ul { display:flex; flex-wrap:wrap; gap:1.1rem;
+                  list-style:none; padding:0; }
+p { margin:0 0 .4em; }
+dl.pairs { display:grid; grid-template-columns:auto 1fr; gap:.15em .75em; margin:0; }
+/* A long unbreakable value must wrap, not be hidden. `section.filled` and
+   `section.boxed` both set `overflow:hidden` to keep a fill inside its own
+   rounded corner, so anything wider than the Zone is silently cut off in the
+   screenshot — recall says the text is present and the picture does not
+   contain it. `cv_0013`'s sidebar was the corpus's one case: the `auto` track
+   sized itself to `ines.halloran@fempost.example`, which has no break
+   opportunity, giving the Zone a 368px content width inside a 256px box.
+   `anywhere` rather than `break-word` because only `anywhere` lowers the
+   min-content width the grid track is measured from. Measured 2026-09-25 over
+   all fifteen: corpus `clipped` 1 -> 0, `beside_agreement` +0.0033,
+   `alignment_agreement` +0.0019, ratchet clean, and `cv_0013`'s height_ratio
+   1.77 -> 2.14, which is the wrapped address taking the lines it needs. */
+dl.pairs dt, dl.pairs dd { overflow-wrap:anywhere; }
+dl.pairs dt { color:var(--muted); }
+dl.pairs dd { margin:0; }
+.zone-summary dl.pairs dd { font-weight:600; text-align:right; }
+.table-wrap { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; }
+th, td { padding:.45em .6em; text-align:left; border-bottom:1px solid var(--rule); }
+thead th { background:var(--shade); font-weight:600; }
+td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+tfoot td:last-child { text-align:right; }
+tfoot td { font-weight:600; border-top:2px solid var(--rule); border-bottom:none; }
+figure.omitted { margin:0; border:1px dashed var(--rule); border-radius:3px;
+                 min-height:3rem; display:flex; align-items:center;
+                 justify-content:center; color:var(--muted); font-size:.8em; }
+figure.omitted figcaption { padding:.5em; text-align:center; }
+.mark { display:inline-block; border:2px solid var(--flag); color:var(--flag);
+        padding:.15em .6em; border-radius:3px; font-weight:600; letter-spacing:.08em; }
+.disputed { background:var(--flag-bg); border-bottom:2px solid var(--flag); cursor:help; }
+.corrected { border-bottom:2px solid var(--rule); cursor:help; }
+.skeleton { background:repeating-linear-gradient(135deg, var(--shade),
+            var(--shade) 6px, transparent 6px, transparent 12px);
+            border:1px dashed var(--rule); min-height:2.5rem; border-radius:3px; }
+.findings { border-left:3px solid var(--flag); background:var(--flag-bg);
+            padding:.6em 1em; margin:0 0 1.75rem; font-size:.875em; }
+.findings ul { margin:.3em 0 0; padding-left:1.2em; }
+.findings.caveats { border-left-color:var(--rule); background:var(--shade);
+                    color:var(--muted); }
+</style>
+<style>:root { --page-bg:rgb(255,255,255); --ink:rgb(85,85,85); --muted:rgb(141,141,141); --rule:rgb(230,230,230); --shade:rgb(245,245,245); }
+</style>
+</head>
+<body>
+<div class="doc">
+<div class="band"><section class="zone zone-header"><figure class="omitted" data-kind="logo" data-bbox="0.0499,0.0835,0.3979,0.1456"><figcaption>SPARKSUITE</figcaption></figure></section><section class="zone zone-header"><dl class="pairs"><dt>Invoice</dt><dd>#: 123</dd><dt>Created</dt><dd>January 1, 2023</dd><dt>Due</dt><dd>February 1, 2023</dd></dl></section></div><div class="band"><section class="zone zone-body"><p>Sparksuite, Inc.<br><code>12345</code> Sunny Road<br>Sunnyville, CA 12345</p></section><section class="zone zone-body"><p>Acme Corp.<br>John Doe<br>john@example.com</p></section></div><div class="band"><section class="zone zone-body" style="min-width:min(12rem,100%)"><div class="table-wrap"><table><thead><tr><th>Payment Method</th><th class="num">Check #</th></tr></thead><tbody><tr><td>Check</td><td class="num">1000</td></tr></tbody></table></div></section></div><div class="band"><section class="zone zone-body" style="min-width:min(12rem,100%)"><div class="table-wrap"><table><thead><tr><th>Item</th><th class="num">Price</th></tr></thead><tbody><tr><td>Website design</td><td class="num">$300.00</td></tr><tr><td>Hosting (3 months)</td><td class="num">$75.00</td></tr><tr><td>Domain name (1 year)</td><td class="num">$10.00</td></tr></tbody><tfoot><tr><td></td><td class="num">Total: $385.00</td></tr></tfoot></table></div></section></div>
+</div>
+<script type="application/json" id="doc-ir">{"source":{"path":"/Users/aless/Desktop/Projects/pic-to-html/doc-to-html/example/invoice.png","sha256":"d48cde2b98ecb74a8ac195aa56b87297bfe6f6f4d81fafc1f785be46717e5afc","width":862,"height":563,"rectified_width":862,"rectified_height":563},"ir_version":1,"rectifier_version":3,"hint":null,"page_px":862,"style":{"page_bg":[255,255,255],"ink":[85,85,85],"accent":null,"shade":[221,221,221]},"zones":[{"kind":"figure","role":"header","band":0,"column":0,"bbox":{"left":0.04988399071925754,"top":0.08348134991119005,"right":0.39791183294663574,"bottom":0.14564831261101244},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"caption","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"SPARKSUITE","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}]}],"graphic_kind":"logo","fill":null,"title_fill":null,"boxed":false,"complete":true},{"kind":"pairs","role":"header","band":0,"column":1,"bbox":{"left":0.7412993039443155,"top":0.08703374777975133,"right":0.9489559164733179,"bottom":0.1989342806394316},"title":null,"rows":[],"pairs":[{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Invoice","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"#: 123","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Created","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"January 1, 2023","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Due","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"February 1, 2023","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}}],"blocks":[],"graphic_kind":null,"fill":null,"title_fill":null,"boxed":false,"complete":true},{"kind":"prose","role":"body","band":1,"column":0,"bbox":{"left":0.04988399071925754,"top":0.2841918294849023,"right":0.22621809744779584,"bottom":0.3978685612788632},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"address","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"Sparksuite, Inc.","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"12345 Sunny Road","model":"qwen3-vl:4b","prompt_version":"2","runs":[{"text":"12345","kind":"code"},{"text":" Sunny Road","kind":"text"}]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"Sunnyville, CA 12345","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}]}],"graphic_kind":null,"fill":null,"title_fill":null,"boxed":false,"complete":true},{"kind":"prose","role":"body","band":1,"column":1,"bbox":{"left":0.7865429234338747,"top":0.2841918294849023,"right":0.9501160092807425,"bottom":0.3960923623445826},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"address","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"Acme Corp.","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"John Doe","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"john@example.com","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}]}],"graphic_kind":null,"fill":null,"title_fill":null,"boxed":false,"complete":true},{"kind":"table","role":"body","band":2,"column":0,"bbox":{"left":0.04176334106728538,"top":0.5044404973357016,"right":0.9582366589327146,"bottom":0.5896980461811723},"title":null,"rows":[{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Payment Method","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"Check #","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"header"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Check","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"1000","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"}],"pairs":[],"blocks":[],"graphic_kind":null,"fill":null,"title_fill":null,"boxed":false,"complete":true},{"kind":"table","role":"body","band":3,"column":0,"bbox":{"left":0.03596287703016241,"top":0.6536412078152753,"right":0.9640371229698376,"bottom":0.9289520426287744},"title":null,"rows":[{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Item","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"Price","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"header"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Website design","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"$300.00","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Hosting (3 months)","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"$75.00","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Domain name (1 year)","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"$10.00","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"Total: $385.00","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"summary"}],"pairs":[],"blocks":[],"graphic_kind":null,"fill":null,"title_fill":null,"boxed":false,"complete":true}],"corrections":[],"probes":[{"kind":"column-sum","zone_index":5,"ok":true,"computed":"385.00","stated":"385.00","detail":"column 1, 3 data rows"}],"gaps":[],"failures":[],"caveats":[],"shortfalls":[]}</script>
+</body>
+</html>

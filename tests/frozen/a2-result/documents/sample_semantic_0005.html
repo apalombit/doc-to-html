@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Document</title>
+<style>
+:root { --ink:#1a1a1a; --muted:#666; --rule:#e0e0e0; --shade:#f4f4f4;
+        --page-bg:#fff; --accent:inherit;
+        --flag:#b45309; --flag-bg:#fff7ed;
+        --link:#0645ad; --mark-bg:#fff2a8; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink:#e8e8e8; --muted:#9a9a9a; --rule:#333; --shade:#1e1e1e;
+          --page-bg:#111;
+          --flag:#fbbf24; --flag-bg:#2a1f0a;
+          --link:#7aa7ff; --mark-bg:#5a4a12; }
+}
+body { font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+       color:var(--ink); background:var(--page-bg); margin:0; padding:2rem 1rem; }
+.doc { max-width:52rem; margin:0 auto; }
+/* Inline runs. `<a>` carries no href — nothing read off the page says where a
+   link goes — so it needs styling of its own to read as one. */
+a { color:var(--link); text-decoration:underline; }
+code { font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+       font-size:0.92em; }
+mark { background:var(--mark-bg); color:inherit; padding:0 0.15em; }
+.band { display:flex; gap:2rem; align-items:flex-start;
+        margin-bottom:1.75rem; flex-wrap:wrap; }
+.band > * { flex:1 1 12rem; min-width:0; }
+.zone-header { font-size:1.05em; }
+.zone-footer { color:var(--muted); font-size:.875em; }
+h1 { font-size:1.6em; margin:0 0 .35em; letter-spacing:.01em; }
+section.boxed { border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
+section.filled { border-radius:4px; overflow:hidden; }
+h2.zone-title { font-size:.95em; font-weight:600; margin:0; padding:.55em 0; }
+h2.zone-title.barred { padding:.55em .9em; }
+section.boxed > h2.zone-title, section.filled > h2.zone-title { padding:.55em .9em; }
+.zone-body { padding:0; }
+section.boxed > .zone-body, section.filled > .zone-body { padding:.9em; }
+section.boxed > .zone-body > .table-wrap,
+section.filled > .zone-body > .table-wrap { margin:-.9em; }
+blockquote { margin:.6em 0 .3em 1.5em; }
+p.attribution { color:var(--muted); font-size:.85em; margin:0 0 .4em; }
+ul { margin:0 0 .4em; padding-left:1.3em; }
+.zone-header ul { display:flex; flex-wrap:wrap; gap:1.1rem;
+                  list-style:none; padding:0; }
+p { margin:0 0 .4em; }
+dl.pairs { display:grid; grid-template-columns:auto 1fr; gap:.15em .75em; margin:0; }
+/* A long unbreakable value must wrap, not be hidden. `section.filled` and
+   `section.boxed` both set `overflow:hidden` to keep a fill inside its own
+   rounded corner, so anything wider than the Zone is silently cut off in the
+   screenshot — recall says the text is present and the picture does not
+   contain it. `cv_0013`'s sidebar was the corpus's one case: the `auto` track
+   sized itself to `ines.halloran@fempost.example`, which has no break
+   opportunity, giving the Zone a 368px content width inside a 256px box.
+   `anywhere` rather than `break-word` because only `anywhere` lowers the
+   min-content width the grid track is measured from. Measured 2026-09-25 over
+   all fifteen: corpus `clipped` 1 -> 0, `beside_agreement` +0.0033,
+   `alignment_agreement` +0.0019, ratchet clean, and `cv_0013`'s height_ratio
+   1.77 -> 2.14, which is the wrapped address taking the lines it needs. */
+dl.pairs dt, dl.pairs dd { overflow-wrap:anywhere; }
+dl.pairs dt { color:var(--muted); }
+dl.pairs dd { margin:0; }
+.zone-summary dl.pairs dd { font-weight:600; text-align:right; }
+.table-wrap { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; }
+th, td { padding:.45em .6em; text-align:left; border-bottom:1px solid var(--rule); }
+thead th { background:var(--shade); font-weight:600; }
+td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+tfoot td:last-child { text-align:right; }
+tfoot td { font-weight:600; border-top:2px solid var(--rule); border-bottom:none; }
+figure.omitted { margin:0; border:1px dashed var(--rule); border-radius:3px;
+                 min-height:3rem; display:flex; align-items:center;
+                 justify-content:center; color:var(--muted); font-size:.8em; }
+figure.omitted figcaption { padding:.5em; text-align:center; }
+.mark { display:inline-block; border:2px solid var(--flag); color:var(--flag);
+        padding:.15em .6em; border-radius:3px; font-weight:600; letter-spacing:.08em; }
+.disputed { background:var(--flag-bg); border-bottom:2px solid var(--flag); cursor:help; }
+.corrected { border-bottom:2px solid var(--rule); cursor:help; }
+.skeleton { background:repeating-linear-gradient(135deg, var(--shade),
+            var(--shade) 6px, transparent 6px, transparent 12px);
+            border:1px dashed var(--rule); min-height:2.5rem; border-radius:3px; }
+.findings { border-left:3px solid var(--flag); background:var(--flag-bg);
+            padding:.6em 1em; margin:0 0 1.75rem; font-size:.875em; }
+.findings ul { margin:.3em 0 0; padding-left:1.2em; }
+.findings.caveats { border-left-color:var(--rule); background:var(--shade);
+                    color:var(--muted); }
+</style>
+<style>:root { --page-bg:rgb(255,255,255); --ink:rgb(25,25,25); --muted:rgb(101,101,101); --rule:rgb(220,220,220); --shade:rgb(241,241,241); --accent:rgb(6,15,229); }
+</style>
+</head>
+<body>
+<div class="doc">
+<div class="band"><section class="zone zone-header"><h2 class="zone-title">The Weekly Digest</h2><div class="zone-body"><ul><li>Home</li><li>Archive</li><li>About</li><li>Contact</li></ul></div></section></div><div class="band"><section class="zone zone-body"><h2 class="zone-title">Why semantic HTML matters</h2><div class="zone-body"><p class="attribution">May 9, 2026 · by <a>Jane Author</a></p></div></section></div><div class="band"><section class="zone zone-body"><h2 class="zone-title">Introduction</h2><div class="zone-body"><p>Modern HTML5 introduced semantic elements like <code>&lt;article&gt;</code>, <code>&lt;section&gt;</code>, and <code>&lt;nav&gt;</code> that describe the meaning of content rather than its appearance.</p></div></section><section class="zone zone-body filled" style="background:rgb(247,248,250)"><h2 class="zone-title">TL;DR</h2><div class="zone-body"><p>Semantic tags improve accessibility, SEO, and code clarity.</p></div></section></div><div class="band"><section class="zone zone-body"><h2 class="zone-title">Benefits</h2><div class="zone-body"><ul><li>Screen readers can navigate the document structure</li></ul></div></section></div><div class="band"><section class="zone zone-body"><ul><li>Search engines understand content hierarchy</li><li>CSS and JavaScript can target meaningful regions</li></ul></section></div><div class="band"><section class="zone zone-body"><blockquote>HTML provides for a number of elements that allow for finer-grained semantics in HTML documents.</blockquote><p class="attribution">— W3C HTML5.2 specification</p></section></div><div class="band"><section class="zone zone-body"><ul><li>html</li><li>web</li><li>standards</li></ul></section></div><div class="band"><section class="zone zone-body"><p>© 2026 The Weekly Digest. All rights reserved.</p><p>Contact: <a>editor@example.com</a></p></section></div>
+</div>
+<script type="application/json" id="doc-ir">{"source":{"path":"/Users/aless/Desktop/Projects/pic-to-html/doc-to-html/example/sample-semantic.png","sha256":"902f72417c0a60b00e674d36200bd10f946cbf08c91fe8f53c63b0f734594ea0","width":915,"height":1122,"rectified_width":915,"rectified_height":1122},"ir_version":1,"rectifier_version":3,"hint":null,"page_px":915,"style":{"page_bg":[255,255,255],"ink":[25,25,25],"accent":[6,15,229],"shade":[216,216,216]},"zones":[{"kind":"list","role":"header","band":0,"column":0,"bbox":{"left":0.09508196721311475,"top":0.0659536541889483,"right":0.4284153005464481,"bottom":0.13903743315508021},"title":"The Weekly Digest","rows":[],"pairs":[],"blocks":[{"kind":"item","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"Home","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}]},{"kind":"item","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"Archive","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}]},{"kind":"item","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"About","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}]},{"kind":"item","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"Contact","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}]}],"graphic_kind":null,"fill":null,"title_fill":null,"boxed":false,"complete":true},{"kind":"prose","role":"body","band":1,"column":0,"bbox":{"left":0.09508196721311475,"top":0.23618538324420676,"right":0.4918032786885246,"bottom":0.3003565062388592},"title":"Why semantic HTML matters","rows":[],"pairs":[],"blocks":[{"kind":"attribution","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"May 9, 2026 \u00b7 by Jane Author","model":"qwen3-vl:4b","prompt_version":"2","runs":[{"text":"May 9, 2026 \u00b7 by ","kind":"text"},{"text":"Jane Author","kind":"link"}]}],"state":"agreed"}]}],"graphic_kind":null,"fill":null,"title_fill":null,"boxed":false,"complete":true},{"kind":"prose","role":"body","band":2,"column":1,"bbox":{"left":0.6174863387978142,"top":0.37254901960784315,"right":0.8950819672131147,"bottom":0.45276292335115864},"title":"TL;DR","rows":[],"pairs":[],"blocks":[{"kind":"paragraph","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"Semantic tags improve accessibility,","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"SEO, and code clarity.","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}]}],"graphic_kind":null,"fill":[247,248,250],"title_fill":null,"boxed":false,"complete":true},{"kind":"prose","role":"body","band":2,"column":0,"bbox":{"left":0.09617486338797815,"top":0.35650623885918004,"right":0.5770491803278689,"bottom":0.46167557932263814},"title":"Introduction","rows":[],"pairs":[],"blocks":[{"kind":"paragraph","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"Modern HTML5 introduced semantic elements like <article>,","model":"qwen3-vl:4b","prompt_version":"2","runs":[{"text":"Modern HTML5 introduced semantic elements like ","kind":"text"},{"text":"<article>","kind":"code"},{"text":",","kind":"text"}]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"<section>, and <nav> that describe the meaning of content","model":"qwen3-vl:4b","prompt_version":"2","runs":[{"text":"<section>","kind":"code"},{"text":", and ","kind":"text"},{"text":"<nav>","kind":"code"},{"text":" that describe the meaning of content","kind":"text"}]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"rather than its appearance.","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}]}],"graphic_kind":null,"fill":null,"title_fill":null,"boxed":false,"complete":true},{"kind":"list","role":"body","band":3,"column":0,"bbox":{"left":0.09617486338797815,"top":0.4875222816399287,"right":0.5398907103825137,"bottom":0.5463458110516934},"title":"Benefits","rows":[],"pairs":[],"blocks":[{"kind":"item","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"Screen readers can navigate the document structure","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}]}],"graphic_kind":null,"fill":null,"title_fill":null,"boxed":false,"complete":true},{"kind":"list","role":"body","band":4,"column":0,"bbox":{"left":0.12131147540983607,"top":0.5543672014260249,"right":0.5234972677595628,"bottom":0.5926916221033868},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"item","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"Search engines understand content hierarchy","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}]},{"kind":"item","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"CSS and JavaScript can target meaningful regions","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}]}],"graphic_kind":null,"fill":null,"title_fill":null,"boxed":false,"complete":true},{"kind":"prose","role":"body","band":5,"column":0,"bbox":{"left":0.11147540983606558,"top":0.6229946524064172,"right":0.8306010928961749,"bottom":0.696078431372549},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"quote","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"HTML provides for a number of elements that allow for finer-grained semantics in HTML","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"documents.","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}]},{"kind":"attribution","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"\u2014 W3C HTML5.2 specification","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}]}],"graphic_kind":null,"fill":null,"title_fill":null,"boxed":false,"complete":true},{"kind":"list","role":"body","band":6,"column":0,"bbox":{"left":0.09508196721311475,"top":0.7602495543672014,"right":0.2819672131147541,"bottom":0.7727272727272727},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"item","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"html","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}]},{"kind":"item","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"web","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}]},{"kind":"item","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"standards","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}]}],"graphic_kind":null,"fill":null,"title_fill":null,"boxed":false,"complete":true},{"kind":"prose","role":"body","band":7,"column":0,"bbox":{"left":0.09617486338797815,"top":0.8654188948306596,"right":0.42185792349726775,"bottom":0.9117647058823529},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"paragraph","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"\u00a9 2026 The Weekly Digest. All rights reserved.","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}]},{"kind":"address","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"Contact: editor@example.com","model":"qwen3-vl:4b","prompt_version":"2","runs":[{"text":"Contact: ","kind":"text"},{"text":"editor@example.com","kind":"link"}]}],"state":"agreed"}]}],"graphic_kind":null,"fill":null,"title_fill":null,"boxed":false,"complete":true}],"corrections":[],"probes":[],"gaps":[],"failures":[],"caveats":[],"shortfalls":[]}</script>
+</body>
+</html>

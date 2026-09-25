@@ -1,5 +1,11 @@
 # `a1-result/` — the configuration Phase A1 shipped, frozen 2026-09-25
 
+> **Superseded as the control by `tests/frozen/a2-result/`**, the same shape —
+> documents beside scores — taken from a real sweep of the configuration A2
+> shipped, and the floor as well. This directory stays as the record A2 was
+> measured against; its references to `a0-result` as the floor describe the day
+> it was frozen.
+
 ## What this is
 
 Two things that belong together:

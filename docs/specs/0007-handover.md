@@ -548,7 +548,30 @@ STANDING RULES:
 
 ---
 
-## Phase A2 — measured 2026-09-25, re-scoped, **NEXT**
+## Phase A2 — re-scoped 2026-09-25 — **DONE 2026-09-25, gate MET**
+
+**Result, in brief.** Sweep `A2-10-enclosed-sweep`, seven of seven clauses, the
+ratchet held on all fifteen. **The enclosure was the detector's, not the
+snap's**: `attach_trailing_rows` and `attach_headings` grew a box over a
+neighbour and left the neighbour standing, and the snap returned those boxes
+unchanged. All four enclosed Zones were duplicates of text the enclosing Zone
+already read. `detector.without_enclosed` drops a box lying wholly inside
+another, by its edges, after the unions — exactly those four go.
+
+**The sweep reproduced the offline prediction on every scored field of every
+document**, so an upstream change that only *removes* a Zone is measurable by
+replay after all. Clause 4 was restated before the sweep, and clause 2 as drafted
+below would have passed without moving a box. `docs/status.md`, "Phase A2's
+result", has the gate and the numbers; `0007-a2-measurements.md` §8 has the
+evidence.
+
+**The lesson worth carrying into A3:** *a check that reports a fault is not
+where the fault is.* The snap was blamed on three documents for a step it
+performed without moving a box, because it was the only thing that ran
+`validate_bands`. Before fixing the component a finding names, run the stages
+one at a time and see which one introduces it.
+
+The prompt A2 was run from follows, kept as record.
 
 **Its first scope did not survive its own measurements.** A2 was written as
 *geometry: columns, alignment, clipping*, on the premise that side-by-side
@@ -576,8 +599,9 @@ has already been tried and refused — then
 docs/specs/0007-look-like-the-document.md. The spec is authoritative where
 anything disagrees.
 
-Branch scaffold. Tests pass, mypy src/ clean. Phase A1 closed 2026-09-25 with
-its gate NOT met on clause 1 only; do not redo any of it.
+Branch scaffold, head 6369bd6. 786 tests pass, mypy src/ clean. Phase A1 closed
+2026-09-25 with its gate NOT met on clause 1 only; do not redo any of it.
+A2's own three offline wins shipped in that commit — do not redo them either.
 
 THE NOTCH IS SETTLED. Ratchet against tests/frozen/a0-result/scores.json:
 
@@ -617,7 +641,9 @@ They are one fault under two symptoms, and both matter:
   - they block the one renderer change that helped. Giving a Band's Zones a
     flex-grow from their measured widths lifted cv_0013's beside_agreement
     0.450 -> 0.556, and the guarded form cannot apply it to cv_0013 because
-    band 0 is one of the four.
+    band 0 is one of the four. Both numbers were taken against the control as
+    it stood BEFORE the wrap fix; cv_0013 now sits at 0.474, so treat 0.556 as
+    evidence that the route is live and NOT as a target — re-measure it.
 
 The rule needs no detector and no model: it is arithmetic on boxes that are
 already in the IR. What it must decide is what to DO with an enclosure — drop
@@ -654,8 +680,9 @@ A PROPOSED GATE, TO ARGUE WITH RATHER THAN ADOPT:
   4. layout.clipped stays at 0 for all fifteen, and no document rises above its
      source_clipped.
   5. Every table column whose non-empty data cells are all numbers is
-     right-aligned — checked in the DOM, counted, not via _alignment. It is 18
-     columns across the corpus today; the count must not fall.
+     right-aligned — checked in the DOM, counted, not via _alignment. It is 21
+     such columns over 18 table Zones today, 254 cells; none may stop being
+     right-aligned.
   6. The ratchet holds against a0-result on all four legs, all fifteen.
   7. Structure, tests, mypy clean.
 
@@ -723,7 +750,7 @@ clean.
 | change | what it fixes |
 |---|---|
 | `render._numeric_columns` skips empty cells | a sparse money column votes on the cells that hold something. `statement_0006`'s "Paid out" was 5 numbers in 40 rows and stayed left; it is 5 of 5 among the non-empty. **42 cells**, corpus `.num` 212 → 254. |
-| `render._speaks_for_its_column` | one cell decides a column only when it *is* the column. `cv_0013`'s `2015` above three blanks right-aligned eight cells the source does not. Changes **exactly one** of the corpus's eighteen table columns and leaves `invoice_0001`'s genuine one-row table alone. |
+| `render._speaks_for_its_column` | one cell decides a column only when it *is* the column. `cv_0013`'s `2015` above three blanks right-aligned eight cells the source does not. Changes **exactly one** of the corpus's eighteen table Zones and leaves `invoice_0001`'s genuine one-row table alone. |
 | `dl.pairs dt, dl.pairs dd { overflow-wrap:anywhere }` | a value too long for its column wraps instead of being hidden. `section.filled` sets `overflow:hidden`, so `cv_0013`'s sidebar cut off an email at 256px of the 368px it wanted — recall said present, the picture did not contain it. |
 | `report._snap_note` / `_snap_html` | the snap rejection, read off `trace.json` and shown beside the ratchet and the honesty gate. Reads **"did not apply to 3 of 15"** today and names the enclosure on each. Off the trace rather than into the IR on purpose: a finding drawn in the page would move `height_ratio` for a reason that is not about the document. |
 

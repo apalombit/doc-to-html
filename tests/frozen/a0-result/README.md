@@ -1,4 +1,11 @@
-# `a0-result/` — Phase A0's outcome, and **the T1 ratchet's floor** since 2026-09-24
+# `a0-result/` — Phase A0's outcome — **superseded as the floor, 2026-09-25**
+
+> **This is no longer the T1 ratchet's floor.** At Phase A2's close the floor
+> moved to `tests/frozen/a2-result/scores.json`, which dominates this file on
+> every ratcheted leg of every document. See `docs/status.md`, "The floor".
+> This directory is kept as the record of what A0 reached. Do not point
+> `--previous` here. Where the text below says "the floor", read "the floor
+> from 2026-09-24 to 2026-09-25".
 
 ## What this is
 

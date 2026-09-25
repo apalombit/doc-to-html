@@ -77,29 +77,28 @@ Phase A1    Inline runs, and hard line breaks   DONE 2026-09-25, gate NOT met
               Extractor prompts crossed the ratchet and were reverted, then
               re-asked as a SEPARATE pass (DTH_INLINE_PASS) which holds the
               ratchet and reaches only 8 of 42 — clause 1 is the open one
-Phase A2    Geometry — RE-SCOPED 2026-09-25          <- in progress
+Phase A2    Geometry — RE-SCOPED            DONE 2026-09-25, gate MET
               its premise did not survive its own measurements — two thirds of
               the fault is inside one Zone, and every renderer replacement
               tried lost on the hard tier. The column model and the merged Zone
               are CLOSED UNBUILT; three offline wins shipped; the enclosed Zone
-              is what is left. docs/specs/0007-a2-measurements.md is the record
-              and is required reading before the phase.
-Phase A3        Figure pixels
+              shipped as detector.without_enclosed — it was the detector's own,
+              not the snap's, and every enclosed Zone was a duplicate.
+              docs/specs/0007-a2-measurements.md is the record.
+Phase A3        Figure pixels                         <- next
 Thread 3/C  Repair loop (re-scoped against A+B residuals first)
 Thread 4/D  Human corrections (unscheduled)
 ```
 
 **2/B ran before A0** and closed on 2026-09-22; **A0 closed the same day;
-A1 closed 2026-09-25 with its gate NOT met** — see `docs/status.md`, "A1's
-gate — THE RESULT".
-`docs/status.md` indexes what each shipped, A0's five gate clauses and their
-result, and where every measurement lives. **The ratchet's floor moved to
-`tests/frozen/a0-result/` on 2026-09-24**, at the start of A1 — A0 did not
-re-freeze the notch, so the decision was taken separately and is recorded in
-`docs/status.md` under "The notch — DECIDED 2026-09-24".
+A1 closed 2026-09-25 with its gate NOT met; A2 closed the same day with its
+gate met** — see `docs/status.md`, "What the last two phases shipped".
+`docs/status.md` indexes what each shipped and where every measurement lives.
+**The ratchet's floor is `tests/frozen/a2-result/` since 2026-09-25**, moved
+there from `a0-result/` at A2's close — see `docs/status.md`, "The floor".
 
 `docs/specs/0007-handover.md` holds a ready prompt per thread and the full
-scope of Phase A-1.
+scope of Phase A-1. **A3's prompt is not written yet.**
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
 this section.** It says what is done, what the last checkpoint showed, what is
@@ -229,50 +228,42 @@ model. A run's `report.html` computes its delta against the previous run's
 `scores.json`, which is the pairwise comparison this section asks for, taken
 automatically and in one sitting.
 
-**A third exception, added 2026-09-22: `tests/frozen/a0-checkpoint/`** — Phase
-A0's starting notch, and the floor for A0. Its README states its provenance
-exactly, including that its model answers come from a real sweep and its
-renders from `tools/remeasure_style.py` at a later commit, and why that is
-sound. `a1-checkpoint/` stays as A-1's notch.
+**The other exceptions are the frozen directories, and each exists because
+`debug/` is gitignored and gets cleared.** Every one is a committed file whose
+README states its provenance exactly. Quote them only for what their README
+says they are.
 
-**A fourth, added 2026-09-24: `tests/frozen/a0-result/`** — the scores A0
-*reached*, from sweep `100-a0-gate`, and **the ratchet's floor from Phase A1
-onward.** It was committed on 2026-09-22 as a preserved result and became the
-notch when Alessandro took the decision `docs/status.md` had left open. The
-move was measured, not argued: `a0-result` is no lower than `a0-checkpoint` on
-any ratcheted leg of any of the fifteen documents.
+| directory | what it is | role now |
+|---|---|---|
+| `run84/` | run 84's five output documents | the scorer's offline test input |
+| `a1-checkpoint/` | Phase A-1's checkpoint scores, the ratchet's first notch | record |
+| `a0-checkpoint/` | A0's starting notch | record |
+| `a0-result/` | the scores A0 reached, sweep `100-a0-gate` | record — the floor 2026-09-24 to 2026-09-25 |
+| `a1-result/` | A1's fifteen documents beside their scores | record — A2's control |
+| **`a2-result/`** | **A2's fifteen documents beside their scores, sweep `A2-10-enclosed-sweep`** | **the floor and the control, from 2026-09-25** |
 
-**A fifth, added 2026-09-25: `tests/frozen/a1-result/`** — **the control, and
-not a floor.** It is the only frozen directory that holds *documents beside
-scores*: the fifteen `document.html` files the shipped configuration produced at
-A1's close, and the `scores.json` of exactly those files. Scored straight out of
-it with nothing else from the run, **15 documents, 0 differing fields** — so the
-scores are re-derivable rather than taken on trust, offline, in about fifty
-seconds, with no model.
-
-**What it buys is a loop, not a number.** Re-rendering its IRs through the
-shipping `render()` returns all fifteen files byte-identical, so a renderer
-change can be measured against it pairwise, one change apart, in one sitting,
-without a sweep. Phase A2 measured five prototype renderers that way and spent
-no model time doing it. It is *not* the ratchet's floor — that stays
-`a0-result/` — and it is not a target to match.
-
-**The second exception, added 2026-09-20: `tests/frozen/a1-checkpoint/`.** It
-holds Phase A-1's checkpoint scores, which are **the T1 ratchet's starting
-notch**, and it is committed for one reason — the notch was set on a run
-directory, and `debug/` is gitignored and gets cleared, so the floor every later
-phase is measured against was living in the one place guaranteed not to survive.
-Ratchet against it by path:
+**Ratchet against the floor by path**, and always with `--documents sweep` —
+without a `fixtures.txt` the report silently scores the iterate five:
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --previous tests/frozen/a1-checkpoint/scores.json
+    --documents sweep --previous tests/frozen/a2-result/scores.json
 ```
 
-Its README states the provenance exactly, including that the run was taken from
-an uncommitted tree and why the numbers are sound anyway. **It is a floor, not a
-result to quote in an argument** — the distinction the rest of this section is
-about.
+**Each floor move was measured, not argued:** the new floor was no lower than
+the old on any ratcheted leg of any of the fifteen documents, and Alessandro
+took the decision each time.
+
+**A directory holding documents beside scores buys a loop, not a number.**
+Scored straight out of `a2-result/`, **15 documents, 0 differing fields**, and
+re-rendering its IRs through the shipping `render()` returns all fifteen
+byte-identical. So a change downstream of the model is measured against it
+pairwise, one change apart, in about fifty seconds, with no model. Phase A2
+measured every prototype it tried that way before it spent a sweep. It is not a
+target to match.
+
+**A floor is not a result to quote in an argument** — the distinction the rest
+of this section is about.
 
 ---
 
@@ -300,9 +291,11 @@ on 2026-09-22.
 **That rule is about one Zone, and the across-Zone case is open.** Two Zones
 that each read the same printed line still print it twice, because the rule
 compares a Block against *its own* Zone's Title and has nothing to say about a
-neighbour. `menu_0012` prints `To begin` twice this way; `darkdeck_0009` prints
-a caption `AVAILABILITY` above a table whose first column header is
-`AVAILABILITY`. Nothing owns it — see `docs/status.md`.
+neighbour. `darkdeck_0009` prints a caption `AVAILABILITY` above a table whose
+first column header is `AVAILABILITY`. Nothing owns it — see `docs/status.md`.
+`menu_0012`'s `To begin` was the other example, and it turned out to be a Zone
+lying wholly inside another: **A2 closed it in the detector**, with
+`without_enclosed`, not in the wire.
 
 ### What must not be deleted
 
@@ -578,6 +571,17 @@ prompt) were closed by Thread 0. Specs 0001–0006 are closed history.
   nothing, because at `temperature: 0` every extraction answer is then the one
   the floor already has. Same model, same question, opposite result. When an
   extra ask damages the primary task, **move the ask before you reword it.**
+
+- **The check that reports a fault is not where the fault is.** For a whole
+  phase `DTH_SNAP_ZONES` was "not applying to 3 of 15", and A2 was scoped
+  around repairing it. Run offline one stage at a time, the snap had returned
+  every box on those pages **unchanged**; the enclosure came from two union
+  steps in the detector, and the snap was named only because it was the one
+  place `validate_bands` ran. A gate clause reading "the snap applies to 15 of
+  15" would have passed without moving a box. **Before fixing the component a
+  finding names, find the stage that introduces the fault** — and suspect a
+  docstring that says a check "cannot fire": `validate_bands`' did, and was
+  false.
 
 - **Set a threshold from the distribution, and look for the empty band.**
   `keep_runs` drops marking that covers a whole line. The first cut was a
