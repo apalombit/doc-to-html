@@ -440,7 +440,26 @@ Ask before binding anything docs/status.md leaves open.
 
 ---
 
-## Phase A1 — inline runs, and hard line breaks — **NEXT**
+## Phase A1 — inline runs, and hard line breaks — **DONE 2026-09-25, gate NOT met**
+
+**Result, in brief.** The reflow half shipped and is measured clean: corpus
+`hard_breaks` **57 → 8** (the 8 remaining are real address breaks),
+`join_recall` **0.8128 → 0.8229**, ratchet holds. The inline half was asked
+twice — **inside** the Extractor prompts, where it crossed the ratchet on seven
+documents and was reverted, and then as a **separate pass**
+(`DTH_INLINE_PASS`), which holds the ratchet and reaches **8 of 42**.
+
+**Clause 1 wanted 21 and is the one open clause.** The model returns no
+`strong`, `em` or `mark` anywhere and nothing in `pairs` or `table`, so the
+ceiling is the model rather than the plumbing. `docs/status.md` carries the
+full result, the guards and their measured thresholds.
+
+**The lesson worth carrying into A2:** *where* you ask is a bigger lever than
+*how* you ask. Same model, same words, moved out of the Extractor prompts into
+a pass of its own — from seven documents crossing the ratchet to none.
+
+The prompt A1 was run from follows, kept as record.
+
 
 ```
 Implement Phase A1 of spec 0007. Stop at its gate and report.
@@ -520,6 +539,109 @@ STANDING RULES:
 - Leave debug/runs/84-rule-not-a-line/ intact.
 - Never score against tests/documents/SAMPLE_DOCUMENTS.
 - Do not delete the three wire-level row nets or the four shipped defaults.
+- project() compares a normalised view, never raw markup.
+- Every run must produce debug/runs/<label>/report.html.
+- Any reviewed run is a full sweep, all fifteen.
+- Rubric judgements are pairwise and in-session only.
+- Ask before binding anything docs/status.md leaves open.
+```
+
+---
+
+## Phase A2 — geometry: columns, alignment, clipping — **NEXT**
+
+```
+Implement Phase A2 of spec 0007. Stop at its gate and report.
+
+Read, in order: CLAUDE.md's "READ THIS FIRST", then docs/status.md, then
+docs/specs/0007-look-like-the-document.md. The spec is authoritative where
+anything disagrees.
+
+Branch scaffold, head a720482. 769 tests pass, mypy src/ clean. Phase A1 closed
+2026-09-25 with its gate NOT met on clause 1 only; do not redo any of it and do
+not try to raise clause 1 as part of A2 — it is listed separately in
+docs/status.md under "Raising clause 1, if anyone wants to".
+
+THE NOTCH IS SETTLED. Ratchet against tests/frozen/a0-result/scores.json. It is
+not an open question any more and it is not to be re-cut to make a run pass:
+
+    python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
+        --previous tests/frozen/a0-result/scores.json
+
+SET A2'S GATE FROM MEASUREMENTS, BEFORE CHANGING ANY CODE. Propose it, say what
+each clause is for, and get it agreed. Two things A1 learned about writing one:
+
+  - A0's model still holds: make most clauses COUNTS OF NAMED STRUCTURES, not
+    ratios. A ratio cannot say WHICH thing came back.
+  - A1's clause 4 was written as a proxy — "hard_breaks must not fall below
+    source_hard_breaks" — and it fired on a document where the fault had not
+    happened, because that count ignores WHERE the breaks are. State the fault
+    directly and per document, or the clause will fail for the wrong reason.
+    Do not gate A2 on beside_agreement alone; spec 0004 pre-registered a gate
+    on exactly the fields its change moved, passed every one, and shipped a
+    regression.
+
+A2'S SCOPE — geometry only:
+
+1. Column collapse. Side-by-side content renders stacked. beside_agreement as
+   A2 begins: form_0007 0.06, catalogue_0015 0.26, menu_0012 0.35, cv_0013
+   0.45, newsletter_0008 0.48, invoice_0002 0.64. This is why menu_0012 and
+   newsletter_0008 render roughly TWICE as tall as their sources (height_ratio
+   2.34 and 1.99) — the height is a symptom, so do not chase it directly.
+
+2. Zone.align.
+
+3. cv_0013's clipped sidebar values (layout.clipped is 1 there).
+
+DO NOT TRADE T1 FOR COLUMN SHAPE. The accepted interim state has always been
+"content complete and reading order correct, in one column". A2 improves the
+shape of content that already converts; it may not lose a word to do it. The
+ratchet enforces that and it has already caught two real regressions this
+phase, each on a single word.
+
+MEASURE BEFORE YOU BUILD, AND CHECK THE HARNESS FIRST. A1's whole method:
+offline replay of a run's recorded answers through the shipping mapper, but
+ONLY after proving the replay reproduces tests/frozen/a0-result/ exactly.
+Geometry is largely downstream of the model — the detector's boxes and the
+renderer's layout both are — so a great deal of A2 may be measurable with no
+model running at all. tools/remeasure_style.py re-renders from a sweep's own
+embedded IRs. Establish what A2 can measure offline BEFORE booking a sweep.
+
+A KNOWN A2 FINDING, ALREADY MEASURED, DO NOT REDISCOVER IT: DTH_SNAP_ZONES is
+silently not applying to four of the fifteen documents. It moves boxes onto
+their ink and then invalidates the Bands, so those four convert on unsnapped
+geometry. Two shapes: a full-width Zone with a narrow box strictly inside it,
+and two Zones snapping onto nearly the same span. Both are questions about
+GROUPING before they are questions about the snap. The snap is one of the four
+shipped defaults and must not be deleted — the finding is that it is not being
+APPLIED, which is a different fact from it being harmful. Surface it in
+report.html as a finding rather than leaving it in bakeoff.stderr.txt.
+
+OPEN, NOT A2'S, DO NOT ABSORB THEM:
+- The across-Zone title echo (menu_0012 "To begin" twice, darkdeck_0009
+  "AVAILABILITY").
+- statement_0006's 41 near-identical caveat lines.
+- receipt_0010 at 19.8% words kept, and its untested resize_long_edge lead.
+- nonlatin_0014's dark-blue table header row, and its ~8.6% invented words.
+- catalogue_0015 at 61.7%, loss NOT declared. A-1 established the pipeline
+  cannot declare loss inside a line and that two pixel-side detectors were
+  built and rejected. Do not build a third without a new kind of evidence.
+- invoice_0001's "Invoice" / "#: 123" — a Pairs label/value boundary.
+- A confirming sweep for A1's shipped 8 of 42, and its one false mark.
+
+DEFERRED — do not "fix" and do not read as new faults: the type scale (2/B, its
+own increment), figures as placeholders (A3), Thread 3/C.
+
+STANDING RULES:
+- Never cite or analyse a past run. Only a run taken in this session counts.
+  Four exceptions, all committed files: tests/frozen/run84/, a1-checkpoint/,
+  a0-checkpoint/ and a0-result/ — the last being the floor.
+- Leave debug/runs/84-rule-not-a-line/ intact.
+- Never score against tests/documents/SAMPLE_DOCUMENTS.
+- Do not delete the four shipped defaults or the three wire-level row nets.
+- Marking may never change the words: wire._runs_for can only cut the string it
+  is given and ir.Cell.runs discards Runs that do not spell the text back. Both
+  checks stay.
 - project() compares a normalised view, never raw markup.
 - Every run must produce debug/runs/<label>/report.html.
 - Any reviewed run is a full sweep, all fifteen.

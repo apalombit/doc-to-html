@@ -77,7 +77,8 @@ Phase A1    Inline runs, and hard line breaks   DONE 2026-09-25, gate NOT met
               Extractor prompts crossed the ratchet and were reverted, then
               re-asked as a SEPARATE pass (DTH_INLINE_PASS) which holds the
               ratchet and reaches only 8 of 42 — clause 1 is the open one
-Phase A2/A3     Geometry, figure pixels
+Phase A2    Geometry: columns, alignment, clipping   <- next
+Phase A3        Figure pixels
 Thread 3/C  Repair loop (re-scoped against A+B residuals first)
 Thread 4/D  Human corrections (unscheduled)
 ```
