@@ -40,6 +40,7 @@ from doc_to_html.engines.detector import (
     outermost,
     split_containers,
     without_enclosed,
+    without_overreaching_pictures,
 )
 from doc_to_html.engines.ollama import OllamaEngine
 from doc_to_html.ir import Kind, Role
@@ -341,6 +342,79 @@ class TestJudgingTheGapAgainstTheGapAbove:
         next_section = box(0.05, 0.53 + HEADING_GAP_MAX * 1.5, 0.90, 0.95)
 
         assert len(attach_headings([heading, next_section], relative=True)) == 2
+
+
+class TestSplittingAPictureFromWhatStandsBesideIt:
+    """`invoice_0002`'s ACME tile, `picture` 0.76, and the address beside it,
+    `text` 0.44, both inside a third box — `picture` 0.72 — which `outermost`
+    kept, so the tile was read as part of a prose Zone and scored as lost.
+    See `detector.without_overreaching_pictures`.
+
+    Page 600x400. Coordinates are the corpus shapes, scaled.
+    """
+
+    def ink(self, marks: list[tuple[int, int, int, int]]) -> np.ndarray:
+        mask = np.zeros((400, 600), dtype=np.uint8)
+        for left, top, right, bottom in marks:
+            mask[top:bottom, left:right] = 255
+        return mask
+
+    def test_a_picture_round_a_surer_picture_and_its_neighbour_goes(
+            self) -> None:
+        outer = box(0.60, 0.05, 0.90, 0.30, "picture", 0.72)
+        tile = box(0.60, 0.05, 0.70, 0.29, "picture", 0.76)
+        address = box(0.72, 0.06, 0.90, 0.30, "text", 0.44)
+        mask = self.ink([(360, 20, 420, 116), (432, 24, 540, 120)])
+
+        kept = without_overreaching_pictures([outer, tile, address], mask)
+        assert kept == [tile, address]
+        assert outermost(kept) == [tile, address]
+
+    def test_a_picture_that_is_only_surer_pictures_stays(self) -> None:
+        """`darkdeck_0009`'s row of four KPI cards: every inner picture
+        scores higher, and there is no ink outside them. A group of cards is
+        a different question from a figure beside its text."""
+        outer = box(0.05, 0.20, 0.95, 0.30, "picture", 0.50)
+        cards = [box(0.05 + i * 0.23, 0.20, 0.26 + i * 0.23, 0.30,
+                     "picture", 0.80) for i in range(4)]
+        mask = self.ink([(36 + i * 138, 84, 150 + i * 138, 116)
+                         for i in range(4)])
+
+        assert without_overreaching_pictures([outer, *cards], mask) == (
+            [outer, *cards])
+
+    def test_a_logo_surer_than_its_own_icon_stays_whole(self) -> None:
+        """`invoice_0001`'s logo: `picture` 0.80 round its icon at 0.58 and a
+        wordmark the detector also reads as text. Without the score test the
+        logo is cut in two."""
+        logo = box(0.05, 0.08, 0.40, 0.15, "picture", 0.80)
+        icon = box(0.05, 0.08, 0.07, 0.15, "picture", 0.58)
+        wordmark = box(0.09, 0.09, 0.40, 0.14, "text", 0.70)
+        mask = self.ink([(30, 32, 42, 60), (54, 36, 240, 56)])
+
+        assert without_overreaching_pictures([logo, icon, wordmark], mask) == (
+            [logo, icon, wordmark])
+
+    def test_only_a_picture_is_ever_taken_apart(self) -> None:
+        """A panel round a surer box is every panel on every page: `outermost`
+        keeping the container is the rule that made the detector usable."""
+        panel = box(0.60, 0.05, 0.90, 0.30, "key_value_region", 0.50)
+        tile = box(0.60, 0.05, 0.70, 0.29, "picture", 0.76)
+        mask = self.ink([(360, 20, 420, 116), (432, 24, 540, 120)])
+
+        assert without_overreaching_pictures([panel, tile], mask) == [panel, tile]
+
+    def test_end_to_end_the_tile_and_its_address_share_a_band(self) -> None:
+        engine = LayoutEngine(Fake([
+            box(0.60, 0.05, 0.90, 0.30, "picture", 0.72),
+            box(0.60, 0.05, 0.70, 0.29, "picture", 0.76),
+            box(0.72, 0.06, 0.90, 0.30, "text", 0.54),
+        ]))
+        zones = engine.detect_zones(page([(360, 20, 420, 116),
+                                          (432, 24, 540, 120)]))
+
+        assert [(z.band, z.column) for z in zones] == [(0, 0), (0, 1)]
+        validate_bands(zones)
 
 
 class TestTakingARegionApartAgain:

@@ -50,8 +50,9 @@ MARKS = frozenset({"signature", "stamp", "badge"})
 """Which of those are Marks rather than Graphics.
 
 A Mark carries document meaning, so its text is captured and it renders as itself.
-A Graphic — a logo, a chart's plotted area — is a placeholder holding its position,
-and a logo's wordmark is part of the artwork rather than content.
+A Graphic — a logo, a chart's plotted area — is drawn from its own pixels, and a
+logo's wordmark is part of the artwork rather than content: it goes to the
+image's `alt`, not onto the page. See `render._figure`.
 
 One set, imported by the renderer, because the two lists drifting apart is how a
 graphic kind ends up handled by code that can never receive it.

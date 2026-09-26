@@ -123,11 +123,12 @@ class ListExtractor(CropAndRead):
 
 
 class FigureExtractor(CropAndRead):
-    """Records a Graphic's position without reconstructing it.
+    """Records what a Graphic is without reconstructing it.
 
-    Text *written on* a graphic is document content and is captured: a chart's
-    title and axis labels, a PAID stamp, a signature's presence. What is never
-    attempted is inferring a chart's data from the geometry of its bars.
+    Text *written on* a graphic is captured: a chart's title and axis labels, a
+    PAID stamp, a signature's presence. What is never attempted is inferring a
+    chart's data from the geometry of its bars. The Graphic's pixels are not
+    this Extractor's: `Conversion._draw_figures` crops them, asking no model.
     """
 
     kind = Kind.FIGURE

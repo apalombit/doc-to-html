@@ -45,7 +45,7 @@ A label bound to a value, as in "Invoice No: INV-2026-0184". The characteristic 
 _Avoid_: Field, key-value, attribute
 
 **Graphic**:
-A non-text region carrying no document-bearing text of its own — a logo, a chart's plotted area. Graphics are recorded as empty placeholders holding their position; their data is never reconstructed from geometry. A logo's wordmark counts as part of the Graphic and is not captured as content, unlike a Mark's text.
+A non-text region carrying no document-bearing text of its own — a logo, a chart's plotted area. A Graphic carries its own pixels, cropped from the Rectified Image, and is drawn from them; its data is never reconstructed from geometry. A logo's wordmark counts as part of the Graphic and is not printed as content, unlike a Mark's text: anything read off a Graphic is kept as the image's alternative text.
 _Avoid_: Image, figure, illustration
 
 **Separator**:

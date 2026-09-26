@@ -647,10 +647,24 @@ def _list(zone: Zone, document: Document) -> str:
 
 
 def _figure(zone: Zone, document: Document) -> str:
-    """A Graphic is placeholdered; a Mark keeps its text.
+    """A Graphic is drawn from its own pixels; a Mark keeps its text.
 
-    Chart data is never reconstructed from geometry, but a chart's title and
-    axis labels are document text and are captured as a caption.
+    **Drawn since spec 0007 Phase A3, 2026-09-26.** A Graphic with pixels is an
+    `<img>` of them, and whatever was read off it goes to `alt` — reachable,
+    and not printed. Printed, it was invented text: `sparksuite` was
+    `invoice_0001`'s only invented word and `logo` one of `receipt_0010`'s,
+    because the page shows both only as pixels. Decided on entry with the
+    measurement: both words leave, precision reaches 1.000 on both documents,
+    and nothing else scored moves.
+
+    The styling is on the elements rather than in `STYLESHEET`, because the
+    stylesheet is inside every render and a rule added there changed the bytes
+    of all fifteen documents to draw two of them.
+
+    A Graphic with no pixels — a hand-built Zone, an IR read back from before
+    A3 — keeps the placeholder, and a chart's title and axis labels there are
+    still captured as a caption. Chart data is never reconstructed from
+    geometry either way.
     """
     kind = zone.graphic_kind or "figure"
     if kind in MARKS:
@@ -661,6 +675,16 @@ def _figure(zone: Zone, document: Document) -> str:
         return (
             f'<div class="mark" data-kind="{html.escape(kind)}">'
             f"{text or html.escape(kind)}</div>"
+        )
+
+    if zone.pixels:
+        read = " ".join(cell.text for block in zone.blocks for cell in block.lines)
+        return (
+            f'<figure style="margin:0" data-kind="{html.escape(kind)}"'
+            f'{_bbox_attr(zone)}>'
+            f'<img src="data:image/png;base64,{zone.pixels}"'
+            f' alt="{html.escape(read or kind)}"'
+            ' style="display:block;max-width:100%;height:auto"></figure>'
         )
 
     caption = "".join(

@@ -243,6 +243,25 @@ class Zone:
     A decorative rule is not among them: a Separator produces no Zone at all.
     """
 
+    pixels: str | None = None
+    """A FIGURE Zone's own pixels, as a base64 PNG. See `preprocess.figure_pixels`.
+
+    **Added in spec 0007 Phase A3, 2026-09-26.** Before it a FIGURE Zone was a
+    label, and the render stood a dashed placeholder where the logo was — the
+    scorer counted `invoice_0001`'s logo as lost, and the placeholder printed
+    words the page shows only as pixels: `sparksuite`, and `logo` on
+    `receipt_0010`'s barcode.
+
+    **Embedded rather than a file beside the document**, decided on entry: a
+    rendered file is copied alone into `tests/frozen/` and into the ratchet's
+    run directories, and an image beside it would fail to load there and be
+    scored as lost again. Measured over the corpus the cost is 6.1 KB for the
+    logo, 0.7 KB for the barcode and 1.5 KB for the ACME tile, each carried
+    twice — once here and once in the `<img>`.
+
+    `None` for every other Kind, and for a figure with no box to crop.
+    """
+
     fill: tuple[int, int, int] | None = None
     """The Zone's own background, where the source draws one. See `style.chrome`.
 
@@ -569,6 +588,7 @@ def _zone(data: dict[str, Any]) -> Zone:
             for b in data.get("blocks", [])
         ],
         graphic_kind=data.get("graphic_kind"),
+        pixels=data.get("pixels"),
         # Named one by one, like every other field here, and the reason is on
         # record: A-1 shipped a decoder that silently dropped `Gap.ink_share`
         # because this function builds each object field by field.

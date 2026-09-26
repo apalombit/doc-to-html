@@ -8,12 +8,16 @@ not, and decoration that must produce nothing at all.
 
 from __future__ import annotations
 
+import base64
 import re
 from pathlib import Path
 
+import cv2
+import numpy as np
 import pytest
 
-from doc_to_html.ir import Document, Kind, Reading, Role, Zone
+from doc_to_html.ir import BBox, Document, Kind, Reading, Role, Zone
+from doc_to_html.preprocess import Rectified, figure_pixels
 from doc_to_html.render import render
 from doc_to_html.wire import FigureResponse, contents_into, schema_of
 
@@ -142,17 +146,68 @@ class TestGraphicsAndMarks:
         """Unlike a logo's wordmark, a badge carries text a reader reads."""
         assert '<div class="mark" data-kind="badge">CSS</div>' in render(cards)
 
-    def test_a_logo_holds_its_position_without_its_wordmark(self) -> None:
-        """The ACME logo's lettering is drawn as part of the artwork. Capturing it
-        would be reconstructing a picture as text."""
+    def test_a_logo_is_drawn_from_its_own_pixels(self) -> None:
+        """End to end through a Conversion, which is the only test that proves
+        the step is armed: `Zone.title_fill` shipped, passed offline, and was
+        never once set in a conversion because of where its stage sat.
+
+        The ACME logo's lettering is drawn as part of the artwork. Capturing it
+        would be reconstructing a picture as text; drawing it is the picture."""
         invoice2 = converted(INVOICE2, "invoice_0002")
         logo = invoice2.zones[1]
         assert logo.graphic_kind == "logo"
         assert logo.blocks == []
+        assert base64.b64decode(logo.pixels or "")[:8] == b"\x89PNG\r\n\x1a\n"
+        assert [z.pixels for z in invoice2.zones if z is not logo] == (
+            [None] * (len(invoice2.zones) - 1))
 
         html = render(invoice2)
-        assert '<figure class="omitted" data-kind="logo"' in html
+        assert f'<img src="data:image/png;base64,{logo.pixels}" alt="logo"' in html
+        assert 'class="omitted"' not in zones_of(html)
         assert "data-bbox=" in html
+
+    def test_what_was_read_off_a_graphic_is_alt_text_and_not_printed(
+            self) -> None:
+        """`sparksuite` was `invoice_0001`'s only invented word: the page shows
+        its wordmark as pixels, so printing the reading of it put a word on the
+        page that the page does not have as text."""
+        zone = fill(Kind.FIGURE, '{"graphic": "logo", "text": ["SPARKSUITE"]}')
+        zone.pixels = _PNG
+        html = zones_of(render(Document(source=_source(), zones=[zone])))
+
+        assert 'alt="SPARKSUITE"' in html
+        assert ">SPARKSUITE<" not in html
+        assert "<figcaption>" not in html
+
+    def test_a_drawn_figure_changes_nothing_outside_itself(self) -> None:
+        """The figure's styling sits on its own elements. Put in `STYLESHEET` it
+        changed the bytes of all fifteen corpus renders to draw two of them."""
+        zone = fill(Kind.FIGURE, '{"graphic": "logo", "text": []}')
+        without = render(Document(source=_source(), zones=[zone]))
+        zone.pixels = _PNG
+        drawn = render(Document(source=_source(), zones=[zone]))
+
+        def style(page: str) -> str:
+            return re.search(r"<style>.*?</style>", page, re.S).group(0)  # type: ignore[union-attr]
+
+        assert style(drawn) == style(without)
+
+    def test_a_mark_with_pixels_still_prints_its_text(self) -> None:
+        """A badge's text is content, so it is printed whatever else the Zone
+        carries."""
+        zone = fill(Kind.FIGURE, '{"graphic": "badge", "text": ["CSS"]}')
+        zone.pixels = _PNG
+        html = render(Document(source=_source(), zones=[zone]))
+        assert '<div class="mark" data-kind="badge">CSS</div>' in html
+        assert "<img" not in html
+
+    def test_the_pixels_survive_the_round_trip_through_json(self) -> None:
+        """Every offline loop reads the IR back out of a rendered file, so a
+        field the decoder forgets is a figure the next re-render loses."""
+        zone = fill(Kind.FIGURE, '{"graphic": "logo", "text": []}')
+        zone.pixels = _PNG
+        document = Document(source=_source(), zones=[zone])  # type: ignore[arg-type]
+        assert Document.from_json(document.to_json()).zones[0].pixels == _PNG
 
     def test_a_mark_with_no_text_still_records_its_presence(self) -> None:
         """A signature is often illegible. That it is there is the finding."""
@@ -276,7 +331,60 @@ class TestCards:
         assert not _boxed_sections(render(cards))
 
 
+_PNG = base64.b64encode(
+    b"\x89PNG\r\n\x1a\n" + b"a stand-in; nothing here decodes it").decode("ascii")
+
+
 def _source() -> object:
     from doc_to_html.ir import Source
 
     return Source(path="synthetic", sha256="0" * 64, width=100, height=100)
+
+
+class TestAFiguresPixels:
+    """What `preprocess.figure_pixels` cuts, and from which of the two arrays.
+
+    A 100x100 page with a 20x20 block at (40, 40) and a neighbour's ink one
+    pixel to its right, which is where `invoice_0002`'s address sits beside
+    the ACME tile.
+    """
+
+    BOX = BBox(0.40, 0.40, 0.60, 0.60)
+
+    def rectified(self, *, inverted: bool = False) -> Rectified:
+        plain = np.full((100, 100, 3), 255, dtype=np.uint8)
+        plain[40:60, 40:60] = (200, 30, 30)
+        plain[40:60, 61:70] = 0
+        image = np.full_like(plain, 128)  # what the readers see; never drawn
+        return Rectified(image=image, plain=plain, inverted=inverted,
+                         source=_source())  # type: ignore[arg-type]
+
+    def decoded(self, pixels: str | None) -> np.ndarray:
+        assert pixels is not None
+        return cv2.imdecode(np.frombuffer(base64.b64decode(pixels), np.uint8),
+                            cv2.IMREAD_COLOR)
+
+    def test_it_is_the_box_with_no_padding(self) -> None:
+        """`zone_pixels` pads for the reader's sake, and the pad is where the
+        neighbour is: padded, the ACME tile carried `Acm`, `Soft`, `Field`."""
+        drawn = self.decoded(figure_pixels(self.rectified(),
+                                           Zone(kind=Kind.FIGURE, bbox=self.BOX)))
+        assert drawn.shape == (20, 20, 3)
+        assert (drawn == (200, 30, 30)).all()
+
+    def test_it_is_cut_from_the_plain_image(self) -> None:
+        """Equalised pixels are for reading; drawn, they would be the wrong
+        colour."""
+        drawn = self.decoded(figure_pixels(self.rectified(),
+                                           Zone(kind=Kind.FIGURE, bbox=self.BOX)))
+        assert not (drawn == 128).all()
+
+    def test_a_page_turned_over_for_reading_is_turned_back(self) -> None:
+        rectified = self.rectified(inverted=True)
+        assert rectified.plain is not None
+        drawn = self.decoded(figure_pixels(rectified,
+                                           Zone(kind=Kind.FIGURE, bbox=self.BOX)))
+        assert (drawn == (55, 225, 225)).all()
+
+    def test_a_zone_with_no_box_has_no_pixels(self) -> None:
+        assert figure_pixels(self.rectified(), Zone(kind=Kind.FIGURE)) is None

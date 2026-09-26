@@ -12,6 +12,7 @@ in ir.py — otherwise stored Corrections silently point at the wrong pixels.
 
 from __future__ import annotations
 
+import base64
 import hashlib
 import logging
 from collections.abc import Callable
@@ -248,6 +249,39 @@ def zone_pixels(image: ImageArray, zone: Zone) -> ImageArray:
             f"{zone.kind.value} Zone in band {zone.band} has no bounding box"
         )
     return crop(image, zone.bbox)
+
+
+def figure_pixels(rectified: Rectified, zone: Zone) -> str | None:
+    """A FIGURE Zone's pixels as the page printed them, for the render to draw.
+
+    **Not `zone_pixels`, on three counts, each measured on 2026-09-26:**
+
+    - **No padding.** `zone_pixels` pads a crop so a model can read the last
+      glyph, and a pad pulls in the neighbour: `invoice_0002`'s padded ACME
+      tile carries the first letters of the address beside it — `Acm`,
+      `Soft`, `Field`, `info`. The box is snapped onto its ink, and on all
+      three corpus figures a 3px ring outside it holds no ink at all.
+    - **`plain`, not `image`.** Equalisation is for reading; a picture is
+      drawn in the colours it has. See `Rectified.plain`.
+    - **Turned back over** on a light-on-dark page, which `rectify` inverted
+      for the readers and which the reader of the render never saw inverted.
+
+    Compressed at PNG level 9 rather than OpenCV's default: the barcode is
+    13.5 KB of base64 at the default and 0.7 KB at 9, pixel for pixel the same.
+
+    None when the Zone has no box, so the render keeps its placeholder.
+    """
+    if zone.bbox is None:
+        return None
+    plain = rectified.plain if rectified.plain is not None else rectified.image
+    if rectified.inverted:
+        plain = 255 - plain
+    pixels = crop(plain, zone.bbox, pad_x=0.0, pad_y=0.0)
+    ok, buffer = _cv2().imencode(".png", pixels,
+                                 [_cv2().IMWRITE_PNG_COMPRESSION, 9])
+    if not ok:
+        raise RectifyError("could not encode a figure as PNG")
+    return base64.b64encode(buffer.tobytes()).decode("ascii")
 
 
 def height_over_input_budget(image: ImageArray, zone: Zone) -> int | None:

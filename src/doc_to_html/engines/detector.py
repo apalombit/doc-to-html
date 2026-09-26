@@ -138,6 +138,74 @@ def outermost(found: list[Detection]) -> list[Detection]:
     return [found[index] for index in sorted(kept)]
 
 
+def without_overreaching_pictures(found: list[Detection],
+                                  mask: ImageArray) -> list[Detection]:
+    """Drop a `picture` that is a surer picture plus whatever stands beside it.
+
+    **Spec 0007 Phase A3, 2026-09-26.** `invoice_0002`'s ACME tile is detected
+    — `picture` at 0.76 — and so is the address printed beside it, `text` at
+    0.44. Heron also draws a third box, `picture` at 0.72, round both, and
+    `outermost` keeps the largest: the tile and the address became one Zone,
+    read as prose, and the scorer counted the tile as lost. Found by running
+    the detector's steps one at a time; the tile survives the threshold and is
+    gone after `outermost`, and nothing later brings it back.
+
+    **Two tests, together, and each is load-bearing.** Measured over every
+    `picture` holding another `picture` across all fifteen documents, after the
+    threshold:
+
+        document         inner scored higher   ink outside the inner pictures
+        invoice_0002     yes, 0.76 > 0.72      2,243 px   <- the tile and its address
+        darkdeck_0009    yes, four of them     0 px       <- a row of four cards
+        sample_css_0004  yes                   0 px
+        invoice_0001     no, 0.58 < 0.80       0.87 of its ink
+        sample_css_0004  no                    0.73 of its ink
+
+    - *Scored higher*, because the detector is surer of the smaller picture
+      than of the larger one. `invoice_0001` is why this is needed: its logo
+      is `picture` 0.80 round an icon at 0.58 and a wordmark heron also reads
+      as text, and without this test the logo is cut in two.
+    - *Ink outside*, because a picture that is only smaller pictures is a
+      group of them and not a picture beside something else. `darkdeck_0009`'s
+      four KPI cards are that shape; splitting them is a different question
+      and not this one's.
+
+    So the rule has no constant: zero pixels against 2,243, with nothing
+    between. Run offline through the whole layout stage, it changes one box on
+    one document of fifteen — `invoice_0002`'s, into the tile and the address.
+
+    Dropping the outer box is enough: `outermost`, run next, then keeps the
+    tile and the box round the address as it would on any page, and the ink
+    the outer box covered is all inside one or the other.
+    """
+    def ink_outside(outer: Detection, inner: list[Detection]) -> int:
+        height, width = mask.shape[:2]
+
+        def pixels(box: Detection) -> tuple[slice, slice]:
+            left = max(0, min(width, int(round(box.left * width))))
+            top = max(0, min(height, int(round(box.top * height))))
+            right = max(left, min(width, int(round(box.right * width))))
+            bottom = max(top, min(height, int(round(box.bottom * height))))
+            return slice(top, bottom), slice(left, right)
+
+        region = np.zeros((height, width), dtype=bool)
+        region[pixels(outer)] = True
+        for box in inner:
+            region[pixels(box)] = False
+        return int(np.logical_and(mask > 0, region).sum())
+
+    def overreaches(outer: Detection) -> bool:
+        if outer.label != "picture":
+            return False
+        inner = [box for box in found if box is not outer
+                 and box.label == "picture"
+                 and _covered_by(box, outer) >= CONTAINED]
+        return (any(box.score > outer.score for box in inner)
+                and ink_outside(outer, inner) > 0)
+
+    return [box for box in found if not overreaches(box)]
+
+
 def without_enclosed(found: list[Detection]) -> list[Detection]:
     """Drop every box lying wholly inside another, once the unions have run.
 
@@ -979,7 +1047,9 @@ class LayoutEngine:
         """Detections to Zones, in steps that each undo one known error.
 
         The order is not arbitrary. `outermost` first, because everything after
-        it assumes one box per region. Then `split_containers`, which needs the
+        it assumes one box per region — and `without_overreaching_pictures`
+        just before it, because a picture drawn round a surer picture and its
+        neighbour is exactly what `outermost` would keep. Then `split_containers`, which needs the
         *unfiltered* pool to find the parts it restores. Then `attach_headings`,
         after the split because it must see the split's output — on
         `sample_table_0003` the caption belongs to a table that only exists once
@@ -990,13 +1060,14 @@ class LayoutEngine:
         leaves it standing, and nothing after this point would notice.
         """
         pool = self.detector.detect(image)
-        found = outermost([d for d in pool if d.score >= self.confidence])
-        found = split_containers(found, pool, content_ink(image))
+        ink = content_ink(image)
+        found = outermost(without_overreaching_pictures(
+            [d for d in pool if d.score >= self.confidence], ink))
+        found = split_containers(found, pool, ink)
         found = attach_trailing_rows(found)
         found = attach_headings(found, relative=self.heading_rule == "relative")
         if self.prefer_container:
-            found = prefer_container(found, pool, content_ink(image),
-                                     self.confidence)
+            found = prefer_container(found, pool, ink, self.confidence)
         found = without_enclosed(found)
         found.sort(key=lambda d: (round(d.top, 3), d.left))
 

@@ -40,6 +40,7 @@ from .preprocess import (
     content_ink,
     count_regions,
     crop_row_as_fraction,
+    figure_pixels,
     ink_fraction,
     ink_share,
     printed_lines,
@@ -771,6 +772,7 @@ class Conversion:
             # of a region's first rows a bar could occupy. Running it first
             # made `title_rows` zero on every Zone of every document.
             self._measure_chrome(rectified, document)
+            self._draw_figures(rectified, document)
             self._extract(rectified, document)
 
             document.probes = probe_module.run(document)
@@ -950,6 +952,34 @@ class Conversion:
                  "boxed": z.boxed}
                 for i, z in enumerate(document.zones)
             ],
+        )
+
+    def _draw_figures(self, rectified: Rectified, document: Document) -> None:
+        """Give every FIGURE Zone its own pixels. See `preprocess.figure_pixels`.
+
+        **After `_classify`, for the reason `_measure_chrome` is:** the Kind is
+        decided there, and a step placed before the thing it depends on ships
+        and never fires — `Zone.title_fill` did exactly that for a phase. Set
+        on every round and cleared on any Zone that is not a figure, so a Kind
+        that changes between rounds cannot leave a picture behind.
+
+        Asks the model nothing, so it cannot move an answer: every other Zone's
+        crop and prompt are what they were.
+        """
+        started = time.perf_counter()
+        drawn = []
+        for index, zone in enumerate(document.zones):
+            zone.pixels = (figure_pixels(rectified, zone)
+                           if zone.kind is Kind.FIGURE else None)
+            if zone.pixels:
+                drawn.append({"zone": index, "graphic": zone.graphic_kind,
+                              "base64_bytes": len(zone.pixels)})
+        self.trace.record(
+            Stage.LAYOUT, "figure_pixels",
+            Disposition.ACCEPTED if drawn else Disposition.SKIPPED,
+            seconds=time.perf_counter() - started,
+            figures=len(drawn), detail=drawn,
+            reason=None if drawn else "no Zone was classified as a figure",
         )
 
     def _layout(self, rectified: Rectified, document: Document) -> None:
