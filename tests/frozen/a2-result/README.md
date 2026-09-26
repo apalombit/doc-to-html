@@ -1,4 +1,11 @@
-# `a2-result/` — Phase A2's outcome, and **the T1 ratchet's floor** since 2026-09-25
+# `a2-result/` — Phase A2's outcome — **superseded as the floor, 2026-09-26**
+
+> **This is no longer the T1 ratchet's floor or the control.** At Phase A3's
+> close both moved to `tests/frozen/a3-result/`, which dominates this
+> directory on every ratcheted leg of every document. See `docs/status.md`,
+> "The floor". Kept as the record of what A2 reached. Do not point
+> `--previous` here. Where the text below says "the floor", read "the floor
+> from 2026-09-25 to 2026-09-26".
 
 ## What this is
 

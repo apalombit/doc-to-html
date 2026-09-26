@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Document</title>
+<style>
+:root { --ink:#1a1a1a; --muted:#666; --rule:#e0e0e0; --shade:#f4f4f4;
+        --page-bg:#fff; --accent:inherit;
+        --flag:#b45309; --flag-bg:#fff7ed;
+        --link:#0645ad; --mark-bg:#fff2a8; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink:#e8e8e8; --muted:#9a9a9a; --rule:#333; --shade:#1e1e1e;
+          --page-bg:#111;
+          --flag:#fbbf24; --flag-bg:#2a1f0a;
+          --link:#7aa7ff; --mark-bg:#5a4a12; }
+}
+body { font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+       color:var(--ink); background:var(--page-bg); margin:0; padding:2rem 1rem; }
+.doc { max-width:52rem; margin:0 auto; }
+/* Inline runs. `<a>` carries no href — nothing read off the page says where a
+   link goes — so it needs styling of its own to read as one. */
+a { color:var(--link); text-decoration:underline; }
+code { font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+       font-size:0.92em; }
+mark { background:var(--mark-bg); color:inherit; padding:0 0.15em; }
+.band { display:flex; gap:2rem; align-items:flex-start;
+        margin-bottom:1.75rem; flex-wrap:wrap; }
+.band > * { flex:1 1 12rem; min-width:0; }
+.zone-header { font-size:1.05em; }
+.zone-footer { color:var(--muted); font-size:.875em; }
+h1 { font-size:1.6em; margin:0 0 .35em; letter-spacing:.01em; }
+section.boxed { border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
+section.filled { border-radius:4px; overflow:hidden; }
+h2.zone-title { font-size:.95em; font-weight:600; margin:0; padding:.55em 0; }
+h2.zone-title.barred { padding:.55em .9em; }
+section.boxed > h2.zone-title, section.filled > h2.zone-title { padding:.55em .9em; }
+.zone-body { padding:0; }
+section.boxed > .zone-body, section.filled > .zone-body { padding:.9em; }
+section.boxed > .zone-body > .table-wrap,
+section.filled > .zone-body > .table-wrap { margin:-.9em; }
+blockquote { margin:.6em 0 .3em 1.5em; }
+p.attribution { color:var(--muted); font-size:.85em; margin:0 0 .4em; }
+ul { margin:0 0 .4em; padding-left:1.3em; }
+.zone-header ul { display:flex; flex-wrap:wrap; gap:1.1rem;
+                  list-style:none; padding:0; }
+p { margin:0 0 .4em; }
+dl.pairs { display:grid; grid-template-columns:auto 1fr; gap:.15em .75em; margin:0; }
+/* A long unbreakable value must wrap, not be hidden. `section.filled` and
+   `section.boxed` both set `overflow:hidden` to keep a fill inside its own
+   rounded corner, so anything wider than the Zone is silently cut off in the
+   screenshot — recall says the text is present and the picture does not
+   contain it. `cv_0013`'s sidebar was the corpus's one case: the `auto` track
+   sized itself to `ines.halloran@fempost.example`, which has no break
+   opportunity, giving the Zone a 368px content width inside a 256px box.
+   `anywhere` rather than `break-word` because only `anywhere` lowers the
+   min-content width the grid track is measured from. Measured 2026-09-25 over
+   all fifteen: corpus `clipped` 1 -> 0, `beside_agreement` +0.0033,
+   `alignment_agreement` +0.0019, ratchet clean, and `cv_0013`'s height_ratio
+   1.77 -> 2.14, which is the wrapped address taking the lines it needs. */
+dl.pairs dt, dl.pairs dd { overflow-wrap:anywhere; }
+dl.pairs dt { color:var(--muted); }
+dl.pairs dd { margin:0; }
+.zone-summary dl.pairs dd { font-weight:600; text-align:right; }
+.table-wrap { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; }
+th, td { padding:.45em .6em; text-align:left; border-bottom:1px solid var(--rule); }
+thead th { background:var(--shade); font-weight:600; }
+td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+tfoot td:last-child { text-align:right; }
+tfoot td { font-weight:600; border-top:2px solid var(--rule); border-bottom:none; }
+figure.omitted { margin:0; border:1px dashed var(--rule); border-radius:3px;
+                 min-height:3rem; display:flex; align-items:center;
+                 justify-content:center; color:var(--muted); font-size:.8em; }
+figure.omitted figcaption { padding:.5em; text-align:center; }
+.mark { display:inline-block; border:2px solid var(--flag); color:var(--flag);
+        padding:.15em .6em; border-radius:3px; font-weight:600; letter-spacing:.08em; }
+.disputed { background:var(--flag-bg); border-bottom:2px solid var(--flag); cursor:help; }
+.corrected { border-bottom:2px solid var(--rule); cursor:help; }
+.skeleton { background:repeating-linear-gradient(135deg, var(--shade),
+            var(--shade) 6px, transparent 6px, transparent 12px);
+            border:1px dashed var(--rule); min-height:2.5rem; border-radius:3px; }
+.findings { border-left:3px solid var(--flag); background:var(--flag-bg);
+            padding:.6em 1em; margin:0 0 1.75rem; font-size:.875em; }
+.findings ul { margin:.3em 0 0; padding-left:1.2em; }
+.findings.caveats { border-left-color:var(--rule); background:var(--shade);
+                    color:var(--muted); }
+</style>
+<style>:root { --page-bg:rgb(255,255,255); --ink:rgb(26,26,26); --muted:rgb(102,102,102); --rule:rgb(221,221,221); --shade:rgb(241,241,241); }
+</style>
+</head>
+<body>
+<div class="doc">
+<div class="findings"><strong>Unresolved</strong><ul><li>Content found outside every detected region: 18.5% of this page&#x27;s printed ink is in here — far too much to be a mark, so this is content nothing read</li><li>Content found outside every detected region: 1.5% of this page&#x27;s printed ink is in here — found by ink coverage, so it may be a mark</li><li>Zone 1 (<code>table</code>) was read short: 19 lines are printed in it and the reading returned 2, over 50% of the page's printed ink</li></ul></div><div class="band"><section class="zone zone-header"><h2 class="zone-title">ELDER STREET CAFE</h2><div class="zone-body"><p>12 Elder Street<br>Castleton CT9 2BN</p><p>01632 960 118</p></div></section></div><div class="band"><section class="zone zone-body" style="min-width:min(120rem,100%)"><h2 class="zone-title">Till 02 Op. NADIA</h2><div class="zone-body"><div class="table-wrap"><table><thead><tr><th>Order 00418</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr></thead></table></div></div></section></div><div class="band"><section class="zone zone-body"><figure style="margin:0" data-kind="logo" data-bbox="0.3015,0.9177,0.7104,0.9799"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIkAAAAiCAIAAADknW2zAAAB1UlEQVRo3u2R1+paQRyENfg4eTNRLCAWEAvYEEUUxQJiAbGADVFEUXwgb+wF/A8ZsoQk98nFzNW3v/3OnnN2LLvd7vuPOJ3O7XYLcLlcn89nvV57PJ7PzyyXS2o+n2+xWAD8fj/ms9ksGAwabTweUwuHw6PRCBCJRDAfDAaxWMxovV6PWjKZ7Ha7gFQqhXm73c5kMkZrNpvU8vl8o9EAFAoFzGu1WrFYNFq5XKZWqVRKpRKgWq1iDrlerxstl8tRw7HZbBbQarUwT6fTnU7HaIlEgho+Mh6PA/r9PubRaHQ4HBoNP0htMpmEQiHAdDrFPBAIzOdzo+G6qK1WK6/XC8DFYu52uzebjdEcDge1/X5vt9sBh8PB9nq9jsejxWI5nU7P5xMMwBJMYLgFOJ/Pj8cDDMASTGC4BbhcLmQAlvf7ncBgaTTy9XrlnMDcbjdqGNpsNqNhDvNPDfB+v8EALq1Wq9HwLDW+BcxDwL+ehk+ihu+nBjB/ZDT8tdH4CK6Ic8JvGoZk7vK2/6phi9o3i/K/Rt2oG0XdqBtF3agbRd0o6kbdKOpG3SjqRlE36kZRN+pGUTeKulE3irpRN4q6UdSNulHUjbpR1I2ibtSNom7UjfLv8wXNA+qAQDDfeQAAAABJRU5ErkJggg==" alt="logo" style="display:block;max-width:100%;height:auto"></figure></section></div>
+</div>
+<script type="application/json" id="doc-ir">{"source":{"path":"/Users/aless/Desktop/Projects/pic-to-html/doc-to-html/example/receipt.png","sha256":"f9636d0f727e9fd4d93c763e55a2cd220397f933895d74f768f6e0825d2d8919","width":500,"height":649,"rectified_width":335,"rectified_height":547},"ir_version":1,"rectifier_version":3,"hint":null,"page_px":500,"style":{"page_bg":[255,255,255],"ink":[26,26,26],"accent":null,"shade":[196,193,187]},"zones":[{"kind":"prose","role":"header","band":0,"column":0,"bbox":{"left":0.2208955223880597,"top":0.03473491773308958,"right":0.7731343283582089,"bottom":0.14076782449725778},"title":"ELDER STREET CAFE","rows":[],"pairs":[],"blocks":[{"kind":"address","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"12 Elder Street","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"Castleton CT9 2BN","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}]},{"kind":"paragraph","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"01632 960 118","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}]}],"graphic_kind":null,"pixels":null,"fill":null,"title_fill":null,"boxed":false,"complete":true},{"kind":"table","role":"body","band":1,"column":0,"bbox":{"left":0.05373134328358209,"top":0.18281535648994515,"right":0.9462686567164179,"bottom":0.8884826325411335},"title":"Till 02 Op. NADIA","rows":[{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Order 00418","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"header"}],"pairs":[],"blocks":[],"graphic_kind":null,"pixels":null,"fill":null,"title_fill":null,"boxed":false,"complete":true},{"kind":"figure","role":"body","band":2,"column":0,"bbox":{"left":0.30149253731343284,"top":0.9177330895795247,"right":0.7104477611940299,"bottom":0.979890310786106},"title":null,"rows":[],"pairs":[],"blocks":[],"graphic_kind":"logo","pixels":"iVBORw0KGgoAAAANSUhEUgAAAIkAAAAiCAIAAADknW2zAAAB1UlEQVRo3u2R1+paQRyENfg4eTNRLCAWEAvYEEUUxQJiAbGADVFEUXwgb+wF/A8ZsoQk98nFzNW3v/3OnnN2LLvd7vuPOJ3O7XYLcLlcn89nvV57PJ7PzyyXS2o+n2+xWAD8fj/ms9ksGAwabTweUwuHw6PRCBCJRDAfDAaxWMxovV6PWjKZ7Ha7gFQqhXm73c5kMkZrNpvU8vl8o9EAFAoFzGu1WrFYNFq5XKZWqVRKpRKgWq1iDrlerxstl8tRw7HZbBbQarUwT6fTnU7HaIlEgho+Mh6PA/r9PubRaHQ4HBoNP0htMpmEQiHAdDrFPBAIzOdzo+G6qK1WK6/XC8DFYu52uzebjdEcDge1/X5vt9sBh8PB9nq9jsejxWI5nU7P5xMMwBJMYLgFOJ/Pj8cDDMASTGC4BbhcLmQAlvf7ncBgaTTy9XrlnMDcbjdqGNpsNqNhDvNPDfB+v8EALq1Wq9HwLDW+BcxDwL+ehk+ihu+nBjB/ZDT8tdH4CK6Ic8JvGoZk7vK2/6phi9o3i/K/Rt2oG0XdqBtF3agbRd0o6kbdKOpG3SjqRlE36kZRN+pGUTeKulE3irpRN4q6UdSNulHUjbpR1I2ibtSNom7UjfLv8wXNA+qAQDDfeQAAAABJRU5ErkJggg==","fill":null,"title_fill":null,"boxed":false,"complete":true}],"corrections":[],"probes":[],"gaps":[{"bbox":{"left":0.0,"top":0.0,"right":1.0,"bottom":0.9963436928702011},"note":"18.5% of this page's printed ink is in here \u2014 far too much to be a mark, so this is content nothing read","resolved":false,"ink_share":0.18473209404045926},{"bbox":{"left":0.05373134328358209,"top":0.16270566727605118,"right":0.9462686567164179,"bottom":0.16453382084095064},"note":"1.5% of this page's printed ink is in here \u2014 found by ink coverage, so it may be a mark","resolved":false,"ink_share":0.01530891197375615}],"failures":[],"caveats":[],"shortfalls":[{"zone_index":1,"kind":"table","printed_lines":19,"read_lines":2,"ink_share":0.502255330781848}]}</script>
+</body>
+</html>

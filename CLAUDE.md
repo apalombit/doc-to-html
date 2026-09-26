@@ -85,20 +85,25 @@ Phase A2    Geometry — RE-SCOPED            DONE 2026-09-25, gate MET
               shipped as detector.without_enclosed — it was the detector's own,
               not the snap's, and every enclosed Zone was a duplicate.
               docs/specs/0007-a2-measurements.md is the record.
-Phase A3        Figure pixels                         <- next
+Phase A3    Figure pixels                   DONE 2026-09-26, gate MET
+              a FIGURE Zone carries its crop (Zone.pixels) and is drawn; what
+              was read off it is alt text. invoice_0002's ACME tile split out
+              by detector.without_overreaching_pictures. figures_lost 2 -> 0
+Open issues One at a time, cheapest first — docs/status.md "Next"  <- next
 Thread 3/C  Repair loop (re-scoped against A+B residuals first)
 Thread 4/D  Human corrections (unscheduled)
 ```
 
 **2/B ran before A0** and closed on 2026-09-22; **A0 closed the same day;
 A1 closed 2026-09-25 with its gate NOT met; A2 closed the same day with its
-gate met** — see `docs/status.md`, "What the last two phases shipped".
+gate met; A3 closed 2026-09-26 with its gate met** — see `docs/status.md`,
+"What the last phase shipped".
 `docs/status.md` indexes what each shipped and where every measurement lives.
-**The ratchet's floor is `tests/frozen/a2-result/` since 2026-09-25**, moved
-there from `a0-result/` at A2's close — see `docs/status.md`, "The floor".
+**The ratchet's floor is `tests/frozen/a3-result/` since 2026-09-26**, moved
+there from `a2-result/` at A3's close — see `docs/status.md`, "The floor".
 
 `docs/specs/0007-handover.md` holds a ready prompt per thread and the full
-scope of Phase A-1. **A3's is the next one to use.**
+scope of Phase A-1. **"Next — the open issues" is the next one to use.**
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
 this section.** It says what is done, what the last checkpoint showed, what is
@@ -240,14 +245,15 @@ says they are.
 | `a0-checkpoint/` | A0's starting notch | record |
 | `a0-result/` | the scores A0 reached, sweep `100-a0-gate` | record — the floor 2026-09-24 to 2026-09-25 |
 | `a1-result/` | A1's fifteen documents beside their scores | record — A2's control |
-| **`a2-result/`** | **A2's fifteen documents beside their scores, sweep `A2-10-enclosed-sweep`** | **the floor and the control, from 2026-09-25** |
+| `a2-result/` | A2's fifteen documents beside their scores, sweep `A2-10-enclosed-sweep` | record — the floor and A3's control 2026-09-25 to 2026-09-26 |
+| **`a3-result/`** | **A3's fifteen documents beside their scores, sweep `A3-10-figure-pixels-sweep`** | **the floor and the control, from 2026-09-26** |
 
 **Ratchet against the floor by path**, and always with `--documents sweep` —
 without a `fixtures.txt` the report silently scores the iterate five:
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/a2-result/scores.json
+    --documents sweep --previous tests/frozen/a3-result/scores.json
 ```
 
 **Each floor move was measured, not argued:** the new floor was no lower than
@@ -255,11 +261,12 @@ the old on any ratcheted leg of any of the fifteen documents, and Alessandro
 took the decision each time.
 
 **A directory holding documents beside scores buys a loop, not a number.**
-Scored straight out of `a2-result/`, **15 documents, 0 differing fields**, and
+Scored straight out of `a3-result/`, **15 documents, 0 differing fields**, and
 re-rendering its IRs through the shipping `render()` returns all fifteen
-byte-identical. So a change downstream of the model is measured against it
-pairwise, one change apart, in about fifty seconds, with no model. Phase A2
-measured every prototype it tried that way before it spent a sweep. It is not a
+byte-identical — figures included, since the IR carries their pixels. So a
+change downstream of the model is measured against it pairwise, one change
+apart, in about fifty seconds, with no model. Phases A2 and A3 measured every
+prototype they tried that way before spending a sweep. It is not a
 target to match.
 
 **A floor is not a result to quote in an argument** — the distinction the rest
@@ -643,6 +650,16 @@ prompt) were closed by Thread 0. Specs 0001–0006 are closed history.
   let a full match hide five deleted table headers. The positive form holds and
   is what should have been written: **every `<br>` still drawn is in a block
   whose kind keeps its lines, and none was lost.**
+
+- **A clause about bytes has to say which bytes.** A3 pre-registered "every
+  document with no figure renders byte-identical", and it could not hold for
+  a reason that had nothing to do with figures: a new `Zone` field puts
+  `"pixels": null` into every embedded IR, and a rule added to `STYLESHEET`
+  lands in every render. It was restated before the sweep — identical outside
+  the embedded IR, and inside it differing by that key alone — and met 12 of
+  12. The same trap sprang on the comparison: reading the floor's IR back
+  through today's `Document` adds the field to the floor too, so strip it
+  from both sides or compare the raw JSON.
 
 - **A guard can be right and still create the fault it looks like.** A0's
   heading guard stopped `attach_trailing_rows` swallowing headings, which

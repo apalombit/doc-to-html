@@ -857,7 +857,7 @@ STANDING RULES:
 
 ---
 
-## Phase A3 — figure pixels — **NEXT**
+## Phase A3 — figure pixels — **DONE 2026-09-26, gate MET**
 
 **Measured 2026-09-25 from `tests/frozen/a2-result/`, before any A3 code.**
 The scorer counts a figure as an `<img>`, `<svg>` or `<canvas>` the page
@@ -971,6 +971,146 @@ STANDING RULES:
 - project() compares a normalised view, never raw markup.
 - Every run must produce debug/runs/<label>/report.html.
 - Any reviewed run is a full sweep, all fifteen.
+- Rubric judgements are pairwise and in-session only.
+- Ask before binding anything docs/status.md leaves open.
+```
+
+### Outcome — 2026-09-26, sweep `A3-10-figure-pixels-sweep`: gate MET, 8 of 8
+
+**Decided on entry, with Alessandro:** pixels embedded in the IR (a file
+beside the document would not survive the copy into `tests/frozen/`); what is
+read off a Graphic becomes `alt`, not printed; the ACME tile in A3, in the
+same sweep, because a sweep was needed anyway to prove the pixels arrive
+through a Conversion and the two changes touch disjoint documents.
+
+| # | clause | result |
+|---|---|---|
+| 1 | `figures_lost` 2 → 0, named | 0 — `invoice_0001`'s logo and `invoice_0002`'s tile drawn |
+| 2 | `receipt_0010`'s barcode drawn from its pixels | yes |
+| 3 | `sparksuite` and `logo` gone | yes; precision 1.000 on both documents |
+| 4 | restated — the twelve untouched documents byte-identical outside the embedded IR, and inside it differing only by `"pixels": null` | 12 of 12 |
+| 5 | `invoice_0002`'s address Zone still reads its four lines | yes, verbatim and in order — as four blocks where the floor had one |
+| 6 | ratchet vs `a2-result`, four legs, fifteen | holds; nothing falls |
+| 7 | visual review, `--previous` the control | 3 `better`, 12 `same`, no `worse` |
+| 8 | tests, mypy | 809 pass, clean |
+
+**What the measurements corrected before any code:**
+
+- **The crop is not `zone_pixels`.** It pads for the reader's sake, and on the
+  ACME tile the pad pulls in `Acm`, `Soft`, `Field`, `info` from the address
+  beside it. The drawn crop is the unpadded box — which holds all the ink on
+  all three figures, none in a 3px ring outside — on `Rectified.plain`.
+- **Clause 4 as first written could not hold.** A rule added to `STYLESHEET`
+  changes all fifteen documents' bytes, so the figure's styling is inline; and
+  a new `Zone` field puts `"pixels": null` into every embedded IR, so the
+  clause was restated before the sweep and put to Alessandro.
+- **`outermost` introduced the tile's loss**, found by running the detector's
+  steps one at a time. The general shape — a container over a higher-scored
+  box — is every panel over its lines. The narrow one, a `picture` over a
+  higher-scored `picture` with ink outside it, fires on `invoice_0002` alone:
+  2,243 px against exactly 0 on the other two candidates. `invoice_0001`'s
+  logo is why the score test is needed, `darkdeck_0009`'s card row why the ink
+  test is.
+
+**The sweep matched the offline prediction byte for byte on 14 of 15.**
+`invoice_0002` moved more than predicted: its narrowed crop read the company
+block as the source's four lines rather than one address block, which is
+where tau 0.849 → 1.000 and beside 0.640 → 0.854 come from — and where the one
+new fault comes from: `Acme Corporation` read as a `heading`, drawn as the
+largest text in the header band. Carried to the open issues.
+
+**A comparison mistake worth not repeating.** Reading the floor's IR back
+through today's `Document` adds the new field to it too; strip it from both
+sides, or compare the raw JSON, before calling two IRs different.
+
+**Floor moved to `tests/frozen/a3-result/`, 2026-09-26** — it dominates
+`a2-result` per document on every ratcheted leg.
+
+---
+
+## Next — the open issues, one at a time — **NEXT**
+
+`docs/status.md` "Next" lists seven, cheapest first. **The first four need no
+model call**: each is downstream of the model, so it is measured against
+`a3-result` offline, one change apart, in about fifty seconds. The last three
+move a crop or ask the model something, and each costs a sweep.
+
+```
+Work the open issues of spec 0007. Take them one at a time, in the order
+docs/status.md "Next" gives, starting with the first four. Stop after the
+fourth — or earlier, at any issue whose measurements say it needs model time —
+and report.
+
+Read, in order: CLAUDE.md's "READ THIS FIRST", then docs/status.md, then the
+Phase A3 "Outcome" in docs/specs/0007-handover.md. The spec is authoritative
+where anything disagrees.
+
+Branch scaffold, at or after the commit closing A3. 809 tests pass, mypy src/
+clean. Do not redo any of A3.
+
+THE FLOOR IS tests/frozen/a3-result/, and it is also the control:
+
+    python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
+        --documents sweep --previous tests/frozen/a3-result/scores.json
+
+--documents sweep is not optional. Prove the control before using it:
+re-rendering its IRs through render() must return 15 of 15 byte-identical, and
+scoring them straight out of the directory must give 0 differing fields. Its
+README has the recipe.
+
+THE FOUR, EACH MEASURED OFFLINE AGAINST a3-result, ONE CHANGE APART:
+  1. statement_0006's 41 near-identical caveat lines aggregate to one.
+  2. nonlatin_0014's dark-blue table header row renders on white. Point
+     chrome()'s title-band measurement at the row RowRole.header names; do not
+     build a detector.
+  3. darkdeck_0009's across-Zone echo: caption AVAILABILITY above a table
+     whose first column header is AVAILABILITY. _without_title_echo only
+     compares a Block with its own Zone's Title.
+  4. invoice_0002's "Acme Corporation", new at A3: a bold body-size line read
+     as a heading block and drawn as h1, now the largest text in the header
+     band. If the honest fix is sizing headings from their own ink, that is
+     the deferred type scale (2/B) — say so rather than smuggle it in.
+
+FOR EACH ONE, BEFORE ANY CODE:
+  - Find the stage that introduces it, not the one that reports it.
+  - Measure which documents a candidate rule touches, across all fifteen. A
+    rule that changes exactly what it names beats a clever one.
+  - Propose a gate of counts of named structures, per document, and get it
+    agreed with Alessandro. Always include: the ratchet holds against
+    a3-result on four legs, all fifteen; every document the rule does not
+    name is unchanged — and say precisely what "unchanged" means before
+    measuring (outside the embedded IR? a new IR field puts a key in every
+    document; a STYLESHEET rule changes every document's bytes).
+
+A wire rule must also be proven to run inside a Conversion — a replayed
+Conversion test — because a rule measured on IRs offline is not yet a rule the
+pipeline applies. Zone.title_fill shipped and never fired for a phase.
+
+Visual review: a renderer or wire change needs no sweep. Copy a3-result's
+documents into a run directory, build the changed arm beside it, and run the
+visual-review skill with --previous the copy. All fifteen sheets.
+
+ISSUES 5-7 COST MODEL TIME — do not start them in this session without
+Alessandro's go: receipt_0010's resize_long_edge probe, nonlatin_0014's
+overlapping Zones, invoice_0001's Pair boundary and A1's false mark.
+
+CLOSED — DO NOT REOPEN WITHOUT A NEW KIND OF EVIDENCE: the column model and
+proportional widths, the merged Zone (menu_0012, form_0007), alignment_agreement
+as a gate, a third loss detector. docs/status.md "Closed, with evidence".
+
+STANDING RULES:
+- Never cite or analyse a past run. Only a run taken in this session counts.
+  The exceptions are the committed tests/frozen/ directories, each for what its
+  README says it is.
+- Leave debug/runs/84-rule-not-a-line/ intact.
+- Never score against tests/documents/SAMPLE_DOCUMENTS.
+- Do not delete the four shipped defaults or the three wire-level row nets.
+- Marking may never change the words: wire._runs_for and ir.Cell.runs both stay.
+- What is read off a Graphic is alt text, never printed.
+- project() compares a normalised view, never raw markup.
+- Every run must produce debug/runs/<label>/report.html. A sweep on
+  uncommitted code saves git diff HEAD beside it.
+- Any reviewed run is a full sweep, all fifteen, or the offline equivalent.
 - Rubric judgements are pairwise and in-session only.
 - Ask before binding anything docs/status.md leaves open.
 ```

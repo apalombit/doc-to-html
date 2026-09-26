@@ -1,6 +1,6 @@
 # Look like the document
 
-**Status: open. Threads 0, A-1, 2/B, A0, A1 and A2 closed; A3 is next.**
+**Status: open. Threads 0, A-1, 2/B, A0, A1, A2 and A3 closed; the open issues are next.**
 `docs/status.md` is the live state. Opened 2026-09-17. Tracking issue **#30**. This spec changes what the project is
 measured against. It supersedes ADR 0002, retires `acceptance.compare()` and the
 five typed fixture builders, and replaces a single mismatch total with a six-axis
@@ -284,7 +284,8 @@ Thread 1/A  The rest of the IR
    A0         stop the bleeding           gate: RE-SCOPED ON ENTRY, see below     DONE, gate MET
    A1         inline runs, hard breaks    gate: set on entry                       DONE, gate NOT met
    A2         geometry — RE-SCOPED        gate: set on entry, see 0007-a2-measurements.md   DONE, gate MET
-   A3         figure pixels                                                        <- next
+   A3         figure pixels               gate: set on entry                       DONE, gate MET
+Open issues  one at a time, cheapest first (docs/status.md "Next")               <- next
 Thread 3/C  Repair loop                   gate: re-scoped against A+B residuals
 Thread 4/D  Human corrections             unscheduled
 ```
@@ -636,8 +637,11 @@ exists. With width pinned and height free, `height_ratio` instead becomes the
 single best diagnostic available: 1.54 on `invoice_0002` says the vertical rhythm
 is wrong, and that is Thread B's primary target.
 
-**Phase A3 — figure pixels.** A `FIGURE` Zone carries its crop, not just a
-`graphic_kind` label. Logos currently vanish or render as dashed placeholders.
+**Phase A3 — figure pixels.** *Closed 2026-09-26, gate met, 8 of 8 —
+[`0007-handover.md`](0007-handover.md), "Phase A3", "Outcome" is the record.*
+A `FIGURE` Zone carries its crop, not just a `graphic_kind` label: `Zone.pixels`,
+drawn as an `<img>` with what was read off it as `alt`. `figures_lost` 2 → 0,
+and `invoice_0002`'s ACME tile split out of the `picture` box that swallowed it.
 
 **Gate for Thread A: T1 holds at 1.00; T3 and T6 improve on the sweep set;
 contact sheet reviewed.**
