@@ -576,16 +576,29 @@ def _speaks_for_its_column(filled: int, rows: int) -> bool:
 
 
 def _table(zone: Zone, document: Document) -> str:
+    """Header rows into `<thead>`, data into `<tbody>`, summaries into `<tfoot>`.
+
+    **Except a header row with data rows on both sides**, which is a section
+    heading and stays where it is, inside `<tbody>`: `menu_0012`'s `From the
+    grill`, `Main courses` and `Puddings` came back as rows 7, 12 and 19, each
+    above its own dishes, and gathering them stacked all three above the first
+    dish. A header with nothing after it still goes on top — that is
+    `sample_table_0003`'s column header, which the model returned as its last
+    row.
+    """
     numeric = _numeric_columns(zone)
+    data_at = [i for i, row in enumerate(zone.rows) if row.role is RowRole.DATA]
     groups: dict[RowRole, list[str]] = {role: [] for role in RowRole}
-    for row in zone.rows:
+    for position, row in enumerate(zone.rows):
         tag = "th" if row.role is RowRole.HEADER else "td"
         cells = "".join(
             f'<{tag}{" class=\"num\"" if index in numeric else ""}>'
             f"{_cell(c, document)}</{tag}>"
             for index, c in enumerate(row.cells)
         )
-        groups[row.role].append(f"<tr>{cells}</tr>")
+        section = (row.role is RowRole.HEADER and data_at
+                   and data_at[0] < position < data_at[-1])
+        groups[RowRole.DATA if section else row.role].append(f"<tr>{cells}</tr>")
 
     parts = []
     if groups[RowRole.HEADER]:

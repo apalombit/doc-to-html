@@ -1,15 +1,15 @@
-# Status — 2026-09-27 (open issues 1–3 closed; **the open-issues queue next**)
+# Status — 2026-09-27 (the open-issues queue: **Q1 done, Q2 next**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-09-27, when
-open issues 1–3 closed, the floor was kept, and the rest were queued.
+Q1 of the open-issues queue closed.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file. If you are going to look at output — and you
 should — use the **`visual-review` skill**.
 
-Branch `scaffold`. **825 tests pass, `mypy src/` clean.**
+Branch `scaffold`. **828 tests pass, `mypy src/` clean.**
 
 ---
 
@@ -24,7 +24,8 @@ Phase A1    Inline runs, and hard line breaks   DONE 2026-09-25, gate NOT met
 Phase A2    Geometry — re-scoped                DONE 2026-09-25, gate MET
 Phase A3    Figure pixels                       DONE 2026-09-26, gate MET
 Open issues 1-3 DONE 2026-09-26 offline; 4 -> the type scale
-Queue       Q1-Q7, in order, go given 2026-09-27                   <- next
+Queue       Q1-Q7, in order, go given 2026-09-27
+              Q1 DONE 2026-09-27, offline, gate MET                Q2 <- next
 Thread 3/C  Repair loop (re-scoped first)
 Thread 4/D  Human corrections (unscheduled)
 ```
@@ -123,12 +124,36 @@ see "Closed, with evidence".
 Greek, three pairs read twice, and the total `12.437,82` printed twice.
 Everything else is at 0.961 or better.
 
-**5. Reading order** wobbles on `newsletter_0008` (0.832), `menu_0012`
-(0.829), `darkdeck_0009` (0.836).
+**5. Reading order** wobbles on `newsletter_0008` (0.832) and `darkdeck_0009`
+(0.836). `menu_0012`'s 0.829 at the floor is 0.956 with Q1, measured offline.
 
 ---
 
 ## What the last step shipped
+
+### The queue so far — each offline, one change apart, against `rederive.py`'s baseline
+
+**The baseline, proved before use:** `python tools/rederive.py
+tests/frozen/a3-result --label Q-00-base` holds the ratchet on four legs for
+all fifteen; `statement_0006` carries 3 caveats; `header_fill` sits on exactly
+`nonlatin_0014` z4, `statement_0006` z3, `invoice_0001` z4 and z5;
+`darkdeck_0009` z2 has no Title.
+
+**Q1 — `menu_0012`'s section headings, 2026-09-27, gate MET.** `render._table`
+now leaves a header row with data rows on both sides where it is, inside
+`<tbody>` as `<th>` cells; any other header row still goes to `<thead>`.
+Renderer only — no IR change, no `STYLESHEET` change, so `rederive.py` gains no
+step.
+
+| clause | result |
+|---|---|
+| `menu_0012` z1: `From the grill`, `Main courses`, `Puddings` each directly above its first dish; no `<thead>`; embedded IR byte-identical | 3 of 3 |
+| `sample_table_0003`: header still in `<thead>` above `United States`; file byte-identical | yes |
+| the other 13 byte-identical to the baseline, whole file | 13 of 13 |
+| ratchet vs `a3-result`, four legs, fifteen | holds |
+| `menu_0012` score fields that moved | tau 0.829 → **0.956**; `ink_delta` 0.345 → 0.314, `output_ink`, `output_texture` (the grey band left the screenshot); `column_error` 0.0688 → 0.0693. Words, joins, beside and height unchanged. |
+| visual review, all fifteen, `--previous` the baseline | `menu_0012` `better`, 14 `same`, no `worse` |
+| tests, mypy | 828 pass, clean |
 
 ### Open issues 1–3 — 2026-09-26, offline, one change apart
 
@@ -173,14 +198,8 @@ this order, in a fresh session.** The ready prompt is
 Model-free first, cheapest first; the three that cost model time last. **Each
 gate is still agreed with Alessandro before any code.**
 
-**Q1. `menu_0012`'s section headings stack in one `<thead>`.** Model-free,
-renderer. `render._table` gathers every `header` row into `<thead>`, so `From
-the grill`, `Main courses` and `Puddings` sit together above the first dish;
-the IR has them at rows 7, 12 and 19, in the right places. Measured on
-`a3-result`: only two tables have a `header` row after row 0 — `menu_0012` z1
-and `sample_table_0003` z1, whose **only** header came back as its **last** row
-(15) and is on top today only because of the grouping. A fix must keep it
-there.
+**Q1. `menu_0012`'s section headings stack in one `<thead>`. — DONE
+2026-09-27, gate met;** see "What the last step shipped".
 
 **Q2. `statement_0006`'s header was read one empty cell wide.** Model-free,
 wire. Every one of its 41 rows is padded to seven cells and an empty column

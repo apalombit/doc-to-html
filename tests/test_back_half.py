@@ -19,7 +19,11 @@ from doc_to_html.ir import (
     CellState,
     Correction,
     Document,
+    Kind,
     Reading,
+    Row,
+    RowRole,
+    Zone,
     cell,
 )
 from doc_to_html.render import render
@@ -157,6 +161,65 @@ class TestRender:
         assert html.index("Unresolved") < html.index("Read with a caveat"), (
             "what is missing comes before what is merely qualified"
         )
+
+
+def _table_of(invoice: Document, rows: list[tuple[RowRole, str]]) -> str:
+    """One two-column table on the page, rendered, and nothing else."""
+    invoice.zones = [Zone(kind=Kind.TABLE, complete=True, rows=[
+        Row(role=role, cells=[cell(text), cell("")]) for role, text in rows
+    ])]
+    html = render(invoice)
+    return html[html.index("<table>"):html.index("</table>")]
+
+
+class TestHeaderRowPlacement:
+    """A header row between data rows is a section heading, and stays put.
+
+    `menu_0012` prints `From the grill`, `Main courses` and `Puddings` above
+    their dishes; the model returned them as header rows 7, 12 and 19, in the
+    right places, and gathering every header into one `<thead>` stacked all
+    three above the first dish. A header with nothing after it is not a section
+    heading: `sample_table_0003`'s only header came back as its last row, and
+    `<thead>` is what puts it back on top.
+    """
+
+    def test_a_header_between_data_rows_stays_where_it_is(
+            self, invoice: Document) -> None:
+        table = _table_of(invoice, [
+            (RowRole.DATA, "Potted brown shrimp"),
+            (RowRole.HEADER, "From the grill"),
+            (RowRole.DATA, "Rib of beef, for two"),
+        ])
+
+        assert "<thead" not in table
+        assert (table.index("Potted brown shrimp")
+                < table.index("<th>From the grill</th>")
+                < table.index("Rib of beef, for two"))
+        assert table.count("<tbody>") == 1
+
+    def test_a_header_with_nothing_after_it_goes_on_top(
+            self, invoice: Document) -> None:
+        table = _table_of(invoice, [
+            (RowRole.DATA, "United States"),
+            (RowRole.DATA, "China"),
+            (RowRole.HEADER, "Country"),
+        ])
+
+        assert table.index("<thead><tr><th>Country</th>") < table.index(
+            "United States")
+
+    def test_a_leading_header_goes_on_top_beside_a_section_heading(
+            self, invoice: Document) -> None:
+        table = _table_of(invoice, [
+            (RowRole.HEADER, "Dish"),
+            (RowRole.DATA, "Potted brown shrimp"),
+            (RowRole.HEADER, "From the grill"),
+            (RowRole.DATA, "Rib of beef, for two"),
+        ])
+
+        assert table.index("<thead><tr><th>Dish</th>") < table.index(
+            "Potted brown shrimp") < table.index("<th>From the grill</th>")
+        assert table.count("<thead") == 1
 
 
 class TestCorrections:
