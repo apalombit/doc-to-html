@@ -581,6 +581,13 @@ print it twice: `menu_0012` prints `To begin` twice, and `darkdeck_0009` prints
 a caption `AVAILABILITY` above a table whose first column header is
 `AVAILABILITY`. Nothing owns the across-Zone case.
 
+**Corrected 2026-09-26: neither example was across Zones.** `menu_0012`'s
+`To begin` was a Zone lying wholly inside another, closed by A2's
+`detector.without_enclosed`. `darkdeck_0009`'s `AVAILABILITY` is one Zone: the
+caption pass lifted the first cell of Zone 2's own header row into its Title,
+and `wire._title_is_its_header_cell` now drops that Title and keeps the row.
+No across-Zone echo is measured on `tests/frozen/a3-result/`.
+
 **Two corrections to this spec's own problem statement, both measured.**
 `sample_table_0003` was named as the document returning a 17th row of empty
 strings; it has 16 rows and none blank, and the live all-blank row was

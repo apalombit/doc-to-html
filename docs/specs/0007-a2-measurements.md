@@ -297,6 +297,8 @@ this shape and is part of why nobody looked.
 `menu_0012`'s is the "To begin" half of the open across-Zone echo: the two
 readings sit in different Zones, which is why `_without_title_echo` could not
 reach it. `darkdeck_0009`'s `AVAILABILITY` is not an overlap and is untouched.
+*(2026-09-26: it is not across Zones either — Zone 2's Title was lifted off
+its own header row's first cell. Closed by `wire._title_is_its_header_cell`.)*
 
 **So drop and merge are the same operation here.** The inner box lies wholly
 inside the outer, the union of the two *is* the outer, and nothing leaves any

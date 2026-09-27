@@ -1028,7 +1028,7 @@ sides, or compare the raw JSON, before calling two IRs different.
 
 ---
 
-## Next — the open issues, one at a time — **NEXT**
+## Next — the open issues, one at a time — **1–3 DONE 2026-09-26; 5–7 wait on a go**
 
 `docs/status.md` "Next" lists seven, cheapest first. **The first four need no
 model call**: each is downstream of the model, so it is measured against
@@ -1114,6 +1114,58 @@ STANDING RULES:
 - Rubric judgements are pairwise and in-session only.
 - Ask before binding anything docs/status.md leaves open.
 ```
+
+### Outcome — 2026-09-26: issues 1–3 closed offline, issue 4 to the type scale
+
+**Measured, not swept.** All three are downstream of the model, so each was
+built as an offline arm from `a3-result`'s IRs, one change apart and
+cumulative — `OI-01-repairs`, `OI-02-header`, `OI-03-echo` — and ratcheted
+against `a3-result`. The control was proved first: 15 of 15 re-render
+byte-identical, 0 differing score fields, and `tools/remeasure_style.py`
+reproduces all fifteen byte for byte. **Each gate was agreed with Alessandro
+before any code.** Every rule also runs inside a replayed Conversion test.
+
+| issue | clause | result |
+|---|---|---|
+| 1 | `statement_0006` caveats 43 → 3, one naming rows 0–40 | yes |
+| 1 | the other 14 documents byte-identical | 14 of 14 |
+| 1 | `statement_0006`: only `output_height` / `height_ratio` move | **not met as written** — `output_ink`, `ink_delta` (0.419 → 0.199) and `output_texture` moved too, because T5 samples the whole screenshot and the findings panel is in it. All toward the source. |
+| 2 | `header_fill` on exactly four Zones — `nonlatin_0014` z4 (28,79,124), `statement_0006` z3 (22,32,43), `invoice_0001` z4, z5 (238,238,238) | yes, each the colour its source CSS declares |
+| 2 | fill, title bar and border unchanged on every Zone of fifteen | yes — the IRs differ by the new key alone |
+| 2 | the other 12 identical outside the IR, and inside it by `"header_fill": null` alone | 12 of 12 |
+| 3 | `darkdeck_0009` z2 loses its Title and keeps its four-cell header row; `AVAILABILITY` printed twice, as in the source | yes; precision 0.996 → 1.000 |
+| 3 | the other 14 byte-identical | 14 of 14 |
+| all | ratchet vs `a3-result`, four legs, fifteen | holds after each change |
+| all | visual review, `--previous` the control | 3 `better` — `darkdeck_0009`, `nonlatin_0014`, `statement_0006` — 12 `same`, no `worse` |
+| all | tests, mypy | 825 pass, clean |
+
+**What the measurements corrected before any code:**
+
+- **Issue 3 was never across Zones.** One print of the floor's IR shows Zone
+  2's Title is the first cell of Zone 2's own header row. The grid veto,
+  `CaptionBand.aligns_to_grid`, missed it by one column: the letter-spaced
+  labels split at their word gaps into 7 against the values' 6. Widening the
+  veto changes the crop the Kind question sees, which is model time; the
+  extracted header row is the better evidence, so the rule sits in the wire.
+- **Issue 2's stage could not have fired where it was.** `_measure_chrome`
+  ran before `_extract`, when no Zone has rows. It now runs after, which is
+  safe because nothing between reads what it sets — proved by the re-measure
+  reproducing the floor.
+- **Issue 2 reaches `statement_0006` too**, with the identical fault, and the
+  rule reads `rows[0]` only: `sample_table_0003`'s header came back as its
+  last row and `menu_0012`'s header rows are section headings mid-table.
+- **Issue 4 has no fix short of the type scale.** `invoice_0002`'s company
+  block is one 75px band of ink, so nothing in the Zone can size the bold
+  line, and 11 of the 16 heading Blocks are alone in their Zone.
+
+**Found by the review, unowned:** `menu_0012`'s section headings all stack in
+one `<thead>` above the first dish, because `render._table` groups every
+`header` row there; and `statement_0006`'s header was read one empty cell
+wide, which leaves an empty seventh column. Both are in `docs/status.md`,
+"Next".
+
+**The floor did not move.** Freezing the combined arm as the next floor is
+Alessandro's call.
 
 ---
 

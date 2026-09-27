@@ -158,8 +158,10 @@ picture has not done the job.
 - `owner` — who fixes it. Pick from: `A-1`, `A0`, `A1`, `A2`, `A3`, `2/B`,
   `3/C`, `4/D`, or `new` when nothing owns it yet. Current assignments:
   doubled titles and content loss → `A0`; column collapse and alignment →
-  `A2`; figures as placeholders → `A3`; the type scale → `2/B`; repeated
-  caveat lines → `A-1`.
+  `A2`; heading and label sizes, including a bold body line drawn as `h1` →
+  the type scale, `2/B`. Figures are drawn from their pixels since A3 and
+  repeated caveat lines are one line since 2026-09-26, so either one coming
+  back is a regression, not a scheduled fault.
 
 `owner` is what turns a list of complaints into work: it separates *fix now*
 from *already scheduled* from *nobody knew about this*.
@@ -207,8 +209,7 @@ Then report in the conversation, and nowhere else:
   stamped with its run and date for this reason.
 - **No scores out of ten.** The output is observations, not a grade.
 - **Do not report the deliberately deferred as new faults**: column collapse,
-  the type scale, `Zone.align`, and figures rendered as placeholders. Record
-  them with their owner and move on.
+  the type scale and `Zone.align`. Record them with their owner and move on.
 - **The rubric is provisional.** Seven axes with a handful of passes behind
   them. `--check` reports which never fired so it can be cut down later. Do
   not treat the current seven as settled.

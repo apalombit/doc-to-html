@@ -89,21 +89,27 @@ Phase A3    Figure pixels                   DONE 2026-09-26, gate MET
               a FIGURE Zone carries its crop (Zone.pixels) and is drawn; what
               was read off it is alt text. invoice_0002's ACME tile split out
               by detector.without_overreaching_pictures. figures_lost 2 -> 0
-Open issues One at a time, cheapest first — docs/status.md "Next"  <- next
+Open issues 1-3 DONE 2026-09-26, offline, ratchet holds 15 of 15
+              caveat lines aggregated, header-row fills measured, the
+              AVAILABILITY Title echo dropped; issue 4 went to the type scale
+            5-7 cost model time, each waits on a go          <- next
 Thread 3/C  Repair loop (re-scoped against A+B residuals first)
 Thread 4/D  Human corrections (unscheduled)
 ```
 
 **2/B ran before A0** and closed on 2026-09-22; **A0 closed the same day;
 A1 closed 2026-09-25 with its gate NOT met; A2 closed the same day with its
-gate met; A3 closed 2026-09-26 with its gate met** — see `docs/status.md`,
-"What the last phase shipped".
+gate met; A3 closed 2026-09-26 with its gate met; open issues 1–3 closed
+offline the same day and the floor did not move** — see `docs/status.md`,
+"What the last step shipped".
 `docs/status.md` indexes what each shipped and where every measurement lives.
 **The ratchet's floor is `tests/frozen/a3-result/` since 2026-09-26**, moved
 there from `a2-result/` at A3's close — see `docs/status.md`, "The floor".
 
 `docs/specs/0007-handover.md` holds a ready prompt per thread and the full
-scope of Phase A-1. **"Next — the open issues" is the next one to use.**
+scope of Phase A-1. **Its "Next — the open issues" prompt is used through
+issue 4**; issues 5–7 move a crop or ask the model, and each waits on
+Alessandro's go.
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
 this section.** It says what is done, what the last checkpoint showed, what is
@@ -295,14 +301,16 @@ top: a Zone carrying a Title must **not** also carry a Block repeating it.
 `wire._without_title_echo` enforces it, and the corpus went **34 echoes to 0**
 on 2026-09-22.
 
-**That rule is about one Zone, and the across-Zone case is open.** Two Zones
-that each read the same printed line still print it twice, because the rule
-compares a Block against *its own* Zone's Title and has nothing to say about a
-neighbour. `darkdeck_0009` prints a caption `AVAILABILITY` above a table whose
-first column header is `AVAILABILITY`. Nothing owns it — see `docs/status.md`.
-`menu_0012`'s `To begin` was the other example, and it turned out to be a Zone
-lying wholly inside another: **A2 closed it in the detector**, with
-`without_enclosed`, not in the wire.
+**That rule is about one Zone, and no across-Zone echo is measured on the
+floor.** Both examples once filed as across-Zone turned out not to be.
+`menu_0012`'s `To begin` was a Zone lying wholly inside another: **A2 closed
+it in the detector**, with `without_enclosed`. `darkdeck_0009`'s
+`AVAILABILITY` was one Zone all along — the caption pass lifted the first cell
+of Zone 2's own header row into its Title — and
+`wire._title_is_its_header_cell` drops that Title and keeps the row,
+2026-09-26. Over `a3-result`'s 47 titled Zones, the only Title spelled
+anywhere in another Zone is `AVAILABILITY` in Zone 9's column header, which
+the source prints too.
 
 ### What must not be deleted
 
@@ -660,6 +668,17 @@ prompt) were closed by Thread 0. Specs 0001–0006 are closed history.
   12. The same trap sprang on the comparison: reading the floor's IR back
   through today's `Document` adds the field to the floor too, so strip it
   from both sides or compare the raw JSON.
+
+- **A fault's description is a claim, and the IR can refute it.** Open issue
+  3 was filed, briefed and handed over as an *across-Zone* echo — two Zones
+  reading one printed line — and scoped around a rule `_without_title_echo`
+  could not reach. One print of the floor's IR showed a single Zone whose
+  Title was its own header row's first cell. **Read the IR before scoping a
+  fix to the description.** The same session's gate clause said only
+  `height_ratio` would move when a findings panel shrank, and three palette
+  fields moved too: the projection excludes the panel, and T5 samples the
+  whole screenshot. **Before predicting which fields move, know what each
+  axis samples.**
 
 - **A guard can be right and still create the fault it looks like.** A0's
   heading guard stopped `attach_trailing_rows` swallowing headings, which

@@ -1,15 +1,15 @@
-# Status — 2026-09-26 (A3 closed, gate MET; **the open issues next**)
+# Status — 2026-09-27 (open issues 1–3 closed offline; **5–7 wait on a go**)
 
 **Live document.** This is where the project actually is. When it goes stale,
-rewrite it; do not add a banner and leave it. Last rewritten 2026-09-26, at
-A3's close, when the floor moved to `a3-result`.
+rewrite it; do not add a banner and leave it. Last rewritten 2026-09-27, when
+open issues 1–3 closed and issue 4 went to the type scale.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file. If you are going to look at output — and you
 should — use the **`visual-review` skill**.
 
-Branch `scaffold`. **809 tests pass, `mypy src/` clean.**
+Branch `scaffold`. **825 tests pass, `mypy src/` clean.**
 
 ---
 
@@ -23,7 +23,8 @@ Phase A0    Stop the bleeding                   DONE 2026-09-22, gate MET
 Phase A1    Inline runs, and hard line breaks   DONE 2026-09-25, gate NOT met
 Phase A2    Geometry — re-scoped                DONE 2026-09-25, gate MET
 Phase A3    Figure pixels                       DONE 2026-09-26, gate MET
-Open issues One at a time, cheapest first                          <- next
+Open issues 1-3 DONE 2026-09-26 offline; 4 -> the type scale
+            5-7 cost model time and wait on a go                  <- next
 Thread 3/C  Repair loop (re-scoped first)
 Thread 4/D  Human corrections (unscheduled)
 ```
@@ -121,48 +122,53 @@ Everything else is at 0.961 or better.
 
 ---
 
-## What the last phase shipped
+## What the last step shipped
 
-### Phase A3 — gate MET, 8 of 8, sweep `A3-10-figure-pixels-sweep`
+### Open issues 1–3 — 2026-09-26, offline, one change apart
 
-The record is [`specs/0007-handover.md`](specs/0007-handover.md), "Phase A3",
-section "Outcome".
+Each was measured against `a3-result` with no model call: the floor's IRs
+re-derived through the changed code and re-rendered. The ratchet holds on all
+four legs for all fifteen after each change. Visual review of the three
+together against the control: 3 `better`, 12 `same`, no `worse`. The record
+is [`specs/0007-handover.md`](specs/0007-handover.md), "Next", section
+"Outcome". **Every rule is also proven inside a replayed Conversion.**
 
 | change | what it fixes |
 |---|---|
-| `Zone.pixels`, `preprocess.figure_pixels` | a FIGURE Zone carries its own crop as a base64 PNG — the unpadded box on `Rectified.plain`, turned back over on a dark page. Embedded, decided on entry: a file beside the document would not survive the copy into `tests/frozen/`. |
-| `Conversion._draw_figures` | fills it after `_classify`, every round |
-| `render._figure` draws an `<img>` | `invoice_0001`'s logo and `receipt_0010`'s barcode drawn instead of dashed placeholders. What was read off a Graphic goes to `alt`, so `sparksuite` and `logo` leave the page; precision 1.000 on both. Styling is inline, so no other document's bytes move. |
-| `detector.without_overreaching_pictures` | `invoice_0002`'s ACME tile was swallowed by `outermost` into a larger `picture` round the tile and its address. A `picture` holding a higher-scored `picture` *and* ink outside it is dropped first: 2,243 px outside on `invoice_0002`, exactly 0 on the only two other candidates. Changes one box on one document; tau 0.849 → 1.000, beside 0.640 → 0.854. |
+| `wire.table_repairs` names rows repaired the same way in one sentence | `statement_0006`'s caveat panel, 43 lines → 3, so the statement starts on the first screen. A one-row repair keeps its old wording. |
+| `Zone.header_fill`, measured by `style.chrome` on the band `preprocess.header_band` finds under a row named `RowRole.header`; `_measure_chrome` now runs **after** `_extract` | header rows drawn in the source's fill — `nonlatin_0014` white on `#1c4f7c`, `statement_0006` on `#16202b`, `invoice_0001` `#eee`. Before `_extract` no Zone has rows, so the stage could not have fired where it was. |
+| `wire._title_is_its_header_cell` — a table's Title that spells the first cell of its own multi-cell header row is dropped, the row kept | `darkdeck_0009` printed `AVAILABILITY` as a caption directly above the same word as the metric row's first label. 1 of 47 titled Zones. |
 
-Clause 4 was restated before the sweep, with evidence, and put to Alessandro:
-a new `Zone` field puts `"pixels": null` in every IR, so the twelve untouched
-documents are byte-identical *outside* the embedded IR and differ inside it by
-that key alone. 12 of 12. Visual review: 3 `better`, 12 `same`, no `worse`.
+**Two corrections this made to what the docs said.**
+
+- **The `AVAILABILITY` echo was never across Zones.** It is Zone 2's own
+  Title, lifted by the caption pass off the first cell of Zone 2's own header
+  row; `CaptionBand.aligns_to_grid` missed it by counting the letter-spaced
+  labels as 7 columns against the values' 6. The only word a titled Zone of
+  the floor shares with another Zone is Zone 9's column header `AVAILABILITY`,
+  which the source prints too. **No across-Zone echo is measured on the
+  floor** — `menu_0012`'s `To begin` was an enclosed Zone, closed in A2.
+- **T5 samples the whole screenshot, findings panel included**, although the
+  projection excludes the panel. Shortening `statement_0006`'s panel moved its
+  `output_ink` and `ink_delta` (0.419 → 0.199) as well as its height — a gate
+  clause predicting only the height was wrong as written.
+
+**The floor stays `a3-result`.** The three changes are downstream of the
+model, so a sweep would reproduce the offline arm; freezing that arm as the
+new floor has not been decided.
 
 ---
 
-## Next — the open issues, one at a time
+## Next — one at a time
 
-**The ready prompt is in [`specs/0007-handover.md`](specs/0007-handover.md),
-"Next — the open issues".** Ordered cheapest first: the first four need no
-model call and are measured against `a3-result` offline.
+**Issue 4, `invoice_0002`'s `Acme Corporation`, went to the type scale.** Its
+four lines are one 75px band of ink, so nothing inside its Zone can size the
+bold line, and 11 of the corpus's 16 heading Blocks are the only line in their
+Zone — any rule needs the page-wide body size that `style.py` records as
+unsafe. See "Deferred deliberately".
 
-1. **`statement_0006`'s 41 near-identical caveat lines** should aggregate to
-   one. Ours, from A-1. Renderer / findings only.
-2. **`nonlatin_0014`'s dark-blue table header row** renders on white. Do not
-   build a third detector; point `chrome()`'s title-band measurement at the row
-   `RowRole.header` already names.
-3. **The across-Zone echo.** `darkdeck_0009` prints a caption `AVAILABILITY`
-   above a table whose first column header is `AVAILABILITY`. The two Zones do
-   not overlap, and `_without_title_echo` compares a Block against its own
-   Zone's Title only.
-4. **`invoice_0002`'s `Acme Corporation`, new at A3.** The narrowed crop reads
-   the bold line as a `heading` block and the render draws every heading block
-   as `h1`, so it is now the largest text in the header band, above
-   `Invoice With Credit`. The source prints it at body size. Sizing a heading
-   from its own ink is the deferred type scale (2/B) — say so if the fix goes
-   there.
+**Issues 5–7 cost model time — each waits on Alessandro's go.**
+
 5. **`receipt_0010`'s untested lead** — the worst document in the corpus.
    `preprocess.resize_long_edge` never enlarges, and this page rectifies to
    **335×547**, so the extractor sees ~300px across 19 lines of monospace.
@@ -174,6 +180,19 @@ model call and are measured against `a3-result` offline.
 7. **`invoice_0001`'s `Invoice` / `#: 123`** — a Pair label/value boundary the
    Pairs Extractor chooses. **A1's one false mark**, `12345`, worth 0.0029 of
    `join_recall`. Both are model questions.
+
+**Found by this step's visual review, and unowned — no model call needed:**
+
+- **`menu_0012`'s section headings all stack at the top of its table.**
+  `render._table` gathers every `header` row into one `<thead>`, so `From the
+  grill`, `Main courses` and `Puddings` sit together above the first dish and
+  no dish is under its own section. The IR has them in the right places. A
+  fix must keep `sample_table_0003`, whose header came back as its *last* row
+  and reaches the top only because of that grouping.
+- **`statement_0006`'s header was read one empty cell wide**, so an empty
+  seventh column trails the transactions table and every row is padded. A
+  header's trailing empty cell that no data row reaches would be a new wire
+  net; it was kept out of issue 1 by decision.
 
 **Not in the list, deliberately:** `catalogue_0015`'s undeclared loss (no
 third detector), and raising A1's clause 1, whose cheapest lever — measuring
@@ -226,8 +245,11 @@ All in [`specs/0007-a2-measurements.md`](specs/0007-a2-measurements.md).
 ## Deferred deliberately — not new faults
 
 - **The type scale** waits for its own increment, gated on `height_ratio`
-  directly rather than on agreement with the CSS size. Open issue 4 may be the
-  first thing it fixes.
+  directly rather than on agreement with the CSS size. **Open issue 4 is the
+  first thing it fixes**, and the review names more of the same: a small
+  letter-spaced label drawn as the page's largest text on `catalogue_0015`
+  and `darkdeck_0009`, and bold body-size lines drawn as `h1` on `cv_0013`
+  and `newsletter_0008` — every heading Block is an `h1` at 1.6em.
 - **Thread 3/C** stays gated on its re-scoping classification. The conversion
   is deterministic, so a loop re-reading the same crop gets the identical wrong
   answer back.
