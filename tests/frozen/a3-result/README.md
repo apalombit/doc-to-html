@@ -64,6 +64,21 @@ measured against this directory offline, one change apart, in about fifty
 seconds, with no model. **Re-derive before you rely on it**: a change to
 `render.py` since this commit is the first reason it would not reproduce.
 
+**Since 2026-09-26 (`07ad13f`) a plain re-render no longer reproduces it, and
+the documents are older than the code.** `Zone.header_fill` puts
+`"header_fill":null` into every embedded IR, so a re-render differs from all
+fifteen by that key alone — remove it and all fifteen are identical. And open
+issues 1–3 changed what the code makes of the same model answers. **The
+baseline for a change one apart from today's code is**
+
+```
+python tools/rederive.py tests/frozen/a3-result --label <label>
+```
+
+which re-applies every step downstream of the model to these IRs and
+reproduced, byte for byte on all fifteen, the arm issues 1–3 were gated on.
+The scores here stay the floor; they were never re-derived.
+
 **And it confirms what the offline work predicted.** 14 of the 15 documents
 are byte-identical to the prediction made from `a2-result/`'s IRs with the
 figure pixels attached; every model answer outside `invoice_0002` is identical

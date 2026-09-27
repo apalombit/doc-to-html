@@ -92,7 +92,9 @@ Phase A3    Figure pixels                   DONE 2026-09-26, gate MET
 Open issues 1-3 DONE 2026-09-26, offline, ratchet holds 15 of 15
               caveat lines aggregated, header-row fills measured, the
               AVAILABILITY Title echo dropped; issue 4 went to the type scale
-            5-7 cost model time, each waits on a go          <- next
+Queue       Q1-Q7 in docs/status.md "Next", in order, go given 2026-09-27
+              model-free first (menu thead, empty header cell, type scale,
+              Thread 0's seam), then the three that cost model time  <- next
 Thread 3/C  Repair loop (re-scoped against A+B residuals first)
 Thread 4/D  Human corrections (unscheduled)
 ```
@@ -100,16 +102,14 @@ Thread 4/D  Human corrections (unscheduled)
 **2/B ran before A0** and closed on 2026-09-22; **A0 closed the same day;
 A1 closed 2026-09-25 with its gate NOT met; A2 closed the same day with its
 gate met; A3 closed 2026-09-26 with its gate met; open issues 1–3 closed
-offline the same day and the floor did not move** — see `docs/status.md`,
-"What the last step shipped".
+offline the same day, and on 2026-09-27 the floor was kept at `a3-result`**
+— see `docs/status.md`, "What the last step shipped".
 `docs/status.md` indexes what each shipped and where every measurement lives.
 **The ratchet's floor is `tests/frozen/a3-result/` since 2026-09-26**, moved
 there from `a2-result/` at A3's close — see `docs/status.md`, "The floor".
 
 `docs/specs/0007-handover.md` holds a ready prompt per thread and the full
-scope of Phase A-1. **Its "Next — the open issues" prompt is used through
-issue 4**; issues 5–7 move a crop or ask the model, and each waits on
-Alessandro's go.
+scope of Phase A-1. **"The open-issues queue" is the next one to use.**
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
 this section.** It says what is done, what the last checkpoint showed, what is
@@ -267,13 +267,16 @@ the old on any ratcheted leg of any of the fifteen documents, and Alessandro
 took the decision each time.
 
 **A directory holding documents beside scores buys a loop, not a number.**
-Scored straight out of `a3-result/`, **15 documents, 0 differing fields**, and
-re-rendering its IRs through the shipping `render()` returns all fifteen
-byte-identical — figures included, since the IR carries their pixels. So a
-change downstream of the model is measured against it pairwise, one change
-apart, in about fifty seconds, with no model. Phases A2 and A3 measured every
-prototype they tried that way before spending a sweep. It is not a
-target to match.
+Scored straight out of `a3-result/`, **15 documents, 0 differing fields**. Its
+IRs are older than today's code, though: **`tools/rederive.py` brings them up
+to it** — re-applying every step downstream of the model — and that, not a
+plain re-render, is the baseline a change is measured one apart from. It
+reproduced the gated arm of open issues 1–3 byte for byte on all fifteen. So a
+change downstream of the model is measured pairwise, in about a minute, with
+no model. Phases A2 and A3 measured every prototype they tried that way before
+spending a sweep. **Any new downstream step that writes the IR must be added
+to `rederive.py`**, or the loop measures yesterday's code. It is not a target
+to match.
 
 **A floor is not a result to quote in an argument** — the distinction the rest
 of this section is about.

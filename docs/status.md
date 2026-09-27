@@ -1,8 +1,8 @@
-# Status — 2026-09-27 (open issues 1–3 closed offline; **5–7 wait on a go**)
+# Status — 2026-09-27 (open issues 1–3 closed; **the open-issues queue next**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-09-27, when
-open issues 1–3 closed and issue 4 went to the type scale.
+open issues 1–3 closed, the floor was kept, and the rest were queued.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
@@ -24,7 +24,7 @@ Phase A1    Inline runs, and hard line breaks   DONE 2026-09-25, gate NOT met
 Phase A2    Geometry — re-scoped                DONE 2026-09-25, gate MET
 Phase A3    Figure pixels                       DONE 2026-09-26, gate MET
 Open issues 1-3 DONE 2026-09-26 offline; 4 -> the type scale
-            5-7 cost model time and wait on a go                  <- next
+Queue       Q1-Q7, in order, go given 2026-09-27                   <- next
 Thread 3/C  Repair loop (re-scoped first)
 Thread 4/D  Human corrections (unscheduled)
 ```
@@ -46,10 +46,16 @@ dominates it per document on every ratcheted leg — rises on 2 (precision),
 1 (tau) and 1 (beside), falls on none — and the set of source words not
 printed is identical on all fifteen.
 
-**It is also the control.** Scored straight out of the directory, **0
-differing fields**; re-rendering its IRs through `render()` gives **15 of 15
-byte-identical**, figures included, because the IR now carries their pixels.
-Its README has the recipe.
+**The floor stays here — decided 2026-09-27.** Open issues 1–3 hold against
+it on all four legs for all fifteen, and were not frozen as a new floor.
+
+**Its scores are the ratchet; its IRs are older than the code.** Scored
+straight out of the directory, **0 differing fields**. A plain re-render no
+longer reproduces its documents — `"header_fill":null` is in every IR now, and
+issues 1–3 changed what the code makes of the same answers. **The baseline
+for any change is `python tools/rederive.py tests/frozen/a3-result --label
+<label>`**, which reproduced the arm issues 1–3 were gated on byte for byte on
+all fifteen. Its README has the rest.
 
 ### What the ratchet enforces, per document
 
@@ -153,48 +159,73 @@ is [`specs/0007-handover.md`](specs/0007-handover.md), "Next", section
   `output_ink` and `ink_delta` (0.419 → 0.199) as well as its height — a gate
   clause predicting only the height was wrong as written.
 
-**The floor stays `a3-result`.** The three changes are downstream of the
-model, so a sweep would reproduce the offline arm; freezing that arm as the
-new floor has not been decided.
+**The floor stays `a3-result` — decided 2026-09-27.** The three changes are
+downstream of the model, so a sweep would reproduce the offline arm, and
+`tools/rederive.py` rebuilds that arm from the floor on demand.
 
 ---
 
-## Next — one at a time
+## Next — the open-issues queue, in order — **go given 2026-09-27**
 
-**Issue 4, `invoice_0002`'s `Acme Corporation`, went to the type scale.** Its
-four lines are one 75px band of ink, so nothing inside its Zone can size the
-bold line, and 11 of the corpus's 16 heading Blocks are the only line in their
-Zone — any rule needs the page-wide body size that `style.py` records as
-unsafe. See "Deferred deliberately".
+**Alessandro's plan, 2026-09-27: work every open issue, one at a time, in
+this order, in a fresh session.** The ready prompt is
+[`specs/0007-handover.md`](specs/0007-handover.md), "The open-issues queue".
+Model-free first, cheapest first; the three that cost model time last. **Each
+gate is still agreed with Alessandro before any code.**
 
-**Issues 5–7 cost model time — each waits on Alessandro's go.**
+**Q1. `menu_0012`'s section headings stack in one `<thead>`.** Model-free,
+renderer. `render._table` gathers every `header` row into `<thead>`, so `From
+the grill`, `Main courses` and `Puddings` sit together above the first dish;
+the IR has them at rows 7, 12 and 19, in the right places. Measured on
+`a3-result`: only two tables have a `header` row after row 0 — `menu_0012` z1
+and `sample_table_0003` z1, whose **only** header came back as its **last** row
+(15) and is on top today only because of the grouping. A fix must keep it
+there.
 
-5. **`receipt_0010`'s untested lead** — the worst document in the corpus.
-   `preprocess.resize_long_edge` never enlarges, and this page rectifies to
-   **335×547**, so the extractor sees ~300px across 19 lines of monospace.
-   ~6 minutes to probe; a change moves crops and costs a sweep.
-6. **`nonlatin_0014`'s overlapping Zones** — left open by decision in A2. Its
-   full-width Zone is 0.70 over the top-right pairs box and re-reads three of
-   its four pairs; the outside part holds `ΤΠΥ = 2026/0417`, so dropping
-   either box loses it. Cutting a box changes a crop and costs a sweep.
-7. **`invoice_0001`'s `Invoice` / `#: 123`** — a Pair label/value boundary the
-   Pairs Extractor chooses. **A1's one false mark**, `12345`, worth 0.0029 of
-   `join_recall`. Both are model questions.
+**Q2. `statement_0006`'s header was read one empty cell wide.** Model-free,
+wire. Every one of its 41 rows is padded to seven cells and an empty column
+trails the table. Measured: nine tables end their header in empty cells, but
+only two have a header wider than any data row that was read —
+`statement_0006` z3 (7 against 6) and `receipt_0010` z1 (20 cells, 19 empty,
+no data row at all). `catalogue_0015`'s six have data rows read to the
+header's width. A new wire net needs a replayed Conversion test, and `wire.py`'s
+three row nets stay.
 
-**Found by this step's visual review, and unowned — no model call needed:**
+**Q3. The type scale — 2/B's deferred increment, carrying open issue 4.**
+Model-free, but its own increment, gated on `height_ratio` directly. Every
+heading Block renders as an `h1` at 1.6em: `invoice_0002`'s bold body-size
+`Acme Corporation` is the page's largest text, and the review names the same
+on `catalogue_0015`, `darkdeck_0009`, `cv_0013` and `newsletter_0008`.
+`style.py`'s module docstring holds the numbers that deferred it —
+`catalogue_0015` estimates 2.40x — and `invoice_0002`'s company block is one
+75px band of ink, so a within-Zone rule cannot size it.
 
-- **`menu_0012`'s section headings all stack at the top of its table.**
-  `render._table` gathers every `header` row into one `<thead>`, so `From the
-  grill`, `Main courses` and `Puddings` sit together above the first dish and
-  no dish is under its own section. The IR has them in the right places. A
-  fix must keep `sample_table_0003`, whose header came back as its *last* row
-  and reaches the top only because of that grouping.
-- **`statement_0006`'s header was read one empty cell wide**, so an empty
-  seventh column trails the transactions table and every row is padded. A
-  header's trailing empty cell that no data row reaches would be a new wire
-  net; it was kept out of issue 1 by decision.
+**Q4. Thread 0's leftover seam.** No output change. `OllamaEngine.detect_zones`
+and `LAYOUT_PROMPT` are unreachable from a Conversion and survive only as what
+nine test modules' layout stage replays against. Bookkeeping, not a
+measurement question: fifteen of fifteen render unchanged, tests pass.
 
-**Not in the list, deliberately:** `catalogue_0015`'s undeclared loss (no
+**Q5. `receipt_0010`'s untested lead** — the worst document in the corpus.
+Model time. `preprocess.resize_long_edge` never enlarges, and this page
+rectifies to **335×547**, so the extractor sees ~300px across 19 lines of
+monospace. ~6 minutes to probe; a change moves crops and costs a sweep.
+
+**Q6. `nonlatin_0014`'s overlapping Zones** — left open by decision in A2.
+Model time. Its full-width Zone is 0.70 over the top-right pairs box and
+re-reads three of its four pairs; the outside part holds `ΤΠΥ = 2026/0417`,
+so dropping either box loses it. Cutting a box changes a crop.
+
+**Q7. `invoice_0001`'s `Invoice` / `#: 123`, and A1's false mark.** Model
+time. A Pair label/value boundary the Pairs Extractor chooses, and A1's one
+false mark, `12345`, worth 0.0029 of `join_recall`. Both are model questions.
+
+**Q5–Q7 touch three different documents**, so whether they share one sweep —
+as A3's two changes did — is decided on entry, with Alessandro.
+
+**After the queue:** the floor decision, then Thread 3/C's re-scoping gate.
+Thread 4/D stays unscheduled.
+
+**Not in the queue, deliberately:** `catalogue_0015`'s undeclared loss (no
 third detector), and raising A1's clause 1, whose cheapest lever — measuring
 weight and monospace off the pixels — needs word-level ink segmentation the
 project does not have.
@@ -244,12 +275,9 @@ All in [`specs/0007-a2-measurements.md`](specs/0007-a2-measurements.md).
 
 ## Deferred deliberately — not new faults
 
-- **The type scale** waits for its own increment, gated on `height_ratio`
-  directly rather than on agreement with the CSS size. **Open issue 4 is the
-  first thing it fixes**, and the review names more of the same: a small
-  letter-spaced label drawn as the page's largest text on `catalogue_0015`
-  and `darkdeck_0009`, and bold body-size lines drawn as `h1` on `cv_0013`
-  and `newsletter_0008` — every heading Block is an `h1` at 1.6em.
+- **The type scale is no longer deferred — it is Q3 of the queue**, gated on
+  `height_ratio` directly rather than on agreement with the CSS size. Until it
+  ships, a heading drawn at the wrong size is its fault, not a new one.
 - **Thread 3/C** stays gated on its re-scoping classification. The conversion
   is deterministic, so a loop re-reading the same crop gets the identical wrong
   answer back.
@@ -273,11 +301,12 @@ python tools/visual_review.py debug/runs/<label> --check
 **Three offline loops, each proved before it was used. Say which produced any
 number you report.**
 
-- **Downstream of the model** — renderer, style, wire. Re-render
-  `tests/frozen/a3-result/`'s IRs and score them; `tools/remeasure_style.py`
-  does the pixel-measured fields. Cannot move anything the model decided. To
-  review it visually, copy `a3-result/documents/` into a run directory and pass
-  that as `--previous`.
+- **Downstream of the model** — renderer, style, wire. `tools/rederive.py
+  tests/frozen/a3-result --label <base>` builds today's baseline; build the
+  changed arm the same way with the change in place, score both, and pass the
+  baseline as `--previous` to the visual review. **A new downstream step that
+  writes the IR must be added to `rederive.py`.** Cannot move anything the
+  model decided.
 - **Recorded answers through the shipping mapper** — validated to four decimal
   places on 2026-09-22. Make it reproduce the floor first, every time.
 - **The layout stage** — detector, `_cover_the_page`, snap — is all CV and runs
