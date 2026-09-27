@@ -25,7 +25,9 @@ from .config import Settings, load
 from .engines.base import LayoutEngine, VisionEngine
 from .engines.ollama import OllamaEngine
 from .extractors import for_kind, resolution_caveat
-from .ir import Caveat, Document, Failure, Gap, Kind, Role, Shortfall, Zone
+from .ir import (
+    Caveat, Document, Failure, Gap, Kind, Role, RowRole, Shortfall, Zone,
+)
 from .preprocess import (
     LAYOUT_LONG_EDGE,
     MIN_ZONE_INK,
@@ -41,6 +43,7 @@ from .preprocess import (
     count_regions,
     crop_row_as_fraction,
     figure_pixels,
+    header_band,
     ink_fraction,
     ink_share,
     printed_lines,
@@ -767,13 +770,15 @@ class Conversion:
         for round_number in range(MAX_ROUNDS):
             self._layout(rectified, document)
             self._classify(rectified, document)
-            # After `_classify`, not before it: the caption pass is what sets
-            # `Zone.title`, and a Title is how `_measure_chrome` knows how many
-            # of a region's first rows a bar could occupy. Running it first
-            # made `title_rows` zero on every Zone of every document.
-            self._measure_chrome(rectified, document)
             self._draw_figures(rectified, document)
             self._extract(rectified, document)
+            # After `_extract`, and so after `_classify`. The caption pass sets
+            # `Zone.title`, which says how many of a region's first rows a
+            # title bar could occupy; the extraction sets the rows, and a row
+            # named `header` is where a header bar is looked for. Before
+            # either, the stage measures a bar nothing has named — which is
+            # how `title_fill` came to be set on none of 119 Zones.
+            self._measure_chrome(rectified, document)
 
             document.probes = probe_module.run(document)
             for probe in document.probes:
@@ -905,10 +910,19 @@ class Conversion:
         nothing between the two reads `fill`, `title_fill` or `boxed`. So the
         answers are unchanged and the effect is measurable offline.
 
+        **It runs after `_extract` too, since 2026-09-26, for the same reason
+        one stage later.** A table's header bar is looked for on the row
+        `RowRole.header` names, and no Zone has rows until it is extracted.
+        Nothing in `_draw_figures` or `_extract` reads what this sets, and
+        re-measuring chrome off `tests/frozen/a3-result/`'s *extracted* IRs
+        reproduced all fifteen documents byte for byte — so the move changes
+        no fill, title bar or border anywhere in the corpus.
+
         `title_rows` comes from `caption_band`, which already measures a crop's
         first printed line for the caption pass. Nothing new is asked of the
         pixels; the same band that decides whether to *ask* for a Title decides
-        how much of the region the bar could occupy.
+        how much of the region the bar could occupy. `header_rows` comes from
+        `header_band`, the next printed line down when the Zone has a Title.
         """
         if not self.style_record or document.style is None:
             return
@@ -927,20 +941,26 @@ class Conversion:
         for index, zone in enumerate(document.zones):
             if zone.bbox is None:
                 continue
-            # The band is measured on the read image and the colour on the
+            # The bands are measured on the read image and the colour on the
             # plain one — the same geometry, so the same crop twice.
-            band = caption_band(zone_pixels(rectified.image, zone))
+            read = zone_pixels(rectified.image, zone)
+            band = caption_band(read)
+            names_a_header = (zone.kind is Kind.TABLE and bool(zone.rows)
+                              and zone.rows[0].role is RowRole.HEADER)
             crop = zone_pixels(plain, zone)
             found = style_module.chrome(
                 crop, ground=document.style.page_bg,
                 inverted=rectified.inverted,
                 title_rows=band.bottom if band is not None and zone.title else 0,
+                header_rows=(header_band(read, titled=bool(zone.title))
+                             if names_a_header else None),
                 bordered=own[index] is not None,
             )
-            zone.fill, zone.title_fill, zone.boxed = (
-                found.fill, found.title_fill, found.bordered
+            zone.fill, zone.title_fill, zone.header_fill, zone.boxed = (
+                found.fill, found.title_fill, found.header_fill, found.bordered
             )
-            if found.fill or found.title_fill or found.bordered:
+            if (found.fill or found.title_fill or found.header_fill
+                    or found.bordered):
                 measured += 1
         self.trace.record(
             Stage.LAYOUT, "zone_chrome", Disposition.ACCEPTED,
@@ -949,7 +969,7 @@ class Conversion:
             rectangles=len(drawn),
             detail=[
                 {"zone": i, "fill": z.fill, "title_fill": z.title_fill,
-                 "boxed": z.boxed}
+                 "header_fill": z.header_fill, "boxed": z.boxed}
                 for i, z in enumerate(document.zones)
             ],
         )

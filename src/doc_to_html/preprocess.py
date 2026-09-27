@@ -728,8 +728,31 @@ def printed_lines(crop: ImageArray) -> int:
     gross shortfall, never as an expected count. `orchestrator.shortfall` is
     where that judgement lives, and it is deliberately coarse.
     """
+    return len(printed_bands(crop))
+
+
+def printed_bands(crop: ImageArray) -> list[tuple[int, int]]:
+    """Each printed line's first and last crop row. See `printed_lines`."""
     mask = _without_vertical_rules(content_ink(crop))
-    return len(ink_bands(mask.sum(axis=1), MIN_ROW_GAP, MIN_BAND))
+    return ink_bands(mask.sum(axis=1), MIN_ROW_GAP, MIN_BAND)
+
+
+def header_band(crop: ImageArray, *, titled: bool) -> tuple[int, int] | None:
+    """The crop rows a table's header row is printed on.
+
+    For a table whose first row `RowRole.header` names, that row is the first
+    printed line — or the second, under a Title, which the caption pass took
+    off the first. The same bands `printed_lines` counts, so a header bar
+    drawn dark is one band of ink with its white type inside it.
+
+    `None` unless something is printed below it, for the reason `caption_band`
+    gives: a header over nothing has no body to be told apart from.
+    """
+    bands = printed_bands(crop)
+    index = 1 if titled else 0
+    if len(bands) < index + 2:
+        return None
+    return bands[index]
 
 
 def ink_share(image: ImageArray, box: BBox) -> float:

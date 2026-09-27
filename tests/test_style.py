@@ -26,11 +26,12 @@ from doc_to_html.ir import (
     Document,
     Kind,
     Row,
+    RowRole,
     Source,
     Style,
     Zone,
 )
-from doc_to_html.preprocess import rectify
+from doc_to_html.preprocess import header_band, rectify
 from doc_to_html.render import render
 from doc_to_html.style import (
     MIN_ACCENT_SHARE,
@@ -684,3 +685,116 @@ class TestReservingRoomForWideContent:
                           rows=[Row(cells=[Cell() for _ in range(20)])])]
 
         assert "min-width:min(120rem,100%)" in render(doc)
+
+
+class TestATableHeaderRowKeepsItsFill:
+    """A header row the source fills is drawn filled, in the source's colour.
+
+    `nonlatin_0014` prints its table's header row white on `#1c4f7c` and
+    `statement_0006` on `#16202b`; both rendered as the house's pale
+    `--shade`. Nothing was wrong with the reading — the rows were right and
+    `RowRole.header` named the row. Nothing measured its colour.
+
+    **The title bar's measurement, pointed at the header row.** Same test —
+    a band's fill counts only where it differs from what is under it — on the
+    printed line `RowRole.header` names: the crop's first, or its second under
+    a Title. Measured on `tests/frozen/a3-result/` it sets exactly four Zones,
+    each the colour its source CSS declares: `nonlatin_0014` (28,79,124),
+    `statement_0006` (22,32,43), and `invoice_0001`'s two tables (238,238,238).
+    """
+
+    DARK = (28, 79, 124)
+    WHITE = (255, 255, 255)
+
+    def table(self, *, titled: bool, bar: tuple[int, int, int] | None,
+              body: tuple[int, int, int] | None = None) -> np.ndarray:
+        """A header line, optionally on a bar, over three lines of type."""
+        image = sheet(400, 160, ground=self.WHITE)
+        if body is not None:
+            image[:, :] = body[::-1]
+        top = 0
+        if titled:
+            write_text(image, [(4, 10, 200)])
+            top = 24
+        if bar is not None:
+            image[top:top + 22, :] = bar[::-1]
+            image[top + 8:top + 14, 10:120] = (255, 255, 255)
+        else:
+            write_text(image, [(top + 8, 10, 120)])
+        write_text(image, [(top + 40, 10, 300), (top + 60, 10, 300),
+                           (top + 80, 10, 300)])
+        return image
+
+    def test_a_dark_header_bar_is_measured(self) -> None:
+        crop = self.table(titled=False, bar=self.DARK)
+
+        found = chrome(crop, ground=self.WHITE,
+                       header_rows=header_band(crop, titled=False))
+
+        assert found.header_fill == self.DARK
+
+    def test_under_a_title_the_header_is_the_second_line(self) -> None:
+        crop = self.table(titled=True, bar=self.DARK)
+        band = header_band(crop, titled=True)
+
+        assert band is not None and band[0] >= 24
+        assert chrome(crop, ground=self.WHITE,
+                      header_rows=band).header_fill == self.DARK
+
+    def test_a_header_on_the_regions_own_fill_is_no_bar(self) -> None:
+        """`darkdeck_0009`'s metric cards: the header line sits on the card's
+        fill, and so does everything under it. A bar only exists where it
+        differs from what is under it."""
+        card = (26, 32, 41)
+        crop = self.table(titled=False, bar=None, body=card)
+
+        found = chrome(crop, ground=(18, 22, 28),
+                       header_rows=header_band(crop, titled=False))
+
+        assert found.fill == card
+        assert found.header_fill is None
+
+    def test_a_plain_header_line_is_no_bar(self) -> None:
+        crop = self.table(titled=False, bar=None)
+
+        assert chrome(crop, ground=self.WHITE,
+                      header_rows=header_band(crop, titled=False)
+                      ).header_fill is None
+
+    def test_no_header_row_is_looked_for_unless_named(self) -> None:
+        crop = self.table(titled=False, bar=self.DARK)
+
+        assert chrome(crop, ground=self.WHITE).header_fill is None
+
+    def test_a_header_needs_something_printed_under_it(self) -> None:
+        """One line is not a header over a body, whatever it is filled with."""
+        crop = sheet(400, 40, ground=self.WHITE)
+        crop[5:27, :] = self.DARK[::-1]
+
+        assert header_band(crop, titled=False) is None
+
+    def test_the_fill_round_trips_as_a_tuple(self) -> None:
+        doc = document()
+        doc.zones = [Zone(kind=Kind.TABLE, header_fill=self.DARK)]
+
+        back = Document.from_json(doc.to_json())
+
+        assert back.zones[0].header_fill == self.DARK
+
+    def test_the_header_is_drawn_on_it_in_legible_ink(self) -> None:
+        doc = document(style=Style(page_bg=self.WHITE, ink=(26, 26, 26),
+                                   accent=None, shade=None))
+        doc.zones = [Zone(kind=Kind.TABLE, header_fill=self.DARK, complete=True,
+                          rows=[Row(role=RowRole.HEADER, cells=[Cell()]),
+                                Row(role=RowRole.DATA, cells=[Cell()])])]
+
+        assert ('<thead style="--shade:rgb(28,79,124);color:rgb(232,232,232)">'
+                in render(doc))
+
+    def test_an_unmeasured_header_renders_exactly_as_before(self) -> None:
+        doc = document()
+        doc.zones = [Zone(kind=Kind.TABLE, complete=True, rows=[
+            Row(role=RowRole.HEADER, cells=[Cell()]),
+        ])]
+
+        assert "<thead><tr>" in render(doc)

@@ -717,31 +717,72 @@ def table_repairs(zone: Zone) -> list[str]:
     Cell has no Reading, and a long row is longer than the header — so this
     reads it back off the answer instead.
 
-    Returns one sentence per repaired row, each naming the row and how much.
-    Empty for a table that needed none, which is the normal case.
+    Returns **one sentence per repair, not per row**: rows repaired the same
+    way — short by the same count, or long at the same width — are named
+    together. `statement_0006`'s header came back one empty cell wider than
+    its 41 rows, and one sentence per row printed that single fact 41 times.
+    A repair to one row keeps the sentence it always had. Empty for a table
+    that needed none, which is the normal case.
     """
     header = next((row for row in zone.rows if row.role is RowRole.HEADER), None)
     if header is None:
         return []
     width = len(header.cells)
-    notes = []
+    # Keyed on what was done, so no sentence claims a shortfall a row did not
+    # have. Dicts keep insertion order, which is the order of each repair's
+    # first row.
+    repairs: dict[tuple[str, int], list[int]] = {}
     for index, row in enumerate(zone.rows):
         if row.role is RowRole.SUMMARY:
             continue
         unread = sum(1 for cell in row.cells if not cell.readings)
         if unread:
+            repairs.setdefault(("short", unread), []).append(index)
+        elif len(row.cells) > width:
+            repairs.setdefault(("long", len(row.cells)), []).append(index)
+
+    notes = []
+    for (repair, count), rows in repairs.items():
+        if len(rows) == 1 and repair == "short":
             notes.append(
-                f"row {index} came back {unread} cell(s) short of the header's "
+                f"row {rows[0]} came back {count} cell(s) short of the header's "
                 f"{width} and was padded rather than discarded — the values it "
                 "does have may sit in the wrong columns"
             )
-        elif len(row.cells) > width:
+        elif len(rows) == 1:
             notes.append(
-                f"row {index} came back with {len(row.cells)} cells against the "
+                f"row {rows[0]} came back with {count} cells against the "
                 f"header's {width} and was kept whole — every value is present, "
                 "and the surplus means some of them may sit in the wrong columns"
             )
+        elif repair == "short":
+            notes.append(
+                f"rows {_runs_of(rows)} ({len(rows)} rows) each came back "
+                f"{count} cell(s) short of the header's {width} and were padded "
+                "rather than discarded — the values they do have may sit in the "
+                "wrong columns"
+            )
+        else:
+            notes.append(
+                f"rows {_runs_of(rows)} ({len(rows)} rows) each came back with "
+                f"{count} cells against the header's {width} and were kept "
+                "whole — every value is present, and the surplus means some of "
+                "them may sit in the wrong columns"
+            )
     return notes
+
+
+def _runs_of(indices: list[int]) -> str:
+    """`[1, 3, 5, 6]` as `1, 3, 5–6`: consecutive indices named as one run."""
+    runs: list[list[int]] = []
+    for index in indices:
+        if runs and index == runs[-1][-1] + 1:
+            runs[-1].append(index)
+        else:
+            runs.append([index])
+    return ", ".join(
+        str(run[0]) if len(run) == 1 else f"{run[0]}–{run[-1]}" for run in runs
+    )
 
 
 def _join_split_header_row(rows: list[WireRow]) -> list[WireRow]:
@@ -1138,6 +1179,10 @@ def _without_title_echo(zone: Zone) -> Zone:
     its Title and is not touched, while `cv_0013`'s single-cell `EDUCATION` row
     is and goes.
 
+    **That Zone's Title goes instead** — see `_title_is_its_header_cell`. The
+    echo runs the other way there: the Title is the copy, lifted off the
+    heading row's first cell, and the row is the reading that keeps its place.
+
     A dropped row takes its `RowRole` with it. That is correct: a caption tagged
     `header` was never the table's heading row, and the row beneath keeps
     whatever role it was given.
@@ -1160,7 +1205,42 @@ def _without_title_echo(zone: Zone) -> Zone:
         )
     ):
         zone.pairs = zone.pairs[1:]
+    elif _title_is_its_header_cell(zone):
+        zone.title = None
     return zone
+
+
+def _title_is_its_header_cell(zone: Zone) -> bool:
+    """Whether the Title is the first cell of this table's own heading row.
+
+    `darkdeck_0009`'s four metric cards print their labels on one line, and
+    the caption pass took the first, `AVAILABILITY`, as the Zone's Title. The
+    Extractor read the same line as a heading row of four. The page prints
+    the word once; ours printed it as a caption and again as the row's first
+    cell, one directly above the other.
+
+    **The grid veto was meant to catch this and counts one column short.**
+    `CaptionBand.aligns_to_grid` refuses a Title when the first line has as
+    many columns of ink as the lines below it. The labels are letter-spaced,
+    so `P95 LATENCY` and its neighbours split at their word gaps and the line
+    counts 7 columns against the values' 6. Widening the veto would change
+    the crop the Kind question is shown, which is a model question; the
+    extracted heading row is better evidence than a column count anyway,
+    because it is the model saying the line is a grid.
+
+    Only a `header` row, and only one carrying at least one more label than
+    the Title — the Title *plus* the rest of a heading row. A caption returned
+    as a row of its own with empty cells beside it is the ordinary echo and is
+    dropped as a row above; a data row may name its own section. Measured on
+    `tests/frozen/a3-result/`, 2026-09-26: 1 of 47 titled Zones, this one.
+    """
+    title = zone.title
+    if not title or not title.strip() or not zone.rows:
+        return False
+    first = zone.rows[0]
+    return (first.role is RowRole.HEADER
+            and _same_text(title, first.cells[0].text if first.cells else "")
+            and any(cell.text.strip() for cell in first.cells[1:]))
 
 
 def contents_into(zone: Zone, content: str, *, read: Read) -> Zone:

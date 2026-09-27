@@ -12,7 +12,8 @@ What is reused and what is recomputed:
     reused       Zones, their boxes, their text, their Kinds — everything the
                  model decided. Read back out of the run's own `document.html`,
                  which embeds the IR.
-    recomputed   Document.style, and each Zone's fill, title_fill and boxed.
+    recomputed   Document.style, and each Zone's fill, title_fill, header_fill
+                 and boxed.
                  Measured from `example/<doc>.png` through the same `rectify`
                  the Conversion used.
 
@@ -42,8 +43,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from doc_to_html import style as style_module  # noqa: E402
 from doc_to_html.corpus import SOURCES  # noqa: E402
-from doc_to_html.ir import Document  # noqa: E402
-from doc_to_html.preprocess import caption_band, rectify, zone_pixels  # noqa: E402
+from doc_to_html.ir import Document, Kind, RowRole  # noqa: E402
+from doc_to_html.preprocess import (  # noqa: E402
+    caption_band, header_band, rectify, zone_pixels)
 from doc_to_html.render import render  # noqa: E402
 
 REPO = Path(__file__).resolve().parent.parent
@@ -70,16 +72,21 @@ def remeasure(document: Document, png: Path) -> tuple[int, int]:
     for index, zone in enumerate(document.zones):
         if zone.bbox is None:
             continue
-        band = caption_band(zone_pixels(rectified.image, zone))
+        read = zone_pixels(rectified.image, zone)
+        band = caption_band(read)
+        names_a_header = (zone.kind is Kind.TABLE and bool(zone.rows)
+                          and zone.rows[0].role is RowRole.HEADER)
         found = style_module.chrome(
             zone_pixels(plain, zone),
             ground=document.style.page_bg,
             inverted=rectified.inverted,
             title_rows=band.bottom if band is not None and zone.title else 0,
+            header_rows=(header_band(read, titled=bool(zone.title))
+                         if names_a_header else None),
             bordered=own[index] is not None,
         )
-        zone.fill, zone.title_fill, zone.boxed = (
-            found.fill, found.title_fill, found.bordered)
+        zone.fill, zone.title_fill, zone.header_fill, zone.boxed = (
+            found.fill, found.title_fill, found.header_fill, found.bordered)
         boxed += int(found.bordered)
     return len(drawn), boxed
 

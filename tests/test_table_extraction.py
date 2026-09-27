@@ -101,9 +101,13 @@ class TestARealTable:
     def test_the_header_row_is_marked_as_one(
         self, invoice: tuple[Document, ReplayTransport]
     ) -> None:
+        """Both heading rows are `#eee` in `invoice.html`, so each `thead`
+        carries that fill — see `TestAHeaderRowsFillArrivesThroughAConversion`."""
         html = render(invoice[0])
-        assert "<thead><tr><th>Payment Method</th>" in html
-        assert '<thead><tr><th>Item</th><th class="num">Price</th></tr></thead>' in html
+        head = '<thead style="--shade:rgb(238,238,238)">'
+        assert f"{head}<tr><th>Payment Method</th>" in html
+        assert (f'{head}<tr><th>Item</th><th class="num">Price</th></tr></thead>'
+                in html)
 
     def test_fifteen_rows_survive(
         self, statistics: tuple[Document, ReplayTransport]
@@ -269,6 +273,26 @@ class TestProbesRunAgainstExtractedData:
         self, invoice: tuple[Document, ReplayTransport]
     ) -> None:
         assert "did not reconcile" not in render(invoice[0])
+
+
+class TestAHeaderRowsFillArrivesThroughAConversion:
+    def test_both_invoice_headers_carry_the_sources_grey(
+        self, invoice: tuple[Document, ReplayTransport]
+    ) -> None:
+        """End to end, because a header row exists only once `_extract` has
+        run, and chrome used to be measured before it. `Zone.title_fill`
+        shipped, passed offline and never fired for a phase for exactly that
+        reason — its stage ran before the pass that sets a Title.
+
+        `invoice.html` fills both heading rows `#eee`."""
+        document, _ = invoice
+
+        tables = [z for z in document.zones if z.kind is Kind.TABLE]
+        assert [z.header_fill for z in tables] == [(238, 238, 238)] * 2
+        assert all(z.header_fill is None
+                   for z in document.zones if z.kind is not Kind.TABLE)
+        assert render(document).count(
+            '<thead style="--shade:rgb(238,238,238)">') == 2
 
 
 class TestProbesNeverHandOverTheAnswerKey:
@@ -506,6 +530,99 @@ class TestARowWithNoCellsAtAll:
         zone = table_zone(self.MEASURED)
 
         assert len(zone.rows) == 5
+
+
+class TestOneRepairIsReportedOnce:
+    """Rows repaired the same way are one finding, not one finding per row.
+
+    Measured on `tests/frozen/a3-result/`, 2026-09-26: `statement_0006`'s
+    transactions header came back as its six printed headings plus one empty
+    cell, so each of its 41 six-cell rows was one short of seven and padded.
+    That is one fact about the table, and it was printed as 41 near-identical
+    lines at the top of the page — the panel ran longer than the table's first
+    screen. No other document of the fifteen has a repair at all.
+    """
+
+    STATEMENT_SHAPE = (
+        '{"rows": [{"role": "header", "cells": ["Date", "Type", "Paid", ""]},'
+        + ",".join(
+            f' {{"role": "data", "cells": ["0{day} Aug", "DD", "1.00"]}}'
+            for day in range(1, 6)
+        )
+        + ', {"role": "summary", "cells": ["Totals", "5.00"]}]}'
+    )
+
+    def test_rows_short_by_the_same_amount_are_one_note(self) -> None:
+        zone = table_zone(self.STATEMENT_SHAPE)
+
+        assert table_repairs(zone) == [
+            "rows 1–5 (5 rows) each came back 1 cell(s) short of the header's "
+            "4 and were padded rather than discarded — the values they do have "
+            "may sit in the wrong columns"
+        ]
+
+    def test_a_single_repaired_row_is_reported_exactly_as_before(self) -> None:
+        """The wording a one-row repair already had is kept word for word."""
+        zone = table_zone(
+            '{"rows": [{"role": "header", "cells": ["a", "b"]},'
+            ' {"role": "data", "cells": ["1"]}]}'
+        )
+
+        assert table_repairs(zone) == [
+            "row 1 came back 1 cell(s) short of the header's 2 and was padded "
+            "rather than discarded — the values it does have may sit in the "
+            "wrong columns"
+        ]
+
+    def test_different_repairs_stay_separate_and_rows_are_named_as_runs(
+        self,
+    ) -> None:
+        """Grouped by what was done, so no note claims a shortfall a row did
+        not have; ordered by the first row each names."""
+        zone = table_zone(
+            '{"rows": [{"role": "header", "cells": ["a", "b", "c"]},'
+            ' {"role": "data", "cells": ["1", "2"]},'
+            ' {"role": "data", "cells": ["1"]},'
+            ' {"role": "data", "cells": ["1", "2"]},'
+            ' {"role": "data", "cells": ["1", "2", "3", "4"]},'
+            ' {"role": "data", "cells": ["1", "2"]},'
+            ' {"role": "data", "cells": ["1", "2"]},'
+            ' {"role": "data", "cells": ["1", "2", "3", "4"]}]}'
+        )
+
+        notes = table_repairs(zone)
+
+        assert len(notes) == 3
+        assert notes[0].startswith("rows 1, 3, 5–6 (4 rows) each came back 1 ")
+        assert notes[1].startswith("row 2 came back 2 cell(s) short")
+        assert notes[2].startswith("rows 4, 7 (2 rows) each came back with 4 "
+                                   "cells against the header's 3 and were kept "
+                                   "whole")
+
+    def test_a_conversion_reports_the_repair_once(self) -> None:
+        """Through a Conversion, because a note written by `wire.py` reaches
+        the page only if the Orchestrator collects it. `invoice_0001`'s line
+        items, answered in `statement_0006`'s shape: a header one empty cell
+        wider than every row under it."""
+        replies = break_zone(
+            recorded_for("invoice_0001"), "invoice_0001", 5,
+            '{"rows": [{"role": "header", "cells": ["Item", "Price", ""]},'
+            ' {"role": "data", "cells": ["Website design", "$300.00"]},'
+            ' {"role": "data", "cells": ["Hosting (3 months)", "$75.00"]},'
+            ' {"role": "data", "cells": ["Domain name (1 year)", "$10.00"]},'
+            ' {"role": "summary", "cells": ["", "Total: $385.00"]}]}',
+        )
+        document, _ = convert_with(INVOICE, replies)  # type: ignore[arg-type]
+
+        repairs = [c.note for c in document.caveats
+                   if c.zone_index == 5 and "padded" in c.note]
+        assert repairs == [
+            "rows 1–3 (3 rows) each came back 1 cell(s) short of the header's "
+            "3 and were padded rather than discarded — the values they do have "
+            "may sit in the wrong columns"
+        ]
+        page = render(document).split('<script type="application/json"')[0]
+        assert page.count("padded rather than discarded") == 1
 
 
 class TestAHeaderRepeatedToPadTheRowCount:

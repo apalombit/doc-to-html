@@ -280,6 +280,15 @@ class Zone:
     draws no fill anywhere on the page.
     """
 
+    header_fill: tuple[int, int, int] | None = None
+    """A table's header row's own background, where it differs from the rows
+    under it. The title bar's measurement, pointed at the row `RowRole.header`
+    names — see `preprocess.header_band`.
+
+    `nonlatin_0014` prints its header row white on `#1c4f7c`, and the renderer
+    drew every header row on the house's pale `--shade` whatever the source did.
+    """
+
     boxed: bool = False
     """Whether the source draws a rule around this Zone. See `style.chrome`.
 
@@ -594,6 +603,7 @@ def _zone(data: dict[str, Any]) -> Zone:
         # because this function builds each object field by field.
         fill=_colour(data.get("fill")),
         title_fill=_colour(data.get("title_fill")),
+        header_fill=_colour(data.get("header_fill")),
         boxed=data.get("boxed", False),
         complete=data.get("complete", False),
     )

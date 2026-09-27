@@ -581,7 +581,8 @@ class TestATitleIsNeverPrintedTwice:
             ["United States", "USA", "331,900,000"],
         ]
 
-    def test_a_real_heading_row_that_starts_with_the_title_is_kept(self) -> None:
+    def test_a_real_heading_row_that_starts_with_the_title_keeps_the_label(
+            self) -> None:
         """The bound that makes the row rule safe, and it is a live case.
 
         `darkdeck_0009`'s Zone 2 is four metric cards whose labels read
@@ -590,6 +591,13 @@ class TestATitleIsNeverPrintedTwice:
         an echo of that Title — it is the Title plus three more labels — so the
         test is on the row's *whole* text and the row stays. Dropping it would
         delete three labels the page prints.
+
+        **The Title is the copy, and it goes** — 2026-09-26. The page prints
+        `AVAILABILITY` once, as the first card's label; ours printed it as a
+        caption and again as the heading row's first cell. The row is the
+        reading that keeps its place in a grid of four, so the lifted copy is
+        the one dropped. Measured on `tests/frozen/a3-result/`: this is the
+        only one of 47 titled Zones the rule touches.
         """
         zone = contents_into(
             Zone(kind=Kind.TABLE, title="AVAILABILITY"),
@@ -600,7 +608,43 @@ class TestATitleIsNeverPrintedTwice:
         )
 
         assert len(zone.rows) == 2
-        assert zone.rows[0].cells[1].text == "P95 LATENCY"
+        assert [c.text for c in zone.rows[0].cells] == [
+            "AVAILABILITY", "P95 LATENCY", "INGEST VOLUME", "COST PER MILLION"]
+        assert zone.title is None
+
+    def test_a_data_row_starting_with_the_title_keeps_both(self) -> None:
+        """Only a *header* row's first cell is the Title's lifted copy. A data
+        row may name its own section — `menu_0012`'s section headings are rows
+        — and a caption over it is a separate printed line."""
+        zone = contents_into(
+            Zone(kind=Kind.TABLE, title="Mains"),
+            '{"rows": [{"role": "data", "cells": ["Mains", "12.00"]},'
+            ' {"role": "data", "cells": ["Pie", "9.00"]}]}',
+            read=a_reading,
+        )
+
+        assert zone.title == "Mains"
+        assert len(zone.rows) == 2
+
+    def test_through_a_conversion_the_lifted_copy_goes(self) -> None:
+        """The rule runs where the pipeline binds contents to a titled Zone,
+        which a rule measured on IRs offline does not prove.
+
+        `sample_table_0003` replayed, with the caption pass answering the
+        table's first heading, `Country`, instead of its caption — which is
+        `darkdeck_0009`'s shape. The grid veto does not fire here (one column
+        of ink in the first line against five below), so the Title reaches
+        extraction, exactly as `AVAILABILITY` did."""
+        replies = recorded_for("sample_table_0003")
+        replies["caption"] = [text('{"first_line": "Country",'
+                                   ' "line_is": "caption"}')]
+        conversion = Conversion(source=REPO / "example" / "sample-table.png",
+                                engines=engines_replaying(ReplayTransport(replies)))
+        document = conversion.run()
+
+        table = next(z for z in document.zones if z.kind is Kind.TABLE)
+        assert table.title is None
+        assert table.rows[0].cells[0].text == "Country"
 
     def test_a_pair_repeating_the_title_is_dropped(self) -> None:
         zone = contents_into(

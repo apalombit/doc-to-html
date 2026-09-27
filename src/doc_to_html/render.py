@@ -589,12 +589,31 @@ def _table(zone: Zone, document: Document) -> str:
 
     parts = []
     if groups[RowRole.HEADER]:
-        parts.append(f"<thead>{''.join(groups[RowRole.HEADER])}</thead>")
+        parts.append(f"<thead{_header_style(zone, document)}>"
+                     f"{''.join(groups[RowRole.HEADER])}</thead>")
     if groups[RowRole.DATA]:
         parts.append(f"<tbody>{''.join(groups[RowRole.DATA])}</tbody>")
     if groups[RowRole.SUMMARY]:
         parts.append(f"<tfoot>{''.join(groups[RowRole.SUMMARY])}</tfoot>")
     return f'<div class="table-wrap"><table>{"".join(parts)}</table></div>'
+
+
+def _header_style(zone: Zone, document: Document) -> str:
+    """The header row's measured fill, when the source draws one.
+
+    Set as the `thead`'s own `--shade`, which `thead th` already paints, so
+    `STYLESHEET` is untouched and no other document's bytes move. The ink is
+    chosen against the fill the way a filled Zone's is — see `_readable_on` —
+    which is what puts `nonlatin_0014`'s white-on-blue header back.
+    """
+    if zone.header_fill is None:
+        return ""
+    parts = [f"--shade:{_rgb(zone.header_fill)}"]
+    ink = _readable_on(zone.header_fill,
+                       document.style.ink if document.style else None)
+    if ink is not None:
+        parts.append(f"color:{_rgb(ink)}")
+    return f' style="{";".join(parts)}"'
 
 
 def _pairs(zone: Zone, document: Document) -> str:

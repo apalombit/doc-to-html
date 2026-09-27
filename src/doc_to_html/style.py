@@ -374,6 +374,13 @@ class Chrome:
     has no fills anywhere.
     """
 
+    header_fill: tuple[int, int, int] | None = None
+    """A table header row's background, when it differs from the rows below.
+
+    The same observation as `title_fill`, on a different band: the printed
+    line `RowRole.header` names. See `preprocess.header_band`.
+    """
+
     bordered: bool = False
     """Whether a rule is drawn around the region."""
 
@@ -520,8 +527,25 @@ def boxes_for(zones: Sequence[BBox | None],
             for claim in claims]
 
 
+def _bar(band: Any, below: Any,
+         ground: tuple[int, int, int]) -> tuple[int, int, int] | None:
+    """A band's fill, when it differs from what is under it.
+
+    A bar only exists where it differs from what is under it. Equal fills —
+    including both being None — is a heading sitting on its own card, which is
+    what most of the corpus actually has.
+    """
+    fill = _filled_with(band, ground)
+    under = _filled_with(below, ground)
+    if fill is not None and (under is None or
+                             sum(abs(a - b) for a, b in zip(fill, under)) > SAME_COLOUR):
+        return fill
+    return None
+
+
 def chrome(crop: ImageArray, *, ground: tuple[int, int, int],
            inverted: bool = False, title_rows: int = 0,
+           header_rows: tuple[int, int] | None = None,
            bordered: bool = False) -> Chrome:
     """What the page draws around one region. See `Chrome`.
 
@@ -533,7 +557,9 @@ def chrome(crop: ImageArray, *, ground: tuple[int, int, int],
 
     `ground` is the page's own measured colour and `title_rows` how many of the
     region's first rows its Title occupies — zero when it has none, in which
-    case no bar is looked for and none can be invented.
+    case no bar is looked for and none can be invented. `header_rows` is the
+    same for a table's header row: the crop rows `preprocess.header_band`
+    found it on, or `None` when no row is named a header and none is looked for.
 
     `bordered` is **passed in, not measured here**, and that is the point of
     the border increment. A rule is a property of the page, not of a crop: the
@@ -556,13 +582,12 @@ def chrome(crop: ImageArray, *, ground: tuple[int, int, int],
     fill = _filled_with(region, ground)
     title_fill = None
     if title_rows > 0 and region.shape[0] > title_rows + 1:
-        band = _filled_with(region[:title_rows], ground)
-        body = _filled_with(region[title_rows:], ground)
-        # A bar only exists where it differs from what is under it. Equal fills
-        # — including both being None — is a heading sitting on its own card,
-        # which is what most of the corpus actually has.
-        if band is not None and (body is None or
-                                 sum(abs(a - b) for a, b in zip(band, body)) > SAME_COLOUR):
-            title_fill = band
+        title_fill = _bar(region[:title_rows], region[title_rows:], ground)
 
-    return Chrome(fill=fill, title_fill=title_fill, bordered=bordered)
+    header_fill = None
+    if header_rows is not None and region.shape[0] > header_rows[1] + 1:
+        top, bottom = header_rows
+        header_fill = _bar(region[top:bottom + 1], region[bottom + 1:], ground)
+
+    return Chrome(fill=fill, title_fill=title_fill, header_fill=header_fill,
+                  bordered=bordered)
