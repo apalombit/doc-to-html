@@ -13,6 +13,8 @@ and can be recomputed from it, in the order a Conversion runs them:
 
     1. a table Title that is its own header row's first cell is dropped
                                     wire._title_is_its_header_cell  (in _extract)
+       and every table's rows padded to the header that is left, not to a
+       caption row the echo rule dropped    wire.repadded  (in _extract)
     2. table-repair Caveats re-derived from each table's rows
                                     wire.table_repairs              (in _extract)
     3. palette and chrome re-measured — fill, title bar, header bar, border
@@ -60,7 +62,8 @@ from doc_to_html.ir import Caveat, Document, Kind  # noqa: E402
 from doc_to_html.orchestrator import shortfall  # noqa: E402
 from doc_to_html.preprocess import rectify  # noqa: E402
 from doc_to_html.render import render  # noqa: E402
-from doc_to_html.wire import _title_is_its_header_cell, table_repairs  # noqa: E402
+from doc_to_html.wire import (  # noqa: E402
+    _title_is_its_header_cell, repadded, table_repairs)
 from remeasure_style import ir_of, remeasure  # noqa: E402
 
 REPO = TOOLS.parent
@@ -75,6 +78,8 @@ def rederive(document: Document, png: Path) -> None:
     for zone in document.zones:
         if _title_is_its_header_cell(zone):
             zone.title = None
+        if zone.kind is Kind.TABLE:
+            zone.rows = repadded(zone.rows)
 
     caveats: list[Caveat] = []
     redone: set[int] = set()

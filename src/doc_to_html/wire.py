@@ -1197,7 +1197,7 @@ def _without_title_echo(zone: Zone) -> Zone:
     elif zone.rows and _same_text(
         title, " ".join(cell.text for cell in zone.rows[0].cells)
     ):
-        zone.rows = zone.rows[1:]
+        zone.rows = repadded(zone.rows[1:])
     elif zone.pairs and (
         _same_text(title, zone.pairs[0].label.text)
         or _same_text(
@@ -1208,6 +1208,41 @@ def _without_title_echo(zone: Zone) -> Zone:
     elif _title_is_its_header_cell(zone):
         zone.title = None
     return zone
+
+
+def repadded(rows: list[Row]) -> list[Row]:
+    """Pad each row to the header that is there, and only to it.
+
+    `rows_from_table` takes a table's width from its first header row, and
+    `_without_title_echo` runs after it — so when the row it drops is that
+    first header, the padding it caused is left behind. `statement_0006`'s
+    caption came back as a header row seven cells wide; the real header and
+    all forty rows were read six wide, and each was padded to seven before the
+    caption went. The page grew an empty seventh column, and `table_repairs`
+    reported 41 rows a cell short that the model had read whole.
+
+    So the padding is taken off — every trailing Cell with no Reading, which
+    is what a pad is and what nothing read can be — and put back against the
+    first header that remains, by the same rule `rows_from_table` applies. A
+    row genuinely short of that header is padded exactly as before. Nothing
+    read is removed, and where no row was dropped this returns every row as
+    it was, because the width is the one the rows were padded to. That is
+    what lets `tools/rederive.py` apply it to every table.
+    """
+    def read(row: Row) -> list[Cell]:
+        cells = list(row.cells)
+        while cells and not cells[-1].readings:
+            cells.pop()
+        return cells
+
+    header = next((row for row in rows if row.role is RowRole.HEADER), None)
+    width = len(read(header)) if header else None
+    for row in rows:
+        cells = read(row)
+        if width is not None and row.role is not RowRole.SUMMARY:
+            cells += [Cell(readings=[]) for _ in range(width - len(cells))]
+        row.cells = cells
+    return rows
 
 
 def _title_is_its_header_cell(zone: Zone) -> bool:

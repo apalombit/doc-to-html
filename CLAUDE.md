@@ -95,7 +95,8 @@ Open issues 1-3 DONE 2026-09-26, offline, ratchet holds 15 of 15
 Queue       Q1-Q7 in docs/status.md "Next", in order, go given 2026-09-27
               model-free first (menu thead, empty header cell, type scale,
               Thread 0's seam), then the three that cost model time
-              Q1 DONE 2026-09-27, offline, gate MET          Q2 <- next
+              Q1 DONE 2026-09-27, Q2 DONE 2026-09-28, both offline,
+              both gate MET                                  Q3 <- next
 Thread 3/C  Repair loop (re-scoped against A+B residuals first)
 Thread 4/D  Human corrections (unscheduled)
 ```

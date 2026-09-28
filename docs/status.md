@@ -1,15 +1,15 @@
-# Status — 2026-09-27 (the open-issues queue: **Q1 done, Q2 next**)
+# Status — 2026-09-28 (the open-issues queue: **Q1–Q2 done, Q3 next**)
 
 **Live document.** This is where the project actually is. When it goes stale,
-rewrite it; do not add a banner and leave it. Last rewritten 2026-09-27, when
-Q1 of the open-issues queue closed.
+rewrite it; do not add a banner and leave it. Last rewritten 2026-09-28, when
+Q2 of the open-issues queue closed.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file. If you are going to look at output — and you
 should — use the **`visual-review` skill**.
 
-Branch `scaffold`. **828 tests pass, `mypy src/` clean.**
+Branch `scaffold`. **830 tests pass, `mypy src/` clean.**
 
 ---
 
@@ -25,7 +25,8 @@ Phase A2    Geometry — re-scoped                DONE 2026-09-25, gate MET
 Phase A3    Figure pixels                       DONE 2026-09-26, gate MET
 Open issues 1-3 DONE 2026-09-26 offline; 4 -> the type scale
 Queue       Q1-Q7, in order, go given 2026-09-27
-              Q1 DONE 2026-09-27, offline, gate MET                Q2 <- next
+              Q1 DONE 2026-09-27, offline, gate MET
+              Q2 DONE 2026-09-28, offline, gate MET                Q3 <- next
 Thread 3/C  Repair loop (re-scoped first)
 Thread 4/D  Human corrections (unscheduled)
 ```
@@ -155,6 +156,39 @@ step.
 | visual review, all fifteen, `--previous` the baseline | `menu_0012` `better`, 14 `same`, no `worse` |
 | tests, mypy | 828 pass, clean |
 
+**Q2 — `statement_0006`'s empty seventh column, 2026-09-28, gate MET.** Baseline
+`Q-10-base`: `rederive.py` at the Q1 commit, byte-identical to the Q1 arm on
+all fifteen.
+
+**The description was wrong, and the IR said so.** The header was never read
+a cell wide: the model read it six wide, like every row, and returned the
+caption `Transactions in date order` as a first header row **seven** wide.
+`rows_from_table` takes the width from the first header, so the real header
+and all forty rows were padded to seven — and then `_without_title_echo`
+dropped the caption row as an echo of the Title, leaving the padding behind.
+The proof is in the IR: the header's own seventh cell carries no Reading.
+`statement_0006` z3 was the only table in the corpus with a padded cell.
+`receipt_0010`'s twenty-cell row is a different fault — every cell was read,
+nineteen of them empty, the model's own answer — and **went to Q5 by
+decision**, since Q5 re-reads that crop.
+
+`wire.repadded`, called where `_without_title_echo` drops a table's first row:
+the trailing Reading-less Cells come off and each row is padded again against
+the header that is left. Nothing read is removed; where no row was dropped it
+returns every row unchanged. **`tools/rederive.py` applies it to every table**
+(step 1).
+
+| clause | result |
+|---|---|
+| `statement_0006` z3: header 7 → 6, 40 data rows 7 → 6, 0 Reading-less cells (was 41); summary row, all 42 rows and every read cell's text unchanged | yes |
+| `statement_0006` caveats 3 → 2, the padding sentence gone; probes, `header_fill`, Shortfalls unchanged | yes |
+| the other 14 byte-identical to the baseline, whole file | 14 of 14 |
+| ratchet vs `a3-result`, four legs, fifteen | holds |
+| `statement_0006` score fields that moved | `height_ratio` 1.577 → 1.546, `alignment_agreement` 0.935 → 0.968, `output_texture`. Words, joins, tau, beside and column fields unchanged. |
+| `contents_into` test and a replayed `sample_table_0003` Conversion with a caption row one cell wider than its header | both pass |
+| visual review, all fifteen, `--previous` the baseline | `statement_0006` `better`, 14 `same`, no `worse` |
+| tests, mypy | 830 pass, clean |
+
 ### Open issues 1–3 — 2026-09-26, offline, one change apart
 
 Each was measured against `a3-result` with no model call: the floor's IRs
@@ -201,14 +235,9 @@ gate is still agreed with Alessandro before any code.**
 **Q1. `menu_0012`'s section headings stack in one `<thead>`. — DONE
 2026-09-27, gate met;** see "What the last step shipped".
 
-**Q2. `statement_0006`'s header was read one empty cell wide.** Model-free,
-wire. Every one of its 41 rows is padded to seven cells and an empty column
-trails the table. Measured: nine tables end their header in empty cells, but
-only two have a header wider than any data row that was read —
-`statement_0006` z3 (7 against 6) and `receipt_0010` z1 (20 cells, 19 empty,
-no data row at all). `catalogue_0015`'s six have data rows read to the
-header's width. A new wire net needs a replayed Conversion test, and `wire.py`'s
-three row nets stay.
+**Q2. `statement_0006`'s empty seventh column. — DONE 2026-09-28, gate met;**
+see "What the last step shipped". `receipt_0010`'s 20-cell header row went to
+Q5 by decision.
 
 **Q3. The type scale — 2/B's deferred increment, carrying open issue 4.**
 Model-free, but its own increment, gated on `height_ratio` directly. Every
@@ -228,6 +257,10 @@ measurement question: fifteen of fifteen render unchanged, tests pass.
 Model time. `preprocess.resize_long_edge` never enlarges, and this page
 rectifies to **335×547**, so the extractor sees ~300px across 19 lines of
 monospace. ~6 minutes to probe; a change moves crops and costs a sweep.
+**Carries Q2's leftover:** its table's one row came back 20 cells wide, 19
+read as empty, so `Order 00418` wraps in a narrow first column. If it survives
+Q5's re-read, the fix is trimming header cells no row fills — measured to
+touch this table only.
 
 **Q6. `nonlatin_0014`'s overlapping Zones** — left open by decision in A2.
 Model time. Its full-width Zone is 0.70 over the top-right pairs box and

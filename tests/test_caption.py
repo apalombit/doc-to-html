@@ -17,6 +17,7 @@ What each half of this file pins:
 from __future__ import annotations
 
 import io
+import json
 from pathlib import Path
 
 import numpy as np
@@ -34,14 +35,20 @@ from doc_to_html.preprocess import (
     zone_pixels,
 )
 from doc_to_html.trace import Disposition, Stage
-from doc_to_html.wire import contents_into
+from doc_to_html.wire import contents_into, table_repairs
 
 
 def a_reading(content: str) -> Reading:
     """The `Read` a mapper is injected with, so these stay pure. See `wire.Read`."""
     return Reading(engine="test", text=content)
 
-from .replay import ReplayTransport, engines_replaying, recorded_for, text
+from .replay import (
+    ReplayTransport,
+    break_zone,
+    engines_replaying,
+    recorded_for,
+    text,
+)
 
 REPO = Path(__file__).resolve().parent.parent
 INVOICE = REPO / "example" / "invoice.png"
@@ -580,6 +587,66 @@ class TestATitleIsNeverPrintedTwice:
             ["Country", "ISO", "Population"],
             ["United States", "USA", "331,900,000"],
         ]
+
+    def test_a_dropped_caption_row_leaves_no_padding_behind(self) -> None:
+        """The caption row is one cell wider than the table, and it goes.
+
+        `statement_0006`'s header and all forty of its rows were read six
+        cells wide, and its caption came back as a first header row of seven.
+        The table's width is taken from the first header, so every other row
+        was padded to seven before the caption was dropped as an echo — and
+        the padding outlived the row that caused it: an empty seventh column,
+        and a Caveat saying 41 rows came back a cell short when none had.
+        """
+        zone = contents_into(
+            Zone(kind=Kind.TABLE, title="Transactions in date order"),
+            '{"rows": [{"role": "header",'
+            ' "cells": ["Transactions in date order", "", "", ""]},'
+            ' {"role": "header", "cells": ["Date", "Description", "Balance"]},'
+            ' {"role": "data", "cells": ["01 Aug", "Opening balance", "2,418.50"]},'
+            ' {"role": "data", "cells": ["02 Aug", "Cordell Energy"]},'
+            ' {"role": "summary", "cells": ["Totals", "3,586.14"]}]}',
+            read=a_reading,
+        )
+
+        assert [len(r.cells) for r in zone.rows] == [3, 3, 3, 2]
+        assert [[c.text for c in r.cells] for r in zone.rows][:2] == [
+            ["Date", "Description", "Balance"],
+            ["01 Aug", "Opening balance", "2,418.50"],
+        ]
+        # A row genuinely short of the header that is left is still padded,
+        # and still carries no Reading where it was padded.
+        assert [bool(c.readings) for c in zone.rows[2].cells] == [
+            True, True, False]
+        assert table_repairs(zone) == [
+            "row 2 came back 1 cell(s) short of the header's 3 and was padded "
+            "rather than discarded — the values it does have may sit in the "
+            "wrong columns"
+        ]
+
+    def test_through_a_conversion_a_wide_caption_row_pads_nothing(self) -> None:
+        """The rule runs where the pipeline binds contents to a titled Zone.
+
+        `sample_table_0003` replayed, with its table answer given a caption row
+        one cell wider than its five columns — `statement_0006`'s shape.
+        """
+        recorded = json.loads(
+            (REPO / "tests/responses/sample_table_0003/zone_01.json").read_text())
+        caption = {"role": "header", "cells": [
+            "Population and GDP (millions of USD)", "", "", "", "", ""]}
+        replies = break_zone(recorded_for("sample_table_0003"),
+                             "sample_table_0003", 1,
+                             json.dumps({"rows": [caption, *recorded["rows"]]}))
+        conversion = Conversion(source=REPO / "example" / "sample-table.png",
+                                engines=engines_replaying(ReplayTransport(replies)))
+        document = conversion.run()
+
+        table = next(z for z in document.zones if z.kind is Kind.TABLE)
+        assert len(table.rows) == 16
+        assert all(len(r.cells) == 5 for r in table.rows)
+        assert all(c.readings for r in table.rows for c in r.cells)
+        assert not any("short of the header" in c.note
+                       for c in document.caveats)
 
     def test_a_real_heading_row_that_starts_with_the_title_keeps_the_label(
             self) -> None:
