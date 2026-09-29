@@ -779,6 +779,7 @@ class Conversion:
             # either, the stage measures a bar nothing has named — which is
             # how `title_fill` came to be set on none of 119 Zones.
             self._measure_chrome(rectified, document)
+            self._measure_type(rectified, document)
 
             document.probes = probe_module.run(document)
             for probe in document.probes:
@@ -972,6 +973,34 @@ class Conversion:
                  "header_fill": z.header_fill, "boxed": z.boxed}
                 for i, z in enumerate(document.zones)
             ],
+        )
+
+    def _measure_type(self, rectified: Rectified, document: Document) -> None:
+        """How large each leading heading is printed. See `style.heading_sizes`.
+
+        After `_extract`, because it sizes a *Block*, and a Zone has none until
+        it is extracted — the stage position that kept `title_fill` and
+        `header_fill` from ever firing, avoided by construction. Nothing after
+        it reads `Block.size` but the renderer, so it moves no model answer.
+
+        Every Block is set, not only the ones measured, so a later round
+        cannot keep a size its heading no longer earns.
+        """
+        if not self.style_record:
+            return
+
+        started = time.perf_counter()
+        sizes = style_module.heading_sizes(rectified.image, document.zones)
+        for zone, size in zip(document.zones, sizes):
+            for position, block in enumerate(zone.blocks):
+                block.size = size if position == 0 else None
+        self.trace.record(
+            Stage.LAYOUT, "heading_sizes", Disposition.ACCEPTED,
+            seconds=time.perf_counter() - started,
+            zones=len(document.zones),
+            sized=sum(1 for size in sizes if size is not None),
+            detail=[{"zone": index, "size": size}
+                    for index, size in enumerate(sizes) if size is not None],
         )
 
     def _draw_figures(self, rectified: Rectified, document: Document) -> None:

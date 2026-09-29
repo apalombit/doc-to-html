@@ -203,6 +203,12 @@ class Block:
 
     lines: list[Cell] = field(default_factory=list)
 
+    size: float | None = None
+    """The size this Block's type is printed at, in ems of the page's body
+    type, measured off its own ink — or None, which draws it at the house
+    size for its kind. Set only on a heading the page prints smaller than a
+    heading is drawn; see `style.heading_sizes`."""
+
 
 @dataclass
 class Zone:
@@ -593,7 +599,8 @@ def _zone(data: dict[str, Any]) -> Zone:
             for p in data.get("pairs", [])
         ],
         blocks=[
-            Block(kind=b["kind"], lines=[_cell(c) for c in b.get("lines", [])])
+            Block(kind=b["kind"], lines=[_cell(c) for c in b.get("lines", [])],
+                  size=b.get("size"))
             for b in data.get("blocks", [])
         ],
         graphic_kind=data.get("graphic_kind"),

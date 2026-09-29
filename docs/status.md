@@ -1,15 +1,15 @@
-# Status — 2026-09-28 (the open-issues queue: **Q1–Q2 done, Q3 next**)
+# Status — 2026-09-29 (the open-issues queue: **Q1–Q3 done, Q4 next**)
 
 **Live document.** This is where the project actually is. When it goes stale,
-rewrite it; do not add a banner and leave it. Last rewritten 2026-09-28, when
-Q2 of the open-issues queue closed.
+rewrite it; do not add a banner and leave it. Last rewritten 2026-09-29, when
+Q3 of the open-issues queue closed.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file. If you are going to look at output — and you
 should — use the **`visual-review` skill**.
 
-Branch `scaffold`. **830 tests pass, `mypy src/` clean.**
+Branch `scaffold`. **839 tests pass, `mypy src/` clean.**
 
 ---
 
@@ -18,7 +18,7 @@ Branch `scaffold`. **830 tests pass, `mypy src/` clean.**
 ```
 Thread 0    Scorer, corpus, report              DONE 2026-09-18
 Phase A-1   Nothing loses content quietly       DONE 2026-09-19, gate NOT met
-Thread 2/B  Style record, all CV, no model      DONE 2026-09-22 bar the type scale
+Thread 2/B  Style record, all CV, no model      DONE 2026-09-22; heading sizes 2026-09-29
 Phase A0    Stop the bleeding                   DONE 2026-09-22, gate MET
 Phase A1    Inline runs, and hard line breaks   DONE 2026-09-25, gate NOT met
 Phase A2    Geometry — re-scoped                DONE 2026-09-25, gate MET
@@ -26,7 +26,8 @@ Phase A3    Figure pixels                       DONE 2026-09-26, gate MET
 Open issues 1-3 DONE 2026-09-26 offline; 4 -> the type scale
 Queue       Q1-Q7, in order, go given 2026-09-27
               Q1 DONE 2026-09-27, offline, gate MET
-              Q2 DONE 2026-09-28, offline, gate MET                Q3 <- next
+              Q2 DONE 2026-09-28, offline, gate MET
+              Q3 DONE 2026-09-29, offline, RE-SCOPED, gate MET     Q4 <- next
 Thread 3/C  Repair loop (re-scoped first)
 Thread 4/D  Human corrections (unscheduled)
 ```
@@ -119,7 +120,10 @@ established that most of it is **inside one Zone**, so no renderer reaches it;
 see "Closed, with evidence".
 
 **3. Height.** `statement_0006` 2.78, `menu_0012` 2.29, `cv_0013` 2.06,
-`newsletter_0008` 1.99 — a symptom of 1 and 2 plus the deferred type scale.
+`newsletter_0008` 1.99 — a symptom of 1 and 2. **Body type is 16px on every
+page** where the sources set 11–16px; Q3 measured why that stays for now,
+and its heading sizes bring `cv_0013` to 2.01 and `newsletter_0008` to 1.88,
+measured offline.
 
 **4. Invented and doubled text.** `nonlatin_0014` at precision 0.914: misread
 Greek, three pairs read twice, and the total `12.437,82` printed twice.
@@ -189,6 +193,45 @@ returns every row unchanged. **`tools/rederive.py` applies it to every table**
 | visual review, all fifteen, `--previous` the baseline | `statement_0006` `better`, 14 `same`, no `worse` |
 | tests, mypy | 830 pass, clean |
 
+**Q3 — the type scale, re-scoped to heading sizes, 2026-09-29, gate MET.**
+Baseline `Q-20-base`, `rederive.py` at the Q2 commit, byte-identical to the Q2
+arm on all fifteen.
+
+**Re-scoped on measurement, by decision.** The full type scale was measured
+with the answer in hand — today's IRs re-rendered at each source's own CSS
+sizes, the ceiling any estimator could reach — and **crosses the T1 ratchet
+in every form but one**: body type on 3 documents, Titles and headings on 1,
+both on 2, all on T3 `beside`. Only shrinking oversized heading Blocks holds.
+`style.py`'s module docstring has the table and the mechanism.
+
+`style.heading_sizes`, run by `Conversion._measure_type` after
+`_measure_chrome` and by `tools/rederive.py` through `remeasure`: a Zone's
+leading heading Block, its line's 90th-percentile glyph height over the page's
+median, recorded as the new `Block.size` in ems when below 1.44em (0.9 of the
+`h1`'s 1.6em, in the empty band between 20.4px and 24.9px measured over all
+fifteen). `invoice_0002`'s "75px band" was the ACME tile's edge inside the
+crop inking every row — `type_lines` clears such a wall only when the band is
+several lines tall, and parts touching lines only into pieces of one size.
+
+| clause | result |
+|---|---|
+| exactly 8 heading Blocks on 5 documents sized, each within ±30% of the source's own size | 8: `catalogue_0015` `AUTUMN LIST…` 0.74em, `cv_0013` both job titles 1.00em, `darkdeck_0009` `Q3 2026 · INTERNAL` 0.84em, `invoice_0002` `Acme Corporation` 1.00em and `Services / Products` 1.27em, `newsletter_0008` `VOL. CLII, NO. 31` 0.78em and the drop-cap line 1.16em. Each 0.74–1.18 of its source's own size in ems. |
+| no other heading Block sized | yes |
+| the other 10 identical outside the IR; inside, by the new key alone | 10 of 10; the 5 touched IRs also differ by the key alone |
+| ratchet vs `a3-result`, four legs, fifteen | holds |
+| `darkdeck_0009` beside vs baseline, agreed in advance | 0.978 → 0.968 — `Platform review` beside `Q3 2026 · INTERNAL`, held only by the oversized label; floor 0.875 |
+| no named document further from height 1 | `cv_0013` 2.058 → 2.009, `invoice_0002` 1.476 → 1.436, `newsletter_0008` 1.994 → 1.878; the other two unchanged |
+| unit, render and replayed-Conversion tests | pass — `invoice_0001` replayed with its sender's address opened by a heading: sized at body size |
+| visual review, all fifteen, `--previous` the baseline | 5 `better`, 10 `same`, no `worse`; `type` majors 4 → 1 |
+| tests, mypy | 839 pass, clean |
+
+**What moved that the gate did not name, and why.** `catalogue_0015`'s T5
+`output_ink` flipped from near-black to light grey, `ink_delta` 0.031 →
+0.627, with no colour on the page changed. T5 takes the modal marked pixel of
+a **600px thumbnail**; the 25.6px `AUTUMN LIST…` was what kept solid ink the
+mode, and at its measured size antialiased greys outnumber it 347 to 328. T5
+measured type size there, not colour.
+
 ### Open issues 1–3 — 2026-09-26, offline, one change apart
 
 Each was measured against `a3-result` with no model call: the floor's IRs
@@ -239,14 +282,8 @@ gate is still agreed with Alessandro before any code.**
 see "What the last step shipped". `receipt_0010`'s 20-cell header row went to
 Q5 by decision.
 
-**Q3. The type scale — 2/B's deferred increment, carrying open issue 4.**
-Model-free, but its own increment, gated on `height_ratio` directly. Every
-heading Block renders as an `h1` at 1.6em: `invoice_0002`'s bold body-size
-`Acme Corporation` is the page's largest text, and the review names the same
-on `catalogue_0015`, `darkdeck_0009`, `cv_0013` and `newsletter_0008`.
-`style.py`'s module docstring holds the numbers that deferred it —
-`catalogue_0015` estimates 2.40x — and `invoice_0002`'s company block is one
-75px band of ink, so a within-Zone rule cannot size it.
+**Q3. The type scale, carrying open issue 4. — DONE 2026-09-29, re-scoped to
+heading sizes, gate met;** see "What the last step shipped".
 
 **Q4. Thread 0's leftover seam.** No output change. `OllamaEngine.detect_zones`
 and `LAYOUT_PROMPT` are unreachable from a Conversion and survive only as what
@@ -327,9 +364,15 @@ All in [`specs/0007-a2-measurements.md`](specs/0007-a2-measurements.md).
 
 ## Deferred deliberately — not new faults
 
-- **The type scale is no longer deferred — it is Q3 of the queue**, gated on
-  `height_ratio` directly rather than on agreement with the CSS size. Until it
-  ships, a heading drawn at the wrong size is its fault, not a new one.
+- **Body type size and Title sizes** — measured in Q3 at the sources' *own*
+  sizes and both cross the T1 ratchet on T3 `beside`. Reopening is a scorer
+  question about `beside`'s half-overlap test, or waits on the content-losing
+  documents; not an estimator question. `style.py`'s module docstring has the
+  table. Until then a Title or body drawn at the wrong size is this, not new.
+- **`catalogue_0015`'s `OK-330` and `Oak drawer runner`** stay at `h1` size.
+  `OK-330` is white type on a dark badge and its line measures the badge's
+  height, above 1.44em, so the rule leaves it; `Oak drawer runner` is its
+  Zone's *second* heading Block, and only the leading one is sized.
 - **Thread 3/C** stays gated on its re-scoping classification. The conversion
   is deterministic, so a loop re-reading the same crop gets the identical wrong
   answer back.

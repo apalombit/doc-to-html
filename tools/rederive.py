@@ -19,6 +19,7 @@ and can be recomputed from it, in the order a Conversion runs them:
                                     wire.table_repairs              (in _extract)
     3. palette and chrome re-measured — fill, title bar, header bar, border
                                     remeasure_style.remeasure  (_measure_chrome)
+       and each leading heading's size      (_measure_type)
     4. Shortfalls re-measured, since step 1 changes a read-line count
                                     orchestrator.shortfall  (_measure_shortfalls)
 

@@ -733,7 +733,11 @@ def _figure(zone: Zone, document: Document) -> str:
 
 def _block(block: Block, document: Document) -> str:
     if block.kind == "heading":
-        return f"<h1>{_lines(block, document)}</h1>"
+        # A size is only ever set smaller than `h1`'s own 1.6em — see
+        # `style.heading_sizes` — so the stylesheet keeps the heading's weight
+        # and margins and this changes only how large it is.
+        size = f' style="font-size:{block.size:.2f}em"' if block.size else ""
+        return f"<h1{size}>{_lines(block, document)}</h1>"
     if block.kind == "quote":
         return f"<blockquote>{_lines(block, document)}</blockquote>"
     if block.kind == "attribution":

@@ -12,8 +12,8 @@ What is reused and what is recomputed:
     reused       Zones, their boxes, their text, their Kinds — everything the
                  model decided. Read back out of the run's own `document.html`,
                  which embeds the IR.
-    recomputed   Document.style, and each Zone's fill, title_fill, header_fill
-                 and boxed.
+    recomputed   Document.style, each Zone's fill, title_fill, header_fill
+                 and boxed, and each leading heading Block's size.
                  Measured from `example/<doc>.png` through the same `rectify`
                  the Conversion used.
 
@@ -88,6 +88,11 @@ def remeasure(document: Document, png: Path) -> tuple[int, int]:
         zone.fill, zone.title_fill, zone.header_fill, zone.boxed = (
             found.fill, found.title_fill, found.header_fill, found.bordered)
         boxed += int(found.bordered)
+    # `Conversion._measure_type`, which runs straight after the chrome.
+    sizes = style_module.heading_sizes(rectified.image, document.zones)
+    for zone, size in zip(document.zones, sizes):
+        for position, block in enumerate(zone.blocks):
+            block.size = size if position == 0 else None
     return len(drawn), boxed
 
 

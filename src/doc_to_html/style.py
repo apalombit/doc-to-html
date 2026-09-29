@@ -31,19 +31,39 @@ snapped box sits up to 256px inside its card because the text does not reach
 the card's right edge. See `rectangles()` for the numbers and the corpus
 result.
 
-**Not here yet: the type scale.** It was measured across the corpus on
-2026-09-20 and it is not safe to ship. Ink-band height tracks the true CSS font
-size closely — the per-Zone pooled mode lands at a median of **0.93** of it,
-inside 0.75-1.13 on thirteen of fifteen documents — but `catalogue_0015` reads
-**2.40x** because its dense cards merge a title, a price and a description into
-one band, and `form_0007` and `menu_0012` sit at 0.75 and 0.69. No confidence
-signal tried separated the bad estimate from the good ones: agreement within
-+-25% of the mode reads 0.50 on `catalogue_0015` and 0.40 on `form_0007`, whose
-estimate is *fine*. Shipping the estimate anyway would set 24px type on a
-document whose real body is 10px, and `catalogue_0015` currently has the best
-`height_ratio` in the corpus at 1.03. **Making the corpus's best document worse
-to improve the others is not a trade worth making blind**, so the type scale
-gets its own increment, measured against `height_ratio` directly.
+**The type scale ships in one part: a heading drawn smaller when the page
+prints it smaller — 2026-09-29, Q3 of spec 0007's open-issues queue.**
+`heading_sizes` measures a leading heading Block's glyph height against the
+page's body and draws it at that size when it is below `SHRINK_BELOW`. Eight
+headings on five documents, `invoice_0002`'s bold body-size `Acme Corporation`
+among them, which was the largest text on its page.
+
+**The rest is not shipped, and not for want of an estimator.** It was measured
+with the answer in hand — today's IRs re-rendered at each source's *own* CSS
+sizes, read off `project()`, which is the best any estimate could ever do:
+
+| arm, at the source's own sizes | T1 ratchet | mean abs log height_ratio |
+|---|---|---|
+| body type | crosses on `catalogue_0015`, `form_0007`, `newsletter_0008` | 0.340 -> 0.282 |
+| Titles and headings | crosses on `form_0007` | 0.340 -> 0.345 |
+| both | crosses on `form_0007`, `newsletter_0008` | 0.340 -> 0.289 |
+| **headings shrunk only** | **holds** | 0.340 -> 0.333 |
+
+Every crossing is T3 `beside`, whose test is vertical overlap over half the
+shorter block: resizing type changes which neighbours overlap by half —
+`form_0007`'s title beside `OFFICE USE`, `newsletter_0008`'s pull quote beside
+the next column — while the columns stay where they were. And the body arm
+moves height *away* from 1 on the three documents that lose words
+(`catalogue_0015`, `form_0007`, `receipt_0010`): oversized type is what makes
+their pages the right height. Reopening either half is a scorer question
+about `beside`, or waits on those documents' content — not an estimator
+question.
+
+The body estimate that was measured on 2026-09-20 — ink-band height, pooled
+per Zone — still reads `catalogue_0015` at over twice its size, because its
+card borders join every line of a card into one band. `type_lines` is what
+clears that: re-measured on 2026-09-28 it puts `catalogue_0015`'s body at 10px
+against the CSS's 11.
 """
 
 from __future__ import annotations
@@ -54,8 +74,17 @@ from typing import Any, Sequence
 
 import numpy as np
 
-from .ir import BBox, Style
-from .preprocess import ImageArray, _cv2, content_ink
+from .ir import BBox, Kind, Style, Zone
+from .preprocess import (
+    MIN_BAND,
+    MIN_ROW_GAP,
+    ImageArray,
+    _cv2,
+    _without_vertical_rules,
+    content_ink,
+    ink_bands,
+    zone_pixels,
+)
 
 BUCKET = 8
 """How coarsely a colour is rounded before the modal one is counted.
@@ -591,3 +620,179 @@ def chrome(crop: ImageArray, *, ground: tuple[int, int, int],
 
     return Chrome(fill=fill, title_fill=title_fill, header_fill=header_fill,
                   bordered=bordered)
+
+
+# --------------------------------------------------------------------------
+# Heading sizes — the part of the type scale that ships
+# --------------------------------------------------------------------------
+
+HEADING_EM = 1.6
+"""What `render.STYLESHEET` draws a heading Block at, in ems of the body."""
+
+SHRINK_BELOW = 0.9 * HEADING_EM
+"""A heading measured below this is drawn at its measured size; at or above it
+keeps `HEADING_EM`. **The threshold sits in an empty band of the
+distribution**, measured over all fifteen documents' leading heading Blocks on
+2026-09-28 (px at a 16px body): the ones the page prints small measured
+11.8–20.4, the ones it prints large 24.9–38.3, and 0.9 x 25.6 = 23.0 falls
+between them. Only ever a shrink: sizing a heading *up* from its ink crossed
+the T1 ratchet at the source's own sizes — see the module docstring."""
+
+SMALLEST_EM = 0.6
+"""Below this a measurement is taken to have found the wrong line rather than
+very small type, and the heading keeps its house size."""
+
+WALL_SHARE = 0.9
+"""A column inked in this share of a band's rows is a candidate wall."""
+
+VALLEY_SHARE = 0.35
+"""How far below a band's peak a row must fall to part two touching lines."""
+
+GLYPH_PERCENTILE = 90
+"""Which glyph height stands for a line's type: the tall ones — capitals,
+ascenders and figures, all about 0.7-0.75 of the em in every face measured —
+rather than the x-height, which is what most of a line's glyphs are and which
+varies from face to face far more."""
+
+
+def _parted(profile: Any) -> list[int]:
+    """Where to cut one band into touching lines: at the valleys between them.
+
+    Cut points as offsets into `profile`, first and last included. **Only
+    lines of one size are parted**, so a cut leaving pieces less than half as
+    tall as each other is refused: that shape is a capital's crossbar standing
+    proud of its own line — `sample_css_0004`'s `Sample HTML` measured as a
+    6px line over a 27px one until this was here.
+    """
+    peak = profile.max()
+    on = profile > VALLEY_SHARE * peak
+    cores: list[tuple[int, int]] = []
+    start: int | None = None
+    for index, value in enumerate([*on, False]):
+        if value and start is None:
+            start = index
+        elif not value and start is not None:
+            if index - start >= 2:
+                cores.append((start, index - 1))
+            start = None
+    cuts = [first[1] + int(np.argmin(profile[first[1]:second[0] + 1]))
+            for first, second in zip(cores, cores[1:])]
+    edges = [0, *[cut + 1 for cut in cuts], len(profile)]
+    pieces = [bottom - top for top, bottom in zip(edges, edges[1:])]
+    if len(pieces) > 1 and min(pieces) < 0.5 * max(pieces):
+        return [0, len(profile)]
+    return edges
+
+
+def type_lines(mask: Any) -> list[tuple[int, int]]:
+    """Each printed line of a region's content ink, as its first and last row.
+
+    `preprocess.printed_bands` asks the same question and answers it at the
+    coarseness its callers need: a band is ink separated by blank rows, so two
+    lines set close, or joined by anything inked down their side, are one
+    band. `invoice_0002`'s company block is the case — the right edge of the
+    ACME tile falls inside the crop and inks every row, so its four lines read
+    as one 75px band. Sizing type needs the lines themselves, so two things
+    are done inside each band:
+
+    - **a wall is cleared** — a column inked in nearly every row — but only
+      when the band is the height of several lines: at least twice as tall as
+      the tallest piece clearing leaves. A capital's stem spans its own line
+      too, and clearing the `T` of a word like `Tax` strands its crossbar
+      above the lowercase — two pieces, but of one line's height. The card
+      bands of `catalogue_0015` are why the test is on height and not on the
+      pieces matching: a card's border leaves 4px slivers beside its lines.
+    - **touching lines are parted** at the valleys between them; see `_parted`.
+    """
+    found: list[tuple[int, int]] = []
+    inked = np.asarray(mask) > 0
+    for top, bottom in ink_bands(inked.sum(axis=1), MIN_ROW_GAP, MIN_BAND):
+        band = inked[top:bottom + 1]
+        walls = band.mean(axis=0) >= WALL_SHARE
+        if walls.any() and not walls.all():
+            cleared = band.copy()
+            cleared[:, walls] = False
+            parts = ink_bands(cleared.sum(axis=1), MIN_ROW_GAP, MIN_BAND)
+            tallest = max((last - first + 1 for first, last in parts), default=0)
+            if len(parts) >= 2 and len(band) >= 2 * tallest:
+                band = cleared
+        for first, last in ink_bands(band.sum(axis=1), MIN_ROW_GAP, MIN_BAND):
+            profile = band[first:last + 1].sum(axis=1).astype(float)
+            edges = _parted(profile)
+            for low, high in zip(edges, edges[1:]):
+                rows = np.where(profile[low:high] > 0)[0]
+                if len(rows) and rows[-1] - rows[0] + 1 >= MIN_BAND:
+                    found.append((top + first + low + int(rows[0]),
+                                  top + first + low + int(rows[-1])))
+    return found
+
+
+def glyph_height(mask: Any, top: int, bottom: int) -> float | None:
+    """How tall one printed line's type is, from its glyphs. See
+    `GLYPH_PERCENTILE`.
+
+    Connected components of the line's ink, less three things that are ink and
+    not glyphs: a rule (wide for its height), a solid block (a tile's edge), and
+    a filled badge with its type knocked out of it — `catalogue_0015`'s SKU
+    labels, which would otherwise measure as the badge. `None` when nothing is
+    left, which is what a line of white type on a dark badge gives.
+    """
+    cv2 = _cv2()
+    strip = (np.asarray(mask)[top:bottom + 1] > 0).astype(np.uint8)
+    count, _, stats, _ = cv2.connectedComponentsWithStats(strip, connectivity=8)
+    heights = []
+    for index in range(1, count):
+        _, _, width, height, area = stats[index]
+        if height < 2 or width > 4 * height:
+            continue
+        if area > 0.85 * width * height and height > 6:
+            continue
+        if area > 0.7 * width * height and width > 1.5 * height:
+            continue
+        heights.append(height)
+    return float(np.percentile(heights, GLYPH_PERCENTILE)) if heights else None
+
+
+def heading_sizes(image: ImageArray, zones: Sequence[Zone]) -> list[float | None]:
+    """For each Zone, the size to draw its leading heading at, or None.
+
+    **Only a Zone's first entry, and only when it is a heading** — its line is
+    the region's first printed line, or the second under a Title, which the
+    caption pass took off the first. Every heading Block in the corpus is
+    such a first entry bar one, `catalogue_0015`'s `Oak drawer runner`, which
+    sits under a badge row and a sliver of tile edge that make counting lines
+    down to it unreliable.
+
+    The size is the heading's glyph height over the page's — the median over
+    every printed line of every region that is not a figure — in ems of the
+    body. Kept only when the page prints the heading smaller than it is drawn
+    (`SHRINK_BELOW`), and no smaller than `SMALLEST_EM`. **This is the
+    bold-body-line case**: `invoice_0002`'s `Acme Corporation` is body-size
+    type read as a heading and was drawn the largest thing on its page.
+
+    Measured on `image`, the Rectified Image the lines were read from: a ratio
+    of two heights on one image needs neither the page's own scale nor its
+    polarity turned back.
+    """
+    lines: list[list[float | None]] = []
+    for zone in zones:
+        if zone.bbox is None or zone.kind is Kind.FIGURE:
+            lines.append([])
+            continue
+        mask = _without_vertical_rules(content_ink(zone_pixels(image, zone)))
+        lines.append([glyph_height(mask, top, bottom)
+                      for top, bottom in type_lines(mask)])
+    measured = [height for zone_lines in lines for height in zone_lines if height]
+    if not measured:
+        return [None] * len(zones)
+    body = float(np.median(measured))
+
+    sizes: list[float | None] = []
+    for zone, zone_lines in zip(zones, lines):
+        index = 1 if zone.title else 0
+        own = zone_lines[index] if index < len(zone_lines) else None
+        heading = bool(zone.blocks) and zone.blocks[0].kind == "heading"
+        size = own / body if heading and own else None
+        sizes.append(round(size, 2) if size is not None
+                     and SMALLEST_EM <= size < SHRINK_BELOW else None)
+    return sizes

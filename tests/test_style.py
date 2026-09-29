@@ -5,8 +5,9 @@ ADR 0005 measures style from pixels precisely so that it is deterministic and
 testable without Ollama.
 
 **What this increment covers and what it does not.** Palette, page width and
-the border finder. The type scale is measured and deliberately unshipped —
-`style.py`'s module docstring holds the numbers and the reason.
+the border finder, and the one part of the type scale that ships — a heading
+drawn no larger than the page prints it. `style.py`'s module docstring holds
+the numbers that keep the rest unshipped.
 
 The border finder's one end-to-end test, through a real Conversion, lives in
 `tests/test_list_and_figure.py::TestCards` beside the render it has to reach.
@@ -22,16 +23,26 @@ import numpy as np
 from doc_to_html.corpus import SOURCES, SWEEP
 from doc_to_html.ir import (
     BBox,
+    Block,
     Cell,
     Document,
     Kind,
+    Reading,
     Row,
     RowRole,
     Source,
     Style,
     Zone,
 )
-from doc_to_html.preprocess import header_band, rectify
+from doc_to_html.orchestrator import Conversion
+from doc_to_html.preprocess import (
+    MIN_BAND,
+    MIN_ROW_GAP,
+    content_ink,
+    header_band,
+    ink_bands,
+    rectify,
+)
 from doc_to_html.render import render
 from doc_to_html.style import (
     MIN_ACCENT_SHARE,
@@ -39,12 +50,21 @@ from doc_to_html.style import (
     boxes_for,
     chrome,
     dominant,
+    glyph_height,
+    heading_sizes,
     measure,
     modal,
     rectangles,
+    type_lines,
 )
 
+from .replay import ReplayTransport, break_zone, engines_replaying, recorded_for
+
 REPO = Path(__file__).resolve().parent.parent
+
+
+def _read(text: str) -> Reading:
+    return Reading(engine="test", text=text)
 
 
 def page(colour: tuple[int, int, int],
@@ -798,3 +818,163 @@ class TestATableHeaderRowKeepsItsFill:
         ])]
 
         assert "<thead><tr>" in render(doc)
+
+
+def type_page(rows: list[tuple[str, float]], *, width: int = 640,
+              leading: float = 2.2, top: int = 20) -> tuple[np.ndarray, list[int]]:
+    """A white BGR page, one line of Hershey type per `(text, scale)` row.
+
+    Returns the page and each line's baseline row, so a test can put a Zone
+    round the lines it means.
+    """
+    import cv2
+
+    image = np.full((top + 20 + int(sum(40 * s * leading for _, s in rows)),
+                     width, 3), 255, dtype=np.uint8)
+    baselines = []
+    y = top
+    for text, scale in rows:
+        y += int(30 * scale)
+        cv2.putText(image, text, (10, y), cv2.FONT_HERSHEY_SIMPLEX, scale,
+                    (0, 0, 0), max(1, int(round(2 * scale))), cv2.LINE_AA)
+        baselines.append(y)
+        y += int(40 * scale * (leading - 1)) + 4
+    return image, baselines
+
+
+def zone_round(image: np.ndarray, first: int, last: int, **fields: object) -> Zone:
+    """A prose Zone boxed round the rows `first`..`last` of `image`."""
+    height = image.shape[0]
+    return Zone(kind=Kind.PROSE, complete=True,
+                bbox=BBox(0.0, max(0, first) / height, 1.0,
+                          min(height, last) / height), **fields)  # type: ignore[arg-type]
+
+
+class TestAHeadingIsDrawnNoLargerThanItIsPrinted:
+    """Q3 of the open-issues queue, the part of the type scale that ships.
+
+    Every heading Block rendered as an `h1` at 1.6em, whatever the page
+    printed: `invoice_0002`'s bold body-size `Acme Corporation` was the
+    largest text on its page. A leading heading measured smaller than that is
+    now drawn at its measured size. Sizing a heading *up* was measured at the
+    source's own sizes and crossed the T1 ratchet — see `style.py`.
+    """
+
+    def test_a_wall_joining_four_lines_is_cleared_and_the_lines_part(
+            self) -> None:
+        """`invoice_0002`'s company block: the ACME tile's edge inks every row."""
+        image, _ = type_page([("Acme Corporation", 0.6), ("Software house", 0.6),
+                              ("Field 3, Moon", 0.6), ("info@acme.com", 0.6)],
+                             leading=1.45)
+        image[10:image.shape[0] - 10, 600:612] = 0
+        mask = content_ink(image)
+
+        assert len(ink_bands(mask.sum(axis=1), MIN_ROW_GAP, MIN_BAND)) == 1
+        assert len(type_lines(mask)) == 4
+
+    def test_a_capitals_crossbar_is_not_cut_off_its_own_line(self) -> None:
+        """`sample_css_0004`'s `Sample HTML`: the `T`'s bar stands proud."""
+        mask = np.zeros((40, 160), dtype=np.uint8)
+        mask[5:9, 0:40] = 255        # the crossbar
+        mask[5:35, 18:22] = 255      # the stem
+        mask[15:35, 50:150] = 255    # the lowercase run beside it
+
+        assert type_lines(mask) == [(5, 34)]
+
+    def test_a_badge_with_its_type_knocked_out_is_not_a_glyph(self) -> None:
+        """`catalogue_0015`'s SKU labels: white type on a dark badge."""
+        mask = np.zeros((24, 80), dtype=np.uint8)
+        mask[2:22, 5:70] = 255
+        for left in (15, 30, 45):
+            mask[8:16, left:left + 5] = 0
+
+        assert glyph_height(mask, 0, 23) is None
+
+    def test_a_body_size_heading_is_sized_and_a_large_one_is_left_alone(
+            self) -> None:
+        image, base = type_page(
+            [("Acme Corporation", 0.6),
+             ("Software development and consulting", 0.6),
+             ("Field three on the moon, by request", 0.6),
+             ("Invoices are payable within thirty days", 0.6),
+             ("Annual review", 1.2)], leading=2.6)
+        small = zone_round(image, base[0] - 25, base[0] + 10,
+                           blocks=[Block(kind="heading", lines=[Cell()])])
+        body = zone_round(image, base[1] - 25, base[3] + 10,
+                          blocks=[Block(kind="paragraph", lines=[Cell()])])
+        large = zone_round(image, base[4] - 45, base[4] + 15,
+                           blocks=[Block(kind="heading", lines=[Cell()])])
+
+        sizes = heading_sizes(image, [small, body, large])
+
+        assert sizes[0] is not None and 0.8 <= sizes[0] <= 1.2
+        assert sizes[1] is None, "only a heading is sized"
+        assert sizes[2] is None, "only ever a shrink"
+
+    def test_under_a_title_the_heading_is_the_second_line(self) -> None:
+        image, base = type_page(
+            [("RIVERSIDE", 1.2), ("Boathouse to reopen", 0.6),
+             ("The towpath opens on the first of October", 0.6),
+             ("The slipways follow a fortnight later", 0.6)], leading=2.6)
+        titled = zone_round(image, base[0] - 45, base[1] + 10,
+                            title="RIVERSIDE",
+                            blocks=[Block(kind="heading", lines=[Cell()])])
+        body = zone_round(image, base[2] - 25, base[3] + 10,
+                          blocks=[Block(kind="paragraph", lines=[Cell()])])
+
+        size = heading_sizes(image, [titled, body])[0]
+
+        assert size is not None and 0.8 <= size <= 1.2
+
+    def test_the_size_round_trips(self) -> None:
+        doc = document()
+        doc.zones = [Zone(kind=Kind.PROSE, blocks=[
+            Block(kind="heading", lines=[Cell()], size=0.84)])]
+
+        back = Document.from_json(doc.to_json())
+
+        assert back.zones[0].blocks[0].size == 0.84
+
+    def test_an_ir_written_before_the_size_existed_still_decodes(self) -> None:
+        doc = document()
+        doc.zones = [Zone(kind=Kind.PROSE, blocks=[Block(kind="heading")])]
+        older = doc.to_json().replace('"size": null', '"_": null')
+
+        assert Document.from_json(older).zones[0].blocks[0].size is None
+
+    def test_a_sized_heading_renders_at_its_size_and_an_unsized_one_as_before(
+            self) -> None:
+        doc = document()
+        doc.zones = [Zone(kind=Kind.PROSE, complete=True, blocks=[
+            Block(kind="heading", lines=[Cell(readings=[_read("Acme")])],
+                  size=1.0),
+            Block(kind="heading", lines=[Cell(readings=[_read("Annual")])])])]
+
+        html = render(doc)
+
+        assert '<h1 style="font-size:1.00em">Acme</h1>' in html
+        assert "<h1>Annual</h1>" in html
+
+    def test_through_a_conversion_the_heading_is_measured(self) -> None:
+        """The stage runs where a Conversion has Blocks to size, which a rule
+        measured on IRs offline does not prove — `title_fill` shipped, was
+        verified offline, and was set on no Zone in a conversion for a phase.
+
+        `invoice_0001` replayed, with its sender's address answered as a
+        heading over two address lines — the shape `invoice_0002`'s company
+        block has. Every line of it is 16px on the page.
+        """
+        replies = break_zone(
+            recorded_for("invoice_0001"), "invoice_0001", 2,
+            '{"blocks": [{"kind": "heading", "lines": ["Sparksuite, Inc."]},'
+            ' {"kind": "address", "lines": ["12345 Sunny Road",'
+            ' "Sunnyville, CA 12345"]}]}')
+        conversion = Conversion(source=REPO / "example" / "invoice.png",
+                                engines=engines_replaying(ReplayTransport(replies)))
+        document = conversion.run()
+
+        blocks = document.zones[2].blocks
+        assert blocks[0].kind == "heading"
+        assert blocks[0].size is not None and 0.8 <= blocks[0].size <= 1.2
+        assert blocks[1].size is None
+        assert '<h1 style="font-size:' in render(document)
