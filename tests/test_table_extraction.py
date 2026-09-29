@@ -274,6 +274,66 @@ class TestAHeaderRowsFillArrivesThroughAConversion:
             '<thead style="--shade:rgb(238,238,238)">') == 2
 
 
+class TestAReceiptThroughAConversion:
+    """Spec 0007's queue, Q5: row order and the column sum, where a Conversion
+    applies them.
+
+    `receipt_0010`'s own picture, at the box the production layout front draws
+    for its table, with the caption, Kind and table answers scripted as the
+    model gave them in sweep `Q5-10-reshot-sweep` — the floor's own reading,
+    closing on two lines it calls headers.
+    """
+
+    ROWS = [
+        ("header", ["Till 02 Op. NADIA", "", "29/08/2026"]),
+        ("header", ["Order 00418", "", "13:47"]),
+        ("data", ["1", "Flat white", "3.40"]),
+        ("data", ["", "oat milk", "0.40"]),
+        ("data", ["2", "Cortado", "6.20"]),
+        ("data", ["1", "Toast, sourdough", "3.10"]),
+        ("data", ["", "extra butter", "0.30"]),
+        ("data", ["1", "Bacon roll", "5.75"]),
+        ("data", ["3", "Shortbread", "4.50"]),
+        ("data", ["1", "Elderflower press", "2.80"]),
+        ("summary", ["Subtotal", "", "26.45"]),
+        ("summary", ["Service 10%", "", "2.65"]),
+        ("summary", ["VAT @ 20%", "", "4.85"]),
+        ("summary", ["TOTAL", "", "29.10"]),
+        ("data", ["Card ***4417", "", "29.10"]),
+        ("data", ["Change", "", "0.00"]),
+        ("header", ["AID A000000031010", "", ""]),
+        ("header", ["Auth 084417", "", "CONTACTLESS"]),
+    ]
+
+    def test_the_rows_keep_their_printed_order_and_the_total_reconciles(
+            self) -> None:
+        from doc_to_html.corpus import SOURCES
+
+        replies = {
+            "caption": [text(json.dumps(
+                {"first_line": "Till 02 Op. NADIA", "line_is": "caption"}))],
+            "classify": [text(json.dumps({"kind": "table", "graphic": ""}))],
+            "table": [text(json.dumps({"rows": [
+                {"role": role, "cells": cells} for role, cells in self.ROWS]}))],
+        }
+        zone = Zone(kind=Kind.PROSE, band=0, column=0,
+                    bbox=BBox(0.0537, 0.1447, 0.9463, 0.735))
+        document, _ = convert_recording(
+            REPO / SOURCES["receipt_0010"].png, replies, layout=[zone])
+
+        html = render(document)
+        table = html[html.index("<table>"):html.index("</table>")]
+        printed = ["Till 02 Op. NADIA", "Flat white", "Elderflower press",
+                   "Subtotal", "TOTAL", "Card ***4417", "Change",
+                   "AID A000000031010", "Auth 084417"]
+        assert [table.index(t) for t in printed] == sorted(
+            table.index(t) for t in printed)
+        assert "<tfoot" not in table
+
+        sums = [p for p in document.probes if p.kind == "column-sum"]
+        assert [(p.ok, p.computed) for p in sums] == [(True, "26.45")]
+
+
 class TestProbesNeverHandOverTheAnswerKey:
     def test_no_expected_value_reaches_a_prompt(
         self, invoice: tuple[Document, ReplayTransport]
@@ -992,6 +1052,35 @@ class TestStatingTheGridInThePrompt:
 
         assert "it holds 2 rows and 2 columns" in asked
         assert asked.startswith(TABLE_PROMPT), "stated after, never instead of"
+
+    def test_a_one_column_count_is_still_stated(self) -> None:
+        """Measured and kept — spec 0007's queue, Q5, 2026-09-29.
+
+        One column is a wrong count on five of the eighteen tables of the
+        re-shot corpus: rules and centred lines bridge the gutters. Withholding
+        it was built and measured on all five, by replaying the floor with each
+        table asked again without it, and it crossed the ratchet: `menu_0012`
+        stopped printing 30 words — told 16 rows it returns the whole menu,
+        told nothing it pairs the two columns into 16 rows and drops the rest
+        — and `statement_0006` lost `Castleton`. A wrong count of columns still
+        carries a count of rows, and that is the part this model obeys.
+
+        On the truncated picture it was measured against first, `receipt_0010`
+        collapsed under "19 rows and 1 columns"; on the whole picture its crop
+        no longer holds the centred line and it reads every row with the count.
+        """
+        engine, transport = engine_with('{"rows": [{"role": "data",'
+                                        ' "cells": ["a", "b"]}]}')
+        engine.table_grid_hint = True
+        page = np.full((120, 400, 3), 245, dtype=np.uint8)
+        page[20:40, 10:390] = 20
+        page[60:80, 10:390] = 20
+        assert table_grid(page).columns == 1, "the page must measure one column"
+
+        engine.extract_zone(page, Zone(kind=Kind.TABLE, bbox=BBox(0, 0, 1, 1)))
+
+        assert transport.last is not None
+        assert "it holds 2 rows and 1 columns" in transport.last.prompt
 
     def test_the_flag_off_leaves_the_prompt_exactly_as_it_ships(self) -> None:
         """Off has to mean untouched, or the default is not the measured one."""

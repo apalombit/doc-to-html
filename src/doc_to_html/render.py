@@ -584,10 +584,26 @@ def _table(zone: Zone, document: Document) -> str:
     above its own dishes, and gathering them stacked all three above the first
     dish. A header with nothing after it still goes on top — that is
     `sample_table_0003`'s column header, which the model returned as its last
-    row.
+    row — **unless the table already opens with its header**, when a later one
+    is a line of the table like any other: `receipt_0010`, read whole in Q5,
+    opens with `Till 02` / `Order 00418` and ends with `THANK YOU — PLEASE
+    CALL AGAIN`, and lifting that to the top put the farewell above the order.
+
+    **Summaries go to `<tfoot>` only when nothing follows them.** The same
+    receipt's `Subtotal` to `TOTAL` are followed by `Card`, `Change` and the
+    payment lines, and gathering them at the foot drew the total below the
+    change. Every other summary row in the corpus closes its table, so this
+    moves no other document.
     """
     numeric = _numeric_columns(zone)
-    data_at = [i for i, row in enumerate(zone.rows) if row.role is RowRole.DATA]
+    roles = [row.role for row in zone.rows]
+    data_at = [i for i, role in enumerate(roles) if role is RowRole.DATA]
+    opening = next((i for i, role in enumerate(roles)
+                    if role is not RowRole.HEADER), len(roles))
+    closing = len(roles)
+    while closing and roles[closing - 1] is RowRole.SUMMARY:
+        closing -= 1
+
     groups: dict[RowRole, list[str]] = {role: [] for role in RowRole}
     for position, row in enumerate(zone.rows):
         tag = "th" if row.role is RowRole.HEADER else "td"
@@ -596,9 +612,13 @@ def _table(zone: Zone, document: Document) -> str:
             f"{_cell(c, document)}</{tag}>"
             for index, c in enumerate(row.cells)
         )
-        section = (row.role is RowRole.HEADER and data_at
-                   and data_at[0] < position < data_at[-1])
-        groups[RowRole.DATA if section else row.role].append(f"<tr>{cells}</tr>")
+        if row.role is RowRole.HEADER:
+            between = bool(data_at) and data_at[0] < position < data_at[-1]
+            in_place = position >= opening and (opening > 0 or between)
+        else:
+            in_place = row.role is RowRole.SUMMARY and position < closing
+        groups[RowRole.DATA if in_place else row.role].append(
+            f"<tr>{cells}</tr>")
 
     parts = []
     if groups[RowRole.HEADER]:

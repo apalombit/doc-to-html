@@ -22,6 +22,8 @@ and can be recomputed from it, in the order a Conversion runs them:
        and each leading heading's size      (_measure_type)
     4. Shortfalls re-measured, since step 1 changes a read-line count
                                     orchestrator.shortfall  (_measure_shortfalls)
+    5. Probes re-run over the tables as they now stand
+                                    probes.run         (after _measure_type)
 
 then re-renders into a run-shaped directory that `doc_to_html.report` and
 `tools/visual_review.py` read without knowing the difference.
@@ -58,6 +60,7 @@ TOOLS = Path(__file__).resolve().parent
 sys.path.insert(0, str(TOOLS.parent / "src"))
 sys.path.insert(0, str(TOOLS))
 
+from doc_to_html import probes  # noqa: E402
 from doc_to_html.corpus import SOURCES  # noqa: E402
 from doc_to_html.ir import Caveat, Document, Kind  # noqa: E402
 from doc_to_html.orchestrator import shortfall  # noqa: E402
@@ -75,7 +78,7 @@ _REPAIR = re.compile(
 
 
 def rederive(document: Document, png: Path) -> None:
-    """Steps 1-4 of this module's docstring, in place."""
+    """Steps 1-5 of this module's docstring, in place."""
     for zone in document.zones:
         if _title_is_its_header_cell(zone):
             zone.title = None
@@ -107,6 +110,8 @@ def rederive(document: Document, png: Path) -> None:
         found for index, zone in enumerate(document.zones)
         if (found := shortfall(image, zone, index)) is not None
     ]
+    # Q5, 2026-09-29: a column-sum totals the rows above its summary only.
+    document.probes = probes.run(document)
 
 
 def documents_in(source: Path, model: str) -> list[tuple[str, Path]]:

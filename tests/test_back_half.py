@@ -78,6 +78,27 @@ class TestProbes:
         assert any(not r.ok for r in results)
         assert probes.implicated_zones(results)
 
+    def test_a_total_sums_only_the_rows_above_it(self, invoice: Document) -> None:
+        """`receipt_0010` prints `Card` and `Change` after its subtotal.
+
+        Summed with them the prices came to 55.55, which matches nothing, and
+        the finding then named a column of quantities summed with the digits
+        of the card and authorisation numbers."""
+        invoice.zones = [Zone(kind=Kind.TABLE, complete=True, rows=[
+            Row(role=RowRole.DATA, cells=[cell("1"), cell("Flat white"), cell("3.40")]),
+            Row(role=RowRole.DATA, cells=[cell(""), cell("oat milk"), cell("0.40")]),
+            Row(role=RowRole.DATA, cells=[cell("2"), cell("Cortado"), cell("6.20")]),
+            Row(role=RowRole.SUMMARY, cells=[cell("Subtotal"), cell(""), cell("10.00")]),
+            Row(role=RowRole.DATA, cells=[cell("Card ***4417"), cell(""), cell("10.00")]),
+            Row(role=RowRole.DATA, cells=[cell("Change"), cell(""), cell("0.00")]),
+            Row(role=RowRole.DATA, cells=[cell("Auth 084417"), cell(""), cell("")]),
+        ])]
+
+        sums = [r for r in probes.run(invoice) if r.kind == "column-sum"]
+
+        assert sums and all(r.ok for r in sums)
+        assert [r.computed for r in sums] == ["10.00"]
+
     def test_probe_findings_carry_locations_not_answers(self, invoice: Document) -> None:
         """docs/adr/0004 — a Probe may say where to look, never what to find."""
         invoice.zones[-1].rows[1].cells[1] = cell("$800.00")
@@ -220,6 +241,53 @@ class TestHeaderRowPlacement:
         assert table.index("<thead><tr><th>Dish</th>") < table.index(
             "Potted brown shrimp") < table.index("<th>From the grill</th>")
         assert table.count("<thead") == 1
+
+    def test_once_the_table_opens_with_a_header_a_last_one_stays_last(
+            self, invoice: Document) -> None:
+        """`receipt_0010`, read whole in Q5: it opens with its order lines and
+        closes with a farewell the model also calls a header. Lifting that to
+        the top put `THANK YOU` above the order."""
+        table = _table_of(invoice, [
+            (RowRole.HEADER, "Till 02 Op. NADIA"),
+            (RowRole.DATA, "Flat white"),
+            (RowRole.HEADER, "AID A0000000031010"),
+            (RowRole.DATA, "Auth 084417"),
+            (RowRole.HEADER, "THANK YOU — PLEASE CALL AGAIN"),
+        ])
+
+        assert table.count("<thead") == 1
+        assert "THANK YOU" not in table[:table.index("</thead>")]
+        assert (table.index("Flat white") < table.index("AID A0000000031010")
+                < table.index("Auth 084417") < table.index("THANK YOU"))
+
+
+class TestSummaryRowPlacement:
+    """Summaries go to the foot only when nothing follows them."""
+
+    def test_closing_summaries_go_to_the_foot(self, invoice: Document) -> None:
+        table = _table_of(invoice, [
+            (RowRole.DATA, "Website design"),
+            (RowRole.SUMMARY, "Total"),
+        ])
+
+        assert "<tfoot><tr><td>Total</td>" in table
+
+    def test_a_summary_with_rows_after_it_stays_where_it_is(
+            self, invoice: Document) -> None:
+        """`receipt_0010` prints its payment lines after its total. At the
+        foot, the total was drawn below `Change`."""
+        table = _table_of(invoice, [
+            (RowRole.DATA, "Elderflower press"),
+            (RowRole.SUMMARY, "Subtotal"),
+            (RowRole.SUMMARY, "TOTAL"),
+            (RowRole.DATA, "Card ****4417"),
+            (RowRole.DATA, "Change"),
+        ])
+
+        assert "<tfoot" not in table
+        assert (table.index("Elderflower press") < table.index("Subtotal")
+                < table.index("TOTAL") < table.index("Card ****4417")
+                < table.index("Change"))
 
 
 class TestCorrections:

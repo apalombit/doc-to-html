@@ -97,10 +97,21 @@ def _column_sum_probes(zone: Zone, zone_index: int) -> list[ProbeResult]:
     The stated total is matched by *value* across the summary row's cells rather
     than by column position, because documents routinely place it in a merged or
     offset cell, packed together with its label.
+
+    **Only the DATA rows above the first SUMMARY row are summed** — what a
+    total totals. `receipt_0010`, read whole in Q5, prints `Card ****4417
+    29.10` and `Change 0.00` after its `Subtotal 26.45`; counting them made the
+    price column 55.55, which matches nothing printed, and the finding then
+    named the quantity column summed with `4417` and `084417` out of the
+    payment lines — 88843. Its eight items sum to 26.45. Every other table in
+    the corpus closes with its summaries, so on those this is every DATA row,
+    as before.
     """
     summary_rows = [r for r in zone.rows if r.role is RowRole.SUMMARY]
     if not summary_rows:
         return []
+    first_summary = next(index for index, row in enumerate(zone.rows)
+                         if row.role is RowRole.SUMMARY)
 
     stated: list[Decimal] = [
         value
@@ -112,7 +123,7 @@ def _column_sum_probes(zone: Zone, zone_index: int) -> list[ProbeResult]:
         return []
 
     results = []
-    for index, values in _numeric_columns(zone.rows).items():
+    for index, values in _numeric_columns(zone.rows[:first_summary]).items():
         if len(values) < 2:
             continue
         computed = sum(values, Decimal(0))

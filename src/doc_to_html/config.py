@@ -173,7 +173,21 @@ unaffected by that correction and did not need re-taking.
 is gated on `bool(zone.title)`, and `title` came back `None` from all 36 of run
 69's classify calls, so `sample_table_0003` was asked for 17 rows on a 16-row
 table and returned a spurious trailing `header`. Both of that fixture's
-mismatches trace to it."""
+mismatches trace to it.
+
+**A wrong column count is still stated, and that was measured — spec 0007's
+queue, Q5, 2026-09-29.** On the re-shot corpus five of eighteen tables measure
+one column where the page prints two to six — rules and centred lines bridge
+every gutter of the projection. Withholding the count when it reads one column
+was built and measured by asking each of the five again with no count and
+replaying the floor with the answers: `menu_0012` stopped printing **30
+words** (told 16 rows it reads the whole menu; told nothing, it pairs the two
+columns into 16 rows and drops the rest) and `statement_0006` lost
+`Castleton`. The count of rows is what the model obeys, so a sentence carrying
+a right number of rows and a wrong number of columns is worth more than none.
+The case that prompted it — `receipt_0010` collapsing to two lines of nineteen
+under "1 columns" — was a picture missing its last lines; on the whole picture
+the receipt reads every row with the count."""
 
 DEFAULT_INLINE_PASS = True
 """Whether to ask each `prose` or `list` Zone which of its spans are set apart.

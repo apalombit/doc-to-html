@@ -637,6 +637,18 @@ def prefer_container(kept: list[Detection], pool: list[Detection],
     candidate spanning a heading and its body re-does that merge with a
     detector-drawn box instead of the union, and three of this rule's adoptions
     were doing exactly that.
+
+    **A container never takes in a picture** — spec 0007's queue, Q5,
+    2026-09-29. A container here is a region of text whose parts the threshold
+    split, and a picture is a region of its own: gathered into a text Zone it
+    is read as text, or not at all. On the re-shot `receipt_0010` a 0.09
+    `picture` took the farewell line, the barcode and the three lines under it
+    as one Zone, which was read as prose — so the barcode, drawn from its pixels
+    since A3, was drawn no longer. Refusing the *container's* label is not
+    enough, and was measured not to be: a 0.15 `key_value_region` over the same
+    stack is adopted instead and snaps to the identical box. Over all fifteen
+    pages that stack is the only adoption with a picture among its parts; the
+    other six gather key-value, footnote and page-footer boxes.
     """
     from ..geometry_score import _gaps_down, _pixel_rect
 
@@ -670,6 +682,8 @@ def prefer_container(kept: list[Detection], pool: list[Detection],
             continue
         parts = [kept[index] for index in inside]
         if not _stacked(parts):
+            continue
+        if any(part.label == "picture" for part in parts):
             continue
         # The parts must account for the candidate's ink, and the candidate must
         # bring none of its own — the second test is what stops it reaching past

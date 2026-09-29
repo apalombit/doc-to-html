@@ -14,6 +14,8 @@ not run on a fresh clone. What the real models return is what the probe is for.
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 import numpy as np
 import pytest
 
@@ -810,6 +812,22 @@ class TestAdoptingAContainerTheThresholdDropped:
         mask = self._mask([(0.10, 0.13), (0.14, 0.17), (0.19, 0.23)])
 
         assert len(prefer_container(parts, parts + [greedy], mask, 0.40)) == 2
+
+    def test_a_container_never_takes_in_a_picture(self) -> None:
+        """`receipt_0010`, re-shot whole: the farewell line, the barcode and
+        the three lines under it, gathered by a 0.15 `key_value_region`, were
+        read as one prose Zone and the barcode was no longer drawn."""
+        parts = [box(0.10, 0.10, 0.90, 0.12),
+                 box(0.10, 0.14, 0.90, 0.20, "picture", 0.70),
+                 box(0.10, 0.22, 0.90, 0.28)]
+        container = box(0.09, 0.09, 0.91, 0.29, "key_value_region", 0.15)
+        mask = self._mask([(0.10, 0.12), (0.14, 0.20), (0.22, 0.28)])
+        texts = [parts[0], replace(parts[1], label="text"), parts[2]]
+        assert len(prefer_container(texts, texts + [container], mask, 0.40)) == 1, (
+            "the same stack with no picture in it is adopted, so what refuses "
+            "the one below is the picture and nothing else")
+
+        assert len(prefer_container(parts, parts + [container], mask, 0.40)) == 3
 
     def test_one_box_is_not_a_regrouping(self) -> None:
         part = [box(0.10, 0.10, 0.90, 0.17)]
