@@ -19,7 +19,7 @@ from pathlib import Path
 
 import pytest
 
-from doc_to_html import projection
+from doc_to_html import corpus, projection
 from doc_to_html.projection import MIN_WIDTH, Block, project, screenshot
 
 REPO = Path(__file__).resolve().parent.parent
@@ -95,6 +95,52 @@ class TestTheBrowserIsPinnedWhereItMatters:
         band = np.asarray(image.convert("L"))[top:bottom + 1, 600:862]
         assert int((band < 128).sum()) > 50, (
             "the last row is in the DOM but not in the pixels"
+        )
+
+
+AUTHORED = [name for name in corpus.names("sweep")
+            if name not in corpus.names("iterate")]
+"""The ten documents `tools/shoot_corpus.py` shot, as against the five
+originals, whose pictures are historical and re-render 6.9-14.1% different."""
+
+
+class TestTheCorpusPictureIsItsOwnHTML:
+    @needs_chrome
+    @pytest.mark.parametrize("name", AUTHORED)
+    def test_the_committed_picture_is_a_fresh_screenshot_of_the_html(
+        self, name: str, tmp_path: Path
+    ) -> None:
+        """The slack fault, found a second time, in the ground truth itself.
+
+        `SHOT_SLACK` landed in the same commit as these ten pictures, and they
+        had been shot before it: each lost its bottom 60-90px. Found
+        2026-09-29 by re-shooting and diffing — footers, `form_0007`'s
+        signature line, `cv_0013`'s last publication, and `receipt_0010`'s
+        last three lines were in the HTML and not in the PNG. The scorer reads
+        the source's words from the HTML, so 266 tokens were counted against a
+        model that was never shown them, and `shoot_corpus.py --check` could
+        not see it: it scores the HTML against itself.
+
+        Re-shot the same day. Two independent shoots agreed to the pixel, so
+        this asks for equality, not similarity.
+        """
+        import numpy as np
+        from PIL import Image
+
+        source = corpus.SOURCES[name]
+        committed = np.asarray(Image.open(source.png_path(REPO)).convert("RGB"))
+        fresh = tmp_path / f"{name}.png"
+        screenshot(source.html_path(REPO), fresh, width=committed.shape[1])
+        shot = np.asarray(Image.open(fresh).convert("RGB"))
+
+        assert shot.shape == committed.shape
+        differs = (np.abs(shot.astype(int) - committed.astype(int)) > 8).any(axis=2)
+        rows = np.flatnonzero(differs.any(axis=1))
+        assert not rows.size, (
+            f"{source.png} is not a screenshot of {source.html}: rows "
+            f"{rows.min()}-{rows.max()} differ. Re-shoot it with "
+            f"`tools/shoot_corpus.py --force {name}` if the HTML was edited; "
+            f"if not, find out what moved before touching the picture."
         )
 
 
