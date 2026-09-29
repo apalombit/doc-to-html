@@ -46,6 +46,7 @@ from .replay import (
     ReplayTransport,
     break_zone,
     engines_replaying,
+    geometry,
     recorded_for,
     text,
 )
@@ -220,7 +221,8 @@ class TestTheOrchestratorAsksInTheRightOrder:
             replies["caption"] = [text(answer) for answer in captions]
         transport = ReplayTransport(replies)
         conversion = Conversion(source=INVOICE,
-                                engines=engines_replaying(transport),
+                                engines=engines_replaying(
+                                    transport, geometry("invoice_0001")),
                                 caption_pass=caption_pass)
         conversion.run()
         return conversion, transport
@@ -244,7 +246,8 @@ class TestTheOrchestratorAsksInTheRightOrder:
         replies = recorded_for("invoice_0001")
         transport = ReplayTransport(replies)
         conversion = Conversion(source=INVOICE,
-                                engines=engines_replaying(transport))
+                                engines=engines_replaying(
+                                    transport, geometry("invoice_0001")))
         conversion.run()
 
         assert [c.pass_name for c in transport.calls].count("caption") > 0
@@ -458,7 +461,8 @@ class TestTheTraceExplainsTheStep:
         ] * 6
         conversion = Conversion(
             source=INVOICE,
-            engines=engines_replaying(ReplayTransport(replies)),
+            engines=engines_replaying(ReplayTransport(replies),
+                                      geometry("invoice_0001")),
             caption_pass=True,
         )
         conversion.run()
@@ -486,7 +490,8 @@ class TestTheTraceExplainsTheStep:
         ] * 6
         conversion = Conversion(
             source=INVOICE,
-            engines=engines_replaying(ReplayTransport(replies)),
+            engines=engines_replaying(ReplayTransport(replies),
+                                      geometry("invoice_0001")),
             caption_pass=True,
         )
         conversion.run()
@@ -638,7 +643,8 @@ class TestATitleIsNeverPrintedTwice:
                              "sample_table_0003", 1,
                              json.dumps({"rows": [caption, *recorded["rows"]]}))
         conversion = Conversion(source=REPO / "example" / "sample-table.png",
-                                engines=engines_replaying(ReplayTransport(replies)))
+                                engines=engines_replaying(ReplayTransport(replies),
+                                                          geometry("sample_table_0003")))
         document = conversion.run()
 
         table = next(z for z in document.zones if z.kind is Kind.TABLE)
@@ -706,7 +712,8 @@ class TestATitleIsNeverPrintedTwice:
         replies["caption"] = [text('{"first_line": "Country",'
                                    ' "line_is": "caption"}')]
         conversion = Conversion(source=REPO / "example" / "sample-table.png",
-                                engines=engines_replaying(ReplayTransport(replies)))
+                                engines=engines_replaying(ReplayTransport(replies),
+                                                          geometry("sample_table_0003")))
         document = conversion.run()
 
         table = next(z for z in document.zones if z.kind is Kind.TABLE)

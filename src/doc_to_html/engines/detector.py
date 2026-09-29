@@ -122,8 +122,8 @@ def outermost(found: list[Detection]) -> list[Detection]:
     wrong, at every confidence, so no threshold reaches it.
 
     Keeping the container is the one-line reading of "a panel and the rows
-    printed inside it are one region" that `LAYOUT_PROMPT` has spent three runs
-    asking a model to perform and being ignored about. Applied, both detectors
+    printed inside it are one region" that the vision layout prompt spent three
+    runs asking a model to perform and being ignored about. Applied, both detectors
     reach covered 1.00 and splits 0 on all five fixtures.
 
     Ties go to area, so of two boxes that contain each other — one region found
@@ -1014,17 +1014,14 @@ running heads and page numbers, which is what `FOOTER` is for.
 class LayoutEngine:
     """A layout pass that is a detector rather than a model.
 
-    Satisfies the same `detect_zones` seam `OllamaEngine` does, and ignores both
-    of its optional arguments — which the Protocol already permits. `hint` is
-    prose for a language model. `region_ceiling` is a rescue for a model that
-    invents regions, and this does not: it returned 6 regions on the page that
-    holds 6 and 12 to 14 on the page that holds 10, where the VLM once returned
-    72.
+    Satisfies `engines.base.LayoutEngine`, and ignores `hint`, which is prose
+    for a language model. It returned 6 regions on the page that holds 6 and 12
+    to 14 on the page that holds 10, where the deleted vision layout pass once
+    returned 72 — which is what a region ceiling used to be stated to rescue.
 
-    **Bands are always derived here.** `DTH_DERIVE_BANDS` exists because the VLM
-    reports Bands of its own that may be believed instead; a detector reports
-    none, so there is nothing to choose between. `bands_from_boxes` matches all
-    five fixtures' expected IR.
+    **Bands are always derived here.** A detector reports no Bands of its own,
+    so there is nothing to believe instead. `bands_from_boxes` matches all five
+    fixtures' expected IR.
 
     **Snapping is always applied**, for the same reason `DTH_SNAP_ZONES` is on:
     raw detector edges clip glyphs, which is 6 split masses of ink on
@@ -1042,8 +1039,8 @@ class LayoutEngine:
         self.name = f"detector:{detector.name}"
         self.model = detector.name
 
-    def detect_zones(self, image: ImageArray, hint: str | None = None,
-                     region_ceiling: int | None = None) -> list[Zone]:
+    def detect_zones(self, image: ImageArray,
+                     hint: str | None = None) -> list[Zone]:
         """Detections to Zones, in steps that each undo one known error.
 
         The order is not arbitrary. `outermost` first, because everything after

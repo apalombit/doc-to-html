@@ -241,16 +241,6 @@ class TestDecorationProducesNothing:
         figures = [z for z in cards.zones if z.kind is Kind.FIGURE]
         assert [z.graphic_kind for z in figures] == ["badge"]
 
-    def test_the_layout_pass_is_told_to_ignore_decoration(self) -> None:
-        from doc_to_html.engines.ollama import LAYOUT_PROMPT
-
-        flat = " ".join(LAYOUT_PROMPT.split())
-        assert (
-            "A horizontal rule, a panel border or a column divider is not a "
-            "region and must not appear in the list."
-        ) in flat
-
-
 class TestTextThatCouldBreakThePage:
     def test_inline_code_in_angle_brackets_survives(self, cards: Document) -> None:
         html = render(cards)

@@ -42,7 +42,6 @@ from doc_to_html.engines.detector import (
     without_enclosed,
     without_overreaching_pictures,
 )
-from doc_to_html.engines.ollama import OllamaEngine
 from doc_to_html.ir import Kind, Role
 from doc_to_html.orchestrator import default_engines
 from doc_to_html.wire import validate_bands
@@ -601,9 +600,9 @@ class TestBoxesBecomeZones:
     def test_bands_and_columns_are_derived_from_the_boxes(self) -> None:
         """A detector reports no Bands, so there is nothing to choose between.
 
-        `DTH_DERIVE_BANDS` exists because the *model* reports Bands of its own
-        that might be believed instead; this path has no such choice, which is
-        why derivation is unconditional here rather than behind the flag.
+        The deleted vision layout pass reported Bands of its own that might have
+        been believed instead, which was once a flag; this path never had that
+        choice, which is why derivation is unconditional here.
         """
         engine = LayoutEngine(Fake([
             box(0.05, 0.05, 0.45, 0.20),
@@ -650,15 +649,13 @@ class TestBoxesBecomeZones:
         engine.detect_zones(image)
         assert engine.detector.images[0].shape == image.shape  # type: ignore[attr-defined]
 
-    def test_the_hint_and_the_ceiling_are_ignored(self) -> None:
-        """Both are addressed to a language model. The Protocol already says an
-        Engine with no use for `region_ceiling` may ignore it; a detector has no
-        use for either, and accepting them keeps the seam one shape."""
+    def test_the_hint_is_ignored(self) -> None:
+        """A Hint is addressed to a language model. A detector has no use for
+        it, and accepting it keeps the seam one shape."""
         engine = LayoutEngine(Fake([box(0.05, 0.05, 0.95, 0.35)]))
         marks = [(30, 20, 570, 140)]
         plain = engine.detect_zones(page(marks))
-        loaded = engine.detect_zones(page(marks), hint="an invoice",
-                                     region_ceiling=1)
+        loaded = engine.detect_zones(page(marks), hint="an invoice")
         assert [z.bbox for z in plain] == [z.bbox for z in loaded]
 
 
@@ -729,12 +726,13 @@ class TestChoosingTheLayoutEngine:
         not have to pretend otherwise to fill the layout role."""
         assert isinstance(LayoutEngine(Fake([])), LayoutEngineProtocol)
 
-    def test_the_vision_model_still_satisfies_it_too(self) -> None:
-        """Structurally, with no edit — which is what makes the narrowing safe."""
-        assert isinstance(
-            OllamaEngine.from_settings(load(env={}), "qwen3-vl:4b"),
-            LayoutEngineProtocol,
-        )
+    def test_the_replayed_suite_fills_it_the_same_way(self) -> None:
+        """The recorded-response suite hands the layout stage fixed Zones, and
+        that stand-in must be held to the Protocol the detector is: a fake of a
+        different shape would test a seam production does not have."""
+        from .replay import FixedLayout
+
+        assert isinstance(FixedLayout([]), LayoutEngineProtocol)
 
 
 class TestAdoptingAContainerTheThresholdDropped:

@@ -39,7 +39,7 @@ Writes every raw answer, every image it asked about, the exact prompt and the
 schema to `debug/runs/<label>/`, beside the run whose crops it reuses.
 
 **Runs 18, 19 and 20 were taken before `CLASSIFY_PROMPT` existed**, when these
-definitions lived only in `LAYOUT_PROMPT`. Each carries the prompt it actually
+definitions lived only in the vision layout prompt. Each carries the prompt it actually
 used; a re-run now measures different words, so its numbers stand beside theirs
 rather than replacing them.
 """
@@ -108,7 +108,7 @@ def prompt_for() -> str:
     prompt rewordings have already failed on these two Zones, so a fifth one
     hiding in this script would make any result meaningless.
 
-    This used to cut the Kind definitions out of `LAYOUT_PROMPT`, because when
+    This used to cut the Kind definitions out of the vision layout prompt, because when
     runs 18-20 were taken that was the only place they existed. `CLASSIFY_PROMPT`
     is their home now, and those runs carry the prompt they actually used in
     their own `prompt.txt` — a re-run after this change is measuring different

@@ -1,0 +1,33 @@
+{
+  "_why": "The Zones the layout stage hands this fixture's Conversion: what a detector that found the hand-authored regions would return. Replayed by tests/replay.py's FixedLayout, since the layout stage is a detector and not a model call. Frozen from the recorded vision-layout answer when that pass was deleted, so every replayed Conversion kept its Zones.",
+  "zones": [
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 0,
+      "bbox": {
+        "left": 0.0292,
+        "top": 0.029,
+        "right": 0.3052,
+        "bottom": 0.0725
+      },
+      "title": null,
+      "graphic_kind": null
+    },
+    {
+      "kind": "table",
+      "role": "body",
+      "band": 1,
+      "column": 0,
+      "bbox": {
+        "left": 0.0375,
+        "top": 0.1188,
+        "right": 0.8917,
+        "bottom": 0.9522
+      },
+      "title": "Population and GDP (millions of USD)",
+      "graphic_kind": null
+    }
+  ]
+}

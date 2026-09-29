@@ -1,0 +1,75 @@
+{
+  "_why": "The Zones the layout stage hands this fixture's Conversion: what a detector that found the hand-authored regions would return. Replayed by tests/replay.py's FixedLayout, since the layout stage is a detector and not a model call. Frozen from the recorded vision-layout answer when that pass was deleted, so every replayed Conversion kept its Zones.",
+  "zones": [
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 0,
+      "bbox": {
+        "left": 0.0456,
+        "top": 0.073,
+        "right": 0.3118,
+        "bottom": 0.1311
+      },
+      "title": null,
+      "graphic_kind": null
+    },
+    {
+      "kind": "figure",
+      "role": "header",
+      "band": 0,
+      "column": 1,
+      "bbox": {
+        "left": 0.3219,
+        "top": 0.0861,
+        "right": 0.3777,
+        "bottom": 0.1348
+      },
+      "title": null,
+      "graphic_kind": "badge"
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 1,
+      "column": 0,
+      "bbox": {
+        "left": 0.0431,
+        "top": 0.2097,
+        "right": 0.9024,
+        "bottom": 0.2416
+      },
+      "title": null,
+      "graphic_kind": null
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 2,
+      "column": 0,
+      "bbox": {
+        "left": 0.071,
+        "top": 0.3895,
+        "right": 0.7997,
+        "bottom": 0.5225
+      },
+      "title": "Card heading",
+      "graphic_kind": null
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 3,
+      "column": 0,
+      "bbox": {
+        "left": 0.071,
+        "top": 0.7322,
+        "right": 0.6324,
+        "bottom": 0.8633
+      },
+      "title": "Another card",
+      "graphic_kind": null
+    }
+  ]
+}

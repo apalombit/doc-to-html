@@ -47,12 +47,6 @@ LABEL="${1:?usage: tools/iterate.sh <label>, e.g. 03-fewer-fields}"
 # ten edits did to the other four was never once measured.
 FIXTURE="${FIXTURE:-invoice_0001}"
 MODEL="${MODEL:-qwen3-vl:4b}"
-# What the layout crop is downscaled to, for the contact sheet's own caption.
-# No longer a setting: `DTH_LAYOUT_LONG_EDGE` served the vision layout pass and
-# spec 0007 Thread 0 retired both. Read from the one remaining constant so this
-# script cannot stamp a run directory with a figure the run was not taken at.
-LONG_EDGE="$(python -c \
-    'from doc_to_html.preprocess import LAYOUT_LONG_EDGE as d; print(d)')"
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUT="$ROOT/debug/runs/$LABEL"
@@ -117,9 +111,11 @@ from doc_to_html.engines.ollama import CLASSIFY_PROMPT
 open('$OUT/classify_prompt_sent.txt','w').write(CLASSIFY_PROMPT)"
 git rev-parse HEAD > "$OUT/commit.txt" 2>/dev/null || true
 
-echo "=> $LABEL: $MODEL over $COUNT fixture(s) at layout long edge $LONG_EDGE," \
-     "from scratch. Expect ~3 minutes each." >&2
-echo "$LONG_EDGE" > "$OUT/layout_long_edge.txt"
+# No `layout_long_edge.txt` any more: it recorded what the vision layout pass
+# was downscaled to, and that pass is gone (spec 0007's queue, Q4). The
+# detector is given the whole rectified page.
+echo "=> $LABEL: $MODEL over $COUNT fixture(s), from scratch." \
+     "Expect ~3 minutes each." >&2
 printf '%s\n' $FIXTURES > "$OUT/fixtures.txt"
 # Every DTH_* this turn was taken under, so the directory stays self-describing
 # when the default moves under it. DTH_SNAP_ZONES is the reason this exists: it
@@ -171,7 +167,6 @@ print(SOURCES['$fixture'].png)")}"
     if ! python tools/inspect_run.py \
         "$OUT/dump/${MODEL//:/_}/$fixture" \
         --source "$source" \
-        --long-edge "$LONG_EDGE" \
         --out "$dest" > "$dest/geometry.txt" 2>"$dest/geometry.stderr.txt"
     then
         echo "WARNING: no contact sheet for $fixture:" >&2

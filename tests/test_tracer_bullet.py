@@ -21,24 +21,23 @@ from doc_to_html.engines.ollama import (
     TruncatedResponse,
     with_hint,
 )
-from doc_to_html.ir import BBox, Document, Kind, Role
+from doc_to_html.ir import BBox, Document, Kind, Role, Zone
 from doc_to_html.orchestrator import Conversion, convert
 from doc_to_html.preprocess import RectifyError, rectify
 from doc_to_html.render import render
 from doc_to_html.wire import (
-    LayoutResponse,
+    ClassifyResponse,
     MappingError,
-    WireZone,
     bands_from_boxes,
     schema_of,
-    zones_from_layout,
+    validate_bands,
 )
 
 from .replay import (
-    Call,
+    FixedLayout,
     ReplayTransport,
     engines_replaying,
-    layout_only,
+    geometry,
     reasoning_channel,
     text,
 )
@@ -47,26 +46,33 @@ REPO = Path(__file__).resolve().parent.parent
 INVOICE = REPO / "example" / "invoice.png"
 
 
-def convert_invoice(transport: ReplayTransport) -> Document:
-    return convert(INVOICE, engines=engines_replaying(transport))
+def convert_invoice(transport: ReplayTransport,
+                    layout: FixedLayout | None = None) -> Document:
+    return convert(INVOICE, engines=engines_replaying(
+        transport, layout or geometry("invoice_0001")
+    ))
 
 
 @pytest.fixture
 def transport() -> ReplayTransport:
-    """The layout pass and nothing else recorded.
+    """The Zones and no model answer at all.
 
     Every Zone therefore fails to extract, which is the spine at its thinnest:
     the run completes, the Zones are in the right Bands, and the render is
     skeletons. What makes each Zone fail is not the subject here.
     """
-    return ReplayTransport(layout_only("invoice_0001"))
+    return ReplayTransport([])
 
 
-def layout_calls(transport: ReplayTransport) -> list[Call]:
-    return [
-        call for call in transport.calls
-        if call.schema == schema_of(LayoutResponse)
-    ]
+def classify_invoice_zone(transport: ReplayTransport) -> Zone:
+    """One Zone of `invoice_0001` put to the classify pass.
+
+    Any pass would do: every one goes through `OllamaEngine.ask`, which is what
+    the failures below are about. Asked of the Engine directly because a
+    Conversion records a Zone that fails and carries on, which would hide them.
+    """
+    engine = OllamaEngine(model="test-model", transport=transport)
+    return engine.classify_zone(rectify(INVOICE).image, geometry("invoice_0001")[1])
 
 
 class TestTheFirstConversion:
@@ -125,10 +131,11 @@ class TestTheFirstConversion:
         test should drive."""
         from doc_to_html import cli
 
-        replay = ReplayTransport(layout_only("invoice_0001"))
+        replay = ReplayTransport([])
         monkeypatch.setattr(
             cli, "convert",
-            lambda image, **kw: convert(image, engines=engines_replaying(replay)),
+            lambda image, **kw: convert(image, engines=engines_replaying(
+                replay, geometry("invoice_0001"))),
         )
         out = tmp_path / "out.html"
         assert cli.main(["convert", str(INVOICE), "-o", str(out)]) == 0
@@ -144,13 +151,13 @@ class TestTheModelIsGivenASchema:
         absence of a JSON-repair code path becomes a bug."""
         convert_invoice(transport)
         first = transport.calls[0]
-        assert first.schema == schema_of(LayoutResponse)
+        assert first.schema == schema_of(ClassifyResponse)
         assert first.images and first.images[0][:4] == b"\x89PNG"
 
     def test_the_wire_schema_is_not_the_ir(self) -> None:
         """A flat schema reads the page better than a nested one, and the IR's
         readings, provenance and Disputed states are not things a model produces."""
-        zone = schema_of(LayoutResponse)["$defs"]["WireZone"]["properties"]
+        zone = schema_of(ClassifyResponse)["properties"]
         assert "readings" not in zone and "complete" not in zone
         assert all(
             "$ref" not in spec and spec.get("type") != "array"
@@ -165,36 +172,28 @@ class TestTheModelIsGivenASchema:
         assert with_hint("PROMPT", None) == "PROMPT"
         assert with_hint("PROMPT", "   ") == "PROMPT"
 
-    def test_the_layout_pass_sees_a_downscaled_page(
-        self, transport: ReplayTransport
-    ) -> None:
-        """Detecting regions is coarse work; the resolution given away here is
-        bought back by cropping each Zone from the full-resolution image."""
-        convert_invoice(transport)
-        assert len(layout_calls(transport)[0].images[0]) < INVOICE.stat().st_size * 4
+class TestBandsMustDescribeAPage:
+    """`validate_bands`, which every Zone list the Orchestrator builds passes.
 
+    The detector numbers Bands from its own boxes, and the snap, the merge and
+    the recovery of unread ink each move boxes after it — so these are checks on
+    geometry that can still go wrong, not on a model's numbering.
+    """
 
-class TestMappingValidatesWhatASchemaCannot:
-    def wire(self, **overrides: object) -> dict[str, object]:
-        base = {
-            "kind": "prose", "role": "body", "band": 0, "column": 0,
-            "left": 0.1, "top": 0.1, "right": 0.9, "bottom": 0.3,
-            "title": "", "graphic": "",
-        }
+    def wire(self, **overrides: float) -> dict[str, float]:
+        base = {"band": 0, "column": 0,
+                "left": 0.1, "top": 0.1, "right": 0.9, "bottom": 0.3}
         return base | overrides
 
-    def parse(self, *zones: dict[str, object]) -> list[object]:
-        return list(
-            zones_from_layout(LayoutResponse.model_validate({"zones": list(zones)}))
-        )
-
-    def test_a_box_off_the_page_names_the_zone(self) -> None:
-        with pytest.raises(MappingError, match=r"zone 0 \(prose.*right=1\.4"):
-            self.parse(self.wire(right=1.4))
-
-    def test_a_box_enclosing_no_area_names_the_zone(self) -> None:
-        with pytest.raises(MappingError, match="zone 0 .*encloses no area"):
-            self.parse(self.wire(top=0.5, bottom=0.5))
+    def parse(self, *zones: dict[str, float]) -> list[Zone]:
+        built = [
+            Zone(kind=Kind.PROSE, role=Role.BODY,
+                 band=int(z["band"]), column=int(z["column"]),
+                 bbox=BBox(z["left"], z["top"], z["right"], z["bottom"]))
+            for z in zones
+        ]
+        validate_bands(built)
+        return built
 
     def test_bands_that_do_not_descend_the_page_are_rejected(self) -> None:
         """A model that numbered Bands by reading order rather than by position
@@ -271,32 +270,6 @@ class TestMappingValidatesWhatASchemaCannot:
                 self.wire(band=0, column=0, left=0.6, right=0.9),
             )
 
-    def test_an_unknown_graphic_cannot_be_expressed(self) -> None:
-        """The schema refuses it, so constrained decoding cannot produce it.
-
-        This used to be the mapper's job, and `qwen3-vl:4b` walked through the
-        gap: asked for a figure's graphic in a field typed `str`, it answered
-        `"SPARKSUIT"` — the text off the wordmark it was looking at. A closed
-        Literal makes that unrepresentable rather than merely detected.
-        """
-        with pytest.raises(ValidationError, match="graphic"):
-            self.parse(self.wire(kind="figure", graphic="photograph"))
-
-    def test_the_mapper_still_rejects_a_graphic_a_schema_let_through(self) -> None:
-        """Belt and braces, for an Engine that cannot constrain its output.
-
-        `model_construct` skips validation, which is the only way to reach this
-        check now — and exactly the position a non-Ollama Engine would put us in.
-        """
-        zone = WireZone.model_construct(
-            **(self.wire(kind="figure") | {"graphic": "photograph"})  # type: ignore[arg-type]
-        )
-        with pytest.raises(MappingError, match="graphic 'photograph'"):
-            zones_from_layout(LayoutResponse.model_construct(zones=[zone]))
-
-    def test_a_title_of_whitespace_is_no_title(self) -> None:
-        assert self.parse(self.wire(title="  "))[0].title is None  # type: ignore[attr-defined]
-
     @pytest.mark.parametrize("fixture", [
         "invoice_0001", "invoice_0002", "sample_table_0003",
         "sample_css_0004", "sample_semantic_0005",
@@ -304,38 +277,36 @@ class TestMappingValidatesWhatASchemaCannot:
     def test_every_hand_authored_layout_is_accepted(self, fixture: str) -> None:
         """The plausibility rules have to admit the documents the project holds
         itself to. A rule that rejects the ground truth is a wrong rule."""
-        raw = (REPO / "tests" / "responses" / fixture / "layout.json").read_text()
-        assert zones_from_layout(LayoutResponse.model_validate_json(raw))
+        validate_bands(geometry(fixture))
 
 
 class TestBandsDerivedFromTheBoxes:
-    """`DTH_DERIVE_BANDS`, which is off by default.
+    """`bands_from_boxes`, which numbers the detector's Zones on every Conversion.
 
-    Every rejection in the class above is a document thrown away for a number the
-    model got wrong about an answer it otherwise got right. Turning this on takes
-    the numbering from the boxes instead, so those become corrections. Nothing
-    here is measured against a live Conversion — see `config.DEFAULT_DERIVE_BANDS`.
+    Band numbering was the part of a model's layout answer that broke most
+    often, and it is fully determined by the boxes — so the numbering is taken
+    from them, whatever produced the boxes.
     """
 
-    def wire(self, **overrides: object) -> dict[str, object]:
-        base = {
-            "kind": "prose", "role": "body", "band": 0, "column": 0,
-            "left": 0.1, "top": 0.1, "right": 0.9, "bottom": 0.3,
-            "title": "", "graphic": "",
-        }
-        return base | overrides
+    def wire(self, **overrides: float) -> dict[str, float]:
+        """A box. A `band` or `column` passed is what the Zone was offered as,
+        and is ignored: the numbering comes from the boxes."""
+        base = {"left": 0.1, "top": 0.1, "right": 0.9, "bottom": 0.3}
+        return base | {k: v for k, v in overrides.items() if k in base}
 
-    def parse(self, *zones: dict[str, object]) -> list[object]:
-        return list(zones_from_layout(
-            LayoutResponse.model_validate({"zones": list(zones)}),
-            derive_bands=True,
-        ))
+    def parse(self, *zones: dict[str, float]) -> list[Zone]:
+        boxes = [BBox(z["left"], z["top"], z["right"], z["bottom"]) for z in zones]
+        built = [Zone(kind=Kind.PROSE, role=Role.BODY, band=band, column=column,
+                      bbox=box)
+                 for box, (band, column) in zip(boxes, bands_from_boxes(boxes))]
+        validate_bands(built)
+        return built
 
     def test_bands_numbered_by_reading_order_are_renumbered_by_position(
         self,
     ) -> None:
-        """Off, this is a `MappingError`. On, the Zone at the top of the page
-        becomes Band 0 whatever the model called it."""
+        """Numbered by reading order this is a `MappingError`; from the boxes,
+        the Zone at the top of the page becomes Band 0."""
         zones = self.parse(
             self.wire(band=0, top=0.6, bottom=0.8),
             self.wire(band=1, top=0.1, bottom=0.3),
@@ -345,8 +316,8 @@ class TestBandsDerivedFromTheBoxes:
     def test_zones_the_model_calls_one_band_but_are_stacked_are_split(
         self,
     ) -> None:
-        """Two Zones with clear paper between them are two Bands, whatever the
-        model numbered them."""
+        """Two Zones with clear paper between them are two Bands, whatever
+        column they were offered in."""
         zones = self.parse(
             self.wire(band=0, column=0, left=0.1, right=0.4,
                       top=0.1, bottom=0.2),
@@ -408,15 +379,13 @@ class TestBandsDerivedFromTheBoxes:
 
 
 class TestFailuresThatASchemaCannotPrevent:
+    PAIRS = '{"kind": "pairs", "graphic": ""}'
+
     def test_a_truncated_response_is_retried_with_a_raised_budget(self) -> None:
-        cut = '{"zones": [{"kind": "prose", "role": "body", "band": 0, "col'
-        replay = ReplayTransport([
-            text(cut, truncated=True),
-            *layout_only("invoice_0001"),
-        ])
-        document = convert_invoice(replay)
-        assert len(document.zones) == 6
-        assert [call.num_ctx for call in layout_calls(replay)] == [8192, 16384]
+        replay = ReplayTransport([text('{"kind": "pa', truncated=True),
+                                  text(self.PAIRS)])
+        assert classify_invoice_zone(replay).kind is Kind.PAIRS
+        assert [call.num_ctx for call in replay.calls] == [8192, 16384]
 
     def test_a_truncation_on_the_reasoning_channel_is_still_a_truncation(
         self,
@@ -431,63 +400,33 @@ class TestFailuresThatASchemaCannotPrevent:
         truncation test beside this one uses the content channel, which is why
         nothing caught it.
         """
-        cut = '{"zones": [{"kind": "prose", "role": "body", "band": 0, "col'
-        replay = ReplayTransport([
-            reasoning_channel(cut, truncated=True),
-            *layout_only("invoice_0001"),
-        ])
-        document = convert_invoice(replay)
-        assert len(document.zones) == 6
-        assert [call.num_ctx for call in layout_calls(replay)] == [8192, 16384]
+        replay = ReplayTransport([reasoning_channel('{"kind": "pa', truncated=True),
+                                  text(self.PAIRS)])
+        assert classify_invoice_zone(replay).kind is Kind.PAIRS
+        assert [call.num_ctx for call in replay.calls] == [8192, 16384]
 
     def test_reasoning_that_fills_the_budget_still_says_so(self) -> None:
         """The other half of the pair, and what the discriminator is for: prose
         on that channel is a thinking setting, and a bigger budget only buys more
         of it."""
         replay = ReplayTransport(
-            [reasoning_channel("Let me look at this page. ", truncated=True)]
+            [reasoning_channel("Let me look at this crop. ", truncated=True)]
         )
         with pytest.raises(ThinkingNotDisabled, match="never answered"):
-            convert_invoice(replay)
+            classify_invoice_zone(replay)
 
     def test_truncation_is_detected_even_when_the_transport_is_silent(self) -> None:
         """A transport may not report why it stopped. An unparseable prefix says
         the same thing."""
-        replay = ReplayTransport([
-            text('{"zones": [{"kind": "tab'),
-            *layout_only("invoice_0001"),
-        ])
-        assert len(convert_invoice(replay).zones) == 6
+        replay = ReplayTransport([text('{"kind": "pa'), text(self.PAIRS)])
+        assert classify_invoice_zone(replay).kind is Kind.PAIRS
 
     def test_truncating_twice_fails_clearly(self) -> None:
         """A plausible fragment returned as an answer is worse than an error: it
         looks like a sparse document."""
         replay = ReplayTransport([text("{", truncated=True)] * 2)
         with pytest.raises(TruncatedResponse, match="token limit twice"):
-            convert_invoice(replay)
-
-    def test_a_layout_returning_no_zones_aborts(self) -> None:
-        """One of only two things that abort a Conversion: with no Zones there is
-        nothing to show."""
-        replay = ReplayTransport([text('{"zones": []}')])
-        with pytest.raises(MappingError, match="no Zones"):
-            convert_invoice(replay)
-
-    def test_geometry_corresponding_to_nothing_aborts_rather_than_coercing(
-        self,
-    ) -> None:
-        """Schema-valid nonsense. Coercing it to an empty result would put a
-        sparse Document in front of an operator with nothing to explain it."""
-        nonsense = {
-            "zones": [
-                {"kind": "table", "role": "body", "band": 0, "column": 0,
-                 "left": 0.9, "top": 0.9, "right": 0.1, "bottom": 0.1,
-                 "title": "", "graphic": ""}
-            ]
-        }
-        replay = ReplayTransport([text(json.dumps(nonsense))])
-        with pytest.raises(MappingError, match="zone 0"):
-            convert_invoice(replay)
+            classify_invoice_zone(replay)
 
     def test_an_unreadable_source_image_aborts(self, tmp_path: Path) -> None:
         with pytest.raises(RectifyError, match="no such Source Image"):
@@ -547,8 +486,9 @@ class TestTheSuiteNeedsNoModel:
     ) -> None:
         """NullHandler answers nothing, so nothing new enters the system and a
         second round would re-run identical passes over identical pixels."""
+        layout = FixedLayout(geometry("invoice_0001"))
         conversion = Conversion(
-            source=INVOICE, engines=engines_replaying(transport)
+            source=INVOICE, engines=engines_replaying(transport, layout)
         )
         conversion.run()
-        assert len(layout_calls(transport)) == 1
+        assert layout.calls == 1

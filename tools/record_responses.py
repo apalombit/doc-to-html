@@ -2,15 +2,16 @@
 
     python tools/record_responses.py
 
-Writes `tests/responses/<fixture>/layout.json` and one file per Zone: the
-responses a model that read each fixture correctly would have returned. The
-output is committed, so the suite runs with no Ollama process, no model
-installed and no network.
+Writes `tests/responses/<fixture>/geometry.json` — the Zones a detector that
+found each fixture's regions would hand the layout stage — and one file per
+Zone: the responses a model that read each fixture correctly would have
+returned. The output is committed, so the suite runs with no Ollama process,
+no model installed and no network.
 
 **What this does and does not buy.** Replaying these exercises the whole path
-below the model — the wire schemas, the parser, the mapping and its validation,
-every Extractor, Probes, assembly and the renderer — against known-correct
-input. It says nothing whatever about whether a real model reads a page
+below the model and the detector — the wire schemas, the parser, the mapping
+and its validation, every Extractor, Probes, assembly and the renderer —
+against known-correct input. It says nothing whatever about whether a real model reads a page
 correctly. That is the bake-off's job (`python -m doc_to_html.bakeoff`), and the reason the
 acceptance harness and the bake-off both exist.
 
@@ -29,7 +30,9 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
-from doc_to_html.ir import Document, Kind, RowRole, Zone  # noqa: E402
+from dataclasses import asdict  # noqa: E402
+
+from doc_to_html.ir import BBox, Document, Kind, RowRole, Zone  # noqa: E402
 from doc_to_html.preprocess import (  # noqa: E402
     caption_band,
     rectify,
@@ -39,13 +42,11 @@ from doc_to_html.wire import (  # noqa: E402
     BlocksResponse,
     CaptionResponse,
     FigureResponse,
-    LayoutResponse,
     PairsResponse,
     TableResponse,
     WireBlock,
     WirePair,
     WireRow,
-    WireZone,
 )
 
 from doc_to_html.corpus import SOURCES  # noqa: E402
@@ -61,24 +62,36 @@ IMAGES = {name: SOURCES[name].png for name in BUILDERS}
 # the other.
 
 
-def layout_of(document: Document) -> LayoutResponse:
-    return LayoutResponse(
-        zones=[
-            WireZone(
-                kind=zone.kind.value,  # type: ignore[arg-type]
-                role=zone.role.value,  # type: ignore[arg-type]
-                band=zone.band,
-                column=zone.column,
-                left=zone.bbox.left if zone.bbox else 0.0,
-                top=zone.bbox.top if zone.bbox else 0.0,
-                right=zone.bbox.right if zone.bbox else 1.0,
-                bottom=zone.bbox.bottom if zone.bbox else 1.0,
-                title=zone.title or "",
-                graphic=zone.graphic_kind or "",
-            )
+GEOMETRY_WHY = (
+    "The Zones the layout stage hands this fixture's Conversion: what a "
+    "detector that found the hand-authored regions would return. Replayed by "
+    "tests/replay.py's FixedLayout, since the layout stage is a detector and "
+    "not a model call. Frozen from the recorded vision-layout answer when "
+    "that pass was deleted, so every replayed Conversion kept its Zones."
+)
+
+
+def geometry_of(document: Document) -> dict[str, object]:
+    """Each Zone as the layout stage returns it: where it is, and nothing read.
+
+    A Zone with no box is given the whole page, as the recorded layout answer
+    did before this replaced it.
+    """
+    return {
+        "_why": GEOMETRY_WHY,
+        "zones": [
+            {
+                "kind": zone.kind.value,
+                "role": zone.role.value,
+                "band": zone.band,
+                "column": zone.column,
+                "bbox": asdict(zone.bbox or BBox(0.0, 0.0, 1.0, 1.0)),
+                "title": (zone.title or "").strip() or None,
+                "graphic_kind": (zone.graphic_kind or "").strip().lower() or None,
+            }
             for zone in document.zones
-        ]
-    )
+        ],
+    }
 
 
 def contents_of(zone: Zone) -> object:
@@ -177,8 +190,8 @@ def record(name: str, out: Path) -> None:
     for stale in directory.glob("*.json"):
         stale.unlink()
 
-    (directory / "layout.json").write_text(
-        layout_of(document).model_dump_json(indent=2) + "\n"
+    (directory / "geometry.json").write_text(
+        json.dumps(geometry_of(document), indent=2, ensure_ascii=False) + "\n"
     )
     for index, zone in enumerate(document.zones):
         payload = contents_of(zone)
@@ -190,7 +203,7 @@ def record(name: str, out: Path) -> None:
     (directory / "caption.json").write_text(
         json.dumps([c.model_dump() for c in captions], indent=2) + "\n"
     )
-    print(f"{name}: layout + {len(document.zones)} zones "
+    print(f"{name}: geometry + {len(document.zones)} zones "
           f"+ {len(captions)} captions")
 
 

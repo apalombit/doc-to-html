@@ -97,7 +97,8 @@ Queue       Q1-Q7 in docs/status.md "Next", in order, go given 2026-09-27
               Thread 0's seam), then the three that cost model time
               Q1 DONE 2026-09-27, Q2 DONE 2026-09-28, both offline,
               both gate MET; Q3 DONE 2026-09-29, re-scoped to heading
-              sizes on measurement, gate MET                 Q4 <- next
+              sizes on measurement, gate MET; Q4 DONE 2026-09-29, the
+              vision layout pass deleted, no output change   Q5 <- next
 Thread 3/C  Repair loop (re-scoped against A+B residuals first)
 Thread 4/D  Human corrections (unscheduled)
 ```
@@ -112,7 +113,8 @@ offline the same day, and on 2026-09-27 the floor was kept at `a3-result`**
 there from `a2-result/` at A3's close — see `docs/status.md`, "The floor".
 
 `docs/specs/0007-handover.md` holds a ready prompt per thread and the full
-scope of Phase A-1. **"The open-issues queue" is the next one to use.**
+scope of Phase A-1. **"The open-issues queue, continued — Q5 to Q7" is the
+next one to use.**
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
 this section.** It says what is done, what the last checkpoint showed, what is
@@ -426,8 +428,8 @@ bottom** when diagnosing one document; open `report.html` when comparing them al
   Conversion. `DTH_LAYOUT_DETECTOR=none` now **refuses by name** rather than
   being handed to `from_name` as if it were a detector, so a stale value in
   somebody's shell says so instead of failing somewhere obscure.
-  `DTH_LAYOUT_LONG_EDGE`, which served only that pass, is gone;
-  `preprocess.LAYOUT_LONG_EDGE` is the remaining constant and is not a setting.
+  `DTH_LAYOUT_LONG_EDGE`, which served only that pass, is gone, and Q4 took
+  `preprocess.LAYOUT_LONG_EDGE` with the rest of the pass.
 - **The probes bound to the retired reference**: `layout_probe.py` (measured
   the vision pass), `snap_probe.py`, `classify_truth_probe.py`,
   `fixture_geometry.py` (derived rectangles *for* the expected IR) and
@@ -435,12 +437,20 @@ bottom** when diagnosing one document; open `report.html` when comparing them al
   **kept** and repointed — see the OpenCV rectangle finder note above, which
   Thread 2/B needs.
 
-**One thing Thread 0 did not finish, named so it is not mistaken for done.**
-`OllamaEngine.detect_zones` and `LAYOUT_PROMPT` are still in the tree as the
-seam the recorded-response suite replays against, documented as that. They are
-unreachable from a Conversion, so nothing they ask for can influence any
-output. Removing the seam means replacing the layout stage of nine test
-modules; it is bookkeeping, not a measurement question.
+**The one thing Thread 0 did not finish was finished by Q4, 2026-09-29.**
+`OllamaEngine.detect_zones`, `LAYOUT_PROMPT`, the layout wire schema, the
+region-ceiling rescue and `DTH_LAYOUT_MODEL` / `DTH_DERIVE_BANDS` /
+`DTH_LAYOUT_REGION_HINT` are gone. The recorded-response suite now hands the
+layout stage fixed Zones — `tests/replay.py`'s `FixedLayout`, serving each
+fixture's `tests/responses/<fixture>/geometry.json` — so a replayed Conversion
+takes its Zones the way a real one does, from something that is not a model.
+**The production layout front can be run with no model at all:** give a
+Conversion engines whose transport refuses every call, and the real detector
+and every model-free layout stage run, each Zone renders a skeleton, and all
+fifteen take 11 seconds: `python tools/layout_front.py <out>`. It reproduces
+`a3-result`'s Zone band, column and bbox on 15 of 15 and is byte-identical run
+to run, and it is how Q4 proved it changed nothing. It sees no model answer —
+`tools/rederive.py` is that loop — so it measures geometry changes only.
 
 ### What Phase A-1 settled, including what it could not do
 

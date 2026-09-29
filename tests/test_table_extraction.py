@@ -199,21 +199,14 @@ class TestExtractionReadsTheRightPixels:
     def test_a_table_is_read_from_a_crop_and_not_from_the_page(
         self, invoice: tuple[Document, ReplayTransport]
     ) -> None:
-        """The layout pass gives resolution away by looking at the whole page.
-        Cropping each Zone from the rectified image is what buys it back.
-
-        The two budgets are what makes this real: layout sees the page at
-        `LAYOUT_LONG_EDGE`, extraction crops from the full-resolution rectified
-        image. Both were 1024 once, which on an 862px fixture meant neither
-        happened and the test below would have passed on a no-op.
+        """Each Zone is cropped from the full-resolution rectified image, so a
+        table is read at the glyph size it was printed at and not at whatever
+        a whole page shrinks to.
         """
-        from doc_to_html.preprocess import LAYOUT_LONG_EDGE, PAD_X, PAD_Y
+        from doc_to_html.preprocess import PAD_X, PAD_Y
 
         document, transport = invoice
-        page = Image.open(io.BytesIO(transport.calls[0].images[0]))
         crop = Image.open(io.BytesIO(table_calls(transport)[1].images[0]))
-
-        assert max(page.size) == LAYOUT_LONG_EDGE < 862
 
         # Derived from the box the Conversion actually cropped on, and the pads,
         # rather than written down: a literal here goes stale the moment either
@@ -225,23 +218,9 @@ class TestExtractionReadsTheRightPixels:
         wide = min(1.0, box.right + PAD_X) - max(0.0, box.left - PAD_X)
         tall = min(1.0, box.bottom + PAD_Y) - max(0.0, box.top - PAD_Y)
 
-        # The crop is a fraction of a *bigger* page than layout ever saw.
+        # A fraction of the page at its own 862 x 563, not of a shrunk copy.
         assert crop.width == pytest.approx(wide * 862, abs=4)
         assert crop.height == pytest.approx(tall * 563, abs=4)
-        assert crop.width > page.width
-
-    def test_layout_and_extraction_have_separate_budgets(
-        self, invoice: tuple[Document, ReplayTransport]
-    ) -> None:
-        """Finding regions needs positions; reading a table needs glyphs. One
-        budget for both means either layout wastes tokens or extraction cannot
-        read."""
-        from doc_to_html.preprocess import LAYOUT_LONG_EDGE, MODEL_INPUT_LONG_EDGE
-
-        assert LAYOUT_LONG_EDGE < MODEL_INPUT_LONG_EDGE
-        _, transport = invoice
-        layout_px = max(Image.open(io.BytesIO(transport.calls[0].images[0])).size)
-        assert layout_px <= LAYOUT_LONG_EDGE
 
     def test_each_table_gets_its_own_crop(
         self, invoice: tuple[Document, ReplayTransport]

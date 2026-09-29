@@ -223,57 +223,6 @@ class TestThePromptSaysWhatTheMappingCannotEnforce:
         assert "summarise" in PROSE_PROMPT
         assert "empty list" in PROSE_PROMPT
 
-    def test_the_kind_definitions_are_frozen_pending_a_split_of_the_pass(
-        self,
-    ) -> None:
-        """Editing this block breaks Band numbering, measured three times.
-
-        Three attempts, each aimed only at which Kind a Zone gets, each of which
-        left the layout unmappable for a reason in a different part of the
-        answer:
-
-        - run 11 added "the heading row names the columns" — the Kind was fixed,
-          Zone 4 came back `table`, and the model returned each table once per
-          column at byte-identical boxes.
-        - run 12 said the same thing without the word "columns" — all seven
-          Zones landed in band 0 and both tables merged into one box.
-        - run 16 added five words to `prose` alone, one line, no growth — four
-          Zones in band 0, column order [0, 1, 2, 3] against lefts 0.05, 0.75,
-          0.05, 0.75. **Run 17 repeated it verbatim and reproduced the failure
-          exactly**, at 475.3s against 220.0s, which also rules out the
-          CPU-offload confound: offload costs latency, not correctness.
-
-        Seven runs separate cleanly: 11, 12, 16 and 17 touched this block and
-        all four were rejected; 13, 14 and 15 did not and all three mapped. The
-        variable is not how *long* these definitions are — run 16 grew nothing.
-
-        Be exact about what that supports. Run 16's wording is repeated, so
-        "this edit breaks Band numbering" is established. "*Any* edit does" is a
-        generalisation from three wordings, and 0001 already withdrew a claim of
-        that class. It is the working hypothesis, not a finding.
-
-        So this is a tripwire, not a style rule: it exists to make the next edit
-        here a deliberate act that reads this docstring first. Deleting it as
-        part of separating classification from geometry is the expected way for
-        it to go. See docs/specs/0002-structure-not-geometry.md.
-        """
-        from doc_to_html.engines.ollama import LAYOUT_PROMPT
-
-        block = LAYOUT_PROMPT.split("kind — one of:")[1].split("role — one of:")[0]
-        assert " ".join(block.split()) == (
-            "table a grid of rows and columns under a heading row. Two grids "
-            "stacked one above the other are two regions, not one, whenever "
-            "each has its own heading row — even if their columns line up and "
-            "only a small gap separates them. A grid with a heading row is a "
-            "table even if only one row of values follows it "
-            "pairs label and value lines with no heading row, such as "
-            '"Invoice No: 12" '
-            "prose headings, paragraphs, addresses, free text "
-            "list bulleted or numbered items, or a row of navigation links "
-            "figure a logo, chart, stamp, signature or badge"
-        )
-
-
 class TestAFailureStillDoesNotSpread:
     def test_one_bad_panel_does_not_cost_the_other(self) -> None:
         """An empty answer rather than an unlabelled value, on purpose.

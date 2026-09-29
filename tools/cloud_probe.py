@@ -1,4 +1,4 @@
-"""Ask a cloud model the two questions the local runs cannot settle alone.
+"""Ask a cloud model a question the local runs cannot settle alone.
 
     python tools/cloud_probe.py
 
@@ -10,14 +10,14 @@ impossible, and weakening the shared mapper to accommodate a model that ignores 
 would trade the guarantee for a data point.
 
 So this asks directly, normalises the answer here, and writes what came back to
-`debug/cloud/`. Two questions:
+`debug/cloud/`. The question: **is the trailing-character truncation ours or
+the model's?** `qwen3-vl:4b` returns `$300.00` as `$300.0` and `1000` as `100`
+— always the last character. A different family reading the same crop settles
+where that comes from.
 
-1. **Is the trailing-character truncation ours or the model's?** `qwen3-vl:4b`
-   returns `$300.00` as `$300.0` and `1000` as `100` — always the last character.
-   A different family reading the same crop settles where that comes from.
-2. **Are the two `kind` confusions our prompt or the 4B's capacity?** If a much
-   larger model also calls the payment table `pairs` and the invoice details
-   `prose`, the prompt is ambiguous and fixing it helps the local path too.
+It used to ask a second — whether the two `kind` confusions were the prompt's
+or the 4B's — through the vision layout prompt. That prompt was deleted in spec
+0007's queue, Q4; the Kind question is `CLASSIFY_PROMPT`'s now.
 
 Requires `OLLAMA_API_KEY` in `.env`. Costs nothing on the 8 GB M1 — no local model
 is loaded — so it does not disturb the latency baseline the local runs measure.
@@ -38,7 +38,7 @@ from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from doc_to_html.engines.ollama import LAYOUT_PROMPT, TABLE_PROMPT  # noqa: E402
+from doc_to_html.engines.ollama import TABLE_PROMPT  # noqa: E402
 
 CLOUD = "https://ollama.com/api/chat"
 MODELS = ("gemma4:31b", "minimax-m3")
@@ -96,18 +96,6 @@ def unfence(text: str) -> str:
     return (fenced.group(1) if fenced else text).strip()
 
 
-def zones_of(text: str) -> list[dict[str, object]] | None:
-    """Accept either `{"zones": [...]}` or a bare top-level array."""
-    try:
-        parsed = json.loads(unfence(text))
-    except json.JSONDecodeError:
-        return None
-    if isinstance(parsed, dict):
-        found = parsed.get("zones")
-        return found if isinstance(found, list) else None
-    return parsed if isinstance(parsed, list) else None
-
-
 def main() -> int:
     token = key()
     out = Path("debug/cloud")
@@ -123,18 +111,6 @@ def main() -> int:
     for model in MODELS:
         slug = model.replace(":", "_").replace(".", "_")
         print(f"\n{'=' * 62}\n{model}\n{'=' * 62}")
-
-        answer = ask(model, LAYOUT_PROMPT, encode(page, 384), token)
-        (out / f"{slug}_layout.txt").write_text(answer)
-        zones = zones_of(answer)
-        if zones is None:
-            print(f"  layout: unparseable -> {answer[:160]}")
-        else:
-            print(f"  layout: {len(zones)} regions")
-            for index, zone in enumerate(zones):
-                box = [zone.get(k) for k in ("left", "top", "right", "bottom")]
-                print(f"    {index} {str(zone.get('kind')):7} "
-                      f"{str(zone.get('role')):7} {box}")
 
         answer = ask(model, TABLE_PROMPT, encode(items), token)
         (out / f"{slug}_table.txt").write_text(answer)

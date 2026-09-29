@@ -8,14 +8,42 @@ invented ones: `minimax-m3` wraps a bare array in a markdown fence, and
 from __future__ import annotations
 
 import json
+from typing import Literal
 
 import pytest
+from pydantic import BaseModel
 
 from doc_to_html.engines.lenient import LenientTransport, canonicalise
 from doc_to_html.engines.transport import Response
-from doc_to_html.wire import LayoutResponse, TableResponse, schema_of
+from doc_to_html.wire import TableResponse, schema_of
 
-LAYOUT = schema_of(LayoutResponse)
+
+class Region(BaseModel):
+    kind: Literal["table", "pairs", "prose", "list", "figure"]
+    role: Literal["header", "body", "summary", "footer"]
+    band: int
+    column: int
+    left: float
+    top: float
+    right: float
+    bottom: float
+    title: str
+    graphic: Literal["", "logo", "chart", "signature", "stamp", "badge"]
+
+
+class RegionsResponse(BaseModel):
+    """The deleted vision layout pass's wire schema, copied here and only here.
+
+    The answers below were taken against it, so it is what they are evidence
+    about: one array of flat records with closed fields, which is the shape
+    `canonicalise` repairs whatever pass asks. The pass went in spec 0007's
+    queue, Q4; the repair serves every pass that remains.
+    """
+
+    zones: list[Region]
+
+
+LAYOUT = schema_of(RegionsResponse)
 
 MINIMAX_LAYOUT = """```json
 [
@@ -35,7 +63,7 @@ GEMMA_LAYOUT = """```json
 class TestWhatItRepairs:
     def test_a_fenced_bare_array_becomes_the_object_the_schema_wants(self) -> None:
         repaired = canonicalise(MINIMAX_LAYOUT, LAYOUT)
-        assert LayoutResponse.model_validate_json(repaired).zones[0].kind == "figure"
+        assert RegionsResponse.model_validate_json(repaired).zones[0].kind == "figure"
 
     def test_an_unfenced_bare_array_is_wrapped_too(self) -> None:
         rows = '[{"role": "header", "cells": ["Item", "Price"]}]'
@@ -73,7 +101,7 @@ class TestWhatItLeavesAlone:
         """
         repaired = canonicalise(GEMMA_LAYOUT, LAYOUT)
         with pytest.raises(Exception):
-            LayoutResponse.model_validate_json(repaired)
+            RegionsResponse.model_validate_json(repaired)
 
     def test_prose_is_left_for_the_schema_to_reject(self) -> None:
         prose = "Looking at this invoice page, I can identify the following regions:"
@@ -99,7 +127,7 @@ class TestTheWrapper:
 
     def test_it_repairs_on_the_way_through(self) -> None:
         reply = self.call(self.transport(MINIMAX_LAYOUT))
-        assert LayoutResponse.model_validate_json(reply.answer).zones[0].graphic == "logo"
+        assert RegionsResponse.model_validate_json(reply.answer).zones[0].graphic == "logo"
 
     def test_an_answer_needing_no_repair_is_passed_through_identically(self) -> None:
         reply = self.call(self.transport('{"zones": []}'))
@@ -119,7 +147,7 @@ class TestTheWrapper:
         def fake(**_: object) -> Response:
             return Response(content="", thinking=MINIMAX_LAYOUT, truncated=False)
         reply = self.call(LenientTransport(inner=fake))  # type: ignore[arg-type]
-        assert LayoutResponse.model_validate_json(reply.answer).zones
+        assert RegionsResponse.model_validate_json(reply.answer).zones
 
 
 class TestEnumCoercion:

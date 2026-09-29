@@ -6,6 +6,13 @@ assembly and the real renderer; only the call to a model is replaced. That is
 what makes the response parser exercised by the same tests that exercise the
 pipeline, rather than verified separately and hoped about.
 
+**The layout stage is the one other thing handed in, and it is not a model.**
+Every Conversion takes its Zones from a trained detector, so a recording gives
+it the Zones instead: each fixture's `geometry.json`, served by `FixedLayout`.
+They were frozen from the recorded answer of the vision layout pass when that
+pass was deleted (spec 0007's queue, Q4), so every replayed Conversion kept
+exactly the Zones it had.
+
 The recorded responses live in `tests/responses/` and are derived by
 `tools/record_responses.py`. See that file for what replaying them does and does
 not prove.
@@ -22,6 +29,7 @@ the moment that object is edited for an unrelated reason.
 
 from __future__ import annotations
 
+import copy
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -30,7 +38,8 @@ from typing import Any
 from doc_to_html.config import Settings
 from doc_to_html.engines.ollama import OllamaEngine
 from doc_to_html.engines.transport import Response
-from doc_to_html.ir import Document
+from doc_to_html.ir import Document, Zone
+from doc_to_html.ir import _zone as zone_from_json
 from doc_to_html.orchestrator import Conversion, EngineSet, convert
 
 RESPONSES = Path(__file__).resolve().parent / "responses"
@@ -74,9 +83,9 @@ class ReplayTransport:
     went unanswered instead of reporting an arithmetic mismatch.
 
     A plain list is still accepted and still served in order. Tests that script a
-    specific sequence — a truncation and its retry, a layout that returns no
-    Zones — are asserting on the order itself, and routing those by pass would
-    hide the thing they exist to check.
+    specific sequence — a truncation and its retry, a classification followed
+    by the extraction it routes — are asserting on the order itself, and routing
+    those by pass would hide the thing they exist to check.
     """
 
     replies: list[Response] | dict[str, list[Response]]
@@ -147,7 +156,6 @@ def recorded(fixture: str, zones: list[int] | None = None
     )
 
     queues: dict[str, list[Response]] = {
-        "layout": [text((directory / "layout.json").read_text())],
         "classify": [
             text(json.dumps({"kind": zone["kind"], "graphic": zone["graphic"]}))
             for zone in described
@@ -173,13 +181,40 @@ def recorded(fixture: str, zones: list[int] | None = None
     return queues
 
 
-def layout_only(fixture: str) -> list[Response]:
-    """Just the layout answer, as a flat list.
+def geometry(fixture: str) -> list[Zone]:
+    """The Zones the layout stage hands one recorded fixture's Conversion."""
+    raw = json.loads((RESPONSES / fixture / "geometry.json").read_text())
+    return [zone_from_json(zone) for zone in raw["zones"]]
 
-    A list rather than a queue map because its callers splice it — a truncated
-    prefix in front of the real answer — and what they are testing is the order.
+
+def fixture_of(image: Path) -> str:
+    """The recorded fixture a Source Image belongs to."""
+    from doc_to_html.corpus import SOURCES
+
+    for name, source in SOURCES.items():
+        if Path(image).resolve() == (RESPONSES.parent.parent / source.png).resolve():
+            return name
+    raise KeyError(f"{image} is not a corpus Source Image")
+
+
+@dataclass
+class FixedLayout:
+    """The layout stage, answered with Zones fixed in advance.
+
+    Satisfies `engines.base.LayoutEngine` as the detector does: pixels in, Zones
+    out, no model. Each call returns fresh copies, because the Orchestrator
+    fills the Zones it is given and a second Conversion must not inherit them.
+    `calls` is counted so a test can hold the Orchestrator to asking once.
     """
-    return [text((RESPONSES / fixture / "layout.json").read_text())]
+
+    zones: list[Zone]
+    name: str = "fixed"
+    model: str = "geometry.json"
+    calls: int = 0
+
+    def detect_zones(self, image: object, hint: str | None = None) -> list[Zone]:
+        self.calls += 1
+        return copy.deepcopy(self.zones)
 
 
 def wired_zones(fixture: str) -> list[int]:
@@ -225,11 +260,13 @@ def break_zone(replies: dict[str, list[Response]], fixture: str,
     return replies
 
 
-def engines_replaying(transport: ReplayTransport) -> EngineSet:
-    """An EngineSet whose only difference from production is the transport."""
+def engines_replaying(transport: ReplayTransport,
+                      layout: list[Zone] | FixedLayout) -> EngineSet:
+    """An EngineSet whose only differences from production are the transport
+    and the Zones the layout stage returns."""
     settings = Settings()
     return EngineSet(
-        layout=OllamaEngine.from_settings(settings, settings.layout_model, transport),
+        layout=layout if isinstance(layout, FixedLayout) else FixedLayout(layout),
         classify=OllamaEngine.from_settings(
             settings, settings.classify_model, transport
         ),
@@ -240,12 +277,15 @@ def engines_replaying(transport: ReplayTransport) -> EngineSet:
 
 def convert_recording(
     image: Path, replies: list[Response] | dict[str, list[Response]],
-    *, caption_pass: bool | None = None,
+    *, layout: list[Zone] | None = None, caption_pass: bool | None = None,
 ) -> tuple[Document, ReplayTransport]:
     """Convert a Source Image against recorded responses, keeping the calls.
 
     Here rather than in each test module because four of them were repeating the
     same three lines, and a change to how the seam is faked should be one edit.
+
+    `layout` defaults to the recorded geometry of the fixture `image` belongs
+    to; a test that scripts Zones of its own passes them.
 
     `caption_pass` names the pass explicitly instead of letting it follow the
     shipped default. **A test that scripts a flat list of replies needs this**:
@@ -255,11 +295,13 @@ def convert_recording(
     say `caption_pass=False` and go on measuring one thing.
     """
     transport = ReplayTransport(replies)
+    engines = engines_replaying(
+        transport, geometry(fixture_of(image)) if layout is None else layout
+    )
     if caption_pass is None:
-        return convert(image, engines=engines_replaying(transport)), transport
+        return convert(image, engines=engines), transport
 
-    conversion = Conversion(source=Path(image),
-                            engines=engines_replaying(transport),
+    conversion = Conversion(source=Path(image), engines=engines,
                             caption_pass=caption_pass)
     return conversion.run(), transport
 

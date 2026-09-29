@@ -1,7 +1,7 @@
 """The Kind question, asked about one Zone at a time against its own crop.
 
-The layout pass decides every Kind at `LAYOUT_LONG_EDGE` while looking at the
-whole page. Issue #13 measured what that costs and separated two causes: a Zone
+The retired vision layout pass decided every Kind while looking at the whole
+page, downscaled. Issue #13 measured what that costs and separated two causes: a Zone
 asked about on its own is classified correctly at a resolution where the same
 Zone, asked about as one of seven, is not; and a Zone whose distinction needs
 glyphs — a shaded heading row over a data row, against two label/value lines —
@@ -32,14 +32,19 @@ from doc_to_html.preprocess import PAD_X, PAD_Y, NoGeometry
 from doc_to_html.wire import (
     CaptionResponse,
     ClassifyResponse,
-    LayoutResponse,
     MappingError,
-    WireZone,
     classification_into,
     schema_of,
 )
 
-from .replay import Call, ReplayTransport, convert_recording, engines_replaying, text
+from .replay import (
+    Call,
+    FixedLayout,
+    ReplayTransport,
+    convert_recording,
+    engines_replaying,
+    text,
+)
 
 PAGE_WIDTH, PAGE_HEIGHT = 800, 600
 
@@ -193,7 +198,8 @@ class TestTheAnswerIsConstrained:
 
     def test_the_schema_closes_the_graphic(self) -> None:
         """Described as a free string, this model once answered `"SPARKSUITE"` —
-        the text it had read off the wordmark. See `WireZone.graphic`."""
+        the text it had read off the wordmark, in the deleted layout pass's
+        schema. A closed Literal makes that unrepresentable."""
         enum = schema_of(ClassifyResponse)["properties"]["graphic"]["enum"]
         assert "" in enum and "logo" in enum and "SPARKSUITE" not in enum
 
@@ -210,8 +216,7 @@ class TestTheAnswerIsConstrained:
                                         '"graphic": ""}')
 
     def test_a_graphic_outside_the_closed_set_is_refused(self) -> None:
-        """Belt and braces for an Engine that cannot constrain — the same
-        runtime check `zones_from_layout` keeps for the same reason."""
+        """Belt and braces for an Engine that cannot constrain its output."""
         with pytest.raises(MappingError, match="SPARKSUITE"):
             classification_into(zone(), '{"kind": "figure", "title": "", '
                                         '"graphic": "SPARKSUITE"}')
@@ -229,26 +234,20 @@ PAIRS_CONTENT = '{"pairs": [{"label": "Due", "value": "today"}]}'
 CONTENT_FOR = {"prose": PROSE_CONTENT, "pairs": PAIRS_CONTENT}
 
 
-def geometry(*kinds: str) -> str:
-    """A geometry answer stacking one Zone per Band down the page.
+def geometry(*kinds: str) -> list[Zone]:
+    """Zones stacked one per Band down the page, as the layout stage returns them.
 
     The Kinds passed here are what geometry *guessed*. Every test below then
     hands classification a different answer, because a Kind that survived from
     geometry would make the whole pass unobservable.
     """
     height = 0.9 / len(kinds)
-    return LayoutResponse(
-        zones=[
-            WireZone(
-                kind=kind,  # type: ignore[arg-type]
-                role="body", band=index, column=0,
-                left=0.05, top=0.05 + index * height,
-                right=0.95, bottom=0.05 + (index + 1) * height,
-                title="", graphic="",
-            )
-            for index, kind in enumerate(kinds)
-        ]
-    ).model_dump_json()
+    return [
+        Zone(kind=Kind(kind), role=Role.BODY, band=index, column=0,
+             bbox=BBox(0.05, 0.05 + index * height,
+                       0.95, 0.05 + (index + 1) * height))
+        for index, kind in enumerate(kinds)
+    ]
 
 
 UNCLASSIFIABLE = '{"kind": "stripe"}'
@@ -264,7 +263,7 @@ def convert_classifying(guessed: list[str], classified: list[str],
     `broken` is the index of the one Zone whose classification comes back
     unusable.
     """
-    replies = [text(geometry(*guessed))]
+    replies = []
     for index, kind in enumerate(classified):
         replies.append(text(UNCLASSIFIABLE if index == broken else answer(kind)))
     # Only the Zones that survive classification are extracted, so only they get
@@ -280,7 +279,8 @@ def convert_classifying(guessed: list[str], classified: list[str],
     # caption answer from, and every reply here is served strictly in order.
     # What they pin is the classify-then-extract sequence; that the caption
     # question comes before the Kind question is `test_caption.py`'s to hold.
-    return convert_recording(INVOICE, replies, caption_pass=False)
+    return convert_recording(INVOICE, replies, layout=geometry(*guessed),
+                             caption_pass=False)
 
 
 class TestTheOrchestratorClassifiesBetweenGeometryAndExtraction:
@@ -302,7 +302,7 @@ class TestTheOrchestratorClassifiesBetweenGeometryAndExtraction:
         _, transport = convert_classifying(["prose", "prose"], ["prose", "pairs"])
 
         assert [call.pass_name for call in transport.calls] == [
-            "layout", "classify", "classify", "prose", "runs", "pairs",
+            "classify", "classify", "prose", "runs", "pairs",
         ]
 
     def test_the_kind_that_routes_a_zone_comes_from_classification(self) -> None:
@@ -337,19 +337,19 @@ class TestTheOrchestratorClassifiesBetweenGeometryAndExtraction:
         """Same reason geometry does. A second round refines what is *in* the
         Zones; re-classifying would spend a call per Zone to be told again what
         the same pixels are."""
-        transport = ReplayTransport(
-            [text(geometry("prose")), text(answer("prose")), text(PROSE_CONTENT)]
-        )
+        transport = ReplayTransport([text(answer("prose")), text(PROSE_CONTENT)])
+        layout = FixedLayout(geometry("prose"))
         # A note is what makes a round non-empty, so this runs two of them.
         handler = ScriptedHandler([Answer(), Answer(note="try again"), Answer()])
         Conversion(
-            source=INVOICE, engines=engines_replaying(transport), handler=handler
+            source=INVOICE, engines=engines_replaying(transport, layout),
+            handler=handler,
         ).run()
 
         rounds = [q for q in handler.asked if q.kind == "convergence"]
         assert len(rounds) == 2
         assert [c.pass_name for c in transport.calls].count("classify") == 1
-        assert [c.pass_name for c in transport.calls].count("layout") == 1
+        assert layout.calls == 1
 
 
 class TestAFailedClassificationDoesNotSpread:
@@ -381,7 +381,7 @@ class TestAFailedClassificationDoesNotSpread:
             ["prose"], ["prose"], broken=0
         )
 
-        assert [c.pass_name for c in transport.calls] == ["layout", "classify"]
+        assert [c.pass_name for c in transport.calls] == ["classify"]
 
 
 class TestAZoneClassifiedAtReducedResolution:

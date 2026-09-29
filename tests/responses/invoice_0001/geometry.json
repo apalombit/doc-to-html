@@ -1,0 +1,89 @@
+{
+  "_why": "The Zones the layout stage hands this fixture's Conversion: what a detector that found the hand-authored regions would return. Replayed by tests/replay.py's FixedLayout, since the layout stage is a detector and not a model call. Frozen from the recorded vision-layout answer when that pass was deleted, so every replayed Conversion kept its Zones.",
+  "zones": [
+    {
+      "kind": "figure",
+      "role": "header",
+      "band": 0,
+      "column": 0,
+      "bbox": {
+        "left": 0.0487,
+        "top": 0.081,
+        "right": 0.3991,
+        "bottom": 0.1474
+      },
+      "title": null,
+      "graphic_kind": "logo"
+    },
+    {
+      "kind": "pairs",
+      "role": "header",
+      "band": 0,
+      "column": 1,
+      "bbox": {
+        "left": 0.7399,
+        "top": 0.0799,
+        "right": 0.9513,
+        "bottom": 0.2007
+      },
+      "title": null,
+      "graphic_kind": null
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 1,
+      "column": 0,
+      "bbox": {
+        "left": 0.0487,
+        "top": 0.2771,
+        "right": 0.2275,
+        "bottom": 0.3979
+      },
+      "title": null,
+      "graphic_kind": null
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 1,
+      "column": 1,
+      "bbox": {
+        "left": 0.7866,
+        "top": 0.2771,
+        "right": 0.9513,
+        "bottom": 0.3979
+      },
+      "title": null,
+      "graphic_kind": null
+    },
+    {
+      "kind": "table",
+      "role": "body",
+      "band": 2,
+      "column": 0,
+      "bbox": {
+        "left": 0.0406,
+        "top": 0.4956,
+        "right": 0.9594,
+        "bottom": 0.595
+      },
+      "title": null,
+      "graphic_kind": null
+    },
+    {
+      "kind": "table",
+      "role": "body",
+      "band": 3,
+      "column": 0,
+      "bbox": {
+        "left": 0.0406,
+        "top": 0.6448,
+        "right": 0.9594,
+        "bottom": 0.9325
+      },
+      "title": null,
+      "graphic_kind": null
+    }
+  ]
+}

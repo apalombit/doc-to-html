@@ -54,10 +54,8 @@ from PIL import Image, ImageChops, ImageDraw, ImageFont
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from doc_to_html import geometry_score  # noqa: E402
-from doc_to_html.engines.lenient import canonicalise  # noqa: E402
-from doc_to_html.ir import BBox  # noqa: E402
+from doc_to_html.ir import BBox, Kind, Role, Zone  # noqa: E402
 from doc_to_html.preprocess import (  # noqa: E402
-    LAYOUT_LONG_EDGE,
     PAD_X,
     PAD_Y,
     ImageArray,
@@ -73,13 +71,11 @@ from doc_to_html.trace import (  # noqa: E402
 )
 from doc_to_html.wire import (  # noqa: E402
     CaptionResponse,
-    LayoutResponse,
     MappingError,
     TableResponse,
     _join_split_header_row,
     _without_empty_rows,
-    schema_of,
-    zones_from_layout,
+    validate_bands,
 )
 
 MODEL_COLOUR = (220, 50, 50)
@@ -142,7 +138,8 @@ def boxes_from_layout(dump: Path) -> list[Box]:
     """The geometry the Conversion ran on, in wire form.
 
     Prefers `zones_used.json` — what the Document actually held — and falls back
-    to the raw layout answer for a dump taken before that existed.
+    to the raw layout answer for a dump taken before that existed — read as
+    plain JSON, now the vision layout pass and its wire schema are deleted.
 
     Takes the **last** `*_layout.json` that parses, not the first. `ask` retries
     a truncated pass with a doubled budget and the dump records every call, so a
@@ -171,10 +168,9 @@ def boxes_from_layout(dump: Path) -> list[Box]:
             for z in json.loads(used.read_text())
         ]
 
-    schema = schema_of(LayoutResponse)
     for path in sorted(dump.glob("*_layout.json"), reverse=True):
         try:
-            data = json.loads(canonicalise(path.read_text(), schema))
+            data = json.loads(path.read_text())
         except json.JSONDecodeError:
             continue
         zones = data.get("zones") if isinstance(data, dict) else None
@@ -225,15 +221,18 @@ def bands_validate(dump: Path) -> bool | None:
     describing a page it had not been shown. A summary carrying only one of them
     would have called it a success.
     """
-    schema = schema_of(LayoutResponse)
     for path in sorted(dump.glob("*_layout.json"), reverse=True):
         try:
-            parsed = LayoutResponse.model_validate_json(
-                canonicalise(path.read_text(), schema))
+            zones = [
+                Zone(kind=Kind.PROSE, role=Role.BODY,
+                     band=z["band"], column=z["column"],
+                     bbox=BBox(z["left"], z["top"], z["right"], z["bottom"]))
+                for z in json.loads(path.read_text())["zones"]
+            ]
         except Exception:  # noqa: BLE001 - unparseable is not "invalid Bands"
             continue
         try:
-            zones_from_layout(parsed)
+            validate_bands(zones)
         except MappingError:
             return False
         return True
@@ -296,15 +295,16 @@ def both(page: Image.Image, model: list[Box], expected: list[Box]) -> Image.Imag
     return draw(canvas, model, MODEL_COLOUR, prefix="got ")
 
 
-def layout_input(page: Image.Image, long_edge: int) -> Image.Image:
-    """The page at the size the layout pass is actually given.
+def layout_input(page: Image.Image, long_edge: int | None) -> Image.Image:
+    """The page at the size the layout stage is given.
 
-    `resize_long_edge` never enlarges, so this is a no-op on a source already
-    smaller than the budget — which is itself worth seeing, because that no-op
-    is what hid the missing downscale until `LAYOUT_LONG_EDGE` was split out.
+    Whole, by default: the detector is handed the rectified page. `long_edge`
+    draws it as the deleted vision layout pass was sent it, for an old dump.
+    `resize_long_edge` never enlarges, so a downscale is a no-op on a source
+    already smaller than the budget — which is what once hid a missing one.
     """
     longest = max(page.size)
-    if longest <= long_edge:
+    if long_edge is None or longest <= long_edge:
         return page.convert("RGB").copy()
     scale = long_edge / longest
     return page.convert("RGB").resize(
@@ -992,8 +992,11 @@ def _given(event: Event, page: Image.Image) -> str:
         return (f"the Zone's crop, measured for a caption band before anything "
                 f"is asked of it — {data.get('lines', 1)} band(s) of ink")
     if event.step == "detect_zones":
-        return (f"the whole page, downscaled to a {data.get('long_edge')}px long "
-                "edge — finding regions is coarse work and needs no glyphs")
+        if data.get("long_edge"):
+            return (f"the whole page, downscaled to a {data.get('long_edge')}px "
+                    "long edge — finding regions is coarse work and needs no "
+                    "glyphs")
+        return "the whole rectified page, given to the layout detector"
     if event.step == "rectify":
         return (f"{data.get('source_width')}x{data.get('source_height')} source, "
                 f"rectified to {data.get('rectified_width')}x"
@@ -1273,7 +1276,10 @@ def main(argv: list[str] | None = None) -> int:
                         help="hand-authored expected IR, to draw alongside")
     parser.add_argument("--out", type=Path, default=None,
                         help="output directory (default: ./debug/<dump name>)")
-    parser.add_argument("--long-edge", type=int, default=LAYOUT_LONG_EDGE)
+    parser.add_argument("--long-edge", type=int, default=None,
+                        help="draw the page downscaled to this long edge, as the "
+                             "deleted vision layout pass was sent it; default: "
+                             "whole, as the detector sees it")
     args = parser.parse_args(argv)
 
     # Either a recorded layout *call* or a record of the geometry the Conversion
@@ -1299,7 +1305,7 @@ def main(argv: list[str] | None = None) -> int:
     panels = [
         ("01_layout_input", "The page as the layout pass saw it",
          f"{page.width}x{page.height} source, sent at {seen.width}x{seen.height} "
-         f"(budget {args.long_edge}).", seen),
+         f"(budget {args.long_edge or 'none'}).", seen),
         ("02_model_boxes", "Boxes the model returned",
          f"{len(model)} Zones.", draw(page, model, MODEL_COLOUR, prefix="got ")),
     ]

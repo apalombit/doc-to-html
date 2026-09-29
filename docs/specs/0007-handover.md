@@ -1167,7 +1167,11 @@ wide, which leaves an empty seventh column. Both are in `docs/status.md`,
 **The floor did not move.** Freezing the combined arm as the next floor is
 Alessandro's call.
 
-## The open-issues queue — Q1 to Q7 — **NEXT**
+## The open-issues queue — Q1 to Q7 — **Q1–Q4 DONE 2026-09-27 to 2026-09-29**
+
+**Q5 to Q7 continue from the next section's prompt, not this one.** This
+prompt is kept as the record of how the queue was briefed; its baseline
+proof and test count are Q1's, and three of its items are closed.
 
 **Planned with Alessandro on 2026-09-27:** every open issue, one at a time,
 in a fresh session, in the order `docs/status.md` "Next" gives. The floor stays
@@ -1285,6 +1289,156 @@ open is needed. After Q7, stop: the floor and Thread 3/C are Alessandro's.
 CLOSED — DO NOT REOPEN WITHOUT A NEW KIND OF EVIDENCE: the column model and
 proportional widths, the merged Zone (menu_0012, form_0007), alignment_agreement
 as a gate, a third loss detector. docs/status.md "Closed, with evidence".
+
+STANDING RULES:
+- Never cite or analyse a past run. Only a run taken in this session counts.
+  The exceptions are the committed tests/frozen/ directories, each for what its
+  README says it is.
+- Leave debug/runs/84-rule-not-a-line/ intact.
+- Never score against tests/documents/SAMPLE_DOCUMENTS.
+- Do not delete the four shipped defaults or the three wire-level row nets.
+- Marking may never change the words: wire._runs_for and ir.Cell.runs both stay.
+- What is read off a Graphic is alt text, never printed.
+- project() compares a normalised view, never raw markup.
+- Every run must produce debug/runs/<label>/report.html.
+- Any reviewed run is a full sweep, all fifteen, or the offline equivalent.
+- Rubric judgements are pairwise and in-session only.
+- Ask before binding anything docs/status.md leaves open.
+```
+
+---
+
+## The open-issues queue, continued — Q5 to Q7 — **NEXT**
+
+**Written 2026-09-29, when Q4 closed.** Q1–Q4 were model-free and each closed
+offline with its gate met; `docs/status.md`, "What the last step shipped",
+has each one's table. What is left costs model time. Measured at the Q4
+commit, and each a check the next session re-takes rather than a number it
+quotes:
+
+- **`tools/rederive.py tests/frozen/a3-result` is today's baseline.** It holds
+  the ratchet on four legs for all fifteen; `statement_0006` carries 2 caveats
+  and every row of its z3 is 6 cells; `header_fill` sits on exactly
+  `invoice_0001` z4 and z5, `nonlatin_0014` z4 and `statement_0006` z3;
+  `darkdeck_0009` z2 has no Title; 8 heading Blocks carry a `size`, on
+  `catalogue_0015`, `cv_0013`, `darkdeck_0009`, `invoice_0002` and
+  `newsletter_0008`; `menu_0012` renders no `<thead>`.
+- **`tools/layout_front.py <out>` runs the production layout front with every
+  model call refused** — detector, recovery, snap, shipped defaults — in about
+  eleven seconds, byte-identical run to run, and its Zones match
+  `a3-result`'s band, column and bbox on 15 of 15. A change that moves boxes
+  (Q6's) is measured here first, for nothing.
+- **No sweep has run since Q1.** Q1–Q4 are downstream of the model or
+  bookkeeping, so the first sweep should reproduce the rederived baseline on
+  every document its change does not touch. It is also the first run of
+  `tools/iterate.sh` since Q4 edited it.
+
+```
+Work the rest of spec 0007's open-issues queue, Q5 to Q7, one at a time, in
+the order docs/status.md "Next" gives. Alessandro gave the go for all three
+on 2026-09-27; each costs model time. Every gate is still agreed with him
+before any code, and a sweep's cost is stated before it starts.
+
+Read, in order: CLAUDE.md's "READ THIS FIRST", then docs/status.md, then
+"The open-issues queue, continued — Q5 to Q7" in docs/specs/0007-handover.md.
+The spec is authoritative where anything disagrees. Q1-Q4 are done; do not
+redo them.
+
+Branch scaffold, at or after the commit that wrote this prompt. 813 tests
+pass, mypy src/ clean.
+
+THE FLOOR IS tests/frozen/a3-result/ and it does not move without Alessandro:
+
+    python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
+        --documents sweep --previous tests/frozen/a3-result/scores.json
+
+--documents sweep is not optional.
+
+THE BASELINE IS NOT THE FLOOR'S DOCUMENTS. Build today's first, and prove it
+before using it:
+
+    python tools/rederive.py tests/frozen/a3-result --label <base>
+
+Scored against the floor it holds the ratchet on four legs for all fifteen;
+statement_0006 carries 2 caveats and every row of its z3 is 6 cells;
+header_fill sits on exactly invoice_0001 z4 and z5, nonlatin_0014 z4 and
+statement_0006 z3; darkdeck_0009 z2 has no Title; 8 heading Blocks carry a
+size, on catalogue_0015, cv_0013, darkdeck_0009, invoice_0002 and
+newsletter_0008; menu_0012 renders no <thead>. Every "unchanged" in a gate is
+measured against this baseline; the ratchet is always against a3-result. A
+change downstream of the model that writes the IR adds its step to
+tools/rederive.py, or the loop measures yesterday's code.
+
+THREE LOOPS, AND WHAT EACH CAN SEE:
+  - tools/rederive.py: every step downstream of the model, on the floor's
+    model answers. No model, about a minute.
+  - tools/layout_front.py <out>: the production layout front with every model
+    call refused. Every Zone's box, no model answer. About eleven seconds.
+  - A sweep: FIXTURE=sweep tools/iterate.sh <label>, about 90 minutes, on
+    committed code or with git diff HEAD saved beside it. The only loop that
+    sees a new model answer. No sweep has run since Q1, so every document the
+    change does not touch should come back byte-identical to the rederived
+    baseline — the conversion is deterministic at temperature 0 on this
+    machine — and a mismatch is a finding to explain before anything else.
+    It is also the first run of tools/iterate.sh since Q4 edited it.
+
+THE QUEUE. Each measured one change apart, committed, and written into
+docs/status.md before the next begins.
+
+  Q5 receipt_0010, the worst document: preprocess.resize_long_edge never
+     enlarges, and the page rectifies to 335x547, so the Extractor sees about
+     300px across 19 lines of monospace. Probe first (about 6 minutes of model
+     time); a change moves crops and costs a sweep. Carries Q2's leftover:
+     its table's one row came back 20 cells wide, 19 of them read as empty,
+     so "Order 00418" wraps in a narrow first column. If that survives Q5's
+     re-read, the fix is trimming header cells no row fills — measured in Q2
+     to touch this table only.
+  Q6 nonlatin_0014's overlapping Zones, left open by decision in A2: the
+     full-width Zone is 0.70 over the top-right pairs box and re-reads three
+     of its four pairs; the outside part holds "ΤΠΥ = 2026/0417", so dropping
+     either box loses it. Cutting a box changes a crop. Measure the boxes with
+     tools/layout_front.py before spending model time.
+  Q7 invoice_0001's "Invoice" / "#: 123" Pair boundary, and A1's one false
+     mark "12345", worth 0.0029 of join_recall. Both are model questions.
+  Q5-Q7 touch three different documents. Decide on entry, with Alessandro,
+  whether they share one sweep, as A3's two changes did.
+
+FOR EACH ONE, BEFORE ANY CODE:
+  - Read the IR of the documents it names before scoping the fix to its
+    description.
+  - Find the stage that introduces it, not the one that reports it.
+  - Measure which documents a candidate rule touches, across all fifteen. A
+    rule that changes exactly what it names beats a clever one.
+  - Propose a gate of counts of named structures, per document, and get it
+    agreed with Alessandro. Always include: the ratchet holds against
+    a3-result on four legs, all fifteen; every document the rule does not
+    name is unchanged against the baseline. Say precisely what "unchanged"
+    means. Before predicting which score fields move, know what each axis
+    samples: T5 takes the modal pixel of a 600px-wide thumbnail of the whole
+    screenshot, findings panel included, and Q3 saw it flip on type size
+    alone; T3's beside needs half the shorter block's height in vertical
+    overlap, so any size change can move it.
+
+A wire rule must also run inside a replayed Conversion test. Replayed
+Conversions take their Zones from tests/responses/<fixture>/geometry.json
+through tests/replay.py's FixedLayout: convert_recording(image, replies)
+finds a fixture's geometry from its image, and a test that builds its own
+EngineSet passes engines_replaying(transport, geometry(fixture)).
+
+VISUAL REVIEW after each change: the visual-review skill, all fifteen sheets,
+--previous the baseline. Only byte identity on all fifteen stands in for it,
+and only by agreement, as in Q4.
+
+STOP AND REPORT where a gate is not met, where a measurement says the fix
+belongs to another issue or thread, or where a decision docs/status.md leaves
+open is needed. After Q7, stop: the floor and Thread 3/C are Alessandro's.
+
+CLOSED — DO NOT REOPEN WITHOUT A NEW KIND OF EVIDENCE: the column model and
+proportional widths, the merged Zone (menu_0012, form_0007), alignment_agreement
+as a gate, a third loss detector, and the vision layout pass (deleted in Q4).
+Body type size and Title sizes are deferred with Q3's evidence in style.py's
+module docstring: at the sources' own sizes both cross the ratchet on T3's
+beside. docs/status.md "Closed, with evidence" and "Deferred deliberately".
 
 STANDING RULES:
 - Never cite or analyse a past run. Only a run taken in this session counts.

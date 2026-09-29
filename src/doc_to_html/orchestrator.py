@@ -29,18 +29,15 @@ from .ir import (
     Caveat, Document, Failure, Gap, Kind, Role, RowRole, Shortfall, Zone,
 )
 from .preprocess import (
-    LAYOUT_LONG_EDGE,
     MIN_ZONE_INK,
     MODEL_INPUT_LONG_EDGE,
     PAD_X,
     PAD_Y,
-    REGION_GAP,
     EmptyZone,
     ImageArray,
     Rectified,
     caption_band,
     content_ink,
-    count_regions,
     crop_row_as_fraction,
     figure_pixels,
     header_band,
@@ -143,7 +140,7 @@ RETIRED_LAYOUT = frozenset({"", "none", "off"})
 Spec 0007 Thread 0 deleted the vision layout path from every Conversion. It
 raised `MappingError` on three of the five documents it was measured on and
 matched none of them, where the detector converts all five, and keeping it
-alive meant maintaining `LAYOUT_PROMPT`'s schema through every IR change in
+alive meant maintaining the vision layout prompt's schema through every IR change in
 Thread A for no measured benefit.
 
 Kept as a *name* so that a `DTH_LAYOUT_DETECTOR=none` left in somebody's shell
@@ -389,9 +386,9 @@ corpus sits near it: the regions measured are 2px, 1px and 15px.
 MAX_RECOVERED = 6
 """How many Zones one page may gain from uncovered ink.
 
-A ceiling on a repair, in the spirit of `_layout_again`'s region ceiling: a
-detector that has missed six separate regions has not missed a block, it has
-failed, and adding a seventh Zone is not the answer to that. The largest are
+A ceiling on a repair: a detector that has missed six separate regions has
+not missed a block, it has failed, and adding a seventh Zone is not the answer
+to that. The largest are
 kept, because ink area is the only ranking available before anything is read.
 """
 
@@ -659,18 +656,6 @@ class Conversion:
 
     Resolved per Conversion rather than read at import, so a test or a bake-off
     arm can set the variable and get the behaviour without reloading the module.
-    """
-
-    layout_region_hint: bool = field(
-        default_factory=lambda: load().layout_region_hint
-    )
-    """Whether `_layout` measures the page and states a region ceiling.
-
-    Resolved per Conversion for the same reason as `snap_zones` above, and it
-    lives here rather than on the Engine because the measurement is the
-    Orchestrator's: it owns the Rectified Image and the Trace, so measuring once
-    here is what keeps the number in the prompt and the number in `trace.json`
-    provably the same one. See `config.DEFAULT_LAYOUT_REGION_HINT`.
     """
 
     cover_the_page: bool = field(default_factory=lambda: load().cover_the_page)
@@ -1032,46 +1017,38 @@ class Conversion:
         )
 
     def _layout(self, rectified: Rectified, document: Document) -> None:
-        """Detect Zones — Band, column, Role, bbox — on a downscaled page.
+        """Detect Zones — Band, column, Role, bbox — with the layout detector.
 
         It still returns a Kind as well, and that Kind is not used: `_classify`
         overwrites every one of them from the Zone's own crop moments later.
-        Deleting it from the prompt and the wire schema is issue #17; until then
-        the geometry pass is still paying tokens to guess something discarded.
 
         Run once per Conversion, not once per round. A later round refines what
         is *in* the Zones; re-detecting them would discard everything extracted
-        so far in exchange for a near-identical answer from a near-deterministic
-        model.
+        so far in exchange for the same boxes.
+
+        A detector that fails is recorded and the failure re-raised, rather
+        than carried on from with no Zones: a plausible partial layout looks
+        like a sparse document and is worse than an error.
         """
         if document.zones:
             return
 
-        ceiling = self._region_ceiling(rectified)
-
         mark, started = self.trace.next_call, time.perf_counter()
         try:
             zones = self.engines.layout.detect_zones(rectified.image, document.hint)
-            overrun = ceiling is not None and len(zones) > ceiling
             failure: Exception | None = None
         except (MappingError, RuntimeError) as error:
-            zones, overrun, failure = [], False, error
+            zones, failure = [], error
         call, made = self.trace.calls_since(mark)
         self.trace.record(
             Stage.LAYOUT, "detect_zones",
-            Disposition.REJECTED if (overrun or failure) else Disposition.ACCEPTED,
+            Disposition.REJECTED if failure else Disposition.ACCEPTED,
             seconds=time.perf_counter() - started, call=call, calls=made,
-            long_edge=LAYOUT_LONG_EDGE, zones=len(zones),
-            boxes=[_box_data(zone) for zone in zones],
-            reason=(
-                f"{len(zones)} Zones, more than the {ceiling} the page measures"
-                if overrun else f"{type(failure).__name__}: {failure}"
-                if failure else None
-            ),
+            zones=len(zones), boxes=[_box_data(zone) for zone in zones],
+            reason=f"{type(failure).__name__}: {failure}" if failure else None,
         )
-
-        if overrun or failure:
-            zones = self._layout_again(rectified, document, ceiling, failure)
+        if failure is not None:
+            raise failure
 
         zones = self._cover_the_page(rectified, zones)
 
@@ -1114,9 +1091,9 @@ class Conversion:
         onto its own ink by the same pass that snaps every other box — one place
         that moves a box onto its ink, not two.
 
-        Recorded either way, like `_region_ceiling`: a step that ran and found
-        nothing and a step that was switched off are different facts, and a
-        Conversion that lost content needs to be able to say which.
+        Recorded either way: a step that ran and found nothing and a step that
+        was switched off are different facts, and a Conversion that lost
+        content needs to be able to say which.
         """
         if not self.cover_the_page:
             self.trace.record(
@@ -1146,83 +1123,6 @@ class Conversion:
             ),
         )
         return covered
-
-    def _layout_again(self, rectified: Rectified, document: Document,
-                      ceiling: int | None, failure: Exception | None) -> list[Zone]:
-        """Ask once more, this time stating how many regions the page holds.
-
-        **The hint is a rescue, not a policy, and that is the whole design.**
-        Stated on every call it is a liability: runs 55 and 56 both put it on the
-        first call and both cost `invoice_0001` its zero-mismatch Conversion —
-        the model read the bound as a target, split real regions to reach it, and
-        returned quantised boxes where the unhinted call had returned measured
-        ones. Asked only after an answer has already failed, it cannot do that:
-        a document whose first answer is fine never sees a number, so the
-        baseline is protected by construction rather than by an argument about
-        wording, which is the argument that was wrong twice.
-
-        What survives from those runs is that the count *works* — it took
-        `invoice_0002` from 72 regions to 11 to its true 10, and killed a runaway
-        that a bigger token budget only fed. That is worth having exactly where
-        the page has already proved it needs it.
-
-        A second failure is the caller's, unchanged: this re-raises rather than
-        returning a fragment, because a plausible partial layout looks like a
-        sparse document and is worse than an error.
-        """
-        if ceiling is None:
-            assert failure is not None
-            raise failure
-
-        log.info("layout is being asked again with the measured ceiling of %d",
-                 ceiling)
-        mark, started = self.trace.next_call, time.perf_counter()
-        zones = self.engines.layout.detect_zones(
-            rectified.image, document.hint, region_ceiling=ceiling
-        )
-        call, made = self.trace.calls_since(mark)
-        self.trace.record(
-            Stage.LAYOUT, "detect_zones_with_ceiling", Disposition.ACCEPTED,
-            seconds=time.perf_counter() - started, call=call, calls=made,
-            long_edge=LAYOUT_LONG_EDGE, zones=len(zones), ceiling=ceiling,
-            boxes=[_box_data(zone) for zone in zones],
-        )
-        return zones
-
-    def _region_ceiling(self, rectified: Rectified) -> int | None:
-        """How many regions the page holds at most, measured from its ink.
-
-        Recorded either way. A step that ran and a step that was switched off are
-        different facts, and a trace that says nothing about the second leaves a
-        reader unable to tell "measured, and this is the number" from "never
-        measured" — which is the distinction the whole module exists to keep.
-
-        Measured on the **full-resolution** Rectified Image, not on the
-        downscaled page the model is shown, because that is what
-        `preprocess.REGION_GAP` is calibrated against. The gap is a fraction of
-        the short edge, so the count is scale-invariant and the two agree anyway;
-        matching the calibration is what makes that claim checkable rather than
-        assumed.
-        """
-        if not self.layout_region_hint:
-            self.trace.record(
-                Stage.LAYOUT, "measure_regions", Disposition.SKIPPED,
-                enabled=False,
-                reason="DTH_LAYOUT_REGION_HINT is off, so the layout prompt "
-                       "states no bound on how many regions the page holds",
-            )
-            return None
-
-        started = time.perf_counter()
-        ceiling = count_regions(rectified.image)
-        log.info("DTH_LAYOUT_REGION_HINT is on: the page measures at most "
-                 "%d regions", ceiling)
-        self.trace.record(
-            Stage.LAYOUT, "measure_regions", Disposition.ACCEPTED,
-            seconds=time.perf_counter() - started,
-            enabled=True, gap=REGION_GAP, regions=ceiling,
-        )
-        return ceiling
 
     def _read_caption(self, rectified: Rectified, document: Document,
                       index: int) -> int:

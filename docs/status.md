@@ -1,15 +1,16 @@
-# Status — 2026-09-29 (the open-issues queue: **Q1–Q3 done, Q4 next**)
+# Status — 2026-09-29 (the open-issues queue: **Q1–Q4 done, Q5 next**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-09-29, when
-Q3 of the open-issues queue closed.
+Q4 of the open-issues queue closed.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file. If you are going to look at output — and you
 should — use the **`visual-review` skill**.
 
-Branch `scaffold`. **839 tests pass, `mypy src/` clean.**
+Branch `scaffold`. **813 tests pass, `mypy src/` clean** — 26 fewer than Q3's
+839, each a test of the vision layout pass Q4 deleted.
 
 ---
 
@@ -27,7 +28,9 @@ Open issues 1-3 DONE 2026-09-26 offline; 4 -> the type scale
 Queue       Q1-Q7, in order, go given 2026-09-27
               Q1 DONE 2026-09-27, offline, gate MET
               Q2 DONE 2026-09-28, offline, gate MET
-              Q3 DONE 2026-09-29, offline, RE-SCOPED, gate MET     Q4 <- next
+              Q3 DONE 2026-09-29, offline, RE-SCOPED, gate MET
+              Q4 DONE 2026-09-29, offline, no output change, gate MET
+                                                                   Q5 <- next
 Thread 3/C  Repair loop (re-scoped first)
 Thread 4/D  Human corrections (unscheduled)
 ```
@@ -232,6 +235,65 @@ a **600px thumbnail**; the 25.6px `AUTUMN LIST…` was what kept solid ink the
 mode, and at its measured size antialiased greys outnumber it 347 to 328. T5
 measured type size there, not colour.
 
+**Q4 — Thread 0's leftover seam, 2026-09-29, gate MET.** Baseline `Q-30-base`,
+`rederive.py` at the Q3 commit, byte-identical to the Q3 arm on all fifteen.
+Agreed scope: **the whole retired vision layout pass**, not only the two names
+the brief gave — with `LAYOUT_PROMPT` gone, `DTH_LAYOUT_REGION_HINT` would
+have been a flag read and acted on by nothing.
+
+**What went.** `OllamaEngine.detect_zones`, `LAYOUT_PROMPT`, `with_regions`;
+the wire schema `LayoutResponse`/`WireZone` with `zones_from_layout` and its
+box check; the Orchestrator's region-ceiling rescue (`_region_ceiling`,
+`_layout_again`); `DTH_LAYOUT_MODEL`, `DTH_DERIVE_BANDS`,
+`DTH_LAYOUT_REGION_HINT`; `OllamaEngine.layout_long_edge` and
+`preprocess.LAYOUT_LONG_EDGE`; `region_ceiling` off `LayoutEngine` and the
+detector. None reached a Conversion after Thread 0, so they were removed
+rather than refused by name — `config.py`'s retirement paragraph says so.
+**What stayed:** `bands_from_boxes`, `validate_bands`, `GRAPHIC_KINDS` (the
+detector and Orchestrator use them), and `count_regions` as a ruler.
+
+**What replaced it.** The recorded-response suite hands the layout stage
+fixed Zones: `tests/replay.py`'s `FixedLayout` serves each fixture's
+`tests/responses/<fixture>/geometry.json`, frozen from its `layout.json`
+through the old mapper and round-trip equal on all five.
+`convert_recording(image, replies)` finds a fixture's geometry from its
+image; `engines_replaying(transport, geometry(fixture))` names it.
+`tools/record_responses.py` writes `geometry.json` and derives the committed
+five exactly. Tools: `inspect_run.py` reads an old dump's layout answer as
+plain JSON and draws the page whole by default; `cloud_probe.py` lost its
+layout question; `iterate.sh` no longer stamps `layout_long_edge.txt`.
+
+**How "no output change" was proved with no model.** The production
+Conversion was run over all fifteen with every model call refused — the real
+detector and every model-free layout stage, shipped defaults, each Zone a
+skeleton — in 11 seconds. At the Q3 commit it was byte-identical across two
+runs and **reproduced `a3-result`'s Zone band, column and bbox on 15 of 15**,
+so it is the production layout path, not an approximation of it. **It is
+committed as `tools/layout_front.py`** — the same run, writing the absolute
+source path a sweep records — for the next change that moves boxes (Q6).
+
+| clause | result |
+|---|---|
+| production, refused-model Conversion, fifteen: `document.html` byte-identical to the Q3 commit | 15 of 15 |
+| its `trace.json` identical but for `seconds`, the `measure_regions` record and the `long_edge` key | 15 of 15 — and every later record's `seq` one lower, since the list is one record shorter |
+| replay, the five recorded fixtures: `document.html` byte-identical to the Q3 commit | 5 of 5 |
+| `rederive.py` from `a3-result`, whole file, against `Q-30-base` | 15 of 15; 0 score fields differ |
+| ratchet vs `a3-result`, four legs, fifteen | holds |
+| the removed names in `src/`, `tools/`, `tests/`, `.env.example` | only `config.py`'s retirement paragraph; `test_lenient.py` keeps a local copy of the schema, renamed `RegionsResponse`, because its real cloud answers were taken against it |
+| tests, mypy | 813 pass (839 less 26 deleted, each a test of the deleted pass), clean |
+| visual review | replaced, by agreement, by the byte identity above |
+
+**Deleted tests, each a test of the pass itself:** the region-ceiling rescue
+(15 of `test_region_ceiling.py`'s 18; its 3 ruler tests are
+`test_region_ruler.py`), 8 in `test_tracer_bullet.py` (the layout downscale,
+two box checks, three graphic/title checks of the mapper, a layout returning
+no Zones, geometry corresponding to nothing), and one prompt-wording or budget
+test each in `test_table_extraction.py`, `test_pairs_and_prose.py` and
+`test_list_and_figure.py`. **Re-pointed, assertion kept:** the Band checks
+now call `validate_bands` and `bands_from_boxes` on Zones directly, the
+truncation tests go through the classify pass, and "the vision model satisfies
+`LayoutEngine`" became "`FixedLayout` does".
+
 ### Open issues 1–3 — 2026-09-26, offline, one change apart
 
 Each was measured against `a3-result` with no model call: the floor's IRs
@@ -285,10 +347,8 @@ Q5 by decision.
 **Q3. The type scale, carrying open issue 4. — DONE 2026-09-29, re-scoped to
 heading sizes, gate met;** see "What the last step shipped".
 
-**Q4. Thread 0's leftover seam.** No output change. `OllamaEngine.detect_zones`
-and `LAYOUT_PROMPT` are unreachable from a Conversion and survive only as what
-nine test modules' layout stage replays against. Bookkeeping, not a
-measurement question: fifteen of fifteen render unchanged, tests pass.
+**Q4. Thread 0's leftover seam. — DONE 2026-09-29, gate met;** see "What the
+last step shipped".
 
 **Q5. `receipt_0010`'s untested lead** — the worst document in the corpus.
 Model time. `preprocess.resize_long_edge` never enlarges, and this page
@@ -309,7 +369,12 @@ time. A Pair label/value boundary the Pairs Extractor chooses, and A1's one
 false mark, `12345`, worth 0.0029 of `join_recall`. Both are model questions.
 
 **Q5–Q7 touch three different documents**, so whether they share one sweep —
-as A3's two changes did — is decided on entry, with Alessandro.
+as A3's two changes did — is decided on entry, with Alessandro. **Start them
+from a clean session with the prompt in
+[`specs/0007-handover.md`](specs/0007-handover.md), "The open-issues queue,
+continued — Q5 to Q7".** The first sweep after Q4 is also the first run of
+`tools/iterate.sh` since Q4 edited it (it no longer writes
+`layout_long_edge.txt`).
 
 **After the queue:** the floor decision, then Thread 3/C's re-scoping gate.
 Thread 4/D stays unscheduled.
@@ -323,7 +388,8 @@ project does not have.
 
 ## Closed, with evidence — do not reopen without a new kind
 
-All in [`specs/0007-a2-measurements.md`](specs/0007-a2-measurements.md).
+All in [`specs/0007-a2-measurements.md`](specs/0007-a2-measurements.md), except
+the last entry.
 
 - **The column model.** Four renderers measured offline, all worse on the hard
   tier. **Proportional widths** lower `cv_0013` 0.500 → 0.474 while crossing
@@ -338,6 +404,11 @@ All in [`specs/0007-a2-measurements.md`](specs/0007-a2-measurements.md).
 - **Reading direction for a multi-Band column region** is an **IR gap**, not a
   renderer choice: the same merge takes `newsletter_0008` tau 0.832 → 0.968 and
   `catalogue_0015` 0.943 → 0.562.
+- **The vision layout pass** — deleted in Q4, 2026-09-29, after Thread 0 took
+  it out of every Conversion: it raised `MappingError` on three of the five
+  documents it was measured on and matched none, where the detector converts
+  all fifteen. If reopened it is a new pass with its own schema and prompt,
+  measured against `tools/layout_front.py`'s boxes, not a restoration.
 
 ---
 

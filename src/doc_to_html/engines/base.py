@@ -16,24 +16,25 @@ from ..preprocess import ImageArray
 
 @runtime_checkable
 class LayoutEngine(Protocol):
-    """Whatever finds the Zones. Narrower than `VisionEngine` on purpose.
+    """Whatever finds the Zones. Separate from `VisionEngine` on purpose.
 
     The layout pass has been reduced to a box detector and this Protocol is
     where that becomes visible in the types. It reports rectangles; the `Kind` it
     also carries is discarded, because `_classify` overwrites every one from the
     Zone's own crop moments later.
 
-    Split out so `engines.detector.LayoutEngine` — a trained ONNX detector with
-    no prompt, no model call and no other pass to offer — can fill the role
-    without pretending to `classify_zone` or `read_cell`. `OllamaEngine`
-    satisfies this structurally, so nothing that already worked moved.
+    Filled by `engines.detector.LayoutEngine` — a trained ONNX detector with no
+    prompt, no model call and no other pass to offer — in every Conversion, and
+    by the recorded-response suite's `FixedLayout`. `OllamaEngine` used to
+    satisfy it too, through a vision layout prompt that spec 0007's queue
+    deleted in Q4.
     """
 
     name: str
     model: str
 
-    def detect_zones(self, image: ImageArray, hint: str | None = None,
-                     region_ceiling: int | None = None) -> list[Zone]:
+    def detect_zones(self, image: ImageArray,
+                     hint: str | None = None) -> list[Zone]:
         """Zones with Band, column, Role and bbox — no contents."""
         ...
 
@@ -44,18 +45,6 @@ class VisionEngine(Protocol):
 
     name: str
     model: str
-
-    def detect_zones(self, image: ImageArray, hint: str | None = None,
-                     region_ceiling: int | None = None) -> list[Zone]:
-        """Zones with Band, column, Kind, Role and bbox — no contents.
-
-        Run on a downscaled page: a coarse task that small models handle well.
-
-        `region_ceiling` is an upper bound on how many regions the page holds,
-        measured from the ink by the caller rather than asked of a model. `None`
-        means unmeasured, and an Engine that has no use for it may ignore it.
-        """
-        ...
 
     def read_caption(self, image: ImageArray, zone: Zone,
                      hint: str | None = None) -> Zone:
@@ -94,9 +83,9 @@ class VisionEngine(Protocol):
         differently-padded image could name a Kind for one picture while the
         Extractor reads another.
 
-        Separate from `detect_zones` because the two answer different questions
-        about different pixels, and measurably so — see `CLASSIFY_PROMPT` and
-        issue #13. Separate from `extract_zone` because the Kind this returns is
+        Separate from finding the Zones because the two answer different
+        questions about different pixels, and measurably so — see
+        `CLASSIFY_PROMPT` and issue #13. Separate from `extract_zone` because the Kind this returns is
         what routes the Zone to an Extractor in the first place.
         """
         ...

@@ -94,8 +94,7 @@ def stub_detector(monkeypatch: pytest.MonkeyPatch) -> None:
         heading_rule = "absolute"
         prefer_container = False
 
-        def detect_zones(self, image: object, hint: object = None,
-                         region_ceiling: object = None) -> list[Zone]:
+        def detect_zones(self, image: object, hint: object = None) -> list[Zone]:
             shape = getattr(image, "shape", (0, 0))[:2]
             return zones_of(by_shape[shape])
 
@@ -393,7 +392,7 @@ class TestTheCommandLine:
         the candidates omit must still get measured."""
         from doc_to_html.bakeoff import models_to_measure
 
-        settings = Settings(layout_model="house-model", extract_model="house-model",
+        settings = Settings(extract_model="house-model",
                             audit_model="granite3.2-vision:latest")
         models = models_to_measure(settings)
         assert models[0] == "house-model"

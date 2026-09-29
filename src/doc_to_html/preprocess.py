@@ -39,19 +39,6 @@ MODEL_INPUT_LONG_EDGE = 1024
 This is the budget for *extraction*, which has to read glyphs.
 """
 
-LAYOUT_LONG_EDGE = 512
-"""What the layout pass sees, and deliberately less.
-
-Finding regions is coarse work: the layout prompt says not to read the text at
-all, so it needs positions rather than glyphs. A vision model's token count scales
-with pixels, so halving each dimension is roughly a quarter of the image tokens —
-which is context a small model was otherwise spending before it reached an answer.
-
-Note this had never actually been exercised: every fixture is under 1024px, so the
-"layout runs on a downscaled page" design was a no-op until this existed.
-"""
-
-
 class RectifyError(RuntimeError):
     """The pixels could not be read at all.
 
@@ -592,7 +579,7 @@ REGION_GAP = 0.04
 one region and begin the next. Used by `count_regions`.
 
 **Calibrated on two fixtures, and it overcounts on both** — which is the whole
-reason `count_regions` is only ever stated as a ceiling:
+reason `count_regions` is only ever read as an upper bound:
 
 | fixture | regions on the page | `count_regions` at 0.04 |
 |---|---|---|
@@ -1326,19 +1313,14 @@ def regions_from_xy_cut(mask: ImageArray, gap: float) -> list[tuple[BBox, int, i
 def count_regions(image: ImageArray, gap: float = REGION_GAP) -> int:
     """How many regions the ink on this page falls into. No model.
 
-    A measurement, not an opinion, and that is the point: two attempts to talk
-    `qwen3-vl:4b` out of over-segmenting a nested page were behavioural
-    instructions and both were ignored — `LAYOUT_PROMPT` already says a panel's
-    inner rows "are not regions themselves" and the model returned 72 regions for
-    a 10-region page anyway. The same asymmetry `DTH_TABLE_GRID_HINT` exploits
-    applies here: this model complies with *how many* and ignores *which*.
+    A measurement, not an opinion. It was built to state a ceiling in the
+    vision layout prompt, after two behavioural instructions failed to stop
+    `qwen3-vl:4b` returning 72 regions for a 10-region page; that pass and its
+    prompt are deleted (spec 0007's queue, Q4), and this stays as a ruler —
+    `tests/test_content_loss.py` measures a turned-over dark page with it.
 
     **Read the answer as an upper bound.** It overcounts on both fixtures it is
-    calibrated against (8 for a true 6, 11 for a true 10), which is why
-    `engines.ollama.with_regions` states it as a ceiling. A ceiling is safe in a
-    way an exact count is not: a page whose regions the model already gets right
-    sits under the bound and feels no pressure to split, while a runaway is
-    still capped.
+    calibrated against (8 for a true 6, 11 for a true 10).
 
     Boxes are discarded here deliberately. Using them as geometry is a separate
     and much larger change — their Bands do not match the expected IR on either

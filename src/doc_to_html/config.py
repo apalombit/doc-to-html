@@ -28,7 +28,6 @@ from pathlib import Path
 from typing import Callable, Mapping, TypeVar
 
 DEFAULT_OLLAMA_HOST = "http://localhost:11434"
-DEFAULT_LAYOUT_MODEL = "qwen3-vl:4b"
 DEFAULT_EXTRACT_MODEL = "qwen3-vl:4b"
 DEFAULT_AUDIT_MODEL = "qwen3-vl:4b"
 """A placeholder, and the one default that is knowingly wrong for its job.
@@ -347,39 +346,6 @@ while `Item` names a column." The veto is aimed exactly there, and in run 72 it
 **fired once across all five fixtures**, on that Zone, refusing "Payment Method"
 at 2 columns against 2. Nothing else in the corpus tripped it."""
 
-DEFAULT_DERIVE_BANDS = False
-"""Whether a Zone's Band and column come from its box rather than from the model.
-
-**Off**, following `DTH_SNAP_ZONES`: a change to geometry ships off until a live
-Conversion has been measured with it, and no run has ever completed with this on.
-
-**What it fixes.** Band numbering is the part of the layout answer this project
-has watched break most often — five of the six changes ever made to
-`LAYOUT_PROMPT` broke it, each time as collateral on a change that never
-mentioned it. It is also the one part fully determined by something the model
-already gives correctly: the boxes. Runs 55 and 56 are the clearest case. Both
-returned sane boxes and correctly alternating columns, and both failed to
-increment the Band index between the first two rows — every Zone landing in Band
-0 with columns `[0, 1, 0, 1]` — which cost `invoice_0001` and `invoice_0002`
-their whole Conversion for a duplicated integer.
-
-**What it is measured against.** `wire.bands_from_boxes` reproduces the
-hand-authored Band and column numbering of all five fixtures from their boxes
-alone, and reproduces run 50's numbering — the model's own answer on the document
-that converts at zero mismatches — so switching it on costs that run nothing. The
-naive rule it replaces, merging on any vertical overlap, matched three of five.
-
-**What it is not measured against: a live Conversion.** Run 57 was to be that and
-was stopped before it finished. Until one completes, the evidence is offline
-only, which is exactly the situation `DTH_SNAP_ZONES`' own docstring describes as
-the reason a geometry default waits.
-
-**What turning it on changes besides the numbers.** `validate_bands` stops being
-able to reject a layout for its Band numbering, because the numbering then comes
-from the boxes it is checked against. A document that would have been thrown away
-converts instead. That is the intent, and it is also a real loss of a signal that
-has caught genuine nonsense before."""
-
 DEFAULT_STYLE_RECORD = True
 """Whether a page's own colours and width are measured and carried into the IR.
 
@@ -431,37 +397,6 @@ cannot sit in a valid Band.
 a geometry change in this project is measured one axis at a time.
 """
 
-DEFAULT_LAYOUT_REGION_HINT = False
-"""Whether to tell the layout pass how many regions the page holds, at most.
-
-**Off**, because a default is a claim about every document and this is measured
-on two. `DTH_TABLE_GRID_HINT` shipped off and was flipped only once a run had
-passed a gate written before it; this follows that order.
-
-**What it is aimed at.** `invoice_0002` has boxed panels containing label/value
-rows, so "what counts as one region" is under-determined. `qwen3-vl:4b` resolves
-it downward and returns a synthetic 18x4 lattice — **72 regions, all `pairs`, for
-a page with 10** — which overruns the token budget, is retried at twice it, and
-is then rejected by `validate_bands`. The page has never converted.
-
-**Why a count rather than better wording.** `LAYOUT_PROMPT` already forbids this
-in as many words: "The columns inside a table or a pairs region are that region's
-own business and are not regions themselves." It is ignored, exactly as the two
-behavioural instructions about splitting a table row were ignored in runs 13 and
-48. This model complies with *how many* and ignores *which* — which is the whole
-finding behind `DEFAULT_TABLE_GRID_HINT`, applied one pass earlier.
-
-**Stated as a ceiling, not as a target.** `preprocess.count_regions` overcounts:
-8 for `invoice_0001`'s true 6, 11 for `invoice_0002`'s true 10. An exact count
-would push a page the model already gets right into splitting regions to reach
-the number, and `invoice_0001` at 0 mismatches is the thing that must not move.
-A bound has no such pull — 6 is already under 8 — while still capping a runaway.
-See `engines.ollama.with_regions`.
-
-**Unmeasured.** Nothing has been run with this on. Read
-`preprocess.REGION_GAP` for what the ruler is calibrated against, which is two
-fixtures and not the other three."""
-
 DEFAULT_LAYOUT_DETECTOR = "heron"
 """Which trained detector finds the Zones, or empty for the vision model.
 
@@ -506,8 +441,19 @@ that catches the opposite error, and it reads 3 on `invoice_0002`.
 **`DTH_LAYOUT_LONG_EDGE` is gone.** It existed only to set the resolution of
 the vision layout pass, it had no docstring, it shipped at a value no recorded
 run used, and spec 0007 Thread 0 retired the pass it served. The detector never
-read it. `preprocess.LAYOUT_LONG_EDGE` is the remaining constant and it is not
-a setting."""
+read it.
+
+**So are `DTH_LAYOUT_MODEL`, `DTH_DERIVE_BANDS` and `DTH_LAYOUT_REGION_HINT`,
+since spec 0007's queue, Q4, 2026-09-29** — with `OllamaEngine.detect_zones`,
+`LAYOUT_PROMPT` and the wire schema it answered in. Thread 0 took the vision
+layout pass out of every Conversion and left those in the tree as the seam the
+recorded-response suite replayed against; that suite now hands the layout stage
+fixed Zones instead. The three settings chose the pass's model, whether its
+Band numbering was believed, and whether its prompt stated a region ceiling.
+None of them reached a Conversion after Thread 0, so a stale value in a shell
+changes nothing, which is why they were removed rather than refused by name.
+`wire.bands_from_boxes` numbers every Conversion's Bands, and
+`preprocess.count_regions` survives as a ruler."""
 
 DEFAULT_DETECTOR_CONFIDENCE = 0.0
 """Confidence floor for the layout detector, or 0 for the detector's own.
@@ -619,7 +565,6 @@ class Settings:
 
     ollama_host: str = DEFAULT_OLLAMA_HOST
     ollama_api_key: str = ""
-    layout_model: str = DEFAULT_LAYOUT_MODEL
     classify_model: str = DEFAULT_CLASSIFY_MODEL
     extract_model: str = DEFAULT_EXTRACT_MODEL
     audit_model: str = DEFAULT_AUDIT_MODEL
@@ -631,10 +576,8 @@ class Settings:
     table_grid_hint: bool = DEFAULT_TABLE_GRID_HINT
     caption_pass: bool = DEFAULT_CAPTION_PASS
     inline_pass: bool = DEFAULT_INLINE_PASS
-    layout_region_hint: bool = DEFAULT_LAYOUT_REGION_HINT
     cover_the_page: bool = DEFAULT_COVER_THE_PAGE
     style_record: bool = DEFAULT_STYLE_RECORD
-    derive_bands: bool = DEFAULT_DERIVE_BANDS
     layout_detector: str = DEFAULT_LAYOUT_DETECTOR
     detector_confidence: float = DEFAULT_DETECTOR_CONFIDENCE
     heading_rule: str = DEFAULT_HEADING_RULE
@@ -749,7 +692,6 @@ def load(
         for setting in (
             resolve("OLLAMA_HOST", DEFAULT_OLLAMA_HOST),
             resolve("OLLAMA_API_KEY", "", secret=True),
-            resolve("DTH_LAYOUT_MODEL", DEFAULT_LAYOUT_MODEL),
             resolve("DTH_CLASSIFY_MODEL", DEFAULT_CLASSIFY_MODEL),
             resolve("DTH_EXTRACT_MODEL", DEFAULT_EXTRACT_MODEL),
             resolve("DTH_AUDIT_MODEL", DEFAULT_AUDIT_MODEL),
@@ -761,10 +703,8 @@ def load(
             resolve("DTH_TABLE_GRID_HINT", DEFAULT_TABLE_GRID_HINT),
             resolve("DTH_CAPTION_PASS", DEFAULT_CAPTION_PASS),
             resolve("DTH_INLINE_PASS", DEFAULT_INLINE_PASS),
-            resolve("DTH_LAYOUT_REGION_HINT", DEFAULT_LAYOUT_REGION_HINT),
             resolve("DTH_COVER_THE_PAGE", DEFAULT_COVER_THE_PAGE),
             resolve("DTH_STYLE_RECORD", DEFAULT_STYLE_RECORD),
-            resolve("DTH_DERIVE_BANDS", DEFAULT_DERIVE_BANDS),
             resolve("DTH_LAYOUT_DETECTOR", DEFAULT_LAYOUT_DETECTOR),
             resolve("DTH_DETECTOR_CONFIDENCE", DEFAULT_DETECTOR_CONFIDENCE),
             resolve("DTH_HEADING_RULE", DEFAULT_HEADING_RULE),
@@ -775,7 +715,6 @@ def load(
     return Settings(
         ollama_host=origins["OLLAMA_HOST"].value,
         ollama_api_key=origins["OLLAMA_API_KEY"].value,
-        layout_model=origins["DTH_LAYOUT_MODEL"].value,
         classify_model=origins["DTH_CLASSIFY_MODEL"].value,
         extract_model=origins["DTH_EXTRACT_MODEL"].value,
         audit_model=origins["DTH_AUDIT_MODEL"].value,
@@ -787,10 +726,8 @@ def load(
         table_grid_hint=_flag(origins["DTH_TABLE_GRID_HINT"]),
         caption_pass=_flag(origins["DTH_CAPTION_PASS"]),
         inline_pass=_flag(origins["DTH_INLINE_PASS"]),
-        layout_region_hint=_flag(origins["DTH_LAYOUT_REGION_HINT"]),
         cover_the_page=_flag(origins["DTH_COVER_THE_PAGE"]),
         style_record=_flag(origins["DTH_STYLE_RECORD"]),
-        derive_bands=_flag(origins["DTH_DERIVE_BANDS"]),
         layout_detector=origins["DTH_LAYOUT_DETECTOR"].value,
         detector_confidence=_number(origins["DTH_DETECTOR_CONFIDENCE"], float),
         heading_rule=_heading_rule(origins["DTH_HEADING_RULE"]),

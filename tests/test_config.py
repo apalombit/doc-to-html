@@ -31,7 +31,6 @@ class TestDefaults:
         """Every variable has a default in code, so nothing has to be set."""
         settings = resolve()
         assert settings.ollama_host == "http://localhost:11434"
-        assert settings.layout_model == config.DEFAULT_LAYOUT_MODEL
         assert settings.classify_model == config.DEFAULT_CLASSIFY_MODEL
         assert settings.extract_model == config.DEFAULT_EXTRACT_MODEL
         assert settings.audit_model == config.DEFAULT_AUDIT_MODEL
@@ -78,10 +77,10 @@ class TestPrecedence:
         """A dotenv file is a convenience for a workstation; an exported
         variable is a deliberate act for one run and must win."""
         dotenv = tmp_path / ".env"
-        dotenv.write_text("DTH_LAYOUT_MODEL=from-file\n")
-        settings = load(env={"DTH_LAYOUT_MODEL": "from-env"}, dotenv_path=dotenv)
-        assert settings.layout_model == "from-env"
-        assert settings.origins["DTH_LAYOUT_MODEL"].source == "environment"
+        dotenv.write_text("DTH_EXTRACT_MODEL=from-file\n")
+        settings = load(env={"DTH_EXTRACT_MODEL": "from-env"}, dotenv_path=dotenv)
+        assert settings.extract_model == "from-env"
+        assert settings.origins["DTH_EXTRACT_MODEL"].source == "environment"
 
     def test_an_empty_string_is_not_a_value(self) -> None:
         """`DTH_NUM_CTX=` in a dotenv file means "I did not set this", not
@@ -163,8 +162,8 @@ class TestReadingEachZonesTitle:
 
 class TestReporting:
     def test_the_report_shows_where_each_value_came_from(self) -> None:
-        lines = config.describe(resolve(DTH_LAYOUT_MODEL="qwen3-vl:2b"))
-        assert any("DTH_LAYOUT_MODEL" in line and "qwen3-vl:2b" in line
+        lines = config.describe(resolve(DTH_EXTRACT_MODEL="qwen3-vl:2b"))
+        assert any("DTH_EXTRACT_MODEL" in line and "qwen3-vl:2b" in line
                    and "environment" in line for line in lines)
         assert any("DTH_AUDIT_MODEL" in line and "default" in line for line in lines)
 
@@ -185,17 +184,15 @@ class TestEngineSet:
     def test_engines_are_built_from_resolved_configuration(self) -> None:
         """Model routing per role.
 
-        The layout role no longer reaches a model at all — geometry comes from
-        a detector and spec 0007 Thread 0 deleted the vision path — so
-        `DTH_LAYOUT_MODEL` is asserted to reach `Settings` and no further.
+        The layout role reaches no model at all — geometry comes from a
+        detector — and its model setting went with the vision layout pass in
+        spec 0007's queue, Q4.
         """
         settings = resolve(
-            DTH_LAYOUT_MODEL="layout-model",
             DTH_CLASSIFY_MODEL="classify-model",
             DTH_EXTRACT_MODEL="extract-model",
             DTH_AUDIT_MODEL="audit-model",
         )
-        assert settings.layout_model == "layout-model"
 
         engines = default_engines(settings)
         assert isinstance(engines, EngineSet)
@@ -203,15 +200,14 @@ class TestEngineSet:
         assert engines.extract.model == "extract-model"
         assert engines.audit.model == "audit-model"
 
-    def test_one_model_does_layout_classification_and_extraction(self) -> None:
-        """Separable roles, one model in all three of them for now.
+    def test_one_model_does_classification_and_extraction(self) -> None:
+        """Separable roles, one model in both of them for now.
 
         Not an accident of copying a default around: two vision models will not
         stay resident in 8GB, and the rival classifier has never run the layout
         pass or touched four of the five fixtures. See
         `config.DEFAULT_CLASSIFY_MODEL` for what this costs, and #19 for the
         evaluation that would change it."""
-        assert config.DEFAULT_CLASSIFY_MODEL == config.DEFAULT_LAYOUT_MODEL
         assert config.DEFAULT_CLASSIFY_MODEL == config.DEFAULT_EXTRACT_MODEL
 
     def test_the_classifier_can_still_be_pointed_somewhere_else(self) -> None:
@@ -269,15 +265,15 @@ class TestNothingElseReadsTheEnvironment:
 
 
 class TestTheAuditModelIsAPlaceholder:
-    """`DTH_AUDIT_MODEL` names the same model as layout, which is precisely the
-    arrangement the Coverage Audit is documented as worthless under.
+    """`DTH_AUDIT_MODEL` names the same model as extraction, which is precisely
+    the arrangement the Coverage Audit is documented as worthless under.
 
     Safe only because nothing calls it. These two tests are the tripwire: the
     first records the debt, the second fails the moment the debt comes due.
     """
 
-    def test_the_audit_shares_the_layout_model_for_now(self) -> None:
-        assert config.DEFAULT_AUDIT_MODEL == config.DEFAULT_LAYOUT_MODEL
+    def test_the_audit_shares_the_extraction_model_for_now(self) -> None:
+        assert config.DEFAULT_AUDIT_MODEL == config.DEFAULT_EXTRACT_MODEL
 
     def test_the_coverage_audit_is_still_unwired(self) -> None:
         """**When this fails, read `config.DEFAULT_AUDIT_MODEL` before fixing it.**

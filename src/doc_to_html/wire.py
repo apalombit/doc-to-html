@@ -13,16 +13,14 @@ the same model asked for something nested. So every wire schema here is a list
 of records of scalars, and nothing more.
 
 The mapping functions are where validation actually lives. A schema guarantees
-shape, not sense — it cannot say that a bounding box lies on the page, that two
-Zones numbered as one Band actually sit side by side, or that a row has as many
-cells as the header. Those are checked here, and a failure names the Zone and
+shape, not sense — it cannot say that two Zones numbered as one Band actually
+sit side by side, or that a row has as many cells as the header. Those are checked here, and a failure names the Zone and
 raises rather than being coerced into an empty result: a silently sparse
 Document looks exactly like a sparse document.
 """
 
 from __future__ import annotations
 
-import logging
 import re
 import unicodedata
 from collections.abc import Sequence
@@ -30,10 +28,7 @@ from typing import Any, Callable, Literal, NoReturn
 
 from pydantic import BaseModel, Field, ValidationError
 
-from .ir import (BBox, Block, Cell, Kind, Pair, Reading, Role, Row, RowRole,
-                 Run, Zone)
-
-log = logging.getLogger(__name__)
+from .ir import BBox, Block, Cell, Kind, Pair, Reading, Row, RowRole, Run, Zone
 
 Read = Callable[[str], Reading]
 """Turns cell text into a Reading carrying its engine, model and prompt version.
@@ -83,48 +78,14 @@ class NotPairs(MappingError):
     """
 
 
-class WireZone(BaseModel):
-    """One region, as a model reports it. Flat on purpose: scalars only."""
-
-    kind: Literal["table", "pairs", "prose", "list", "figure"]
-    role: Literal["header", "body", "summary", "footer"]
-    band: int = Field(description="Which group of side-by-side regions this "
-                                  "belongs to, numbered from 0 at the top")
-    column: int = Field(description="Position within the band, from 0 at the left")
-    left: float
-    top: float
-    right: float
-    bottom: float
-    title: str = Field(description="Heading printed above and belonging to this "
-                                   "region; empty string if there is none")
-    graphic: Literal["", "logo", "chart", "signature", "stamp", "badge"] = Field(
-        default="",
-        description="What a figure is. Empty string for every other kind",
-    )
-    """Closed, so constrained decoding cannot produce anything else.
-
-    Described as a free string with its values named only in the description,
-    `qwen3-vl:4b` answered `"SPARKSUIT"` — the text it had read off the wordmark.
-    That is the failure this project uses constrained decoding to make
-    impossible, and it survived here because the field was typed `str`. The
-    runtime check in `zones_from_layout` stays as belt and braces for an Engine
-    that cannot constrain."""
-
-
-class LayoutResponse(BaseModel):
-    """The layout pass: where the regions are, and nothing about their contents."""
-
-    zones: list[WireZone]
-
-
 class ClassifyResponse(BaseModel):
     """What one Zone structurally is, decided from that Zone's own crop.
 
-    Separate from `WireZone` rather than a subset of it, because the two passes
-    are asked different questions about different pixels: geometry sees the whole
-    page downscaled and answers about position, this sees one region at full
-    resolution and answers about structure. See `CLASSIFY_PROMPT` for what was
-    measured about that difference.
+    Its own question, and never part of finding the Zones, because the two
+    are about different pixels: geometry sees the whole page and answers about
+    position, this sees one region at full resolution and answers about
+    structure. See `CLASSIFY_PROMPT` for what was measured about that
+    difference, when geometry was still a model's answer.
 
     Two scalars and no list, which is this module's standing rule about
     constrained decoding applied to the smallest question in the pipeline.
@@ -337,23 +298,6 @@ def schema_of(model: type[BaseModel]) -> dict[str, Any]:
     return model.model_json_schema()
 
 
-def _validate_box(wire: WireZone, where: str) -> BBox:
-    """A box must lie on the page and enclose some area.
-
-    Coercing a bad box to something plausible would put content at coordinates
-    nothing was read from, and every Correction anchored there afterwards would
-    point at the wrong pixels.
-    """
-    values = {"left": wire.left, "top": wire.top,
-              "right": wire.right, "bottom": wire.bottom}
-    for name, value in values.items():
-        if not 0.0 <= value <= 1.0:
-            raise MappingError(f"{where}: {name}={value} is off the page")
-    if wire.left >= wire.right or wire.top >= wire.bottom:
-        raise MappingError(f"{where}: box encloses no area ({values})")
-    return BBox(wire.left, wire.top, wire.right, wire.bottom)
-
-
 def bands_from_boxes(boxes: list[BBox]) -> list[tuple[int, int]]:
     """Band and column for each box, worked out from the boxes themselves.
 
@@ -375,17 +319,14 @@ def bands_from_boxes(boxes: list[BBox]) -> list[tuple[int, int]]:
     converts at zero mismatches — so deriving costs that run nothing. The naive
     any-overlap version matched three of five.
 
-    **Why derive at all, rather than take what the model said.** Band numbering
-    is the part of the layout answer this project has watched break most often:
-    five of the six prompt changes ever made to `LAYOUT_PROMPT` broke it, each
-    time as collateral on a change that never mentioned it. And it is the one
-    part that is fully determined by an answer the model already gives — the
-    boxes. Runs 55 and 56 are the clearest case: correct boxes, correctly
-    alternating columns, and a Band index that failed to increment between the
-    first two rows, which cost both documents the whole Conversion.
-
-    The model's own numbering is not lost: it is in the raw layout answer, which
-    every run dumps as `00_layout.json`, so before and after stay comparable.
+    **Why derive at all.** Band numbering was the part of the vision layout
+    pass's answer this project watched break most often: five of the six prompt
+    changes ever made to that prompt broke it, each time as collateral on a
+    change that never mentioned it. And it is fully determined by the boxes.
+    Runs 55 and 56 were the clearest case: correct boxes, correctly alternating
+    columns, and a Band index that failed to increment between the first two
+    rows, which cost both documents the whole Conversion. The detector reports
+    no numbering at all, so every Conversion's Bands now come from here.
     """
     order = sorted(range(len(boxes)),
                    key=lambda i: (boxes[i].top, boxes[i].left))
@@ -409,19 +350,18 @@ def bands_from_boxes(boxes: list[BBox]) -> list[tuple[int, int]]:
 def validate_bands(zones: list[Zone]) -> None:
     """Bands must be horizontal stripes, read top to bottom, left to right.
 
-    It has two jobs now, depending on where the numbering came from. On the
-    model's own numbering — the default — it is what it always was, the check
-    below. On numbers derived from the boxes — `DTH_DERIVE_BANDS`, and every
-    detector — it checks the *boxes*: `bands_from_boxes` puts a box that lies
-    inside another into that one's Band, so an enclosure fails here however the
-    Bands were numbered. **This docstring used to say it could not fire on
-    derived Bands.** It fired on three corpus documents, and the claim is part
-    of why nobody looked — see `detector.without_enclosed`.
+    Every Conversion's numbering is derived from the boxes by
+    `bands_from_boxes`, so what this checks is the *boxes*: `bands_from_boxes`
+    puts a box that lies inside another into that one's Band, so an enclosure
+    fails here however the Bands were numbered. **This docstring used to say it
+    could not fire on derived Bands.** It fired on three corpus documents, and
+    the claim is part of why nobody looked — see `detector.without_enclosed`.
 
-    This is the check that catches a model which numbered Bands by reading order
-    rather than by position, or grouped two Zones as side by side when one sits
-    well below the other. Either produces geometry that is schema-valid and
-    describes no page.
+    It was written for a model that numbered Bands by reading order rather than
+    by position, or grouped two Zones as side by side when one sits well below
+    the other — geometry that is schema-valid and describes no page. The snap,
+    the merge and the recovery of unread ink each move boxes after the
+    detector, and each is checked here.
     """
     by_band: dict[int, list[Zone]] = {}
     for zone in zones:
@@ -487,71 +427,6 @@ def _overlaps_horizontally(one: BBox, other: BBox) -> bool:
     is why this is a check and not a sentence.
     """
     return min(one.right, other.right) > max(one.left, other.left)
-
-
-def zones_from_layout(response: LayoutResponse, *,
-                      derive_bands: bool = False) -> list[Zone]:
-    """Map a layout response onto Zones. Pure, and the place validation lives.
-
-    Zones come back incomplete: this pass reports where content is, never what
-    it says. They render as skeletons until an Extractor fills them.
-
-    `derive_bands` replaces the model's Band and column numbering with numbering
-    worked out from its own boxes — see `bands_from_boxes`. **Off by default**,
-    which keeps this function's behaviour what it has always been: the model's
-    numbering, checked by `validate_bands` and rejected when it describes no
-    page. See `config.DEFAULT_DERIVE_BANDS` for what turning it on is measured
-    against, and for what it has not been measured against, which is a live
-    Conversion.
-    """
-    if not response.zones:
-        raise MappingError(
-            "layout returned no Zones — there is nothing to show, so the "
-            "Conversion cannot continue"
-        )
-
-    boxes, built = [], []
-    for index, wire in enumerate(response.zones):  # noqa: B007
-        where = f"zone {index} ({wire.kind}, band {wire.band} column {wire.column})"
-        graphic = wire.graphic.strip().lower()
-        if graphic and graphic not in GRAPHIC_KINDS:
-            raise MappingError(
-                f"{where}: graphic {wire.graphic!r} is not one of {GRAPHIC_KINDS}"
-            )
-        boxes.append(_validate_box(wire, where))
-        built.append((wire, graphic))
-
-    # Band and column either come from the boxes or are taken as the model gave
-    # them. See `bands_from_boxes` for the rule and the five fixtures it was
-    # measured against. Everything else in the answer is the model's either way.
-    placed = (
-        bands_from_boxes(boxes) if derive_bands
-        else [(wire.band, wire.column) for wire in response.zones]
-    )
-    zones = [
-        Zone(
-            kind=Kind(wire.kind),
-            role=Role(wire.role),
-            band=band,
-            column=column,
-            bbox=box,
-            title=wire.title.strip() or None,
-            graphic_kind=graphic or None,
-        )
-        for (wire, graphic), box, (band, column) in zip(built, boxes, placed)
-    ]
-
-    if derive_bands:
-        moved = sum(
-            1 for wire, (band, column) in zip(response.zones, placed)
-            if (wire.band, wire.column) != (band, column)
-        )
-        if moved:
-            log.info("DTH_DERIVE_BANDS is on: %d of %d Zones renumbered from "
-                     "their boxes", moved, len(zones))
-
-    validate_bands(zones)
-    return zones
 
 
 def classification_into(zone: Zone, content: str) -> Zone:

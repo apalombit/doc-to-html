@@ -1,0 +1,131 @@
+{
+  "_why": "The Zones the layout stage hands this fixture's Conversion: what a detector that found the hand-authored regions would return. Replayed by tests/replay.py's FixedLayout, since the layout stage is a detector and not a model call. Frozen from the recorded vision-layout answer when that pass was deleted, so every replayed Conversion kept its Zones.",
+  "zones": [
+    {
+      "kind": "pairs",
+      "role": "header",
+      "band": 0,
+      "column": 0,
+      "bbox": {
+        "left": 0.0146,
+        "top": 0.0627,
+        "right": 0.256,
+        "bottom": 0.1504
+      },
+      "title": "Invoice With Credit",
+      "graphic_kind": null
+    },
+    {
+      "kind": "figure",
+      "role": "header",
+      "band": 0,
+      "column": 1,
+      "bbox": {
+        "left": 0.6787,
+        "top": 0.0251,
+        "right": 0.7388,
+        "bottom": 0.1226
+      },
+      "title": null,
+      "graphic_kind": "logo"
+    },
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 2,
+      "bbox": {
+        "left": 0.7474,
+        "top": 0.0306,
+        "right": 0.8694,
+        "bottom": 0.1295
+      },
+      "title": null,
+      "graphic_kind": null
+    },
+    {
+      "kind": "pairs",
+      "role": "body",
+      "band": 1,
+      "column": 0,
+      "bbox": {
+        "left": 0.0284,
+        "top": 0.1811,
+        "right": 0.305,
+        "bottom": 0.4276
+      },
+      "title": "Company Details",
+      "graphic_kind": null
+    },
+    {
+      "kind": "pairs",
+      "role": "body",
+      "band": 1,
+      "column": 1,
+      "bbox": {
+        "left": 0.4433,
+        "top": 0.1811,
+        "right": 0.9845,
+        "bottom": 0.4554
+      },
+      "title": "Customer Details",
+      "graphic_kind": null
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 2,
+      "column": 0,
+      "bbox": {
+        "left": 0.0284,
+        "top": 0.5028,
+        "right": 0.1521,
+        "bottom": 0.5223
+      },
+      "title": "Services / Products",
+      "graphic_kind": null
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 3,
+      "column": 0,
+      "bbox": {
+        "left": 0.0284,
+        "top": 0.6017,
+        "right": 0.5687,
+        "bottom": 0.7423
+      },
+      "title": "Comments / Notes",
+      "graphic_kind": null
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 3,
+      "column": 1,
+      "bbox": {
+        "left": 0.6091,
+        "top": 0.6003,
+        "right": 0.982,
+        "bottom": 0.8217
+      },
+      "title": "Payment Method",
+      "graphic_kind": null
+    },
+    {
+      "kind": "prose",
+      "role": "footer",
+      "band": 4,
+      "column": 0,
+      "bbox": {
+        "left": 0.0137,
+        "top": 0.8997,
+        "right": 0.2113,
+        "bottom": 0.9694
+      },
+      "title": null,
+      "graphic_kind": null
+    }
+  ]
+}

@@ -79,7 +79,7 @@ def models_to_measure(settings: Settings) -> list[str]:
     selected buries the useful number.
     """
     return list(dict.fromkeys(
-        [settings.layout_model, settings.extract_model, settings.audit_model]
+        [settings.extract_model, settings.audit_model]
         + list(CANDIDATES)
     ))
 

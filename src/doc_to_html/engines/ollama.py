@@ -28,7 +28,6 @@ from ..config import (
 )
 from ..ir import BBox, Kind, Reading, Zone
 from ..preprocess import (
-    LAYOUT_LONG_EDGE,
     MODEL_INPUT_LONG_EDGE,
     ImageArray,
     TableGrid,
@@ -41,14 +40,12 @@ from ..wire import (
     EXTRACTION_SCHEMAS,
     CaptionResponse,
     ClassifyResponse,
-    LayoutResponse,
     RunsResponse,
     caption_into,
     classification_into,
     contents_into,
     runs_into,
     schema_of,
-    zones_from_layout,
 )
 from .lenient import LenientTransport
 from .transport import OllamaTransport, Response, Transport
@@ -59,67 +56,6 @@ PROMPT_VERSION = "2"
 Bumped to 2 when `CLASSIFY_PROMPT`'s `pairs` entry dropped its same-line
 constraint. Readings either side of that are not comparable at one version, which
 is the whole reason the field exists."""
-
-LAYOUT_PROMPT = """You are looking at one page of a document.
-
-Find the regions of content printed on this page and return them as a flat
-list, in reading order. Report only where each region is and what it
-structurally is. Do not read the text inside any region.
-
-The regions do not have to cover the page. Most of a page is blank, and blank
-paper belongs to no region. Do not stretch a region to reach its neighbour, and
-do not add a region to fill a gap: where nothing is printed, no region goes.
-
-For each region give:
-
-kind — one of:
-  table   a grid of rows and columns under a heading row. Two grids stacked one
-          above the other are two regions, not one, whenever each has its own
-          heading row — even if their columns line up and only a small gap
-          separates them. A grid with a heading row is a table even if only one
-          row of values follows it
-  pairs   label and value lines with no heading row, such as "Invoice No: 12"
-  prose   headings, paragraphs, addresses, free text
-  list    bulleted or numbered items, or a row of navigation links
-  figure  a logo, chart, stamp, signature or badge
-
-role — one of:
-  header   sits at the top of the page, above the main content
-  summary  a totals or overview block
-  footer   small print at the foot of the page
-  body     anything else
-
-band and column — group the regions you found. Regions that sit side by side at
-the same height share a band; bands are numbered from 0 at the top, and within
-a band the regions are numbered from 0 left to right in column. A region with
-nothing beside it is alone in its band. Bands describe how the regions are
-grouped — they are not stripes of the page, they need not be the same height,
-and they need not touch one another.
-
-The columns *inside* a table or a pairs region are that region's own business
-and are not regions themselves. Never report one region once per column it
-contains. Two regions in the same band always have different boxes; if you are
-about to give two regions the same box, they are one region.
-
-left, top, right, bottom — the smallest rectangle containing everything printed
-in that region, as fractions of the page width and height, between 0 and 1.
-Measure each edge against the ink rather than against a grid: put it just
-outside the outermost mark, and use however many decimals that takes. Two rules
-follow from this and matter more than tidy numbers:
-
-  - No edge may cut through a line of text, a table row, or a picture. If a
-    table row belongs to a region, the whole of that row is inside it.
-  - No region may contain any part of another, and no two regions may overlap.
-
-title — a short heading printed immediately above the region and belonging to
-it, such as a panel caption or a card title. Use an empty string if there is
-none. Do not invent one.
-
-graphic — for a figure only: logo, chart, signature, stamp or badge. Use an
-empty string for every other kind.
-
-Ignore decoration. A horizontal rule, a panel border or a column divider is not
-a region and must not appear in the list."""
 
 CLASSIFY_PROMPT = """You are looking at one region, cropped from a page of a
 document.
@@ -149,7 +85,8 @@ Answer for this region only. Do not describe anything outside the crop, and do
 not read the text out."""
 """The Kind question, asked about one crop rather than about a whole page.
 
-Split out of `LAYOUT_PROMPT` on measured evidence, not for tidiness. Issue #13
+Split out of the vision layout prompt on measured evidence, not for tidiness —
+that pass is deleted, and geometry comes from a detector. Issue #13
 put both of `example/invoice.png`'s wrong Kinds to a real model twice each, once
 at the resolution the layout pass sees and once at the Zone's own crop, and
 separated two causes the layout prompt had conflated:
@@ -210,7 +147,7 @@ which keeps the ordering the 12/12 crossover bought: typesetting decides, and a
 set-apart row of labels is a table however its words read.
 
 Unlike the four attempts 0002 records, none of this can cost Band numbering:
-Bands come from the layout pass and this prompt runs after geometry.
+Bands come from the layout stage and this prompt runs after geometry.
 
 **The `title` paragraph is gone, and its absence is the point.** It asked for "a
 short heading printed at the top of this region and naming the whole of it" and
@@ -597,13 +534,6 @@ class OllamaEngine:
     model: str = DEFAULT_EXTRACT_MODEL
     host: str = DEFAULT_OLLAMA_HOST
     api_key: str = ""
-    layout_long_edge: int = LAYOUT_LONG_EDGE
-    """What the retired vision layout pass downscaled a page to.
-
-    No longer configurable: `DTH_LAYOUT_LONG_EDGE` served only that pass and
-    spec 0007 Thread 0 retired it. The constant stays because `detect_zones`
-    stays as the seam the recorded-response suite replays against.
-    """
     num_ctx: int = DEFAULT_NUM_CTX
     timeout_s: float = DEFAULT_TIMEOUT_S
     transport: Transport | None = None
@@ -622,12 +552,6 @@ class OllamaEngine:
     Off by default; see `config.DEFAULT_TABLE_GRID_HINT` for what it is aimed at
     and why a counted fact is a different lever from the two behavioural
     instructions that already failed."""
-
-    derive_bands: bool = False
-    """Take each Zone's Band and column from its box rather than from the model.
-
-    Off by default; see `config.DEFAULT_DERIVE_BANDS` for what it fixes, what it
-    is measured against, and what it gives up."""
 
     name: str = "ollama"
 
@@ -650,7 +574,6 @@ class OllamaEngine:
             transport=transport,
             lenient=settings.lenient_decoding,
             table_grid_hint=settings.table_grid_hint,
-            derive_bands=settings.derive_bands,
         )
 
     def client_kwargs(self) -> dict[str, Any]:
@@ -722,31 +645,6 @@ class OllamaEngine:
             f"{pass_name}: {self.model} stopped at the token limit twice, "
             f"last budget {budget // 2}. The Zone is too dense to read whole."
         )
-
-    def detect_zones(self, image: ImageArray, hint: str | None = None,
-                     region_ceiling: int | None = None) -> list[Zone]:
-        """Zones with Band, column, Kind, Role and bbox — no contents.
-
-        Runs on a downscaled page: detecting regions is a coarse task that small
-        models handle well, and the resolution given away here is bought back by
-        cropping each Zone from the full-resolution image for extraction.
-
-        `region_ceiling` is an upper bound on how many regions the page holds,
-        measured from the ink by the caller. `None` means the caller did not
-        measure and the prompt goes out unchanged. See `with_regions`.
-        """
-        prompt = LAYOUT_PROMPT
-        if region_ceiling is not None:
-            prompt = with_regions(prompt, region_ceiling)
-        content = self.ask(
-            "layout",
-            with_hint(prompt, hint),
-            image,
-            schema_of(LayoutResponse),
-            long_edge=self.layout_long_edge,
-        )
-        return zones_from_layout(LayoutResponse.model_validate_json(content),
-                                 derive_bands=self.derive_bands)
 
     def read_caption(self, image: ImageArray, zone: Zone,
                      hint: str | None = None) -> Zone:
@@ -976,44 +874,6 @@ def with_grid(prompt: str, grid: TableGrid) -> str:
         f"with {grid.columns} cells. Two pieces of text at the same height are "
         f"two cells of one row, even when they sit at opposite edges with blank "
         f"paper between them — they are not two rows."
-    )
-
-
-def with_regions(prompt: str, ceiling: int) -> str:
-    """State an upper bound on how many regions the page holds, measured from it.
-
-    The layout counterpart of `with_grid`, and it exists for the same reason:
-    `LAYOUT_PROMPT` already forbids reporting a panel's inner rows as regions of
-    their own, in as many words, and `qwen3-vl:4b` returns 72 regions for a
-    10-region page regardless. That is the third instruction this project has
-    watched this model ignore, after the two about splitting a table row, and the
-    pattern in all three is the same — it complies with *how many* and ignores
-    *which*. So this stops arguing and states a number.
-
-    **A ceiling and not a count, because the ruler overcounts.**
-    `preprocess.count_regions` measures 8 where `invoice_0001` has 6 and 11 where
-    `invoice_0002` has 10. Stated as an exact target, that number would push a
-    page the model already reads correctly into splitting regions to reach it,
-    and `invoice_0001` at zero mismatches is precisely what must not move. Stated
-    as a bound it has no such pull — 6 is already under 8, so a correct answer
-    stays correct — while a runaway is still capped. The asymmetry is the whole
-    design: being wrong high costs nothing, being wrong low costs a region.
-
-    Stated, not enforced, exactly as `with_grid` is. The wire schema is
-    untouched, so a wrong bound is a sentence the model may disagree with and
-    every check behind it still runs, rather than a constraint it must drop
-    content to satisfy.
-    """
-    return (
-        f"{prompt}\n\n"
-        f"This page has been measured from the ink printed on it: it holds no "
-        f"more than {ceiling} regions.\n\n"
-        f"That is a limit, not a quantity to produce. Most pages hold fewer "
-        f"regions than their limit, and returning fewer is the usual and correct "
-        f"answer. Never split a region in order to reach the number. Only never "
-        f"go above it.\n\n"
-        f"A panel and the rows printed inside it are one region: count the "
-        f"panel, not its rows."
     )
 
 

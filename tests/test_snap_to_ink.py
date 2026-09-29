@@ -335,8 +335,8 @@ class TestTheFlagDecidesWhetherItRunsAtAll:
             self.zones = zones
             self.calls = 0
 
-        def detect_zones(self, image: np.ndarray, hint: str | None,
-                         region_ceiling: int | None = None) -> list[Zone]:
+        def detect_zones(self, image: np.ndarray,
+                         hint: str | None = None) -> list[Zone]:
             self.calls += 1
             return list(self.zones)
 

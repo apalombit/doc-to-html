@@ -58,7 +58,13 @@ from doc_to_html.style import (
     type_lines,
 )
 
-from .replay import ReplayTransport, break_zone, engines_replaying, recorded_for
+from .replay import (
+    ReplayTransport,
+    break_zone,
+    engines_replaying,
+    geometry,
+    recorded_for,
+)
 
 REPO = Path(__file__).resolve().parent.parent
 
@@ -970,7 +976,8 @@ class TestAHeadingIsDrawnNoLargerThanItIsPrinted:
             ' {"kind": "address", "lines": ["12345 Sunny Road",'
             ' "Sunnyville, CA 12345"]}]}')
         conversion = Conversion(source=REPO / "example" / "invoice.png",
-                                engines=engines_replaying(ReplayTransport(replies)))
+                                engines=engines_replaying(ReplayTransport(replies),
+                                                          geometry("invoice_0001")))
         document = conversion.run()
 
         blocks = document.zones[2].blocks
