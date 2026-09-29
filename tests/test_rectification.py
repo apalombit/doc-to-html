@@ -224,6 +224,27 @@ class TestDeskewCorrectsATiltAndNotAnOrientation:
         assert skew_angle(invoice) == 0.0
         assert deskew(invoice) is invoice
 
+    def test_a_full_height_panel_is_not_read_as_a_tilt(self) -> None:
+        """`cv_0013`'s sidebar, once its picture was re-shot whole, 2026-09-29.
+
+        A solid panel running the height of the page adds the same ink to
+        every row at level, and a wedge of it once tilted — so the line
+        profile scored every step of tilt higher than the last and a straight
+        page was turned a full 15 degrees. See `_without_panels`.
+        """
+        page = cv2.imread(str(EXAMPLES / "cv.png"), cv2.IMREAD_COLOR)
+        assert skew_angle(page) == 0.0
+        assert deskew(page) is page
+
+    @pytest.mark.parametrize("tilt", [-4.0, 4.0])
+    def test_a_tilt_is_still_taken_out_beside_a_panel(
+        self, invoice: ImageArray, tilt: float
+    ) -> None:
+        """Taking the panel out of the vote must not take the type with it."""
+        panelled = invoice.copy()
+        panelled[:, : invoice.shape[1] // 5] = (40, 50, 60)
+        assert abs(self.straightened(panelled, tilt)) <= 1.0
+
     def test_a_page_on_its_side_is_not_guessed_at(
         self, invoice: ImageArray
     ) -> None:

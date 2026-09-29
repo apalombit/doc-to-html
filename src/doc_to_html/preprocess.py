@@ -1438,15 +1438,49 @@ def _line_sharpness(mask: ImageArray, angle: float) -> float:
     return float(profile.var())
 
 
+PANEL_SPAN = 9
+"""The side, in pixels at `DETECT_LONG_EDGE`, of the smallest solid block of ink
+that is a panel rather than type. See `_without_panels`.
+
+Wider than any stroke or rule on the corpus's pages at that scale, which run
+1-4px; narrower than a filled bar, a badge or a sidebar."""
+
+
+def _without_panels(mask: ImageArray) -> ImageArray:
+    """The ink mask with its solid blocks taken out, leaving type and rules.
+
+    `_line_sharpness` assumes the ink is lines of text, and a filled panel is
+    not one. **Found 2026-09-29 on `cv_0013`**, once its picture was re-shot
+    whole: its dark sidebar runs the full height of the page, so at level it
+    adds the same amount to every row and nothing to the profile's variance —
+    while tilted, the rotation cuts it into a wedge whose row sums climb from
+    one end of the page to the other. The variance then rises with every step
+    of tilt, the search stops at its bound, and a straight page was rotated a
+    full `MAX_DESKEW_DEGREES`. The trained detector, shown the rotated page,
+    read the whole of it as one photograph.
+
+    When the old, truncated picture stopped the sidebar short of the bottom,
+    its end was a step in the profile at level, and that masked the fault.
+    An opening with a `PANEL_SPAN` square keeps exactly what is solid in both
+    directions; one more pixel of growth takes its antialiased edge with it.
+    """
+    cv2 = _cv2()
+    block = cv2.getStructuringElement(cv2.MORPH_RECT, (PANEL_SPAN, PANEL_SPAN))
+    panels = cv2.dilate(cv2.morphologyEx(mask, cv2.MORPH_OPEN, block),
+                        np.ones((3, 3), np.uint8))
+    type_only: ImageArray = cv2.bitwise_and(mask, cv2.bitwise_not(panels))
+    return type_only
+
+
 def skew_angle(image: ImageArray) -> float:
     """The angle the text sits at, in degrees, or 0.0 when it cannot be told.
 
     Bounded to small angles by MAX_DESKEW_DEGREES: this corrects a tilt, never an
-    orientation.
+    orientation. Measured on type alone: see `_without_panels`.
     """
     cv2 = _cv2()
     small = resize_long_edge(image, DETECT_LONG_EDGE)
-    mask = _ink(cv2.cvtColor(small, cv2.COLOR_BGR2GRAY))
+    mask = _without_panels(_ink(cv2.cvtColor(small, cv2.COLOR_BGR2GRAY)))
     if cv2.countNonZero(mask) < 50:
         return 0.0
 

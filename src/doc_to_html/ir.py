@@ -20,7 +20,7 @@ from typing import Any
 IR_VERSION = 1
 """Bump when the shape below changes incompatibly. Written into every IR."""
 
-RECTIFIER_VERSION = 3
+RECTIFIER_VERSION = 4
 """Bump when rectification changes geometrically.
 
 Corrections are anchored to coordinates in the rectified space. If rectification
@@ -33,6 +33,12 @@ equalisation — see `preprocess.ground_is_dark`. The coordinates are untouched,
 so this bump is stricter than the rule above requires; the *values* at those
 coordinates change, and a human ruling made against a dark page was made against
 different pixels.
+
+**4** is `preprocess._without_panels`, 2026-09-29: a solid panel no longer
+votes on the page's tilt. It moves no page of the corpus as the floor recorded
+it — all fifteen read level before and after — but a page whose full-height
+panel used to rotate it by up to 15 degrees now stays straight, which is a
+different mapping from source pixels.
 """
 
 
