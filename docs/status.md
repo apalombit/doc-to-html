@@ -350,6 +350,24 @@ heading sizes, gate met;** see "What the last step shipped".
 **Q4. Thread 0's leftover seam. — DONE 2026-09-29, gate met;** see "What the
 last step shipped".
 
+**Q5 — the gate for sweep `Q5-40-sweep`, written 2026-09-30 before it
+starts, on commit `2d918df`. The floor is `tests/frozen/reshot/`.** Each
+clause carries its offline prediction: the receipt from the single-document
+run `Q5-30-receipt` on the same commit, the other fourteen from
+`Q5-20-downstream` (the floor re-derived through Q5's code) and the layout
+front (every Zone of the fourteen unchanged).
+
+| # | clause | predicted |
+|---|---|---|
+| 1 | `receipt_0010`'s rows in the DOM in printed order — `Till 02 Op. NADIA`, `Order 00418`, the eight items, `Subtotal`, `Service 10%`, `VAT @ 20%`, `TOTAL`, `Card`, `Change`, `AID`, `Auth` — and no `<tfoot>`. Replaces tau and beside for this document (decided 2026-09-29: at the old floor they were taken over 4 matched blocks and 0 pairs) | holds; tau and beside also 1.000 |
+| 2 | `receipt_0010`'s column-sum Probe reconciles, 26.45 = 26.45; no "did not reconcile" finding | holds |
+| 3 | `receipt_0010`'s barcode is a FIGURE drawn from its pixels; `THANK YOU – PLEASE CALL AGAIN` and the three lines under the barcode print as text | holds |
+| 4 | `receipt_0010`: no source word stops printing against the floor, and precision does not fall | 0.9877 = 0.9877, 0.9903 = 0.9903 |
+| 5 | the other fourteen documents byte-identical to the floor's, whole file | 14 of 14 |
+| 6 | ratchet against `reshot`, four legs, fifteen | holds |
+| 7 | visual review, all fifteen sheets, `--previous` the floor's sweep | no `worse` |
+| 8 | tests, mypy | 833 pass, clean |
+
 **Q5. `receipt_0010`'s untested lead** — the worst document in the corpus.
 Model time. `preprocess.resize_long_edge` never enlarges, and this page
 rectifies to **335×547**, so the extractor sees ~300px across 19 lines of
