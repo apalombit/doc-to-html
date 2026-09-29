@@ -109,8 +109,10 @@ gate met; A3 closed 2026-09-26 with its gate met; open issues 1–3 closed
 offline the same day, and on 2026-09-27 the floor was kept at `a3-result`**
 — see `docs/status.md`, "What the last step shipped".
 `docs/status.md` indexes what each shipped and where every measurement lives.
-**The ratchet's floor is `tests/frozen/a3-result/` since 2026-09-26**, moved
-there from `a2-result/` at A3's close — see `docs/status.md`, "The floor".
+**The ratchet's floor is `tests/frozen/reshot/` since 2026-09-29**, moved
+there from `a3-result/` when the ten authored corpus pictures were found
+missing their last lines and re-shot whole — see its README, and
+`docs/status.md`, "The floor".
 
 `docs/specs/0007-handover.md` holds a ready prompt per thread and the full
 scope of Phase A-1. **"The open-issues queue, continued — Q5 to Q7" is the
@@ -183,7 +185,11 @@ function runs over source and output alike and the projections are diffed. Addin
 a document is writing an HTML file — which is what lets the corpus leave five.
 
 **The source and its screenshot agree exactly for the ten authored documents
-and approximately for four of the original five.** Only `invoice.html` still
+— since 2026-09-29, and pinned by `TestTheCorpusPictureIsItsOwnHTML` — and
+approximately for four of the original five.** Until that day this sentence
+was false and nothing checked it: the ten had been shot before
+`projection.SHOT_SLACK` and each was missing its bottom 60-90px, found by
+re-shooting and diffing. Only `invoice.html` still
 re-renders to its screenshot (0.74% of pixels differing); the other four differ
 by 6.9–14.1%, in content *height* rather than position, because of fonts on
 this machine — and `invoice2.html` additionally wants a CDN. So `height_ratio`
@@ -257,26 +263,30 @@ says they are.
 | `a0-result/` | the scores A0 reached, sweep `100-a0-gate` | record — the floor 2026-09-24 to 2026-09-25 |
 | `a1-result/` | A1's fifteen documents beside their scores | record — A2's control |
 | `a2-result/` | A2's fifteen documents beside their scores, sweep `A2-10-enclosed-sweep` | record — the floor and A3's control 2026-09-25 to 2026-09-26 |
-| **`a3-result/`** | **A3's fifteen documents beside their scores, sweep `A3-10-figure-pixels-sweep`** | **the floor and the control, from 2026-09-26** |
+| `a3-result/` | A3's fifteen documents beside their scores, sweep `A3-10-figure-pixels-sweep` | record — the floor 2026-09-26 to 2026-09-29, measured on pictures missing their last lines |
+| **`reshot/`** | **the first sweep on whole pictures, `Q5-10-reshot-sweep`** | **the floor and the control, from 2026-09-29** |
 
 **Ratchet against the floor by path**, and always with `--documents sweep` —
 without a `fixtures.txt` the report silently scores the iterate five:
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/a3-result/scores.json
+    --documents sweep --previous tests/frozen/reshot/scores.json
 ```
 
-**Each floor move was measured, not argued:** the new floor was no lower than
-the old on any ratcheted leg of any of the fifteen documents, and Alessandro
-took the decision each time.
+**Each floor move was measured, not argued:** until 2026-09-29 the new floor
+was no lower than the old on any ratcheted leg of any of the fifteen
+documents, and Alessandro took the decision each time. **`reshot/` is the one
+exception, decided in advance:** it corrects the pictures rather than the
+pipeline, and its README names every leg on which it falls below
+`a3-result` and why — four words and `cv_0013`'s reading order among them.
 
 **A directory holding documents beside scores buys a loop, not a number.**
-Scored straight out of `a3-result/`, **15 documents, 0 differing fields**. Its
-IRs are older than today's code, though: **`tools/rederive.py` brings them up
-to it** — re-applying every step downstream of the model — and that, not a
-plain re-render, is the baseline a change is measured one apart from. It
-reproduced the gated arm of open issues 1–3 byte for byte on all fifteen. So a
+Scored straight out of `reshot/`, **15 documents, 0 differing fields**, and
+**`tools/rederive.py` over it reproduces it byte for byte** at the commit it
+was taken on. When code downstream of the model moves, `rederive.py` brings
+the IRs up to it — re-applying every step downstream of the model — and that,
+not a plain re-render, is the baseline a change is measured one apart from. So a
 change downstream of the model is measured pairwise, in about a minute, with
 no model. Phases A2 and A3 measured every prototype they tried that way before
 spending a sweep. **Any new downstream step that writes the IR must be added
