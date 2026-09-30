@@ -107,7 +107,9 @@ Queue       Q1-Q7 in docs/status.md "Next", in order, go given 2026-09-27
               the floor and the control; tools/replay_run.py committed
 Queue, continued   N1-N4 model-free (two false-alarm findings, statement's
               sliver Zone, catalogue's one-letter column), then Q6, Q7, N5,
-              in docs/status.md "Next"                         N1 <- next
+              in docs/status.md "Next"
+              N1 DONE 2026-09-30, offline, gate MET: a prose or list
+              Shortfall counts lines as its Extractor does   N2 <- next
 Thread 3/C  Repair loop (re-scoped against A+B residuals first)
 Thread 4/D  Human corrections (unscheduled)
 ```

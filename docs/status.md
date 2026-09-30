@@ -1,15 +1,15 @@
-# Status — 2026-09-30 (the queue: **Q5 done, gate met; the corpus re-shot; `q5-result/` the floor and the control; N1 next**)
+# Status — 2026-09-30 (the queue: **N1 done, gate met; `q5-result/` the floor and the control; N2 next**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-09-30, when
-Q5 of the open-issues queue closed.
+N1 of the open-issues queue closed.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file. If you are going to look at output — and you
 should — use the **`visual-review` skill**.
 
-Branch `scaffold`. **833 tests pass, `mypy src/` clean.**
+Branch `scaffold`. **836 tests pass, `mypy src/` clean.**
 
 ---
 
@@ -28,7 +28,8 @@ Queue       Q1-Q7, in order, go given 2026-09-27
               Q1-Q4 DONE 2026-09-27 to 2026-09-29, offline, gates MET
               the corpus pictures re-shot whole, floor re-cut   2026-09-29
               Q5 DONE 2026-09-30, sweep Q5-40-sweep, gate MET 8 of 8
-            continued: N1-N4 model-free, then Q6, Q7, N5        N1 <- next
+            continued: N1-N4 model-free, then Q6, Q7, N5
+              N1 DONE 2026-09-30, offline, gate MET 8 of 8      N2 <- next
 Thread 3/C  Repair loop (re-scoped first)
 Thread 4/D  Human corrections (unscheduled)
 ```
@@ -151,15 +152,13 @@ footnote number as invented, because the source draws them with CSS counters
 and `<ol>` markers that `project()` cannot see.
 
 **5. The findings panel reports losses that did not happen — found by the
-review; no score sees it.** Two of the three Shortfalls fire on a paragraph
-read whole as one line: `invoice_0002` Zone 7 ("2 of 4 lines", 30 words, all
-there) and `newsletter_0008` Zone 15 ("1 of 5", 38 words, all there) —
-`orchestrator.shortfall` counts lines, not words. And "content nothing read"
-fires on ink that is not text: `cv_0013`'s dark sidebar fill, **26.1%** of the
-page's ink, boxed at the sidebar's full extent though every item in it was
-boxed and drawn; `receipt_0010`'s paper edge and dashed rules, **23.0%**, bounded by
-the whole page. `shortfall`'s own docstring names the cost: a finding that
-fires on correct behaviour is how the whole list stops being read.
+review; no score sees it.** The false Shortfalls are gone since N1. What is
+left: "content nothing read" fires on ink that is not text — `cv_0013`'s dark
+sidebar fill, **26.1%** of the page's ink, boxed at the sidebar's full extent
+though every item in it was boxed and drawn; `receipt_0010`'s paper edge and
+dashed rules, **23.0%**, bounded by the whole page. `shortfall`'s own
+docstring names the cost: a finding that fires on correct behaviour is how the
+whole list stops being read.
 
 **6. Drawn, though the page does not have it** — found by the review. Yellow
 `<mark>` highlights on `cv_0013`'s `native` and `nonlatin_0014`'s `myDATA`
@@ -174,6 +173,49 @@ page** where the sources set 9–16px — deferred with Q3's evidence.
 ---
 
 ## What the last step shipped
+
+### N1 — the Shortfall counts lines as the Extractor does, `4d4bccd`, 2026-09-30, **gate MET, 8 of 8**
+
+**The model was right.** `PROSE_PROMPT` asks for the lines the document
+*breaks* — "a line that runs to the right-hand edge and continues below it
+has merely wrapped, and is one line" — and both paragraphs read whole were
+answered to the letter. `orchestrator.shortfall` compared them against
+`printed_lines`, which counts every line the type wraps onto. And
+`darkdeck_0009` Zone 4 was right by the same accident: "Open risks" over one
+bullet wrapped onto two lines, a one-line loss read as two. Its twin, Zone 10
+— "Decisions wanted" over one bullet — was reported by nothing.
+
+`preprocess.hard_lines` counts in the Extractor's unit: a printed line ending
+within `WRAP_TOLERANCE` (0.15) of the widest line's end, with another below
+it, is a wrap. **There is no empty band** — over every prose and list Zone of
+the control, wraps stop up to 0.104 of the width short and deliberate breaks
+as close as 0.007 (`invoice_0001`'s right-aligned address) — so the tolerance
+sits above every wrap and an ambiguous line counts as wrapped, the side that
+can only silence a finding. With wraps gone, a prose or list Zone fires at one
+line short (`SHORTFALL_HARD_LINES`); tables and pairs are untouched at two.
+Counting printed lines at one short would have fired on eight Zones, six of
+them wraps.
+
+Gate agreed before any code, measured by `tools/rederive.py` over the
+control, one change apart from its baseline (`N1-00-base`, 15 of 15
+byte-identical to `q5-result/`, 0 differing score fields):
+
+| # | clause | result |
+|---|---|---|
+| 1 | `darkdeck_0009`: exactly Zones 4 and 10, each 2 printed / 1 read | **holds** |
+| 2 | `invoice_0002`, `newsletter_0008`: no Shortfall | **holds** |
+| 3 | the other twelve byte-identical to the baseline | **12 of 12** |
+| 4 | the three differ only in the findings panel and the IR's `shortfalls`; score fields only height, T5 ink and texture, `newsletter_0008`'s `split_regions` 1 → 0 | **holds** — the 14 fields the scratch arm predicted, and no others |
+| 5 | ratchet against the floor, four legs, fifteen | **holds** |
+| 6 | honesty tally 6 declared / 6 quiet → 4 / 8 | **4 / 8** |
+| 7 | visual review, fifteen sheets, `--previous` the baseline | **no `worse`** — twelve `same`, the three panels `better` |
+| 8 | tests, mypy | **836, clean** |
+
+**Clause 6 is the truth, not a regression, Alessandro's decision.**
+`invoice_0002` and `newsletter_0008` were "declared" only by the false
+Shortfalls. What they actually lose — `adipisicing` and `blanditiis` misspelt
+inside Zone 7's paragraph, and `councillor` — is loss inside a line, which A-1
+established no finding can see.
 
 ### The corpus pictures, re-shot whole — `4b6d34d`, 2026-09-29
 
@@ -269,16 +311,14 @@ never did. `bakeoff.write_dump` is the dump writer both share.
 The ready prompt is [`specs/0007-handover.md`](specs/0007-handover.md), "The
 open-issues queue, continued — Q6, Q7 and what the whole pictures showed".
 **Each gate is still agreed with Alessandro before any code.** Cheapest
-first — the first four need no model:
+first — the first four need no model. **N1 is done**, above.
 
-**N1. The Shortfall counts lines, not words.** Two of three fire on
-paragraphs read whole (live fault 5). Measurable by `tools/rederive.py`,
-which re-measures Shortfalls.
-
-**N2. "Content nothing read" on ink that is not text** — `cv_0013`'s sidebar
+**N2 — next. "Content nothing read" on ink that is not text** — `cv_0013`'s sidebar
 fill, `receipt_0010`'s paper edge and rules (live fault 5).
 `preprocess._without_panels` already takes solid blocks out of the deskew
 vote; whether the same cut belongs in `uncovered_regions` is the question.
+Both documents' honesty accounts cite those findings today, as N1's two
+did, so measure the tally before and after.
 
 **N3. `statement_0006`'s sliver Zone** — `Totals for the period` boxed on its
 own at 0.042–0.170 across, 0.927–0.935 down, inside the table's box, so the
