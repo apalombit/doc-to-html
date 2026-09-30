@@ -109,7 +109,9 @@ Queue, continued   N1-N4 model-free (two false-alarm findings, statement's
               sliver Zone, catalogue's one-letter column), then Q6, Q7, N5,
               in docs/status.md "Next"
               N1 DONE 2026-09-30, offline, gate MET: a prose or list
-              Shortfall counts lines as its Extractor does   N2 <- next
+              Shortfall counts lines as its Extractor does
+              N2 DONE 2026-09-30, offline, gate MET: the Gap audit
+              reads type, not a page's edge or a panel's fill  N3 <- next
 Thread 3/C  Repair loop (re-scoped against A+B residuals first)
 Thread 4/D  Human corrections (unscheduled)
 ```

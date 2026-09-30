@@ -1,15 +1,15 @@
-# Status — 2026-09-30 (the queue: **N1 done, gate met; `q5-result/` the floor and the control; N2 next**)
+# Status — 2026-09-30 (the queue: **N1 and N2 done, gates met; `q5-result/` the floor and the control; N3 next**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-09-30, when
-N1 of the open-issues queue closed.
+N2 of the open-issues queue closed.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file. If you are going to look at output — and you
 should — use the **`visual-review` skill**.
 
-Branch `scaffold`. **836 tests pass, `mypy src/` clean.**
+Branch `scaffold`. **840 tests pass, `mypy src/` clean.**
 
 ---
 
@@ -29,7 +29,8 @@ Queue       Q1-Q7, in order, go given 2026-09-27
               the corpus pictures re-shot whole, floor re-cut   2026-09-29
               Q5 DONE 2026-09-30, sweep Q5-40-sweep, gate MET 8 of 8
             continued: N1-N4 model-free, then Q6, Q7, N5
-              N1 DONE 2026-09-30, offline, gate MET 8 of 8      N2 <- next
+              N1 DONE 2026-09-30, offline, gate MET 8 of 8
+              N2 DONE 2026-09-30, offline, gate MET 8 of 8      N3 <- next
 Thread 3/C  Repair loop (re-scoped first)
 Thread 4/D  Human corrections (unscheduled)
 ```
@@ -152,13 +153,13 @@ footnote number as invented, because the source draws them with CSS counters
 and `<ol>` markers that `project()` cannot see.
 
 **5. The findings panel reports losses that did not happen — found by the
-review; no score sees it.** The false Shortfalls are gone since N1. What is
-left: "content nothing read" fires on ink that is not text — `cv_0013`'s dark
-sidebar fill, **26.1%** of the page's ink, boxed at the sidebar's full extent
-though every item in it was boxed and drawn; `receipt_0010`'s paper edge and
-dashed rules, **23.0%**, bounded by the whole page. `shortfall`'s own
-docstring names the cost: a finding that fires on correct behaviour is how the
-whole list stops being read.
+review; no score sees it.** The two false Shortfalls went in N1 and the two
+false "content nothing read" Gaps in N2. What is left is small and hedged
+"may be a mark", and still not type: `receipt_0010`'s dashed rule (2.1%),
+`form_0007`'s title rule (2.9%, the only finding that document carries), and
+a 0.6% strip of `cv_0013`'s halo. `shortfall`'s own docstring names the cost:
+a finding that fires on correct behaviour is how the whole list stops being
+read.
 
 **6. Drawn, though the page does not have it** — found by the review. Yellow
 `<mark>` highlights on `cv_0013`'s `native` and `nonlatin_0014`'s `myDATA`
@@ -173,6 +174,48 @@ page** where the sources set 9–16px — deferred with Q3's evidence.
 ---
 
 ## What the last step shipped
+
+### N2 — the Gap audit reads type, `1a720ef`, 2026-09-30, **gate MET, 8 of 8**
+
+**Two stages put ink that is not type where the audit looks.** On
+`receipt_0010` the page warp keeps 2px of the grey ground round the paper, a
+frame along all four edges: 23.0% of the page's ink. On `cv_0013`, `equalise`
+takes the dark sidebar for uneven light and blows it out, leaving dark halos
+round every item and along the panel's edge: 26.1% of the page's ink between
+the Zone boxes. Fixing either stage moves the pixels the model is shown and
+costs a sweep. The audit is where the false finding is made, and fixing it
+there is free.
+
+`preprocess.uncovered_regions(type_only=True)` takes off, before the boxes:
+the page's outermost rows and columns while each is inked over
+`PAGE_EDGE_INK` (half) of its length — the receipt 0.97-1.00, every other
+page 0.00-0.03 — and solid blocks, `_without_panels` at the page's scale with
+a margin of one `PANEL_SPAN`, because the halo fades over several pixels (at
+deskew's one-pixel margin three fragments of it stayed as findings).
+**Only the audit asks for it** — `orchestrator.gaps`, shared by `_audit` and
+`tools/rederive.py`, which gains the step. Recovering Zones reads the ink as
+before, since a solid block no box covers may be a lost figure; on the corpus
+the two agree, Zones identical either way. That narrows what was proposed —
+the cut was put to Alessandro as sitting in the shared mask — and changes no
+output.
+
+Measured by `tools/rederive.py` over the control, one change apart from N1's
+arm (`N1-02-shipped`); the Gap step, run with no cut, reproduces that arm 15
+of 15:
+
+| # | clause | result |
+|---|---|---|
+| 1 | `cv_0013`: one Gap, 0.6%, hedged | **holds** — from 5, the 26.1% among them |
+| 2 | `receipt_0010`: one Gap, the dashed rule, 2.1%, hedged | **holds** — from 2 |
+| 3 | the other thirteen byte-identical; the two differ only in the panel and the IR's `gaps`; fields only height and T5 texture | **holds** — 13 of 13, and those 6 fields |
+| 4 | `tools/layout_front.py`: Zones identical | **15 of 15** |
+| 5 | ratchet against the floor, four legs, fifteen; honesty tally | **holds; 4 / 8, unchanged** |
+| 6 | `rederive.py` gains the Gap step and reproduces the baseline with no cut | **15 of 15** |
+| 7 | visual review, fifteen sheets, `--previous` N1's arm | **no `worse`** — thirteen `same`, the two panels `better` |
+| 8 | tests, mypy | **840, clean** |
+
+**For N5:** the same `equalise` blow-out is in the crops the model reads.
+`cv_0013`'s `Revit` and `Python`, read as figures, sit in it.
 
 ### N1 — the Shortfall counts lines as the Extractor does, `4d4bccd`, 2026-09-30, **gate MET, 8 of 8**
 
@@ -311,16 +354,9 @@ never did. `bakeoff.write_dump` is the dump writer both share.
 The ready prompt is [`specs/0007-handover.md`](specs/0007-handover.md), "The
 open-issues queue, continued — Q6, Q7 and what the whole pictures showed".
 **Each gate is still agreed with Alessandro before any code.** Cheapest
-first — the first four need no model. **N1 is done**, above.
+first — the first four need no model. **N1 and N2 are done**, above.
 
-**N2 — next. "Content nothing read" on ink that is not text** — `cv_0013`'s sidebar
-fill, `receipt_0010`'s paper edge and rules (live fault 5).
-`preprocess._without_panels` already takes solid blocks out of the deskew
-vote; whether the same cut belongs in `uncovered_regions` is the question.
-Both documents' honesty accounts cite those findings today, as N1's two
-did, so measure the tally before and after.
-
-**N3. `statement_0006`'s sliver Zone** — `Totals for the period` boxed on its
+**N3 — next. `statement_0006`'s sliver Zone** — `Totals for the period` boxed on its
 own at 0.042–0.170 across, 0.927–0.935 down, inside the table's box, so the
 line prints twice, the snap is refused and the table is squeezed. A layout
 question, measurable with `tools/layout_front.py` for nothing.
