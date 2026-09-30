@@ -98,7 +98,16 @@ Queue       Q1-Q7 in docs/status.md "Next", in order, go given 2026-09-27
               Q1 DONE 2026-09-27, Q2 DONE 2026-09-28, both offline,
               both gate MET; Q3 DONE 2026-09-29, re-scoped to heading
               sizes on measurement, gate MET; Q4 DONE 2026-09-29, the
-              vision layout pass deleted, no output change   Q5 <- next
+              vision layout pass deleted, no output change
+              2026-09-29: the ten authored pictures found cut short and
+              re-shot whole; deskew on type alone; floor re-cut to reshot/
+              Q5 DONE 2026-09-30, gate MET 8 of 8: its resize premise did
+              not survive; the receipt's rows in order, its total
+              reconciled, its barcode drawn; q5-result/ frozen as the control
+              and tools/replay_run.py committed
+Queue, continued   N1-N4 model-free (two false-alarm findings, statement's
+              sliver Zone, catalogue's one-letter column), then Q6, Q7, N5,
+              in docs/status.md "Next"                         N1 <- next
 Thread 3/C  Repair loop (re-scoped against A+B residuals first)
 Thread 4/D  Human corrections (unscheduled)
 ```
@@ -112,11 +121,13 @@ offline the same day, and on 2026-09-27 the floor was kept at `a3-result`**
 **The ratchet's floor is `tests/frozen/reshot/` since 2026-09-29**, moved
 there from `a3-result/` when the ten authored corpus pictures were found
 missing their last lines and re-shot whole — see its README, and
-`docs/status.md`, "The floor".
+`docs/status.md`, "The floor". **The control is `tests/frozen/q5-result/`
+since 2026-09-30**: the documents today's code makes, and the first frozen
+directory to carry the answers that made them.
 
 `docs/specs/0007-handover.md` holds a ready prompt per thread and the full
-scope of Phase A-1. **"The open-issues queue, continued — Q5 to Q7" is the
-next one to use.**
+scope of Phase A-1. **"The open-issues queue, continued — Q6, Q7 and what the
+whole pictures showed" is the next one to use.**
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
 this section.** It says what is done, what the last checkpoint showed, what is
@@ -264,7 +275,8 @@ says they are.
 | `a1-result/` | A1's fifteen documents beside their scores | record — A2's control |
 | `a2-result/` | A2's fifteen documents beside their scores, sweep `A2-10-enclosed-sweep` | record — the floor and A3's control 2026-09-25 to 2026-09-26 |
 | `a3-result/` | A3's fifteen documents beside their scores, sweep `A3-10-figure-pixels-sweep` | record — the floor 2026-09-26 to 2026-09-29, measured on pictures missing their last lines |
-| **`reshot/`** | **the first sweep on whole pictures, `Q5-10-reshot-sweep`** | **the floor and the control, from 2026-09-29** |
+| **`reshot/`** | **the first sweep on whole pictures, `Q5-10-reshot-sweep`** | **the floor, from 2026-09-29**; the control until 2026-09-30 |
+| **`q5-result/`** | **Q5's fifteen documents beside their scores and the answers that made them, sweep `Q5-40-sweep`** | **the control, from 2026-09-30** — the floor too if Alessandro moves it; it dominates `reshot/` on every ratcheted leg |
 
 **Ratchet against the floor by path**, and always with `--documents sweep` —
 without a `fixtures.txt` the report silently scores the iterate five:
@@ -282,9 +294,8 @@ pipeline, and its README names every leg on which it falls below
 `a3-result` and why — four words and `cv_0013`'s reading order among them.
 
 **A directory holding documents beside scores buys a loop, not a number.**
-Scored straight out of `reshot/`, **15 documents, 0 differing fields**, and
-**`tools/rederive.py` over it reproduces it byte for byte** at the commit it
-was taken on. When code downstream of the model moves, `rederive.py` brings
+Scored straight out of `q5-result/`, **15 documents, 0 differing fields**, and **`tools/rederive.py`
+over it reproduces it byte for byte** at the commit it was taken on. When code downstream of the model moves, `rederive.py` brings
 the IRs up to it — re-applying every step downstream of the model — and that,
 not a plain re-render, is the baseline a change is measured one apart from. So a
 change downstream of the model is measured pairwise, in about a minute, with
@@ -292,6 +303,16 @@ no model. Phases A2 and A3 measured every prototype they tried that way before
 spending a sweep. **Any new downstream step that writes the IR must be added
 to `rederive.py`**, or the loop measures yesterday's code. It is not a target
 to match.
+
+**A directory that also holds the answers buys a second loop.** `q5-result/`
+is the first to carry `answers/` — each document's model answers, in the
+order they were asked — and **`tools/replay_run.py` serves them to today's
+code through a real Conversion**: wire, mapper and every pass, which
+`rederive.py` cannot re-run. With `--swap` it serves one new answer, so a
+prompt change probed on one crop is measured on its whole document, ratchet
+included, with no sweep. It reproduces `q5-result/` **15 of 15 byte for byte**, from its answers and again from the sweep's own traces. A
+document it marks **ASKED MORE THAN THE RUN** is not a measurement: the
+change moved a crop, and a crop costs a sweep.
 
 **A floor is not a result to quote in an argument** — the distinction the rest
 of this section is about.
@@ -716,6 +737,34 @@ prompt) were closed by Thread 0. Specs 0001–0006 are closed history.
   (`_without_repeated_header`), because **a dropped row is a recall fault and a
   surplus row is only a precision one** — put the repair on the side where
   being wrong costs less.
+
+- **A fixed tool does not fix what it already made.** `projection.SHOT_SLACK`
+  fixed the shooter in the commit that added it, and the ten authored pictures
+  had been shot by the unfixed one: each was missing its bottom 60–90px —
+  footers, a signature line, a footnote, a receipt's last three lines. Every
+  score on those documents since was taken against text the model was never
+  shown, and `shoot_corpus.py --check` could not see it, because it compares
+  the HTML with itself. **When a tool is fixed, remake what it made and diff
+  the remake against the original**; `TestTheCorpusPictureIsItsOwnHTML` now
+  keeps that diff.
+
+- **When the evidence under a queue changes, re-take each item's premise
+  before building its fix.** Q5 and Q6 were scoped on the cut-short pictures.
+  On the whole ones `receipt_0010` read every row with no resize — Q5's lead
+  was answered before it was built — and the full-width Zone Q6 was to repair
+  no longer exists. The same change *uncovered* a fault the cut had hidden:
+  `cv_0013`'s sidebar now ran the page's full height, deskew read it as a 15°
+  tilt, and the detector saw the straightened page as one photograph. A
+  truncated input can mask faults as well as cause them.
+
+- **A semantic element can carry a layout decision.** `<thead>` is drawn at
+  the top of its table and `<tfoot>` at the bottom, wherever their rows sit in
+  the IR. `render._table` grouped every `header` row there, and Q1 exempted
+  only a header with data on both sides — so a row the model *called* a
+  header still moved: the receipt's `AID` and `Auth` lines, printed last,
+  were drawn first. **A role is not a position.** Q5: a header stays in place
+  once the table has opened with one, and only the summaries nothing follows
+  go to `<tfoot>`.
 
 ---
 

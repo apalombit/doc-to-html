@@ -75,8 +75,15 @@ differently — not a change to the pipeline:
 - **Precision**: `statement_0006` prints `Totals for the period` twice — a new
   sliver Zone overlapping the table, which is also why the snap is refused on
   that document; `form_0007` misreads its new footer (`Castletown` ×2,
-  `ferpost`); `receipt_0010` reads `A000000031010`, one zero short;
-  `report_0011` prints its new footnotes' numbers as text.
+  `ferpost`); `receipt_0010` reads `A000000031010`, one zero short.
+  **`report_0011`'s fall is the scorer's, not the output's** — corrected
+  2026-09-30; this line first said the output printed its footnotes' numbers
+  as text. Every token it counts as invented is a section or footnote number
+  the source draws with a CSS counter or an `<ol>` marker, which `project()`
+  cannot see (spec 0007, "Why `Completeness.duplicated` is not the gate").
+  On the truncated picture the footer was not read, so its `1 of 1` absorbed
+  two of them; it is read now, and the third footnote's `3.` joins them. The
+  output prints what the picture shows.
 - **`receipt_0010`'s tau and beside** fall from values taken over 4 matched
   blocks and 0 side-by-side pairs to values taken over the whole receipt; its
   rows are drawn out of order, which spec 0007's queue, Q5, fixes.

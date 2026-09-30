@@ -1306,9 +1306,169 @@ STANDING RULES:
 - Ask before binding anything docs/status.md leaves open.
 ```
 
+### Outcome — Q1 to Q4, 2026-09-27 to 2026-09-29: four gates MET, all offline
+
+**Moved here from `docs/status.md` on 2026-09-30, verbatim**, when Q5 closed and
+status was rewritten. Each was measured against `tools/rederive.py`'s baseline
+over `tests/frozen/a3-result/`, the floor at the time.
+
+
+**The baseline, proved before use:** `python tools/rederive.py
+tests/frozen/a3-result --label Q-00-base` holds the ratchet on four legs for
+all fifteen; `statement_0006` carries 3 caveats; `header_fill` sits on exactly
+`nonlatin_0014` z4, `statement_0006` z3, `invoice_0001` z4 and z5;
+`darkdeck_0009` z2 has no Title.
+
+**Q1 — `menu_0012`'s section headings, 2026-09-27, gate MET.** `render._table`
+now leaves a header row with data rows on both sides where it is, inside
+`<tbody>` as `<th>` cells; any other header row still goes to `<thead>`.
+Renderer only — no IR change, no `STYLESHEET` change, so `rederive.py` gains no
+step.
+
+| clause | result |
+|---|---|
+| `menu_0012` z1: `From the grill`, `Main courses`, `Puddings` each directly above its first dish; no `<thead>`; embedded IR byte-identical | 3 of 3 |
+| `sample_table_0003`: header still in `<thead>` above `United States`; file byte-identical | yes |
+| the other 13 byte-identical to the baseline, whole file | 13 of 13 |
+| ratchet vs `a3-result`, four legs, fifteen | holds |
+| `menu_0012` score fields that moved | tau 0.829 → **0.956**; `ink_delta` 0.345 → 0.314, `output_ink`, `output_texture` (the grey band left the screenshot); `column_error` 0.0688 → 0.0693. Words, joins, beside and height unchanged. |
+| visual review, all fifteen, `--previous` the baseline | `menu_0012` `better`, 14 `same`, no `worse` |
+| tests, mypy | 828 pass, clean |
+
+**Q2 — `statement_0006`'s empty seventh column, 2026-09-28, gate MET.** Baseline
+`Q-10-base`: `rederive.py` at the Q1 commit, byte-identical to the Q1 arm on
+all fifteen.
+
+**The description was wrong, and the IR said so.** The header was never read
+a cell wide: the model read it six wide, like every row, and returned the
+caption `Transactions in date order` as a first header row **seven** wide.
+`rows_from_table` takes the width from the first header, so the real header
+and all forty rows were padded to seven — and then `_without_title_echo`
+dropped the caption row as an echo of the Title, leaving the padding behind.
+The proof is in the IR: the header's own seventh cell carries no Reading.
+`statement_0006` z3 was the only table in the corpus with a padded cell.
+`receipt_0010`'s twenty-cell row is a different fault — every cell was read,
+nineteen of them empty, the model's own answer — and **went to Q5 by
+decision**, since Q5 re-reads that crop.
+
+`wire.repadded`, called where `_without_title_echo` drops a table's first row:
+the trailing Reading-less Cells come off and each row is padded again against
+the header that is left. Nothing read is removed; where no row was dropped it
+returns every row unchanged. **`tools/rederive.py` applies it to every table**
+(step 1).
+
+| clause | result |
+|---|---|
+| `statement_0006` z3: header 7 → 6, 40 data rows 7 → 6, 0 Reading-less cells (was 41); summary row, all 42 rows and every read cell's text unchanged | yes |
+| `statement_0006` caveats 3 → 2, the padding sentence gone; probes, `header_fill`, Shortfalls unchanged | yes |
+| the other 14 byte-identical to the baseline, whole file | 14 of 14 |
+| ratchet vs `a3-result`, four legs, fifteen | holds |
+| `statement_0006` score fields that moved | `height_ratio` 1.577 → 1.546, `alignment_agreement` 0.935 → 0.968, `output_texture`. Words, joins, tau, beside and column fields unchanged. |
+| `contents_into` test and a replayed `sample_table_0003` Conversion with a caption row one cell wider than its header | both pass |
+| visual review, all fifteen, `--previous` the baseline | `statement_0006` `better`, 14 `same`, no `worse` |
+| tests, mypy | 830 pass, clean |
+
+**Q3 — the type scale, re-scoped to heading sizes, 2026-09-29, gate MET.**
+Baseline `Q-20-base`, `rederive.py` at the Q2 commit, byte-identical to the Q2
+arm on all fifteen.
+
+**Re-scoped on measurement, by decision.** The full type scale was measured
+with the answer in hand — today's IRs re-rendered at each source's own CSS
+sizes, the ceiling any estimator could reach — and **crosses the T1 ratchet
+in every form but one**: body type on 3 documents, Titles and headings on 1,
+both on 2, all on T3 `beside`. Only shrinking oversized heading Blocks holds.
+`style.py`'s module docstring has the table and the mechanism.
+
+`style.heading_sizes`, run by `Conversion._measure_type` after
+`_measure_chrome` and by `tools/rederive.py` through `remeasure`: a Zone's
+leading heading Block, its line's 90th-percentile glyph height over the page's
+median, recorded as the new `Block.size` in ems when below 1.44em (0.9 of the
+`h1`'s 1.6em, in the empty band between 20.4px and 24.9px measured over all
+fifteen). `invoice_0002`'s "75px band" was the ACME tile's edge inside the
+crop inking every row — `type_lines` clears such a wall only when the band is
+several lines tall, and parts touching lines only into pieces of one size.
+
+| clause | result |
+|---|---|
+| exactly 8 heading Blocks on 5 documents sized, each within ±30% of the source's own size | 8: `catalogue_0015` `AUTUMN LIST…` 0.74em, `cv_0013` both job titles 1.00em, `darkdeck_0009` `Q3 2026 · INTERNAL` 0.84em, `invoice_0002` `Acme Corporation` 1.00em and `Services / Products` 1.27em, `newsletter_0008` `VOL. CLII, NO. 31` 0.78em and the drop-cap line 1.16em. Each 0.74–1.18 of its source's own size in ems. |
+| no other heading Block sized | yes |
+| the other 10 identical outside the IR; inside, by the new key alone | 10 of 10; the 5 touched IRs also differ by the key alone |
+| ratchet vs `a3-result`, four legs, fifteen | holds |
+| `darkdeck_0009` beside vs baseline, agreed in advance | 0.978 → 0.968 — `Platform review` beside `Q3 2026 · INTERNAL`, held only by the oversized label; floor 0.875 |
+| no named document further from height 1 | `cv_0013` 2.058 → 2.009, `invoice_0002` 1.476 → 1.436, `newsletter_0008` 1.994 → 1.878; the other two unchanged |
+| unit, render and replayed-Conversion tests | pass — `invoice_0001` replayed with its sender's address opened by a heading: sized at body size |
+| visual review, all fifteen, `--previous` the baseline | 5 `better`, 10 `same`, no `worse`; `type` majors 4 → 1 |
+| tests, mypy | 839 pass, clean |
+
+**What moved that the gate did not name, and why.** `catalogue_0015`'s T5
+`output_ink` flipped from near-black to light grey, `ink_delta` 0.031 →
+0.627, with no colour on the page changed. T5 takes the modal marked pixel of
+a **600px thumbnail**; the 25.6px `AUTUMN LIST…` was what kept solid ink the
+mode, and at its measured size antialiased greys outnumber it 347 to 328. T5
+measured type size there, not colour.
+
+**Q4 — Thread 0's leftover seam, 2026-09-29, gate MET.** Baseline `Q-30-base`,
+`rederive.py` at the Q3 commit, byte-identical to the Q3 arm on all fifteen.
+Agreed scope: **the whole retired vision layout pass**, not only the two names
+the brief gave — with `LAYOUT_PROMPT` gone, `DTH_LAYOUT_REGION_HINT` would
+have been a flag read and acted on by nothing.
+
+**What went.** `OllamaEngine.detect_zones`, `LAYOUT_PROMPT`, `with_regions`;
+the wire schema `LayoutResponse`/`WireZone` with `zones_from_layout` and its
+box check; the Orchestrator's region-ceiling rescue (`_region_ceiling`,
+`_layout_again`); `DTH_LAYOUT_MODEL`, `DTH_DERIVE_BANDS`,
+`DTH_LAYOUT_REGION_HINT`; `OllamaEngine.layout_long_edge` and
+`preprocess.LAYOUT_LONG_EDGE`; `region_ceiling` off `LayoutEngine` and the
+detector. None reached a Conversion after Thread 0, so they were removed
+rather than refused by name — `config.py`'s retirement paragraph says so.
+**What stayed:** `bands_from_boxes`, `validate_bands`, `GRAPHIC_KINDS` (the
+detector and Orchestrator use them), and `count_regions` as a ruler.
+
+**What replaced it.** The recorded-response suite hands the layout stage
+fixed Zones: `tests/replay.py`'s `FixedLayout` serves each fixture's
+`tests/responses/<fixture>/geometry.json`, frozen from its `layout.json`
+through the old mapper and round-trip equal on all five.
+`convert_recording(image, replies)` finds a fixture's geometry from its
+image; `engines_replaying(transport, geometry(fixture))` names it.
+`tools/record_responses.py` writes `geometry.json` and derives the committed
+five exactly. Tools: `inspect_run.py` reads an old dump's layout answer as
+plain JSON and draws the page whole by default; `cloud_probe.py` lost its
+layout question; `iterate.sh` no longer stamps `layout_long_edge.txt`.
+
+**How "no output change" was proved with no model.** The production
+Conversion was run over all fifteen with every model call refused — the real
+detector and every model-free layout stage, shipped defaults, each Zone a
+skeleton — in 11 seconds. At the Q3 commit it was byte-identical across two
+runs and **reproduced `a3-result`'s Zone band, column and bbox on 15 of 15**,
+so it is the production layout path, not an approximation of it. **It is
+committed as `tools/layout_front.py`** — the same run, writing the absolute
+source path a sweep records — for the next change that moves boxes (Q6).
+
+| clause | result |
+|---|---|
+| production, refused-model Conversion, fifteen: `document.html` byte-identical to the Q3 commit | 15 of 15 |
+| its `trace.json` identical but for `seconds`, the `measure_regions` record and the `long_edge` key | 15 of 15 — and every later record's `seq` one lower, since the list is one record shorter |
+| replay, the five recorded fixtures: `document.html` byte-identical to the Q3 commit | 5 of 5 |
+| `rederive.py` from `a3-result`, whole file, against `Q-30-base` | 15 of 15; 0 score fields differ |
+| ratchet vs `a3-result`, four legs, fifteen | holds |
+| the removed names in `src/`, `tools/`, `tests/`, `.env.example` | only `config.py`'s retirement paragraph; `test_lenient.py` keeps a local copy of the schema, renamed `RegionsResponse`, because its real cloud answers were taken against it |
+| tests, mypy | 813 pass (839 less 26 deleted, each a test of the deleted pass), clean |
+| visual review | replaced, by agreement, by the byte identity above |
+
+**Deleted tests, each a test of the pass itself:** the region-ceiling rescue
+(15 of `test_region_ceiling.py`'s 18; its 3 ruler tests are
+`test_region_ruler.py`), 8 in `test_tracer_bullet.py` (the layout downscale,
+two box checks, three graphic/title checks of the mapper, a layout returning
+no Zones, geometry corresponding to nothing), and one prompt-wording or budget
+test each in `test_table_extraction.py`, `test_pairs_and_prose.py` and
+`test_list_and_figure.py`. **Re-pointed, assertion kept:** the Band checks
+now call `validate_bands` and `bands_from_boxes` on Zones directly, the
+truncation tests go through the classify pass, and "the vision model satisfies
+`LayoutEngine`" became "`FixedLayout` does".
+
 ---
 
-## The open-issues queue, continued — Q5 to Q7 — **NEXT**
+## The open-issues queue, continued — Q5 to Q7 — **Q5 DONE 2026-09-30; Q6 and Q7 continue below**
 
 **Written 2026-09-29, when Q4 closed.** Q1–Q4 were model-free and each closed
 offline with its gate met; `docs/status.md`, "What the last step shipped",
@@ -1450,6 +1610,296 @@ STANDING RULES:
 - Marking may never change the words: wire._runs_for and ir.Cell.runs both stay.
 - What is read off a Graphic is alt text, never printed.
 - project() compares a normalised view, never raw markup.
+- Every run must produce debug/runs/<label>/report.html.
+- Any reviewed run is a full sweep, all fifteen, or the offline equivalent.
+- Rubric judgements are pairwise and in-session only.
+- Ask before binding anything docs/status.md leaves open.
+```
+
+
+### Outcome — Q5, 2026-09-29 to 2026-09-30, sweep `Q5-40-sweep`: gate MET, 8 of 8
+
+**Entering Q5 found the corpus pictures wrong, and that came first.** Probing
+`receipt_0010` showed its last three lines were not in its picture — and
+neither were any of the ten authored documents' last lines. All ten had been
+shot before `projection.SHOT_SLACK` existed, each missing its bottom
+60–90px. Four recommendations went to Alessandro on 2026-09-29, and he took
+all four:
+
+| # | decision | what became of it |
+|---|---|---|
+| 1 | re-shoot the ten, take one sweep at HEAD, freeze it as the floor and control | done: `4b6d34d`, `8f70679`, `031ba3a` — `tests/frozen/reshot/` |
+| 2 | withhold the table grid when it measures one column; probe the other tables first | **built, measured, reversed** — below |
+| 3 | gate the receipt on named row order in the DOM, not on tau and beside | clause 1 |
+| 4 | fold the two row-order fixes into Q5, measured one change apart | done: `2d918df` |
+
+**The re-shoot uncovered a fault the cut had hidden.** On the whole picture
+`cv_0013`'s dark sidebar runs the page's full height. `preprocess.skew_angle`
+scores angles by how sharply ink stacks into lines, and a full-height panel is
+level ink at 0° and a wedge once tilted, so the score rose with every step and
+the straight page was turned the full 15°; the detector then read it as one
+photograph, 13 Zones to 1. `_without_panels` takes solid blocks out of the
+vote (`RECTIFIER_VERSION` 3 → 4). All fifteen pages read level, and the tilt
+tests still straighten ±1.5° and ±4°, with a panel and without.
+
+**The floor was re-cut, and it is the one floor below the one before it.**
+Sweep `Q5-10-reshot-sweep`: vocabulary recall 0.8667 → 0.9708 over fifteen,
+`receipt_0010` 0.198 → 0.988 with no pipeline change. The five original
+documents came back byte-identical to `a3-result` re-derived, bar
+`rectifier_version`. What fell is named leg by leg in its README — four words
+and `cv_0013`'s reading order among them — and one explanation there was
+wrong and is corrected: `report_0011`'s precision fall is the scorer's,
+because the section and footnote numbers it counts as invented are drawn by
+CSS counters and `<ol>` markers `project()` cannot see.
+
+**Q5's own premise did not survive.** Enlarging the receipt's crop 2.6×
+changed no answer. On the cut-short picture it collapsed under the grid
+sentence "19 rows and 1 columns" — a wrong count, from dashed rules and a
+centred line bridging every gutter of the projection — and read every line
+with no count at all. On the whole picture its crop no longer holds the
+centred line, and it reads every row *with* the count. Q2's leftover — one
+row 20 cells wide — dissolved in the same re-read.
+
+**Decision 2, reversed on measurement.** Five of the fifteen tables the floor
+asks about state one column where the page prints two to six. Each was asked
+again with no count and the floor replayed with the answers: `menu_0012`
+stopped printing **30 words** — told 16 rows it reads the whole menu; told
+nothing it pairs the two columns into 16 rows and drops the rest — and
+`statement_0006` lost `Castleton`. The model obeys the count of rows, so a
+sentence with the right rows and the wrong columns beats none. The hint stays;
+`config.DEFAULT_TABLE_GRID_HINT` records why and
+`test_a_one_column_count_is_still_stated` pins it.
+
+**What shipped — three changes, each measured one apart:**
+
+| change | measured by | effect |
+|---|---|---|
+| `render._table`: a header stays in place once the table opened with one; only summaries nothing follows go to `<tfoot>` | re-render over the floor: 14 of 15 byte-identical | receipt tau 0.800 → 1.000, beside 0.871 → 1.000 |
+| `probes._column_sum_probes`: totals the DATA rows above the first SUMMARY; `tools/rederive.py` gains the step | replayed Conversion test | the false "did not reconcile" 4426 becomes **26.45 = 26.45** |
+| `detector.prefer_container`: a container never takes in a picture | `tools/layout_front.py`: exactly the receipt moves, 3 → 5 Zones | the barcode, drawn since A3, is drawn again |
+
+**Gate — written before the sweep and committed as `d9a0d39`:**
+
+| # | clause | predicted | result |
+|---|---|---|---|
+| 1 | receipt rows in printed order in the DOM; no `<tfoot>` | holds | **holds** |
+| 2 | receipt column-sum reconciles, 26.45 = 26.45 | holds | **holds** |
+| 3 | barcode drawn from its pixels; `THANK YOU` and the three lines as text | holds | **holds** — one figure Zone with its pixels, one `<img>`, all four lines as text |
+| 4 | receipt: no word stops printing, precision does not fall | 0.9877, 0.9903 | **0.9877, 0.9903**, nothing newly vanished |
+| 5 | the other fourteen byte-identical to the floor | 14 of 14 | **14 of 14**; the receipt byte-identical to its prediction run, `Q5-30-receipt` |
+| 6 | ratchet against `reshot`, four legs, fifteen | holds | **holds**, fifteen of fifteen |
+| 7 | visual review, all fifteen, `--previous` the floor's sweep | no `worse` | **none** — fourteen `same`, the receipt `better` |
+| 8 | tests, mypy | 833, clean | **833, clean** |
+
+The sweep ran on `d9a0d39`: 491 model calls, 2h01m, the model 54%/46%
+CPU/GPU. Not ratcheted, and fell: the receipt's `columns_within_tolerance`
+0.875 → 0.775 — the farewell, the barcode and the last three lines are now
+three blocks, each drawn at the left where the source centres it
+(`Zone.align`, deferred).
+
+**The visual review found what no score reports.** All fifteen sheets, read
+against the floor's sweep: fourteen `same`, the receipt `better`. Beside the
+known faults, six the scored axes cannot see — the findings panel reporting
+losses that did not happen (two of three Shortfalls on paragraphs read whole;
+"content nothing read" on `cv_0013`'s sidebar fill and `receipt_0010`'s paper
+edge), two yellow highlights the page does not have, and `catalogue_0015`'s
+`each` printed one letter to a line. Two misreadings it would not let pass:
+`statement_0006`'s amounts 1,144.30 and 216.08 printed as 1,141.30 and
+210.08, and `nonlatin_0014`'s footer naming a company that does not exist.
+Owners: A0 7, A2 4, 2/B 2, A1 1, A-1 1.
+
+**What the receipt still gets wrong:** `A0000000031010` one zero short; its
+centred lines drawn at the left; monospace drawn as sans at twice the size;
+and `TOTAL 29.10` no longer bold — the source bolds that line alone, and the
+floor bolded all four summary lines.
+
+**Frozen as the control:** `tests/frozen/q5-result/` — documents, scores and
+answers. Scored straight out, 0 differing fields; `rederive.py` and
+`replay_run.py` over it, 15 of 15 byte-identical each; `layout_front.py`, 15
+of 15 Zones. **Whether it also becomes the floor is Alessandro's decision**:
+it dominates `reshot/` on every ratcheted leg of every document.
+
+**A fourth offline loop came out of it.** `tools/replay_run.py` serves a
+run's — or a frozen directory's — recorded answers to today's code through a
+real Conversion, optionally with one answer swapped. It is how decision 2 was
+measured without a sweep. Proved on the day: 14 of 15 byte-identical over the
+floor's sweep, the receipt flagged as asking questions the run never did;
+15 of 15 over `Q5-40-sweep`, and 15 of 15 again from `tests/frozen/q5-result/`'s committed answers.
+
+---
+
+## The open-issues queue, continued — Q6, Q7 and what the whole pictures showed — **NEXT**
+
+**Written 2026-09-30, when Q5 closed.** Measured at the commit that wrote
+this, and each a check the next session re-takes rather than a number it
+quotes:
+
+- **`tests/frozen/q5-result/` is the control.** Scored straight out of it, 15
+  documents, 0 differing fields. `tools/rederive.py tests/frozen/q5-result`
+  reproduces its documents 15 of 15 byte for byte, and `tools/replay_run.py
+  tests/frozen/q5-result` does the same from its committed answers.
+  `tools/layout_front.py`'s Zones match its IRs on 15 of 15.
+- **The floor is `tests/frozen/reshot/`** unless docs/status.md says
+  Alessandro moved it. Against it the control holds the ratchet on four
+  legs, all fifteen: fourteen documents byte-identical, and `receipt_0010`
+  tau 0.800 → 1.000 and beside 0.871 → 1.000.
+- **The conversion is still deterministic.** `Q5-40-sweep` reproduced the
+  receipt's prediction run byte for byte and fourteen documents of the
+  floor's sweep, taken three hours earlier.
+- **833 tests pass, `mypy src/` clean.**
+
+```
+Work the rest of spec 0007's open-issues queue, one item at a time, in the
+order below. Alessandro gave the go for Q6 and Q7 on 2026-09-27; the items the
+whole pictures added need his go as well — propose each, then wait. Every gate
+is agreed with him before any code, and a sweep's cost is stated before it
+starts.
+
+Read, in order: CLAUDE.md's "READ THIS FIRST", then docs/status.md, then "The
+open-issues queue, continued — Q6, Q7 and what the whole pictures showed" in
+docs/specs/0007-handover.md. The spec is authoritative where anything
+disagrees. Q1-Q5 are done; do not redo them.
+
+Branch scaffold, at or after the commit that wrote this prompt. 833 tests
+pass, mypy src/ clean.
+
+THE FLOOR is the directory docs/status.md "The floor" names —
+tests/frozen/reshot/ when this was written, with Alessandro asked whether
+tests/frozen/q5-result/ replaces it. It does not move without him:
+
+    python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
+        --documents sweep --previous tests/frozen/<floor>/scores.json
+
+--documents sweep is not optional.
+
+THE CONTROL IS tests/frozen/q5-result/: the fifteen documents today's code
+makes, beside the answers that made them. Build today's baseline from it and
+prove it before using it:
+
+    python tools/rederive.py tests/frozen/q5-result --label <base>
+
+It reproduces q5-result byte for byte on 15 of 15. Every "unchanged" in a
+gate is measured against it; the ratchet is always against the floor.
+
+FOUR LOOPS, AND WHAT EACH CAN SEE — say which produced any number you report:
+  - tools/rederive.py: every step that works on the IR, over the control's
+    model answers. No model, about a minute. A change that writes the IR
+    adds its step there, or the loop measures yesterday's code.
+  - tools/replay_run.py tests/frozen/q5-result --label <label>: the control's
+    recorded answers through a real Conversion — wire, mapper, every pass.
+    No model, under a minute. With --swap <doc>:<NN>=<answer.json> it serves
+    one new answer — a prompt change probed on one crop, measured on its
+    whole document and against the ratchet. A document it marks ASKED MORE
+    THAN THE RUN is not a measurement: the change moved a crop.
+  - tools/layout_front.py <out>: the production layout front with every model
+    call refused. Every Zone's box, about eleven seconds.
+  - A sweep: FIXTURE=sweep tools/iterate.sh <label>, about two hours on this
+    machine (Q5-40-sweep: 2h01m, 491 calls, the model 54% on the CPU), on
+    committed code or with git diff HEAD saved beside it. The only loop that
+    sees an answer to a new question.
+
+THE QUEUE, cheapest first — N1 to N4 need no model. Each measured one change
+apart, committed, and written into docs/status.md before the next begins.
+N1-N5 came from Q5's sweep and its visual review; docs/status.md "The live
+faults" has the evidence for each.
+
+  N1 The Shortfall counts lines, not words. Two of the three the control
+     carries fire on a paragraph read whole as one line: invoice_0002 Zone 7
+     ("2 of 4 lines", 30 words, all there) and newsletter_0008 Zone 15 ("1 of
+     5", 38 words, all there). darkdeck_0009 Zone 4's is right — its "OPEN
+     RISKS" heading is lost. tools/rederive.py re-measures Shortfalls.
+  N2 "Content nothing read" on ink that is not text: cv_0013's dark sidebar
+     fill (26.1% of the page's ink, the sidebar's full box, every item in it
+     drawn) and receipt_0010's paper edge and dashed rules (23.0%, bounded by
+     the whole page). preprocess._without_panels already takes solid blocks
+     out of the deskew vote; whether a cut like it belongs in
+     uncovered_regions is the question. This fixes an existing finding's
+     false alarms — it is not the third loss detector the closed list bars.
+  N3 statement_0006's sliver Zone. "Totals for the period" is boxed alone at
+     0.042-0.170 across, 0.927-0.935 down, inside the transactions table's
+     box: the line prints twice, the snap is refused for the whole document
+     because the two share a Band, and the table is squeezed to about 70% of
+     the width. A layout question — find the stage that introduces the sliver
+     with tools/layout_front.py, for nothing.
+  N4 catalogue_0015's "each", squeezed into a one-letter column in the IR-212
+     and CP-418 cards and printed downward, e / a / c / h. A renderer
+     question: re-render the control.
+  Q6 nonlatin_0014 — its premise is gone. On the whole picture the full-width
+     Zone that re-read three pairs no longer exists: the title Zone stops at
+     0.377 across, ΑΦΜ and ΔΟΥ are no longer doubled, and "ΤΠΥ = 2026/0417"
+     is read in its own box. What is left: the total "12.437,82" printed
+     twice — the table prompt asks for 10 rows where the page prints 9, the
+     Title's band counted as a row as on sample_table_0003, and the model
+     pads the tenth by repeating the total; wire._without_repeated_header is
+     the same padding on a header row — and the misread Greek, the footer's
+     invented company name "Αγγελίδης Μπραγκαντής Α.Ε." among it. Re-scope
+     it with Alessandro before any code.
+  Q7 invoice_0001's "Invoice" / "#: 123" Pair boundary, and the false marks:
+     A1's "12345", and — visible on the page — cv_0013's "native" and
+     nonlatin_0014's "myDATA" drawn as yellow highlights. T6 counts marks
+     found, not marks invented, so no score sees them. Model questions:
+     probe the crop, then --swap the answer into a replay of the control
+     before spending a sweep.
+  N5 cv_0013's sidebar, the worst document on the whole picture. The
+     detector no longer boxes the dark sidebar whole: 31 Zones where the
+     cut-short picture gave 13; "Revit" and "Python" are classified as
+     figures, so their words are alt text and not printed; the sidebar
+     interleaves with the main column Band by Band, tau 0.562; its labels
+     draw at h1 size; height 3.20. Part of it is the IR gap in "Closed, with
+     evidence" — reading direction for a multi-Band column region — so say
+     which part is which before building anything.
+
+FOR EACH ONE, BEFORE ANY CODE:
+  - Read the IR of the documents it names before scoping the fix to its
+    description.
+  - Find the stage that introduces it, not the one that reports it.
+  - Measure which documents a candidate rule touches, across all fifteen. A
+    rule that changes exactly what it names beats a clever one.
+  - Propose a gate of counts of named structures, per document, and get it
+    agreed with Alessandro. Always include: the ratchet holds against the
+    floor on four legs, all fifteen; every document the rule does not name
+    is unchanged against the baseline. Say precisely what "unchanged" means.
+    Before predicting which score fields move, know what each axis samples:
+    T5 takes the modal pixel of a 600px-wide thumbnail of the whole
+    screenshot, findings panel included; T3's beside needs half the shorter
+    block's height in vertical overlap, so any size change can move it; and
+    project() walks text nodes, so a number the source draws with a CSS
+    counter or an <ol> marker counts as invented when the output prints it.
+
+A wire rule must also run inside a replayed Conversion test. Replayed
+Conversions take their Zones from tests/responses/<fixture>/geometry.json
+through tests/replay.py's FixedLayout: convert_recording(image, replies)
+finds a fixture's geometry from its image, and a test that builds its own
+EngineSet passes engines_replaying(transport, geometry(fixture)).
+
+VISUAL REVIEW after each change: the visual-review skill, all fifteen sheets,
+--previous the baseline. Only byte identity on all fifteen stands in for it,
+and only by agreement, as in Q4.
+
+STOP AND REPORT where a gate is not met, where a measurement says the fix
+belongs to another issue or thread, or where a decision docs/status.md leaves
+open is needed. When the queue is done, stop: the floor and Thread 3/C are
+Alessandro's.
+
+CLOSED — DO NOT REOPEN WITHOUT A NEW KIND OF EVIDENCE: the column model and
+proportional widths, the merged Zone (menu_0012, form_0007), alignment_agreement
+as a gate, a third loss detector, the vision layout pass (deleted in Q4), and
+withholding a one-column grid from the table prompt (Q5). Body type size and
+Title sizes are deferred with Q3's evidence in style.py's module docstring.
+docs/status.md "Closed, with evidence" and "Deferred deliberately".
+
+STANDING RULES:
+- Never cite or analyse a past run. Only a run taken in this session counts.
+  The exceptions are the committed tests/frozen/ directories, each for what its
+  README says it is.
+- Leave debug/runs/84-rule-not-a-line/ intact.
+- Never score against tests/documents/SAMPLE_DOCUMENTS.
+- Do not delete the four shipped defaults or the three wire-level row nets.
+- Marking may never change the words: wire._runs_for and ir.Cell.runs both stay.
+- What is read off a Graphic is alt text, never printed.
+- project() compares a normalised view, never raw markup.
+- The committed corpus picture is a screenshot of its own HTML; when a page
+  or the shooter changes, re-shoot and re-cut the floor on a sweep.
 - Every run must produce debug/runs/<label>/report.html.
 - Any reviewed run is a full sweep, all fifteen, or the offline equivalent.
 - Rubric judgements are pairwise and in-session only.

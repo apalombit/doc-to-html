@@ -176,7 +176,7 @@ table and returned a spurious trailing `header`. Both of that fixture's
 mismatches trace to it.
 
 **A wrong column count is still stated, and that was measured — spec 0007's
-queue, Q5, 2026-09-29.** On the re-shot corpus five of eighteen tables measure
+queue, Q5, 2026-09-29.** On the re-shot corpus five of fifteen tables measure
 one column where the page prints two to six — rules and centred lines bridge
 every gutter of the projection. Withholding the count when it reads one column
 was built and measured by asking each of the five again with no count and

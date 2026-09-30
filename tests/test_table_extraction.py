@@ -1056,7 +1056,7 @@ class TestStatingTheGridInThePrompt:
     def test_a_one_column_count_is_still_stated(self) -> None:
         """Measured and kept — spec 0007's queue, Q5, 2026-09-29.
 
-        One column is a wrong count on five of the eighteen tables of the
+        One column is a wrong count on five of the fifteen tables of the
         re-shot corpus: rules and centred lines bridge the gutters. Withholding
         it was built and measured on all five, by replaying the floor with each
         table asked again without it, and it crossed the ratchet: `menu_0012`
