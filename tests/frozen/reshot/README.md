@@ -1,4 +1,7 @@
-# `reshot/` — the first sweep on whole pictures, and **the T1 ratchet's floor** since 2026-09-29
+# `reshot/` — the first sweep on whole pictures; the floor and the control 2026-09-29 to 2026-09-30, **now record**
+
+Replaced by `q5-result/` on 2026-09-30, which dominates it on every
+ratcheted leg of every document: see that README.
 
 ## What this is
 

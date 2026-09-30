@@ -1,4 +1,4 @@
-# Status — 2026-09-30 (the queue: **Q5 done, gate met; the corpus re-shot; `q5-result/` the control; N1 next**)
+# Status — 2026-09-30 (the queue: **Q5 done, gate met; the corpus re-shot; `q5-result/` the floor and the control; N1 next**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-09-30, when
@@ -38,15 +38,29 @@ Q1-Q4's result tables moved to
 
 ---
 
-## The floor — `tests/frozen/reshot/`, DECIDED 2026-09-29
+## The floor — `tests/frozen/q5-result/`, DECIDED 2026-09-30
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/reshot/scores.json
+    --documents sweep --previous tests/frozen/q5-result/scores.json
 ```
 
 `--documents sweep` is not optional: without a `fixtures.txt` the report
 scores the iterate five and says nothing about the other ten.
+
+**It is the floor and the control since 2026-09-30, Alessandro's decision.**
+Sweep `Q5-40-sweep`: the fifteen documents today's code makes, with the
+answers that made them. It dominates `reshot/` on every ratcheted leg of
+every document — fourteen byte-identical, and `receipt_0010`'s tau 0.800 →
+1.000 and beside 0.871 → 1.000 with recall and precision unchanged — the
+condition every floor move but one has met. Scored straight out of the
+directory, **15 documents, 0 differing fields**; `tools/rederive.py` over it
+reproduces it **15 of 15 byte for byte**, and so does `tools/replay_run.py`
+from its committed `answers/`; `tools/layout_front.py`'s Zones match its IRs
+on 15 of 15. Its README says what moved against `reshot/`: the receipt, and
+nothing else.
+
+### The one before it — `reshot/`, 2026-09-29 to 2026-09-30
 
 **It moved from `a3-result` because the pictures were wrong, not the
 pipeline.** The ten authored corpus pictures were shot before
@@ -60,20 +74,6 @@ one before it; its README names every leg on which it falls below
 It was also the control until Q5 moved the receipt's Zones: `rederive.py`
 re-applies what works on the IR, not the detector, so over `reshot/` it
 cannot reproduce today's receipt.
-
-**The control is `tests/frozen/q5-result/` since 2026-09-30** — sweep
-`Q5-40-sweep`, the fifteen documents today's code makes, with the answers
-that made them. Scored straight out of the directory, **15 documents, 0
-differing fields**; `tools/rederive.py` over it reproduces it **15 of 15 byte
-for byte**, and so does `tools/replay_run.py` from its committed `answers/`;
-`tools/layout_front.py`'s Zones match its IRs on 15 of 15. Its README says
-what moved against `reshot/`: the receipt, and nothing else.
-
-**Whether `q5-result/` becomes the floor is Alessandro's decision, not yet
-taken.** It dominates `reshot/` on every ratcheted leg of every document —
-fourteen byte-identical, and `receipt_0010`'s tau 0.800 → 1.000 and beside
-0.871 → 1.000 with recall and precision unchanged — which is the condition
-every floor move before `reshot/` met.
 
 ### What the ratchet enforces, per document
 
@@ -92,7 +92,7 @@ ground, decided in advance and accounted for leg by leg.
 
 ---
 
-## Where the corpus is — at the control, `q5-result/`
+## Where the corpus is — at the floor, `q5-result/`
 
 | | mean |
 |---|---|
@@ -107,8 +107,8 @@ ground, decided in advance and accounted for leg by leg.
 | `figures_lost` | **0** |
 | T6 inline runs | 8 of 42 |
 
-The floor, `reshot/`, differs on three rows and one document: its tau 0.9232,
-beside 0.7536 and height 1.610 are `receipt_0010` before Q5.
+`reshot/`, the floor before it, differs on three rows and one document: its
+tau 0.9232, beside 0.7536 and height 1.610 are `receipt_0010` before Q5.
 
 ### The live faults, worst first
 
@@ -252,10 +252,10 @@ replayed with the answers: **`menu_0012` stopped printing 30 words** and
 so the hint stays; `config.DEFAULT_TABLE_GRID_HINT` records the measurement,
 and `test_a_one_column_count_is_still_stated` pins it.
 
-### The control frozen, and a fourth loop — 2026-09-30
+### The floor and the control frozen, and a fourth loop — 2026-09-30
 
 `tests/frozen/q5-result/` holds `Q5-40-sweep`'s documents, scores and — a
-first — its answers. **`tools/replay_run.py`** serves a run's or a frozen
+first — its answers; Alessandro made it the floor the same day. **`tools/replay_run.py`** serves a run's or a frozen
 directory's answers to today's code through a real Conversion, and with
 `--swap` one new answer; it is how the withheld hint was measured. Proved on
 the day: 15 of 15 byte-identical from the sweep and again from `q5-result/`;
@@ -306,7 +306,8 @@ answer into a replay of the control before spending a sweep.
 reading order, which is the IR gap below. Say which part is which before
 building.
 
-**After the queue:** the floor decision, then Thread 3/C's re-scoping gate.
+**After the queue:** the next floor decision, then Thread 3/C's re-scoping
+gate.
 Thread 4/D stays unscheduled.
 
 ---
@@ -350,8 +351,8 @@ the last two entries.
 - **Never cite or analyse a past run.** Only a run taken in this session counts.
   **The exceptions are committed files:** `tests/frozen/run84/`,
   `a1-checkpoint/`, `a0-checkpoint/`, `a0-result/`, `a1-result/`,
-  `a2-result/`, `a3-result/` — all kept as record — and **`reshot/`, the floor
-  and the control.** `a3-result/` was scored on pictures missing their last
+  `a2-result/`, `a3-result/`, `reshot/` — all kept as record — and
+  **`q5-result/`, the floor and the control.** `a3-result/` was scored on pictures missing their last
   lines; quote it only as that.
 - **The committed corpus picture is a screenshot of its own HTML.**
   `TestTheCorpusPictureIsItsOwnHTML` re-shoots the ten authored pages and
@@ -395,7 +396,7 @@ the last two entries.
 FIXTURE=sweep tools/iterate.sh <label>        # all fifteen, ~90 min — anything reviewed
 FIXTURE=iterate tools/iterate.sh <label>      # the five, ~17 min — throwaway checks only
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/reshot/scores.json
+    --documents sweep --previous tests/frozen/q5-result/scores.json
 python tools/visual_review.py debug/runs/<label> --previous debug/runs/<older>
 python tools/visual_review.py debug/runs/<label> --check
 ```

@@ -103,8 +103,8 @@ Queue       Q1-Q7 in docs/status.md "Next", in order, go given 2026-09-27
               re-shot whole; deskew on type alone; floor re-cut to reshot/
               Q5 DONE 2026-09-30, gate MET 8 of 8: its resize premise did
               not survive; the receipt's rows in order, its total
-              reconciled, its barcode drawn; q5-result/ frozen as the control
-              and tools/replay_run.py committed
+              reconciled, its barcode drawn; q5-result/ frozen, and made
+              the floor and the control; tools/replay_run.py committed
 Queue, continued   N1-N4 model-free (two false-alarm findings, statement's
               sliver Zone, catalogue's one-letter column), then Q6, Q7, N5,
               in docs/status.md "Next"                         N1 <- next
@@ -118,12 +118,13 @@ gate met; A3 closed 2026-09-26 with its gate met; open issues 1–3 closed
 offline the same day, and on 2026-09-27 the floor was kept at `a3-result`**
 — see `docs/status.md`, "What the last step shipped".
 `docs/status.md` indexes what each shipped and where every measurement lives.
-**The ratchet's floor is `tests/frozen/reshot/` since 2026-09-29**, moved
-there from `a3-result/` when the ten authored corpus pictures were found
-missing their last lines and re-shot whole — see its README, and
-`docs/status.md`, "The floor". **The control is `tests/frozen/q5-result/`
-since 2026-09-30**: the documents today's code makes, and the first frozen
-directory to carry the answers that made them.
+**The ratchet's floor and the control are both `tests/frozen/q5-result/`
+since 2026-09-30** — the documents today's code makes, and the first frozen
+directory to carry the answers that made them. Alessandro moved the floor
+there from `reshot/`, which it dominates on every ratcheted leg; `reshot/`
+had replaced `a3-result/` the day before, when the ten authored corpus
+pictures were found missing their last lines and re-shot whole. See each
+README, and `docs/status.md`, "The floor".
 
 `docs/specs/0007-handover.md` holds a ready prompt per thread and the full
 scope of Phase A-1. **"The open-issues queue, continued — Q6, Q7 and what the
@@ -275,21 +276,22 @@ says they are.
 | `a1-result/` | A1's fifteen documents beside their scores | record — A2's control |
 | `a2-result/` | A2's fifteen documents beside their scores, sweep `A2-10-enclosed-sweep` | record — the floor and A3's control 2026-09-25 to 2026-09-26 |
 | `a3-result/` | A3's fifteen documents beside their scores, sweep `A3-10-figure-pixels-sweep` | record — the floor 2026-09-26 to 2026-09-29, measured on pictures missing their last lines |
-| **`reshot/`** | **the first sweep on whole pictures, `Q5-10-reshot-sweep`** | **the floor, from 2026-09-29**; the control until 2026-09-30 |
-| **`q5-result/`** | **Q5's fifteen documents beside their scores and the answers that made them, sweep `Q5-40-sweep`** | **the control, from 2026-09-30** — the floor too if Alessandro moves it; it dominates `reshot/` on every ratcheted leg |
+| `reshot/` | the first sweep on whole pictures, `Q5-10-reshot-sweep` | record — the floor and the control 2026-09-29 to 2026-09-30 |
+| **`q5-result/`** | **Q5's fifteen documents beside their scores and the answers that made them, sweep `Q5-40-sweep`** | **the floor and the control, from 2026-09-30** |
 
 **Ratchet against the floor by path**, and always with `--documents sweep` —
 without a `fixtures.txt` the report silently scores the iterate five:
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/reshot/scores.json
+    --documents sweep --previous tests/frozen/q5-result/scores.json
 ```
 
-**Each floor move was measured, not argued:** until 2026-09-29 the new floor
-was no lower than the old on any ratcheted leg of any of the fifteen
-documents, and Alessandro took the decision each time. **`reshot/` is the one
-exception, decided in advance:** it corrects the pictures rather than the
+**Each floor move was measured, not argued:** the new floor was no lower than
+the old on any ratcheted leg of any of the fifteen documents, and Alessandro
+took the decision each time — `q5-result/` over `reshot/` included: fourteen
+documents byte-identical, the receipt's tau and beside up. **`reshot/` is the
+one exception, decided in advance:** it corrects the pictures rather than the
 pipeline, and its README names every leg on which it falls below
 `a3-result` and why — four words and `cv_0013`'s reading order among them.
 

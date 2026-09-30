@@ -1,4 +1,4 @@
-# `q5-result/` — Q5's sweep, and **the control** since 2026-09-30
+# `q5-result/` — Q5's sweep, and **the floor and the control** since 2026-09-30
 
 ## What this is
 
@@ -37,8 +37,8 @@ model, and each was proved on the day it was frozen:
 - and `tools/layout_front.py`'s Zones match its IRs' band, column and bbox on
   15 of 15.
 
-**It is not the floor** unless Alessandro moves it there; `docs/status.md`,
-"The floor", says which directory is. Against `reshot/`: fourteen documents are byte-identical, and
+**It is also the floor**, Alessandro's decision on 2026-09-30. Against
+`reshot/`, the floor it replaces: fourteen documents are byte-identical, and
 `receipt_0010` is no lower on any ratcheted leg — tau 0.800 → 1.000, beside
 0.871 → 1.000, vocabulary recall and precision unchanged at 0.9877 and 0.9903.
 So it dominates `reshot/` on every ratcheted leg of every document, the
@@ -67,11 +67,11 @@ the farewell, the barcode and the last three lines are now three blocks, each
 drawn at the left where the source centres it (`Zone.align`, deferred). Every
 other document: 0 differing fields.
 
-Ratchet against the floor by path, whichever directory that is:
+Ratchet against it by path:
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/<floor>/scores.json
+    --documents sweep --previous tests/frozen/q5-result/scores.json
 ```
 
 `--documents sweep` is not optional: without a `fixtures.txt` in the run

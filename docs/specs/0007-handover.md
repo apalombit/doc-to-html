@@ -1716,8 +1716,8 @@ floor bolded all four summary lines.
 **Frozen as the control:** `tests/frozen/q5-result/` — documents, scores and
 answers. Scored straight out, 0 differing fields; `rederive.py` and
 `replay_run.py` over it, 15 of 15 byte-identical each; `layout_front.py`, 15
-of 15 Zones. **Whether it also becomes the floor is Alessandro's decision**:
-it dominates `reshot/` on every ratcheted leg of every document.
+of 15 Zones. **Alessandro made it the floor too, on 2026-09-30**: it
+dominates `reshot/` on every ratcheted leg of every document.
 
 **A fourth offline loop came out of it.** `tools/replay_run.py` serves a
 run's — or a frozen directory's — recorded answers to today's code through a
@@ -1739,10 +1739,10 @@ quotes:
   reproduces its documents 15 of 15 byte for byte, and `tools/replay_run.py
   tests/frozen/q5-result` does the same from its committed answers.
   `tools/layout_front.py`'s Zones match its IRs on 15 of 15.
-- **The floor is `tests/frozen/reshot/`** unless docs/status.md says
-  Alessandro moved it. Against it the control holds the ratchet on four
-  legs, all fifteen: fourteen documents byte-identical, and `receipt_0010`
-  tau 0.800 → 1.000 and beside 0.871 → 1.000.
+- **The floor is the control, `tests/frozen/q5-result/`**, Alessandro's
+  decision on 2026-09-30. Against `reshot/`, the floor it replaced, it holds
+  the ratchet on four legs, all fifteen: fourteen documents byte-identical,
+  and `receipt_0010` tau 0.800 → 1.000 and beside 0.871 → 1.000.
 - **The conversion is still deterministic.** `Q5-40-sweep` reproduced the
   receipt's prediction run byte for byte and fourteen documents of the
   floor's sweep, taken three hours earlier.
@@ -1763,23 +1763,23 @@ disagrees. Q1-Q5 are done; do not redo them.
 Branch scaffold, at or after the commit that wrote this prompt. 833 tests
 pass, mypy src/ clean.
 
-THE FLOOR is the directory docs/status.md "The floor" names —
-tests/frozen/reshot/ when this was written, with Alessandro asked whether
-tests/frozen/q5-result/ replaces it. It does not move without him:
+THE FLOOR IS tests/frozen/q5-result/ since 2026-09-30, and it does not move
+without Alessandro:
 
     python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-        --documents sweep --previous tests/frozen/<floor>/scores.json
+        --documents sweep --previous tests/frozen/q5-result/scores.json
 
 --documents sweep is not optional.
 
-THE CONTROL IS tests/frozen/q5-result/: the fifteen documents today's code
-makes, beside the answers that made them. Build today's baseline from it and
-prove it before using it:
+IT IS ALSO THE CONTROL: the fifteen documents today's code makes, beside
+the answers that made them. Build today's baseline from it and prove it
+before using it:
 
     python tools/rederive.py tests/frozen/q5-result --label <base>
 
 It reproduces q5-result byte for byte on 15 of 15. Every "unchanged" in a
-gate is measured against it; the ratchet is always against the floor.
+gate is measured against the baseline; the ratchet is always against the
+floor's scores.json.
 
 FOUR LOOPS, AND WHAT EACH CAN SEE — say which produced any number you report:
   - tools/rederive.py: every step that works on the IR, over the control's
