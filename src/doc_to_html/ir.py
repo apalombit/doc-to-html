@@ -409,8 +409,9 @@ class Shortfall:
 
     `printed_lines` is measured off the pixels by `preprocess.printed_lines` and
     is a floor, not an expectation — a wrapped cell is two printed lines in one
-    row. See `orchestrator.shortfall` for how coarse the comparison deliberately
-    is.
+    row. A prose or list Zone's is `preprocess.hard_lines`, which counts a
+    wrapped line once, as its Extractor does. See `orchestrator.shortfall` for
+    how coarse the comparison deliberately is.
     """
 
     zone_index: int

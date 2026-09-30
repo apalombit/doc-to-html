@@ -42,6 +42,7 @@ from .preprocess import (
     figure_pixels,
     header_band,
     ink_fraction,
+    hard_lines,
     ink_share,
     printed_lines,
     snap_to_ink,
@@ -520,6 +521,26 @@ document lost 7% of its tokens in silence; at two it declares itself.
 One line short stays invisible on purpose. The counts genuinely disagree by one
 in both directions, so a finding there would fire on correct readings, and a
 list of findings that includes correct readings is a list nobody finishes.
+
+**Tables and pairs only, since 2026-09-30.** A prose or list Zone is counted in
+its Extractor's own unit and held to `SHORTFALL_HARD_LINES`.
+"""
+
+SHORTFALL_HARD_LINES = 1
+"""How many lines short a prose or list Zone must be: one, because its printed
+lines are counted as its Extractor counts them, by `preprocess.hard_lines`.
+
+The disagreement `SHORTFALL_LINES` leaves room for is a wrapped line, and for
+these two Kinds it is gone: `PROSE_PROMPT` asks for the lines the document
+breaks, not the lines the type wraps onto, and `hard_lines` counts the same.
+**Measured over the control, `tests/frozen/q5-result/`, on 2026-09-30.**
+Counting printed lines at two short, `invoice_0002` Zone 7 and
+`newsletter_0008` Zone 15 were reported — each one paragraph read whole, every
+word there. Counting printed lines at one short would have reported eight
+Zones, six of them a paragraph or a bullet that wrapped. Counting hard lines at
+one short reports exactly two, `darkdeck_0009` Zones 4 and 10, and each lost
+its heading — `Open risks` and `Decisions wanted`, a bullet wrapped under each.
+The second of those was reported by nothing before.
 """
 
 
@@ -555,12 +576,21 @@ def shortfall(image: ImageArray, zone: Zone, index: int) -> Shortfall | None:
 
     An incomplete Zone is exempt too: it already has a Failure naming it, and
     two findings for one loss is one finding too many.
+
+    **A prose or list Zone is counted in the unit its Extractor was asked
+    for** — lines the document breaks, a wrapped line once — and so is held
+    to one line short, not two. See `SHORTFALL_HARD_LINES` for what that
+    changed on the corpus.
     """
     if zone.kind is Kind.FIGURE or not zone.complete or zone.bbox is None:
         return None
-    printed = printed_lines(zone_pixels(image, zone))
+    crop = zone_pixels(image, zone)
+    if zone.kind in (Kind.PROSE, Kind.LIST):
+        printed, margin = hard_lines(crop), SHORTFALL_HARD_LINES
+    else:
+        printed, margin = printed_lines(crop), SHORTFALL_LINES
     got = read_lines(zone)
-    if printed - got < SHORTFALL_LINES or got >= SHORTFALL_RATIO * printed:
+    if printed - got < margin or got >= SHORTFALL_RATIO * printed:
         return None
     return Shortfall(
         zone_index=index, kind=zone.kind.value,

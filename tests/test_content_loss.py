@@ -45,6 +45,8 @@ from doc_to_html.preprocess import (
     count_regions,
     ground_is_dark,
     ground_level,
+    hard_lines,
+    printed_lines,
     rectify,
     uncovered_regions,
     with_dark_ink,
@@ -284,10 +286,54 @@ class TestAZoneReadShort:
         """Printed lines and rows genuinely disagree by one in both directions —
         a wrapped cell is two printed lines in one row — so a finding there
         would fire on correct readings, and a list of findings that includes
-        correct readings is a list nobody finishes."""
+        correct readings is a list nobody finishes. Tables and pairs only: a
+        prose or list Zone's lines are counted as its Extractor counts them."""
         image = self.lined_page(2)
 
         assert shortfall(image, self.table(1), index=0) is None
+
+    def text(self, kind: Kind, lines: int) -> Zone:
+        """A prose or list Zone read as `lines` lines, with no Title."""
+        zone = Zone(kind=kind, bbox=BBox(0.0, 0.0, 1.0, 1.0), complete=True)
+        zone.blocks.append(Block(
+            kind="paragraph" if kind is Kind.PROSE else "item",
+            lines=[Cell(readings=[Reading(engine="t", text=f"line {i}")])
+                   for i in range(lines)]))
+        return zone
+
+    def test_a_paragraph_read_whole_is_not_reported(self) -> None:
+        """`invoice_0002` Zone 7 and `newsletter_0008` Zone 15 in miniature:
+        four printed lines, three running to the right-hand edge, returned as
+        one line — which is what `PROSE_PROMPT` asks for, and every word was
+        there. Counting printed lines, both were reported read short."""
+        image = page(245, [(10, 4, 190, 12), (10, 18, 190, 26),
+                           (10, 32, 190, 40), (10, 46, 110, 54)], 10)
+
+        assert printed_lines(image) == 4
+        assert hard_lines(image) == 1
+        assert shortfall(image, self.text(Kind.PROSE, 1), index=0) is None
+
+    def test_a_heading_lost_above_a_wrapped_entry_is_reported(self) -> None:
+        """`darkdeck_0009` Zones 4 and 10: a heading, then one bullet wrapped
+        over two lines, returned as the bullet alone. One line short, and the
+        line is the heading — so a prose or list Zone reports one line short."""
+        image = page(245, [(10, 4, 70, 12), (10, 18, 190, 26),
+                           (22, 32, 150, 40)], 10)
+
+        found = shortfall(image, self.text(Kind.LIST, 1), index=0)
+
+        assert found is not None
+        assert (found.printed_lines, found.read_lines) == (2, 1)
+
+    def test_a_line_that_stops_short_is_broken_on_purpose(self) -> None:
+        """An address: no line reaches the edge the last one sets, so each is
+        its own line, as `PROSE_PROMPT` says a three-line address stays."""
+        image = page(245, [(10, 4, 120, 12), (10, 18, 100, 26),
+                           (10, 32, 150, 40)], 10)
+
+        assert hard_lines(image) == 3
+        assert shortfall(image, self.text(Kind.PROSE, 1), index=0) is not None
+        assert shortfall(image, self.text(Kind.PROSE, 3), index=0) is None
 
     @pytest.mark.parametrize("kind,build,expected", [
         (Kind.TABLE, lambda z: z.rows.append(Row(role=RowRole.DATA)), 1),

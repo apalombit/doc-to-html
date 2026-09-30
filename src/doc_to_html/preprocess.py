@@ -724,6 +724,58 @@ def printed_bands(crop: ImageArray) -> list[tuple[int, int]]:
     return ink_bands(mask.sum(axis=1), MIN_ROW_GAP, MIN_BAND)
 
 
+WRAP_TOLERANCE = 0.15
+"""How far short of the right-hand edge a printed line may stop and still count
+as wrapped into the line below it, as a share of the widest line's width.
+
+`PROSE_PROMPT` defines a line as a reader does: one that "runs to the
+right-hand edge and continues below it has merely wrapped, and is one line".
+`hard_lines` reads that rule off the pixels, and the pixels cannot always apply
+it. **Measured over every prose and list Zone of `tests/frozen/q5-result/` on
+2026-09-30, there is no empty band:** a line that wrapped in ragged-right type
+stops up to 0.104 of the width short (`darkdeck_0009` Zone 3), and a line broken
+on purpose stops as close as 0.007 (`invoice_0001`'s right-aligned address).
+Which of the two a line is depends on whether the next line's first word would
+have fitted, and that is reading.
+
+So this sits above every wrap measured, and an ambiguous line counts as wrapped.
+That is the side `orchestrator.shortfall` can afford to be wrong on: a break
+taken for a wrap undercounts what is printed and can only silence a finding,
+where a wrap taken for a break is a false one. Every value from 0.01 to 0.15
+gave the same Shortfalls on all fifteen documents.
+"""
+
+
+def hard_lines(crop: ImageArray) -> int:
+    """How many lines of type are printed in this crop, a wrapped line once.
+
+    `printed_lines` counts every line the type occupies. The prose and list
+    Extractors are asked for the lines the document *breaks*, so a paragraph
+    read whole is one line against four printed, and a Shortfall comparing the
+    two fires on a correct reading — `invoice_0002` Zone 7 and
+    `newsletter_0008` Zone 15 did, every word of both paragraphs there. This
+    counts in the Extractor's unit: a printed line reaching the right-hand edge
+    — the widest line's end, less `WRAP_TOLERANCE` — with another below it
+    continues into that line, and is not one of its own.
+
+    Coarse in the direction `printed_lines` is. The widest line *is* the edge,
+    so among short lines broken on purpose the widest counts as wrapped unless
+    it is the last, and an address can read one line fewer than it prints. That
+    undercount can only silence a finding, never raise one.
+    """
+    mask = _without_vertical_rules(content_ink(crop))
+    bands = ink_bands(mask.sum(axis=1), MIN_ROW_GAP, MIN_BAND)
+    if not bands:
+        return 0
+    spans = [np.flatnonzero(mask[top:bottom + 1].any(axis=0))
+             for top, bottom in bands]
+    ends = [int(span.max()) for span in spans]
+    edge = max(ends)
+    width = edge - min(int(span.min()) for span in spans) + 1
+    wrapped = sum(1 for end in ends[:-1] if edge - end <= WRAP_TOLERANCE * width)
+    return len(bands) - wrapped
+
+
 def header_band(crop: ImageArray, *, titled: bool) -> tuple[int, int] | None:
     """The crop rows a table's header row is printed on.
 
