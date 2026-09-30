@@ -1,0 +1,64 @@
+{
+ "calls": [
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"KITCHEN & CELLAR · EST. 1961\",\n  \"line_is\": \"header\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"A discretionary service charge of 12.5% is added to tables of six or more.\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"The Copper Pot\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "table",
+   "answer": "{\n  \"rows\": [\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"KITCHEN & CELLAR · EST. 1961\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"To begin\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"\",\n        \"Main courses\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Potted brown shrimp\",\n        \"9.50\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"with mace butter and toasted rye\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Celeriac and apple soup VG\",\n        \"7.00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"hazelnut oil, cheril\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Ox tongue, sauce gribiche\",\n        \"10.25\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Burrata, late tomatoes\",\n        \"11.00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"basil, aged balsamic\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"From the grill\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"\",\n        \"Puddings\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Rib of beef, for two\",\n        \"62.00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"dripping chips, watercress, béarnaise\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Lamb cutlets\",\n        \"26.50\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Whole plaice on the bone\",\n        \"24.00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"brown butter, capers, lemon\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Braised shin, bone marrow\",\n        \"23.00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"mashed potato, red wine\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Guinea fowl, autumn roots\",\n        \"21.50\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Squash and sage gnocchi VG\",\n        \"18.00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"crisp sage, toasted pumpkin seed\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Fish pie of the day\",\n        \"19.75\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Treacle tart, clotted cream\",\n        \"8.50\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Poached quince, custard\",\n        \"8.00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Chocolate pot, sea salt\",\n        \"8.50\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Cheese, three from the board\",\n        \"12.00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"quince paste, oat biscuits\",\n        \"\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"A discretionary service charge of 12.5% is added to tables of six or more.\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Please tell us of any allergy before ordering.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  }
+ ]
+}

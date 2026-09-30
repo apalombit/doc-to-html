@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Document</title>
+<style>
+:root { --ink:#1a1a1a; --muted:#666; --rule:#e0e0e0; --shade:#f4f4f4;
+        --page-bg:#fff; --accent:inherit;
+        --flag:#b45309; --flag-bg:#fff7ed;
+        --link:#0645ad; --mark-bg:#fff2a8; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink:#e8e8e8; --muted:#9a9a9a; --rule:#333; --shade:#1e1e1e;
+          --page-bg:#111;
+          --flag:#fbbf24; --flag-bg:#2a1f0a;
+          --link:#7aa7ff; --mark-bg:#5a4a12; }
+}
+body { font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+       color:var(--ink); background:var(--page-bg); margin:0; padding:2rem 1rem; }
+.doc { max-width:52rem; margin:0 auto; }
+/* Inline runs. `<a>` carries no href — nothing read off the page says where a
+   link goes — so it needs styling of its own to read as one. */
+a { color:var(--link); text-decoration:underline; }
+code { font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+       font-size:0.92em; }
+mark { background:var(--mark-bg); color:inherit; padding:0 0.15em; }
+.band { display:flex; gap:2rem; align-items:flex-start;
+        margin-bottom:1.75rem; flex-wrap:wrap; }
+.band > * { flex:1 1 12rem; min-width:0; }
+.zone-header { font-size:1.05em; }
+.zone-footer { color:var(--muted); font-size:.875em; }
+h1 { font-size:1.6em; margin:0 0 .35em; letter-spacing:.01em; }
+section.boxed { border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
+section.filled { border-radius:4px; overflow:hidden; }
+h2.zone-title { font-size:.95em; font-weight:600; margin:0; padding:.55em 0; }
+h2.zone-title.barred { padding:.55em .9em; }
+section.boxed > h2.zone-title, section.filled > h2.zone-title { padding:.55em .9em; }
+.zone-body { padding:0; }
+section.boxed > .zone-body, section.filled > .zone-body { padding:.9em; }
+section.boxed > .zone-body > .table-wrap,
+section.filled > .zone-body > .table-wrap { margin:-.9em; }
+blockquote { margin:.6em 0 .3em 1.5em; }
+p.attribution { color:var(--muted); font-size:.85em; margin:0 0 .4em; }
+ul { margin:0 0 .4em; padding-left:1.3em; }
+.zone-header ul { display:flex; flex-wrap:wrap; gap:1.1rem;
+                  list-style:none; padding:0; }
+p { margin:0 0 .4em; }
+dl.pairs { display:grid; grid-template-columns:auto 1fr; gap:.15em .75em; margin:0; }
+/* A long unbreakable value must wrap, not be hidden. `section.filled` and
+   `section.boxed` both set `overflow:hidden` to keep a fill inside its own
+   rounded corner, so anything wider than the Zone is silently cut off in the
+   screenshot — recall says the text is present and the picture does not
+   contain it. `cv_0013`'s sidebar was the corpus's one case: the `auto` track
+   sized itself to `ines.halloran@fempost.example`, which has no break
+   opportunity, giving the Zone a 368px content width inside a 256px box.
+   `anywhere` rather than `break-word` because only `anywhere` lowers the
+   min-content width the grid track is measured from. Measured 2026-09-25 over
+   all fifteen: corpus `clipped` 1 -> 0, `beside_agreement` +0.0033,
+   `alignment_agreement` +0.0019, ratchet clean, and `cv_0013`'s height_ratio
+   1.77 -> 2.14, which is the wrapped address taking the lines it needs. */
+dl.pairs dt, dl.pairs dd { overflow-wrap:anywhere; }
+dl.pairs dt { color:var(--muted); }
+dl.pairs dd { margin:0; }
+.zone-summary dl.pairs dd { font-weight:600; text-align:right; }
+.table-wrap { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; }
+th, td { padding:.45em .6em; text-align:left; border-bottom:1px solid var(--rule); }
+thead th { background:var(--shade); font-weight:600; }
+td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+tfoot td:last-child { text-align:right; }
+tfoot td { font-weight:600; border-top:2px solid var(--rule); border-bottom:none; }
+figure.omitted { margin:0; border:1px dashed var(--rule); border-radius:3px;
+                 min-height:3rem; display:flex; align-items:center;
+                 justify-content:center; color:var(--muted); font-size:.8em; }
+figure.omitted figcaption { padding:.5em; text-align:center; }
+.mark { display:inline-block; border:2px solid var(--flag); color:var(--flag);
+        padding:.15em .6em; border-radius:3px; font-weight:600; letter-spacing:.08em; }
+.disputed { background:var(--flag-bg); border-bottom:2px solid var(--flag); cursor:help; }
+.corrected { border-bottom:2px solid var(--rule); cursor:help; }
+.skeleton { background:repeating-linear-gradient(135deg, var(--shade),
+            var(--shade) 6px, transparent 6px, transparent 12px);
+            border:1px dashed var(--rule); min-height:2.5rem; border-radius:3px; }
+.findings { border-left:3px solid var(--flag); background:var(--flag-bg);
+            padding:.6em 1em; margin:0 0 1.75rem; font-size:.875em; }
+.findings ul { margin:.3em 0 0; padding-left:1.2em; }
+.findings.caveats { border-left-color:var(--rule); background:var(--shade);
+                    color:var(--muted); }
+</style>
+<style>:root { --page-bg:rgb(255,255,255); --ink:rgb(118,118,118); --muted:rgb(163,163,163); --rule:rgb(234,234,234); --shade:rgb(247,247,247); }
+</style>
+</head>
+<body>
+<div class="doc">
+<div class="findings"><strong>Unresolved</strong><ul><li>Content found outside every detected region: 2.9% of this page&#x27;s printed ink is in here — found by ink coverage, so it may be a mark</li></ul></div><div class="band"><section class="zone zone-header"><h2 class="zone-title">Application for full membership</h2><div class="zone-body"><p>Castleton Rowing Club · Form M-2 (revised April 2026)</p></div></section><section class="zone zone-header"><dl class="pairs"><dt>OFFICE USE</dt><dd></dd><dt>Ref.</dt><dd>__________</dd><dt>Date stamp</dt><dd></dd></dl></section></div><div class="band"><section class="zone zone-body"><h2 class="zone-title barred" style="background:rgb(236,236,236)">1. APPLICANT DETAILS</h2><div class="zone-body"><dl class="pairs"><dt>Family name</dt><dd>Whitlock</dd><dt>Given names</dt><dd>Marion Elspeth</dd><dt>Date of birth (DD MM YYYY)</dt><dd>1 4 0 6 1 9 9 1</dd><dt>Membership number (if renewing)</dt><dd></dd><dt>Address</dt><dd>17 Bellwether Lane, Castleton</dd><dt>Postcode</dt><dd>CT9 4RD</dd><dt>Telephone</dt><dd></dd><dt>Email</dt><dd>m.whitlock@ferpost.example</dd><dt>Full rowing</dt><dd>X</dd><dt>Social</dt><dd></dd><dt>Junior (under 18)</dt><dd></dd><dt>Country</dt><dd></dd><dt>Locker required</dt><dd>X</dd><dt>Years rowing</dt><dd>6</dd><dt>Previous club</dt><dd>Ashgrove ARC</dd><dt>Highest level of competition reached</dt><dd>Regional championships, coxed four, 2024</dd><dt>Any medical condition we should know about</dt><dd></dd><dt>Name</dt><dd>Peter Whitlock</dd><dt>Relationship</dt><dd>Father</dd><dt>Daytime telephone</dt><dd>01632 960 774</dd><dt>Alternative telephone</dt><dd></dd><dt>I can swim 100 metres in light clothing</dt><dd>X</dd><dt>I accept the club rules</dt><dd>X</dd><dt>I consent to photographs being published</dt><dd></dd></dl></div></section></div><div class="band"><section class="zone zone-footer"><p>Return this form to the Membership Secretary, Castletown Rowing Club, Boathouse Reach, Castletown CT9 1AA. Incomplete forms cannot be processed.</p></section></div>
+</div>
+<script type="application/json" id="doc-ir">{"source":{"path":"/Users/aless/Desktop/Projects/pic-to-html/doc-to-html/example/form.png","sha256":"2090525948e74fe75ed9573b5fc55d4e2bb015f448cec56fd0144a43fe9c5df6","width":820,"height":1085,"rectified_width":820,"rectified_height":1085},"ir_version":1,"rectifier_version":4,"hint":null,"page_px":820,"style":{"page_bg":[255,255,255],"ink":[118,118,118],"accent":null,"shade":[17,17,17]},"zones":[{"kind":"pairs","role":"header","band":0,"column":1,"bbox":{"left":0.7780487804878049,"top":0.022119815668202765,"right":0.9658536585365853,"bottom":0.07834101382488479},"title":null,"rows":[],"pairs":[{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"OFFICE USE","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Ref.","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"__________","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Date stamp","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}}],"blocks":[],"graphic_kind":null,"pixels":null,"fill":null,"title_fill":null,"header_fill":null,"boxed":false,"complete":true},{"kind":"prose","role":"header","band":0,"column":0,"bbox":{"left":0.03414634146341464,"top":0.027649769585253458,"right":0.3829268292682927,"bottom":0.06359447004608294},"title":"Application for full membership","rows":[],"pairs":[],"blocks":[{"kind":"paragraph","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"Castleton Rowing Club \u00b7 Form M-2 (revised April 2026)","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"size":null}],"graphic_kind":null,"pixels":null,"fill":null,"title_fill":null,"header_fill":null,"boxed":false,"complete":true},{"kind":"pairs","role":"body","band":1,"column":0,"bbox":{"left":0.03414634146341464,"top":0.0912442396313364,"right":0.9658536585365853,"bottom":0.9410138248847926},"title":"1. APPLICANT DETAILS","rows":[],"pairs":[{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Family name","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"Whitlock","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Given names","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"Marion Elspeth","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Date of birth (DD MM YYYY)","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"1 4 0 6 1 9 9 1","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Membership number (if renewing)","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Address","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"17 Bellwether Lane, Castleton","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Postcode","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"CT9 4RD","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Telephone","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Email","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"m.whitlock@ferpost.example","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Full rowing","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"X","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Social","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Junior (under 18)","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Country","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Locker required","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"X","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Years rowing","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"6","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Previous club","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"Ashgrove ARC","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Highest level of competition reached","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"Regional championships, coxed four, 2024","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Any medical condition we should know about","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Name","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"Peter Whitlock","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Relationship","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"Father","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Daytime telephone","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"01632 960 774","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"Alternative telephone","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"I can swim 100 metres in light clothing","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"X","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"I accept the club rules","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"X","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}},{"label":{"bbox":null,"readings":[{"engine":"ollama","text":"I consent to photographs being published","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},"value":{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}}],"blocks":[],"graphic_kind":null,"pixels":null,"fill":null,"title_fill":[236,236,236],"header_fill":null,"boxed":false,"complete":true},{"kind":"prose","role":"footer","band":2,"column":0,"bbox":{"left":0.03414634146341464,"top":0.967741935483871,"right":0.7634146341463415,"bottom":0.976036866359447},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"paragraph","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"Return this form to the Membership Secretary, Castletown Rowing Club, Boathouse Reach, Castletown CT9 1AA. Incomplete forms cannot be processed.","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"size":null}],"graphic_kind":null,"pixels":null,"fill":null,"title_fill":null,"header_fill":null,"boxed":false,"complete":true}],"corrections":[],"probes":[],"gaps":[{"bbox":{"left":0.03414634146341464,"top":0.07465437788018434,"right":0.7475609756097561,"bottom":0.07649769585253456},"note":"2.9% of this page's printed ink is in here \u2014 found by ink coverage, so it may be a mark","resolved":false,"ink_share":0.02946880588368637}],"failures":[],"caveats":[],"shortfalls":[]}</script>
+</body>
+</html>

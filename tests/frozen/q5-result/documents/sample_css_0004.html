@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sample HTML</title>
+<style>
+:root { --ink:#1a1a1a; --muted:#666; --rule:#e0e0e0; --shade:#f4f4f4;
+        --page-bg:#fff; --accent:inherit;
+        --flag:#b45309; --flag-bg:#fff7ed;
+        --link:#0645ad; --mark-bg:#fff2a8; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink:#e8e8e8; --muted:#9a9a9a; --rule:#333; --shade:#1e1e1e;
+          --page-bg:#111;
+          --flag:#fbbf24; --flag-bg:#2a1f0a;
+          --link:#7aa7ff; --mark-bg:#5a4a12; }
+}
+body { font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+       color:var(--ink); background:var(--page-bg); margin:0; padding:2rem 1rem; }
+.doc { max-width:52rem; margin:0 auto; }
+/* Inline runs. `<a>` carries no href — nothing read off the page says where a
+   link goes — so it needs styling of its own to read as one. */
+a { color:var(--link); text-decoration:underline; }
+code { font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+       font-size:0.92em; }
+mark { background:var(--mark-bg); color:inherit; padding:0 0.15em; }
+.band { display:flex; gap:2rem; align-items:flex-start;
+        margin-bottom:1.75rem; flex-wrap:wrap; }
+.band > * { flex:1 1 12rem; min-width:0; }
+.zone-header { font-size:1.05em; }
+.zone-footer { color:var(--muted); font-size:.875em; }
+h1 { font-size:1.6em; margin:0 0 .35em; letter-spacing:.01em; }
+section.boxed { border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
+section.filled { border-radius:4px; overflow:hidden; }
+h2.zone-title { font-size:.95em; font-weight:600; margin:0; padding:.55em 0; }
+h2.zone-title.barred { padding:.55em .9em; }
+section.boxed > h2.zone-title, section.filled > h2.zone-title { padding:.55em .9em; }
+.zone-body { padding:0; }
+section.boxed > .zone-body, section.filled > .zone-body { padding:.9em; }
+section.boxed > .zone-body > .table-wrap,
+section.filled > .zone-body > .table-wrap { margin:-.9em; }
+blockquote { margin:.6em 0 .3em 1.5em; }
+p.attribution { color:var(--muted); font-size:.85em; margin:0 0 .4em; }
+ul { margin:0 0 .4em; padding-left:1.3em; }
+.zone-header ul { display:flex; flex-wrap:wrap; gap:1.1rem;
+                  list-style:none; padding:0; }
+p { margin:0 0 .4em; }
+dl.pairs { display:grid; grid-template-columns:auto 1fr; gap:.15em .75em; margin:0; }
+/* A long unbreakable value must wrap, not be hidden. `section.filled` and
+   `section.boxed` both set `overflow:hidden` to keep a fill inside its own
+   rounded corner, so anything wider than the Zone is silently cut off in the
+   screenshot — recall says the text is present and the picture does not
+   contain it. `cv_0013`'s sidebar was the corpus's one case: the `auto` track
+   sized itself to `ines.halloran@fempost.example`, which has no break
+   opportunity, giving the Zone a 368px content width inside a 256px box.
+   `anywhere` rather than `break-word` because only `anywhere` lowers the
+   min-content width the grid track is measured from. Measured 2026-09-25 over
+   all fifteen: corpus `clipped` 1 -> 0, `beside_agreement` +0.0033,
+   `alignment_agreement` +0.0019, ratchet clean, and `cv_0013`'s height_ratio
+   1.77 -> 2.14, which is the wrapped address taking the lines it needs. */
+dl.pairs dt, dl.pairs dd { overflow-wrap:anywhere; }
+dl.pairs dt { color:var(--muted); }
+dl.pairs dd { margin:0; }
+.zone-summary dl.pairs dd { font-weight:600; text-align:right; }
+.table-wrap { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; }
+th, td { padding:.45em .6em; text-align:left; border-bottom:1px solid var(--rule); }
+thead th { background:var(--shade); font-weight:600; }
+td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+tfoot td:last-child { text-align:right; }
+tfoot td { font-weight:600; border-top:2px solid var(--rule); border-bottom:none; }
+figure.omitted { margin:0; border:1px dashed var(--rule); border-radius:3px;
+                 min-height:3rem; display:flex; align-items:center;
+                 justify-content:center; color:var(--muted); font-size:.8em; }
+figure.omitted figcaption { padding:.5em; text-align:center; }
+.mark { display:inline-block; border:2px solid var(--flag); color:var(--flag);
+        padding:.15em .6em; border-radius:3px; font-weight:600; letter-spacing:.08em; }
+.disputed { background:var(--flag-bg); border-bottom:2px solid var(--flag); cursor:help; }
+.corrected { border-bottom:2px solid var(--rule); cursor:help; }
+.skeleton { background:repeating-linear-gradient(135deg, var(--shade),
+            var(--shade) 6px, transparent 6px, transparent 12px);
+            border:1px dashed var(--rule); min-height:2.5rem; border-radius:3px; }
+.findings { border-left:3px solid var(--flag); background:var(--flag-bg);
+            padding:.6em 1em; margin:0 0 1.75rem; font-size:.875em; }
+.findings ul { margin:.3em 0 0; padding-left:1.2em; }
+.findings.caveats { border-left-color:var(--rule); background:var(--shade);
+                    color:var(--muted); }
+</style>
+<style>:root { --page-bg:rgb(255,255,255); --ink:rgb(31,31,31); --muted:rgb(105,105,105); --rule:rgb(221,221,221); --shade:rgb(242,242,242); --accent:rgb(72,139,210); }
+</style>
+</head>
+<body>
+<div class="doc">
+<div class="band"><section class="zone zone-header"><h1>Sample HTML</h1><ul><li>css</li></ul></section></div><div class="band"><section class="zone zone-body"><p>This document demonstrates inline <code>&lt;style&gt;</code> blocks with typography, layout, and components.</p></section></div><div class="band"><section class="zone zone-body boxed" style="background:rgb(246,248,250)"><h2 class="zone-title">Card heading</h2><div class="zone-body"><p>Cards are reusable layout containers. Edit the CSS in the <code>&lt;head&gt;</code> to customize.</p></div></section></div><div class="band"><section class="zone zone-body boxed" style="background:rgb(246,248,250)"><h2 class="zone-title">Another card</h2><div class="zone-body"><p>You can add as many as you need. <a>Anchor links</a> are styled too.</p></div></section></div>
+</div>
+<script type="application/json" id="doc-ir">{"source":{"path":"/Users/aless/Desktop/Projects/pic-to-html/doc-to-html/example/sample-css.png","sha256":"c8e749f5758437c7a7c2ce3335cf9fb7ba5697ac81bf0c3886f165eeafb8dfd5","width":789,"height":534,"rectified_width":789,"rectified_height":534},"ir_version":1,"rectifier_version":4,"hint":null,"page_px":789,"style":{"page_bg":[255,255,255],"ink":[31,31,31],"accent":[72,139,210],"shade":[222,228,234]},"zones":[{"kind":"prose","role":"header","band":0,"column":0,"bbox":{"left":0.045627376425855515,"top":0.07303370786516854,"right":0.3776932826362484,"bottom":0.1348314606741573},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"heading","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"Sample HTML","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"size":null},{"kind":"item","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"css","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"size":null}],"graphic_kind":null,"pixels":null,"fill":null,"title_fill":null,"header_fill":null,"boxed":false,"complete":true},{"kind":"prose","role":"body","band":1,"column":0,"bbox":{"left":0.043092522179974654,"top":0.20973782771535582,"right":0.9024081115335868,"bottom":0.24157303370786518},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"paragraph","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"This document demonstrates inline <style> blocks with typography, layout, and components.","model":"qwen3-vl:4b","prompt_version":"2","runs":[{"text":"This document demonstrates inline ","kind":"text"},{"text":"<style>","kind":"code"},{"text":" blocks with typography, layout, and components.","kind":"text"}]}],"state":"agreed"}],"size":null}],"graphic_kind":null,"pixels":null,"fill":null,"title_fill":null,"header_fill":null,"boxed":false,"complete":true},{"kind":"prose","role":"body","band":2,"column":0,"bbox":{"left":0.07097591888466413,"top":0.3895131086142322,"right":0.7997465145754119,"bottom":0.5224719101123596},"title":"Card heading","rows":[],"pairs":[],"blocks":[{"kind":"paragraph","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"Cards are reusable layout containers. Edit the CSS in the <head> to customize.","model":"qwen3-vl:4b","prompt_version":"2","runs":[{"text":"Cards are reusable layout containers. Edit the CSS in the ","kind":"text"},{"text":"<head>","kind":"code"},{"text":" to customize.","kind":"text"}]}],"state":"agreed"}],"size":null}],"graphic_kind":null,"pixels":null,"fill":[246,248,250],"title_fill":null,"header_fill":null,"boxed":true,"complete":true},{"kind":"prose","role":"body","band":3,"column":0,"bbox":{"left":0.07097591888466413,"top":0.7322097378277154,"right":0.632446134347275,"bottom":0.8632958801498127},"title":"Another card","rows":[],"pairs":[],"blocks":[{"kind":"paragraph","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"You can add as many as you need. Anchor links are styled too.","model":"qwen3-vl:4b","prompt_version":"2","runs":[{"text":"You can add as many as you need. ","kind":"text"},{"text":"Anchor links","kind":"link"},{"text":" are styled too.","kind":"text"}]}],"state":"agreed"}],"size":null}],"graphic_kind":null,"pixels":null,"fill":[246,248,250],"title_fill":null,"header_fill":null,"boxed":true,"complete":true}],"corrections":[],"probes":[],"gaps":[],"failures":[],"caveats":[],"shortfalls":[]}</script>
+</body>
+</html>
