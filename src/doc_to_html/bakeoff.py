@@ -553,6 +553,31 @@ def report(attempts: list[Attempt]) -> str:
     )
 
 
+def write_dump(attempts: list[Attempt], root: Path) -> None:
+    """Every attempt's answers, prompts, document and Trace, under `root`.
+
+    `root/<model>/<fixture>/` — the layout `doc_to_html.report`,
+    `tools/inspect_run.py` and `tools/visual_review.py` read. A function
+    rather than inline in `main` so `tools/replay_run.py` writes exactly
+    what a run writes.
+    """
+    for attempt in attempts:
+        out = root / attempt.model.replace(":", "_") / attempt.fixture
+        out.mkdir(parents=True, exist_ok=True)
+        for index, (pass_name, answer, prompt) in enumerate(attempt.answers):
+            (out / f"{index:02d}_{pass_name}.json").write_text(answer)
+            (out / f"{index:02d}_{pass_name}.prompt.txt").write_text(prompt)
+        if attempt.html is not None:
+            (out / "document.html").write_text(attempt.html)
+        if attempt.zones_used is not None:
+            (out / "zones_used.json").write_text(attempt.zones_used)
+        if attempt.trace is not None:
+            # Written even when the Conversion raised: a run that died
+            # halfway is exactly the run whose steps you want to read, and
+            # the Trace holds everything up to the point it stopped.
+            (out / "trace.json").write_text(attempt.trace.to_json())
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="python -m doc_to_html.bakeoff",
@@ -595,21 +620,7 @@ def main(argv: list[str] | None = None) -> int:
     print(report(attempts))
 
     if args.dump:
-        for attempt in attempts:
-            out = args.dump / attempt.model.replace(":", "_") / attempt.fixture
-            out.mkdir(parents=True, exist_ok=True)
-            for index, (pass_name, answer, prompt) in enumerate(attempt.answers):
-                (out / f"{index:02d}_{pass_name}.json").write_text(answer)
-                (out / f"{index:02d}_{pass_name}.prompt.txt").write_text(prompt)
-            if attempt.html is not None:
-                (out / "document.html").write_text(attempt.html)
-            if attempt.zones_used is not None:
-                (out / "zones_used.json").write_text(attempt.zones_used)
-            if attempt.trace is not None:
-                # Written even when the Conversion raised: a run that died
-                # halfway is exactly the run whose steps you want to read, and
-                # the Trace holds everything up to the point it stopped.
-                (out / "trace.json").write_text(attempt.trace.to_json())
+        write_dump(attempts, args.dump)
         print(f"\nraw answers written to {args.dump}", file=sys.stderr)
 
     if args.json:
