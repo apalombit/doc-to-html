@@ -1169,9 +1169,14 @@ def _cap(box: BBox, others: list[BBox], direction: str,
     return round((neighbour + here) / 2 * span)
 
 
-def uncovered_regions(image: ImageArray, boxes: list[BBox]
-                      ) -> list[tuple[BBox, float]]:
+def uncovered_regions(image: ImageArray, boxes: list[BBox], *,
+                      type_only: bool = False) -> list[tuple[BBox, float]]:
     """Patches of uncovered ink, each bounded to its own ink and measured.
+
+    `type_only` takes out the page's own edge and every solid block before
+    looking — ink that is not type. The Gap audit asks it; recovering Zones
+    does not, because a solid block no box covers may be a lost figure, and a
+    Zone is how a figure gets drawn. See `_uncovered_mask`.
 
     The same search `uncovered_ink` has always done, reporting two things it
     could not: a box drawn round the **ink** rather than round the dilation that
@@ -1196,7 +1201,7 @@ def uncovered_regions(image: ImageArray, boxes: list[BBox]
     """
     cv2 = _cv2()
     height, width = image.shape[:2]
-    mask = _uncovered_mask(image, boxes)
+    mask = _uncovered_mask(image, boxes, type_only=type_only)
 
     kernel = cv2.getStructuringElement(
         cv2.MORPH_RECT,
@@ -1229,7 +1234,8 @@ def uncovered_regions(image: ImageArray, boxes: list[BBox]
     return found
 
 
-def _uncovered_mask(image: ImageArray, boxes: list[BBox]) -> ImageArray:
+def _uncovered_mask(image: ImageArray, boxes: list[BBox], *,
+                    type_only: bool = False) -> ImageArray:
     """Content ink with every box's padded footprint removed.
 
     Boxes are subtracted with the same padding `crop` adds, so ink the Extractor
@@ -1239,15 +1245,66 @@ def _uncovered_mask(image: ImageArray, boxes: list[BBox]) -> ImageArray:
     the other way round leaves a rule that a box happens to overlap broken into
     stubs too short for the aspect test to recognise, so the half of a rule
     nobody covered would be reported as content nobody covered.
+
+    **`type_only` takes two more things off first, for the same reason** —
+    N2, 2026-09-30, the two findings that read "far too much to be a mark, so
+    this is content nothing read" over ink that is not type:
+
+    - the page's own edge, `_without_page_edge`: `receipt_0010`'s warp keeps
+      2px of the grey ground round the paper, 23.0% of the page's ink;
+    - solid blocks, `_without_panels` at this page's scale: `equalise` takes
+      `cv_0013`'s dark sidebar for uneven light and blows it out, leaving
+      halos round every item and along the panel's edge — 26.1% of the page's
+      ink between the Zone boxes, every item in it boxed and drawn. The margin
+      round a panel is one `PANEL_SPAN` rather than a pixel, because the halo
+      fades over several: at one pixel three fragments of it were left as
+      findings, at one span one is.
+
+    Over all fifteen documents exactly those two findings go, and each page
+    keeps one small finding that hedges: `receipt_0010`'s dashed rule and a
+    strip of `cv_0013`'s halo. Nothing else on any page moves.
     """
     height, width = image.shape[:2]
     mask = content_ink(image)
+    if type_only:
+        span = max(1, round(PANEL_SPAN * max(height, width) / DETECT_LONG_EDGE))
+        mask = _without_panels(_without_page_edge(mask), span=span, grow=span)
     for box in boxes:
         left = int(max(0.0, box.left - PAD_X) * width)
         right = int(min(1.0, box.right + PAD_X) * width)
         top = int(max(0.0, box.top - PAD_Y) * height)
         bottom = int(min(1.0, box.bottom + PAD_Y) * height)
         mask[top:bottom, left:right] = 0
+    return mask
+
+
+PAGE_EDGE_INK = 0.5
+"""How much of its length the page's outermost row or column must be inked
+over to be the page's edge rather than something printed on it.
+
+Measured over all fifteen corpus pages on 2026-09-30: `receipt_0010`'s edges
+are inked over 0.97-1.00 of their length, two pixels deep, where its warp kept
+the grey ground round the paper; every other page's are 0.00-0.03. Half sits in
+the middle of that empty band, and a line of type touching the edge covers
+nowhere near it."""
+
+
+def _without_page_edge(mask: ImageArray) -> ImageArray:
+    """The ink mask with the page's own edge taken off, in place.
+
+    Rows are cleared from each side inward for as long as each is inked over
+    `PAGE_EDGE_INK` of its length, and never deeper than a tenth of the page.
+    The frame round a page is one connected component whose box is the whole
+    page, so `content_ink`'s separator test, which asks whether a component is
+    thin, cannot see it.
+    """
+    for side in range(4):
+        edge = np.rot90(mask, side)  # a view: clearing it clears `mask`
+        depth = 0
+        while (depth < edge.shape[0] // 10
+               and (edge[depth] > 0).mean() >= PAGE_EDGE_INK):
+            edge[depth] = 0
+            depth += 1
     return mask
 
 
@@ -1498,8 +1555,13 @@ Wider than any stroke or rule on the corpus's pages at that scale, which run
 1-4px; narrower than a filled bar, a badge or a sidebar."""
 
 
-def _without_panels(mask: ImageArray) -> ImageArray:
+def _without_panels(mask: ImageArray, *, span: int = PANEL_SPAN,
+                    grow: int = 3) -> ImageArray:
     """The ink mask with its solid blocks taken out, leaving type and rules.
+
+    `span` is the side of the smallest solid block, and `grow` how far round
+    one is taken with it; the defaults are deskew's, at `DETECT_LONG_EDGE`.
+    The Gap audit scales both to its page — see `_uncovered_mask`.
 
     `_line_sharpness` assumes the ink is lines of text, and a filled panel is
     not one. **Found 2026-09-29 on `cv_0013`**, once its picture was re-shot
@@ -1517,9 +1579,9 @@ def _without_panels(mask: ImageArray) -> ImageArray:
     directions; one more pixel of growth takes its antialiased edge with it.
     """
     cv2 = _cv2()
-    block = cv2.getStructuringElement(cv2.MORPH_RECT, (PANEL_SPAN, PANEL_SPAN))
+    block = cv2.getStructuringElement(cv2.MORPH_RECT, (span, span))
     panels = cv2.dilate(cv2.morphologyEx(mask, cv2.MORPH_OPEN, block),
-                        np.ones((3, 3), np.uint8))
+                        np.ones((grow, grow), np.uint8))
     type_only: ImageArray = cv2.bitwise_and(mask, cv2.bitwise_not(panels))
     return type_only
 

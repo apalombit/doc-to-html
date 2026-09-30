@@ -599,6 +599,39 @@ def shortfall(image: ImageArray, zone: Zone, index: int) -> Shortfall | None:
     )
 
 
+def gaps(image: ImageArray, zones: list[Zone]) -> list[Gap]:
+    """Type no Zone covers, each patch with how much of the page's ink it holds.
+
+    `Conversion._audit` says what this can and cannot see. Asked `type_only`,
+    so the page's own edge and a panel's solid fill are not reported as
+    content — see `preprocess._uncovered_mask` for the two findings that did.
+    """
+    boxes = [zone.bbox for zone in zones if zone.bbox is not None]
+    # The note says how the finding was made, because that is what bounds
+    # how far to trust it — a threshold on dark pixels found this, so a
+    # small patch may be a Mark rather than lost content.
+    #
+    # **And it says how much, which it did not until spec 0007 Phase A-1.**
+    # The old note was "found by ink coverage, so it may be a mark" at every
+    # size, and on `receipt_0010` that sentence stood over three quarters of
+    # the document. A hedge that is right about a stray glyph is a lie about
+    # a page, so the hedge is now attached to the size it is true of.
+    # The share is of the *uncovered ink*, not of the rectangle. Asked about
+    # the rectangle, `receipt_0010`'s grouped edge scraps come back as the
+    # whole page holding 100% of its ink — a finding that would be false in
+    # the one direction this phase exists to prevent.
+    return [
+        Gap(bbox=box, ink_share=share,
+            note=(
+                f"{share * 100:.1f}% of this page's printed ink is in here "
+                + ("— far too much to be a mark, so this is content nothing "
+                   "read" if share >= GAP_IS_CONTENT else
+                   "— found by ink coverage, so it may be a mark")
+            ))
+        for box, share in uncovered_regions(image, boxes, type_only=True)
+    ]
+
+
 def empty_zone(image: ImageArray, zone: Zone) -> EmptyZone | None:
     """Whether this Zone's crop is blank, and so holds nothing to classify.
 
@@ -1649,30 +1682,7 @@ class Conversion:
         second family before that method is written. Nothing here discharges that
         debt; it narrows the window in which the debt is invisible.
         """
-        boxes = [zone.bbox for zone in document.zones if zone.bbox is not None]
-        # The note says how the finding was made, because that is what bounds
-        # how far to trust it — a threshold on dark pixels found this, so a
-        # small patch may be a Mark rather than lost content.
-        #
-        # **And it says how much, which it did not until spec 0007 Phase A-1.**
-        # The old note was "found by ink coverage, so it may be a mark" at every
-        # size, and on `receipt_0010` that sentence stood over three quarters of
-        # the document. A hedge that is right about a stray glyph is a lie about
-        # a page, so the hedge is now attached to the size it is true of.
-        # The share is of the *uncovered ink*, not of the rectangle. Asked about
-        # the rectangle, `receipt_0010`'s grouped edge scraps come back as the
-        # whole page holding 100% of its ink — a finding that would be false in
-        # the one direction this phase exists to prevent.
-        document.gaps = [
-            Gap(bbox=box, ink_share=share,
-                note=(
-                    f"{share * 100:.1f}% of this page's printed ink is in here "
-                    + ("— far too much to be a mark, so this is content nothing "
-                       "read" if share >= GAP_IS_CONTENT else
-                       "— found by ink coverage, so it may be a mark")
-                ))
-            for box, share in uncovered_regions(rectified.image, boxes)
-        ]
+        document.gaps = gaps(rectified.image, document.zones)
 
     def _climb_ladders(self, rectified: Rectified, document: Document) -> None:
         """Advance every unresolved item one Rung.

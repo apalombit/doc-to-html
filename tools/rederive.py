@@ -24,6 +24,9 @@ and can be recomputed from it, in the order a Conversion runs them:
                                     orchestrator.shortfall  (_measure_shortfalls)
     5. Probes re-run over the tables as they now stand
                                     probes.run         (after _measure_type)
+    6. Gaps re-measured over the Zones' boxes — N2, 2026-09-30, when the
+       audit stopped reading a page's edge and a panel's fill as content
+                                    orchestrator.gaps               (_audit)
 
 then re-renders into a run-shaped directory that `doc_to_html.report` and
 `tools/visual_review.py` read without knowing the difference.
@@ -63,7 +66,7 @@ sys.path.insert(0, str(TOOLS))
 from doc_to_html import probes  # noqa: E402
 from doc_to_html.corpus import SOURCES  # noqa: E402
 from doc_to_html.ir import Caveat, Document, Kind  # noqa: E402
-from doc_to_html.orchestrator import shortfall  # noqa: E402
+from doc_to_html.orchestrator import gaps, shortfall  # noqa: E402
 from doc_to_html.preprocess import rectify  # noqa: E402
 from doc_to_html.render import render  # noqa: E402
 from doc_to_html.wire import (  # noqa: E402
@@ -78,7 +81,7 @@ _REPAIR = re.compile(
 
 
 def rederive(document: Document, png: Path) -> None:
-    """Steps 1-5 of this module's docstring, in place."""
+    """Steps 1-6 of this module's docstring, in place."""
     for zone in document.zones:
         if _title_is_its_header_cell(zone):
             zone.title = None
@@ -112,6 +115,7 @@ def rederive(document: Document, png: Path) -> None:
     ]
     # Q5, 2026-09-29: a column-sum totals the rows above its summary only.
     document.probes = probes.run(document)
+    document.gaps = gaps(image, document.zones)
 
 
 def documents_in(source: Path, model: str) -> list[tuple[str, Path]]:
@@ -159,7 +163,8 @@ def main() -> int:
         out.write_text(render(document), encoding="utf-8")
         print(f"{name:<22} caveats={len(document.caveats):<3} "
               f"header_fills={sum(1 for z in document.zones if z.header_fill)} "
-              f"shortfalls={len(document.shortfalls)}")
+              f"shortfalls={len(document.shortfalls)} "
+              f"gaps={len(document.gaps)}")
 
     print(f"\n-> {target.relative_to(REPO)}")
     return 0

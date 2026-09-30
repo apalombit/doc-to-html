@@ -190,6 +190,68 @@ class TestRecoveringInkNoBoxCovers:
         assert recovered_zones(image, detected) == detected
 
 
+def sheet(marks: list[tuple[int, int, int, int]], ink: int,
+          size: int = 800) -> np.ndarray:
+    """`page` at a corpus page's size, where a panel is wider than a stroke.
+
+    `_without_panels` is sized for a page 800px on its long edge, and at
+    `page`'s 200px a solid 2px square is a panel, so a stroke would be one."""
+    image = np.full((size, size, 3), 245, dtype=np.uint8)
+    for left, top, right, bottom in marks:
+        image[top:bottom, left:right] = ink
+    return image
+
+
+def type_at(left: int, top: int, right: int, lines: int = 3
+            ) -> list[tuple[int, int, int, int]]:
+    """Strokes 2px wide and 12px tall, 5px apart, a few lines of them: ink
+    that reads as type to the eye and to `_without_panels` alike."""
+    return [(x, top + 20 * line, x + 2, top + 20 * line + 12)
+            for line in range(lines) for x in range(left, right, 5)]
+
+
+class TestInkThatIsNotContent:
+    """N2, 2026-09-30. "Content nothing read" fired on ink that is not type:
+    `cv_0013`'s dark sidebar, which `equalise` blows out into halos round every
+    item, 26.1% of the page's ink between the Zone boxes; and `receipt_0010`'s
+    paper edge, a 2px frame the warp keeps, 23.0%. The Gap audit reads the ink
+    with both taken out; recovering Zones does not."""
+
+    FRAME = [(0, 0, 800, 2), (0, 798, 800, 800), (0, 0, 2, 800),
+             (798, 0, 800, 800)]
+    PANEL = [(0, 0, 280, 800)]
+
+    def test_the_pages_own_edge_is_not_content(self) -> None:
+        image = sheet(self.FRAME + type_at(100, 100, 500), 180)
+        boxes = [BBox(0.1, 0.1, 0.65, 0.2)]
+
+        assert uncovered_regions(image, boxes), "read as it always was"
+        assert uncovered_regions(image, boxes, type_only=True) == []
+
+    def test_type_that_touches_the_edge_is_not_the_edge(self) -> None:
+        """A page's edge is ink along most of its length; a line of type
+        cropped tight to the top of the page is not."""
+        image = sheet(type_at(100, 0, 300, lines=1), 10)
+
+        assert uncovered_regions(image, [], type_only=True)
+
+    def test_a_panels_fill_between_its_items_is_not_content(self) -> None:
+        image = sheet(self.PANEL, 40)
+        boxes = [BBox(0.0, 0.1, 0.35, 0.2), BBox(0.0, 0.4, 0.35, 0.5)]
+
+        assert uncovered_regions(image, boxes), "read as it always was"
+        assert uncovered_regions(image, boxes, type_only=True) == []
+
+    def test_type_beside_a_panel_is_still_found(self) -> None:
+        image = sheet(self.PANEL + type_at(450, 400, 700), 40)
+        boxes = [BBox(0.0, 0.0, 0.35, 1.0)]
+
+        (box, share), = uncovered_regions(image, boxes, type_only=True)
+
+        assert box.left * 800 == pytest.approx(450, abs=2)
+        assert share > 0.0
+
+
 class TestHowMuchAFindingSays:
     """A finding about missing content has to say how much, and the share has
     to be of the page rather than of the finding."""
