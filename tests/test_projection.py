@@ -322,3 +322,51 @@ class TestAValueTooLongForItsColumnWraps:
         assert "ines.halloran@fempost.example" in " ".join(
             block.text for block in page.blocks
         )
+
+
+class TestALabelWithNoValueDoesNotSizeTheLabelColumn:
+    """A pairs Zone is a grid of `auto 1fr`. A pair with no value used to put
+    its label in the `auto` column all the same, so the longest such label
+    sized it to the whole box and the `1fr` column was left a few pixels —
+    where `anywhere`, above, broke the next value after every letter.
+    `catalogue_0015`'s `each` was printed one letter to a line, twice. N4.
+    """
+
+    def a_card(self) -> object:
+        """`catalogue_0015`'s IR-212 card as read, one of three in its Band."""
+        from doc_to_html.ir import (BBox, Document, Kind, Pair, Source, Zone,
+                                    cell)
+
+        doc = Document(source=Source(path="x.png", sha256="0" * 64,
+                                     width=900, height=900))
+        lines = [("IR-212", ""), ("Iron thumb latch", ""),
+                 ("Suffolk pattern, 265 mm, beeswax", ""),
+                 ("£28.00", "each"), ("In stock", "")]
+        doc.zones = [
+            Zone(kind=Kind.PAIRS, complete=True, band=0, column=index,
+                 bbox=BBox(0.33 * index, 0.0, 0.33 * index + 0.3, 0.3),
+                 pairs=[Pair(label=cell(label), value=cell(value))
+                        for label, value in lines])
+            for index in (0, 1, 2)
+        ]
+        return doc
+
+    @needs_chrome
+    def test_the_value_keeps_its_word_whole(self) -> None:
+        from doc_to_html.render import render
+
+        page = project(render(self.a_card()), width=MIN_WIDTH)
+
+        each = [block for block in page.blocks if block.text == "each"]
+        assert len(each) == 3
+        assert all(block.lines == 1 for block in each)
+
+    @needs_chrome
+    def test_and_the_label_with_no_value_is_still_printed_whole(self) -> None:
+        from doc_to_html.render import render
+
+        page = project(render(self.a_card()), width=MIN_WIDTH)
+
+        assert page.clipped == 0
+        assert sum(block.text == "Suffolk pattern, 265 mm, beeswax"
+                   for block in page.blocks) == 3

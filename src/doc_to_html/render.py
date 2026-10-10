@@ -80,6 +80,14 @@ dl.pairs { display:grid; grid-template-columns:auto 1fr; gap:.15em .75em; margin
    `alignment_agreement` +0.0019, ratchet clean, and `cv_0013`'s height_ratio
    1.77 -> 2.14, which is the wrapped address taking the lines it needs. */
 dl.pairs dt, dl.pairs dd { overflow-wrap:anywhere; }
+/* A label with no value is not in the label column. Left there, the `auto`
+   track sizes itself to it as if a value stood beside it, and the `1fr` track
+   gets what is left: `catalogue_0015`'s `Suffolk pattern, 265 mm, beeswax` took
+   the whole card and `each`, the next line's value, was broken after every
+   letter by the `anywhere` above. Across both columns it sizes neither, so the
+   label column is as wide as the labels that have values. N4, 2026-10-10. */
+dl.pairs dt.alone { grid-column:1 / -1; }
+dl.pairs dt.alone + dd { display:none; }
 dl.pairs dt { color:var(--muted); }
 dl.pairs dd { margin:0; }
 .zone-summary dl.pairs dd { font-weight:600; text-align:right; }
@@ -650,14 +658,14 @@ def _header_style(zone: Zone, document: Document) -> str:
 
 
 def _pairs(zone: Zone, document: Document) -> str:
-    return (
-        '<dl class="pairs">'
-        + "".join(
-            f"<dt>{_cell(p.label, document)}</dt><dd>{_cell(p.value, document)}</dd>"
-            for p in zone.pairs
-        )
-        + "</dl>"
-    )
+    """One `dt` and one `dd` per pair; a pair with no value marks its label
+    `alone`, which the stylesheet draws across both columns."""
+    parts = []
+    for pair in zone.pairs:
+        label, value = _cell(pair.label, document), _cell(pair.value, document)
+        tag = "<dt>" if value.strip() else '<dt class="alone">'
+        parts.append(f"{tag}{label}</dt><dd>{value}</dd>")
+    return '<dl class="pairs">' + "".join(parts) + "</dl>"
 
 
 def _prose(zone: Zone, document: Document) -> str:
