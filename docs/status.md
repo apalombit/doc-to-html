@@ -1,15 +1,15 @@
-# Status — 2026-09-30 (the queue: **N1 and N2 done, gates met; `q5-result/` the floor and the control; N3 next**)
+# Status — 2026-10-10 (the queue: **N1-N3 done, gates met; `q5-result/` the floor and the control; N4 next**)
 
 **Live document.** This is where the project actually is. When it goes stale,
-rewrite it; do not add a banner and leave it. Last rewritten 2026-09-30, when
-N2 of the open-issues queue closed.
+rewrite it; do not add a banner and leave it. Last rewritten 2026-10-10, when
+N3 of the open-issues queue closed.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file. If you are going to look at output — and you
 should — use the **`visual-review` skill**.
 
-Branch `scaffold`. **840 tests pass, `mypy src/` clean.**
+Branch `scaffold`. **843 tests pass, `mypy src/` clean.**
 
 ---
 
@@ -30,7 +30,8 @@ Queue       Q1-Q7, in order, go given 2026-09-27
               Q5 DONE 2026-09-30, sweep Q5-40-sweep, gate MET 8 of 8
             continued: N1-N4 model-free, then Q6, Q7, N5
               N1 DONE 2026-09-30, offline, gate MET 8 of 8
-              N2 DONE 2026-09-30, offline, gate MET 8 of 8      N3 <- next
+              N2 DONE 2026-09-30, offline, gate MET 8 of 8
+              N3 DONE 2026-10-10, offline, gate MET 7 of 7      N4 <- next
 Thread 3/C  Repair loop (re-scoped first)
 Thread 4/D  Human corrections (unscheduled)
 ```
@@ -143,11 +144,7 @@ company that does not exist**, `Αγγελίδης Μπραγκαντής Α.Ε.
 established the pipeline cannot declare loss inside a line. **Do not build a
 third detector without a new kind of evidence.**
 
-**4. Doubled text.** `statement_0006` prints `Totals for the period` twice: a
-sliver Zone overlaps the transactions table in one Band, which also makes
-the snap refuse that document and squeezes the table to about 70% of the
-width.
-`nonlatin_0014` prints its total `12.437,82` twice. *Not* a fault, though the
+**4. Doubled text.** `nonlatin_0014` prints its total `12.437,82` twice. *Not* a fault, though the
 numbers call it one: `report_0011`'s precision counts every section and
 footnote number as invented, because the source draws them with CSS counters
 and `<ol>` markers that `project()` cannot see.
@@ -174,6 +171,43 @@ page** where the sources set 9–16px — deferred with Q3's evidence.
 ---
 
 ## What the last step shipped
+
+### N3 — a totals row across the table's edge, `8e1c0f8`, 2026-10-10, **gate MET, 7 of 7**
+
+**The detector put it there.** heron ends `statement_0006`'s transactions
+table at 0.9300, through the middle of its own totals row, and reports
+`Totals for the period` as text at 0.9255–0.9352. Starting 0.0045 above the
+edge, it was never a strip *under* the table for `attach_trailing_rows`; not
+wholly inside, `without_enclosed` kept it. In the table's Band it printed the
+line a second time, refused the snap for the page, and squeezed the table
+into two thirds of the width. `detector._trailing_row` now also takes a strip
+that starts below the table's top and ends below its bottom, under every
+other guard.
+
+**Measured with no model, and why that is enough.** `tools/layout_front.py`:
+exactly `statement_0006` changes, 6 Zones to 5, and its five remaining boxes
+are identical to full precision — the detector's own snap had already put
+them on their ink, so the snap the sliver blocked moves nothing. A change
+that only removes a Zone moves no crop, so `tools/replay_run.py` measures it
+— over a scratch copy of the control's answers with the sliver's three calls
+(classify, prose, runs) taken out. The Conversion then asks exactly the other
+17, with byte-identical prompts, nothing asked beyond the run and nothing
+unserved. The replay baseline, unmodified, equals `rederive.py`'s arm 15 of
+15, so the two loops agree on today's code.
+
+| # | clause | result |
+|---|---|---|
+| 1 | `statement_0006`: 5 Zones; `Totals for the period` printed once; 42 rows, column-sum reconciles | **holds** |
+| 2 | layout front: the other fourteen's Zones identical; statement's five boxes identical to full precision | **holds** |
+| 3 | replay asks exactly the 17 remaining calls, prompts byte-identical | **17 of 17** |
+| 4 | the other fourteen byte-identical; statement precision 0.9827 → 0.9903, height 2.05 → 1.60, columns within tolerance 0.559 → 1.000, and their companions | **holds** — 14 of 14 |
+| 5 | ratchet against the floor, four legs, fifteen; the report's snap line names no document | **holds; none** |
+| 6 | visual review, fifteen sheets, `--previous` the replay baseline | **no `worse`** — fourteen `same`, statement `better` |
+| 7 | tests, mypy | **843, clean** |
+
+**A tool finding, not fixed.** On a run built by `rederive.py` the report's
+"The Bands are valid everywhere" is vacuous: `_snap_note` reads refusals from
+`trace.json`, and `rederive.py` writes none. Replays and sweeps write one.
 
 ### N2 — the Gap audit reads type, `1a720ef`, 2026-09-30, **gate MET, 8 of 8**
 
@@ -354,14 +388,9 @@ never did. `bakeoff.write_dump` is the dump writer both share.
 The ready prompt is [`specs/0007-handover.md`](specs/0007-handover.md), "The
 open-issues queue, continued — Q6, Q7 and what the whole pictures showed".
 **Each gate is still agreed with Alessandro before any code.** Cheapest
-first — the first four need no model. **N1 and N2 are done**, above.
+first — the first four need no model. **N1 to N3 are done**, above.
 
-**N3 — next. `statement_0006`'s sliver Zone** — `Totals for the period` boxed on its
-own at 0.042–0.170 across, 0.927–0.935 down, inside the table's box, so the
-line prints twice, the snap is refused and the table is squeezed. A layout
-question, measurable with `tools/layout_front.py` for nothing.
-
-**N4. `catalogue_0015`'s `each`, one letter to a line** — a renderer
+**N4 — next. `catalogue_0015`'s `each`, one letter to a line** — a renderer
 question, measurable by re-rendering the control.
 
 **Q6. `nonlatin_0014` — its premise is gone.** On the whole picture the

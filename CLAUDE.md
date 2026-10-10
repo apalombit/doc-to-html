@@ -111,7 +111,9 @@ Queue, continued   N1-N4 model-free (two false-alarm findings, statement's
               N1 DONE 2026-09-30, offline, gate MET: a prose or list
               Shortfall counts lines as its Extractor does
               N2 DONE 2026-09-30, offline, gate MET: the Gap audit
-              reads type, not a page's edge or a panel's fill  N3 <- next
+              reads type, not a page's edge or a panel's fill
+              N3 DONE 2026-10-10, offline, gate MET: a totals row
+              across the table's edge is a trailing row        N4 <- next
 Thread 3/C  Repair loop (re-scoped against A+B residuals first)
 Thread 4/D  Human corrections (unscheduled)
 ```
