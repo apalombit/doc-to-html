@@ -25,10 +25,10 @@ from pathlib import Path
 import numpy as np
 
 from doc_to_html.corpus import SOURCES, SWEEP
-from doc_to_html.ir import BBox, Block, Document, Kind, Source, Zone, cell
+from doc_to_html.ir import BBox, Block, Document, Kind, Role, Source, Zone, cell
 from doc_to_html.preprocess import rectify
 from doc_to_html.render import render
-from doc_to_html.structure import Flow, Region, structure
+from doc_to_html.structure import Flow, Region, alike, cut_at_edges, structure
 from doc_to_html.style import measure
 
 REPO = Path(__file__).resolve().parent.parent
@@ -226,3 +226,56 @@ class TestTheIRCarriesTheStructure:
         html = render(document)
         assert 'class="lane" style="flex:34.4 1 0;background:rgb(38,51,63)"' in html
         assert 'class="lane" style="flex:65.6 1 0"' in html
+
+
+def zones_of(name: str) -> list[Zone]:
+    html = (FLOOR / f"{name}.html").read_text(encoding="utf-8")
+    found = re.search(r'id="doc-ir">(.*?)</script>', html, re.S)
+    assert found
+    return Document.from_json(found.group(1).replace("<\\/", "</")).zones
+
+
+class TestTheStructureShapesTheBoxes:
+    """Spec 0008, step 3."""
+
+    def test_the_catalogue_title_is_cut_out_of_the_first_card(self) -> None:
+        rectified = rectify(REPO / SOURCES["catalogue_0015"].png)
+        zones = zones_of("catalogue_0015")
+        grid = next(r for r in regions_of("catalogue_0015") if r.flow is Flow.GRID)
+        cut = cut_at_edges(rectified.image, zones, regions_of("catalogue_0015"))
+
+        assert len(cut) == len(zones) + 1
+        for zone in cut:
+            assert zone.bbox is not None
+            assert not zone.bbox.top < grid.top < zone.bbox.bottom
+        title = [z for z in cut if z.bbox and z.bbox.bottom < grid.top and z.bbox.left < 0.1]
+        assert len(title) == 1 and title[0].band == 0 and title[0].role is Role.HEADER
+        cards = [z for z in cut if z.bbox and grid.holds(z.bbox)]
+        assert len(cards) == 9
+        assert all(card.role is Role.BODY for card in cards)
+
+    def test_a_page_where_nothing_crosses_an_edge_is_left_as_it_is(self) -> None:
+        rectified = rectify(REPO / SOURCES["cv_0013"].png)
+        zones = zones_of("cv_0013")
+        assert cut_at_edges(rectified.image, zones, regions_of("cv_0013")) is zones
+
+    def test_a_grids_copies_take_the_kind_most_of_them_were_given(self) -> None:
+        grid = [Region(0.0, 1.0, Flow.GRID, (0.5,), rows=2)]
+        boxes = [BBox(0.0, 0.0, 0.4, 0.4), BBox(0.6, 0.0, 1.0, 0.4),
+                 BBox(0.0, 0.6, 0.4, 1.0), BBox(0.6, 0.6, 1.0, 1.0)]
+        kinds = [Kind.PAIRS, Kind.TABLE, Kind.PAIRS, Kind.PROSE]
+        zones = [Zone(kind=kind, bbox=box) for kind, box in zip(kinds, boxes)]
+        assert alike(zones, grid) == {1: Kind.PAIRS, 3: Kind.PAIRS}
+
+    def test_a_tie_names_no_majority(self) -> None:
+        grid = [Region(0.0, 1.0, Flow.GRID, (0.5,))]
+        zones = [Zone(kind=Kind.PAIRS, bbox=BBox(0.0, 0.0, 0.4, 1.0)),
+                 Zone(kind=Kind.TABLE, bbox=BBox(0.6, 0.0, 1.0, 1.0))]
+        assert alike(zones, grid) == {}
+
+    def test_only_a_grid_votes(self) -> None:
+        columns = [Region(0.0, 1.0, Flow.COLUMNS, (0.5,))]
+        zones = [Zone(kind=Kind.PAIRS, bbox=BBox(0.0, 0.0, 0.4, 0.4)),
+                 Zone(kind=Kind.PAIRS, bbox=BBox(0.0, 0.5, 0.4, 0.9)),
+                 Zone(kind=Kind.TABLE, bbox=BBox(0.6, 0.0, 1.0, 1.0))]
+        assert alike(zones, columns) == {}

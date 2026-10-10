@@ -54,7 +54,7 @@ from .preprocess import (
     zone_pixels,
 )
 from .render import render
-from .structure import structure
+from .structure import alike, cut_at_edges, structure
 from .trace import Change, Disposition, Stage, Trace
 from .wire import (
     MappingError,
@@ -1147,6 +1147,8 @@ class Conversion:
             )
         document.zones = zones
         self._read_structure(rectified, document)
+        if self._cut_at_regions(rectified, document):
+            self._read_structure(rectified, document)
 
     def _read_structure(self, rectified: Rectified, document: Document) -> None:
         """The page's regions, read off the final boxes — spec 0008. See
@@ -1176,6 +1178,24 @@ class Conversion:
                       "splits": [round(x, 4) for x in r.splits],
                       "rows": r.rows} for r in document.regions],
         )
+
+    def _cut_at_regions(self, rectified: Rectified, document: Document) -> bool:
+        """Cut a Zone that crosses the edge of a grid or a column region — spec
+        0008, step 3. See `structure.cut_at_edges`. Returns whether it cut."""
+        try:
+            cut = cut_at_edges(rectified.image, document.zones, document.regions)
+        except MappingError as error:
+            self.trace.record(Stage.LAYOUT, "cut_at_regions", Disposition.REJECTED,
+                              reason=f"{type(error).__name__}: {error}")
+            return False
+        if cut is document.zones:
+            return False
+        self.trace.record(
+            Stage.LAYOUT, "cut_at_regions", Disposition.ACCEPTED,
+            before=[_box_data(zone) for zone in document.zones],
+            after=[_box_data(zone) for zone in cut])
+        document.zones = cut
+        return True
 
     def _cover_the_page(self, rectified: Rectified,
                         zones: list[Zone]) -> list[Zone]:
@@ -1413,6 +1433,24 @@ class Conversion:
                     Stage.CLASSIFY, "classify_caveat", Disposition.ACCEPTED,
                     zone_index=index, kind=classified.kind.value, note=note,
                 )
+
+        self._read_copies_alike(document)
+
+    def _read_copies_alike(self, document: Document) -> None:
+        """A grid's copies are read as one Kind, before anything is extracted —
+        spec 0008, step 3. See `structure.alike`."""
+        changes = alike(document.zones, document.regions,
+                        frozenset(self.unclassified))
+        if not changes:
+            return
+        self.trace.record(
+            Stage.CLASSIFY, "copies_alike", Disposition.OVERRIDDEN,
+            changed=[Change(path=f"zones[{index}].kind",
+                            before=document.zones[index].kind.value,
+                            after=kind.value)
+                     for index, kind in sorted(changes.items())])
+        for index, kind in changes.items():
+            document.zones[index].kind = kind
 
     def _read_runs(self, rectified: Rectified, document: Document,
                    index: int) -> None:

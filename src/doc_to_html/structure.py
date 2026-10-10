@@ -33,19 +33,25 @@ its gutter cannot be told from a two-column table's. So the menu stays
 `single` here — the pixels cannot decide — and step 3 asks the model one
 closed question about it instead.
 
-Nothing in a Conversion calls this yet; step 2 carries it in the IR.
+`Conversion._read_structure` sets `Document.regions` from it once the boxes are
+final (step 2), and step 3 lets it shape them: `cut_at_edges` cuts a Zone that
+crosses the edge of a grid or a column region, and `alike` reads a grid's copies
+as one Kind.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from collections import Counter
+from dataclasses import dataclass, replace
 from typing import Any, Sequence
 
 import numpy as np
 
-from .ir import BBox, Flow, Region
-from .preprocess import MIN_GAP_THICKNESS, SEPARATOR_ASPECT, ImageArray, _cv2
+from .ir import BBox, Flow, Kind, Region, Role, Zone
+from .preprocess import (MIN_GAP_THICKNESS, MIN_ZONE_INK, SEPARATOR_ASPECT,
+                         ImageArray, _cv2, ink_fraction, snap_to_ink, zone_pixels)
 from .style import CONTAINED, SAME_COLOUR, rectangles
+from .wire import bands_from_boxes, validate_bands
 
 
 SAME_SIZE = 0.01
@@ -292,3 +298,87 @@ def _extended(top: float, bottom: float, splits: list[float],
                and b.top >= ceiling and b.bottom <= floor]
     return (min([top] + [b.top for b in between]),
             max([bottom] + [b.bottom for b in between]))
+
+
+def cut_at_edges(image: ImageArray, zones: list[Zone],
+                 regions: Sequence[Region]) -> list[Zone]:
+    """The Zones with each one that crosses the edge of a grid or a column
+    region cut there — the same list when none does. Spec 0008, step 3.
+
+    `catalogue_0015`'s first card box runs from the page title down through the
+    first card, so the title was read as part of a card and never printed. The
+    grid's top is where the cards begin, drawn on the page; a box straddling it
+    holds two things. Each part is moved onto its own ink with `snap_to_ink`,
+    which caps growth at the midpoint to a neighbour, and a part carrying less
+    than `MIN_ZONE_INK` is no Zone. The Bands are derived again, and Band 0 is
+    the header, as `_cover_the_page` has it.
+
+    Raises `MappingError` when the parts cannot sit in valid Bands; the caller
+    keeps the uncut boxes.
+    """
+    edges = sorted({edge for region in regions if region.flow is not Flow.SINGLE
+                    for edge in (region.top, region.bottom)} - {0.0, 1.0})
+    pieces: dict[int, list[BBox]] = {}
+    for index, zone in enumerate(zones):
+        box = zone.bbox
+        if box is None:
+            continue
+        inside = [edge for edge in edges if box.top < edge < box.bottom]
+        if inside:
+            cuts = [box.top, *inside, box.bottom]
+            pieces[index] = [BBox(box.left, upper, box.right, lower)
+                             for upper, lower in zip(cuts, cuts[1:])]
+    if not pieces:
+        return zones
+
+    new = [part for index in sorted(pieces) for part in pieces[index]]
+    kept = [zone.bbox for index, zone in enumerate(zones)
+            if index not in pieces and zone.bbox is not None]
+    snapped = iter(snap_to_ink(image, new + kept)[:len(new)])
+
+    cut: list[Zone] = []
+    for index, zone in enumerate(zones):
+        if index not in pieces:
+            cut.append(zone)
+            continue
+        for _ in pieces[index]:
+            part = replace(zone, bbox=next(snapped))
+            if ink_fraction(zone_pixels(image, part)) >= MIN_ZONE_INK:
+                cut.append(part)
+
+    placed = bands_from_boxes([zone.bbox for zone in cut if zone.bbox is not None])
+    renumbered = [
+        replace(zone, band=band, column=column,
+                role=(Role.HEADER if band == 0 else
+                      Role.BODY if zone.role is Role.HEADER else zone.role))
+        for zone, (band, column) in zip(cut, placed)
+    ]
+    validate_bands(renumbered)
+    return renumbered
+
+
+def alike(zones: Sequence[Zone], regions: Sequence[Region],
+          skip: frozenset[int] = frozenset()) -> dict[int, Kind]:
+    """Which Zones change Kind so that a grid's copies are read alike — spec
+    0008, step 3.
+
+    `catalogue_0015`'s nine cards are one design drawn nine times, and were
+    classified one at a time as five `pairs`, three `table` and a `prose`; the
+    three tables lost most of their words. Within each `grid` Region every Zone
+    takes the Kind most of them were given. A tie names no majority and changes
+    nothing; `skip` is the Zones that have no Kind to vote with.
+    """
+    changes: dict[int, Kind] = {}
+    for region in regions:
+        if region.flow is not Flow.GRID:
+            continue
+        held = [index for index, zone in enumerate(zones)
+                if zone.bbox is not None and region.holds(zone.bbox)
+                and index not in skip]
+        ranked = Counter(zones[index].kind for index in held).most_common()
+        if len(held) < 2 or (len(ranked) > 1 and ranked[0][1] == ranked[1][1]):
+            continue
+        kind = ranked[0][0]
+        changes.update({index: kind for index in held
+                        if zones[index].kind is not kind})
+    return changes
