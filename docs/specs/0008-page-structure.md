@@ -1,6 +1,6 @@
 # Read the page's structure before its boxes
 
-**Status: open — step 1 DONE 2026-10-10, gate MET; step 2 next.** Opened 2026-10-10, Alessandro's decision,
+**Status: open — step 1 DONE 2026-10-10, gate MET; step 2 DONE 2026-10-10, gate NOT met on the ratchet; step 3 next.** Opened 2026-10-10, Alessandro's decision,
 after reviewing the fresh sweep `F1-sweep`. Tracking issue **#31**. It works
 under spec 0007's target and ratchet; nothing in 0007 changes.
 
@@ -167,6 +167,48 @@ Offline, no model.
   - no `worse` in the review.
 - **Expect `menu_0012` and `catalogue_0015` not to move** — their faults are in
   the boxes, which is step 3.
+
+#### Outcome — step 2, 2026-10-10, gate NOT met on the ratchet
+
+`Document.regions`; `Conversion._read_structure` sets it in `_layout` once the
+boxes are final, and `tools/rederive.py` step 7 re-derives it. A Zone's region
+and lane follow from its box (`Region.holds`, `Region.lane_of`) — nothing is
+recorded twice. `render._columns` draws a `columns` Region as its lanes side
+by side, each as wide as the page draws it, each a stack of rows worked out
+among its own Zones; a lane whose Zones share one fill is painted with it.
+
+Measured offline: `S2-00-base` (`rederive.py` over F1-sweep at step 1's
+commit — **15 of 15 byte-identical to F1-sweep**) against `S2-04-lanes`.
+
+| document | tau | height | beside |
+|---|---|---|---|
+| `cv_0013` | 0.5616 → **0.9838** | 2.98 → **1.96** | 0.5769 → **0.4000** |
+| `darkdeck_0009` | 0.8556 → **0.9805** | 1.68 → **1.32** | 0.9677 → **0.8148** |
+| `newsletter_0008` | 0.8615 → **1.0000** | 1.87 → **1.67** | 0.5000 → **0.7000** |
+
+| # | clause | result |
+|---|---|---|
+| 1 | the three read in the source's order, sidebar and aside drawn as a column | **holds** — and the sidebar one dark strip, the aside one panel |
+| 2 | every document with no `columns` region unchanged | **holds** — twelve identical outside the stylesheet and the `regions` key, and pixel-identical |
+| 3 | the ratchet holds, bar the N4 exception | **FAILS** — T3 beside on `cv_0013` and `darkdeck_0009` |
+| 4 | no `worse` in the review | **holds** — the three `better` by eye, twelve pixel-identical |
+
+**Why beside falls, measured rather than argued.** A two-column page's
+side-by-side pairs are coincidences of height between independent columns, and
+the Band render reproduced them by construction — Bands are built from exactly
+those overlaps, which is also what interleaved the columns. `darkdeck_0009`
+keeps 88 of its 92 source pairs either way; the column render adds false ones
+where an aside item lands beside a table row it does not touch in the source.
+Two ways of keeping the coincidences were built and measured: lanes sharing
+row lines taken from the page (beside `cv_0013` 0.41, `darkdeck_0009` 0.85)
+open gaps in every lane wherever the other lane is taller, and rows
+proportional to the page's own (`darkdeck_0009` 0.93) make the pages 3 to 6
+times the source's height. Both look less like the source; neither holds the
+ratchet. What shipped is the arm that looks most like the page.
+
+`.columns dl.pairs` caps a label column at half its lane: `cv_0013`'s
+`Reg. no. 11408` was broken after every letter in the narrower sidebar — N4's
+fault, in a lane, and fixed only inside lanes so no other pairs list moves.
 
 ### Step 3 — let the structure shape the boxes
 

@@ -460,6 +460,44 @@ class Style:
     shade: tuple[int, int, int] | None = None
 
 
+class Flow(str, Enum):
+    """Which way a Region is read. See `structure.structure`."""
+
+    SINGLE = "single"
+    COLUMNS = "columns"
+    GRID = "grid"
+
+
+@dataclass(frozen=True)
+class Region:
+    """A horizontal slice of the page, the full width of it, and how it is read
+    — spec 0008.
+
+    `splits` are the x positions between lanes — a `columns` region's lanes, a
+    `grid`'s columns — so a region has one lane more than it has splits. A Zone
+    belongs to the Region its box's centre falls in, and to the lane that centre
+    falls in; nothing records it twice.
+    """
+
+    top: float
+    bottom: float
+    flow: Flow = Flow.SINGLE
+    splits: tuple[float, ...] = ()
+    rows: int = 1
+    """How many rows a `grid` has; 1 for anything else."""
+
+    @property
+    def lanes(self) -> int:
+        return len(self.splits) + 1
+
+    def holds(self, box: BBox) -> bool:
+        return self.top <= (box.top + box.bottom) / 2 <= self.bottom
+
+    def lane_of(self, box: BBox) -> int:
+        middle = (box.left + box.right) / 2
+        return sum(1 for split in self.splits if middle >= split)
+
+
 @dataclass
 class Source:
     """Provenance of the pixels."""
@@ -506,6 +544,9 @@ class Document:
     failures: list[Failure] = field(default_factory=list)
     caveats: list[Caveat] = field(default_factory=list)
     shortfalls: list[Shortfall] = field(default_factory=list)
+    regions: list[Region] = field(default_factory=list)
+    """The page's structure, top to bottom — `structure.structure`. Empty means
+    nobody read it, and the page renders as Bands, as it always did."""
 
     def bands(self) -> list[list[Zone]]:
         """Zones grouped into Bands and ordered for rendering."""
@@ -664,6 +705,11 @@ def _decode_document(data: dict[str, Any]) -> Document:
         failures=[Failure(**f) for f in data.get("failures", [])],
         caveats=[Caveat(**c) for c in data.get("caveats", [])],
         shortfalls=[Shortfall(**s) for s in data.get("shortfalls", [])],
+        regions=[
+            Region(top=r["top"], bottom=r["bottom"], flow=Flow(r["flow"]),
+                   splits=tuple(r.get("splits", ())), rows=r.get("rows", 1))
+            for r in data.get("regions", [])
+        ],
     )
 
 

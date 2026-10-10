@@ -39,42 +39,13 @@ Nothing in a Conversion calls this yet; step 2 carries it in the IR.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import Enum
 from typing import Any, Sequence
 
 import numpy as np
 
-from .ir import BBox
+from .ir import BBox, Flow, Region
 from .preprocess import MIN_GAP_THICKNESS, SEPARATOR_ASPECT, ImageArray, _cv2
 from .style import CONTAINED, SAME_COLOUR, rectangles
-
-
-class Flow(str, Enum):
-    """Which way a region is read."""
-
-    SINGLE = "single"
-    COLUMNS = "columns"
-    GRID = "grid"
-
-
-@dataclass(frozen=True)
-class Region:
-    """A horizontal slice of the page, the full width of it, and how it is read.
-
-    `splits` are the x positions between lanes — a `columns` region's lanes, a
-    `grid`'s columns — so a region has one lane more than it has splits.
-    """
-
-    top: float
-    bottom: float
-    flow: Flow = Flow.SINGLE
-    splits: tuple[float, ...] = ()
-    rows: int = 1
-    """How many rows a `grid` has; 1 for anything else."""
-
-    @property
-    def lanes(self) -> int:
-        return len(self.splits) + 1
 
 
 SAME_SIZE = 0.01

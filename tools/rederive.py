@@ -27,6 +27,8 @@ and can be recomputed from it, in the order a Conversion runs them:
     6. Gaps re-measured over the Zones' boxes — N2, 2026-09-30, when the
        audit stopped reading a page's edge and a panel's fill as content
                                     orchestrator.gaps               (_audit)
+    7. The page's regions read off the Zones' boxes — spec 0008, step 2
+                                    structure.structure  (_read_structure)
 
 then re-renders into a run-shaped directory that `doc_to_html.report` and
 `tools/visual_review.py` read without knowing the difference.
@@ -69,6 +71,7 @@ from doc_to_html.ir import Caveat, Document, Kind  # noqa: E402
 from doc_to_html.orchestrator import gaps, shortfall  # noqa: E402
 from doc_to_html.preprocess import rectify  # noqa: E402
 from doc_to_html.render import render  # noqa: E402
+from doc_to_html.structure import structure  # noqa: E402
 from doc_to_html.wire import (  # noqa: E402
     _title_is_its_header_cell, repadded, table_repairs)
 from remeasure_style import ir_of, remeasure  # noqa: E402
@@ -81,7 +84,7 @@ _REPAIR = re.compile(
 
 
 def rederive(document: Document, png: Path) -> None:
-    """Steps 1-6 of this module's docstring, in place."""
+    """Steps 1-7 of this module's docstring, in place."""
     for zone in document.zones:
         if _title_is_its_header_cell(zone):
             zone.title = None
@@ -108,7 +111,8 @@ def rederive(document: Document, png: Path) -> None:
 
     remeasure(document, png)
 
-    image = rectify(png).image
+    rectified = rectify(png)
+    image = rectified.image
     document.shortfalls = [
         found for index, zone in enumerate(document.zones)
         if (found := shortfall(image, zone, index)) is not None
@@ -116,6 +120,11 @@ def rederive(document: Document, png: Path) -> None:
     # Q5, 2026-09-29: a column-sum totals the rows above its summary only.
     document.probes = probes.run(document)
     document.gaps = gaps(image, document.zones)
+    plain = rectified.plain if rectified.plain is not None else rectified.image
+    if document.style is not None:
+        document.regions = structure(
+            plain, [zone.bbox for zone in document.zones if zone.bbox is not None],
+            ground=document.style.page_bg, inverted=rectified.inverted)
 
 
 def documents_in(source: Path, model: str) -> list[tuple[str, Path]]:

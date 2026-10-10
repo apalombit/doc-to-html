@@ -17,6 +17,7 @@ every answer here was identical on 2026-10-10.
 
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -24,8 +25,9 @@ from pathlib import Path
 import numpy as np
 
 from doc_to_html.corpus import SOURCES, SWEEP
-from doc_to_html.ir import BBox, Document
+from doc_to_html.ir import BBox, Block, Document, Kind, Source, Zone, cell
 from doc_to_html.preprocess import rectify
+from doc_to_html.render import render
 from doc_to_html.structure import Flow, Region, structure
 from doc_to_html.style import measure
 
@@ -161,3 +163,66 @@ class TestAPanelIsAColumnOnlyWhenTheContentBesideItRunsOn:
         assert len(columns) == 1
         assert columns[0].splits == (400 / 600,)
         assert columns[0].top <= 0.12 and columns[0].bottom >= 0.70
+
+
+def prose(text: str, box: BBox, band: int, column: int) -> Zone:
+    return Zone(kind=Kind.PROSE, band=band, column=column, bbox=box,
+                blocks=[Block(kind="paragraph", lines=[cell(text)])],
+                complete=True)
+
+
+def sidebar_page(regions: list[Region]) -> Document:
+    """A sidebar beside a main column, each two items deep — the shape Bands
+    interleave: Band 0 is `Contact | Experience`, Band 1 `Skills | Education`."""
+    return Document(
+        source=Source(path="page.png", sha256="0", width=900, height=700),
+        zones=[
+            prose("Contact", BBox(0.02, 0.05, 0.30, 0.20), 0, 0),
+            prose("Experience", BBox(0.38, 0.05, 0.97, 0.45), 0, 1),
+            prose("Skills", BBox(0.02, 0.25, 0.30, 0.40), 1, 0),
+            prose("Education", BBox(0.38, 0.50, 0.97, 0.90), 1, 1),
+        ],
+        regions=regions)
+
+
+class TestTheIRCarriesTheStructure:
+    """Spec 0008, step 2: `Document.regions`, and the renderer reading it."""
+
+    COLUMNS = Region(0.0, 1.0, Flow.COLUMNS, (0.344,))
+
+    def test_regions_survive_the_round_trip(self) -> None:
+        regions = [Region(0.0, 0.1), Region(0.1, 0.9, Flow.GRID, (0.341, 0.659), rows=3),
+                   Region(0.9, 1.0)]
+        document = sidebar_page(regions)
+        assert Document.from_json(document.to_json()).regions == regions
+
+    def test_an_ir_written_before_regions_reads_back_with_none(self) -> None:
+        raw = json.loads(sidebar_page([]).to_json())
+        del raw["regions"]
+        assert Document.from_json(json.dumps(raw)).regions == []
+
+    def test_a_columns_region_is_read_lane_by_lane(self) -> None:
+        html = render(sidebar_page([self.COLUMNS]))
+        html = html[:html.index('id="doc-ir"')]
+        order = [html.index(word) for word in
+                 ("Contact", "Skills", "Experience", "Education")]
+        assert order == sorted(order)
+
+    def test_without_one_the_page_is_drawn_band_by_band(self) -> None:
+        """Byte for byte as before: a `grid` or `single` region draws Bands."""
+        plain = render(sidebar_page([]))
+        assert render(sidebar_page([Region(0.0, 1.0)])).replace(
+            '"regions":[{"top":0.0,"bottom":1.0,"flow":"single","splits":[],"rows":1}]',
+            '"regions":[]') == plain
+        body = plain[:plain.index('id="doc-ir"')]
+        order = [body.index(word) for word in
+                 ("Contact", "Experience", "Skills", "Education")]
+        assert order == sorted(order)
+
+    def test_a_lane_whose_zones_share_a_fill_is_painted_with_it(self) -> None:
+        document = sidebar_page([self.COLUMNS])
+        for zone in document.zones[0::2]:
+            zone.fill = (38, 51, 63)
+        html = render(document)
+        assert 'class="lane" style="flex:34.4 1 0;background:rgb(38,51,63)"' in html
+        assert 'class="lane" style="flex:65.6 1 0"' in html

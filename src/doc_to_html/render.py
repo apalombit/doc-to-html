@@ -21,9 +21,10 @@ from functools import lru_cache
 from itertools import groupby
 from typing import Any
 
-from .ir import Block, Cell, CellState, Document, Kind, Pair, Role, RowRole, Zone
+from .ir import (Block, Cell, CellState, Document, Flow, Kind, Pair, Region,
+                 Role, RowRole, Zone)
 from .probes import is_numeric
-from .wire import MARKS
+from .wire import MARKS, bands_from_boxes
 
 STYLESHEET = """
 :root { --ink:#1a1a1a; --muted:#666; --rule:#e0e0e0; --shade:#f4f4f4;
@@ -48,6 +49,16 @@ mark { background:var(--mark-bg); color:inherit; padding:0 0.15em; }
 .band { display:flex; gap:2rem; align-items:flex-start;
         margin-bottom:1.75rem; flex-wrap:wrap; }
 .band > * { flex:1 1 12rem; min-width:0; }
+/* A `columns` Region: its lanes side by side, each read top to bottom and as
+   wide as the page draws it. Spec 0008, step 2. */
+.columns { display:flex; gap:2rem; align-items:flex-start; margin-bottom:1.75rem; }
+.lane { min-width:0; }
+.lane > .band:last-child { margin-bottom:0; }
+/* A label column in a lane takes at most half of it. A lane is narrower than
+   the page, and `cv_0013`'s `Chartered Engineer, Engineers Ireland (2019)`
+   sized the `auto` track to the whole sidebar, leaving `Reg. no. 11408` a
+   sliver that `anywhere` broke after every letter — N4's fault, in a lane. */
+.columns dl.pairs { grid-template-columns:fit-content(50%) 1fr; }
 .zone-header { font-size:1.05em; }
 .zone-footer { color:var(--muted); font-size:.875em; }
 h1 { font-size:1.6em; margin:0 0 .35em; letter-spacing:.01em; }
@@ -119,13 +130,7 @@ figure.omitted figcaption { padding:.5em; text-align:center; }
 
 def render(document: Document, *, title: str | None = None) -> str:
     """Render the IR to a complete, self-contained HTML document."""
-    body = [_findings(document)]
-    for band in document.bands():
-        body.append(
-            '<div class="band">'
-            + "".join(_zone(zone, document) for zone in band)
-            + "</div>"
-        )
+    body = [_findings(document), *_body(document)]
 
     heading = title or _infer_title(document) or "Document"
     return (
@@ -139,6 +144,93 @@ def render(document: Document, *, title: str | None = None) -> str:
         f'<div class="doc">\n{"".join(filter(None, body))}\n</div>\n'
         f"{_embedded_ir(document)}\n</body>\n</html>\n"
     )
+
+
+def _band(zones: list[Zone], document: Document) -> str:
+    return ('<div class="band">'
+            + "".join(_zone(zone, document) for zone in zones) + "</div>")
+
+
+def _body(document: Document) -> list[str]:
+    """Every Band as a row, except where a `columns` Region reads down.
+
+    **A page with no `columns` Region is drawn exactly as before**, Band by
+    Band. Where there is one, its Zones leave the page's Bands and are drawn
+    together, where the first of them would have been: each lane a stack of
+    its own rows, read top to bottom, so `cv_0013`'s sidebar is no longer
+    paired with whichever main-column item sits at its height.
+    """
+    columns = [r for r in document.regions if r.flow is Flow.COLUMNS]
+    home: dict[int, Region] = {}
+    for zone in document.zones:
+        for region in columns:
+            if zone.bbox is not None and region.holds(zone.bbox):
+                home[id(zone)] = region
+                break
+    if not home:
+        return [_band(band, document) for band in document.bands()]
+
+    out: list[str] = []
+    drawn: set[int] = set()
+    for band in document.bands():
+        outside = [zone for zone in band if id(zone) not in home]
+        if outside:
+            out.append(_band(outside, document))
+        for zone in band:
+            held = home.get(id(zone))
+            if held is None or id(held) in drawn:
+                continue
+            drawn.add(id(held))
+            out.append(_columns(
+                held, [z for z in document.zones if home.get(id(z)) is held],
+                document))
+    return out
+
+
+def _columns(region: Region, zones: list[Zone], document: Document) -> str:
+    """One `columns` Region: its lanes side by side, each as wide as the page
+    draws it and holding its own Zones in rows worked out among themselves —
+    so `2021 — present` sits beside `Senior Structural Engineer` in its lane,
+    as on the page.
+
+    **Each lane is stacked on its own**, and it costs T3 `beside`, measured
+    before choosing. A two-column page's side-by-side pairs are coincidences
+    of height between independent columns, and the Band render reproduced them
+    by construction — it is built from exactly those overlaps, which is also
+    why it interleaved the columns. Two ways of keeping them were measured
+    offline over F1-sweep's IRs, spec 0008 step 2: lanes sharing row lines
+    taken from the page (`cv_0013` beside 0.36 -> 0.41, `darkdeck_0009`
+    0.81 -> 0.85) open gaps in every lane wherever the other is taller, and
+    rows proportional to the page's own (`darkdeck_0009` 0.93) make it
+    3 to 6 times the source's height. Both look less like the page than this.
+
+    A lane whose Zones all carry one fill is painted with it, so the source's
+    sidebar is one strip and its aside one panel, not a stack of cards.
+    """
+    lanes: list[list[Zone]] = [[] for _ in range(region.lanes)]
+    for zone in zones:
+        assert zone.bbox is not None
+        lanes[region.lane_of(zone.bbox)].append(zone)
+    edges = [0.0, *region.splits, 1.0]
+
+    parts = []
+    for index, lane in enumerate(lanes):
+        rows: dict[int, list[tuple[int, Zone]]] = {}
+        placed = bands_from_boxes([zone.bbox for zone in lane if zone.bbox])
+        for zone, (band, column) in zip(lane, placed):
+            rows.setdefault(band, []).append((column, zone))
+        style = f"flex:{(edges[index + 1] - edges[index]) * 100:.1f} 1 0"
+        fills = {zone.fill for zone in lane}
+        if lane and len(fills) == 1 and None not in fills:
+            (fill,) = fills
+            assert fill is not None
+            style += f";background:{_rgb(fill)}"
+        parts.append(
+            f'<div class="lane" style="{style}">'
+            + "".join(_band([z for _, z in sorted(rows[b], key=lambda r: r[0])],
+                            document) for b in sorted(rows))
+            + "</div>")
+    return '<div class="columns">' + "".join(parts) + "</div>"
 
 
 def _rgb(colour: tuple[int, int, int]) -> str:

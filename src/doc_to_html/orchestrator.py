@@ -54,6 +54,7 @@ from .preprocess import (
     zone_pixels,
 )
 from .render import render
+from .structure import structure
 from .trace import Change, Disposition, Stage, Trace
 from .wire import (
     MappingError,
@@ -1145,6 +1146,36 @@ class Conversion:
                        "as returned",
             )
         document.zones = zones
+        self._read_structure(rectified, document)
+
+    def _read_structure(self, rectified: Rectified, document: Document) -> None:
+        """The page's regions, read off the final boxes — spec 0008. See
+        `structure.structure`.
+
+        Here, once the boxes are final, because the regions are a fact about
+        where those boxes sit; nothing a model is asked reads them, so this
+        moves no answer. It needs the page's ground, which the Style Record
+        measures, so with `DTH_STYLE_RECORD` off the page renders as Bands, as
+        it always did.
+        """
+        if document.style is None:
+            self.trace.record(
+                Stage.LAYOUT, "structure", Disposition.SKIPPED,
+                reason="no Style Record, so no page ground to read regions off")
+            return
+        started = time.perf_counter()
+        plain = rectified.plain if rectified.plain is not None else rectified.image
+        document.regions = structure(
+            plain, [zone.bbox for zone in document.zones if zone.bbox is not None],
+            ground=document.style.page_bg, inverted=rectified.inverted)
+        self.trace.record(
+            Stage.LAYOUT, "structure", Disposition.ACCEPTED,
+            seconds=time.perf_counter() - started,
+            regions=[{"top": round(r.top, 4), "bottom": round(r.bottom, 4),
+                      "flow": r.flow.value,
+                      "splits": [round(x, 4) for x in r.splits],
+                      "rows": r.rows} for r in document.regions],
+        )
 
     def _cover_the_page(self, rectified: Rectified,
                         zones: list[Zone]) -> list[Zone]:
