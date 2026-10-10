@@ -37,7 +37,8 @@ trial axis is kept rather than rejected.
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
 measured numbers and what has already been tried and rejected. **0008 is the
-one open spec** (issue #31); 0007 still defines the target.
+one open spec** (issue #31), its three steps done and awaiting Alessandro's
+decision; 0007 still defines the target.
 
 ---
 
@@ -62,7 +63,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-10: spec 0008, step 2 next.**
+**Where the project is — 2026-10-10: spec 0008 done, awaiting Alessandro's decision.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -79,8 +80,9 @@ RESET       2026-10-10, Alessandro: every open task and idea cleared —
 Spec 0008   Page structure — opened 2026-10-10 from his review of
               F1-sweep, issue #31. Three steps, in order:
               1 structure from pixels, offline              DONE, gate MET
-              2 carry it in the IR and draw it, offline     <- next
-              3 let it shape the boxes, one sweep
+              2 carry it in the IR and draw it, offline     DONE, gate NOT met
+              3 let it shape the boxes, one sweep           DONE, gate NOT met
+              sweep S3-sweep on 9c42d81                     <- his decision
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's

@@ -1,6 +1,6 @@
 # Read the page's structure before its boxes
 
-**Status: open — step 1 DONE 2026-10-10, gate MET; step 2 DONE 2026-10-10, gate NOT met on the ratchet; step 3 next.** Opened 2026-10-10, Alessandro's decision,
+**Status: all three steps done 2026-10-10 — step 1 gate MET; steps 2 and 3 gates NOT met on the ratchet. Awaiting Alessandro's decision; see "Outcome — step 3" and "Then decide".** Opened 2026-10-10, Alessandro's decision,
 after reviewing the fresh sweep `F1-sweep`. Tracking issue **#31**. It works
 under spec 0007's target and ratchet; nothing in 0007 changes.
 
@@ -228,9 +228,64 @@ One sweep, model.
   - step 2's gains kept;
   - the ratchet holds.
 
+#### Outcome — step 3, 2026-10-10, sweep `S3-sweep`, gate NOT met
+
+`structure.cut_at_edges` (applied in `Conversion._layout`) and
+`structure.alike` (at the end of `_classify`). Commit `9c42d81`, shipped
+defaults, all fifteen; 1h32m, the model 54%/46% CPU/GPU.
+
+**The offline loops predicted the sweep exactly:** the layout front moved
+`catalogue_0015`'s boxes alone, `tools/replay_run.py` over F1-sweep's answers
+reproduced step 2's output on the other fourteen, and the sweep is
+**byte-identical to that prediction on 14 of 15**. Rendered, eleven documents
+are pixel-identical to F1-sweep; only the four targets moved.
+
+| # | clause | result |
+|---|---|---|
+| 1 | `menu_0012`: two columns, four titled sections, each price beside its dish | **NOT attempted** — see below |
+| 2 | `catalogue_0015`: the title printed, the nine cards one Kind and one shape | **title printed; one Kind (all `pairs`)**; not quite one shape — some cards draw label and value side by side, some stack them, as the model split each |
+| 3 | step 2's gains kept | **holds** — the three column documents byte-identical to step 2's |
+| 4 | the ratchet holds | **FAILS** — step 2's two T3 beside legs, and `catalogue_0015` precision 1.000 → 0.994 |
+
+`catalogue_0015` against F1-sweep: vocabulary recall 0.8435 → **0.9913**,
+recall 0.8155 → **0.9881**, join recall 0.8148 → **0.9722**, tau 0.9379 →
+**1.0000**, beside 0.2364 → **0.2727** — above the floor's 0.2523, so N4's
+recorded exception no longer applies. 29 words come back, `Hardwood fittings`
+among them. The precision leg is one token: IR-207's and OK-341's spec lines
+were lost entirely when those cards read as tables, and OK-341's now comes
+back with `220 × 180` read as `220 x 180`.
+
+Corpus means, floor → `S3-sweep`: vocabulary recall 0.9708 → 0.9806, recall
+0.9664 → 0.9779, precision 0.9865 → 0.9866, join recall 0.9434 → 0.9538, tau
+0.9366 → **0.9864**, beside 0.7622 → 0.7549, height 1.621 → 1.441.
+
+**Why the menu was not attempted — the model cannot decide it either.** The
+closed question was probed before anything was built, on the twenty Zones of
+the corpus with an interior gutter at least 30px wide: the menu's body and the
+tables, cards and panels A2 §7 could not tell from it. Asked "how many columns,
+read down or across", the model answered `down` **20 of 20** times, giving each
+table's own column count. Asked to copy a line from each side of the gutter
+and say whether they are `one_item` or `separate_items`, it copied
+`Potted brown shrimp` and `Braised shin, bone marrow` correctly and answered
+`one_item` — **20 of 20** again. Two shapes, no separation on a single crop;
+no model call was added.
+
 ---
 
 ## Then decide
+
+**The answer, 2026-10-10, for Alessandro to confirm.** Simple was enough for
+four of the five targets: `cv_0013`, `darkdeck_0009` and `newsletter_0008` now
+read as columns, and `catalogue_0015` prints its title and reads its cards
+alike. It was not enough for `menu_0012`, and nothing simple is left to try:
+pixels (A2 §7, step 1) and a closed model question (two shapes) both fail to
+tell its columns from a table. Nothing here needed nested regions. What is
+open is a decision, not a build: whether to accept T3 beside below the floor
+on `cv_0013` and `darkdeck_0009` — the Band render's cross-column coincidences,
+which a column render does not reproduce — and the one-token precision fall
+on `catalogue_0015`, and so whether `S3-sweep` becomes the floor.
+
+What follows is the plan as it was written before any of it ran.
 
 If the targets look like their sources after step 3, **stop**: simple was
 enough. If not — the structure is wrong beyond the targets, or regions need

@@ -1,16 +1,15 @@
-# Status — 2026-10-10 (**spec 0008, page structure: step 2 next**; `q5-result/` the floor)
+# Status — 2026-10-10 (**spec 0008 done — awaiting Alessandro's decision**; `q5-result/` the floor)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-10, when
-N4 shipped, Alessandro cleared every open task and idea, and after reviewing
-the fresh sweep opened spec 0008.
+spec 0008's three steps finished and sweep `S3-sweep` measured them.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file. If you are going to look at output — and you
 should — use the **`visual-review` skill**.
 
-Branch `scaffold`. **850 tests pass, `mypy src/` clean.**
+Branch `scaffold`. **860 tests pass, `mypy src/` clean.**
 
 ---
 
@@ -40,8 +39,9 @@ Reset       2026-10-10, Alessandro: every open task and idea cleared —
               Fresh sweep F1-sweep, commit 12fa2d1, shipped defaults.
 Spec 0008   Page structure, opened 2026-10-10 from the F1-sweep review
               step 1  structure from pixels, offline          DONE, gate MET
-              step 2  carry it in the IR and draw it, offline <- next
-              step 3  let it shape the boxes, one sweep
+              step 2  carry it in the IR and draw it, offline DONE, gate NOT met (ratchet)
+              step 3  let it shape the boxes, one sweep       DONE, gate NOT met (ratchet, menu)
+              sweep S3-sweep, commit 9c42d81                   <- Alessandro's decision
 ```
 
 Q1-Q4's result tables moved to
@@ -136,7 +136,46 @@ next one comes from Alessandro's own review of `F1-sweep`.
 
 ## What the last step shipped
 
-### N4 — a label with no value spans the row, `12fa2d1`, 2026-10-10, **gate NOT met on clause 3; shipped on Alessandro's decision**
+### Spec 0008 — the page's structure, steps 1-3, 2026-10-10, sweep `S3-sweep`
+
+**What it built.** `structure.structure()` reads the page's regions off its
+pixels and its boxes — `single`, `columns` (lanes read down) or `grid`
+(identical drawn boxes read across). `Document.regions` carries them; the
+renderer draws a `columns` region as lanes side by side, each read top to
+bottom, a lane painted with its Zones' common fill. A Zone crossing a grid's or
+a column region's edge is cut there, and a grid's copies take the Kind most of
+them were given. The spec's three "Outcome" sections have every table.
+
+**What it fixed, sweep `S3-sweep` against F1-sweep:**
+
+| document | what changed | tau | other |
+|---|---|---|---|
+| `cv_0013` | sidebar one dark strip beside the CV, read down | 0.56 → **0.98** | height 2.98 → 1.96 |
+| `darkdeck_0009` | the risks panel one column beside the main text | 0.86 → **0.98** | height 1.68 → 1.32 |
+| `newsletter_0008` | three columns read down | 0.86 → **1.00** | beside 0.50 → 0.70 |
+| `catalogue_0015` | title printed; nine cards a 3×3 grid, all `pairs` | 0.94 → **1.00** | vocabulary recall 0.84 → **0.99**, 29 words back |
+
+Eleven documents render pixel-identical to F1-sweep, `menu_0012` among them.
+The offline loops predicted the sweep byte for byte on 14 of 15; the fifteenth
+was the one whose crops changed.
+
+**Where it falls short — the decision.** The ratchet against `q5-result/`
+fails on three legs: T3 beside on `cv_0013` (0.5769 → 0.4000) and
+`darkdeck_0009` (0.9677 → 0.8148), and `catalogue_0015` precision (1.000 →
+0.994, one `×` read as `x` on a spec line that was not printed at all before).
+The beside falls are the Band render's cross-column coincidences, which a
+column render does not reproduce; both renders that keep them were built and
+measured, and look less like the page (spec, "Outcome — step 2").
+`catalogue_0015`'s beside rises to 0.2727, above the floor, so N4's recorded
+exception no longer applies. **`menu_0012` is unchanged**: neither the pixels
+nor a closed model question, probed in two shapes on twenty crops, tells its
+columns from a table (spec, "Outcome — step 3").
+
+Corpus means, floor → `S3-sweep`: vocabulary recall 0.9708 → 0.9806, recall
+0.9664 → 0.9779, precision 0.9865 → 0.9866, join recall 0.9434 → 0.9538,
+tau 0.9366 → **0.9864**, beside 0.7622 → 0.7549, height 1.621 → 1.441.
+
+### Before it — N4 — a label with no value spans the row, `12fa2d1`, 2026-10-10, **gate NOT met on clause 3; shipped on Alessandro's decision**
 
 **The IR was right and the renderer was not.** `catalogue_0015`'s Zones 5 and
 8 hold `£28.00 | each` and `£18.75 | each`. A pairs Zone is a grid of
@@ -183,43 +222,27 @@ the Q5-era records", verbatim. Q1–Q4's are under "Outcome — Q1 to Q4".
 
 ---
 
-## Next — spec 0008, step 2
+## Next — Alessandro's decision on spec 0008
 
-**Step 1 is done, 2026-10-10, gate met on every clause** —
-`structure.structure()` finds `cv_0013`'s, `darkdeck_0009`'s and
-`newsletter_0008`'s columns, `catalogue_0015`'s and the deck's grids, invents
-nothing on the ten, and leaves `menu_0012` `single` because nothing is drawn
-between its columns. The spec's "Outcome — step 1" has the table. Nothing in
-a Conversion calls it yet; step 2 carries it in the IR and draws it.
+**Spec 0008's three steps are done; nothing is queued.** What is open is a
+decision, not a build:
 
-**[`specs/0008-page-structure.md`](specs/0008-page-structure.md), issue #31 —
-the only open work.** Nothing in the converter decides what the page's layout
-is; it adds one small step that records it, and lets the renderer and then the
-boxes follow it. Targets `cv_0013`, `menu_0012`, `catalogue_0015`, then
-`darkdeck_0009` and `newsletter_0008`. Three steps in order, each gate agreed
-before code; the spec carries the handover prompt.
+1. Accept T3 beside below the floor on `cv_0013` and `darkdeck_0009`, and the
+   one-token precision fall on `catalogue_0015` — and so whether
+   `debug/runs/S3-sweep` becomes the floor (frozen as a directory, as
+   `q5-result/` was).
+2. `menu_0012`: the spec's "Then decide" — simple was enough for four targets
+   and nothing simple is left for the menu. If reopened it is a richer layout
+   question, its own spec.
 
-The queue cleared on 2026-10-10 — Q6, Q7, N5, the live-fault list, Threads
-3/C and 4/D — stays cleared: what they found is record, not work.
+**`debug/runs/S3-sweep/report.html`** is the sweep: commit `9c42d81`, shipped
+defaults, all fifteen, scored against `q5-result/`. Its fifteen review sheets
+are in `_review/`, `--previous` F1-sweep. **Until he decides, start nothing.**
 
-**`debug/runs/F1-sweep/report.html`** is the fresh sweep: commit `12fa2d1`,
-shipped defaults, no `DTH_*` set, all fifteen documents. Alessandro reviews
-it himself and decides what comes next. **Until he does, start nothing.**
-
-What it measured, 2026-10-10, scored against the floor — facts, not a review:
-
-- **15 of 15 converted**, 488 model calls, 1h43m.
-- **Byte-identical, 15 of 15, to the offline prediction** — `rederive.py`
-  over N3's replay with N4's renderer. The offline loops predicted the sweep
-  exactly.
-- **The ratchet names only the recorded exception**, `catalogue_0015` T3
-  beside. The report's "Phase A-1" lines are the standing honesty tally the
-  floor also carries.
-- Corpus means against the floor: vocabulary recall, recall, join recall and
-  tau unchanged (0.9708, 0.9664, 0.9434, 0.9366); precision 0.9865 → 0.9870;
-  beside 0.7622 → 0.7611; height 1.621 → 1.549. Seven documents moved, each
-  by one of N1–N4 — findings panels, `statement_0006`'s sliver, catalogue's
-  cards.
+The offline arms are beside it — `S2-00-base` (rederive over F1-sweep, 15 of 15
+byte-identical to it), `S2-01-columns`, `S2-02-grid`, `S2-03-fr`,
+`S2-04-lanes` (what shipped), `S3-00-replay` — and F1-sweep, the starting
+point.
 
 ---
 
@@ -232,13 +255,17 @@ the last two entries.
   tier. **Proportional widths** lower `cv_0013` 0.500 → 0.474 while crossing
   the ratchet on `form_0007`. A3's tile sitting in the middle third of an
   equal-column band is this question, not a new one. **Reopened by spec 0008,
-  2026-10-10, with the IR changed first** — not another renderer over the
-  flat IR.
+  2026-10-10, with the IR changed first, and built** — lanes drawn only for a
+  `columns` region, whose widths are the page's.
 - **The merged Zone** — `menu_0012`'s two menu sections as one table,
   `form_0007`'s two-column form as one pairs list. Three pixel-side tests, none
   separates them. **Do not build a fourth**; if reopened it is a *model*
   question asked as "how many regions", and its own phase. **Reopened by spec
-  0008 at the page level**, with that model question as step 3's fallback.
+  0008 at the page level, and the model question asked, 2026-10-10: it does
+  not separate either.** On twenty Zones with a wide interior gutter, "how many
+  columns, read down or across" got `down` 20 of 20, and "one item or separate
+  items" got `one_item` 20 of 20 — the menu included, its two dish names
+  copied correctly. A third shape needs a new kind of evidence.
 - **`alignment_agreement` as a gate.** Flipping 42 cells moved it 0.935 →
   0.935. Alignment is gated on a count of named columns, in the DOM.
 - **Reading direction for a multi-Band column region** is an **IR gap**, not a
