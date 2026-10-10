@@ -36,8 +36,8 @@ trial axis is kept rather than rejected.
 
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
-measured numbers and what has already been tried and rejected. **Every spec is
-closed as of 2026-10-10**; 0007 still defines the target.
+measured numbers and what has already been tried and rejected. **0008 is the
+one open spec** (issue #31); 0007 still defines the target.
 
 ---
 
@@ -62,7 +62,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-10: nothing is queued.**
+**Where the project is — 2026-10-10: spec 0008, step 1 next.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -75,8 +75,12 @@ Phase A3    Figure pixels                           DONE 2026-09-26, gate MET
 Queue       Open issues 1-3, Q1-Q5, N1-N4           DONE 2026-09-26 to 2026-10-10
 RESET       2026-10-10, Alessandro: every open task and idea cleared —
               Q6, Q7, N5, the live-fault list, Threads 3/C and 4/D.
-              Fresh sweep F1-sweep on 12fa2d1; the next work comes
-              from his own review of it. Start nothing until he says.
+              Fresh sweep F1-sweep on 12fa2d1
+Spec 0008   Page structure — opened 2026-10-10 from his review of
+              F1-sweep, issue #31. Three steps, in order:
+              1 structure from pixels, offline              <- next
+              2 carry it in the IR and draw it, offline
+              3 let it shape the boxes, one sweep
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
@@ -89,8 +93,9 @@ answers that made it. **One leg sits below it by decision since N4:**
 `docs/status.md`, "What the ratchet enforces". Each earlier floor, and why
 it moved, is in its README and in `docs/status.md`, "The floor".
 
-`docs/specs/0007-handover.md` holds a ready prompt per thread, as record; the
-one to use is **"Fresh start — 2026-10-10"**.
+**The only open work is `docs/specs/0008-page-structure.md`**, and its last
+section is the prompt to start a session with. `docs/specs/0007-handover.md`
+holds spec 0007's prompts, as record.
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
 this section.** It says what is done, where the floor is, what is closed with
@@ -468,7 +473,7 @@ each other — `CellState.DISPUTED` and the Ladder are already the vocabulary fo
 it, and `_climb_ladders` already records that it waits on a second Engine. That
 is model time and Alessandro's decision, not a detector.
 
-**Tracker state, 2026-10-10: no open issues.** #30 (spec 0007) closed when its
+**Tracker state, 2026-10-10: one open issue, #31 — spec 0008.** #30 (spec 0007) closed when its
 work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
 #17 (the vision layout prompt) were closed by Thread 0. Every spec is closed
 history; 0007 still defines the target.

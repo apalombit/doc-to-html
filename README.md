@@ -24,7 +24,8 @@ like the source document**, compared against `example/*.html` and `example/*.png
 directly. See
 **[docs/specs/0007-look-like-the-document.md](docs/specs/0007-look-like-the-document.md)**
 — it defines the target and the measure. The work plan it carried finished on
-2026-10-10 (issue #30, closed), and nothing is in flight.
+2026-10-10 (issue #30, closed); the work in flight is
+[spec 0008](docs/specs/0008-page-structure.md), page structure.
 
 ## What it aims at
 
@@ -74,7 +75,8 @@ Adding a document is therefore writing an HTML file and running
 - **[docs/status.md](docs/status.md)** — where the project is: the ratchet's
   floor, what shipped last, what is closed with evidence, and what is queued.
 - **[docs/specs/](docs/specs/)** — one spec per piece of work, each with its
-  measured numbers. All are closed; 0007 defines the current target.
+  measured numbers. 0007 defines the target; 0008 is the one open piece of
+  work.
 - **[docs/adr/](docs/adr/)** — five decisions that look arbitrary without their
   reasons:
   - [0001](docs/adr/0001-no-document-types.md) — no document types

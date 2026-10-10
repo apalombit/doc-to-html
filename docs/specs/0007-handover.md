@@ -3,9 +3,10 @@
 One prompt per thread, to be pasted into a fresh session. Each thread ended at
 a gate before the next prompt was used.
 
-**As of 2026-10-10 every prompt here is record, bar one.** Every thread is done
-or was cleared by Alessandro; the one to use is **"Fresh start — 2026-10-10"**,
-the last section before the standing rules.
+**As of 2026-10-10 every prompt here is record.** Every thread is done or was
+cleared by Alessandro. The work in flight is
+[`0008-page-structure.md`](0008-page-structure.md), whose last section is the
+prompt to use.
 
 **Why these exist:** they scope a fresh session to **one thread**, and they carry
 the two or three things about each thread that are easy to get subtly wrong.
@@ -2161,7 +2162,7 @@ ground truth there is.
 
 ---
 
-## Fresh start — 2026-10-10 — **NEXT**
+## Fresh start — 2026-10-10 — **superseded the same day by spec 0008**
 
 **Written 2026-10-10, when Alessandro cleared every open task and idea.**
 Nothing is queued. The ready prompt for a fresh chat:

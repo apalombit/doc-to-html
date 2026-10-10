@@ -1,8 +1,9 @@
-# Status — 2026-10-10 (**reset: nothing queued; fresh sweep `F1-sweep` for Alessandro's review**; `q5-result/` the floor)
+# Status — 2026-10-10 (**spec 0008, page structure: step 1 next**; `q5-result/` the floor)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-10, when
-N4 shipped and Alessandro cleared every open task and idea.
+N4 shipped, Alessandro cleared every open task and idea, and after reviewing
+the fresh sweep opened spec 0008.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
@@ -36,8 +37,11 @@ Queue       Q1-Q7, in order, go given 2026-09-27
                  shipped on Alessandro's decision, the exception recorded
 Reset       2026-10-10, Alessandro: every open task and idea cleared —
               Q6, Q7, N5, the live-fault list, Thread 3/C, Thread 4/D.
-              Nothing is queued. Fresh sweep F1-sweep, commit 12fa2d1,
-              shipped defaults; the next work comes from his review of it.
+              Fresh sweep F1-sweep, commit 12fa2d1, shipped defaults.
+Spec 0008   Page structure, opened 2026-10-10 from the F1-sweep review
+              step 1  structure from pixels, offline          <- next
+              step 2  carry it in the IR and draw it, offline
+              step 3  let it shape the boxes, one sweep
 ```
 
 Q1-Q4's result tables moved to
@@ -179,12 +183,17 @@ the Q5-era records", verbatim. Q1–Q4's are under "Outcome — Q1 to Q4".
 
 ---
 
-## Next — nothing queued
+## Next — spec 0008, step 1
 
-**Cleared 2026-10-10 by Alessandro**, to restart from a clean end-to-end run.
-Q6, Q7 and N5, the live-fault list, Thread 3/C's re-scoping gate and Thread
-4/D are all off the list. What they found stays where it was written — the
-specs, the handover, this file's history — as record, not as work.
+**[`specs/0008-page-structure.md`](specs/0008-page-structure.md), issue #31 —
+the only open work.** Nothing in the converter decides what the page's layout
+is; it adds one small step that records it, and lets the renderer and then the
+boxes follow it. Targets `cv_0013`, `menu_0012`, `catalogue_0015`, then
+`darkdeck_0009` and `newsletter_0008`. Three steps in order, each gate agreed
+before code; the spec carries the handover prompt.
+
+The queue cleared on 2026-10-10 — Q6, Q7, N5, the live-fault list, Threads
+3/C and 4/D — stays cleared: what they found is record, not work.
 
 **`debug/runs/F1-sweep/report.html`** is the fresh sweep: commit `12fa2d1`,
 shipped defaults, no `DTH_*` set, all fifteen documents. Alessandro reviews
@@ -215,15 +224,18 @@ the last two entries.
 - **The column model.** Four renderers measured offline, all worse on the hard
   tier. **Proportional widths** lower `cv_0013` 0.500 → 0.474 while crossing
   the ratchet on `form_0007`. A3's tile sitting in the middle third of an
-  equal-column band is this question, not a new one.
+  equal-column band is this question, not a new one. **Reopened by spec 0008,
+  2026-10-10, with the IR changed first** — not another renderer over the
+  flat IR.
 - **The merged Zone** — `menu_0012`'s two menu sections as one table,
   `form_0007`'s two-column form as one pairs list. Three pixel-side tests, none
   separates them. **Do not build a fourth**; if reopened it is a *model*
-  question asked as "how many regions", and its own phase.
+  question asked as "how many regions", and its own phase. **Reopened by spec
+  0008 at the page level**, with that model question as step 3's fallback.
 - **`alignment_agreement` as a gate.** Flipping 42 cells moved it 0.935 →
   0.935. Alignment is gated on a count of named columns, in the DOM.
 - **Reading direction for a multi-Band column region** is an **IR gap**, not a
-  renderer choice: the same merge takes `newsletter_0008` tau 0.832 → 0.968 and
+  renderer choice — **spec 0008 is the work that fills it**: the same merge takes `newsletter_0008` tau 0.832 → 0.968 and
   `catalogue_0015` 0.943 → 0.562.
 - **The vision layout pass** — deleted in Q4, 2026-09-29, after Thread 0 took
   it out of every Conversion: it raised `MappingError` on three of the five
