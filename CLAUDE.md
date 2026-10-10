@@ -727,7 +727,7 @@ history; 0007 still defines the target.
 
 ```
 tools/iterate.sh <label>                  # one document, shipped defaults
-FIXTURE=iterate tools/iterate.sh <label>  # the five, ~17 min
+FIXTURE=iterate tools/iterate.sh <label>  # the five, ~20 min
 FIXTURE=sweep   tools/iterate.sh <label>  # all fifteen, at a phase gate
 FIXTURE=invoice_0001,cv_0013 tools/iterate.sh <label>
 ```
@@ -744,18 +744,18 @@ every document, and it carries the delta against the previous run's
 after reviewing the five found four real faults in one pass and the five turned
 out to be the least representative sample in the corpus — all light-grounded,
 all similar, none of the ten documents authored after the target changed. The
-~90 minutes is budgeted for. `iterate` is for a throwaway check nobody will draw
+~1¾ hours is budgeted for. `iterate` is for a throwaway check nobody will draw
 a conclusion from. **A renderer-only change needs no new run at all:** every
 pixel-derived field can be re-measured and the IRs re-rendered offline, so one
 sweep serves many render iterations.
 
 **Corpus split.** *iterate* = the original five. *sweep* =
 all fifteen, run at phase gates. `doc_to_html.corpus` is the one place that
-says which is which. **A sweep takes about 90 minutes** — measured
-2026-09-18, on a machine where the model was partly on the CPU. Budget for it
-before starting one. Per-document model time on `qwen3-vl:4b`, measured from
-run 84: `invoice_0002` 301s, `sample_semantic_0005` 300s, `invoice_0001` 174s,
-`sample_table_0003` 132s, `sample_css_0004` 128s.
+says which is which. **A sweep takes about 1¾ hours** — `F1-sweep`,
+2026-10-10: 1h43m wall clock, 488 model calls taking 96 minutes of it, the
+model 40%/60% CPU/GPU. Budget for it before starting one. The slowest
+documents are `cv_0013` (16 minutes of model time), `newsletter_0008` (12)
+and `report_0011` (10); the iterate five take about 20 minutes together.
 
 **The five original documents are the ones every prompt was tuned on.** That is
 why *sweep* exists and why a phase gate is not allowed to be decided on

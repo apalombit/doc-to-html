@@ -3,12 +3,12 @@
 # One turn of the prompt-iteration loop, from scratch.
 #
 #     tools/iterate.sh 03-some-label                 # one document
-#     FIXTURE=iterate tools/iterate.sh 11-baseline    # the five, ~17 min
-#     FIXTURE=sweep tools/iterate.sh 12-gate          # all fifteen, ~50 min
+#     FIXTURE=iterate tools/iterate.sh 11-baseline    # the five, ~20 min
+#     FIXTURE=sweep tools/iterate.sh 12-gate          # all fifteen, ~1¾ hours
 #     FIXTURE=invoice_0001,cv_0013 tools/iterate.sh 13-two
 #
 # Runs the whole document against a real model — every pass, no shortcuts, about
-# three minutes each on the 8 GB M1 — then draws what came back. Everything lands
+# seven minutes each on the 8 GB M1, from 2 to 16 — then draws what came back. Everything lands
 # in one directory per turn, and that directory carries the prompt that produced
 # it, so two turns can be compared months later without a git archaeology session.
 #
@@ -115,7 +115,7 @@ git rev-parse HEAD > "$OUT/commit.txt" 2>/dev/null || true
 # was downscaled to, and that pass is gone (spec 0007's queue, Q4). The
 # detector is given the whole rectified page.
 echo "=> $LABEL: $MODEL over $COUNT fixture(s), from scratch." \
-     "Expect ~3 minutes each." >&2
+     "Expect ~7 minutes each." >&2
 printf '%s\n' $FIXTURES > "$OUT/fixtures.txt"
 # Every DTH_* this turn was taken under, so the directory stays self-describing
 # when the default moves under it. DTH_SNAP_ZONES is the reason this exists: it

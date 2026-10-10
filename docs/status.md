@@ -190,6 +190,21 @@ specs, the handover, this file's history — as record, not as work.
 shipped defaults, no `DTH_*` set, all fifteen documents. Alessandro reviews
 it himself and decides what comes next. **Until he does, start nothing.**
 
+What it measured, 2026-10-10, scored against the floor — facts, not a review:
+
+- **15 of 15 converted**, 488 model calls, 1h43m.
+- **Byte-identical, 15 of 15, to the offline prediction** — `rederive.py`
+  over N3's replay with N4's renderer. The offline loops predicted the sweep
+  exactly.
+- **The ratchet names only the recorded exception**, `catalogue_0015` T3
+  beside. The report's "Phase A-1" lines are the standing honesty tally the
+  floor also carries.
+- Corpus means against the floor: vocabulary recall, recall, join recall and
+  tau unchanged (0.9708, 0.9664, 0.9434, 0.9366); precision 0.9865 → 0.9870;
+  beside 0.7622 → 0.7611; height 1.621 → 1.549. Seven documents moved, each
+  by one of N1–N4 — findings panels, `statement_0006`'s sliver, catalogue's
+  cards.
+
 ---
 
 ## Closed, with evidence — do not reopen without a new kind
@@ -268,8 +283,8 @@ the last two entries.
 ## The loop
 
 ```
-FIXTURE=sweep tools/iterate.sh <label>        # all fifteen, ~90 min — anything reviewed
-FIXTURE=iterate tools/iterate.sh <label>      # the five, ~17 min — throwaway checks only
+FIXTURE=sweep tools/iterate.sh <label>        # all fifteen, ~1¾ h — anything reviewed
+FIXTURE=iterate tools/iterate.sh <label>      # the five, ~20 min — throwaway checks only
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
     --documents sweep --previous tests/frozen/q5-result/scores.json
 python tools/visual_review.py debug/runs/<label> --previous debug/runs/<older>
