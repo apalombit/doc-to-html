@@ -546,6 +546,38 @@ class TestGivingATableItsSummaryRowBack:
 
         assert len(attach_trailing_rows([table, total])) == 1
 
+    def test_a_totals_row_the_tables_edge_cuts_through_joins_it(self) -> None:
+        """N3, 2026-09-30, `statement_0006` on the whole picture: heron ends the
+        transactions table at 0.9300, through the middle of its own totals row,
+        and reports `Totals for the period` as text at 0.9255-0.9352. Starting
+        above the edge, it was never a strip *under* the table; not wholly
+        inside it, `without_enclosed` kept it. It became its own Zone in the
+        table's Band, printed the line twice and refused the snap."""
+        table = box(0.031, 0.145, 0.968, 0.9300, "table")
+        label = box(0.042, 0.9255, 0.170, 0.9352, "text")
+
+        merged = attach_trailing_rows([table, label])
+
+        assert len(merged) == 1
+        assert merged[0].bottom == 0.9352
+        assert merged[0].label == "table"
+
+    def test_a_strip_wholly_inside_the_table_is_not_a_trailing_row(
+        self,
+    ) -> None:
+        """Ending above the table's edge it is enclosed, not trailing — that is
+        `without_enclosed`'s to drop, and a union here would change nothing."""
+        table = box(0.05, 0.30, 0.95, 0.80, "table")
+        inside = box(0.05, 0.70, 0.40, 0.72, "text")
+
+        assert len(attach_trailing_rows([table, inside])) == 2
+
+    def test_a_heading_across_the_tables_edge_is_still_refused(self) -> None:
+        table = box(0.05, 0.30, 0.95, 0.80, "table")
+        heading = box(0.05, 0.795, 0.40, 0.81, "section_header")
+
+        assert len(attach_trailing_rows([table, heading])) == 2
+
 
 class TestBoxesBecomeZones:
     """What the adapter must produce for the rest of the pipeline to work."""

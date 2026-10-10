@@ -727,6 +727,19 @@ def attach_trailing_rows(found: list[Detection]) -> list[Detection]:
     `report_0011`'s table caption, both `section_header`; the four are the case
     this rule exists for and are untouched, `invoice_0001`'s `key_value_region`
     — the `Total: $385.00` strip — among them.
+
+    **A row across the table's bottom edge is a trailing row too — N3,
+    2026-09-30.** On the whole picture heron ends `statement_0006`'s
+    transactions table at 0.9300, through the middle of its own totals row,
+    and reports `Totals for the period` at 0.9255-0.9352. It started 0.0045
+    above the edge, so it was never *under* the table; and it was not wholly
+    inside, so `without_enclosed` kept it. It became a Zone of its own in the
+    table's Band: the line printed twice, the snap was refused for the whole
+    page, and the table was drawn in two thirds of the width beside it. So a
+    strip now qualifies when it starts below the table's top and ends below
+    its bottom, under every other guard here. Over all fifteen documents it
+    changes exactly that page: 6 Zones to 5, no other box moved, since the
+    detector's own snap had already put every box on its ink.
     """
     absorbed: set[int] = set()
     merged: list[Detection] = []
@@ -754,7 +767,9 @@ def _trailing_row(found: list[Detection], parent: int,
         if index != parent and index not in absorbed
         and box.label not in SPLITTABLE
         and box.label not in HEADINGS
-        and 0 <= box.top - table.bottom <= TRAILING_GAP
+        # Under the table, or across its bottom edge — see `attach_trailing_rows`.
+        and box.top > table.top and box.bottom > table.bottom
+        and box.top - table.bottom <= TRAILING_GAP
         and (box.bottom - box.top) <= TRAILING_HEIGHT * height
         and min(box.right, table.right) > max(box.left, table.left)
     ]
