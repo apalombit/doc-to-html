@@ -62,7 +62,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-10: spec 0008, step 1 next.**
+**Where the project is — 2026-10-10: spec 0008, step 2 next.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -78,8 +78,8 @@ RESET       2026-10-10, Alessandro: every open task and idea cleared —
               Fresh sweep F1-sweep on 12fa2d1
 Spec 0008   Page structure — opened 2026-10-10 from his review of
               F1-sweep, issue #31. Three steps, in order:
-              1 structure from pixels, offline              <- next
-              2 carry it in the IR and draw it, offline
+              1 structure from pixels, offline              DONE, gate MET
+              2 carry it in the IR and draw it, offline     <- next
               3 let it shape the boxes, one sweep
 ```
 

@@ -1,6 +1,6 @@
 # Read the page's structure before its boxes
 
-**Status: open — step 1 next.** Opened 2026-10-10, Alessandro's decision,
+**Status: open — step 1 DONE 2026-10-10, gate MET; step 2 next.** Opened 2026-10-10, Alessandro's decision,
 after reviewing the fresh sweep `F1-sweep`. Tracking issue **#31**. It works
 under spec 0007's target and ratchet; nothing in 0007 changes.
 
@@ -106,6 +106,39 @@ Offline, no model, seconds per page.
   - `menu_0012` correct, or recorded as "the pixels cannot decide";
   - no `columns` region invented on the other ten;
   - tests and mypy clean.
+
+#### Outcome — step 1, 2026-10-10, gate MET on every clause
+
+`src/doc_to_html/structure.py`, `structure(image, boxes, *, ground, inverted)`;
+pinned by `tests/test_structure.py`. Nothing in a Conversion calls it yet.
+
+| # | clause | result |
+|---|---|---|
+| 1 | `cv_0013`, `darkdeck_0009`, `newsletter_0008`: the `columns` region | **holds** — 2, 2 and 3 lanes; splits 0.344, 0.643, 0.335 / 0.665 (source 0.344, 0.630, 0.346 / 0.676); **0 printed lines in the wrong region**, every line of each source read in Chrome |
+| 2 | `catalogue_0015` a 3×3 grid of copies, no `columns`; `darkdeck_0009`'s tiles 1×4 | **holds** — splits 0.341 / 0.659, the grid starting below the title |
+| 3 | `menu_0012` correct, or "the pixels cannot decide" | **cannot decide**, as predicted — `single`, for step 3's model question |
+| 4 | no `columns` on the other ten; a grid only at `nonlatin_0014`'s panels | **holds** |
+| 5 | tests and mypy clean | **holds** — 850, clean |
+
+**How it decides.** A `grid` is a full lattice of drawn boxes of one size. A
+`columns` region needs a *drawn* divider — a panel's side, a fill running the
+page's height, a vertical rule — and, beside it, one block standing beside two
+stacked blocks on the other side: the shape a Band cannot hold. That second
+test does the work: removed, it invents columns on `invoice_0002`,
+`sample_css_0004`, `statement_0006`, `form_0007`, `receipt_0010` and on
+`catalogue_0015`'s cards. A whitespace gutter alone never makes a column (A2
+§7), which is why the menu stays `single`.
+
+**It reads the Zones' boxes as well as the pixels**, which the proposal said
+it would not: telling `darkdeck_0009`'s aside from a float (`sample_semantic_0005`'s
+TL;DR) is whether a main-column *block* runs across the panel's bottom edge,
+and the pixels can say that only with a gap threshold. The test reads the
+boxes committed in `tests/frozen/q5-result/`; F1-sweep's give identical answers
+on all fifteen.
+
+**The mask is "not the page's ground", not `content_ink`.** At `INK_LEVEL`
+the newsletter's column rules and the deck's footer rule do not exist, and
+`cv_0013`'s light sidebar type punches holes in its fill.
 
 ### Step 2 — carry it in the IR, and draw it
 

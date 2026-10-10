@@ -1,0 +1,323 @@
+"""The page's structure: which parts of it are columns read down, and which are
+a grid of copies read across — spec 0008, step 1.
+
+**Why it exists.** Nothing else in the converter decides what the page's layout
+is. `wire.bands_from_boxes` turns boxes into rows, and a row can only say what
+is *beside* what, never which way a region is read — the gap
+`specs/0007-a2-measurements.md` §4 named. `cv_0013`'s sidebar items are each
+paired with whichever main-column item sits at their height, because a Band is
+a row and the sidebar is not one.
+
+**What it returns.** The page top to bottom as `Region`s, each `single` (read
+down — today's Bands, and the default), `columns` (lanes side by side, each read
+top to bottom) or `grid` (identical drawn boxes in rows and columns, read
+across). Nothing deeper than page → region → lane.
+
+**What it reads.** The page's own pixels and the Zones' boxes, nothing else.
+Two kinds of evidence, both *drawn*:
+
+- a **grid** is a full lattice of rectangles of one size, from
+  `style.rectangles` — `catalogue_0015`'s nine cards, `darkdeck_0009`'s four
+  tiles;
+- a **column** needs a drawn divider — a panel's side (`darkdeck_0009`'s
+  aside), the edge of a fill running the page's height (`cv_0013`'s sidebar),
+  or a vertical rule (`newsletter_0008`) — with the content on its two sides
+  stacked independently: some block on one side stands beside two stacked
+  blocks on the other. That is exactly the shape a Band cannot hold, and a
+  float is not it — `sample_semantic_0005`'s TL;DR panel stands beside one
+  block, and so does each of `invoice_0002`'s unequal panels.
+
+**A whitespace gutter alone is never a column.** `menu_0012`'s body is two
+columns with nothing drawn between them, and A2 §7 measured three times that
+its gutter cannot be told from a two-column table's. So the menu stays
+`single` here — the pixels cannot decide — and step 3 asks the model one
+closed question about it instead.
+
+Nothing in a Conversion calls this yet; step 2 carries it in the IR.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from enum import Enum
+from typing import Any, Sequence
+
+import numpy as np
+
+from .ir import BBox
+from .preprocess import MIN_GAP_THICKNESS, SEPARATOR_ASPECT, ImageArray, _cv2
+from .style import CONTAINED, SAME_COLOUR, rectangles
+
+
+class Flow(str, Enum):
+    """Which way a region is read."""
+
+    SINGLE = "single"
+    COLUMNS = "columns"
+    GRID = "grid"
+
+
+@dataclass(frozen=True)
+class Region:
+    """A horizontal slice of the page, the full width of it, and how it is read.
+
+    `splits` are the x positions between lanes — a `columns` region's lanes, a
+    `grid`'s columns — so a region has one lane more than it has splits.
+    """
+
+    top: float
+    bottom: float
+    flow: Flow = Flow.SINGLE
+    splits: tuple[float, ...] = ()
+    rows: int = 1
+    """How many rows a `grid` has; 1 for anything else."""
+
+    @property
+    def lanes(self) -> int:
+        return len(self.splits) + 1
+
+
+SAME_SIZE = 0.01
+"""How far apart, as a share of the page, two drawn boxes' widths, heights or
+positions may be and still be copies of one design.
+
+Measured over every rectangle `style.rectangles` finds on the corpus: the
+copies differ by at most 0.002 (`catalogue_0015`'s cards) and 0.004
+(`sample_css_0004`'s two stacked cards), and the nearest pair that is not
+copies — `invoice_0002`'s Company Details and Payment Method panels, equal in
+width — differs in height by 0.029.
+"""
+
+FULL_HEIGHT = 0.9
+"""How much of a pixel column a fill must cover to run the page's height.
+
+`cv_0013`'s sidebar covers all of it, light type and all, because the type is
+no more the page's ground than the fill is. No other column on the corpus
+reaches 0.5 wider than a page-edge hairline.
+"""
+
+
+def structure(image: ImageArray, boxes: Sequence[BBox], *,
+              ground: tuple[int, int, int],
+              inverted: bool = False) -> list[Region]:
+    """The page's regions, top to bottom, covering it from 0 to 1.
+
+    `image` and `ground` are what `style.rectangles` takes — the plain
+    Rectified Image and the measured page ground — and `boxes` are the Zones'.
+    """
+    drawn = rectangles(image, ground=ground, inverted=inverted)
+    marked = _marked(image, ground, inverted)
+    containers = list(drawn) + _strips(marked, boxes)
+    found = _grids(drawn) + _columns(boxes, containers, _rules(marked))
+
+    regions: list[Region] = []
+    cursor = 0.0
+    for region in sorted(found, key=lambda r: r.top):
+        if region.top < cursor:
+            continue
+        if region.top > cursor:
+            regions.append(Region(cursor, region.top))
+        regions.append(region)
+        cursor = region.bottom
+    if cursor < 1.0:
+        regions.append(Region(cursor, 1.0))
+    return regions
+
+
+def _marked(image: ImageArray, ground: tuple[int, int, int],
+            inverted: bool) -> Any:
+    """Every pixel that is not the page's ground — the mask `rectangles` reads.
+
+    Not `content_ink`: that one is cut at a fixed grey level, and
+    `newsletter_0008`'s column rules and `darkdeck_0009`'s footer rule are too
+    faint for it, while `cv_0013`'s light sidebar type punches holes in the
+    fill it sits on.
+    """
+    pixels = np.asarray(image, dtype=np.int64)
+    if inverted:
+        pixels = 255 - pixels
+    return np.abs(pixels[:, :, ::-1] - np.array(ground)).sum(axis=2) > SAME_COLOUR
+
+
+def _strips(marked: Any, boxes: Sequence[BBox]) -> list[BBox]:
+    """Fills running the page's height that hold a Zone — a sidebar.
+
+    Thicker than a rule, so a page-edge hairline is not one, and holding a Zone,
+    so a border round a photographed page is not one either.
+    """
+    height, width = marked.shape
+    full = np.flatnonzero(marked.mean(axis=0) >= FULL_HEIGHT)
+    found: list[BBox] = []
+    for run in np.split(full, np.flatnonzero(np.diff(full) > 1) + 1):
+        if len(run) < MIN_GAP_THICKNESS * min(width, height):
+            continue
+        rows = np.flatnonzero(marked[:, run].mean(axis=1) >= 0.5)
+        strip = BBox(run[0] / width, rows[0] / height,
+                     (run[-1] + 1) / width, (rows[-1] + 1) / height)
+        if any(box.overlap_ratio(strip) >= CONTAINED for box in boxes):
+            found.append(strip)
+    return found
+
+
+@dataclass(frozen=True)
+class _Rule:
+    x: float
+    top: float
+    bottom: float
+    left: float
+    right: float
+    vertical: bool
+
+
+def _rules(marked: Any) -> list[_Rule]:
+    """Every Separator on the page — thin, and long for its thickness.
+
+    `preprocess.content_ink`'s test, applied to `_marked` rather than to ink.
+    """
+    cv2 = _cv2()
+    height, width = marked.shape
+    count, _, stats, _ = cv2.connectedComponentsWithStats(
+        marked.astype(np.uint8) * 255, connectivity=8)
+    found: list[_Rule] = []
+    for index in range(1, count):
+        x, y, w, h, _ = stats[index]
+        thin = min(w, h) < MIN_GAP_THICKNESS * min(width, height)
+        if thin and max(w, h) >= SEPARATOR_ASPECT * max(1, min(w, h)):
+            found.append(_Rule(x=(x + w / 2) / width, top=y / height,
+                               bottom=(y + h) / height, left=x / width,
+                               right=(x + w) / width, vertical=h > w))
+    return found
+
+
+def _grids(drawn: Sequence[BBox]) -> list[Region]:
+    """Each full lattice of same-size drawn boxes at least two columns wide.
+
+    A full lattice — every row holding a box in every column — so that
+    `form_0007`'s input boxes, eleven of one size scattered among labels and
+    full-width fields, are not one.
+    """
+    groups: list[list[BBox]] = []
+    for box in drawn:
+        for group in groups:
+            if (_near(box.right - box.left, group[0].right - group[0].left)
+                    and _near(box.bottom - box.top, group[0].bottom - group[0].top)):
+                group.append(box)
+                break
+        else:
+            groups.append([box])
+
+    found: list[Region] = []
+    for group in groups:
+        lefts = _clusters([box.left for box in group])
+        tops = _clusters([box.top for box in group])
+        if len(lefts) < 2 or len(lefts) * len(tops) != len(group):
+            continue
+        cells = {(_index(lefts, box.left), _index(tops, box.top)) for box in group}
+        if len(cells) != len(group):
+            continue
+        rights = [max(box.right for box in group if _near(box.left, left))
+                  for left in lefts]
+        found.append(Region(
+            top=float(min(box.top for box in group)),
+            bottom=float(max(box.bottom for box in group)),
+            flow=Flow.GRID,
+            splits=tuple(float(right + left) / 2
+                         for right, left in zip(rights, lefts[1:])),
+            rows=len(tops),
+        ))
+    return found
+
+
+def _near(a: float, b: float) -> bool:
+    return abs(a - b) <= SAME_SIZE
+
+
+def _clusters(values: list[float]) -> list[float]:
+    """The distinct positions among `values`, each the first of its cluster."""
+    found: list[float] = []
+    for value in sorted(values):
+        if not found or not _near(value, found[-1]):
+            found.append(value)
+    return found
+
+
+def _index(clusters: list[float], value: float) -> int:
+    return next(i for i, at in enumerate(clusters) if _near(value, at))
+
+
+def _columns(boxes: Sequence[BBox], containers: Sequence[BBox],
+             rules: Sequence[_Rule]) -> list[Region]:
+    """Each stretch of the page a drawn divider splits into independent lanes.
+
+    The blocks are the Zones' boxes, except that a box inside a drawn container
+    is the container: `darkdeck_0009`'s aside holds six list Zones and stands
+    beside the main column as one thing.
+    """
+    blocks = [box for box in boxes
+              if not any(box.overlap_ratio(c) >= CONTAINED for c in containers)]
+    blocks += list(containers)
+
+    dividers = [(c.left, c.top, c.bottom) for c in containers]
+    dividers += [(c.right, c.top, c.bottom) for c in containers]
+    dividers += [(r.x, r.top, r.bottom) for r in rules if r.vertical]
+
+    found: list[tuple[float, float, set[float]]] = []
+    for x, top, bottom in dividers:
+        near = [b for b in blocks if b.top < bottom and b.bottom > top]
+        if not near or any(b.left < x < b.right for b in near):
+            continue
+        left = [b for b in near if b.right <= x]
+        right = [b for b in near if b.left >= x]
+        if _independent(left, right) or _independent(right, left):
+            found.append((min(top, *(b.top for b in near)),
+                          max(bottom, *(b.bottom for b in near)), {x}))
+
+    merged: list[tuple[float, float, set[float]]] = []
+    for top, bottom, splits in sorted(found, key=lambda f: f[0]):
+        if merged and top < merged[-1][1]:
+            last = merged[-1]
+            merged[-1] = (last[0], max(last[1], bottom), last[2] | splits)
+        else:
+            merged.append((top, bottom, splits))
+
+    horizontal = [r for r in rules if not r.vertical]
+    regions: list[Region] = []
+    for top, bottom, splits in merged:
+        top, bottom = _extended(top, bottom, sorted(splits), blocks, horizontal)
+        regions.append(Region(float(top), float(bottom), Flow.COLUMNS,
+                              tuple(float(x) for x in sorted(splits))))
+    return regions
+
+
+def _independent(one: list[BBox], other: list[BBox]) -> bool:
+    """Whether a block on one side stands beside two stacked blocks on the other."""
+    for block in one:
+        beside = [b for b in other if b.top < block.bottom and b.bottom > block.top]
+        if any(a.bottom <= b.top or b.bottom <= a.top
+               for i, a in enumerate(beside) for b in beside[i + 1:]):
+            return True
+    return False
+
+
+def _extended(top: float, bottom: float, splits: list[float],
+              blocks: Sequence[BBox], rules: Sequence[_Rule]) -> tuple[float, float]:
+    """The region grown up and down to the nearest block or rule that crosses a
+    split, taking in every block between that sits in one lane.
+
+    `darkdeck_0009`'s `What Q4 commits to` sits below the aside and in the main
+    column's lane, and the footer's rule is what ends the column above the
+    footer line, which on its own would also fit in that lane. Bounded by the
+    *nearest* crossing rather than walked block by block, because the tile row
+    above the aside has tiles clear of the split beside the one that crosses it.
+    """
+    def crosses(left: float, right: float) -> bool:
+        return any(left < x < right for x in splits)
+
+    edges = [(b.top, b.bottom) for b in blocks if crosses(b.left, b.right)]
+    edges += [(r.top, r.bottom) for r in rules if crosses(r.left, r.right)]
+    ceiling = max((low for high, low in edges if low <= top), default=0.0)
+    floor = min((high for high, low in edges if high >= bottom), default=1.0)
+    between = [b for b in blocks if not crosses(b.left, b.right)
+               and b.top >= ceiling and b.bottom <= floor]
+    return (min([top] + [b.top for b in between]),
+            max([bottom] + [b.bottom for b in between]))

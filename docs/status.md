@@ -1,4 +1,4 @@
-# Status — 2026-10-10 (**spec 0008, page structure: step 1 next**; `q5-result/` the floor)
+# Status — 2026-10-10 (**spec 0008, page structure: step 2 next**; `q5-result/` the floor)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-10, when
@@ -10,7 +10,7 @@ Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 (authoritative), then this file. If you are going to look at output — and you
 should — use the **`visual-review` skill**.
 
-Branch `scaffold`. **845 tests pass, `mypy src/` clean.**
+Branch `scaffold`. **850 tests pass, `mypy src/` clean.**
 
 ---
 
@@ -39,8 +39,8 @@ Reset       2026-10-10, Alessandro: every open task and idea cleared —
               Q6, Q7, N5, the live-fault list, Thread 3/C, Thread 4/D.
               Fresh sweep F1-sweep, commit 12fa2d1, shipped defaults.
 Spec 0008   Page structure, opened 2026-10-10 from the F1-sweep review
-              step 1  structure from pixels, offline          <- next
-              step 2  carry it in the IR and draw it, offline
+              step 1  structure from pixels, offline          DONE, gate MET
+              step 2  carry it in the IR and draw it, offline <- next
               step 3  let it shape the boxes, one sweep
 ```
 
@@ -183,7 +183,14 @@ the Q5-era records", verbatim. Q1–Q4's are under "Outcome — Q1 to Q4".
 
 ---
 
-## Next — spec 0008, step 1
+## Next — spec 0008, step 2
+
+**Step 1 is done, 2026-10-10, gate met on every clause** —
+`structure.structure()` finds `cv_0013`'s, `darkdeck_0009`'s and
+`newsletter_0008`'s columns, `catalogue_0015`'s and the deck's grids, invents
+nothing on the ten, and leaves `menu_0012` `single` because nothing is drawn
+between its columns. The spec's "Outcome — step 1" has the table. Nothing in
+a Conversion calls it yet; step 2 carries it in the IR and draws it.
 
 **[`specs/0008-page-structure.md`](specs/0008-page-structure.md), issue #31 —
 the only open work.** Nothing in the converter decides what the page's layout
