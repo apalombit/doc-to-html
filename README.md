@@ -23,7 +23,8 @@ its source in eighty runs.
 like the source document**, compared against `example/*.html` and `example/*.png`
 directly. See
 **[docs/specs/0007-look-like-the-document.md](docs/specs/0007-look-like-the-document.md)**
-(issue #30) — it is the live spec and the plan.
+— it defines the target and the measure. The work plan it carried finished on
+2026-10-10 (issue #30, closed), and nothing is in flight.
 
 ## What it aims at
 
@@ -70,10 +71,10 @@ Adding a document is therefore writing an HTML file and running
 
 - **[CONTEXT.md](CONTEXT.md)** — the vocabulary. Zone, Band, Kind, Role, Probe,
   Ladder, Correction. Worth reading first; the code assumes these words.
-- **[docs/status.md](docs/status.md)** — what is built, what is stubbed, what is
-  missing, and what was rejected.
-- **[docs/specs/](docs/specs/)** — the piece of work currently in flight, with its
-  measured numbers. Start here if you are picking the project up.
+- **[docs/status.md](docs/status.md)** — where the project is: the ratchet's
+  floor, what shipped last, what is closed with evidence, and what is queued.
+- **[docs/specs/](docs/specs/)** — one spec per piece of work, each with its
+  measured numbers. All are closed; 0007 defines the current target.
 - **[docs/adr/](docs/adr/)** — five decisions that look arbitrary without their
   reasons:
   - [0001](docs/adr/0001-no-document-types.md) — no document types
@@ -92,7 +93,8 @@ Rectified Image ─────────────────────�
   │  layout: a trained ONNX detector finds the Zones — no model call
   │  classification (per-Zone full-res crop): Kind, Title
   │  per-Zone extraction from full-res crops, sliced with overlap if dense
-  │  coverage audit (different model family): content no Zone covers   [not built]
+  │  style record, no model: palette, fills, borders, heading sizes
+  │  coverage audit, no model: ink no Zone covers gets a Zone or a Gap
   ▼
 IR ── Probes: does a column of data rows sum to a summary row?
   │    Ladder: read → upscale → other engine → ask human
@@ -156,8 +158,7 @@ receipt, a corporate report, a restaurant menu, a CV, a Greek invoice and a
 product grid. Each carries one awkward feature the others do not —
 `doc_to_html.corpus` names it.
 
-[`docs/status.md`](docs/status.md) tracks what is implemented, what is stubbed,
-and what is known to be missing.
+[`docs/status.md`](docs/status.md) is the live state.
 
 ## Constraints worth knowing
 

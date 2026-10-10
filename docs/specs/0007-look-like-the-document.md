@@ -1,7 +1,11 @@
 # Look like the document
 
-**Status: open. Threads 0, A-1, 2/B, A0, A1, A2 and A3 closed; the open issues are next.**
-`docs/status.md` is the live state. Opened 2026-09-17. Tracking issue **#30**. This spec changes what the project is
+**Status: the work plan is finished; the target stands.** Threads 0, A-1, 2/B,
+A0, A1, A2, A3 and the open-issues queue closed between 2026-09-18 and
+2026-10-10; on 2026-10-10 Alessandro cleared what was left — Q6, Q7, N5,
+Threads 3/C and 4/D. **The target, the six axes and the ratchet below remain
+the project's standard.** `docs/status.md` is the live state. Opened
+2026-09-17; tracking issue **#30**, closed 2026-10-10. This spec changes what the project is
 measured against. It supersedes ADR 0002, retires `acceptance.compare()` and the
 five typed fixture builders, and replaces a single mismatch total with a six-axis
 rubric under a hard content ratchet.
@@ -285,10 +289,14 @@ Thread 1/A  The rest of the IR
    A1         inline runs, hard breaks    gate: set on entry                       DONE, gate NOT met
    A2         geometry — RE-SCOPED        gate: set on entry, see 0007-a2-measurements.md   DONE, gate MET
    A3         figure pixels               gate: set on entry                       DONE, gate MET
-Open issues  one at a time, cheapest first (docs/status.md "Next")               <- next
-Thread 3/C  Repair loop                   gate: re-scoped against A+B residuals
-Thread 4/D  Human corrections             unscheduled
+Open issues  Q1-Q5, N1-N4, one at a time                                     DONE 2026-10-10
+Thread 3/C  Repair loop                   gate: re-scoped against A+B residuals   CLEARED 2026-10-10
+Thread 4/D  Human corrections             unscheduled                              CLEARED 2026-10-10
 ```
+
+**Cleared, 2026-10-10:** Alessandro removed every remaining task — Q6, Q7, N5,
+the live-fault list, Threads 3/C and 4/D — to restart from a fresh end-to-end
+sweep he reviews himself. Their sections below are kept as design record.
 
 **2/B moved ahead of A0 on 2026-09-20**, on A-1's checkpoint evidence. A0 moves
 precision (0.91–0.98 across the corpus) — real but small — while `height_ratio`
@@ -307,7 +315,7 @@ columns by accident, which is A2's band model, so 2/B keeps the measurement and
 A2 gets the rule. **`Zone.align` never moved**; it stays in A2 too. All of it
 is recorded so none of it reads as drift.
 
-Checkpoint runs after **0, A-1, B, A0, A, C**. Each produces a comparison report.
+Checkpoint runs were planned after **0, A-1, B, A0, A, C**; C was never reached. Each produced a comparison report.
 
 ---
 
@@ -575,7 +583,7 @@ corpus-wide. The arithmetic was corrected on the *count* side instead, which is
 the cheaper of the two repairs: dropping a count can only be wrong, where
 cutting a crop can destroy.
 
-**Found by closing fault 1, and open.** The echo rule compares a Block against
+**Found by closing fault 1, and since resolved.** The echo rule compares a Block against
 *its own* Zone's Title, so two Zones that each read the same printed line still
 print it twice: `menu_0012` prints `To begin` twice, and `darkdeck_0009` prints
 a caption `AVAILABILITY` above a table whose first column header is
@@ -705,7 +713,7 @@ real second cause and both have to move.
 
 ---
 
-### Thread 3/C — the repair loop
+### Thread 3/C — the repair loop — **cleared 2026-10-10, never built**
 
 Designed here in full. **Its parameters are re-scoped after Thread B's
 checkpoint, against measured residuals rather than predicted ones** — a repair
@@ -740,7 +748,7 @@ way spec 0006's Change 3 closed.
 
 ---
 
-### Thread 4/D — human corrections
+### Thread 4/D — human corrections — **cleared 2026-10-10, never scheduled**
 
 **Unscheduled.** The hard part already exists: `Correction` is anchored to image
 geometry rather than to IR positions, which is what lets a human ruling survive
@@ -812,22 +820,20 @@ assumed.
 
 ## Further notes
 
-**Documents to supersede or amend when this lands:**
+**Documents superseded or amended when this landed — all done:**
 
-- **ADR 0002** is superseded by a new ADR. Its rejection of positioned facsimile
-  survives; its claim that *"no styling is ever extracted from the Source Image"*
-  does not.
+- **ADR 0002** is partly superseded by ADR 0005 (2026-09-18). Its rejection of
+  positioned facsimile survives; its claim that *"no styling is ever extracted
+  from the Source Image"* does not.
 - **ADR 0003** is amended: ground truth is derived from the source HTML rather
   than from typed expected IR, and the degradation generator it describes still
   does not exist.
-- **`CLAUDE.md`'s baseline section** — the run 84 table, the findings breakdown,
-  and "what is left, named exactly" — all describe the retired harness and must be
-  rewritten against the rubric once Thread 0's first checkpoint exists.
+- **`CLAUDE.md`'s baseline section** was rewritten against the rubric.
 
-**Tracker:** this spec needs a GitHub issue. So does `docs/specs/0006`, which
-never got one. `#28` (spec 0005) and `#17` (the vision layout prompt) are both
-closed by Thread 0 — 0005's remaining Changes 4 and 5 measure against a harness
-that no longer exists, and #17's pass is deleted.
+**Tracker:** this spec was issue #30, closed 2026-10-10; spec 0006 is #29,
+recorded retrospectively and closed. `#28` (spec 0005) and `#17` (the vision
+layout prompt) were closed by Thread 0 — 0005's remaining Changes 4 and 5
+measured against a harness that no longer exists, and #17's pass is deleted.
 
 **Two dormant safety nets that must survive every thread here.**
 `wire._without_empty_rows` and `_reread_as_prose` each guard behaviour that took

@@ -1,7 +1,9 @@
 # Nothing is missing
 
-**Status: Change 1 built, behind `DTH_CAPTION_PASS`. Changes 2-5 not started.**
-Tracked as issue #28; this is the only live spec, and 0001-0004 are closed.
+**Status: closed — history, not work in flight.** Change 1 shipped as
+`DTH_CAPTION_PASS`, on by default. Changes 2 and 3 were superseded by spec
+0006; Changes 4 and 5 were retired on 2026-09-18 by spec 0007's Thread 0,
+with the harness they were measured against. Issue #28 is closed.
 Continues `0004-check-the-box-against-the-ink.md` (issue #20), which ended by
 finding that "geometry is broken on four of the five fixtures" and calling that
 "a bigger problem than anything this spec set out to address". This is that

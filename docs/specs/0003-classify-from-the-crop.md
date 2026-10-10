@@ -1,10 +1,11 @@
 # Classify from the crop, not from the downscaled page
 
 **Status: closed — history, not work in flight.** Issue #12 is closed, with
-children #16, #18 and #19; only #17 remains open, and its own comment thread
-explains why it should be re-scoped rather than started. Continues
+children #16, #18 and #19; #17 was closed on 2026-09-18 by spec 0007's Thread
+0, which deleted the vision layout pass it was about. Continues
 `0002-structure-not-geometry.md`, which holds the run history and the four
-rejected prompt attempts. The live work is `0005-nothing-is-missing.md`.
+rejected prompt attempts. The current target is
+`0007-look-like-the-document.md`.
 
 **Treat runs before 50 as superseded and do not cite them as evidence.** Every
 run named in this file — 18, 19, 20, 22 and the ten before them — is below that

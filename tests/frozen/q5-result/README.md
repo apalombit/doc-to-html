@@ -1,5 +1,18 @@
 # `q5-result/` — Q5's sweep, and **the floor and the control** since 2026-09-30
 
+> **One leg sits below this floor by decision.** Since N4, 2026-10-10,
+> `catalogue_0015`'s T3 beside is 0.2364 against this directory's 0.2523:
+> the render it froze broke `each` one letter to a line, and the tall broken
+> word overlapped four of its neighbours' rows. Alessandro accepted the
+> crossing; every report against this directory names it, and no other leg
+> may fall. See `docs/status.md`, "What the ratchet enforces".
+>
+> **Nor is it still exactly what today's code makes.** N1–N4 (2026-09-30 to
+> 2026-10-10) changed four things downstream of the model — Shortfalls, Gaps,
+> `statement_0006`'s Zones and the pairs grid. `F1-sweep`, taken 2026-10-10,
+> is today's code end to end; whether it becomes the control is Alessandro's
+> decision.
+
 ## What this is
 
 The same shape as `reshot/`, plus the answers:

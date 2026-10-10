@@ -60,6 +60,10 @@ only for the one quantity. The guard recorded with it (*a rectangle covering
 more than 0.80 of the page is the page*) is knowledge worth keeping and worth
 **re-measuring** rather than citing.
 
+**Built 2026-09-21, in Thread 2/B, as `style.rectangles` (`458e435`).** It is found
+on the page, not grown from a Zone — a snapped Zone cannot see its own rule —
+and its docstring carries the measurement over all fifteen documents.
+
 That also makes the style record fully deterministic and unit-testable against
 `tests/frozen/run84/` with nothing running.
 

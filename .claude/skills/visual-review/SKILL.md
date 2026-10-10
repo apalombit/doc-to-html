@@ -155,16 +155,17 @@ picture has not done the job.
 ### `worst` and `owner`
 
 - `worst` — the axis carrying the worst fault on that document.
-- `owner` — who fixes it. Pick from: `A-1`, `A0`, `A1`, `A2`, `A3`, `2/B`,
-  `3/C`, `4/D`, or `new` when nothing owns it yet. Current assignments:
+- `owner` — where the fault was last worked on, or `new` when nothing has
+  touched it. Every phase is closed and nothing is queued since 2026-10-10, so
+  `owner` no longer means *already scheduled*. The areas, for reference:
   doubled titles and content loss → `A0`; column collapse and alignment →
   `A2`; heading and label sizes, including a bold body line drawn as `h1` →
-  the type scale, `2/B`. Figures are drawn from their pixels since A3 and
-  repeated caveat lines are one line since 2026-09-26, so either one coming
-  back is a regression, not a scheduled fault.
+  the type scale, `2/B`; figures → `A3`. Figures are drawn from their pixels
+  since A3 and repeated caveat lines are one line since 2026-09-26, so either
+  one coming back is a regression.
 
-`owner` is what turns a list of complaints into work: it separates *fix now*
-from *already scheduled* from *nobody knew about this*.
+`owner` separates *a known fault, already worked on* from *nobody knew about
+this* — what gets fixed next is Alessandro's decision.
 
 **An axis the rubric does not declare is accepted and counted as a trial
 axis.** If a fault has no home, add one rather than bending it into an axis

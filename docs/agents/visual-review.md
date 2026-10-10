@@ -75,10 +75,9 @@ needs no code change.
 
 ---
 
-## What the tool still cannot do
+## What the tool cannot do
 
-Kept here because it is the next piece of work on the instrument, not because
-a reviewer needs it.
+Known limits, so a reviewer allows for them. Not scheduled work.
 
 1. **The rubric is still a guess.** `--check` now collects the firing record;
    a few more passes decide which axes stay.

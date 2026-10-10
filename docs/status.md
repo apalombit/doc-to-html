@@ -169,211 +169,13 @@ price 46px below its neighbours'. T5's `ink` on catalogue moved 128 → 192
 grey: a modal flip, the card border outnumbering the text on a page 53px
 shorter, not a colour change.
 
-### N3 — a totals row across the table's edge, `8e1c0f8`, 2026-10-10, **gate MET, 7 of 7**
+### Before N4
 
-**The detector put it there.** heron ends `statement_0006`'s transactions
-table at 0.9300, through the middle of its own totals row, and reports
-`Totals for the period` as text at 0.9255–0.9352. Starting 0.0045 above the
-edge, it was never a strip *under* the table for `attach_trailing_rows`; not
-wholly inside, `without_enclosed` kept it. In the table's Band it printed the
-line a second time, refused the snap for the page, and squeezed the table
-into two thirds of the width. `detector._trailing_row` now also takes a strip
-that starts below the table's top and ends below its bottom, under every
-other guard.
-
-**Measured with no model, and why that is enough.** `tools/layout_front.py`:
-exactly `statement_0006` changes, 6 Zones to 5, and its five remaining boxes
-are identical to full precision — the detector's own snap had already put
-them on their ink, so the snap the sliver blocked moves nothing. A change
-that only removes a Zone moves no crop, so `tools/replay_run.py` measures it
-— over a scratch copy of the control's answers with the sliver's three calls
-(classify, prose, runs) taken out. The Conversion then asks exactly the other
-17, with byte-identical prompts, nothing asked beyond the run and nothing
-unserved. The replay baseline, unmodified, equals `rederive.py`'s arm 15 of
-15, so the two loops agree on today's code.
-
-| # | clause | result |
-|---|---|---|
-| 1 | `statement_0006`: 5 Zones; `Totals for the period` printed once; 42 rows, column-sum reconciles | **holds** |
-| 2 | layout front: the other fourteen's Zones identical; statement's five boxes identical to full precision | **holds** |
-| 3 | replay asks exactly the 17 remaining calls, prompts byte-identical | **17 of 17** |
-| 4 | the other fourteen byte-identical; statement precision 0.9827 → 0.9903, height 2.05 → 1.60, columns within tolerance 0.559 → 1.000, and their companions | **holds** — 14 of 14 |
-| 5 | ratchet against the floor, four legs, fifteen; the report's snap line names no document | **holds; none** |
-| 6 | visual review, fifteen sheets, `--previous` the replay baseline | **no `worse`** — fourteen `same`, statement `better` |
-| 7 | tests, mypy | **843, clean** |
-
-**A caveat on the offline loop.** On a run built by `rederive.py` the report's
-"The Bands are valid everywhere" is vacuous: `_snap_note` reads refusals from
-`trace.json`, and `rederive.py` writes none. Replays and sweeps write one.
-
-### N2 — the Gap audit reads type, `1a720ef`, 2026-09-30, **gate MET, 8 of 8**
-
-**Two stages put ink that is not type where the audit looks.** On
-`receipt_0010` the page warp keeps 2px of the grey ground round the paper, a
-frame along all four edges: 23.0% of the page's ink. On `cv_0013`, `equalise`
-takes the dark sidebar for uneven light and blows it out, leaving dark halos
-round every item and along the panel's edge: 26.1% of the page's ink between
-the Zone boxes. Fixing either stage moves the pixels the model is shown and
-costs a sweep. The audit is where the false finding is made, and fixing it
-there is free.
-
-`preprocess.uncovered_regions(type_only=True)` takes off, before the boxes:
-the page's outermost rows and columns while each is inked over
-`PAGE_EDGE_INK` (half) of its length — the receipt 0.97-1.00, every other
-page 0.00-0.03 — and solid blocks, `_without_panels` at the page's scale with
-a margin of one `PANEL_SPAN`, because the halo fades over several pixels (at
-deskew's one-pixel margin three fragments of it stayed as findings).
-**Only the audit asks for it** — `orchestrator.gaps`, shared by `_audit` and
-`tools/rederive.py`, which gains the step. Recovering Zones reads the ink as
-before, since a solid block no box covers may be a lost figure; on the corpus
-the two agree, Zones identical either way. That narrows what was proposed —
-the cut was put to Alessandro as sitting in the shared mask — and changes no
-output.
-
-Measured by `tools/rederive.py` over the control, one change apart from N1's
-arm (`N1-02-shipped`); the Gap step, run with no cut, reproduces that arm 15
-of 15:
-
-| # | clause | result |
-|---|---|---|
-| 1 | `cv_0013`: one Gap, 0.6%, hedged | **holds** — from 5, the 26.1% among them |
-| 2 | `receipt_0010`: one Gap, the dashed rule, 2.1%, hedged | **holds** — from 2 |
-| 3 | the other thirteen byte-identical; the two differ only in the panel and the IR's `gaps`; fields only height and T5 texture | **holds** — 13 of 13, and those 6 fields |
-| 4 | `tools/layout_front.py`: Zones identical | **15 of 15** |
-| 5 | ratchet against the floor, four legs, fifteen; honesty tally | **holds; 4 / 8, unchanged** |
-| 6 | `rederive.py` gains the Gap step and reproduces the baseline with no cut | **15 of 15** |
-| 7 | visual review, fifteen sheets, `--previous` N1's arm | **no `worse`** — thirteen `same`, the two panels `better` |
-| 8 | tests, mypy | **840, clean** |
-
-### N1 — the Shortfall counts lines as the Extractor does, `4d4bccd`, 2026-09-30, **gate MET, 8 of 8**
-
-**The model was right.** `PROSE_PROMPT` asks for the lines the document
-*breaks* — "a line that runs to the right-hand edge and continues below it
-has merely wrapped, and is one line" — and both paragraphs read whole were
-answered to the letter. `orchestrator.shortfall` compared them against
-`printed_lines`, which counts every line the type wraps onto. And
-`darkdeck_0009` Zone 4 was right by the same accident: "Open risks" over one
-bullet wrapped onto two lines, a one-line loss read as two. Its twin, Zone 10
-— "Decisions wanted" over one bullet — was reported by nothing.
-
-`preprocess.hard_lines` counts in the Extractor's unit: a printed line ending
-within `WRAP_TOLERANCE` (0.15) of the widest line's end, with another below
-it, is a wrap. **There is no empty band** — over every prose and list Zone of
-the control, wraps stop up to 0.104 of the width short and deliberate breaks
-as close as 0.007 (`invoice_0001`'s right-aligned address) — so the tolerance
-sits above every wrap and an ambiguous line counts as wrapped, the side that
-can only silence a finding. With wraps gone, a prose or list Zone fires at one
-line short (`SHORTFALL_HARD_LINES`); tables and pairs are untouched at two.
-Counting printed lines at one short would have fired on eight Zones, six of
-them wraps.
-
-Gate agreed before any code, measured by `tools/rederive.py` over the
-control, one change apart from its baseline (`N1-00-base`, 15 of 15
-byte-identical to `q5-result/`, 0 differing score fields):
-
-| # | clause | result |
-|---|---|---|
-| 1 | `darkdeck_0009`: exactly Zones 4 and 10, each 2 printed / 1 read | **holds** |
-| 2 | `invoice_0002`, `newsletter_0008`: no Shortfall | **holds** |
-| 3 | the other twelve byte-identical to the baseline | **12 of 12** |
-| 4 | the three differ only in the findings panel and the IR's `shortfalls`; score fields only height, T5 ink and texture, `newsletter_0008`'s `split_regions` 1 → 0 | **holds** — the 14 fields the scratch arm predicted, and no others |
-| 5 | ratchet against the floor, four legs, fifteen | **holds** |
-| 6 | honesty tally 6 declared / 6 quiet → 4 / 8 | **4 / 8** |
-| 7 | visual review, fifteen sheets, `--previous` the baseline | **no `worse`** — twelve `same`, the three panels `better` |
-| 8 | tests, mypy | **836, clean** |
-
-**Clause 6 is the truth, not a regression, Alessandro's decision.**
-`invoice_0002` and `newsletter_0008` were "declared" only by the false
-Shortfalls. What they actually lose — `adipisicing` and `blanditiis` misspelt
-inside Zone 7's paragraph, and `councillor` — is loss inside a line, which A-1
-established no finding can see.
-
-### The corpus pictures, re-shot whole — `4b6d34d`, 2026-09-29
-
-All ten authored pictures were missing their bottom 60-90px: footers,
-`form_0007`'s signature line, `report_0011`'s third footnote, `cv_0013`'s last
-publication, `receipt_0010`'s last three lines. They were shot before
-`SHOT_SLACK`, in the commit that added it, and `shoot_corpus.py --check` could
-not see it because it scores the HTML against itself. Re-shot with `--force`;
-two independent shoots agree to the pixel; **`test_projection`'s
-`TestTheCorpusPictureIsItsOwnHTML` fails on every one of the old pictures.**
-
-### Deskew on type alone — `8f70679`, 2026-09-29
-
-On the whole picture `cv_0013`'s dark sidebar runs the page's full height.
-`skew_angle` scores angles by how sharply the ink stacks into lines, and a
-full-height panel adds nothing at level and a wedge once tilted — so the
-score rose with every step and a straight page was rotated the full 15°. The
-detector read the rotated page as one photograph: **13 Zones to 1**.
-`preprocess._without_panels` takes solid blocks out of the vote. All fifteen
-pages read level, old pictures and new; the tilt tests still straighten ±1.5°
-and ±4°, with and without a panel. `RECTIFIER_VERSION` 3 → 4.
-
-### The floor re-cut — `031ba3a`, 2026-09-29
-
-Sweep `Q5-10-reshot-sweep`, 486 model calls. The five unchanged originals
-came back **byte-identical** to `a3-result` re-derived, but for
-`rectifier_version`: the conversion is still deterministic. Vocabulary recall
-over fifteen **0.8667 → 0.9708**; `receipt_0010` 0.198 → 0.988 with no change
-to the pipeline at all. What fell, and why, is in
-[`tests/frozen/reshot/README.md`](../tests/frozen/reshot/README.md) — which
-was corrected on 2026-09-30 about `report_0011`, whose fall is the scorer's.
-
-### Q5 — `receipt_0010`, `2d918df`, 2026-09-30, **gate MET, 8 of 8**
-
-**Its premise did not survive measurement.** Enlarging the crop 2.6× changed
-no answer. On the truncated picture the receipt collapsed under the table
-prompt's grid sentence, "19 rows and **1 columns**" — a wrong count, from
-dashed rules and a centred line bridging every gutter — and read every line
-with no count at all. On the whole picture its crop no longer holds the
-centred line, and it reads every row *with* the count. What was left was
-drawing it, and three changes, each measured one apart:
-
-| change | effect |
-|---|---|
-| `render._table`: a header row stays in place once the table opens with a header; summaries go to `<tfoot>` only when nothing follows them | the receipt's `AID`/`Auth` rows and its `Card`/`Change` lines were drawn out of order. Replayed over the floor: **14 of 15 byte-identical**, receipt tau 0.800 → 1.000, beside 0.871 → 1.000 |
-| `probes`: a column-sum totals the DATA rows above the first SUMMARY row; `tools/rederive.py` gains the step | the false "did not reconcile" (4426 — quantities summed with a card number) becomes **26.45 = 26.45** |
-| `detector.prefer_container`: a container never takes in a picture | the farewell line, barcode and last three lines were one prose Zone and **the barcode, drawn since A3, was not drawn**. Layout front: exactly the receipt moves, 3 → 5 Zones |
-
-**The gate, written before sweep `Q5-40-sweep` and committed as `d9a0d39`.**
-The sweep ran on that commit: 491 model calls, 2h01m, the model 54%/46%
-CPU/GPU.
-
-| # | clause | predicted | result |
-|---|---|---|---|
-| 1 | receipt rows in printed order in the DOM; no `<tfoot>` (replaces its tau and beside, decided 2026-09-29) | holds | **holds** |
-| 2 | receipt column-sum reconciles, 26.45 = 26.45 | holds | **holds** |
-| 3 | receipt barcode drawn from its pixels; `THANK YOU` and the three lines printed as text | holds | **holds** — one figure Zone with its pixels, one `<img>`, all four lines as text |
-| 4 | receipt: no word stops printing, precision does not fall | 0.9877, 0.9903 | **0.9877, 0.9903**, nothing newly vanished |
-| 5 | the other fourteen byte-identical to the floor | 14 of 14 | **14 of 14**; the receipt byte-identical to its prediction run, `Q5-30-receipt` |
-| 6 | ratchet against `reshot`, four legs, fifteen | holds | **holds**, fifteen of fifteen |
-| 7 | visual review, all fifteen, `--previous` the floor's sweep | no `worse` | **none** — fourteen `same`, the receipt `better` |
-| 8 | tests, mypy | 833, clean | **833, clean** |
-
-Not ratcheted, and fell: the receipt's `columns_within_tolerance` 0.875 →
-0.775 — the farewell, the barcode and the last three lines are now three
-blocks, each drawn at the left where the source centres it (`Zone.align`,
-deferred).
-
-### Measured and kept: the one-column grid hint
-
-Withholding a grid that measures one column was the first thing Q5 built. On
-the re-shot corpus **five of fifteen tables** measure one column where the
-page prints two to six. Each was asked again with no count and the floor
-replayed with the answers: **`menu_0012` stopped printing 30 words** and
-`statement_0006` lost `Castleton`. The count of rows is what the model obeys,
-so the hint stays; `config.DEFAULT_TABLE_GRID_HINT` records the measurement,
-and `test_a_one_column_count_is_still_stated` pins it.
-
-### The floor and the control frozen, and a fourth loop — 2026-09-30
-
-`tests/frozen/q5-result/` holds `Q5-40-sweep`'s documents, scores and — a
-first — its answers; Alessandro made it the floor the same day. **`tools/replay_run.py`** serves a run's or a frozen
-directory's answers to today's code through a real Conversion, and with
-`--swap` one new answer; it is how the withheld hint was measured. Proved on
-the day: 15 of 15 byte-identical from the sweep and again from `q5-result/`;
-14 of 15 over the floor's sweep, the receipt flagged as asking what that run
-never did. `bakeoff.write_dump` is the dump writer both share.
+N1–N3 and the Q5-era records — the corpus pictures re-shot whole, deskew on
+type alone, the floor re-cut, Q5, the one-column grid hint, the floor and the
+control frozen — moved on 2026-10-10 to
+[`specs/0007-handover.md`](specs/0007-handover.md), "Outcome — N1 to N3, and
+the Q5-era records", verbatim. Q1–Q4's are under "Outcome — Q1 to Q4".
 
 ---
 
@@ -478,16 +280,19 @@ python tools/visual_review.py debug/runs/<label> --check
 `git diff HEAD > debug/runs/<label>/uncommitted.diff` beside it**, as A3 did.
 
 **Three offline loops, each proved before it was used, and a sweep. Say which
-produced any number you report.**
+produced any number you report.** Start them from a fresh sweep such as
+`debug/runs/F1-sweep`, not from `q5-result/`: N1–N4 changed what today's code
+makes from the floor's answers, and `rederive.py` cannot re-apply N3's
+detector change. Both tools take a run directory as well as a frozen one.
 
 - **Downstream of the model** — renderer, style, probes. `tools/rederive.py
-  tests/frozen/q5-result --label <base>` builds today's baseline; build the
+  <run> --label <base>` builds today's baseline; build the
   changed arm the same way with the change in place, score both, and pass the
   baseline as `--previous` to the visual review. **A new downstream step that
   writes the IR must be added to `rederive.py`.** Cannot move anything the
   model decided.
 - **Recorded answers through a real Conversion** — `tools/replay_run.py
-  tests/frozen/q5-result --label <label>`, committed in Q5 after the loop had
+  <run> --label <label>`, committed in Q5 after the loop had
   lived in scratch scripts since 2026-09-22. Everything between an answer and
   the page — wire, mapper, every pass — on the control's own answers, in under
   a minute; `--swap <doc>:<NN>=<answer.json>` serves one new answer. A

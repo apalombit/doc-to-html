@@ -1,4 +1,11 @@
-# `a3-result/` — Phase A3's outcome, and **the T1 ratchet's floor** since 2026-09-26
+# `a3-result/` — Phase A3's outcome — **superseded as the floor, 2026-09-29**
+
+> **This is no longer the T1 ratchet's floor.** On 2026-09-29 the floor moved
+> to `tests/frozen/reshot/`, when the ten authored corpus pictures were found
+> missing their last lines and re-shot whole, and on 2026-09-30 to
+> `tests/frozen/q5-result/`. Kept as the record of what A3 reached, measured
+> on the cut-short pictures. Do not point `--previous` here. Where the text
+> below says "the floor", read "the floor from 2026-09-26 to 2026-09-29".
 
 ## What this is
 

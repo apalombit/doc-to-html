@@ -3,8 +3,9 @@
 **Status: complete.** Closed on run 81 — the corpus at **22 findings, geometry
 6**, down from 26 and 16 when this spec opened. Supersedes spec 0005's Changes 2
 and 3, whose mismatch counts were written against a comparison that no longer
-exists. 0005's Change 1 (Titles) is built; its Changes 4 and 5 are untouched and
-stay where they are. No GitHub issue: every measurement is in this file.
+exists. 0005's Change 1 (Titles) is built; its Changes 4 and 5 were retired by
+spec 0007. Recorded retrospectively as issue #29, closed; every measurement is
+in this file.
 
 | change | outcome |
 |---|---|

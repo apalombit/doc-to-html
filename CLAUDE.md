@@ -34,16 +34,18 @@ trial axis is kept rather than rejected.
 
 ### Specs
 
-Work in flight has a spec in `docs/specs/`, one file per piece of work, each tracked
-as a GitHub issue. **Read the spec before the code** — it carries the measured
-numbers and what has already been tried and rejected.
+Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
+tracked as a GitHub issue. **Read the spec before the code** — it carries the
+measured numbers and what has already been tried and rejected. **Every spec is
+closed as of 2026-10-10**; 0007 still defines the target.
 
 ---
 
 ## READ THIS FIRST — the target changed on 2026-09-17
 
 **`docs/specs/0007-look-like-the-document.md` is authoritative. Where this file
-disagrees with it, the spec wins.** Its tracking issue is **#30**.
+disagrees with it, the spec wins.** Its tracking issue, **#30**, closed on
+2026-10-10 when its work plan finished; the target stands.
 
 The project no longer optimises agreement between the IR and a hand-typed
 reference IR. **It optimises whether the rendered output looks and reads like the
@@ -60,92 +62,40 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Work order — one thread at a time, each ending at a gate:**
+**Where the project is — 2026-10-10: nothing is queued.**
 
 ```
-Thread 0    Scorer, corpus, report        DONE 2026-09-18
-Phase A-1   Nothing loses content quietly DONE 2026-09-19, gate NOT met
-Thread 2/B  Style record (all CV, zero model calls)   DONE 2026-09-22
-              palette, per-Zone chrome, borders, clipping, width reservation
-              and ink contrast all shipped; page width measured-not-drawn;
-              type scale deferred with its numbers in style.py
-Phase A0    Stop the bleeding          DONE 2026-09-22, gate MET
-              its pre-registered T1 = 1.00 gate was disproved and replaced
-              from tests/frozen/a0-checkpoint/ before any code changed
-Phase A1    Inline runs, and hard line breaks   DONE 2026-09-25, gate NOT met
-              reflow shipped and measured clean; inline runs asked INSIDE the
-              Extractor prompts crossed the ratchet and were reverted, then
-              re-asked as a SEPARATE pass (DTH_INLINE_PASS) which holds the
-              ratchet and reaches only 8 of 42 — clause 1 is the open one
-Phase A2    Geometry — RE-SCOPED            DONE 2026-09-25, gate MET
-              its premise did not survive its own measurements — two thirds of
-              the fault is inside one Zone, and every renderer replacement
-              tried lost on the hard tier. The column model and the merged Zone
-              are CLOSED UNBUILT; three offline wins shipped; the enclosed Zone
-              shipped as detector.without_enclosed — it was the detector's own,
-              not the snap's, and every enclosed Zone was a duplicate.
-              docs/specs/0007-a2-measurements.md is the record.
-Phase A3    Figure pixels                   DONE 2026-09-26, gate MET
-              a FIGURE Zone carries its crop (Zone.pixels) and is drawn; what
-              was read off it is alt text. invoice_0002's ACME tile split out
-              by detector.without_overreaching_pictures. figures_lost 2 -> 0
-Open issues 1-3 DONE 2026-09-26, offline, ratchet holds 15 of 15
-              caveat lines aggregated, header-row fills measured, the
-              AVAILABILITY Title echo dropped; issue 4 went to the type scale
-Queue       Q1-Q7 in docs/status.md "Next", in order, go given 2026-09-27
-              model-free first (menu thead, empty header cell, type scale,
-              Thread 0's seam), then the three that cost model time
-              Q1 DONE 2026-09-27, Q2 DONE 2026-09-28, both offline,
-              both gate MET; Q3 DONE 2026-09-29, re-scoped to heading
-              sizes on measurement, gate MET; Q4 DONE 2026-09-29, the
-              vision layout pass deleted, no output change
-              2026-09-29: the ten authored pictures found cut short and
-              re-shot whole; deskew on type alone; floor re-cut to reshot/
-              Q5 DONE 2026-09-30, gate MET 8 of 8: its resize premise did
-              not survive; the receipt's rows in order, its total
-              reconciled, its barcode drawn; q5-result/ frozen, and made
-              the floor and the control; tools/replay_run.py committed
-Queue, continued   N1-N4 model-free
-              N1 DONE 2026-09-30, offline, gate MET: a prose or list
-              Shortfall counts lines as its Extractor does
-              N2 DONE 2026-09-30, offline, gate MET: the Gap audit
-              reads type, not a page's edge or a panel's fill
-              N3 DONE 2026-10-10, offline, gate MET: a totals row
-              across the table's edge is a trailing row
-              N4 DONE 2026-10-10, offline, gate NOT met: a label with
-              no value spans the row; shipped on Alessandro's decision,
-              catalogue_0015's T3 beside below the floor recorded
+Thread 0    Scorer, corpus, report                  DONE 2026-09-18
+Phase A-1   Nothing loses content quietly           DONE 2026-09-19, gate NOT met
+Thread 2/B  Style record, all CV, zero model calls  DONE 2026-09-22
+Phase A0    Stop the bleeding                       DONE 2026-09-22, gate MET
+Phase A1    Inline runs, hard line breaks           DONE 2026-09-25, gate NOT met
+Phase A2    Geometry, re-scoped                     DONE 2026-09-25, gate MET
+Phase A3    Figure pixels                           DONE 2026-09-26, gate MET
+Queue       Open issues 1-3, Q1-Q5, N1-N4           DONE 2026-09-26 to 2026-10-10
 RESET       2026-10-10, Alessandro: every open task and idea cleared —
-              Q6, Q7, N5, the live-fault list, Thread 3/C, Thread 4/D.
-              NOTHING IS QUEUED. Fresh sweep F1-sweep on 12fa2d1; the
-              next work comes from his own review of it
+              Q6, Q7, N5, the live-fault list, Threads 3/C and 4/D.
+              Fresh sweep F1-sweep on 12fa2d1; the next work comes
+              from his own review of it. Start nothing until he says.
 ```
 
-**2/B ran before A0** and closed on 2026-09-22; **A0 closed the same day;
-A1 closed 2026-09-25 with its gate NOT met; A2 closed the same day with its
-gate met; A3 closed 2026-09-26 with its gate met; open issues 1–3 closed
-offline the same day, and on 2026-09-27 the floor was kept at `a3-result`**
-— see `docs/status.md`, "What the last step shipped".
-`docs/status.md` indexes what each shipped and where every measurement lives.
-**The ratchet's floor and the control are both `tests/frozen/q5-result/`
-since 2026-09-30** — the documents today's code makes, and the first frozen
-directory to carry the answers that made them. **One leg sits below it by
-decision since N4:** `catalogue_0015`'s T3 beside, which every report against
-it names — `docs/status.md`, "What the ratchet enforces". Alessandro moved the floor
-there from `reshot/`, which it dominates on every ratcheted leg; `reshot/`
-had replaced `a3-result/` the day before, when the ten authored corpus
-pictures were found missing their last lines and re-shot whole. See each
-README, and `docs/status.md`, "The floor".
+What each step shipped and measured is in `docs/status.md` and the handover's
+outcome sections; spec 0007 keeps the design record and what was rejected.
 
-`docs/specs/0007-handover.md` holds a ready prompt per thread and the full
-scope of Phase A-1, as record. **No prompt in it is next:** Alessandro cleared
-the queue on 2026-10-10 and reviews the fresh sweep `F1-sweep` himself —
-**start nothing until he says what comes next.**
+**The ratchet's floor and the control are both `tests/frozen/q5-result/`
+since 2026-09-30** — Q5's sweep, and the first frozen directory to carry the
+answers that made it. **One leg sits below it by decision since N4:**
+`catalogue_0015`'s T3 beside, which every report against it names —
+`docs/status.md`, "What the ratchet enforces". Each earlier floor, and why
+it moved, is in its README and in `docs/status.md`, "The floor".
+
+`docs/specs/0007-handover.md` holds a ready prompt per thread, as record; the
+one to use is **"Fresh start — 2026-10-10"**.
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
-this section.** It says what is done, what the last checkpoint showed, what is
-deferred and why, and what is still waiting on a decision. It is maintained,
-not archived: when it goes stale, rewrite it rather than banner it.
+this section.** It says what is done, where the floor is, what is closed with
+evidence, and what is queued. It is maintained, not archived: when it goes
+stale, rewrite it rather than banner it.
 
 ### What Thread 0 built, and where it lives
 
@@ -392,34 +342,25 @@ and `_without_repeated_header` — which drops a second `role == "header"` row
 that spells the same as the first, the padding the model produces when the
 grid hint asks for more rows than the table has.
 
-### The OpenCV rectangle finder — Thread 2/B must BUILD it
+### The rectangle finder — `style.rectangles`, built in 2/B on 2026-09-21
 
-**Corrected 2026-09-20. This section used to say the finder was in the tree and
-must not be rebuilt. It is not in the tree and never was.** `git log -S
-findContours` across all history returns exactly one introduction, and it is
-`preprocess.find_page_quad` — page-edge detection for rectification, a different
-job. `tools/cv_layout_probe.py` holds `zones_from_morphology`, which dilates ink
-and takes connected components; it groups ink into blocks and **cannot see a
-drawn border at all**.
+It finds every box the page draws — cards, panels, bordered fields — for the
+style record's borders and card treatment. **It is found on the page, never
+grown from a Zone**: a snapped Zone sits on its *content* ink, and
+`preprocess.content_ink` deletes rules by name, so the rule is invisible to
+the thing that placed the box. Its docstring carries the measurement over
+all fifteen documents, and its guard — a rectangle covering more than 0.80 of
+the page is the page.
 
-What spec 0006 Change 3 measured was measured in a scratch script that was never
-committed, and three documents — this file, spec 0007 and ADR 0005 — then spent
-a year telling the next session to reuse it. **That is the project's own
-recurring fault applied to itself: a claim in the docs that nothing verifies.**
-The lesson beside `dth_env.txt` is the same shape — before relying on something,
-prove it is there.
+**Do not use it for *grouping*.** Wired into grouping, morphology produced
+byte-identical boxes on all five original documents; Zones come from the
+detector.
 
-What survives as *knowledge* rather than as code: a rectangle finder was
-observed to locate exactly `invoice_0002`'s four panels and `sample_css_0004`'s
-two cards and nothing on the other three pages, and **its guard** — a rectangle
-covering more than 0.80 of the page is the page, unguarded it took
-`invoice_0001` from 6 Zones to 1. Treat both as a starting point to re-measure,
-not as a result to cite.
-
-**Do not rebuild it for *grouping*** — that much is still settled, and for a
-separate reason: wired into grouping, morphology produced byte-identical boxes
-on all five fixtures. Thread 2/B's use is borders, rules and card treatment for
-the style record, which is a different question.
+**The lesson it left, which generalises:** for a year three documents told
+each session to *reuse* a finder that had never been committed — spec 0006
+Change 3 measured it in a scratch script. **A claim in the docs that nothing
+verifies is the project's recurring fault applied to itself.** Before relying
+on something, prove it is there.
 
 ### Runs explain themselves
 
@@ -513,24 +454,24 @@ rejected for firing on clean documents while missing the worst real loss;
 `src/doc_to_html/honesty.py` carries the table and the numbers. **Do not build a
 third without a new kind of evidence.**
 
-**What that means for Thread 3/C, stated in full because the shorthand was
-useless.** 3/C's re-scoping gate classifies each residual error as (a) the IR
-cannot express it, (b) a pass read it wrong and would again, or (c) it needs a
-second look at the whole page — and the loop gets built **only if (c) is a
-material share**. This residue is **(b)**: the conversion is deterministic at
-`temperature: 0`, so a loop that re-examines the same crop gets the identical
-wrong answer back. **Do not plan on the repair loop to recover recall**, and do
-not let that expectation justify deferring reading quality. On current evidence
-3/C closes unbuilt, exactly as spec 0006's Change 3 did.
+**What that means for any repair loop** (spec 0007's Thread 3/C, cleared
+unbuilt on 2026-10-10). Classify each residual error as (a) the IR cannot
+express it, (b) a pass read it wrong and would again, or (c) it needs a second
+look at the whole page — a loop only pays if (c) is a material share. This
+residue is **(b)**: the conversion is deterministic at `temperature: 0`, so a
+loop that re-examines the same crop gets the identical wrong answer back.
+**Do not expect a repair loop to recover recall**, and do not let that
+expectation justify deferring reading quality.
 
 What *would* reach intra-line loss is two readings of one crop compared against
 each other — `CellState.DISPUTED` and the Ladder are already the vocabulary for
 it, and `_climb_ladders` already records that it waits on a second Engine. That
-is model time and a thread's decision, not a detector.
+is model time and Alessandro's decision, not a detector.
 
-**Tracker state.** **#30** is spec 0007 and the only open issue. #29 records
-spec 0006 retrospectively (closed). #28 (spec 0005) and #17 (the vision layout
-prompt) were closed by Thread 0. Specs 0001–0006 are closed history.
+**Tracker state, 2026-10-10: no open issues.** #30 (spec 0007) closed when its
+work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
+#17 (the vision layout prompt) were closed by Thread 0. Every spec is closed
+history; 0007 still defines the target.
 
 ---
 
