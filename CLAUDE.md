@@ -105,17 +105,20 @@ Queue       Q1-Q7 in docs/status.md "Next", in order, go given 2026-09-27
               not survive; the receipt's rows in order, its total
               reconciled, its barcode drawn; q5-result/ frozen, and made
               the floor and the control; tools/replay_run.py committed
-Queue, continued   N1-N4 model-free (two false-alarm findings, statement's
-              sliver Zone, catalogue's one-letter column), then Q6, Q7, N5,
-              in docs/status.md "Next"
+Queue, continued   N1-N4 model-free
               N1 DONE 2026-09-30, offline, gate MET: a prose or list
               Shortfall counts lines as its Extractor does
               N2 DONE 2026-09-30, offline, gate MET: the Gap audit
               reads type, not a page's edge or a panel's fill
               N3 DONE 2026-10-10, offline, gate MET: a totals row
-              across the table's edge is a trailing row        N4 <- next
-Thread 3/C  Repair loop (re-scoped against A+B residuals first)
-Thread 4/D  Human corrections (unscheduled)
+              across the table's edge is a trailing row
+              N4 DONE 2026-10-10, offline, gate NOT met: a label with
+              no value spans the row; shipped on Alessandro's decision,
+              catalogue_0015's T3 beside below the floor recorded
+RESET       2026-10-10, Alessandro: every open task and idea cleared —
+              Q6, Q7, N5, the live-fault list, Thread 3/C, Thread 4/D.
+              NOTHING IS QUEUED. Fresh sweep F1-sweep on 12fa2d1; the
+              next work comes from his own review of it
 ```
 
 **2/B ran before A0** and closed on 2026-09-22; **A0 closed the same day;
@@ -126,15 +129,18 @@ offline the same day, and on 2026-09-27 the floor was kept at `a3-result`**
 `docs/status.md` indexes what each shipped and where every measurement lives.
 **The ratchet's floor and the control are both `tests/frozen/q5-result/`
 since 2026-09-30** — the documents today's code makes, and the first frozen
-directory to carry the answers that made them. Alessandro moved the floor
+directory to carry the answers that made them. **One leg sits below it by
+decision since N4:** `catalogue_0015`'s T3 beside, which every report against
+it names — `docs/status.md`, "What the ratchet enforces". Alessandro moved the floor
 there from `reshot/`, which it dominates on every ratcheted leg; `reshot/`
 had replaced `a3-result/` the day before, when the ten authored corpus
 pictures were found missing their last lines and re-shot whole. See each
 README, and `docs/status.md`, "The floor".
 
 `docs/specs/0007-handover.md` holds a ready prompt per thread and the full
-scope of Phase A-1. **"The open-issues queue, continued — Q6, Q7 and what the
-whole pictures showed" is the next one to use.**
+scope of Phase A-1, as record. **No prompt in it is next:** Alessandro cleared
+the queue on 2026-10-10 and reviews the fresh sweep `F1-sweep` himself —
+**start nothing until he says what comes next.**
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
 this section.** It says what is done, what the last checkpoint showed, what is

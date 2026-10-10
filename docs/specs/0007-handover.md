@@ -1728,7 +1728,13 @@ floor's sweep, the receipt flagged as asking questions the run never did;
 
 ---
 
-## The open-issues queue, continued — Q6, Q7 and what the whole pictures showed — **NEXT**
+## The open-issues queue, continued — Q6, Q7 and what the whole pictures showed — **CLEARED 2026-10-10**
+
+**Outcome, 2026-10-10.** N1–N4 done, all offline: N1–N3 gates met, N4's not
+met on the ratchet and shipped on Alessandro's decision with the crossing
+recorded (`docs/status.md`, "N4"). **Alessandro then cleared everything
+else — Q6, Q7, N5 and the live-fault list — to restart from a fresh sweep.**
+The prompt below is record, not work.
 
 **Written 2026-09-30, when Q5 closed.** Measured at the commit that wrote
 this, and each a check the next session re-takes rather than a number it
@@ -1908,7 +1914,7 @@ STANDING RULES:
 
 ---
 
-## Thread 3/C — the repair loop
+## Thread 3/C — the repair loop — **cleared 2026-10-10, not scheduled**
 
 ```
 Read docs/specs/0007-look-like-the-document.md, then run Thread 3/C's re-scoping
@@ -1930,11 +1936,37 @@ permitted to invent it, and T1 is the axis that matters most.
 
 ---
 
-## Thread 4/D — human corrections
+## Thread 4/D — human corrections — **cleared 2026-10-10, not scheduled**
 
 Unscheduled. Revisit when real photographs enter the corpus, since that is the
 case where derived ground truth is unavailable and a human ruling is the only
 ground truth there is.
+
+---
+
+## Fresh start — 2026-10-10 — **NEXT**
+
+**Written 2026-10-10, when Alessandro cleared every open task and idea.**
+Nothing is queued. The ready prompt for a fresh chat:
+
+```
+Read CLAUDE.md's READ THIS FIRST, then docs/status.md. Nothing is queued:
+on 2026-10-10 Alessandro cleared every open task and idea — Q6, Q7, N5, the
+live-fault list, Threads 3/C and 4/D — and ran a fresh sweep, F1-sweep
+(commit 12fa2d1, shipped defaults, all fifteen), to review himself.
+
+Start by asking him what he saw in debug/runs/F1-sweep/report.html. Do not
+propose work from the cleared lists; the next work comes from his review.
+If the run has been cleared from debug/, re-take it with
+FIXTURE=sweep tools/iterate.sh <label> (about two hours) and score it with
+python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
+    --documents sweep --previous tests/frozen/q5-result/scores.json
+
+The floor is tests/frozen/q5-result/; catalogue_0015's T3 beside sits below
+it by Alessandro's decision since N4, and every report names it. Every rule
+under "Standing rules for every thread" below still holds; agree each gate
+with Alessandro before any code, and state a sweep's cost before starting it.
+```
 
 ---
 

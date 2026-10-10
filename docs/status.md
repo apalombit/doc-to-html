@@ -1,15 +1,15 @@
-# Status — 2026-10-10 (the queue: **N1-N3 done, gates met; `q5-result/` the floor and the control; N4 next**)
+# Status — 2026-10-10 (**reset: nothing queued; fresh sweep `F1-sweep` for Alessandro's review**; `q5-result/` the floor)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-10, when
-N3 of the open-issues queue closed.
+N4 shipped and Alessandro cleared every open task and idea.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file. If you are going to look at output — and you
 should — use the **`visual-review` skill**.
 
-Branch `scaffold`. **843 tests pass, `mypy src/` clean.**
+Branch `scaffold`. **845 tests pass, `mypy src/` clean.**
 
 ---
 
@@ -28,12 +28,16 @@ Queue       Q1-Q7, in order, go given 2026-09-27
               Q1-Q4 DONE 2026-09-27 to 2026-09-29, offline, gates MET
               the corpus pictures re-shot whole, floor re-cut   2026-09-29
               Q5 DONE 2026-09-30, sweep Q5-40-sweep, gate MET 8 of 8
-            continued: N1-N4 model-free, then Q6, Q7, N5
+            continued: N1-N4 model-free
               N1 DONE 2026-09-30, offline, gate MET 8 of 8
               N2 DONE 2026-09-30, offline, gate MET 8 of 8
-              N3 DONE 2026-10-10, offline, gate MET 7 of 7      N4 <- next
-Thread 3/C  Repair loop (re-scoped first)
-Thread 4/D  Human corrections (unscheduled)
+              N3 DONE 2026-10-10, offline, gate MET 7 of 7
+              N4 DONE 2026-10-10, offline, gate NOT met on the ratchet;
+                 shipped on Alessandro's decision, the exception recorded
+Reset       2026-10-10, Alessandro: every open task and idea cleared —
+              Q6, Q7, N5, the live-fault list, Thread 3/C, Thread 4/D.
+              Nothing is queued. Fresh sweep F1-sweep, commit 12fa2d1,
+              shipped defaults; the next work comes from his review of it.
 ```
 
 Q1-Q4's result tables moved to
@@ -93,6 +97,12 @@ cannot reproduce today's receipt.
 floor never falls for any reason** — `reshot/` is the one move that gave
 ground, decided in advance and accounted for leg by leg.
 
+**One standing exception since N4, 2026-10-10, Alessandro's decision:**
+`catalogue_0015` T3 beside sits below the floor, 0.2523 → 0.2364. The broken
+render's letter-stacked `each` held four agreements by overlapping its
+neighbours' price rows; drawn on one line it cannot. Every report against
+`q5-result/` names it. It is accepted; nothing else is.
+
 ---
 
 ## Where the corpus is — at the floor, `q5-result/`
@@ -113,64 +123,51 @@ ground, decided in advance and accounted for leg by leg.
 `reshot/`, the floor before it, differs on three rows and one document: its
 tau 0.9232, beside 0.7536 and height 1.610 are `receipt_0010` before Q5.
 
-### The live faults, worst first
+### The live faults — cleared 2026-10-10
 
-The visual review of `Q5-40-sweep`, all fifteen sheets, is the source for
-what follows as much as the scores are; `debug/runs/Q5-40-sweep/_review/`
-while it lasts.
-
-**1. `cv_0013`'s sidebar comes apart.** On the whole picture the detector no
-longer boxes the dark sidebar as one picture: each item is its own Zone, 31
-Zones where the truncated picture gave 13. The skills `Revit` and `Python` are
-classified as figures, so their words are `alt` and not printed; the sidebar
-interleaves with the main column Band by Band, **tau 0.562**; its labels draw
-at h1 size; height **3.20**. The truncated picture hid this.
-
-**2. Side-by-side content stacks or scatters** — beside `form_0007` 0.059,
-`catalogue_0015` 0.252, `menu_0012` 0.348, `newsletter_0008` 0.500; and
-`darkdeck_0009`'s aside, whose bullets scatter through the main column. A2
-established most of it is **inside one Zone**, so no renderer reaches it, and
-that reading direction for a multi-Band column region is an IR gap — see
-"Closed, with evidence".
-
-**3. Words lost or misread.** `catalogue_0015` keeps 84.3% — its title and
-two cards' bodies — and `form_0007` 86.2%, with four of its five section
-headings; `darkdeck_0009` loses its aside's two headings. Misreadings the
-review would not let pass: **`statement_0006` prints two wrong amounts**,
-1,144.30 as 1,141.30 and 216.08 as 210.08; **`nonlatin_0014`'s footer names a
-company that does not exist**, `Αγγελίδης Μπραγκαντής Α.Ε.` for `Αιγαίο
-Μηχανική Α.Ε.`. Smaller: `form_0007`'s footer (`Castletown` ×2, `ferpost`),
-`menu_0012`'s `cheril`, `receipt_0010`'s `A0000000031010` one zero short. A-1
-established the pipeline cannot declare loss inside a line. **Do not build a
-third detector without a new kind of evidence.**
-
-**4. Doubled text.** `nonlatin_0014` prints its total `12.437,82` twice. *Not* a fault, though the
-numbers call it one: `report_0011`'s precision counts every section and
-footnote number as invented, because the source draws them with CSS counters
-and `<ol>` markers that `project()` cannot see.
-
-**5. The findings panel reports losses that did not happen — found by the
-review; no score sees it.** The two false Shortfalls went in N1 and the two
-false "content nothing read" Gaps in N2. What is left is small and hedged
-"may be a mark", and still not type: `receipt_0010`'s dashed rule (2.1%),
-`form_0007`'s title rule (2.9%, the only finding that document carries), and
-a 0.6% strip of `cv_0013`'s halo. `shortfall`'s own docstring names the cost:
-a finding that fires on correct behaviour is how the whole list stops being
-read.
-
-**6. Drawn, though the page does not have it** — found by the review. Yellow
-`<mark>` highlights on `cv_0013`'s `native` and `nonlatin_0014`'s `myDATA`
-(A1's inline pass; T6 counts marks found, not marks invented, and this is Q7's
-`12345` again, where it can be seen). `catalogue_0015`'s `each` squeezed into a
-one-letter column in two cards and printed downward, `e / a / c / h`.
-
-**7. Height.** `cv_0013` 3.20, `menu_0012` 2.57, `receipt_0010` 2.26,
-`statement_0006` 2.05, `newsletter_0008` 2.01. **Body type is 16px on every
-page** where the sources set 9–16px — deferred with Q3's evidence.
+The list drawn from `Q5-40-sweep`'s review was cleared with the queue. The
+next one comes from Alessandro's own review of `F1-sweep`.
 
 ---
 
 ## What the last step shipped
+
+### N4 — a label with no value spans the row, `12fa2d1`, 2026-10-10, **gate NOT met on clause 3; shipped on Alessandro's decision**
+
+**The IR was right and the renderer was not.** `catalogue_0015`'s Zones 5 and
+8 hold `£28.00 | each` and `£18.75 | each`. A pairs Zone is a grid of
+`auto 1fr`, and a pair with **no value** still put its label in the `auto`
+column, so `Suffolk pattern, 265 mm, beeswax | ""` sized that column to the
+whole card and left the `1fr` column a few pixels, where `overflow-wrap:
+anywhere` (A2's guard against clipping) broke `each` after every letter.
+`render._pairs` now marks such a label `alone` and the stylesheet draws it
+across both columns, so only a label with a value sizes the label column.
+`TestALabelWithNoValueDoesNotSizeTheLabelColumn` pins it in the browser, and
+fails without the rule.
+
+Measured offline: `N4-00-base` → `N4-01-proto`, both `rederive.py` over the
+N3 replay, which the base reproduces 15 of 15.
+
+| # | clause | result |
+|---|---|---|
+| 1 | `catalogue_0015` Zones 5 and 8: `each` drawn on one line, beside its price | **holds** |
+| 2 | the eleven documents with no value-less pair render pixel-identical; their HTML differs only in the stylesheet; every embedded IR identical | **holds** — `cv_0013` and `invoice_0002` pixel-identical too; only catalogue and form move |
+| 3 | ratchet against the floor, four legs, all fifteen | **FAILS** — `catalogue_0015` T3 beside 0.2523 → 0.2364 |
+| 4 | `clipped` 0 on all fifteen — A2's guard holds | **holds** |
+| 5 | visual review, fifteen sheets, `--previous` the baseline: catalogue `better`, none `worse` | **holds** — catalogue `better`, form `same`, thirteen pixel-identical |
+| 6 | a test pins the rule; tests and mypy clean | **holds** — 845, clean |
+
+**Why beside fell: the broken render was rewarded for being broken.** Stacked
+a letter to a line, `each` was a block four lines tall, and it overlapped the
+price rows of the cards beside it — `£7.40` and `per metre` in row 2, `£5.60`
+and `6 left` in row 3 — four pairs the source also has side by side. On one
+line it overlaps only its own price: those four go, and two genuine ones
+arrive (`In stock` beside `£5.60` and `6 left`). 28 of 111 → 26 of 110. No
+word moved and no other leg on any document fell. The row-2 pairs cannot come
+back while `OK-330`'s Title is drawn as two large headings, which push its
+price 46px below its neighbours'. T5's `ink` on catalogue moved 128 → 192
+grey: a modal flip, the card border outnumbering the text on a page 53px
+shorter, not a colour change.
 
 ### N3 — a totals row across the table's edge, `8e1c0f8`, 2026-10-10, **gate MET, 7 of 7**
 
@@ -205,7 +202,7 @@ unserved. The replay baseline, unmodified, equals `rederive.py`'s arm 15 of
 | 6 | visual review, fifteen sheets, `--previous` the replay baseline | **no `worse`** — fourteen `same`, statement `better` |
 | 7 | tests, mypy | **843, clean** |
 
-**A tool finding, not fixed.** On a run built by `rederive.py` the report's
+**A caveat on the offline loop.** On a run built by `rederive.py` the report's
 "The Bands are valid everywhere" is vacuous: `_snap_note` reads refusals from
 `trace.json`, and `rederive.py` writes none. Replays and sweeps write one.
 
@@ -247,9 +244,6 @@ of 15:
 | 6 | `rederive.py` gains the Gap step and reproduces the baseline with no cut | **15 of 15** |
 | 7 | visual review, fifteen sheets, `--previous` N1's arm | **no `worse`** — thirteen `same`, the two panels `better` |
 | 8 | tests, mypy | **840, clean** |
-
-**For N5:** the same `equalise` blow-out is in the crops the model reads.
-`cv_0013`'s `Revit` and `Python`, read as figures, sit in it.
 
 ### N1 — the Shortfall counts lines as the Extractor does, `4d4bccd`, 2026-09-30, **gate MET, 8 of 8**
 
@@ -383,37 +377,16 @@ never did. `bakeoff.write_dump` is the dump writer both share.
 
 ---
 
-## Next — the rest of the queue, re-measured on the whole pictures
+## Next — nothing queued
 
-The ready prompt is [`specs/0007-handover.md`](specs/0007-handover.md), "The
-open-issues queue, continued — Q6, Q7 and what the whole pictures showed".
-**Each gate is still agreed with Alessandro before any code.** Cheapest
-first — the first four need no model. **N1 to N3 are done**, above.
+**Cleared 2026-10-10 by Alessandro**, to restart from a clean end-to-end run.
+Q6, Q7 and N5, the live-fault list, Thread 3/C's re-scoping gate and Thread
+4/D are all off the list. What they found stays where it was written — the
+specs, the handover, this file's history — as record, not as work.
 
-**N4 — next. `catalogue_0015`'s `each`, one letter to a line** — a renderer
-question, measurable by re-rendering the control.
-
-**Q6. `nonlatin_0014` — its premise is gone.** On the whole picture the
-full-width Zone that re-read three pairs no longer exists: the title Zone
-stops at 0.377 across, `ΑΦΜ` and `ΔΟΥ` are no longer doubled, and `ΤΠΥ =
-2026/0417` is read in its own box. What is left is the total `12.437,82`
-printed twice — the table prompt asks for 10 rows where the page prints 9,
-the Title's band counted as a row, and the model pads the tenth by repeating
-the total, the padding `wire._without_repeated_header` already drops when it
-is a header — and the misread Greek, the invented footer name among it.
-
-**Q7. `invoice_0001`'s `Invoice` / `#: 123`, and the false marks** — A1's
-`12345`, and now `cv_0013`'s `native` and `nonlatin_0014`'s `myDATA`, drawn
-as yellow highlights. Model questions; probe the crop, then `--swap` the
-answer into a replay of the control before spending a sweep.
-
-**N5. `cv_0013`'s split sidebar** — its skills read as figures, and its
-reading order, which is the IR gap below. Say which part is which before
-building.
-
-**After the queue:** the next floor decision, then Thread 3/C's re-scoping
-gate.
-Thread 4/D stays unscheduled.
+**`debug/runs/F1-sweep/report.html`** is the fresh sweep: commit `12fa2d1`,
+shipped defaults, no `DTH_*` set, all fifteen documents. Alessandro reviews
+it himself and decides what comes next. **Until he does, start nothing.**
 
 ---
 
@@ -478,20 +451,15 @@ the last two entries.
 - **What is read off a Graphic is `alt`, never printed.** Printing it is how
   `sparksuite` and `logo` were invented.
 
-## Deferred deliberately — not new faults
+## Measured and not shipped — record, not a queue
 
 - **Body type size and Title sizes** — measured in Q3 at the sources' *own*
-  sizes and both cross the T1 ratchet on T3 `beside`. Reopening is a scorer
-  question about `beside`'s half-overlap test, or waits on the content-losing
-  documents; not an estimator question. `style.py`'s module docstring has the
-  table. Until then a Title or body drawn at the wrong size is this, not new.
-- **`catalogue_0015`'s `OK-330` and `Oak drawer runner`** stay at `h1` size.
-  `OK-330` is white type on a dark badge and its line measures the badge's
-  height, above 1.44em, so the rule leaves it; `Oak drawer runner` is its
-  Zone's *second* heading Block, and only the leading one is sized.
-- **Thread 3/C** stays gated on its re-scoping classification. The conversion
-  is deterministic, so a loop re-reading the same crop gets the identical wrong
-  answer back.
+  sizes; both cross the T1 ratchet on T3 `beside`. `style.py`'s module
+  docstring has the table. A Title or body drawn at the wrong size is this,
+  not a new fault — `catalogue_0015`'s `OK-330` and `Oak drawer runner`
+  included: the first is white type on a dark badge whose line measures above
+  1.44em, the second its Zone's *second* heading Block, and only the leading
+  one is sized.
 
 ---
 
