@@ -426,3 +426,49 @@ class TestTheConversionFindsSeparatorsOnceKindsAreKnown:
             recorded_for("sample_table_0003"), layout=placeholders)
         assert any(zone.kind is Kind.TABLE for zone in document.zones)
         assert document.separators == []
+
+
+class TestAGridIsDrawnAsAGrid:
+    """Spec 0010, step B1 — `darkdeck_0009`'s four metric tiles, which a
+    `.band` wrapped three and one."""
+
+    @staticmethod
+    def four_tiles() -> Document:
+        zones = [Zone(kind=Kind.PROSE, role=Role.BODY, band=0, column=index,
+                      bbox=BBox(0.05 + 0.24 * index, 0.2, 0.25 + 0.24 * index, 0.3),
+                      title=f"TILE {index}", blocks=[Block(kind="paragraph",
+                                                           lines=[cell(f"v{index}")])])
+                 for index in range(4)]
+        # In the IR the third tile comes first, as a caption pass can leave them.
+        zones = [zones[2], zones[0], zones[3], zones[1]]
+        return Document(source=Source(path="x", sha256="0" * 64, width=1000,
+                                      height=900),
+                        zones=zones,
+                        regions=[Region(top=0.15, bottom=0.35, flow=Flow.GRID,
+                                        splits=(0.264, 0.5, 0.737))])
+
+    def test_the_tiles_sit_in_one_row_of_four_lanes(self) -> None:
+        page = render(self.four_tiles()).split('id="doc-ir"')[0]
+        grid = re.search(r'<div class="grid" style="grid-template-columns:([^"]+)">',
+                         page)
+        assert grid
+        assert grid.group(1).count("minmax(0,") == 4
+        for lane in range(1, 5):
+            assert f"grid-row:1;grid-column:{lane}" in page
+
+    def test_the_markup_is_in_reading_order(self) -> None:
+        page = render(self.four_tiles()).split('id="doc-ir"')[0]
+        found = [page.index(f"TILE {index}") for index in range(4)]
+        assert found == sorted(found)
+
+    def test_the_floors_card_grid_keeps_nine_cards_in_three_rows(self) -> None:
+        html = (REPO / "tests" / "frozen" / "s3-result" / "documents"
+                / "catalogue_0015.html").read_text(encoding="utf-8")
+        found = re.search(r'id="doc-ir">(.*?)</script>', html, re.S)
+        assert found
+        document = Document.from_json(found.group(1).replace("<\\/", "</"))
+        page = render(document).split('id="doc-ir"')[0]
+        placed = re.findall(r"grid-row:(\d);grid-column:(\d)", page)
+        assert sorted(placed) == [(str(r), str(c)) for r in range(1, 4)
+                                  for c in range(1, 4)]
+        assert placed == sorted(placed)

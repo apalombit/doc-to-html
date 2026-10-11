@@ -145,6 +145,38 @@ the floor as at `S4-sweep`. They wait on B1 and C.
 | B-3 | `cv_0013`'s CONTACT, SOFTWARE, LANGUAGES draw below 1.6em |
 | B-4 | Ratchet against `s3-result/` holds as at A-5 |
 
+#### Outcome — step B, 2026-10-11, gate MET
+
+**What the pages look like** (`S5-B-replay` against `S5-A-replay`).
+`darkdeck_0009`'s four tiles stand four across. `statement_0006` opens on an
+"Unresolved" panel naming the balance of Cordell Energy (1,141.30) and
+Wexford Insurance, and the paid-out column 6.00 short of 5,772.36.
+`cv_0013`'s CONTACT, SOFTWARE, LANGUAGES and INTERESTS are small capitals
+again, and the skills are body-size lines. `catalogue_0015` and
+`nonlatin_0014` look as before; catalogue's grey kicker `AUTUMN LIST` is
+drawn at 1.0em where it was 0.75em, measured against a body that is now
+measured correctly (8px, not 10.6px).
+
+| # | clause | result |
+|---|---|---|
+| B-1 | darkdeck's tiles four across; catalogue and nonlatin as before | **holds** — darkdeck height 1.580 → 1.418, beside 0.562 → 0.623 |
+| B-2 | the statement names both rows; no other Probe fails | **holds** — a test runs the Probes over all fifteen floor IRs |
+| B-3 | cv's labels below 1.6em | **holds** — 0.74em |
+| B-4 | ratchet as at A-5 | **holds** — no leg falls that `S5-A-replay` held; beside rises on catalogue (0.273 → 0.314), cv (0.400 → 0.519) and darkdeck |
+
+**Two things were found on the way, both in the measuring, not the idea.**
+(1) The grid first wrote its Zones in IR order and placed them by CSS, so
+the page looked right and reading order fell — tau 1.000 → 0.860 on
+`nonlatin_0014`, 0.910 on `catalogue_0015`. The markup is now in reading
+order too. (2) Type was measured on the *equalised* image, where CLAHE turns
+cv's dark sidebar into a 40–250 gradient across one crop; no grey level
+separates type from ground there. It is now measured on `Rectified.plain`,
+binarised by Otsu with the minority class as ink. Three other headings move
+by a few hundredths. `tools/remeasure_style.py` measures the same way.
+
+**Not reachable by `rederive.py`:** A1 needs the caption the veto refused,
+which only the trace holds. Replay is its loop.
+
 ### Step C — T3 `beside` by row groups (offline, scorer only)
 
 **Today:** two blocks are beside each other when they overlap vertically by

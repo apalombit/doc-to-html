@@ -54,6 +54,10 @@ mark { background:var(--mark-bg); color:inherit; padding:0 0.15em; }
 .columns { display:flex; gap:2rem; align-items:flex-start; margin-bottom:1.75rem; }
 .lane { min-width:0; }
 .lane > .band:last-child { margin-bottom:0; }
+/* A `grid` Region: its Zones by row and by lane, never wrapped. Spec 0010, B1. */
+.grid { display:grid; column-gap:2rem; row-gap:1.75rem; align-items:start;
+        margin-bottom:1.75rem; }
+.grid > * { min-width:0; }
 /* A label column in a lane takes at most half of it. A lane is narrower than
    the page, and `cv_0013`'s `Chartered Engineer, Engineers Ireland (2019)`
    sized the `auto` track to the whole sidebar, leaving `Reg. no. 11408` a
@@ -159,8 +163,11 @@ def _body(document: Document) -> list[str]:
     together, where the first of them would have been: each lane a stack of
     its own rows, read top to bottom, so `cv_0013`'s sidebar is no longer
     paired with whichever main-column item sits at its height.
+
+    A `grid` Region is drawn the same way, as one grid — see `_grid`.
     """
-    columns = [r for r in document.regions if r.flow is Flow.COLUMNS]
+    columns = [r for r in document.regions
+               if r.flow in (Flow.COLUMNS, Flow.GRID)]
     home: dict[int, Region] = {}
     for zone in document.zones:
         for region in columns:
@@ -184,7 +191,8 @@ def _body(document: Document) -> list[str]:
                 continue
             drawn.add(id(held))
             inside = [z for z in document.zones if home.get(id(z)) is held]
-            out.append((_columns(held, inside, document), inside))
+            drawer = _grid if held.flow is Flow.GRID else _columns
+            out.append((drawer(held, inside, document), inside))
     return _with_separators(out, document.separators)
 
 
@@ -265,6 +273,37 @@ def _columns(region: Region, zones: list[Zone], document: Document) -> str:
                             document) for b in sorted(rows))
             + "</div>")
     return '<div class="columns">' + "".join(parts) + "</div>"
+
+
+def _grid(region: Region, zones: list[Zone], document: Document) -> str:
+    """One `grid` Region: each Zone in the row and the lane the page puts it
+    in, lanes as wide as the page draws them — spec 0010, step B1.
+
+    **Drawn as a grid because a Band wraps.** `.band > *` asks 12rem of each
+    Zone and wraps what does not fit, which is right for a row of unrelated
+    blocks and wrong for a lattice the page draws: `darkdeck_0009`'s four
+    metric tiles need more than the 52rem column and came out three and one.
+    A grid's lanes are the page's own, so they cannot wrap, and a lane with
+    no Zone in some row stays empty rather than letting the next one slide in.
+    """
+    edges = [0.0, *region.splits, 1.0]
+    tracks = " ".join(f"minmax(0,{(edges[i + 1] - edges[i]) * 100:.1f}fr)"
+                      for i in range(region.lanes))
+    boxes = [zone.bbox for zone in zones if zone.bbox is not None]
+    placed = bands_from_boxes(boxes)
+    rows = sorted({band for band, _ in placed})
+    cells = []
+    for zone, (band, _) in zip(zones, placed):
+        assert zone.bbox is not None
+        row, lane = rows.index(band) + 1, region.lane_of(zone.bbox) + 1
+        cells.append(((row, lane, zone.bbox.left),
+                      f'<div style="grid-row:{row};grid-column:{lane}">'
+                      f'{_zone(zone, document)}</div>'))
+    # In reading order in the markup too, not only on the screen: a reader
+    # of the HTML — and `project()` — meets them row by row, left to right.
+    return (f'<div class="grid" style="grid-template-columns:{tracks}">'
+            + "".join(markup for _, markup in sorted(cells, key=lambda c: c[0]))
+            + "</div>")
 
 
 def _rgb(colour: tuple[int, int, int]) -> str:

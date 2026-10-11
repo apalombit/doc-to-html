@@ -1045,7 +1045,8 @@ class Conversion:
             return
 
         started = time.perf_counter()
-        sizes = style_module.heading_sizes(rectified.image, document.zones)
+        plain = rectified.plain if rectified.plain is not None else rectified.image
+        sizes = style_module.heading_sizes(plain, document.zones)
         for zone, size in zip(document.zones, sizes):
             for position, block in enumerate(zone.blocks):
                 block.size = size if position == 0 else None

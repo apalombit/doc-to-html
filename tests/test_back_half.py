@@ -328,3 +328,41 @@ class TestIRRoundTrip:
         assert restored.to_json() == invoice.to_json()
         assert len(restored.zones) == len(invoice.zones)
         assert restored.zones[5].rows[4].role == invoice.zones[5].rows[4].role
+
+
+class TestTheStatementsArithmeticReachesThePage:
+    """Spec 0010, step B2. The floor's `statement_0006` was read at reduced
+    resolution, and two of its amounts are wrong: Cordell Energy's balance
+    1,144.30 read 1,141.30, and Wexford Insurance's 216.08 read 210.08."""
+
+    @staticmethod
+    def floor(name: str) -> Document:
+        import re
+        from pathlib import Path
+        html = (Path(__file__).resolve().parent / "frozen" / "s3-result"
+                / "documents" / f"{name}.html").read_text(encoding="utf-8")
+        found = re.search(r'id="doc-ir">(.*?)</script>', html, re.S)
+        assert found
+        return Document.from_json(found.group(1).replace("<\\/", "</"))
+
+    def test_the_running_balance_names_both_rows(self) -> None:
+        failed = [r for r in probes.run(self.floor("statement_0006"))
+                  if r.kind == "running-balance" and not r.ok]
+        assert len(failed) == 1
+        assert failed[0].detail is not None
+        assert "the balance of Cordell Energy" in failed[0].detail
+        assert "(1,141.30)" in failed[0].detail
+        assert "Wexford Insurance" in failed[0].detail
+        assert "Hale" not in failed[0].detail
+
+    def test_the_paid_out_column_is_reported_six_short(self) -> None:
+        near = [r for r in probes.run(self.floor("statement_0006"))
+                if r.kind == "column-sum" and not r.ok]
+        assert [(r.computed, r.stated) for r in near] == [("5766.36", "5772.36")]
+
+    def test_no_other_document_on_the_floor_fails_a_probe(self) -> None:
+        from doc_to_html.corpus import SWEEP
+        for name in SWEEP:
+            if name == "statement_0006":
+                continue
+            assert all(r.ok for r in probes.run(self.floor(name))), name

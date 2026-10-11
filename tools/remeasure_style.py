@@ -89,7 +89,8 @@ def remeasure(document: Document, png: Path) -> tuple[int, int]:
             found.fill, found.title_fill, found.header_fill, found.bordered)
         boxed += int(found.bordered)
     # `Conversion._measure_type`, which runs straight after the chrome.
-    sizes = style_module.heading_sizes(rectified.image, document.zones)
+    plain = rectified.plain if rectified.plain is not None else rectified.image
+    sizes = style_module.heading_sizes(plain, document.zones)
     for zone, size in zip(document.zones, sizes):
         for position, block in enumerate(zone.blocks):
             block.size = size if position == 0 else None

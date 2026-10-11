@@ -753,6 +753,40 @@ def glyph_height(mask: Any, top: int, bottom: int) -> float | None:
     return float(np.percentile(heights, GLYPH_PERCENTILE)) if heights else None
 
 
+
+
+def type_mask(image: ImageArray, zone: Zone) -> ImageArray:
+    """A Zone's type as ink, measured in the Zone's own polarity — spec 0010,
+    step B3.
+
+    `content_ink` takes dark pixels for ink, which is right wherever the
+    ground is light. A light page is not turned over, so a dark panel on it —
+    `cv_0013`'s sidebar — arrived as a block of ground-coloured "ink" with its
+    type knocked out of it: `heading_sizes` measured no line at all under
+    SOFTWARE and LANGUAGES, and 1.6–1.8x the body under CONTACT and the skill
+    names, and so drew all of them at the house heading size, the largest
+    type on the page. Turned over first, they measure 0.9x.
+
+    **Measured on `Rectified.plain`, and split by Otsu rather than at a grey
+    level.** The equalised image turns that sidebar into a gradient from 40 to
+    250 across one crop, so no side of it is reliably the ground; the plain
+    one keeps it a flat dark. Split at Otsu's threshold, type is the
+    minority of any crop: a crop whose darker class is the majority is light
+    type on a dark ground, and the minority class is drawn as ink either way —
+    which also keeps a light grey kicker, `catalogue_0015`'s `AUTUMN LIST`,
+    that a fixed level on unequalised pixels would half lose.
+    """
+    cv2 = _cv2()
+    pixels = zone_pixels(image, zone)
+    grey = (cv2.cvtColor(pixels, cv2.COLOR_BGR2GRAY) if pixels.ndim == 3
+            else pixels).astype(np.uint8)
+    threshold, _ = cv2.threshold(grey, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    dark = grey <= threshold
+    ink = ~dark if float(dark.mean()) > 0.5 else dark
+    return _without_vertical_rules(
+        content_ink(np.where(ink, 0, 255).astype(np.uint8)))
+
+
 def heading_sizes(image: ImageArray, zones: Sequence[Zone]) -> list[float | None]:
     """For each Zone, the size to draw its leading heading at, or None.
 
@@ -779,7 +813,7 @@ def heading_sizes(image: ImageArray, zones: Sequence[Zone]) -> list[float | None
         if zone.bbox is None or zone.kind is Kind.FIGURE:
             lines.append([])
             continue
-        mask = _without_vertical_rules(content_ink(zone_pixels(image, zone)))
+        mask = type_mask(image, zone)
         lines.append([glyph_height(mask, top, bottom)
                       for top, bottom in type_lines(mask)])
     measured = [height for zone_lines in lines for height in zone_lines if height]

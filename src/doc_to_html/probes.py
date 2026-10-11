@@ -141,10 +141,137 @@ def _column_sum_probes(zone: Zone, zone_index: int) -> list[ProbeResult]:
 
     # A column that matches nothing is not itself a failure — a table may hold
     # several numeric columns of which only one is totalled. Only report failure
-    # when no column reconciles with any stated figure.
+    # when no column reconciles with any stated figure — or when a column
+    # *nearly* does, which is a misread, not a column nobody totalled.
     if any(r.ok for r in results):
-        return [r for r in results if r.ok]
+        return [r for r in results if r.ok] + _near_misses(
+            zone, zone_index, first_summary, stated)
     return results[:1]
+
+
+NEAR_MISS = Decimal("0.01")
+"""How close, as a share of a stated total, a column must sum to be a misread
+rather than a column nobody totalled.
+
+**Spec 0010, step B2.** `statement_0006`'s paid-out column sums to 5,766.36
+against the printed 5,772.36 — 0.1% short, exactly the 6.00 between 216.08
+and the 210.08 the model read. The Probe matched the paid-in column, and
+returned only that, so the miss was never shown. Columns that total nothing
+miss every stated figure by far more: on the corpus the next-nearest column
+to any stated total is not within 1%."""
+
+
+def _near_misses(zone: Zone, zone_index: int, first_summary: int,
+                 stated: list[Decimal]) -> list[ProbeResult]:
+    """Columns within `NEAR_MISS` of a stated total without reaching it."""
+    found = []
+    for index, values in _numeric_columns(zone.rows[:first_summary]).items():
+        if len(values) < 2:
+            continue
+        computed = sum(values, Decimal(0))
+        for total in stated:
+            gap = abs(total - computed)
+            if total and TOLERANCE < gap <= NEAR_MISS * abs(total):
+                found.append(ProbeResult(
+                    kind="column-sum", zone_index=zone_index, ok=False,
+                    computed=str(computed), stated=str(total),
+                    detail=f"column {index}, {len(values)} data rows, "
+                           f"{gap} short of the stated {total}",
+                ))
+                break
+    return found
+
+
+def _running_balance_probes(zone: Zone, zone_index: int) -> list[ProbeResult]:
+    """Does a column carry a running balance, and where does it break?
+
+    **Spec 0010, step B2.** A statement's balance column is the row above's
+    balance plus what came in less what went out, row by row. Which column is
+    the balance and which columns move it are inferred from the table, as
+    `_row_product_probes` infers its triple: each column is tried as the
+    balance, each other numeric column as adding, subtracting or neither, and
+    the relation is believed only when it holds across at least
+    `BALANCE_HOLDS` of the consecutive data rows, four at the least.
+
+    Where it breaks, the rows are named — by their first cell that is not a
+    number, which on a statement is the date or the payee. When two
+    consecutive rows both break and the row above the first reconciles with
+    the row below the second, the balance printed between them is the reading
+    at fault, and that cell is named. Detection only: no value is changed, and
+    none reaches a prompt (docs/adr/0004).
+    """
+    data = [row for row in zone.rows if row.role is RowRole.DATA]
+    if len(data) < 5:
+        return []
+    parsed = [{i: v for i, c in enumerate(row.cells)
+               if (v := parse_number(c.text)) is not None} for row in data]
+    columns = sorted(set().union(*(p.keys() for p in parsed)))
+    best: tuple[int, int, dict[int, int], list[int]] | None = None
+    for balance in columns:
+        others = [c for c in columns if c != balance][:3]
+        for signs in _sign_choices(len(others)):
+            if not any(signs):
+                continue
+            weights = dict(zip(others, signs))
+            checked, broken = 0, []
+            for k in range(1, len(parsed)):
+                if balance not in parsed[k] or balance not in parsed[k - 1]:
+                    continue
+                checked += 1
+                moved = sum((weights[c] * parsed[k].get(c, Decimal(0))
+                             for c in others), Decimal(0))
+                if abs(parsed[k - 1][balance] + moved - parsed[k][balance]) > TOLERANCE:
+                    broken.append(k)
+            held = checked - len(broken)
+            if checked >= 4 and held >= BALANCE_HOLDS * checked and (
+                    best is None or held > best[0]):
+                best = (held, balance, weights, broken)
+    if best is None:
+        return []
+    held, balance, weights, broken = best
+    if not broken:
+        return [ProbeResult(kind="running-balance", zone_index=zone_index, ok=True,
+                            detail=f"column {balance}, {held} rows")]
+
+    def name(k: int) -> str:
+        words = [c.text for i, c in enumerate(data[k].cells)
+                 if c.text.strip() and i not in parsed[k]]
+        return " ".join(words) or f"row {k + 1}"
+
+    def movement(k: int) -> Decimal:
+        return sum((w * parsed[k].get(c, Decimal(0)) for c, w in weights.items()),
+                   Decimal(0))
+
+    named: list[str] = []
+    skip: set[int] = set()
+    for k in broken:
+        if k in skip:
+            continue
+        after = k + 1
+        if (after in broken and balance in parsed[after]
+                and abs(parsed[k - 1][balance] + movement(k) + movement(after)
+                        - parsed[after][balance]) <= TOLERANCE):
+            named.append(f"the balance of {name(k)} ({data[k].cells[balance].text})")
+            skip.add(after)
+        else:
+            named.append(name(k))
+    return [ProbeResult(
+        kind="running-balance", zone_index=zone_index, ok=False,
+        detail=f"column {balance} breaks at {'; '.join(named)}",
+    )]
+
+
+BALANCE_HOLDS = 0.8
+"""The share of consecutive rows a running balance must hold across to be
+believed. A balance with a misread or two still holds on the rest; a column
+that merely happens to rise and fall with another does not hold on four."""
+
+
+def _sign_choices(count: int) -> list[tuple[int, ...]]:
+    choices: list[tuple[int, ...]] = [()]
+    for _ in range(count):
+        choices = [c + (s,) for c in choices for s in (1, -1, 0)]
+    return choices
 
 
 def _row_product_probes(zone: Zone, zone_index: int) -> list[ProbeResult]:
@@ -210,6 +337,7 @@ def run(document: Document) -> list[ProbeResult]:
             continue
         results.extend(_column_sum_probes(zone, index))
         results.extend(_row_product_probes(zone, index))
+        results.extend(_running_balance_probes(zone, index))
     return results
 
 

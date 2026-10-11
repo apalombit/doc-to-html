@@ -985,3 +985,31 @@ class TestAHeadingIsDrawnNoLargerThanItIsPrinted:
         assert blocks[0].size is not None and 0.8 <= blocks[0].size <= 1.2
         assert blocks[1].size is None
         assert '<h1 style="font-size:' in render(document)
+
+
+class TestTypeIsMeasuredInItsZonesOwnPolarity:
+    """Spec 0010, step B3 — `cv_0013`'s dark sidebar on a light page. Measured
+    as dark ink, its labels came back as no line at all or 1.6x the body, and
+    were drawn at the house heading size, the largest type on the page."""
+
+    def test_the_sidebar_labels_measure_smaller_than_the_body(self) -> None:
+        import re
+        from doc_to_html.ir import Document
+        from doc_to_html.preprocess import rectify
+        from doc_to_html.style import heading_sizes
+
+        html = (REPO / "tests" / "frozen" / "s3-result" / "documents"
+                / "cv_0013.html").read_text(encoding="utf-8")
+        found = re.search(r'id="doc-ir">(.*?)</script>', html, re.S)
+        assert found
+        zones = Document.from_json(found.group(1).replace("<\\/", "</")).zones
+        rectified = rectify(REPO / "example" / "cv.png")
+        assert rectified.plain is not None
+        sizes = heading_sizes(rectified.plain, zones)
+        labels = {zone.blocks[0].lines[0].text: size
+                  for zone, size in zip(zones, sizes)
+                  if zone.blocks and zone.blocks[0].kind == "heading"
+                  and zone.blocks[0].lines[0].text in ("CONTACT", "SOFTWARE",
+                                                       "LANGUAGES")}
+        assert set(labels) == {"CONTACT", "SOFTWARE", "LANGUAGES"}
+        assert all(size is not None and size < 1.0 for size in labels.values())
