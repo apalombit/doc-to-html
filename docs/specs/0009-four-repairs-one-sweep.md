@@ -1,6 +1,7 @@
 # Four repairs after the structure step, one sweep
 
-**Status: under way, issue #32 — steps 0 and A done 2026-10-11, gates MET.**
+**Status: under way, issue #32 — steps 0, A and B done 2026-10-11, gates MET
+(B's sweep clause waits for step E).**
 Alessandro's decision, taken on
 2026-10-11 after reviewing sweep `S3-sweep` (spec 0008's outcome):
 
@@ -295,6 +296,23 @@ and the sweep measures it.
 4. *Checked in the sweep (step E):* the four tiles render as four cards side
    by side. `P95 LATENCY`, `INGEST VOLUME` and `COST PER MILLION` all print.
    A0 once lost exactly these words by cutting this band, so open the crops.
+
+#### Outcome — step B, 2026-10-11, gate MET offline (clause 4 waits for the sweep)
+
+`structure.cut_at_edges` also cuts a part a grid holds at the grid's lane
+splits, through `_across_lanes`; nothing else changed. Measured on the layout
+front, then by replay over `s3-result/`'s answers, `S4-B-replay`.
+
+| # | clause | result |
+|---|---|---|
+| 1 | `darkdeck_0009`'s tile box → 4 Zones, one per lane; the other 14 identical | **holds** — x 0.050–0.133, 0.287–0.368, 0.523–0.619, 0.759–0.872, lanes 0–3, one Band; the regions read back unchanged; 14 of 15 match `s3-result/` |
+| 2 | replay: 14 byte-identical, `darkdeck_0009` asks more | **holds** — 14 identical to `S4-A-replay` (13 to `s3-result/`, plus `nonlatin_0014` as step A left it); darkdeck asked 55 calls against 50 |
+| 3 | tests on a synthetic grid and on darkdeck's boxes; suite and mypy | **holds** — three tests in `TestTheStructureShapesTheBoxes`; 869 pass, mypy clean |
+| 4 | *sweep:* four cards side by side, the three labels print | waits for step E |
+
+The four crops were opened as the model will be shown them: each holds its
+whole tile — label, figure and change — so the cut falls in the gutters, not
+through the labels A0 once lost.
 
 ### Step C — #3, the detector's own sections (`form_0007`, `menu_0012`)
 

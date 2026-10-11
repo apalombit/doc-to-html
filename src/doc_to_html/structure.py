@@ -313,21 +313,32 @@ def cut_at_edges(image: ImageArray, zones: list[Zone],
     than `MIN_ZONE_INK` is no Zone. The Bands are derived again, and Band 0 is
     the header, as `_cover_the_page` has it.
 
+    **A part a grid holds is also cut at the grid's lane splits** — spec 0009,
+    step B. `darkdeck_0009`'s four metric tiles are a 1×4 grid of drawn boxes,
+    and the detector gave them one box across all four, so they were read as
+    one four-column table. The splits are where the drawn boxes meet, so a cut
+    there falls between tiles, never through one. Measured on the corpus's
+    other two grids, no box crosses a split: `catalogue_0015`'s nine cards and
+    `nonlatin_0014`'s two panels each sit inside one lane.
+
     Raises `MappingError` when the parts cannot sit in valid Bands; the caller
     keeps the uncut boxes.
     """
     edges = sorted({edge for region in regions if region.flow is not Flow.SINGLE
                     for edge in (region.top, region.bottom)} - {0.0, 1.0})
+    grids = [region for region in regions if region.flow is Flow.GRID]
     pieces: dict[int, list[BBox]] = {}
     for index, zone in enumerate(zones):
         box = zone.bbox
         if box is None:
             continue
-        inside = [edge for edge in edges if box.top < edge < box.bottom]
-        if inside:
-            cuts = [box.top, *inside, box.bottom]
-            pieces[index] = [BBox(box.left, upper, box.right, lower)
-                             for upper, lower in zip(cuts, cuts[1:])]
+        cuts = [box.top, *(edge for edge in edges if box.top < edge < box.bottom),
+                box.bottom]
+        parts = [part for upper, lower in zip(cuts, cuts[1:])
+                 for part in _across_lanes(
+                     BBox(box.left, upper, box.right, lower), grids)]
+        if len(parts) > 1:
+            pieces[index] = parts
     if not pieces:
         return zones
 
@@ -355,6 +366,16 @@ def cut_at_edges(image: ImageArray, zones: list[Zone],
     ]
     validate_bands(renumbered)
     return renumbered
+
+
+def _across_lanes(box: BBox, grids: Sequence[Region]) -> list[BBox]:
+    """`box` cut at the lane splits of the grid that holds it, left to right;
+    `[box]` when no grid holds it or it sits inside one lane."""
+    grid = next((region for region in grids if region.holds(box)), None)
+    splits = [x for x in grid.splits if box.left < x < box.right] if grid else []
+    cuts = [box.left, *splits, box.right]
+    return [BBox(left, box.top, right, box.bottom)
+            for left, right in zip(cuts, cuts[1:])]
 
 
 def alike(zones: Sequence[Zone], regions: Sequence[Region],

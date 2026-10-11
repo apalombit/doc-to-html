@@ -23,6 +23,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 from doc_to_html.corpus import SOURCES, SWEEP
 from doc_to_html.ir import BBox, Block, Document, Kind, Role, Source, Zone, cell
@@ -253,6 +254,49 @@ class TestTheStructureShapesTheBoxes:
         cards = [z for z in cut if z.bbox and grid.holds(z.bbox)]
         assert len(cards) == 9
         assert all(card.role is Role.BODY for card in cards)
+
+    def test_a_box_across_a_grids_lanes_is_cut_at_its_splits(self) -> None:
+        """Spec 0009, step B: four tiles read as one box become four Zones,
+        one per lane, each on its own ink."""
+        image = np.full((200, 800, 3), 255, dtype=np.uint8)
+        for left in (40, 240, 440, 640):
+            image[80:90, left:left + 100] = 30
+            image[100:120, left:left + 60] = 30
+        grid = [Region(0.0, 0.3, Flow.SINGLE), Region(0.3, 0.7, Flow.GRID, (0.25, 0.5, 0.75)),
+                Region(0.7, 1.0, Flow.SINGLE)]
+        tiles = Zone(kind=Kind.TABLE, bbox=BBox(0.05, 0.4, 0.93, 0.6))
+
+        cut = cut_at_edges(image, [tiles], grid)
+
+        assert len(cut) == 4
+        assert [grid[1].lane_of(z.bbox) for z in cut if z.bbox] == [0, 1, 2, 3]
+        assert [(z.band, z.column) for z in cut] == [(0, 0), (0, 1), (0, 2), (0, 3)]
+        for zone, left in zip(cut, (40, 240, 440, 640)):
+            assert zone.bbox is not None
+            assert zone.bbox.left == pytest.approx(left / 800, abs=0.01)
+            assert zone.bbox.right == pytest.approx((left + 100) / 800, abs=0.01)
+
+    def test_a_box_inside_one_lane_is_not_cut(self) -> None:
+        image = np.full((200, 800, 3), 255, dtype=np.uint8)
+        image[80:120, 40:140] = 30
+        grid = [Region(0.0, 1.0, Flow.GRID, (0.25, 0.5, 0.75))]
+        zones = [Zone(kind=Kind.PAIRS, bbox=BBox(0.05, 0.4, 0.175, 0.6))]
+        assert cut_at_edges(image, zones, grid) is zones
+
+    def test_darkdecks_tiles_become_one_zone_per_lane(self) -> None:
+        rectified = rectify(REPO / SOURCES["darkdeck_0009"].png)
+        zones = zones_of("darkdeck_0009")
+        regions = regions_of("darkdeck_0009")
+        grid = next(r for r in regions if r.flow is Flow.GRID)
+        before = [z for z in zones if z.bbox and grid.holds(z.bbox)]
+        assert len(before) == 1
+
+        cut = cut_at_edges(rectified.image, zones, regions)
+
+        tiles = [z for z in cut if z.bbox and grid.holds(z.bbox)]
+        assert sorted(grid.lane_of(z.bbox) for z in tiles if z.bbox) == [0, 1, 2, 3]
+        assert len({z.band for z in tiles}) == 1
+        assert len(cut) == len(zones) + 3
 
     def test_a_page_where_nothing_crosses_an_edge_is_left_as_it_is(self) -> None:
         rectified = rectify(REPO / SOURCES["cv_0013"].png)
