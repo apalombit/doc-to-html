@@ -376,6 +376,11 @@ def _style_css(document: Document) -> str:
     if style is None:
         return _wrap([], rules)
 
+    # Spec 0010, step D1 — the body at the page's own size. Only `body`: every
+    # other size is in ems of it, and `.doc`'s width is in rems, which it
+    # leaves alone.
+    if style.body_px is not None:
+        rules.append(f"body {{ font-size:{style.body_px:g}px; }}")
     root = [
         f"--page-bg:{_rgb(style.page_bg)}",
         f"--ink:{_rgb(style.ink)}",
@@ -632,10 +637,14 @@ def _inline_style(zone: Zone,
 
 
 def _inline_title_style(zone: Zone) -> str:
-    """The Title bar's measured fill, when the source draws one."""
-    if zone.title_fill is None:
-        return ""
-    return f' style="background:{_rgb(zone.title_fill)}"'
+    """The Title bar's measured fill, when the source draws one, and the
+    Title's printed size — spec 0010, step D2."""
+    rules = []
+    if zone.title_fill is not None:
+        rules.append(f"background:{_rgb(zone.title_fill)}")
+    if zone.title_size is not None:
+        rules.append(f"font-size:{zone.title_size:.2f}em")
+    return f' style="{";".join(rules)}"' if rules else ""
 
 
 def _zone(zone: Zone, document: Document) -> str:

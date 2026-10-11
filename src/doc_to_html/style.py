@@ -787,6 +787,80 @@ def type_mask(image: ImageArray, zone: Zone) -> ImageArray:
         content_ink(np.where(ink, 0, 255).astype(np.uint8)))
 
 
+EM_PER_GLYPH = 1.33
+"""A body's CSS size over its printed glyph height — spec 0010, step D1.
+
+Measured on 2026-10-11 against every source's own CSS, read off `project()`
+as the size that sets the most characters: the width-weighted median glyph
+height of a page's lines, times this, is within 10% of the CSS body on 12
+of 15 documents. The three outside: `form_0007` 1.10 and `darkdeck_0009`
+1.18, both estimating larger, and `receipt_0010` 1.57 — a photograph, whose
+image pixels are not its CSS pixels and where the image is what the render
+has to match. A lowercase line's ink runs ascender to descender, about
+three quarters of an em, which is where 1.33 comes from."""
+
+
+def body_glyph(image: ImageArray, zones: Sequence[Zone]) -> float | None:
+    """The page's body glyph height: every line's, weighted by its inked width.
+
+    Weighted because a page's body is its long lines. `sample_css_0004` has
+    as many heading lines as body lines, and an unweighted median of its
+    seven read 15.5px for a 16px body; weighted, 13. None when no line of any
+    Zone has a measurable glyph.
+    """
+    heights: list[float] = []
+    widths: list[int] = []
+    for zone in zones:
+        if zone.bbox is None or zone.kind is Kind.FIGURE:
+            continue
+        mask = type_mask(image, zone)
+        inked = np.asarray(mask) > 0
+        for top, bottom in type_lines(mask):
+            height = glyph_height(mask, top, bottom)
+            if height:
+                heights.append(height)
+                widths.append(int(inked[top:bottom + 1].any(axis=0).sum()))
+    if not heights:
+        return None
+    order = np.argsort(heights)
+    cumulative = np.cumsum(np.asarray(widths)[order])
+    middle = int(np.searchsorted(cumulative, cumulative[-1] / 2))
+    return float(np.asarray(heights)[order][middle])
+
+
+LARGEST_EM = 4.0
+"""Above this a Title's measurement is taken to have found more than its line
+— a bar, a rule, a picture's edge — and it keeps the house size. The corpus's
+Titles measure 0.70–2.56em and then `newsletter_0008`'s masthead at 3.11;
+nothing measures above it."""
+
+
+def title_sizes(image: ImageArray, zones: Sequence[Zone]) -> list[float | None]:
+    """For each titled Zone, its Title's printed size in ems of the body.
+
+    **Spec 0010, step D2.** Every Title was drawn at 0.95em, and eight pages
+    print theirs at 17–31px — `newsletter_0008`'s masthead, `menu_0012`'s and
+    `sample_semantic_0005`'s, `darkdeck_0009`'s and `nonlatin_0014`'s titles —
+    so the largest line of each page was drawn as one of its smallest. The
+    Title is the Zone's first printed line, and it is measured as a heading
+    Block is, against the body `body_glyph` reads, which is the size the
+    page's body is drawn at. Kept between `SMALLEST_EM` and `LARGEST_EM`.
+    """
+    body = body_glyph(image, zones)
+    sizes: list[float | None] = []
+    for zone in zones:
+        if not body or not zone.title or zone.bbox is None:
+            sizes.append(None)
+            continue
+        mask = type_mask(image, zone)
+        lines = type_lines(mask)
+        own = glyph_height(mask, *lines[0]) if lines else None
+        size = own / body if own else None
+        sizes.append(round(size, 2) if size is not None
+                     and SMALLEST_EM <= size <= LARGEST_EM else None)
+    return sizes
+
+
 def heading_sizes(image: ImageArray, zones: Sequence[Zone]) -> list[float | None]:
     """For each Zone, the size to draw its leading heading at, or None.
 
@@ -799,8 +873,12 @@ def heading_sizes(image: ImageArray, zones: Sequence[Zone]) -> list[float | None
 
     The size is the heading's glyph height over the page's — the median over
     every printed line of every region that is not a figure — in ems of the
-    body. Kept only when the page prints the heading smaller than it is drawn
-    (`SHRINK_BELOW`), and no smaller than `SMALLEST_EM`. **This is the
+    body, kept between `SMALLEST_EM` and `LARGEST_EM`. **Both ways since spec
+    0010, step D3**: until then only a shrink was kept (`SHRINK_BELOW`),
+    because sizing up crossed T3 `beside` on 2026-09-29. With the body drawn
+    at the page's own size (D1) and the Titles at theirs (D2), the seven
+    headings drawn at the house 1.6em measure 1.45–2.22em, and drawing them so
+    crossed nothing — `newsletter_0008`'s headline is the largest. **This is the
     bold-body-line case**: `invoice_0002`'s `Acme Corporation` is body-size
     type read as a heading and was drawn the largest thing on its page.
 
@@ -828,5 +906,5 @@ def heading_sizes(image: ImageArray, zones: Sequence[Zone]) -> list[float | None
         heading = bool(zone.blocks) and zone.blocks[0].kind == "heading"
         size = own / body if heading and own else None
         sizes.append(round(size, 2) if size is not None
-                     and SMALLEST_EM <= size < SHRINK_BELOW else None)
+                     and SMALLEST_EM <= size <= LARGEST_EM else None)
     return sizes

@@ -896,7 +896,7 @@ class TestAHeadingIsDrawnNoLargerThanItIsPrinted:
 
         assert glyph_height(mask, 0, 23) is None
 
-    def test_a_body_size_heading_is_sized_and_a_large_one_is_left_alone(
+    def test_a_body_size_heading_and_a_large_one_are_both_sized(
             self) -> None:
         image, base = type_page(
             [("Acme Corporation", 0.6),
@@ -915,7 +915,10 @@ class TestAHeadingIsDrawnNoLargerThanItIsPrinted:
 
         assert sizes[0] is not None and 0.8 <= sizes[0] <= 1.2
         assert sizes[1] is None, "only a heading is sized"
-        assert sizes[2] is None, "only ever a shrink"
+        # Sized both ways since spec 0010, step D3: a heading set at twice
+        # the body's type is drawn larger than the body, at what it measures —
+        # 1.5 here, its capitals lacking the body's descenders.
+        assert sizes[2] is not None and 1.4 <= sizes[2] <= 2.4
 
     def test_under_a_title_the_heading_is_the_second_line(self) -> None:
         image, base = type_page(
@@ -1013,3 +1016,42 @@ class TestTypeIsMeasuredInItsZonesOwnPolarity:
                                                        "LANGUAGES")}
         assert set(labels) == {"CONTACT", "SOFTWARE", "LANGUAGES"}
         assert all(size is not None and size < 1.0 for size in labels.values())
+
+
+class TestTypeIsDrawnAtThePagesSize:
+    """Spec 0010, steps D1 and D2, measured on the floor's own Zones."""
+
+    @staticmethod
+    def floor(name: str) -> list:
+        from doc_to_html.ir import Document
+        html = (REPO / "tests" / "frozen" / "s3-result" / "documents"
+                / f"{name}.html").read_text(encoding="utf-8")
+        found = re.search(r'id="doc-ir">(.*?)</script>', html, re.S)
+        assert found
+        return Document.from_json(found.group(1).replace("<\\/", "</")).zones
+
+    def test_the_body_is_read_within_a_tenth_of_its_css(self) -> None:
+        """`newsletter_0008` sets its body at 12px and `statement_0006` at 12;
+        `invoice_0001` at 16."""
+        from doc_to_html.orchestrator import body_px
+        from doc_to_html.preprocess import rectify
+
+        for name, css in (("newsletter_0008", 12), ("statement_0006", 12),
+                          ("invoice_0001", 16)):
+            rectified = rectify(REPO / SOURCES[name].png)
+            assert rectified.plain is not None
+            found = body_px(rectified.plain, self.floor(name),
+                            rectified.source.width)
+            assert found is not None and abs(found - css) <= 0.1 * css, name
+
+    def test_a_masthead_is_drawn_larger_than_its_body(self) -> None:
+        from doc_to_html.preprocess import rectify
+        from doc_to_html.style import title_sizes
+
+        rectified = rectify(REPO / SOURCES["newsletter_0008"].png)
+        assert rectified.plain is not None
+        zones = self.floor("newsletter_0008")
+        sizes = dict(zip((zone.title for zone in zones),
+                         title_sizes(rectified.plain, zones)))
+        assert sizes["The Castleton Chronicle"] is not None
+        assert sizes["The Castleton Chronicle"] > 2.5

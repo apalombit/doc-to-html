@@ -282,6 +282,10 @@ class Zone:
     and nothing invents a fill.
     """
 
+    title_size: float | None = None
+    """The Title's printed size, in ems of the page's body — spec 0010, step
+    D2. See `style.title_sizes`. None draws the house size."""
+
     title_fill: tuple[int, int, int] | None = None
     """The Title band's own background, where it differs from the Zone's.
 
@@ -458,6 +462,9 @@ class Style:
     ink: tuple[int, int, int] = (26, 26, 26)
     accent: tuple[int, int, int] | None = None
     shade: tuple[int, int, int] | None = None
+    body_px: float | None = None
+    """The body type's size in source pixels, read off the page's lines — spec
+    0010, step D1. See `style.EM_PER_GLYPH`. None draws the house 16px."""
 
 
 class Flow(str, Enum):
@@ -596,9 +603,11 @@ def _style(data: dict[str, Any] | None) -> Style | None:
         return None
     ground = _colour(data.get("page_bg")) or (255, 255, 255)
     ink = _colour(data.get("ink")) or (26, 26, 26)
+    body = data.get("body_px")
     return Style(page_bg=ground, ink=ink,
                  accent=_colour(data.get("accent")),
-                 shade=_colour(data.get("shade")))
+                 shade=_colour(data.get("shade")),
+                 body_px=None if body is None else float(body))
 
 
 def _bbox(data: dict[str, Any] | None) -> BBox | None:
@@ -660,6 +669,7 @@ def _zone(data: dict[str, Any]) -> Zone:
         # record: A-1 shipped a decoder that silently dropped `Gap.ink_share`
         # because this function builds each object field by field.
         fill=_colour(data.get("fill")),
+        title_size=data.get("title_size"),
         title_fill=_colour(data.get("title_fill")),
         header_fill=_colour(data.get("header_fill")),
         boxed=data.get("boxed", False),

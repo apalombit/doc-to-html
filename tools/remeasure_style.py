@@ -44,6 +44,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 from doc_to_html import style as style_module  # noqa: E402
 from doc_to_html.corpus import SOURCES  # noqa: E402
 from doc_to_html.ir import Document, Kind, RowRole  # noqa: E402
+from doc_to_html.orchestrator import body_px  # noqa: E402
 from doc_to_html.preprocess import (  # noqa: E402
     caption_band, header_band, rectify, zone_pixels)
 from doc_to_html.render import render  # noqa: E402
@@ -94,6 +95,10 @@ def remeasure(document: Document, png: Path) -> tuple[int, int]:
     for zone, size in zip(document.zones, sizes):
         for position, block in enumerate(zone.blocks):
             block.size = size if position == 0 else None
+    document.style.body_px = body_px(plain, document.zones, rectified.source.width)
+    for zone, title in zip(document.zones,
+                           style_module.title_sizes(plain, document.zones)):
+        zone.title_size = title
     return len(drawn), boxed
 
 

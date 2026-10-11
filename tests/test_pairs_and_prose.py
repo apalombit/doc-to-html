@@ -105,7 +105,7 @@ class TestASectionThatIsLegitimatelyEmpty:
         self, invoice2: Document
     ) -> None:
         html = render(invoice2)
-        assert '<h2 class="zone-title">Services / Products</h2>' in html
+        assert re.search(r'<h2 class="zone-title"[^>]*>Services / Products</h2>', html)
         assert 'class="skeleton"' not in html
 
     def test_an_untitled_zone_that_comes_back_empty_is_a_failure(self) -> None:
@@ -142,7 +142,7 @@ class TestProseKeepsItsShape:
         Zone's Title now, so it renders at the level a Title renders at and the
         numbers sit under it — which is what the page shows."""
         html = render(invoice2)
-        assert '<h2 class="zone-title">Invoice With Credit</h2>' in html
+        assert re.search(r'<h2 class="zone-title"[^>]*>Invoice With Credit</h2>', html)
         assert "<h1>" not in html
 
     def test_the_footer_role_is_preserved(self, invoice2: Document) -> None:

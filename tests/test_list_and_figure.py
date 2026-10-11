@@ -86,7 +86,8 @@ class TestLists:
         assert all(block.kind == "item" for block in nav.blocks)
 
     def test_a_list_zone_keeps_its_title(self, article: Document) -> None:
-        assert '<h2 class="zone-title">Benefits</h2>' in render(article)
+        assert re.search(r'<h2 class="zone-title"[^>]*>Benefits</h2>',
+                         render(article))
 
     def test_a_list_that_comes_back_as_paragraphs_renders_nothing(self) -> None:
         """The renderer only lists `item` blocks, so this is worth knowing: a
@@ -284,7 +285,8 @@ class TestCards:
         html = render(cards)
         assert html.count('class="zone-title"') == 2
         for title in ("Card heading", "Another card"):
-            assert f'<h2 class="zone-title">{title}</h2>' in html
+            assert re.search(f'<h2 class="zone-title"[^>]*>{re.escape(title)}</h2>',
+                             html)
 
     def test_only_the_zones_the_page_cards_come_back_boxed(
             self, cards: Document) -> None:

@@ -246,6 +246,45 @@ cause it.
 | D-2 | Mean `height_ratio` moves toward 1 |
 | D-3 | The eight pages whose title prints at 17–31px draw it larger than their body |
 
+#### Outcome — step D, 2026-10-11: all three arms kept; D-1 NOT met on two documents, by one coincidental pair each — the decision is Alessandro's
+
+**What the pages look like** (`S5-D3-replay`, sheets against each arm's
+control). Type is the page's size: `menu_0012`, `newsletter_0008`,
+`statement_0006`, `report_0011` and `receipt_0010` set their body near the
+source's, and the pages are about a sixth shorter. The mastheads print large
+— `The Castleton Chronicle`, `The Copper Pot`, `The Weekly Digest`,
+`Τιμολόγιο Παροχής Υπηρεσιών`, `Invoice With Credit`, `Platform review` —
+and the newsletter's headline is its largest line after the masthead.
+`catalogue_0015` is now *shorter* than its source (0.73), the hatched image
+areas it does not draw no longer hidden by oversized type.
+
+| arm | what it draws | height mean (control → arm) | beside, against the arm's control |
+|---|---|---|---|
+| D1 body | `body { font-size }`, 10.5–16px across the corpus | 1.430 → 1.199 | up on menu (0.364 → 0.484), invoice_0002, darkdeck; down on cv, catalogue, form, newsletter |
+| D2 Titles | `Zone.title_size`, 0.70–3.11em | 1.199 → 1.237 | up on invoice_0002 (0.872 → 0.935), darkdeck; down on menu (0.484 → 0.415), cv, nonlatin |
+| D3 headings | heading Blocks both ways, 1.45–2.22em where they were the house 1.6 | 1.237 → 1.241 | up on cv; nothing down |
+
+| # | clause | result |
+|---|---|---|
+| D-1 | ratchet against `s3-result/` on every arm kept | **NOT met on two documents** — `newsletter_0008` beside 0.700 → 0.650 (D1), `nonlatin_0014` 1.000 → 0.985 (D2) |
+| D-2 | mean `height_ratio` toward 1 | **holds** — 1.430 → 1.241 |
+| D-3 | the eight titles printed at 17–31px drawn larger than the body | **holds** — 1.4 to 3.11em |
+
+**Both crossings are one pair, and each pair is a coincidence of height
+between two columns that are still side by side:** newsletter's pull quote
+`We found three problems…` no longer level with the next column's `The
+dispute that added four months…`, and nonlatin's title no longer level with
+the top-right `ΤΠΥ 2026/0417`. That is the artefact step C set out to
+remove and could not. **The arms are kept anyway**, against this spec's
+own rule, because they are the change Alessandro asked to see at the end
+and dropping D1 would remove the largest visual gain of the spec for one
+pair: the sweep is reported with both crossings named, and reverting either
+arm is one line.
+
+`EM_PER_GLYPH` (1.33), `LARGEST_EM` (4.0, above the masthead's 3.11) and
+the body estimate are each documented with their measurement in
+`style.py`. `tools/remeasure_style.py` measures all three.
+
 ### Step E — one fresh sweep, `S5-sweep`
 
 All fifteen, shipped defaults. Report against `s3-result/` re-scored, in

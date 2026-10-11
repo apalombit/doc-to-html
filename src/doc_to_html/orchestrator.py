@@ -561,6 +561,21 @@ def read_lines(zone: Zone) -> int:
     return lines + sum(len(block.lines) for block in zone.blocks)
 
 
+def body_px(image: ImageArray, zones: list[Zone], source_width: int) -> float | None:
+    """The body size to draw, in the source's pixels, to the half pixel.
+
+    Measured on the rectified image and scaled by the source's width over its
+    width, because the render is laid out at the source's width — so a
+    photographed page, warped to its paper, is sized as that paper filling
+    the page. See `style.EM_PER_GLYPH`.
+    """
+    glyph = style_module.body_glyph(image, zones)
+    if glyph is None or not image.shape[1]:
+        return None
+    return float(round(glyph * style_module.EM_PER_GLYPH
+                       * source_width / image.shape[1] * 2) / 2)
+
+
 def shortfall(image: ImageArray, zone: Zone, index: int) -> Shortfall | None:
     """Whether this Zone was read short of what is printed in it.
 
@@ -1050,9 +1065,16 @@ class Conversion:
         for zone, size in zip(document.zones, sizes):
             for position, block in enumerate(zone.blocks):
                 block.size = size if position == 0 else None
+        body = body_px(plain, document.zones, rectified.source.width)
+        if document.style is not None:
+            document.style.body_px = body
+        for zone, title in zip(document.zones,
+                               style_module.title_sizes(plain, document.zones)):
+            zone.title_size = title
         self.trace.record(
             Stage.LAYOUT, "heading_sizes", Disposition.ACCEPTED,
             seconds=time.perf_counter() - started,
+            body_px=body,
             zones=len(document.zones),
             sized=sum(1 for size in sizes if size is not None),
             detail=[{"zone": index, "size": size}
