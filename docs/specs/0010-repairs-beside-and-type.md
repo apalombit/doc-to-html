@@ -194,6 +194,46 @@ stays reported as `row_agreement`, unratcheted.
 | C-3 | `s3-result/` re-scored with the new scorer is written beside its README, and S4-sweep's falls and gains are reported on both scorers |
 | C-4 | No document whose picture shows its columns collapsed gains `beside` |
 
+#### Outcome — step C, 2026-10-11: measured and reverted — the row group does not do what it was for
+
+The relation was built and every page re-scored with it: the floor's
+documents (re-scored first with today's scorer, **15 documents, 0
+differing fields**, `S3-floor-scored`), `S4-sweep` and `S5-B-replay`.
+`row_agreement` reproduced the old `beside_agreement` exactly on all 45.
+
+| document | floor old → new | S4-sweep old → new | S5-B old → new |
+|---|---|---|---|
+| `catalogue_0015` | 0.273 → 0.261 | 0.273 → 0.261 | 0.314 → 0.325 |
+| `cv_0013` | 0.400 → 0.385 | 0.400 → 0.385 | 0.519 → 0.484 |
+| `menu_0012` | 0.348 → 0.348 | 0.364 → 0.400 | 0.364 → 0.400 |
+| `newsletter_0008` | 0.700 → 0.545 | 0.700 → 0.545 | 0.700 → 0.545 |
+| `invoice_0002` | 0.854 → 0.865 | 0.854 → 0.865 | 0.854 → 0.865 |
+| the other ten | unchanged | unchanged | unchanged |
+
+**Why it fails, read off the pairs** (every disagreeing
+pair listed per document):
+
+- **A source's row groups are fragments, not column stretches.** On
+  `cv_0013` a sidebar line and a main-column line overlap by half only here
+  and there, so the page's "columns" are a dozen small groups and drift
+  between them still breaks pairs. The premise — one group per stretch of
+  columns — does not hold on the pages it was meant for.
+- **Not all of the low score is drift.** `catalogue_0015`'s is mostly each
+  card's one-line price row, `£4.20 | each | In stock`, drawn as three
+  stacked lines — a real layout difference a reader would remark on.
+  `menu_0012`'s and `cv_0013`'s *are* coincidental cross-column alignment,
+  which this relation was meant to forgive and does not.
+
+The clause it was measured on, C-4, held, and C-1 to C-3 would have. It is
+reverted because it does not do its job, and no number on the floor moved
+the right way for the right reason. **What a drift-tolerant `beside` would
+have to be is now known:** a column is not a chain of half-overlaps; it
+needs the page's own stretches, found from the blocks that span them. That
+is a scorer design question, not a parameter, and it goes back to
+Alessandro. **Step D is measured on today's scorer**, and if type at the
+page's size crosses `beside`, the crossing is reported with the pairs that
+cause it.
+
 ### Step D — type at the page's size (replay, each arm kept only if it holds)
 
 - **D1. Body type** at 1.33 × the width-weighted median glyph height.
