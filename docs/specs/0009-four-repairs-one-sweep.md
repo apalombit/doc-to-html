@@ -1,6 +1,6 @@
 # Four repairs after the structure step, one sweep
 
-**Status: under way, issue #32 — step 0 done 2026-10-11, gate MET.**
+**Status: under way, issue #32 — steps 0 and A done 2026-10-11, gates MET.**
 Alessandro's decision, taken on
 2026-10-11 after reviewing sweep `S3-sweep` (spec 0008's outcome):
 
@@ -236,6 +236,35 @@ open `nonlatin_0014`'s sheet.
 4. Tests pin both nets, including two negatives: a non-empty cell is never
    trimmed, and a summary row that adds any new cell is kept. Suite and mypy
    are clean.
+
+#### Outcome — step A, 2026-10-11, gate MET
+
+`wire._trimmed_to_header` and `wire._without_repeated_total`, run in that
+order after `_without_repeated_header`; `wire.retrimmed` is the IR-level
+pair, added to `tools/rederive.py` step 1. Measured by replay,
+`S4-A-replay`, over `s3-result/`'s answers.
+
+| # | clause | result |
+|---|---|---|
+| 1 | every row 4 cells; the grand total under `ΦΠΑ 24% \| 2.407,32`; `12.437,82` once — in the picture | **holds** — sheet opened beside `S3-base`: totals in the label and figure columns, printed once, the table now the page's width as in the source |
+| 2 | the other 14 byte-identical | **holds** — 14 of 15 |
+| 3 | no ratchet leg falls on `nonlatin_0014`; precision rises | **holds** — precision 0.9510 → **0.9652**; recall, tau, beside unchanged; `duplicated` empty; height 1.479 → 1.426 |
+| 4 | tests pin both nets and the two negatives; suite and mypy | **holds** — six tests in `TestATotalsRowPaddedOnTheLeft`; 866 pass, mypy clean |
+
+`rederive.py` over `s3-result/` now reaches the replay's bytes on 15 of 15,
+so the IR-level pair matches the wire-level one.
+
+**Two guards narrower than the rule as written**, each on the side where
+being wrong is cheaper, and neither changes what fires on the corpus:
+
+- The trim acts only where the header's width is the table's — at least as
+  many rows of that width as wider ones. `menu_0012` and `cv_0013` both read
+  a one-cell header over wider rows; trimming to it would move values left.
+- A total is dropped only under another summary row. A total equal to the
+  one data row above it is a real shape, and dropping it loses a number.
+
+Over every table answer in `s3-result/`, both nets fire on `nonlatin_0014`
+alone: two wide rows opening empty, one repeated total.
 
 ### Step B — #1, cut at a grid's inner splits (`darkdeck_0009`)
 

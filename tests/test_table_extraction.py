@@ -33,6 +33,7 @@ from doc_to_html.wire import (
     MappingError,
     TableResponse,
     contents_into,
+    retrimmed,
     table_repairs,
 )
 
@@ -746,6 +747,100 @@ class TestAHeaderRepeatedToPadTheRowCount:
         )
 
         assert len(zone.rows) == 2
+
+
+class TestATotalsRowPaddedOnTheLeft:
+    """`nonlatin_0014`'s totals came back a cell too wide, and the last twice.
+
+    Spec 0009 step A. The header and every data row are four cells; the third
+    summary row arrived as five, its label one column right of `ΦΠΑ 24%`'s,
+    and a fourth summary row said only `12.437,82` again, which the page
+    prints once (`example/nonlatin.html`). `tests/frozen/s3-result/`'s answer,
+    call 20, in the shape it came back.
+    """
+
+    MEASURED = (
+        '{"rows": [{"role": "header", "cells": '
+        '["Περιγραφή", "Ώρες", "Τιμή/ώρα", "Καθαρή αξία"]},'
+        ' {"role": "data", "cells": ["Στατική μελέτη προβλήτας", "84", "65,00", "5.460,00"]},'
+        ' {"role": "data", "cells": ["Μετακινήσεις και διαμονή", "", "", "438,50"]},'
+        ' {"role": "summary", "cells": ["", "", "Καθαρή αξία", "10.030,50"]},'
+        ' {"role": "summary", "cells": ["", "", "ΦΠΑ 24%", "2.407,32"]},'
+        ' {"role": "summary", "cells": ["", "", "", "Συνολικό πληρωτέο", "12.437,82"]},'
+        ' {"role": "summary", "cells": ["", "", "", "", "12.437,82"]}]}'
+    )
+
+    def test_the_total_lines_up_and_prints_once(self) -> None:
+        zone = table_zone(self.MEASURED)
+
+        assert [[c.text for c in r.cells] for r in zone.rows][3:] == [
+            ["", "", "Καθαρή αξία", "10.030,50"],
+            ["", "", "ΦΠΑ 24%", "2.407,32"],
+            ["", "", "Συνολικό πληρωτέο", "12.437,82"],
+        ]
+        assert all(len(r.cells) == 4 for r in zone.rows)
+        assert table_repairs(zone) == []
+
+    def test_a_non_empty_cell_is_never_trimmed(self) -> None:
+        """Only leading *empty* cells go: a wide row whose first cell says
+        something is kept whole, and flagged as before."""
+        zone = table_zone(
+            '{"rows": [{"role": "header", "cells": ["a", "b"]},'
+            ' {"role": "data", "cells": ["1", "2"]},'
+            ' {"role": "data", "cells": ["3", "", "4"]},'
+            ' {"role": "data", "cells": ["", "x", "y", "z"]}]}'
+        )
+
+        assert [[c.text for c in r.cells] for r in zone.rows] == [
+            ["a", "b"], ["1", "2"], ["3", "", "4"], ["x", "y", "z"],
+        ]
+        assert ["rows 2–3" in note and "3 cells" in note
+                for note in table_repairs(zone)] == [True]
+
+    def test_a_header_narrower_than_its_table_trims_nothing(self) -> None:
+        """`menu_0012` and `cv_0013` both read a one-cell header over wider
+        rows. There the header's width is not the table's, and trimming to it
+        would move values into columns they were not read in."""
+        zone = table_zone(
+            '{"rows": [{"role": "header", "cells": ["To begin"]},'
+            ' {"role": "data", "cells": ["Soup", "6.50"]},'
+            ' {"role": "data", "cells": ["", "8.00"]}]}'
+        )
+
+        assert [[c.text for c in r.cells] for r in zone.rows] == [
+            ["To begin"], ["Soup", "6.50"], ["", "8.00"],
+        ]
+
+    def test_a_summary_row_that_adds_any_new_cell_is_kept(self) -> None:
+        zone = table_zone(
+            '{"rows": [{"role": "header", "cells": ["Item", "Price"]},'
+            ' {"role": "summary", "cells": ["Subtotal", "300.00"]},'
+            ' {"role": "summary", "cells": ["Total", "300.00"]},'
+            ' {"role": "summary", "cells": ["", "300.00", "x"]}]}'
+        )
+
+        assert len(zone.rows) == 4
+
+    def test_a_total_repeating_a_data_row_is_kept(self) -> None:
+        """Only a summary under a summary: a total equal to the one line above
+        it is a real shape, and dropping it would lose a printed number."""
+        zone = table_zone(
+            '{"rows": [{"role": "header", "cells": ["Item", "Price"]},'
+            ' {"role": "data", "cells": ["Design", "300.00"]},'
+            ' {"role": "summary", "cells": ["", "300.00"]}]}'
+        )
+
+        assert len(zone.rows) == 3
+
+    def test_the_ir_level_repair_matches_the_wire_level_one(self) -> None:
+        """`tools/rederive.py` applies `retrimmed` to IRs made before the two
+        nets existed, and must reach the rows a Conversion now makes."""
+        raw = TableResponse.model_validate_json(self.MEASURED)
+        rows = [Row(role=RowRole(r.role), cells=[cell(t) for t in r.cells])
+                for r in raw.rows]
+
+        assert ([[c.text for c in r.cells] for r in retrimmed(rows)]
+                == [[c.text for c in r.cells] for r in table_zone(self.MEASURED).rows])
 
 
 class TestAHeaderRowSplitOneCellPerRow:

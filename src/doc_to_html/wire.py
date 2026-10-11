@@ -553,14 +553,18 @@ def rows_from_table(response: TableResponse, *, read: Read) -> list[Row]:
     `_join_split_header_row` — and a header repeated to pad a stated row count
     is removed after that, by `_without_repeated_header`. The order matters:
     the split header must be rejoined before it can be compared with a repeat
-    of itself.
+    of itself. Then a row padded on the left loses its leading empty cells,
+    `_trimmed_to_header`, and a summary repeating the one above it goes,
+    `_without_repeated_total` — in that order, so the columns compare.
     """
     if not response.rows:
         _no_content("table", "no rows")
 
-    wire_rows = _without_repeated_header(
-        _join_split_header_row(_without_empty_rows(response.rows))
-    )
+    wire_rows = _without_repeated_total(_trimmed_to_header(
+        _without_repeated_header(
+            _join_split_header_row(_without_empty_rows(response.rows))
+        )
+    ))
     if not wire_rows:
         _no_content("table", "nothing but empty rows")
 
@@ -768,6 +772,108 @@ def _without_repeated_header(rows: list[WireRow]) -> list[WireRow]:
         or row.role != "header"
         or [_spell(cell) for cell in row.cells] != spelling
     ]
+
+
+def _trimmed_to_header(rows: list[WireRow]) -> list[WireRow]:
+    """Take the leading empty cells off a row wider than the header.
+
+    **The fourth net, and the same shape: it removes only cells that say
+    nothing.** Added in spec 0009, step A, 2026-10-11, for `nonlatin_0014`.
+    Its header and data rows are four cells, and its totals print their label
+    in the third column and their figure in the fourth. Two summary rows came
+    back five wide — `['', '', '', 'Συνολικό πληρωτέο', '12.437,82']` — so the
+    grand total stood one column right of `ΦΠΑ 24%` and its figure in a
+    column no other row has. Measured over every table answer in
+    `tests/frozen/s3-result/`, these two are the only wide rows that open
+    with an empty cell.
+
+    Narrow on purpose:
+
+    - **Never a cell with text in it.** The trim stops at the first non-empty
+      cell, so a wide row that opens with a value is kept whole and flagged by
+      `table_repairs`, as before.
+    - **Only where the header's width is the table's** — as many rows of the
+      header's width as wider ones. `menu_0012` and `cv_0013` both read a
+      one-cell header over two- and four-cell rows; there it is the header
+      that is short, and trimming to it would move values into columns they
+      were not read in.
+    """
+    header = next((row for row in rows if row.role == "header"), None)
+    if header is None or not _is_the_tables_width(
+            len(header.cells), [len(row.cells) for row in rows]):
+        return rows
+    return [
+        row if row.role == "header"
+        else row.model_copy(update={"cells": row.cells[
+            _empty_lead(row.cells, len(header.cells)):]})
+        for row in rows
+    ]
+
+
+def _without_repeated_total(rows: list[WireRow]) -> list[WireRow]:
+    """Drop a summary row that only repeats the summary row above it.
+
+    **The fifth net: it removes a row that says nothing new.** Added with
+    `_trimmed_to_header`, which runs first so the columns compare.
+    `nonlatin_0014`'s last summary row came back `['', '', '', '',
+    '12.437,82']` under `Συνολικό πληρωτέο | 12.437,82`, and the page prints
+    the figure once. Every non-empty cell of the row must equal the cell in
+    the same column of the row directly above it, compared as `_spell` does.
+
+    **Only a summary under a summary.** A total equal to the one data row
+    above it is a real shape — an invoice of one line — and a dropped row is
+    a recall fault where a surplus row is only a precision one, so that side
+    keeps the row.
+    """
+    return [
+        row for index, row in enumerate(rows)
+        if not (index and row.role == "summary"
+                and rows[index - 1].role == "summary"
+                and _repeats(row.cells, rows[index - 1].cells))
+    ]
+
+
+def retrimmed(rows: list[Row]) -> list[Row]:
+    """`_trimmed_to_header` then `_without_repeated_total`, on the IR.
+
+    For `tools/rederive.py`, which brings IRs made before the two nets up to
+    them. Same rules, read off each Cell's text.
+    """
+    header = next((row for row in rows if row.role is RowRole.HEADER), None)
+    if header is not None and _is_the_tables_width(
+            len(header.cells), [len(row.cells) for row in rows]):
+        for row in rows:
+            if row.role is not RowRole.HEADER:
+                row.cells = row.cells[_empty_lead(
+                    [cell.text for cell in row.cells], len(header.cells)):]
+    return [
+        row for index, row in enumerate(rows)
+        if not (index and row.role is RowRole.SUMMARY
+                and rows[index - 1].role is RowRole.SUMMARY
+                and _repeats([cell.text for cell in row.cells],
+                             [cell.text for cell in rows[index - 1].cells]))
+    ]
+
+
+def _is_the_tables_width(width: int, widths: list[int]) -> bool:
+    """Whether at least as many rows are `width` wide as are wider."""
+    return widths.count(width) >= sum(1 for each in widths if each > width)
+
+
+def _empty_lead(cells: list[str], width: int) -> int:
+    """How many leading cells can go: empty ones, and no more than the surplus."""
+    cut = 0
+    while len(cells) - cut > width and not cells[cut].strip():
+        cut += 1
+    return cut
+
+
+def _repeats(cells: list[str], above: list[str]) -> bool:
+    """Whether every non-empty cell equals the one in its column above."""
+    filled = [(column, text) for column, text in enumerate(cells) if text.strip()]
+    return bool(filled) and all(
+        column < len(above) and _spell(above[column]) == _spell(text)
+        for column, text in filled)
 
 
 def _without_empty_rows(rows: list[WireRow]) -> list[WireRow]:

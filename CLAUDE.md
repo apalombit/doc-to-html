@@ -63,7 +63,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-11: spec 0009 under way, step A next.**
+**Where the project is — 2026-10-11: spec 0009 under way, step B next.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -86,7 +86,7 @@ Spec 0008   Page structure — opened 2026-10-10 from his review of
 Spec 0009   Four repairs after the structure step, one sweep — planned
               2026-10-11 from his review of S3-sweep, issue #32:
               0 freeze S3-sweep as tests/frozen/s3-result/  DONE, gate MET
-              A wire row nets  <- next B cut at a grid's inner splits
+              A wire row nets  DONE    B cut at a grid's inner splits <- next
               C the detector's own sections   D page width (+ separators)
               E one sweep, S4-sweep
 ```
@@ -356,12 +356,16 @@ Phase A0 fixed the condition — 2026-09-22.** `if row.cells` is truthy for
 drop it and rendered as a blank line inside the table. The net itself stayed:
 the finding was that it tested the wrong thing, not that it should not exist.
 
-**There are three wire-level row nets as of 2026-09-22, not one.** Each invents
+**There are five wire-level row nets as of 2026-10-11, not one.** Each invents
 nothing and discards nothing, and each exists because a measured run lost
 content without it: `_without_empty_rows` (above), `_join_split_header_row`,
 and `_without_repeated_header` — which drops a second `role == "header"` row
 that spells the same as the first, the padding the model produces when the
-grid hint asks for more rows than the table has.
+grid hint asks for more rows than the table has. Spec 0009 added two for
+`nonlatin_0014`'s totals, which were misplaced and doubled rather than lost:
+`_trimmed_to_header` takes the leading empty cells off a row wider than the
+header, and `_without_repeated_total` drops a summary row repeating the
+summary above it.
 
 ### The rectangle finder — `style.rectangles`, built in 2/B on 2026-09-21
 

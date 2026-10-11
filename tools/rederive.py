@@ -15,6 +15,9 @@ and can be recomputed from it, in the order a Conversion runs them:
                                     wire._title_is_its_header_cell  (in _extract)
        and every table's rows padded to the header that is left, not to a
        caption row the echo rule dropped    wire.repadded  (in _extract)
+       after a row padded on the left is trimmed to the header and a
+       summary repeating the one above it dropped — spec 0009, step A
+                                    wire.retrimmed  (in rows_from_table)
     2. table-repair Caveats re-derived from each table's rows
                                     wire.table_repairs              (in _extract)
     3. palette and chrome re-measured — fill, title bar, header bar, border
@@ -73,7 +76,7 @@ from doc_to_html.preprocess import rectify  # noqa: E402
 from doc_to_html.render import render  # noqa: E402
 from doc_to_html.structure import structure  # noqa: E402
 from doc_to_html.wire import (  # noqa: E402
-    _title_is_its_header_cell, repadded, table_repairs)
+    _title_is_its_header_cell, repadded, retrimmed, table_repairs)
 from remeasure_style import ir_of, remeasure  # noqa: E402
 
 REPO = TOOLS.parent
@@ -89,7 +92,7 @@ def rederive(document: Document, png: Path) -> None:
         if _title_is_its_header_cell(zone):
             zone.title = None
         if zone.kind is Kind.TABLE:
-            zone.rows = repadded(zone.rows)
+            zone.rows = repadded(retrimmed(zone.rows))
 
     caveats: list[Caveat] = []
     redone: set[int] = set()

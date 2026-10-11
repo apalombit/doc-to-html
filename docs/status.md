@@ -44,7 +44,8 @@ Spec 0008   Page structure, opened 2026-10-10 from the F1-sweep review
               sweep S3-sweep, commit 9c42d81 — DECIDED 2026-10-11: the new floor
 Spec 0009   Four repairs after the structure step, one sweep — issue #32
               step 0  freeze S3-sweep as tests/frozen/s3-result/  DONE, gate MET
-              A-D     four repairs, offline where possible        <- A next
+              A       wire row nets, nonlatin_0014, replay        DONE, gate MET
+              B-D     three repairs, offline where possible       <- B next
               E       one sweep
 ```
 
@@ -128,6 +129,15 @@ next one comes from Alessandro's own review of `F1-sweep`.
 ---
 
 ## What the last step shipped
+
+### Spec 0009 step A — two wire row nets, 2026-10-11, gate MET
+
+`nonlatin_0014`'s totals: a summary row padded on the left loses its leading
+empty cells to the header's width (`wire._trimmed_to_header`), and a summary
+repeating the one above it goes (`wire._without_repeated_total`). By replay:
+the grand total sits under `ΦΠΑ 24%`, `12.437,82` prints once, precision
+0.9510 → 0.9652, the other 14 byte-identical. `wire.retrimmed` brings old IRs
+up to it in `rederive.py`. Spec, "Outcome — step A".
 
 ### Spec 0009 step 0 — `S3-sweep` frozen as the floor, 2026-10-11
 
@@ -226,7 +236,7 @@ the Q5-era records", verbatim. Q1–Q4's are under "Outcome — Q1 to Q4".
 
 ---
 
-## Next — spec 0009, step A
+## Next — spec 0009, step B
 
 **The only open work is
 [`specs/0009-four-repairs-one-sweep.md`](specs/0009-four-repairs-one-sweep.md)**,
@@ -235,8 +245,8 @@ conversion stage, and the plan with every gate registered:
 
 ```
 0  freeze S3-sweep as tests/frozen/s3-result/, move the floor   DONE
-A  wire row nets — nonlatin_0014's totals                        offline, replay   <- next
-B  cut at a grid's inner splits — darkdeck_0009's tiles          layout front
+A  wire row nets — nonlatin_0014's totals                        offline, replay   DONE
+B  cut at a grid's inner splits — darkdeck_0009's tiles          layout front      <- next
 C  the detector's own sections — form_0007, menu_0012            layout front
 D  a photographed page at its paper's width — receipt_0010       offline, rederive
    (+ drawn separators, one optional attempt)
@@ -303,8 +313,9 @@ the last two entries.
   scores of a picture that changed are not comparable with anything before it.
 - **Leave `debug/runs/84-rule-not-a-line/` intact.**
 - **Never score against `tests/documents/SAMPLE_DOCUMENTS`.**
-- **Do not delete the four shipped defaults or the three wire-level row nets** —
-  `_without_empty_rows`, `_join_split_header_row`, `_without_repeated_header`.
+- **Do not delete the four shipped defaults or the five wire-level row nets** —
+  `_without_empty_rows`, `_join_split_header_row`, `_without_repeated_header`,
+  and since spec 0009 `_trimmed_to_header` and `_without_repeated_total`.
 - **`project()` compares a normalised view, never raw markup.**
 - **Every run must produce `debug/runs/<label>/report.html`.**
 - **Any reviewed run is a full sweep**, all fifteen documents.
