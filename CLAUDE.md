@@ -36,9 +36,10 @@ trial axis is kept rather than rejected.
 
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
-measured numbers and what has already been tried and rejected. **0009 is the
-one open spec** — issue #32, started 2026-10-11; 0008 (issue #31) is done and
-decided; 0007 still defines the target.
+measured numbers and what has already been tried and rejected. **0010 is the
+one open spec** — issue #33, started 2026-10-11, measured, its floor
+decision pending; 0009 (issue #32) folded its own decision into it; 0008
+(issue #31) is done and decided; 0007 still defines the target.
 
 ---
 
@@ -63,7 +64,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-11: spec 0009 measured, final gate NOT met — the floor is Alessandro's decision.**
+**Where the project is — 2026-10-11: spec 0010 measured by sweep `S5-sweep` — the floor is Alessandro's decision.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -89,7 +90,15 @@ Spec 0009   Four repairs after the structure step, one sweep — planned
               A wire row nets  DONE    B cut at a grid's inner splits DONE
               C the detector's own sections DONE   D separators DONE (width dropped)
               E sweep S4-sweep on b80b7f0                DONE, gate NOT met
-              ratchet falls on darkdeck_0009 and menu_0012  <- decision pending
+              its floor decision folded into spec 0010's
+Spec 0010   Five repairs, the beside score, type at the page's size —
+              2026-10-11 from his review of the S4-sweep analysis, issue #33:
+              A vetoed caption kept, title echo keeps a value  DONE
+              B grid drawn as a grid, two Probes, polarity   DONE
+              C beside by row groups                         REVERTED
+              D type at the page's size                      DONE
+              E sweep S5-sweep on 4a5fe3f, prediction held, ratchet
+              falls on five documents, each named  <- decision pending
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
@@ -103,13 +112,13 @@ precision token on `catalogue_0015` — its README names each. N4's recorded
 exception is gone. Each earlier floor, and why it moved, is in its README and
 in `docs/status.md`, "The floor".
 
-**The only open work is `docs/specs/0009-four-repairs-one-sweep.md`'s
-decision**: whether `S4-sweep` becomes the floor. Its "Outcome — step E" has
-the measurement and the recommendation, and its last section is the prompt
-to start a session with. **Keep `debug/runs/S4-sweep`** — it is the only copy
-of the answers the next step replays. It carries spec
-0008's changes and the S3-sweep analysis it was planned from. `docs/specs/0007-handover.md`
-holds spec 0007's prompts, as record.
+**The only open work is `docs/specs/0010-repairs-beside-and-type.md`'s
+decision**: whether `S5-sweep` becomes the floor. Its "Outcome — step E" has
+the measurement, the five legs below `s3-result/` with their causes, and the
+recommendation, and its last section is the prompt to start a session with.
+**Keep `debug/runs/S5-sweep` and `S4-sweep`** — the sweep is the only copy
+of the answers the next step replays. `docs/specs/0007-handover.md` holds
+spec 0007's prompts, as record.
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
 this section.** It says what is done, where the floor is, what is closed with
@@ -497,7 +506,7 @@ each other — `CellState.DISPUTED` and the Ladder are already the vocabulary fo
 it, and `_climb_ladders` already records that it waits on a second Engine. That
 is model time and Alessandro's decision, not a detector.
 
-**Tracker state, 2026-10-11: two open issues — #32, spec 0009, under way, and #31, spec 0008, done and decided.** #30 (spec 0007) closed when its
+**Tracker state, 2026-10-11: three open issues — #33, spec 0010, measured and awaiting the floor decision; #32, spec 0009, whose decision folded into #33; and #31, spec 0008, done and decided.** #30 (spec 0007) closed when its
 work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
 #17 (the vision layout prompt) were closed by Thread 0. Every spec is closed
 history; 0007 still defines the target.

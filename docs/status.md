@@ -1,15 +1,15 @@
-# Status — 2026-10-11 (**spec 0009 measured, sweep `S4-sweep`: final gate NOT met — decision pending**; the floor is `s3-result/`)
+# Status — 2026-10-11 (**spec 0010 measured, sweep `S5-sweep`: ratchet NOT met on five documents — decision pending**; the floor is `s3-result/`)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-11, after
-sweep `S4-sweep` measured spec 0009's four repairs.
+sweep `S5-sweep` measured spec 0010's repairs and type at the page's size.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file. If you are going to look at output — and you
 should — use the **`visual-review` skill**.
 
-Branch `scaffold`. **886 tests pass, `mypy src/` clean.**
+Branch `scaffold`. **898 tests pass, `mypy src/` clean.**
 
 ---
 
@@ -49,7 +49,15 @@ Spec 0009   Four repairs after the structure step, one sweep — issue #32
               C       the detector's own sections, form + menu    DONE offline, gate MET
               D       4a page width DROPPED (gate failed); 4b separators DONE
               E       sweep S4-sweep, commit b80b7f0               DONE, gate NOT met
-                      (ratchet: darkdeck_0009, menu_0012) — decision pending
+                      (ratchet: darkdeck_0009, menu_0012) — its floor decision
+                      folded into spec 0010's
+Spec 0010   Five repairs, the beside score, type at the page's size — issue #33
+              0+A     vetoed caption kept, title echo keeps a value  DONE, gate MET (one exception)
+              B       grid drawn as a grid, two Probes, polarity     DONE, gate MET
+              C       beside by row groups                  measured and REVERTED
+              D       body, Titles, headings at the page's size  DONE, D-1 NOT met (two pairs)
+              E       sweep S5-sweep, commit 4a5fe3f        DONE, prediction held;
+                      ratchet NOT met on five documents — decision pending
 ```
 
 Q1-Q4's result tables moved to
@@ -133,82 +141,67 @@ next one comes from Alessandro's own review of `F1-sweep`.
 
 ## What the last step shipped
 
+### Spec 0010 — five repairs, the beside score, type at the page's size, `S5-sweep`, 2026-10-11 — ratchet NOT met on five documents
+
+**The pages.** Every page sets its body at about the source's size, and its
+mastheads and titles at their printed sizes. The pages are about a sixth
+shorter (mean height 1.435× → 1.241×). `darkdeck_0009` is complete again,
+with `$2.14`, `OPEN RISKS` and `DECISIONS WANTED` back, and its four tiles
+stand four across. `form_0007` heads all five sections. `report_0011`'s
+table carries its caption. `statement_0006` opens by naming the two amounts
+it misread. `cv_0013`'s sidebar labels are small capitals again. Of the
+fifteen sheets against `S4-sweep`, 13 are better, 2 the same and none worse.
+
+**What shipped, by step** (spec 0010, an "Outcome" section per step):
+
+- **A** — a caption the grid veto refused, which the reading then drops,
+  becomes the Zone's Title (`Orchestrator._restore_vetoed_captions`). The
+  title-echo rule keeps a pair's value when only its label repeats the
+  Title.
+- **B** — a `grid` region is drawn as a CSS grid, in reading order. Two
+  Probes, detection only: a running balance names the rows where it breaks,
+  and a column within 1% of a stated total is reported. Type is measured in
+  its Zone's own polarity, on `Rectified.plain`.
+- **C** — T3 `beside` by row groups was measured and **reverted**. A
+  source's row groups are fragments, not column stretches.
+- **D** — `Style.body_px` is 1.33 × the width-weighted median glyph height.
+  `Zone.title_size` is the printed size, and heading Blocks are sized both
+  ways. `tools/remeasure_style.py` measures all three.
+
+**The prediction held:** the sweep asked the questions `S4-sweep` asked, and
+its documents are byte-identical to `S5-D3-replay`, 15 of 15, with every
+one of its 518 answers byte-identical to `S4-sweep`'s. 1h44m, 40%/60%
+CPU/GPU.
+
+**The ratchet against `s3-result/` falls on five documents.** None of them
+is content lost by this spec:
+
+| document | leg | floor → `S5-sweep` | cause |
+|---|---|---|---|
+| `darkdeck_0009` | tau, beside | 0.9805 → 0.9192, 0.8148 → 0.6579 | the P95 tile read as a table; the scorer pairs its `P95` and `184 ms` with the component table's |
+| `menu_0012` | vocabulary, precision | 0.9922 → 0.9844, 0.9938 → 0.9877 | `béarnaise` read without its accent (spec 0009's crop) |
+| `report_0011` | precision | 0.9679 → 0.9663 | the caption's `1`, counted surplus against `<ol>` footnote numbers |
+| `newsletter_0008` | beside | 0.7000 → 0.6500 | one coincidental pair across two columns |
+| `nonlatin_0014` | beside | 1.0000 → 0.9853 | one coincidental pair across two columns |
+
+Corpus means, `s3-result/` → `S5-sweep`: vocabulary 0.9806 → 0.9876,
+precision 0.9866 → 0.9881, join recall 0.9538 → 0.9599, tau 0.9864 →
+0.9875, beside 0.7549 → 0.7638, height 1.4405 → 1.2405.
+
 ### Spec 0009 — four repairs, one sweep, `S4-sweep`, 2026-10-11 — final gate NOT met
 
 **The pages.** `menu_0012` reads down two columns under their own headings
-(tau 0.923 → 0.994, height 2.57× → 1.93×). `form_0007` is five sections,
-four opening on their printed heading (vocabulary 0.862 → 0.939, beside
-0.059 → 0.208). `nonlatin_0014`'s grand total lines up and prints once.
-Eleven pages draw their sources' rules. `darkdeck_0009` is worse: its four
-tiles are cards but wrap 3 + 1, and `$2.14` is gone.
+(tau 0.923 → 0.994). `form_0007` is cut into five sections at the headings
+the detector found. `nonlatin_0014`'s grand total lines up and prints once.
+Eleven pages draw their sources' rules (`Document.separators`).
+`darkdeck_0009`'s tile box is cut at the grid's splits. It fell below the
+floor at that sweep, and spec 0010 repaired it. Two wire row nets came in:
+`_trimmed_to_header` and `_without_repeated_total`. The receipt's paper
+width was dropped on a failed gate. Spec 0009 has an "Outcome" per step.
 
-**The ratchet against `s3-result/` falls on two documents:**
-`darkdeck_0009` — `$2.14` stops printing, tau 0.9805 → 0.9143, beside
-0.8148 → 0.5982 — and `menu_0012` — `béarnaise` read without its accent,
-precision 0.9938 → 0.9877. `$2.14` is a wire rule's fault:
-`_without_title_echo` drops a first pair whose *label* repeats the Title,
-value and all. The tiles wrap because a Band of four Zones overflows the
-52rem column. `béarnaise` is the model's reading of a new, narrower crop.
-
-The twelve documents whose crops did not move are byte-identical to the
-floor's answers replayed through the same commit (`S4-E-replay`). Corpus
-means, `s3-result/` → `S4-sweep`: vocabulary 0.9806 → 0.9848, precision
-0.9866 → 0.9882, tau 0.9864 → 0.9872, beside 0.7549 → 0.7515, height 1.4405
-→ 1.4349. The spec's "Outcome — step E" has every table.
-
-**One fault found before the sweep, and the lesson it repeats.** As first
-committed, the separator pass ran during layout, before any Zone had a Kind,
-so its table-border test saw no tables. `rederive.py` works on finished IRs
-and could not see it; a replay beside it did. A stage's position is as much
-a way for a feature not to arrive as an unread flag.
-
-### Spec 0009 step D — separators drawn; the receipt's paper width dropped, 2026-10-11
-
-**4b ships:** the wide rules a page draws between its Zones — 21 on eleven
-pages, not a table's own border — are carried in `Document.separators` and
-drawn as a hairline in the gap between the rows they part. No ratchet leg
-falls; all eleven moved sheets look closer. **4a was dropped** on a failed
-gate: at the paper's 335px the receipt's large sans type no longer fits —
-prices clipped, height 2.16× → 2.23×. It waits on the type scale. Spec,
-"Outcome — step D".
-
-### Spec 0009 step C — the detector's own sections, 2026-10-11, gate MET offline
-
-`form_0007`'s one `form` box is cut at the section headings heron found
-inside it — five Zones, one per printed section, each opening on its heading
-— skipping a heading inside a drawn field (the address value, which heron
-also calls `section_header`). `menu_0012`'s one `document_index` is split
-into the two columns heron also proposed, side by side in one Band, each with
-its heading. Scoped to `form` and `document_index`; fires on those two pages
-only. Spec, "Outcome — step C".
-
-### Spec 0009 step B — cut at a grid's lane splits, 2026-10-11, gate MET offline
-
-`structure.cut_at_edges` also cuts a box a grid holds at the grid's splits:
-`darkdeck_0009`'s one box over four metric tiles becomes four Zones, one per
-lane, each crop holding its whole tile. Layout front: 14 others identical.
-Its crops moved, so the replay asks more there and step E's sweep measures
-it. Spec, "Outcome — step B".
-
-### Spec 0009 step A — two wire row nets, 2026-10-11, gate MET
-
-`nonlatin_0014`'s totals: a summary row padded on the left loses its leading
-empty cells to the header's width (`wire._trimmed_to_header`), and a summary
-repeating the one above it goes (`wire._without_repeated_total`). By replay:
-the grand total sits under `ΦΠΑ 24%`, `12.437,82` prints once, precision
-0.9510 → 0.9652, the other 14 byte-identical. `wire.retrimmed` brings old IRs
-up to it in `rederive.py`. Spec, "Outcome — step A".
-
-### Spec 0009 step 0 — `S3-sweep` frozen as the floor, 2026-10-11
-
-`tests/frozen/s3-result/`: the sweep's fifteen documents, its scores against
-`q5-result/`, its 490 answers and its (empty) `dth_env.txt`. All four loops
-reproduce it 15 of 15 — scored (0 differing fields), rederive, replay, layout
-front. The floor is named as `s3-result/` in CLAUDE.md, here and in
-`tools/replay_run.py`'s usage. `tests/test_structure.py` stays on
-`q5-result/`'s boxes: repointed, its catalogue-title test fails, because that
-title is already cut out in `s3-result/`. Its README has the table of what
-moved against `q5-result/` — seven documents, three of them by N1–N4.
+**The lesson it repeats.** As first committed, the separator pass ran before
+any Zone had a Kind, so its table-border test saw no tables. A stage's
+position is as much a way for a feature not to arrive as an unread flag.
 
 ### Spec 0008 — the page's structure, steps 1-3, 2026-10-10, sweep `S3-sweep`
 
@@ -296,18 +289,20 @@ the Q5-era records", verbatim. Q1–Q4's are under "Outcome — Q1 to Q4".
 
 ---
 
-## Next — Alessandro's decision on `S4-sweep`
+## Next — Alessandro's decision on `S5-sweep`
 
-**Whether `S4-sweep` becomes the floor**, and with which legs below
-`s3-result/` accepted. Until he decides, `s3-result/` is the floor and the
-control, and **`debug/runs/S4-sweep`, `S4-E-replay` and `S3-base` must
-survive** — the sweep is the only copy of the answers any next step replays.
+**Whether `S5-sweep` becomes the floor**, accepting the five legs above.
+Until he decides, `s3-result/` is the floor and the control, and
+**`debug/runs/S5-sweep` and `S4-sweep` must survive**: the sweep is the only
+copy of the answers any next step replays. If he takes it, freeze it as
+`tests/frozen/s5-result/` the way spec 0009's step 0 froze `s3-result/`.
 
-The recommendation (spec 0009, "Outcome — step E", §4): two offline
-repairs over `S4-sweep` first — the title-echo rule keeping a pair's value
-when only its label repeats the Title (`replay_run.py`), and a `grid` region
-drawn as its lanes (`rederive.py`) — then re-check `darkdeck_0009` against
-`s3-result/` and decide, accepting `menu_0012`'s one word. Not started.
+The recommendation (spec 0010, "Outcome — step E", §4) is size, weight and
+colour per entry inside a Zone. Today one weight and one colour hold per
+Zone, so product names, prices, tile values and red/green amounts draw as
+body text. It is offline over the new floor (`rederive.py`). After it come
+`form_0007`'s drawn fields, then T3 `beside` by the page's own stretches.
+Not started.
 
 ---
 
@@ -382,13 +377,14 @@ the last two entries.
 
 ## Measured and not shipped — record, not a queue
 
-- **Body type size and Title sizes** — measured in Q3 at the sources' *own*
-  sizes; both cross the T1 ratchet on T3 `beside`. `style.py`'s module
-  docstring has the table. A Title or body drawn at the wrong size is this,
-  not a new fault — `catalogue_0015`'s `OK-330` and `Oak drawer runner`
-  included: the first is white type on a dark badge whose line measures above
-  1.44em, the second its Zone's *second* heading Block, and only the leading
-  one is sized.
+- **T3 `beside` by row groups** — spec 0010 step C, 2026-10-11. The
+  half-overlap relation's connected components, meant to forgive vertical
+  drift within a stretch of columns. A source's groups are fragments, not
+  column stretches, so it forgave nothing it was built for. A drift-tolerant
+  `beside` needs the page's own stretches; that is a scorer design question.
+- **Type at the page's size shipped in spec 0010** (step D), crossing
+  `beside` by one coincidental pair on two documents. Q3's oracle arm is
+  recorded in `style.py`'s module docstring.
 
 ---
 

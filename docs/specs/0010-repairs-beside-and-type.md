@@ -1,6 +1,6 @@
 # Five repairs, the beside score, and type at the page's size
 
-**Status: under way, issue #33 — opened 2026-10-11.**
+**Status: measured, sweep `S5-sweep` — decision pending. Issue #33, opened 2026-10-11.**
 
 Alessandro's decision, taken on 2026-10-11 after the close-up error analysis
 of sweep `S4-sweep` (spec 0009's outcome):
@@ -299,6 +299,95 @@ documents come back byte-identical to `S5-D3-replay`**, taken at the same
 commit (`4a5fe3f`). Any document that does not is a finding about the
 determinism claim, not about this spec.
 
+#### Outcome — step E, 2026-10-11, sweep `S5-sweep`: prediction held; ratchet NOT met on five documents — the decision is Alessandro's
+
+Sweep `S5-sweep`: commit `4a5fe3f`, shipped defaults, `qwen3-vl:4b` at
+40%/60% CPU/GPU, 518 model calls, 1h44m. Reported against
+`tests/frozen/s3-result/scores.json`; sheets against `S4-sweep`.
+
+**What the pages look like.** Every page sets its body at about the
+source's size, and its mastheads and titles at their printed sizes. The
+pages are about a sixth shorter. `darkdeck_0009` is complete again: four
+tiles across, `$2.14` printed, and the risks panel under `OPEN RISKS` and
+`DECISIONS WANTED`. `form_0007` heads all five sections. `report_0011`'s
+table carries its caption. `statement_0006` opens by naming the two amounts
+it misread. `cv_0013`'s sidebar labels are small capitals again. What still
+separates the pages from their sources is mostly *inside* a Zone: one
+weight and one colour per Zone, so product names, prices, tile values and
+red/green amounts all draw as body text. The form also draws no field
+boxes.
+
+**1. Gate**
+
+| # | clause | result |
+|---|---|---|
+| E-1 | prediction: all fifteen byte-identical to `S5-D3-replay` | **holds** — 15 of 15 documents and render images byte-identical, every axis of every score equal; each of the 518 answers byte-identical to `S4-sweep`'s |
+| E-2 | ratchet against `s3-result/`, every leg of every document | **NOT met on five** — table in §5 |
+| E-3 | all fifteen sheets opened against `S4-sweep`'s, this session | **holds** — 13 better, 2 same (`invoice_0001`, `sample_table_0003`), none worse; one `major` left, `form_0007`'s chrome |
+| E-4 | tests and `mypy src/` | **holds** — 898 passed, clean |
+
+**2. Where it gained** (against `S4-sweep`)
+
+| document | gain |
+|---|---|
+| `darkdeck_0009` | **Complete.** `$2.14`, `OPEN RISKS`, `DECISIONS WANTED` back, four tiles across; vocabulary 0.970 → 1.000, height 1.67× → 1.25× |
+| `form_0007` | **Heading.** `2. MEMBERSHIP CATEGORY` heads its section; vocabulary 0.938 → 0.946, height 1.23× → 1.08× |
+| `report_0011` | **Caption.** `TABLE 1 — MOVEMENTS AND REVENUE BY BERTH` prints; vocabulary 0.996 → 1.000, join recall 0.985 → 1.000 |
+| `statement_0006` | **Arithmetic.** An Unresolved panel names both misread rows and the 6.00 shortfall; height 1.60× → 1.31× |
+| `cv_0013` | **Labels.** Sidebar labels 0.74em small capitals, no longer the page's largest type; beside 0.400 → 0.484 |
+| all fifteen | **Type.** Body at the page's size, titles at their printed size; mean height 1.435× → 1.241× |
+| `catalogue_0015` | **Grid.** Three tracks at the source's widths; beside 0.273 → 0.287 |
+| `invoice_0002` | **Beside.** 0.854 → 0.935, the title and panels at their printed sizes |
+
+Corpus means, `s3-result/` → `S4-sweep` → `S5-sweep`: vocabulary recall
+0.9806 → 0.9848 → 0.9876, recall 0.9779 → 0.9825 → 0.9860, precision
+0.9866 → 0.9882 → 0.9881, join recall 0.9538 → 0.9567 → 0.9599, tau
+0.9864 → 0.9872 → 0.9875, beside 0.7549 → 0.7515 → 0.7638, height 1.4405 →
+1.4349 → 1.2405. `hard_breaks` 5, `figures_lost` 0, T6 8 of 42 —
+unchanged.
+
+**3. Remaining faults, by conversion stage**
+
+| document | what's wrong | stage | evidence |
+|---|---|---|---|
+| `form_0007` | no input boxes, tick boxes or signature lines; the ticks are lost | **IR + Render**, then Extract | the IR has no word for a drawn field; the list reading keeps no tick state |
+| `catalogue_0015`, `darkdeck_0009`, `statement_0006` | one weight per Zone: product names not bold, prices, tile values and summary figures at body size | **Style** | only a Zone's Title and its heading Blocks are sized; every cell, pair and line is drawn at body size and weight |
+| `statement_0006`, `catalogue_0015`, `darkdeck_0009` | red/green amounts, stock colours, status pills absent | **Style** | colour is measured per Zone (ground, ink), never per cell |
+| `darkdeck_0009` | P95 tile read as a three-row table; tau 0.919 and beside 0.658 below the floor | **Classify → Extract** | the caption veto keeps `P95 LATENCY` in the crop and it splits at its space; the scorer then pairs the tile's `P95` and `184 ms` with the table's — all but three blocks are in source order |
+| `statement_0006` | 1,144.30 read 1,141.30, 216.08 read 210.08 | **Extract** (reduced resolution) | named on the page by two Probes; 1156px over the 1024px budget |
+| `newsletter_0008` | the drop cap's `T` turns the opening sentence into a heading | **Extract** | `heading ['T', 'he stretch…']` |
+| `newsletter_0008`, `nonlatin_0014` | beside down one pair each | **Scorer** | a coincidence of height across two columns that are still side by side — step C's artefact |
+
+**4. Directions, ranked by gain for cost**
+
+| # | stage | change | why | cost / how measured |
+|---|---|---|---|---|
+| 1 | Style | size and weight per line inside a Zone: an entry drawn at its own measured glyph height and stroke weight | the type hierarchy inside cards, tiles and summaries — three documents' remaining `type` minors | offline, `rederive.py` over `S5-sweep`; needs each printed line matched to its IR entry |
+| 2 | Style | ink colour per entry, measured from its pixels | red/green amounts, stock colours, tile deltas | offline, the same match as #1 |
+| 3 | IR + Render | a drawn field: a value inside a rectangle `style.rectangles` already finds is drawn in a box, a tick box with its state | `form_0007` reads as a form | offline for the box; tick state from pixels |
+| 4 | Scorer | T3 `beside` by the page's own stretches | stops a coincidental pair crossing the ratchet whenever type moves | offline, scorer only — step C's finding |
+| 5 | Extract | the statement's 1156px crop read in two overlapping slices | the two misread amounts | model calls — a sweep |
+
+Not worth more effort: `menu_0012`'s `béarnaise` (a 4B model reading 8px
+italic), and `receipt_0010`'s scale (a photograph's pixels are not CSS
+pixels).
+
+**5. Decision for Alessandro.** Whether `S5-sweep` becomes the floor. It
+sits below `s3-result/` on five documents:
+
+| document | leg | floor → `S5-sweep` | cause |
+|---|---|---|---|
+| `darkdeck_0009` | tau, beside | 0.9805 → 0.9192, 0.8148 → 0.6579 | the P95 tile read as a table (§3); every word prints |
+| `menu_0012` | vocabulary, precision | 0.9922 → 0.9844, 0.9938 → 0.9877 | `béarnaise` read without its accent, on spec 0009's narrower crop |
+| `report_0011` | precision | 0.9679 → 0.9663 | the caption's genuine `1`, counted surplus against footnote numbers the source draws with `<ol>` |
+| `newsletter_0008` | beside | 0.7000 → 0.6500 | one coincidental pair, D1 |
+| `nonlatin_0014` | beside | 1.0000 → 0.9853 | one coincidental pair, D2 |
+
+**Recommendation:** take `S5-sweep` as the floor with these five legs. Each
+is a scorer artefact or one word the model reads differently, and every
+page looks as close to its source as at `S4-sweep` or closer. Then do #1
+and #2 offline over it.
+
 ---
 
 ## 3. Rules that bind
@@ -307,3 +396,30 @@ Spec 0009's §6, unchanged. **Never cite a past run.** Look at the pictures.
 Commit each step. **A change whose gate fails is reverted and recorded, not
 argued** — Alessandro asked for the sweep at the end either way, so a failed
 step does not stop the plan; it is reported with its measurement.
+
+---
+
+## Handover prompt — after `S5-sweep` (current)
+
+```
+Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then
+docs/specs/0010-repairs-beside-and-type.md, "Outcome — step E" — spec
+0010's steps A, B and D are committed, step C was measured and reverted,
+and sweep S5-sweep (commit 4a5fe3f) measured them. Every page now sets
+its type at the source's size, darkdeck_0009 is complete, and the ratchet
+against tests/frozen/s3-result/ falls on five documents, each named with
+its cause in the outcome's §5.
+
+First check debug/runs/S5-sweep and S4-sweep still exist; if S5-sweep is
+gone, say so before anything else — it is the only copy of the answers
+the next step replays.
+
+Alessandro's decision is pending: whether S5-sweep becomes the floor,
+accepting those five legs. If he takes it, freeze it as
+tests/frozen/s5-result/ the way spec 0009's step 0 froze s3-result/ —
+documents, scores, answers, README naming the five legs — and prove all
+four loops reproduce it. The recommendation after that is per-entry size,
+weight and colour inside a Zone (directions #1 and #2), offline over the
+new floor. Do not start before he answers. The standing rules are
+CLAUDE.md's and spec 0009's §6.
+```
