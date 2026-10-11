@@ -1,0 +1,76 @@
+{
+ "calls": [
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Application for full membership\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"1. APPLICANT DETAILS\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"OFFICE USE\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Ref.\",\n      \"value\": \"__________\"\n    },\n    {\n      \"label\": \"Date stamp\",\n      \"value\": \"\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Application for full membership\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Castleton Rowing Club · Form M-2 (revised April 2026)\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"Family name\",\n      \"value\": \"Whitlock\"\n    },\n    {\n      \"label\": \"Given names\",\n      \"value\": \"Marion Elspeth\"\n    },\n    {\n      \"label\": \"Date of birth (DD MM YYYY)\",\n      \"value\": \"1 4 0 6 1 9 9 1\"\n    },\n    {\n      \"label\": \"Membership number (if renewing)\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Address\",\n      \"value\": \"17 Bellwether Lane, Castleton\"\n    },\n    {\n      \"label\": \"Postcode\",\n      \"value\": \"CT9 4RD\"\n    },\n    {\n      \"label\": \"Telephone\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Email\",\n      \"value\": \"m.whitlock@ferpost.example\"\n    },\n    {\n      \"label\": \"Full rowing\",\n      \"value\": \"X\"\n    },\n    {\n      \"label\": \"Social\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Junior (under 18)\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Country\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Locker required\",\n      \"value\": \"X\"\n    },\n    {\n      \"label\": \"Years rowing\",\n      \"value\": \"6\"\n    },\n    {\n      \"label\": \"Previous club\",\n      \"value\": \"Ashgrove ARC\"\n    },\n    {\n      \"label\": \"Highest level of competition reached\",\n      \"value\": \"Regional championships, coxed four, 2024\"\n    },\n    {\n      \"label\": \"Any medical condition we should know about\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Name\",\n      \"value\": \"Peter Whitlock\"\n    },\n    {\n      \"label\": \"Relationship\",\n      \"value\": \"Father\"\n    },\n    {\n      \"label\": \"Daytime telephone\",\n      \"value\": \"01632 960 774\"\n    },\n    {\n      \"label\": \"Alternative telephone\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"I can swim 100 metres in light clothing\",\n      \"value\": \"X\"\n    },\n    {\n      \"label\": \"I accept the club rules\",\n      \"value\": \"X\"\n    },\n    {\n      \"label\": \"I consent to photographs being published\",\n      \"value\": \"\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Return this form to the Membership Secretary, Castletown Rowing Club, Boathouse Reach, Castletown CT9 1AA. Incomplete forms cannot be processed.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  }
+ ]
+}

@@ -1,6 +1,7 @@
 # Four repairs after the structure step, one sweep
 
-**Status: planned 2026-10-11, not started.** Alessandro's decision, taken on
+**Status: under way, issue #32 — step 0 done 2026-10-11, gate MET.**
+Alessandro's decision, taken on
 2026-10-11 after reviewing sweep `S3-sweep` (spec 0008's outcome):
 
 1. **`S3-sweep` becomes the floor.** Freeze it first.
@@ -175,6 +176,30 @@ Then move the floor everywhere it is named:
 
 **Gate 0:** all four loops reproduce, or the README states the exception. The
 floor is named as `s3-result/` everywhere it is stated. The suite passes.
+
+#### Outcome — step 0, 2026-10-11, gate MET
+
+`debug/runs/S3-sweep` was still there (commit `9c42d81`, empty
+`dth_env.txt`, 54%/46% CPU/GPU, 490 calls by the bake-off's per-pass table,
+the same count `answers/` holds). Frozen as `tests/frozen/s3-result/`.
+
+| # | clause | result |
+|---|---|---|
+| 1 | scored straight out of `documents/` | **holds** — 15 documents, 0 differing fields against `scores.json` |
+| 2 | `rederive.py` → `S3-base` | **holds** — 15 of 15 byte-identical; `debug/runs/S3-base` kept, with its own report |
+| 3 | `replay_run.py` from `answers/` | **holds** — 15 of 15 byte-identical |
+| 4 | `layout_front.py` Zones vs the IRs | **holds** — band, column and bbox match on 15 of 15 |
+| 5 | the floor named as `s3-result/` everywhere it is stated | **holds** — CLAUDE.md (table, command, loop paragraphs), `docs/status.md`, `tools/replay_run.py`'s usage; `q5-result/`'s README marked record |
+| 6 | suite passes | **holds** — 860, mypy clean |
+
+`orchestrator.py` and `preprocess.py` name `q5-result/` only as where a
+measurement was taken, so they stay. `tests/test_structure.py` stays on
+`q5-result/`'s boxes: repointed, `test_the_catalogue_title_is_cut_out_of_the_first_card`
+fails, because the title is already cut out in `s3-result/`.
+
+Against `q5-result/`, seven documents moved: spec 0008's four, and
+`invoice_0002`, `receipt_0010` and `statement_0006` by N1–N4. The README
+tabulates them.
 
 ### Step A — #2, two wire row nets (`nonlatin_0014`)
 

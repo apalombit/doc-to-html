@@ -37,9 +37,8 @@ trial axis is kept rather than rejected.
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
 measured numbers and what has already been tried and rejected. **0009 is the
-one open spec** — planned 2026-10-11, not started, its tracking issue to be
-opened by the session that starts it; 0008 (issue #31) is done and decided;
-0007 still defines the target.
+one open spec** — issue #32, started 2026-10-11; 0008 (issue #31) is done and
+decided; 0007 still defines the target.
 
 ---
 
@@ -64,7 +63,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-11: spec 0009 planned, step 0 next.**
+**Where the project is — 2026-10-11: spec 0009 under way, step A next.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -85,9 +84,9 @@ Spec 0008   Page structure — opened 2026-10-10 from his review of
               3 let it shape the boxes, one sweep           DONE, gate NOT met
               sweep S3-sweep on 9c42d81 — DECIDED 2026-10-11: the new floor
 Spec 0009   Four repairs after the structure step, one sweep — planned
-              2026-10-11 from his review of S3-sweep:
-              0 freeze S3-sweep as tests/frozen/s3-result/  <- next
-              A wire row nets          B cut at a grid's inner splits
+              2026-10-11 from his review of S3-sweep, issue #32:
+              0 freeze S3-sweep as tests/frozen/s3-result/  DONE, gate MET
+              A wire row nets  <- next B cut at a grid's inner splits
               C the detector's own sections   D page width (+ separators)
               E one sweep, S4-sweep
 ```
@@ -95,16 +94,13 @@ Spec 0009   Four repairs after the structure step, one sweep — planned
 What each step shipped and measured is in `docs/status.md` and the handover's
 outcome sections; spec 0007 keeps the design record and what was rejected.
 
-**The ratchet's floor and the control are both `tests/frozen/q5-result/`
-since 2026-09-30** — Q5's sweep, and the first frozen directory to carry the
-answers that made it. **One leg sits below it by decision since N4:**
-`catalogue_0015`'s T3 beside, which every report against it names —
-`docs/status.md`, "What the ratchet enforces". Each earlier floor, and why
-it moved, is in its README and in `docs/status.md`, "The floor". **On
-2026-10-11 Alessandro decided `S3-sweep` becomes the floor**, with its three
-legs below `q5-result/` accepted; spec 0009's step 0 freezes it as
-`tests/frozen/s3-result/` and moves every mention of the floor, and until it
-lands `q5-result/` is still what the tools name.
+**The ratchet's floor and the control are both `tests/frozen/s3-result/`
+since 2026-10-11** — sweep `S3-sweep`, spec 0008's outcome, Alessandro's
+decision. **Three of its legs sit below `q5-result/`, the floor before it,
+by that decision:** T3 beside on `cv_0013` and `darkdeck_0009`, and one
+precision token on `catalogue_0015` — its README names each. N4's recorded
+exception is gone. Each earlier floor, and why it moved, is in its README and
+in `docs/status.md`, "The floor".
 
 **The only open work is `docs/specs/0009-four-repairs-one-sweep.md`**, and
 its last section is the prompt to start a session with. It carries spec
@@ -258,14 +254,15 @@ says they are.
 | `a2-result/` | A2's fifteen documents beside their scores, sweep `A2-10-enclosed-sweep` | record — the floor and A3's control 2026-09-25 to 2026-09-26 |
 | `a3-result/` | A3's fifteen documents beside their scores, sweep `A3-10-figure-pixels-sweep` | record — the floor 2026-09-26 to 2026-09-29, measured on pictures missing their last lines |
 | `reshot/` | the first sweep on whole pictures, `Q5-10-reshot-sweep` | record — the floor and the control 2026-09-29 to 2026-09-30 |
-| **`q5-result/`** | **Q5's fifteen documents beside their scores and the answers that made them, sweep `Q5-40-sweep`** | **the floor and the control, from 2026-09-30** |
+| `q5-result/` | Q5's fifteen documents beside their scores and the answers that made them, sweep `Q5-40-sweep` | record — the floor and the control 2026-09-30 to 2026-10-11 |
+| **`s3-result/`** | **spec 0008's fifteen documents beside their scores and the answers that made them, sweep `S3-sweep`** | **the floor and the control, from 2026-10-11** |
 
 **Ratchet against the floor by path**, and always with `--documents sweep` —
 without a `fixtures.txt` the report silently scores the iterate five:
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/q5-result/scores.json
+    --documents sweep --previous tests/frozen/s3-result/scores.json
 ```
 
 **Each floor move was measured, not argued:** the new floor was no lower than
@@ -275,9 +272,14 @@ documents byte-identical, the receipt's tau and beside up. **`reshot/` is the
 one exception, decided in advance:** it corrects the pictures rather than the
 pipeline, and its README names every leg on which it falls below
 `a3-result` and why — four words and `cv_0013`'s reading order among them.
+**`s3-result/` is the second, decided after review:** spec 0008 read
+`cv_0013`'s and `darkdeck_0009`'s columns as columns, which costs the Band
+render's cross-column T3 beside agreements, and `catalogue_0015` printed a
+spec line for the first time with one `×` read as `x`. Its README names the
+three legs.
 
 **A directory holding documents beside scores buys a loop, not a number.**
-Scored straight out of `q5-result/`, **15 documents, 0 differing fields**, and **`tools/rederive.py`
+Scored straight out of `s3-result/`, **15 documents, 0 differing fields**, and **`tools/rederive.py`
 over it reproduces it byte for byte** at the commit it was taken on. When code downstream of the model moves, `rederive.py` brings
 the IRs up to it — re-applying every step downstream of the model — and that,
 not a plain re-render, is the baseline a change is measured one apart from. So a
@@ -288,12 +290,12 @@ to `rederive.py`**, or the loop measures yesterday's code. It is not a target
 to match.
 
 **A directory that also holds the answers buys a second loop.** `q5-result/`
-is the first to carry `answers/` — each document's model answers, in the
+was the first to carry `answers/`, and `s3-result/` carries them too — each document's model answers, in the
 order they were asked — and **`tools/replay_run.py` serves them to today's
 code through a real Conversion**: wire, mapper and every pass, which
 `rederive.py` cannot re-run. With `--swap` it serves one new answer, so a
 prompt change probed on one crop is measured on its whole document, ratchet
-included, with no sweep. It reproduces `q5-result/` **15 of 15 byte for byte**, from its answers and again from the sweep's own traces. A
+included, with no sweep. It reproduces `s3-result/` **15 of 15 byte for byte** from its answers. A
 document it marks **ASKED MORE THAN THE RUN** is not a measurement: the
 change moved a crop, and a crop costs a sweep.
 
@@ -487,7 +489,7 @@ each other — `CellState.DISPUTED` and the Ladder are already the vocabulary fo
 it, and `_climb_ladders` already records that it waits on a second Engine. That
 is model time and Alessandro's decision, not a detector.
 
-**Tracker state, 2026-10-11: one open issue, #31 — spec 0008, done and decided; spec 0009's issue is opened by the session that starts it.** #30 (spec 0007) closed when its
+**Tracker state, 2026-10-11: two open issues — #32, spec 0009, under way, and #31, spec 0008, done and decided.** #30 (spec 0007) closed when its
 work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
 #17 (the vision layout prompt) were closed by Thread 0. Every spec is closed
 history; 0007 still defines the target.

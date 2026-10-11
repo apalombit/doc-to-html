@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Country statistics</title>
+<style>
+:root { --ink:#1a1a1a; --muted:#666; --rule:#e0e0e0; --shade:#f4f4f4;
+        --page-bg:#fff; --accent:inherit;
+        --flag:#b45309; --flag-bg:#fff7ed;
+        --link:#0645ad; --mark-bg:#fff2a8; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink:#e8e8e8; --muted:#9a9a9a; --rule:#333; --shade:#1e1e1e;
+          --page-bg:#111;
+          --flag:#fbbf24; --flag-bg:#2a1f0a;
+          --link:#7aa7ff; --mark-bg:#5a4a12; }
+}
+body { font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+       color:var(--ink); background:var(--page-bg); margin:0; padding:2rem 1rem; }
+.doc { max-width:52rem; margin:0 auto; }
+/* Inline runs. `<a>` carries no href — nothing read off the page says where a
+   link goes — so it needs styling of its own to read as one. */
+a { color:var(--link); text-decoration:underline; }
+code { font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+       font-size:0.92em; }
+mark { background:var(--mark-bg); color:inherit; padding:0 0.15em; }
+.band { display:flex; gap:2rem; align-items:flex-start;
+        margin-bottom:1.75rem; flex-wrap:wrap; }
+.band > * { flex:1 1 12rem; min-width:0; }
+/* A `columns` Region: its lanes side by side, each read top to bottom and as
+   wide as the page draws it. Spec 0008, step 2. */
+.columns { display:flex; gap:2rem; align-items:flex-start; margin-bottom:1.75rem; }
+.lane { min-width:0; }
+.lane > .band:last-child { margin-bottom:0; }
+/* A label column in a lane takes at most half of it. A lane is narrower than
+   the page, and `cv_0013`'s `Chartered Engineer, Engineers Ireland (2019)`
+   sized the `auto` track to the whole sidebar, leaving `Reg. no. 11408` a
+   sliver that `anywhere` broke after every letter — N4's fault, in a lane. */
+.columns dl.pairs { grid-template-columns:fit-content(50%) 1fr; }
+.zone-header { font-size:1.05em; }
+.zone-footer { color:var(--muted); font-size:.875em; }
+h1 { font-size:1.6em; margin:0 0 .35em; letter-spacing:.01em; }
+section.boxed { border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
+section.filled { border-radius:4px; overflow:hidden; }
+h2.zone-title { font-size:.95em; font-weight:600; margin:0; padding:.55em 0; }
+h2.zone-title.barred { padding:.55em .9em; }
+section.boxed > h2.zone-title, section.filled > h2.zone-title { padding:.55em .9em; }
+.zone-body { padding:0; }
+section.boxed > .zone-body, section.filled > .zone-body { padding:.9em; }
+section.boxed > .zone-body > .table-wrap,
+section.filled > .zone-body > .table-wrap { margin:-.9em; }
+blockquote { margin:.6em 0 .3em 1.5em; }
+p.attribution { color:var(--muted); font-size:.85em; margin:0 0 .4em; }
+ul { margin:0 0 .4em; padding-left:1.3em; }
+.zone-header ul { display:flex; flex-wrap:wrap; gap:1.1rem;
+                  list-style:none; padding:0; }
+p { margin:0 0 .4em; }
+dl.pairs { display:grid; grid-template-columns:auto 1fr; gap:.15em .75em; margin:0; }
+/* A long unbreakable value must wrap, not be hidden. `section.filled` and
+   `section.boxed` both set `overflow:hidden` to keep a fill inside its own
+   rounded corner, so anything wider than the Zone is silently cut off in the
+   screenshot — recall says the text is present and the picture does not
+   contain it. `cv_0013`'s sidebar was the corpus's one case: the `auto` track
+   sized itself to `ines.halloran@fempost.example`, which has no break
+   opportunity, giving the Zone a 368px content width inside a 256px box.
+   `anywhere` rather than `break-word` because only `anywhere` lowers the
+   min-content width the grid track is measured from. Measured 2026-09-25 over
+   all fifteen: corpus `clipped` 1 -> 0, `beside_agreement` +0.0033,
+   `alignment_agreement` +0.0019, ratchet clean, and `cv_0013`'s height_ratio
+   1.77 -> 2.14, which is the wrapped address taking the lines it needs. */
+dl.pairs dt, dl.pairs dd { overflow-wrap:anywhere; }
+/* A label with no value is not in the label column. Left there, the `auto`
+   track sizes itself to it as if a value stood beside it, and the `1fr` track
+   gets what is left: `catalogue_0015`'s `Suffolk pattern, 265 mm, beeswax` took
+   the whole card and `each`, the next line's value, was broken after every
+   letter by the `anywhere` above. Across both columns it sizes neither, so the
+   label column is as wide as the labels that have values. N4, 2026-10-10. */
+dl.pairs dt.alone { grid-column:1 / -1; }
+dl.pairs dt.alone + dd { display:none; }
+dl.pairs dt { color:var(--muted); }
+dl.pairs dd { margin:0; }
+.zone-summary dl.pairs dd { font-weight:600; text-align:right; }
+.table-wrap { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; }
+th, td { padding:.45em .6em; text-align:left; border-bottom:1px solid var(--rule); }
+thead th { background:var(--shade); font-weight:600; }
+td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+tfoot td:last-child { text-align:right; }
+tfoot td { font-weight:600; border-top:2px solid var(--rule); border-bottom:none; }
+figure.omitted { margin:0; border:1px dashed var(--rule); border-radius:3px;
+                 min-height:3rem; display:flex; align-items:center;
+                 justify-content:center; color:var(--muted); font-size:.8em; }
+figure.omitted figcaption { padding:.5em; text-align:center; }
+.mark { display:inline-block; border:2px solid var(--flag); color:var(--flag);
+        padding:.15em .6em; border-radius:3px; font-weight:600; letter-spacing:.08em; }
+.disputed { background:var(--flag-bg); border-bottom:2px solid var(--flag); cursor:help; }
+.corrected { border-bottom:2px solid var(--rule); cursor:help; }
+.skeleton { background:repeating-linear-gradient(135deg, var(--shade),
+            var(--shade) 6px, transparent 6px, transparent 12px);
+            border:1px dashed var(--rule); min-height:2.5rem; border-radius:3px; }
+.findings { border-left:3px solid var(--flag); background:var(--flag-bg);
+            padding:.6em 1em; margin:0 0 1.75rem; font-size:.875em; }
+.findings ul { margin:.3em 0 0; padding-left:1.2em; }
+.findings.caveats { border-left-color:var(--rule); background:var(--shade);
+                    color:var(--muted); }
+</style>
+<style>:root { --page-bg:rgb(255,255,255); --ink:rgb(0,0,0); --muted:rgb(84,84,84); --rule:rgb(217,217,217); --shade:rgb(240,240,240); }
+</style>
+</head>
+<body>
+<div class="doc">
+<div class="band"><section class="zone zone-header"><h1>Country statistics</h1></section></div><div class="band"><section class="zone zone-body" style="min-width:min(30rem,100%)"><h2 class="zone-title">Population and GDP (millions of USD)</h2><div class="zone-body"><div class="table-wrap"><table><thead><tr><th>Country</th><th>ISO</th><th class="num">Population</th><th class="num">GDP (USD M)</th><th>Currency</th></tr></thead><tbody><tr><td>United States</td><td>USA</td><td class="num">331,900,000</td><td class="num">19,485,394</td><td>USD</td></tr><tr><td>China</td><td>CHN</td><td class="num">1,412,000,000</td><td class="num">14,722,801</td><td>CNY</td></tr><tr><td>Japan</td><td>JPN</td><td class="num">125,700,000</td><td class="num">4,937,422</td><td>JPY</td></tr><tr><td>Germany</td><td>DEU</td><td class="num">83,240,000</td><td class="num">4,223,116</td><td>EUR</td></tr><tr><td>India</td><td>IND</td><td class="num">1,408,000,000</td><td class="num">3,173,398</td><td>INR</td></tr><tr><td>United Kingdom</td><td>GBR</td><td class="num">67,330,000</td><td class="num">3,070,667</td><td>GBP</td></tr><tr><td>France</td><td>FRA</td><td class="num">67,750,000</td><td class="num">2,937,473</td><td>EUR</td></tr><tr><td>Italy</td><td>ITA</td><td class="num">59,110,000</td><td class="num">2,099,880</td><td>EUR</td></tr><tr><td>Canada</td><td>CAN</td><td class="num">38,250,000</td><td class="num">1,988,336</td><td>CAD</td></tr><tr><td>South Korea</td><td>KOR</td><td class="num">51,740,000</td><td class="num">1,810,966</td><td>KRW</td></tr><tr><td>Russia</td><td>RUS</td><td class="num">143,400,000</td><td class="num">1,775,800</td><td>RUB</td></tr><tr><td>Brazil</td><td>BRA</td><td class="num">214,300,000</td><td class="num">1,608,981</td><td>BRL</td></tr><tr><td>Australia</td><td>AUS</td><td class="num">25,690,000</td><td class="num">1,542,660</td><td>AUD</td></tr><tr><td>Spain</td><td>ESP</td><td class="num">47,420,000</td><td class="num">1,425,865</td><td>EUR</td></tr><tr><td>Mexico</td><td>MEX</td><td class="num">130,300,000</td><td class="num">1,293,490</td><td>MXN</td></tr></tbody></table></div></div></section></div>
+</div>
+<script type="application/json" id="doc-ir">{"source":{"path":"/Users/aless/Desktop/Projects/pic-to-html/doc-to-html/example/sample-table.png","sha256":"94aac4057c9f65b887e44431600a6f291876f0877c378b0db9cb2e193a1525cc","width":960,"height":690,"rectified_width":960,"rectified_height":690},"ir_version":1,"rectifier_version":4,"hint":null,"page_px":960,"style":{"page_bg":[255,255,255],"ink":[0,0,0],"accent":null,"shade":[221,221,221]},"zones":[{"kind":"prose","role":"header","band":0,"column":0,"bbox":{"left":0.029166666666666667,"top":0.028985507246376812,"right":0.30520833333333336,"bottom":0.07246376811594203},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"heading","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"Country statistics","model":"qwen3-vl:4b","prompt_version":"2","runs":[{"text":"Country statistics","kind":"text"}]}],"state":"agreed"}],"size":null}],"graphic_kind":null,"pixels":null,"fill":null,"title_fill":null,"header_fill":null,"boxed":false,"complete":true},{"kind":"table","role":"body","band":1,"column":0,"bbox":{"left":0.0375,"top":0.11884057971014493,"right":0.8916666666666667,"bottom":0.9521739130434783},"title":"Population and GDP (millions of USD)","rows":[{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"United States","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"USA","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"331,900,000","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"19,485,394","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"USD","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"China","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"CHN","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"1,412,000,000","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"14,722,801","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"CNY","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Japan","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"JPN","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"125,700,000","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"4,937,422","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"JPY","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Germany","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"DEU","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"83,240,000","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"4,223,116","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"EUR","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"India","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"IND","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"1,408,000,000","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"3,173,398","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"INR","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"United Kingdom","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"GBR","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"67,330,000","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"3,070,667","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"GBP","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"France","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"FRA","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"67,750,000","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"2,937,473","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"EUR","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Italy","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"ITA","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"59,110,000","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"2,099,880","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"EUR","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Canada","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"CAN","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"38,250,000","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"1,988,336","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"CAD","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"South Korea","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"KOR","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"51,740,000","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"1,810,966","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"KRW","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Russia","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"RUS","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"143,400,000","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"1,775,800","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"RUB","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Brazil","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"BRA","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"214,300,000","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"1,608,981","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"BRL","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Australia","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"AUS","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"25,690,000","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"1,542,660","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"AUD","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Spain","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"ESP","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"47,420,000","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"1,425,865","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"EUR","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Mexico","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"MEX","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"130,300,000","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"1,293,490","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"MXN","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Country","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"ISO","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"Population","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"GDP (USD M)","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"Currency","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"header"}],"pairs":[],"blocks":[],"graphic_kind":null,"pixels":null,"fill":null,"title_fill":null,"header_fill":null,"boxed":false,"complete":true}],"corrections":[],"probes":[],"gaps":[],"failures":[],"caveats":[],"shortfalls":[],"regions":[{"top":0.0,"bottom":1.0,"flow":"single","splits":[],"rows":1}]}</script>
+</body>
+</html>

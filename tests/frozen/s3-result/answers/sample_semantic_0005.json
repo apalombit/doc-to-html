@@ -1,0 +1,214 @@
+{
+ "calls": [
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"The Weekly Digest\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Why semantic HTML matters\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"TL;DR\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Introduction\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Benefits\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\"first_line\": \"Search engines understand content hierarchy\", \"line_is\": \"content\"}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"HTML provides for a number of elements that allow for finer-grained semantics in HTML documents.\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"© 2026 The Weekly Digest. All rights reserved.\",\n  \"line_is\": \"header\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "list",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Home\"\n      ]\n    },\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Archive\"\n      ]\n    },\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"About\"\n      ]\n    },\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Contact\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"Home\",\n      \"kind\": \"link\"\n    },\n    {\n      \"text\": \"Archive\",\n      \"kind\": \"link\"\n    },\n    {\n      \"text\": \"About\",\n      \"kind\": \"link\"\n    },\n    {\n      \"text\": \"Contact\",\n      \"kind\": \"link\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Why semantic HTML matters\"\n      ]\n    },\n    {\n      \"kind\": \"attribution\",\n      \"lines\": [\n        \"May 9, 2026 · by Jane Author\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"Jane Author\",\n      \"kind\": \"link\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"TL;DR\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Semantic tags improve accessibility,\",\n        \"SEO, and code clarity.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Introduction\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Modern HTML5 introduced semantic elements like <article>,\",\n        \"<section>, and <nav> that describe the meaning of content\",\n        \"rather than its appearance.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"<article>\",\n      \"kind\": \"code\"\n    },\n    {\n      \"text\": \"<section>\",\n      \"kind\": \"code\"\n    },\n    {\n      \"text\": \"<nav>\",\n      \"kind\": \"code\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "list",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Screen readers can navigate the document structure\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "list",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Search engines understand content hierarchy\"\n      ]\n    },\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"CSS and JavaScript can target meaningful regions\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"quote\",\n      \"lines\": [\n        \"HTML provides for a number of elements that allow for finer-grained semantics in HTML\",\n        \"documents.\"\n      ]\n    },\n    {\n      \"kind\": \"attribution\",\n      \"lines\": [\n        \"— W3C HTML5.2 specification\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "list",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"html\"\n      ]\n    },\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"web\"\n      ]\n    },\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"standards\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"html\",\n      \"kind\": \"link\"\n    },\n    {\n      \"text\": \"web\",\n      \"kind\": \"link\"\n    },\n    {\n      \"text\": \"standards\",\n      \"kind\": \"link\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"© 2026 The Weekly Digest. All rights reserved.\"\n      ]\n    },\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"Contact: editor@example.com\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"editor@example.com\",\n      \"kind\": \"link\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  }
+ ]
+}

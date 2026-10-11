@@ -1,0 +1,40 @@
+{
+ "calls": [
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Population and GDP (millions of USD)\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Country statistics\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"Country\",\n      \"kind\": \"strong\"\n    },\n    {\n      \"text\": \"statistics\",\n      \"kind\": \"em\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "table",
+   "answer": "{\n  \"rows\": [\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"Population and GDP (millions of USD)\",\n        \"\",\n        \"\",\n        \"\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"United States\",\n        \"USA\",\n        \"331,900,000\",\n        \"19,485,394\",\n        \"USD\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"China\",\n        \"CHN\",\n        \"1,412,000,000\",\n        \"14,722,801\",\n        \"CNY\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Japan\",\n        \"JPN\",\n        \"125,700,000\",\n        \"4,937,422\",\n        \"JPY\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Germany\",\n        \"DEU\",\n        \"83,240,000\",\n        \"4,223,116\",\n        \"EUR\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"India\",\n        \"IND\",\n        \"1,408,000,000\",\n        \"3,173,398\",\n        \"INR\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"United Kingdom\",\n        \"GBR\",\n        \"67,330,000\",\n        \"3,070,667\",\n        \"GBP\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"France\",\n        \"FRA\",\n        \"67,750,000\",\n        \"2,937,473\",\n        \"EUR\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Italy\",\n        \"ITA\",\n        \"59,110,000\",\n        \"2,099,880\",\n        \"EUR\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Canada\",\n        \"CAN\",\n        \"38,250,000\",\n        \"1,988,336\",\n        \"CAD\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"South Korea\",\n        \"KOR\",\n        \"51,740,000\",\n        \"1,810,966\",\n        \"KRW\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Russia\",\n        \"RUS\",\n        \"143,400,000\",\n        \"1,775,800\",\n        \"RUB\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Brazil\",\n        \"BRA\",\n        \"214,300,000\",\n        \"1,608,981\",\n        \"BRL\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Australia\",\n        \"AUS\",\n        \"25,690,000\",\n        \"1,542,660\",\n        \"AUD\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Spain\",\n        \"ESP\",\n        \"47,420,000\",\n        \"1,425,865\",\n        \"EUR\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Mexico\",\n        \"MEX\",\n        \"130,300,000\",\n        \"1,293,490\",\n        \"MXN\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"Country\",\n        \"ISO\",\n        \"Population\",\n        \"GDP (USD M)\",\n        \"Currency\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  }
+ ]
+}

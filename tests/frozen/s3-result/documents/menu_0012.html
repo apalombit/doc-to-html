@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Copper Pot</title>
+<style>
+:root { --ink:#1a1a1a; --muted:#666; --rule:#e0e0e0; --shade:#f4f4f4;
+        --page-bg:#fff; --accent:inherit;
+        --flag:#b45309; --flag-bg:#fff7ed;
+        --link:#0645ad; --mark-bg:#fff2a8; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink:#e8e8e8; --muted:#9a9a9a; --rule:#333; --shade:#1e1e1e;
+          --page-bg:#111;
+          --flag:#fbbf24; --flag-bg:#2a1f0a;
+          --link:#7aa7ff; --mark-bg:#5a4a12; }
+}
+body { font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+       color:var(--ink); background:var(--page-bg); margin:0; padding:2rem 1rem; }
+.doc { max-width:52rem; margin:0 auto; }
+/* Inline runs. `<a>` carries no href — nothing read off the page says where a
+   link goes — so it needs styling of its own to read as one. */
+a { color:var(--link); text-decoration:underline; }
+code { font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+       font-size:0.92em; }
+mark { background:var(--mark-bg); color:inherit; padding:0 0.15em; }
+.band { display:flex; gap:2rem; align-items:flex-start;
+        margin-bottom:1.75rem; flex-wrap:wrap; }
+.band > * { flex:1 1 12rem; min-width:0; }
+/* A `columns` Region: its lanes side by side, each read top to bottom and as
+   wide as the page draws it. Spec 0008, step 2. */
+.columns { display:flex; gap:2rem; align-items:flex-start; margin-bottom:1.75rem; }
+.lane { min-width:0; }
+.lane > .band:last-child { margin-bottom:0; }
+/* A label column in a lane takes at most half of it. A lane is narrower than
+   the page, and `cv_0013`'s `Chartered Engineer, Engineers Ireland (2019)`
+   sized the `auto` track to the whole sidebar, leaving `Reg. no. 11408` a
+   sliver that `anywhere` broke after every letter — N4's fault, in a lane. */
+.columns dl.pairs { grid-template-columns:fit-content(50%) 1fr; }
+.zone-header { font-size:1.05em; }
+.zone-footer { color:var(--muted); font-size:.875em; }
+h1 { font-size:1.6em; margin:0 0 .35em; letter-spacing:.01em; }
+section.boxed { border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
+section.filled { border-radius:4px; overflow:hidden; }
+h2.zone-title { font-size:.95em; font-weight:600; margin:0; padding:.55em 0; }
+h2.zone-title.barred { padding:.55em .9em; }
+section.boxed > h2.zone-title, section.filled > h2.zone-title { padding:.55em .9em; }
+.zone-body { padding:0; }
+section.boxed > .zone-body, section.filled > .zone-body { padding:.9em; }
+section.boxed > .zone-body > .table-wrap,
+section.filled > .zone-body > .table-wrap { margin:-.9em; }
+blockquote { margin:.6em 0 .3em 1.5em; }
+p.attribution { color:var(--muted); font-size:.85em; margin:0 0 .4em; }
+ul { margin:0 0 .4em; padding-left:1.3em; }
+.zone-header ul { display:flex; flex-wrap:wrap; gap:1.1rem;
+                  list-style:none; padding:0; }
+p { margin:0 0 .4em; }
+dl.pairs { display:grid; grid-template-columns:auto 1fr; gap:.15em .75em; margin:0; }
+/* A long unbreakable value must wrap, not be hidden. `section.filled` and
+   `section.boxed` both set `overflow:hidden` to keep a fill inside its own
+   rounded corner, so anything wider than the Zone is silently cut off in the
+   screenshot — recall says the text is present and the picture does not
+   contain it. `cv_0013`'s sidebar was the corpus's one case: the `auto` track
+   sized itself to `ines.halloran@fempost.example`, which has no break
+   opportunity, giving the Zone a 368px content width inside a 256px box.
+   `anywhere` rather than `break-word` because only `anywhere` lowers the
+   min-content width the grid track is measured from. Measured 2026-09-25 over
+   all fifteen: corpus `clipped` 1 -> 0, `beside_agreement` +0.0033,
+   `alignment_agreement` +0.0019, ratchet clean, and `cv_0013`'s height_ratio
+   1.77 -> 2.14, which is the wrapped address taking the lines it needs. */
+dl.pairs dt, dl.pairs dd { overflow-wrap:anywhere; }
+/* A label with no value is not in the label column. Left there, the `auto`
+   track sizes itself to it as if a value stood beside it, and the `1fr` track
+   gets what is left: `catalogue_0015`'s `Suffolk pattern, 265 mm, beeswax` took
+   the whole card and `each`, the next line's value, was broken after every
+   letter by the `anywhere` above. Across both columns it sizes neither, so the
+   label column is as wide as the labels that have values. N4, 2026-10-10. */
+dl.pairs dt.alone { grid-column:1 / -1; }
+dl.pairs dt.alone + dd { display:none; }
+dl.pairs dt { color:var(--muted); }
+dl.pairs dd { margin:0; }
+.zone-summary dl.pairs dd { font-weight:600; text-align:right; }
+.table-wrap { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; }
+th, td { padding:.45em .6em; text-align:left; border-bottom:1px solid var(--rule); }
+thead th { background:var(--shade); font-weight:600; }
+td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+tfoot td:last-child { text-align:right; }
+tfoot td { font-weight:600; border-top:2px solid var(--rule); border-bottom:none; }
+figure.omitted { margin:0; border:1px dashed var(--rule); border-radius:3px;
+                 min-height:3rem; display:flex; align-items:center;
+                 justify-content:center; color:var(--muted); font-size:.8em; }
+figure.omitted figcaption { padding:.5em; text-align:center; }
+.mark { display:inline-block; border:2px solid var(--flag); color:var(--flag);
+        padding:.15em .6em; border-radius:3px; font-weight:600; letter-spacing:.08em; }
+.disputed { background:var(--flag-bg); border-bottom:2px solid var(--flag); cursor:help; }
+.corrected { border-bottom:2px solid var(--rule); cursor:help; }
+.skeleton { background:repeating-linear-gradient(135deg, var(--shade),
+            var(--shade) 6px, transparent 6px, transparent 12px);
+            border:1px dashed var(--rule); min-height:2.5rem; border-radius:3px; }
+.findings { border-left:3px solid var(--flag); background:var(--flag-bg);
+            padding:.6em 1em; margin:0 0 1.75rem; font-size:.875em; }
+.findings ul { margin:.3em 0 0; padding-left:1.2em; }
+.findings.caveats { border-left-color:var(--rule); background:var(--shade);
+                    color:var(--muted); }
+</style>
+<style>:root { --page-bg:rgb(253,250,244); --ink:rgb(43,33,24); --muted:rgb(112,105,97); --rule:rgb(222,217,211); --shade:rgb(240,237,231); }
+</style>
+</head>
+<body>
+<div class="doc">
+<div class="findings caveats"><strong>Read with a caveat</strong><ul><li>Zone 1 (<code>table</code>) rows 1–25 (25 rows) each came back with 2 cells against the header&#x27;s 1 and were kept whole — every value is present, and the surplus means some of them may sit in the wrong columns</li></ul></div><div class="band"><section class="zone zone-header"><h1>The Copper Pot</h1></section></div><div class="band"><section class="zone zone-body" style="min-width:min(12rem,100%)"><div class="table-wrap"><table><thead><tr><th>KITCHEN &amp; CELLAR · EST. 1961</th></tr><tr><th>To begin</th><th class="num">Main courses</th></tr></thead><tbody><tr><td>Potted brown shrimp</td><td class="num">9.50</td></tr><tr><td>with mace butter and toasted rye</td><td class="num"></td></tr><tr><td>Celeriac and apple soup VG</td><td class="num">7.00</td></tr><tr><td>hazelnut oil, cheril</td><td class="num"></td></tr><tr><td>Ox tongue, sauce gribiche</td><td class="num">10.25</td></tr><tr><td>Burrata, late tomatoes</td><td class="num">11.00</td></tr><tr><td>basil, aged balsamic</td><td class="num"></td></tr><tr><th>From the grill</th><th class="num">Puddings</th></tr><tr><td>Rib of beef, for two</td><td class="num">62.00</td></tr><tr><td>dripping chips, watercress, béarnaise</td><td class="num"></td></tr><tr><td>Lamb cutlets</td><td class="num">26.50</td></tr><tr><td>Whole plaice on the bone</td><td class="num">24.00</td></tr><tr><td>brown butter, capers, lemon</td><td class="num"></td></tr><tr><td>Braised shin, bone marrow</td><td class="num">23.00</td></tr><tr><td>mashed potato, red wine</td><td class="num"></td></tr><tr><td>Guinea fowl, autumn roots</td><td class="num">21.50</td></tr><tr><td>Squash and sage gnocchi VG</td><td class="num">18.00</td></tr><tr><td>crisp sage, toasted pumpkin seed</td><td class="num"></td></tr><tr><td>Fish pie of the day</td><td class="num">19.75</td></tr><tr><td>Treacle tart, clotted cream</td><td class="num">8.50</td></tr><tr><td>Poached quince, custard</td><td class="num">8.00</td></tr><tr><td>Chocolate pot, sea salt</td><td class="num">8.50</td></tr><tr><td>Cheese, three from the board</td><td class="num">12.00</td></tr><tr><td>quince paste, oat biscuits</td><td class="num"></td></tr></tbody></table></div></section></div><div class="band"><section class="zone zone-footer"><p>A discretionary service charge of 12.5% is added to tables of six or more.</p><p>Please tell us of any allergy before ordering.</p></section></div>
+</div>
+<script type="application/json" id="doc-ir">{"source":{"path":"/Users/aless/Desktop/Projects/pic-to-html/doc-to-html/example/menu.png","sha256":"6978eac6d88586e66ba7c72082dafff6c2141fa6990239aeb91d2d8db9c50cd6","width":760,"height":539,"rectified_width":760,"rectified_height":539},"ir_version":1,"rectifier_version":4,"hint":null,"page_px":760,"style":{"page_bg":[253,250,244],"ink":[43,33,24],"accent":null,"shade":[185,166,137]},"zones":[{"kind":"prose","role":"header","band":0,"column":0,"bbox":{"left":0.3092105263157895,"top":0.07235621521335807,"right":0.6842105263157895,"bottom":0.11873840445269017},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"heading","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"The Copper Pot","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"size":null}],"graphic_kind":null,"pixels":null,"fill":null,"title_fill":null,"header_fill":null,"boxed":false,"complete":true},{"kind":"table","role":"body","band":1,"column":0,"bbox":{"left":0.04473684210526316,"top":0.15584415584415584,"right":0.9552631578947368,"bottom":0.8218923933209648},"title":null,"rows":[{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"KITCHEN & CELLAR \u00b7 EST. 1961","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"header"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"To begin","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"Main courses","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"header"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Potted brown shrimp","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"9.50","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"with mace butter and toasted rye","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Celeriac and apple soup VG","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"7.00","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"hazelnut oil, cheril","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Ox tongue, sauce gribiche","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"10.25","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Burrata, late tomatoes","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"11.00","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"basil, aged balsamic","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"From the grill","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"Puddings","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"header"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Rib of beef, for two","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"62.00","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"dripping chips, watercress, b\u00e9arnaise","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Lamb cutlets","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"26.50","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Whole plaice on the bone","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"24.00","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"brown butter, capers, lemon","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Braised shin, bone marrow","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"23.00","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"mashed potato, red wine","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Guinea fowl, autumn roots","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"21.50","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Squash and sage gnocchi VG","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"18.00","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"crisp sage, toasted pumpkin seed","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Fish pie of the day","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"19.75","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Treacle tart, clotted cream","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"8.50","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Poached quince, custard","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"8.00","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Chocolate pot, sea salt","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"8.50","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Cheese, three from the board","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"12.00","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"quince paste, oat biscuits","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"}],"pairs":[],"blocks":[],"graphic_kind":null,"pixels":null,"fill":null,"title_fill":null,"header_fill":null,"boxed":false,"complete":true},{"kind":"prose","role":"footer","band":2,"column":0,"bbox":{"left":0.30657894736842106,"top":0.9016697588126159,"right":0.6921052631578948,"bottom":0.9461966604823747},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"paragraph","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"A discretionary service charge of 12.5% is added to tables of six or more.","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"size":null},{"kind":"paragraph","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"Please tell us of any allergy before ordering.","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"size":null}],"graphic_kind":null,"pixels":null,"fill":null,"title_fill":null,"header_fill":null,"boxed":false,"complete":true}],"corrections":[],"probes":[],"gaps":[],"failures":[],"caveats":[{"zone_index":1,"kind":"table","note":"rows 1\u201325 (25 rows) each came back with 2 cells against the header's 1 and were kept whole \u2014 every value is present, and the surplus means some of them may sit in the wrong columns"}],"shortfalls":[],"regions":[{"top":0.0,"bottom":1.0,"flow":"single","splits":[],"rows":1}]}</script>
+</body>
+</html>

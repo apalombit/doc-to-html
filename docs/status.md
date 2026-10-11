@@ -1,11 +1,8 @@
-# Status — 2026-10-11 (**spec 0009 planned, step 0 next**; `S3-sweep` decided as the floor, frozen at step 0)
+# Status — 2026-10-11 (**spec 0009 under way, issue #32**; the floor is `s3-result/`)
 
 **Live document.** This is where the project actually is. When it goes stale,
-rewrite it; do not add a banner and leave it. Last rewritten 2026-10-10, when
-spec 0008's three steps finished and sweep `S3-sweep` measured them; header,
-"Where we are" and "Next" updated 2026-10-11 for Alessandro's decision and
-spec 0009. The floor sections below still describe `q5-result/` — step 0
-rewrites them.
+rewrite it; do not add a banner and leave it. Last rewritten 2026-10-11, at
+spec 0009's step 0, which froze `S3-sweep` as the floor.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
@@ -45,9 +42,10 @@ Spec 0008   Page structure, opened 2026-10-10 from the F1-sweep review
               step 2  carry it in the IR and draw it, offline DONE, gate NOT met (ratchet)
               step 3  let it shape the boxes, one sweep       DONE, gate NOT met (ratchet, menu)
               sweep S3-sweep, commit 9c42d81 — DECIDED 2026-10-11: the new floor
-Spec 0009   Four repairs after the structure step, one sweep — planned 2026-10-11
-              step 0  freeze S3-sweep as tests/frozen/s3-result/        <- next
-              A-D     four repairs, offline where possible; E one sweep
+Spec 0009   Four repairs after the structure step, one sweep — issue #32
+              step 0  freeze S3-sweep as tests/frozen/s3-result/  DONE, gate MET
+              A-D     four repairs, offline where possible        <- A next
+              E       one sweep
 ```
 
 Q1-Q4's result tables moved to
@@ -55,42 +53,40 @@ Q1-Q4's result tables moved to
 
 ---
 
-## The floor — `tests/frozen/q5-result/`, DECIDED 2026-09-30
+## The floor — `tests/frozen/s3-result/`, DECIDED 2026-10-11
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/q5-result/scores.json
+    --documents sweep --previous tests/frozen/s3-result/scores.json
 ```
 
 `--documents sweep` is not optional: without a `fixtures.txt` the report
 scores the iterate five and says nothing about the other ten.
 
-**It is the floor and the control since 2026-09-30, Alessandro's decision.**
-Sweep `Q5-40-sweep`: the fifteen documents today's code makes, with the
-answers that made them. It dominates `reshot/` on every ratcheted leg of
-every document — fourteen byte-identical, and `receipt_0010`'s tau 0.800 →
-1.000 and beside 0.871 → 1.000 with recall and precision unchanged — the
-condition every floor move but one has met. Scored straight out of the
-directory, **15 documents, 0 differing fields**; `tools/rederive.py` over it
-reproduces it **15 of 15 byte for byte**, and so does `tools/replay_run.py`
-from its committed `answers/`; `tools/layout_front.py`'s Zones match its IRs
-on 15 of 15. Its README says what moved against `reshot/`: the receipt, and
-nothing else.
+**It is the floor and the control since 2026-10-11, Alessandro's decision**
+after reviewing sweep `S3-sweep` — spec 0008's outcome, commit `9c42d81`:
+the fifteen documents today's code makes, with the 490 answers that made
+them. Frozen at spec 0009's step 0 and proved that day: scored straight out
+of the directory, **15 documents, 0 differing fields**; `tools/rederive.py`
+over it reproduces it **15 of 15 byte for byte**, and so does
+`tools/replay_run.py` from its committed `answers/`; `tools/layout_front.py`'s
+Zones match its IRs on 15 of 15. `debug/runs/S3-base` is the rederive proof
+kept as a run directory — the `--previous` for spec 0009's sheets.
 
-### The one before it — `reshot/`, 2026-09-29 to 2026-09-30
+**Three legs sit below `q5-result/`, the floor before it, by that decision:**
+T3 beside on `cv_0013` (0.5769 → 0.4000) and `darkdeck_0009` (0.9677 →
+0.8148) — the Band render's cross-column coincidences, which a column render
+does not reproduce — and precision on `catalogue_0015` (1.0000 → 0.9940), one
+`×` read as `x` on a spec line printed for the first time. Its README names
+them and what else moved. **N4's exception is gone:** `catalogue_0015`'s
+beside is 0.2727, above `q5-result/`'s 0.2523.
 
-**It moved from `a3-result` because the pictures were wrong, not the
-pipeline.** The ten authored corpus pictures were shot before
-`projection.SHOT_SLACK` existed and each was missing its bottom 60-90px, so
-up to 266 tokens were scored against a model never shown them. They were
-re-shot, one sweep was taken at HEAD, and **Alessandro decided in advance
-that it would be the floor.** It is the one floor that does not dominate the
-one before it; its README names every leg on which it falls below
-`a3-result` and why — four words and `cv_0013`'s reading order among them.
+### The ones before it
 
-It was also the control until Q5 moved the receipt's Zones: `rederive.py`
-re-applies what works on the IR, not the detector, so over `reshot/` it
-cannot reproduce today's receipt.
+`q5-result/` (2026-09-30 to 2026-10-11) dominated `reshot/` on every
+ratcheted leg; `reshot/` (2026-09-29 to 2026-09-30) is the one move that gave
+ground *before* it was taken, because it corrected the pictures rather than
+the pipeline. Each README says what moved and why.
 
 ### What the ratchet enforces, per document
 
@@ -104,34 +100,25 @@ cannot reproduce today's receipt.
 | T3 beside | strict decrease, any amount |
 
 `vocabulary_recall` is reported beside a failure to say how far it fell. **The
-floor never falls for any reason** — `reshot/` is the one move that gave
-ground, decided in advance and accounted for leg by leg.
-
-**One standing exception since N4, 2026-10-10, Alessandro's decision:**
-`catalogue_0015` T3 beside sits below the floor, 0.2523 → 0.2364. The broken
-render's letter-stacked `each` held four agreements by overlapping its
-neighbours' price rows; drawn on one line it cannot. Every report against
-`q5-result/` names it. It is accepted; nothing else is.
+floor never falls for any reason.** No standing exception sits against
+`s3-result/`.
 
 ---
 
-## Where the corpus is — at the floor, `q5-result/`
+## Where the corpus is — at the floor, `s3-result/`
 
 | | mean |
 |---|---|
-| vocabulary recall | 0.9708 |
-| recall (multiset) | 0.9664 |
-| precision | 0.9865 |
-| join recall | 0.9434 |
-| tau | 0.9366 |
-| beside agreement | 0.7622 |
-| height ratio | 1.621 |
+| vocabulary recall | 0.9806 |
+| recall (multiset) | 0.9779 |
+| precision | 0.9866 |
+| join recall | 0.9538 |
+| tau | 0.9864 |
+| beside agreement | 0.7549 |
+| height ratio | 1.441 |
 | `hard_breaks` | 5 |
 | `figures_lost` | **0** |
 | T6 inline runs | 8 of 42 |
-
-`reshot/`, the floor before it, differs on three rows and one document: its
-tau 0.9232, beside 0.7536 and height 1.610 are `receipt_0010` before Q5.
 
 ### The live faults — cleared 2026-10-10
 
@@ -141,6 +128,17 @@ next one comes from Alessandro's own review of `F1-sweep`.
 ---
 
 ## What the last step shipped
+
+### Spec 0009 step 0 — `S3-sweep` frozen as the floor, 2026-10-11
+
+`tests/frozen/s3-result/`: the sweep's fifteen documents, its scores against
+`q5-result/`, its 490 answers and its (empty) `dth_env.txt`. All four loops
+reproduce it 15 of 15 — scored (0 differing fields), rederive, replay, layout
+front. The floor is named as `s3-result/` in CLAUDE.md, here and in
+`tools/replay_run.py`'s usage. `tests/test_structure.py` stays on
+`q5-result/`'s boxes: repointed, its catalogue-title test fails, because that
+title is already cut out in `s3-result/`. Its README has the table of what
+moved against `q5-result/` — seven documents, three of them by N1–N4.
 
 ### Spec 0008 — the page's structure, steps 1-3, 2026-10-10, sweep `S3-sweep`
 
@@ -177,7 +175,7 @@ exception no longer applies. **`menu_0012` is unchanged**: neither the pixels
 nor a closed model question, probed in two shapes on twenty crops, tells its
 columns from a table (spec, "Outcome — step 3").
 
-Corpus means, floor → `S3-sweep`: vocabulary recall 0.9708 → 0.9806, recall
+Corpus means, `q5-result/` → `S3-sweep`: vocabulary recall 0.9708 → 0.9806, recall
 0.9664 → 0.9779, precision 0.9865 → 0.9866, join recall 0.9434 → 0.9538,
 tau 0.9366 → **0.9864**, beside 0.7622 → 0.7549, height 1.621 → 1.441.
 
@@ -228,21 +226,16 @@ the Q5-era records", verbatim. Q1–Q4's are under "Outcome — Q1 to Q4".
 
 ---
 
-## Next — spec 0009, step 0
-
-**Decided 2026-10-11, Alessandro, after reviewing `S3-sweep`:** it becomes
-the floor, with the three legs below `q5-result/` accepted (T3 beside on
-`cv_0013` and `darkdeck_0009`, one precision token on `catalogue_0015`); the
-menu's richer layout spec is deferred.
+## Next — spec 0009, step A
 
 **The only open work is
-[`specs/0009-four-repairs-one-sweep.md`](specs/0009-four-repairs-one-sweep.md)**
-— it carries spec 0008's changes, the S3-sweep analysis by conversion stage,
-and the plan with every gate registered:
+[`specs/0009-four-repairs-one-sweep.md`](specs/0009-four-repairs-one-sweep.md)**,
+issue #32 — it carries spec 0008's changes, the S3-sweep analysis by
+conversion stage, and the plan with every gate registered:
 
 ```
-0  freeze S3-sweep as tests/frozen/s3-result/, move the floor   <- next
-A  wire row nets — nonlatin_0014's totals                        offline, replay
+0  freeze S3-sweep as tests/frozen/s3-result/, move the floor   DONE
+A  wire row nets — nonlatin_0014's totals                        offline, replay   <- next
 B  cut at a grid's inner splits — darkdeck_0009's tiles          layout front
 C  the detector's own sections — form_0007, menu_0012            layout front
 D  a photographed page at its paper's width — receipt_0010       offline, rederive
@@ -250,9 +243,7 @@ D  a photographed page at its paper's width — receipt_0010       offline, rede
 E  one sweep, S4-sweep, about 1½ hours, report against s3-result/
 ```
 
-**`debug/runs/S3-sweep` must survive until step 0 has frozen it** — it is the
-only copy of the new floor's documents and answers. Until step 0 lands,
-`q5-result/` is still what every tool and the section above name.
+The menu's richer layout spec is deferred unless step C's stop rule fires.
 
 ---
 
@@ -302,8 +293,8 @@ the last two entries.
 - **Never cite or analyse a past run.** Only a run taken in this session counts.
   **The exceptions are committed files:** `tests/frozen/run84/`,
   `a1-checkpoint/`, `a0-checkpoint/`, `a0-result/`, `a1-result/`,
-  `a2-result/`, `a3-result/`, `reshot/` — all kept as record — and
-  **`q5-result/`, the floor and the control.** `a3-result/` was scored on pictures missing their last
+  `a2-result/`, `a3-result/`, `reshot/`, `q5-result/` — all kept as record —
+  and **`s3-result/`, the floor and the control.** `a3-result/` was scored on pictures missing their last
   lines; quote it only as that.
 - **The committed corpus picture is a screenshot of its own HTML.**
   `TestTheCorpusPictureIsItsOwnHTML` re-shoots the ten authored pages and
@@ -342,7 +333,7 @@ the last two entries.
 FIXTURE=sweep tools/iterate.sh <label>        # all fifteen, ~1¾ h — anything reviewed
 FIXTURE=iterate tools/iterate.sh <label>      # the five, ~20 min — throwaway checks only
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/q5-result/scores.json
+    --documents sweep --previous tests/frozen/s3-result/scores.json
 python tools/visual_review.py debug/runs/<label> --previous debug/runs/<older>
 python tools/visual_review.py debug/runs/<label> --check
 ```
@@ -351,10 +342,10 @@ python tools/visual_review.py debug/runs/<label> --check
 `git diff HEAD > debug/runs/<label>/uncommitted.diff` beside it**, as A3 did.
 
 **Three offline loops, each proved before it was used, and a sweep. Say which
-produced any number you report.** Start them from a fresh sweep such as
-`debug/runs/F1-sweep`, not from `q5-result/`: N1–N4 changed what today's code
-makes from the floor's answers, and `rederive.py` cannot re-apply N3's
-detector change. Both tools take a run directory as well as a frozen one.
+produced any number you report.** Start them from `tests/frozen/s3-result/`,
+which today's code reproduces 15 of 15 on all three loops (2026-10-11);
+`debug/runs/S3-base` is its rederive, kept as a run directory. Both tools
+take a run directory as well as a frozen one.
 
 - **Downstream of the model** — renderer, style, probes. `tools/rederive.py
   <run> --label <base>` builds today's baseline; build the

@@ -1,17 +1,21 @@
-# `q5-result/` — Q5's sweep, and **the floor and the control** since 2026-09-30
+# `q5-result/` — Q5's sweep; the floor and the control 2026-09-30 to 2026-10-11, **now record**
 
-> **One leg sits below this floor by decision.** Since N4, 2026-10-10,
+Replaced by `s3-result/` on 2026-10-11, Alessandro's decision after reviewing
+spec 0008's sweep. It does not dominate this directory: three legs sit below
+it by that decision, and its README names them. N4's exception, recorded
+below, no longer applies there. Do not point `--previous` here. Where the
+text below says "the floor" or "the control", read "from 2026-09-30 to
+2026-10-11".
+
+> **One leg sat below this floor by decision.** Since N4, 2026-10-10,
 > `catalogue_0015`'s T3 beside is 0.2364 against this directory's 0.2523:
 > the render it froze broke `each` one letter to a line, and the tall broken
 > word overlapped four of its neighbours' rows. Alessandro accepted the
-> crossing; every report against this directory names it, and no other leg
-> may fall. See `docs/status.md`, "What the ratchet enforces".
+> crossing.
 >
-> **Nor is it still exactly what today's code makes.** N1–N4 (2026-09-30 to
-> 2026-10-10) changed four things downstream of the model — Shortfalls, Gaps,
-> `statement_0006`'s Zones and the pairs grid. `F1-sweep`, taken 2026-10-10,
-> is today's code end to end; whether it becomes the control is Alessandro's
-> decision.
+> **Nor was it exactly what the code made after 2026-09-30.** N1–N4 changed
+> four things downstream of the model — Shortfalls, Gaps, `statement_0006`'s
+> Zones and the pairs grid — before spec 0008.
 
 ## What this is
 
