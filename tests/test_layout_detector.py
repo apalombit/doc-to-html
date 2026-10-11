@@ -37,14 +37,16 @@ from doc_to_html.engines.detector import (
     LayoutEngine,
     attach_headings,
     attach_trailing_rows,
+    cut_at_sections,
     prefer_container,
     from_name,
     outermost,
     split_containers,
+    split_side_by_side,
     without_enclosed,
     without_overreaching_pictures,
 )
-from doc_to_html.ir import Kind, Role
+from doc_to_html.ir import BBox, Kind, Role
 from doc_to_html.orchestrator import default_engines
 from doc_to_html.wire import validate_bands
 
@@ -467,6 +469,130 @@ class TestTakingARegionApartAgain:
         parent = box(0.05, 0.10, 0.95, 0.90, "table", 0.95)
         mask = self.ink([(30, 40, 570, 360)])
         assert split_containers([parent], [parent], mask) == [parent]
+
+
+class TestTheDetectorsOwnSections:
+    """Spec 0009, step C: the sections `outermost` dropped, put back.
+
+    The detections are heron's own on the two pages, at the shipped 0.40,
+    copied from its pool: the container, its headings, and the content lines
+    that place them.
+    """
+
+    FORM = box(0.031, 0.090, 0.968, 0.961, "form", 0.97)
+    FORM_HEADINGS = [
+        box(0.047, 0.096, 0.241, 0.108, "section_header", 0.67),  # 1. APPLICANT
+        box(0.041, 0.250, 0.253, 0.261, "section_header", 0.54),  # 17 Bellwether Lane
+        box(0.046, 0.392, 0.278, 0.404, "section_header", 0.56),  # 2. MEMBERSHIP
+        box(0.047, 0.473, 0.175, 0.484, "section_header", 0.62),  # 3. EXPERIENCE
+        box(0.046, 0.698, 0.260, 0.709, "section_header", 0.60),  # 4. EMERGENCY
+        box(0.047, 0.839, 0.188, 0.850, "section_header", 0.48),  # 5. DECLARATION
+    ]
+    FORM_LINES = [
+        box(0.047, 0.096, 0.241, 0.108, "list_item", 0.62),
+        box(0.034, 0.127, 0.110, 0.137, "text", 0.91),  # Family name
+        box(0.033, 0.229, 0.083, 0.238, "text", 0.89),  # Address
+        box(0.041, 0.250, 0.253, 0.261, "list_item", 0.66),
+        box(0.040, 0.353, 0.253, 0.365, "text", 0.92),  # the email
+        box(0.034, 0.443, 0.357, 0.452, "text", 0.91),  # Tick one category.
+        box(0.034, 0.600, 0.301, 0.610, "text", 0.93),
+        box(0.041, 0.800, 0.147, 0.809, "text", 0.90),
+        box(0.034, 0.931, 0.152, 0.941, "text", 0.92),  # Signature of applicant
+    ]
+    ADDRESS_FIELD = BBox(0.034, 0.244, 0.966, 0.269)
+    """The field `style.rectangles` finds round the address."""
+
+    def test_the_form_is_cut_once_per_printed_section(self) -> None:
+        pool = [self.FORM, *self.FORM_HEADINGS, *self.FORM_LINES]
+        parts = cut_at_sections([self.FORM], pool, 0.40, [self.ADDRESS_FIELD])
+
+        assert len(parts) == 5
+        assert parts[0].top == self.FORM.top and parts[-1].bottom == self.FORM.bottom
+        for upper, lower in zip(parts, parts[1:]):
+            assert upper.bottom == lower.top
+        # Each cut falls in the white above a heading, never through it.
+        for part, heading in zip(parts[1:], [self.FORM_HEADINGS[i] for i in (2, 3, 4, 5)]):
+            assert part.top < heading.top
+            assert part.bottom > heading.bottom
+        # The address stays in section 1, with its label.
+        assert parts[0].top < 0.229 and parts[0].bottom > 0.261
+
+    def test_a_heading_inside_a_drawn_field_is_its_value(self) -> None:
+        """Without the field, the address value would open a section of its
+        own and the `Address` label would be left in the one above."""
+        pool = [self.FORM, *self.FORM_HEADINGS, *self.FORM_LINES]
+        parts = cut_at_sections([self.FORM], pool, 0.40, [])
+        assert len(parts) == 6
+        assert parts[0].bottom == pytest.approx((0.250 + 0.238) / 2)
+
+    def test_a_container_opening_with_its_only_heading_stays_whole(self) -> None:
+        parent = box(0.05, 0.10, 0.50, 0.90, "document_index", 0.76)
+        pool = [parent, box(0.10, 0.10, 0.30, 0.13, "section_header", 0.6),
+                box(0.05, 0.15, 0.50, 0.20, "text", 0.9),
+                box(0.10, 0.50, 0.30, 0.53, "section_header", 0.6),
+                box(0.05, 0.55, 0.50, 0.60, "text", 0.9)]
+        assert cut_at_sections([parent], pool, 0.40) == [parent]
+
+    def test_text_holding_headings_stays_whole(self) -> None:
+        """`SPLITTABLE`'s reason: a `text` box is not a container of sections."""
+        parent = box(0.05, 0.10, 0.95, 0.90, "text", 0.96)
+        pool = [parent, box(0.05, 0.10, 0.95, 0.15, "text", 0.9),
+                *(box(0.05, top, 0.40, top + 0.03, "section_header", 0.6)
+                  for top in (0.30, 0.50, 0.70))]
+        assert cut_at_sections([parent], pool, 0.40) == [parent]
+
+    def test_a_table_with_a_caption_stays_whole(self) -> None:
+        parent = box(0.05, 0.10, 0.95, 0.90, "table", 0.95)
+        pool = [parent, box(0.05, 0.10, 0.40, 0.14, "section_header", 0.7),
+                box(0.05, 0.20, 0.45, 0.85, "table", 0.30),
+                box(0.55, 0.20, 0.95, 0.85, "table", 0.25),
+                box(0.05, 0.40, 0.40, 0.44, "section_header", 0.5),
+                box(0.05, 0.60, 0.40, 0.64, "section_header", 0.5)]
+        mask = TestTakingARegionApartAgain().ink([(30, 40, 570, 340)])
+        assert cut_at_sections([parent], pool, 0.40) == [parent]
+        assert split_side_by_side([parent], pool, mask, 0.40) == [parent]
+
+    MENU = box(0.043, 0.229, 0.956, 0.821, "document_index", 0.76)
+    MENU_LEFT = box(0.043, 0.272, 0.476, 0.822, "document_index", 0.55)
+    MENU_RIGHT = box(0.523, 0.281, 0.955, 0.788, "document_index", 0.68)
+    MENU_POOL = [
+        MENU, MENU_RIGHT, MENU_LEFT,
+        box(0.043, 0.282, 0.475, 0.543, "document_index", 0.43),
+        box(0.524, 0.608, 0.956, 0.787, "document_index", 0.45),
+        box(0.216, 0.227, 0.301, 0.248, "section_header", 0.47),  # To begin
+        box(0.672, 0.227, 0.805, 0.248, "section_header", 0.50),  # Main courses
+        box(0.693, 0.553, 0.783, 0.574, "section_header", 0.43),  # Puddings
+    ]
+
+    def menu_ink(self) -> np.ndarray:
+        return TestTakingARegionApartAgain().ink([
+            (30, 116, 282, 324), (318, 116, 570, 312),   # the two columns
+            (132, 92, 180, 98), (405, 92, 480, 98),      # their headings
+        ])
+
+    def test_the_menu_becomes_its_two_columns_each_with_its_heading(self) -> None:
+        split = split_side_by_side([self.MENU], self.MENU_POOL, self.menu_ink(), 0.40)
+        assert split[:2] == [self.MENU_LEFT, self.MENU_RIGHT]
+        assert [d.label for d in split[2:]] == ["section_header", "section_header"]
+
+        columns = attach_headings(split, relative=True)
+        assert sorted((round(c.left, 3), round(c.top, 3), round(c.right, 3))
+                      for c in columns) == [(0.043, 0.227, 0.476), (0.523, 0.227, 0.955)]
+
+    def test_parts_that_stack_are_not_side_by_side(self) -> None:
+        parent = box(0.05, 0.10, 0.95, 0.90, "document_index", 0.76)
+        upper = box(0.05, 0.10, 0.95, 0.45, "document_index", 0.5)
+        lower = box(0.05, 0.55, 0.95, 0.90, "document_index", 0.5)
+        mask = TestTakingARegionApartAgain().ink([(30, 40, 570, 180), (30, 220, 570, 360)])
+        assert split_side_by_side([parent], [parent, upper, lower], mask, 0.40) == [parent]
+
+    def test_text_whose_words_stand_side_by_side_stays_whole(self) -> None:
+        """Unscoped, this rule fires on twelve pages' lines and footers."""
+        parent = box(0.05, 0.10, 0.95, 0.15, "text", 0.9)
+        words = [box(0.05, 0.10, 0.45, 0.15, "text", 0.3),
+                 box(0.55, 0.10, 0.95, 0.15, "text", 0.3)]
+        mask = TestTakingARegionApartAgain().ink([(30, 40, 270, 60), (330, 40, 570, 60)])
+        assert split_side_by_side([parent], [parent, *words], mask, 0.40) == [parent]
 
 
 class TestGivingATableItsSummaryRowBack:

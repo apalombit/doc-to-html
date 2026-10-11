@@ -1,7 +1,7 @@
 # Four repairs after the structure step, one sweep
 
-**Status: under way, issue #32 — steps 0, A and B done 2026-10-11, gates MET
-(B's sweep clause waits for step E).**
+**Status: under way, issue #32 — steps 0, A, B and C done 2026-10-11, gates
+MET (B's and C's sweep clauses wait for step E; C1 corrected, see its outcome).**
 Alessandro's decision, taken on
 2026-10-11 after reviewing sweep `S3-sweep` (spec 0008's outcome):
 
@@ -362,6 +362,42 @@ looked at), then replay, which marks the moved documents as asking more.
 **Stop rule.** If no rule separates these two without moving another
 document's Zones, stop. Record what was tried in this spec. That result is
 the evidence for the deferred richer layout spec.
+
+#### Outcome — step C, 2026-10-11, gate MET offline (clause 5 waits for the sweep) — with one correction to clause 1
+
+Both rules, each scoped to `SECTIONED = {form, document_index}`, in
+`engines/detector.py` after `split_containers`: `split_side_by_side` and
+`cut_at_sections`. Measured on the layout front, then by replay over
+`s3-result/`'s answers, `S4-C-replay`. The stop rule did not fire.
+
+**Clause 1 counted a detection that is not a section.** The form prints
+**five** sections, `1. APPLICANT DETAILS` to `5. DECLARATION`. Heron's sixth
+`section_header` (y 0.250, 0.54) is `17 Bellwether Lane, Castleton` — the
+address field's *value*, labelled like the real headings (0.48-0.67, the same
+`list_item` twin), so nothing in the pool tells it apart. Cut there, section 1
+splits between `Address` and its value. What does tell it apart is the page:
+`style.rectangles` finds the address field drawn round it and nothing round
+any of the five real headings, which sit on shaded bars. So `cut_at_sections`
+skips a heading inside a drawn rectangle — one predicate on a finder already
+built, and the one piece of machinery beyond the section above. Clause 1 is
+read as its own words have it: one Zone per printed section, each starting at
+its heading.
+
+| # | clause | result |
+|---|---|---|
+| 1 | `form_0007`'s Zone 2 → one Zone per printed section, each starting at its heading | **holds, five** — y 0.091, 0.386, 0.468, 0.692, 0.833, each opening on its heading bar; the address stays in section 1 with its label. The spec's "six" counted the field value above |
+| 2 | `menu_0012`'s body → two side-by-side Zones; none spans both columns | **holds** — x 0.045-0.475 and 0.525-0.955, one Band, each opening on `To begin` / `Main courses`; the title and subtitle are one Zone above |
+| 3 | every other document's Zones identical; no table split | **holds** — 13 identical to step B's layout front; every named table among them |
+| 4 | tests on the two pages' raw detections and the negatives; suite and mypy | **holds** — nine tests in `TestTheDetectorsOwnSections`, among them a `text` holding headings, a table with a caption, stacked parts; 877 pass, mypy clean |
+| 5 | *sweep:* section headings print, vocabulary and beside rise on the form; the menu reads down each column, height falls | waits for step E |
+
+Replay: `form_0007` (20 calls against 12) and `menu_0012` (13 against 10)
+ask more, as predicted; the other 13 identical to `S4-B-replay`.
+
+Over all fifteen pages, scoped, the two rules fire on these two containers
+only; unscoped, the side-by-side rule fires on twelve more pages, every one
+a line, footer or page header cut into words — `SPLITTABLE`'s reason, measured
+again.
 
 ### Step D — #4, the page width (`receipt_0010`), and optional separators
 

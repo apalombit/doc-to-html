@@ -46,7 +46,8 @@ from __future__ import annotations
 import ast
 import json
 import statistics
-from dataclasses import dataclass
+from collections.abc import Sequence
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Protocol
 
@@ -533,6 +534,109 @@ def split_containers(kept: list[Detection], pool: list[Detection],
     return split
 
 
+SECTIONED = frozenset({"form", "document_index"})
+"""Which containers the detector's own section proposals may take apart —
+spec 0009, step C. The two classes the corpus measures holding sections.
+
+`SPLITTABLE`'s reason binds here too. Over all fifteen pages, the two rules
+below fire on exactly two containers with this scope — `form_0007`'s `form`
+and `menu_0012`'s `document_index` — and with no class restriction the
+side-by-side rule fires on twelve more pages, every one a line of `text`, a
+footer or a page header cut into its words.
+"""
+
+
+def cut_at_sections(kept: list[Detection], pool: list[Detection],
+                    confidence: float,
+                    drawn: Sequence[BBox] = ()) -> list[Detection]:
+    """Cut a container at the section headings the detector found inside it.
+
+    **`outermost` dropped them.** `form_0007` is one `form` at 0.97 over the
+    whole form, and heron also reports a `section_header` on each printed
+    section's heading bar — `2. MEMBERSHIP CATEGORY` and the three after it —
+    which `outermost` discarded as the container's insides. Read as one
+    Zone, the section headings vanished and the two-column fields became one
+    list. Cut there, each part begins with its heading: the Zone convention,
+    a heading and what it names one Zone.
+
+    **Two or more headings below the container's first line**, so a
+    container that opens with its only heading — every `menu_0012` column —
+    stays whole. The cut falls midway between a heading and the content
+    above it, so a heading bar is never sliced.
+
+    **A heading inside a drawn rectangle is a field's value, not a section.**
+    Heron labels `17 Bellwether Lane, Castleton`, printed inside the address
+    field, `section_header` at 0.54 — within the real headings' 0.48-0.67,
+    with the same `list_item` twin. `style.rectangles` finds that field
+    around it and finds nothing around any of the five real headings, which
+    sit on shaded bars. Cut there, the `Address` label and its value would
+    be read in two Zones.
+    """
+    cut: list[Detection] = []
+    for parent in kept:
+        inside = [box for box in pool if box is not parent
+                  and box.score >= confidence
+                  and _covered_by(box, parent) >= CONTAINED]
+        content = [box for box in inside if box.label not in HEADINGS]
+        first = min((box.top for box in content), default=parent.bottom)
+        tops = sorted({
+            box.top for box in inside
+            if box.label == "section_header" and box.top > first
+            and not any(rect.left <= box.left and rect.top <= box.top
+                        and box.right <= rect.right and box.bottom <= rect.bottom
+                        for rect in drawn)
+        })
+        if parent.label not in SECTIONED or len(tops) < 2:
+            cut.append(parent)
+            continue
+        edges = [parent.top, *(_gap_middle(top, content) for top in tops),
+                 parent.bottom]
+        cut.extend(replace(parent, top=upper, bottom=lower)
+                   for upper, lower in zip(edges, edges[1:]))
+    return cut
+
+
+def _gap_middle(top: float, content: list[Detection]) -> float:
+    """Midway between a heading's top and the content printed above it."""
+    above = [box.bottom for box in content if box.bottom <= top]
+    return (top + max(above)) / 2 if above else top
+
+
+def split_side_by_side(kept: list[Detection], pool: list[Detection],
+                       mask: ImageArray, confidence: float) -> list[Detection]:
+    """Split a container into same-class parts that stand side by side.
+
+    **`split_containers`' rule, turned on its side.** `menu_0012` is one
+    `document_index` at 0.76 over both menu columns, and heron also reports
+    each column, at 0.55 and 0.68, side by side. Read as one Zone, the two
+    columns became one table with its headings paired across (`To begin |
+    Main courses`). Split, each column is a Zone, and the two stand in one
+    Band, which the band render draws side by side.
+
+    **Side by side only — not `_stacked`**, the signal `prefer_container`
+    already trusts: parts that sit one above another are one region printed
+    as lines. And the headings standing above the parts, inside the
+    container and outside every part, come out with them, as detections of
+    their own: `attach_headings` runs next and folds each into the part it
+    names. They count in the ink test, which `SPLIT_INK` would otherwise
+    fail, since the two parts alone leave the headings' ink behind.
+    """
+    split: list[Detection] = []
+    for parent in kept:
+        parts = _parts_of(parent, pool, SECTIONED)
+        if len(parts) >= 2 and not _stacked(parts):
+            headings = [box for box in pool
+                        if box.label == "section_header" and box.score >= confidence
+                        and _covered_by(box, parent) >= CONTAINED
+                        and all(_covered_by(box, part) < CONTAINED for part in parts)]
+            if _ink_share(mask, parts + headings) >= (
+                    SPLIT_INK * _ink_share(mask, [parent])):
+                split.extend(parts + headings)
+                continue
+        split.append(parent)
+    return split
+
+
 PAGE_LEVEL = frozenset({"form"})
 """Detector classes that describe the sheet of paper rather than a region on it.
 
@@ -778,14 +882,15 @@ def _trailing_row(found: list[Detection], parent: int,
     return min(below, key=lambda index: found[index].top)
 
 
-def _parts_of(parent: Detection, pool: list[Detection]) -> list[Detection]:
+def _parts_of(parent: Detection, pool: list[Detection],
+              labels: frozenset[str] = SPLITTABLE) -> list[Detection]:
     """Same-class boxes inside `parent` that do not overlap each other.
 
     Greedy by confidence, so of two proposals for the same part the surer one
     wins and the other is excluded by the overlap test rather than by a rule
-    about which came first.
+    about which came first. Only a parent whose class is in `labels`.
     """
-    if parent.label not in SPLITTABLE:
+    if parent.label not in labels:
         return []
 
     inside = [box for box in pool
@@ -1076,8 +1181,10 @@ class LayoutEngine:
         it assumes one box per region — and `without_overreaching_pictures`
         just before it, because a picture drawn round a surer picture and its
         neighbour is exactly what `outermost` would keep. Then `split_containers`, which needs the
-        *unfiltered* pool to find the parts it restores. Then `attach_headings`,
-        after the split because it must see the split's output — on
+        *unfiltered* pool to find the parts it restores, and its two section
+        rules, `split_side_by_side` and `cut_at_sections` (spec 0009). Then
+        `attach_headings`, after the split because it must see the split's
+        output — `split_side_by_side` leaves headings for it to fold in; on
         `sample_table_0003` the caption belongs to a table that only exists once
         the split has run.
 
@@ -1090,6 +1197,10 @@ class LayoutEngine:
         found = outermost(without_overreaching_pictures(
             [d for d in pool if d.score >= self.confidence], ink))
         found = split_containers(found, pool, ink)
+        found = split_side_by_side(found, pool, ink, self.confidence)
+        if any(box.label in SECTIONED for box in found):
+            found = cut_at_sections(found, pool, self.confidence,
+                                    _drawn(image))
         found = attach_trailing_rows(found)
         found = attach_headings(found, relative=self.heading_rule == "relative")
         if self.prefer_container:
@@ -1110,6 +1221,13 @@ class LayoutEngine:
             )
             for detection, box, (band, column) in zip(found, boxes, placed)
         ]
+
+
+def _drawn(image: ImageArray) -> tuple[BBox, ...]:
+    """Every box the page draws — `style.rectangles`, on the page's ground."""
+    from ..style import measure, rectangles
+
+    return rectangles(image, ground=measure(image).page_bg)
 
 
 def _role(label: str, band: int) -> Role:

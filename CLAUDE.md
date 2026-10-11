@@ -63,7 +63,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-11: spec 0009 under way, step C next.**
+**Where the project is — 2026-10-11: spec 0009 under way, step D next.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -87,7 +87,7 @@ Spec 0009   Four repairs after the structure step, one sweep — planned
               2026-10-11 from his review of S3-sweep, issue #32:
               0 freeze S3-sweep as tests/frozen/s3-result/  DONE, gate MET
               A wire row nets  DONE    B cut at a grid's inner splits DONE
-              C the detector's own sections <- next   D page width (+ separators)
+              C the detector's own sections DONE   D page width (+ separators) <- next
               E one sweep, S4-sweep
 ```
 

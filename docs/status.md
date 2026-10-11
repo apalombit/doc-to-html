@@ -46,7 +46,8 @@ Spec 0009   Four repairs after the structure step, one sweep — issue #32
               step 0  freeze S3-sweep as tests/frozen/s3-result/  DONE, gate MET
               A       wire row nets, nonlatin_0014, replay        DONE, gate MET
               B       cut at a grid's lane splits, darkdeck_0009  DONE offline, gate MET
-              C-D     two repairs, offline where possible         <- C next
+              C       the detector's own sections, form + menu    DONE offline, gate MET
+              D       page width (+ separators), rederive         <- D next
               E       one sweep
 ```
 
@@ -130,6 +131,16 @@ next one comes from Alessandro's own review of `F1-sweep`.
 ---
 
 ## What the last step shipped
+
+### Spec 0009 step C — the detector's own sections, 2026-10-11, gate MET offline
+
+`form_0007`'s one `form` box is cut at the section headings heron found
+inside it — five Zones, one per printed section, each opening on its heading
+— skipping a heading inside a drawn field (the address value, which heron
+also calls `section_header`). `menu_0012`'s one `document_index` is split
+into the two columns heron also proposed, side by side in one Band, each with
+its heading. Scoped to `form` and `document_index`; fires on those two pages
+only. Spec, "Outcome — step C".
 
 ### Spec 0009 step B — cut at a grid's lane splits, 2026-10-11, gate MET offline
 
@@ -245,7 +256,7 @@ the Q5-era records", verbatim. Q1–Q4's are under "Outcome — Q1 to Q4".
 
 ---
 
-## Next — spec 0009, step C
+## Next — spec 0009, step D
 
 **The only open work is
 [`specs/0009-four-repairs-one-sweep.md`](specs/0009-four-repairs-one-sweep.md)**,
@@ -256,8 +267,8 @@ conversion stage, and the plan with every gate registered:
 0  freeze S3-sweep as tests/frozen/s3-result/, move the floor   DONE
 A  wire row nets — nonlatin_0014's totals                        offline, replay   DONE
 B  cut at a grid's inner splits — darkdeck_0009's tiles          layout front      DONE
-C  the detector's own sections — form_0007, menu_0012            layout front      <- next
-D  a photographed page at its paper's width — receipt_0010       offline, rederive
+C  the detector's own sections — form_0007, menu_0012            layout front      DONE
+D  a photographed page at its paper's width — receipt_0010       offline, rederive <- next
    (+ drawn separators, one optional attempt)
 E  one sweep, S4-sweep, about 1½ hours, report against s3-result/
 ```
