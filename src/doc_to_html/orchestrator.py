@@ -829,6 +829,7 @@ class Conversion:
             # how `title_fill` came to be set on none of 119 Zones.
             self._measure_chrome(rectified, document)
             self._measure_type(rectified, document)
+            self._find_separators(rectified, document)
 
             document.probes = probe_module.run(document)
             for probe in document.probes:
@@ -1170,9 +1171,6 @@ class Conversion:
         document.regions = structure(
             plain, [zone.bbox for zone in document.zones if zone.bbox is not None],
             ground=document.style.page_bg, inverted=rectified.inverted)
-        document.separators = separators(
-            plain, document.zones, ground=document.style.page_bg,
-            inverted=rectified.inverted)
         self.trace.record(
             Stage.LAYOUT, "structure", Disposition.ACCEPTED,
             seconds=time.perf_counter() - started,
@@ -1180,8 +1178,31 @@ class Conversion:
                       "flow": r.flow.value,
                       "splits": [round(x, 4) for x in r.splits],
                       "rows": r.rows} for r in document.regions],
-            separators=[round(y, 4) for y in document.separators],
         )
+
+    def _find_separators(self, rectified: Rectified, document: Document) -> None:
+        """The wide rules the page draws between its Zones — spec 0009, step D.
+        See `structure.separators`.
+
+        **Here, after `_extract`, and not with the regions.** It tells a
+        table's border by the table Zone's row rules, so it needs Kinds; in
+        `_read_structure`, during layout, every Zone is still the detector's
+        placeholder `prose`, and `sample_table_0003`'s and `report_0011`'s
+        borders were drawn as separators. Found by replaying the floor's
+        answers beside `rederive.py`, which works on finished IRs and could
+        not see it. Nothing a model is asked reads them.
+        """
+        if document.style is None:
+            return
+        started = time.perf_counter()
+        plain = rectified.plain if rectified.plain is not None else rectified.image
+        document.separators = separators(
+            plain, document.zones, ground=document.style.page_bg,
+            inverted=rectified.inverted)
+        self.trace.record(
+            Stage.LAYOUT, "separators", Disposition.ACCEPTED,
+            seconds=time.perf_counter() - started,
+            separators=[round(y, 4) for y in document.separators])
 
     def _cut_at_regions(self, rectified: Rectified, document: Document) -> bool:
         """Cut a Zone that crosses the edge of a grid or a column region — spec

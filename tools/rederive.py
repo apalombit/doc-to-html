@@ -33,7 +33,7 @@ and can be recomputed from it, in the order a Conversion runs them:
     7. The page's regions read off the Zones' boxes — spec 0008, step 2
                                     structure.structure  (_read_structure)
        and the wide rules it draws between them — spec 0009, step D
-                                    structure.separators (_read_structure)
+                                    structure.separators (_find_separators)
 
 then re-renders into a run-shaped directory that `doc_to_html.report` and
 `tools/visual_review.py` read without knowing the difference.

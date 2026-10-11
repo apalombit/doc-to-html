@@ -495,6 +495,18 @@ sample, the rule now among the inks. The rules are drawn light
 (`var(--rule)`) where some sources draw them dark; that is a remaining
 difference, not measured here.
 
+**A stage-position fault, found before the sweep and fixed in its own
+commit.** As first committed, `separators` ran inside `_read_structure`,
+during layout — before any Zone has a Kind, so the table-border test saw
+none and a Conversion drew `sample_table_0003`'s and `report_0011`'s table
+borders. `rederive.py` works on finished IRs and could not see it; replaying
+the floor's answers through today's code beside it did (10 of 15 agreeing
+where 12 should). It now runs in `Conversion._find_separators`, after
+`_measure_type`; replay and rederive agree on 12 of 15, the three that
+differ being the three whose crops moved; a test converts
+`sample_table_0003` with the detector's placeholder Kinds and fails without
+the move. The first sweep was stopped minutes in and restarted.
+
 **Step C's correction is confirmed**, Alessandro, 2026-10-11 ("go as
 recommended"): five sections for the form, and the drawn-field predicate.
 

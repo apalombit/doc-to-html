@@ -400,3 +400,29 @@ class TestTheRulesBetweenZones:
         raw = json.loads(sidebar_page([]).to_json())
         del raw["separators"]
         assert Document.from_json(json.dumps(raw)).separators == []
+
+
+class TestTheConversionFindsSeparatorsOnceKindsAreKnown:
+    """Spec 0009, step D, 4b — the stage's position, found by the replay.
+
+    `separators` tells a table's border by the table Zone's row rules, and so
+    needs Kinds. Run inside `_read_structure`, during layout, every Zone was
+    still the placeholder `prose`, so a Conversion drew `sample_table_0003`'s
+    and `report_0011`'s table borders as separators while `rederive.py`,
+    which works on finished IRs, did not.
+    """
+
+    def test_a_tables_border_is_not_drawn_by_a_conversion(self) -> None:
+        """The fixture's Zones handed over as the detector hands them, every
+        Kind the placeholder `prose`; the recorded answers then make one a
+        table, whose bottom rule sits 0.012 under its box."""
+        from .replay import convert_recording, geometry, recorded_for
+
+        placeholders = geometry("sample_table_0003")
+        for zone in placeholders:
+            zone.kind = Kind.PROSE
+        document, _ = convert_recording(
+            REPO / SOURCES["sample_table_0003"].png,
+            recorded_for("sample_table_0003"), layout=placeholders)
+        assert any(zone.kind is Kind.TABLE for zone in document.zones)
+        assert document.separators == []
