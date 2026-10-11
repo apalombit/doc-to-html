@@ -63,7 +63,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-11: spec 0009 under way, step E (the sweep) next.**
+**Where the project is — 2026-10-11: spec 0009 measured, final gate NOT met — the floor is Alessandro's decision.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -88,7 +88,8 @@ Spec 0009   Four repairs after the structure step, one sweep — planned
               0 freeze S3-sweep as tests/frozen/s3-result/  DONE, gate MET
               A wire row nets  DONE    B cut at a grid's inner splits DONE
               C the detector's own sections DONE   D separators DONE (width dropped)
-              E one sweep, S4-sweep  <- next
+              E sweep S4-sweep on b80b7f0                DONE, gate NOT met
+              ratchet falls on darkdeck_0009 and menu_0012  <- decision pending
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
@@ -102,8 +103,11 @@ precision token on `catalogue_0015` — its README names each. N4's recorded
 exception is gone. Each earlier floor, and why it moved, is in its README and
 in `docs/status.md`, "The floor".
 
-**The only open work is `docs/specs/0009-four-repairs-one-sweep.md`**, and
-its last section is the prompt to start a session with. It carries spec
+**The only open work is `docs/specs/0009-four-repairs-one-sweep.md`'s
+decision**: whether `S4-sweep` becomes the floor. Its "Outcome — step E" has
+the measurement and the recommendation, and its last section is the prompt
+to start a session with. **Keep `debug/runs/S4-sweep`** — it is the only copy
+of the answers the next step replays. It carries spec
 0008's changes and the S3-sweep analysis it was planned from. `docs/specs/0007-handover.md`
 holds spec 0007's prompts, as record.
 

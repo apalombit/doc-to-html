@@ -1,15 +1,15 @@
-# Status — 2026-10-11 (**spec 0009 under way, issue #32**; the floor is `s3-result/`)
+# Status — 2026-10-11 (**spec 0009 measured, sweep `S4-sweep`: final gate NOT met — decision pending**; the floor is `s3-result/`)
 
 **Live document.** This is where the project actually is. When it goes stale,
-rewrite it; do not add a banner and leave it. Last rewritten 2026-10-11, at
-spec 0009's step 0, which froze `S3-sweep` as the floor.
+rewrite it; do not add a banner and leave it. Last rewritten 2026-10-11, after
+sweep `S4-sweep` measured spec 0009's four repairs.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file. If you are going to look at output — and you
 should — use the **`visual-review` skill**.
 
-Branch `scaffold`. **860 tests pass, `mypy src/` clean.**
+Branch `scaffold`. **886 tests pass, `mypy src/` clean.**
 
 ---
 
@@ -48,8 +48,8 @@ Spec 0009   Four repairs after the structure step, one sweep — issue #32
               B       cut at a grid's lane splits, darkdeck_0009  DONE offline, gate MET
               C       the detector's own sections, form + menu    DONE offline, gate MET
               D       4a page width DROPPED (gate failed); 4b separators DONE
-              E       one sweep, S4-sweep                         <- next
-              E       one sweep
+              E       sweep S4-sweep, commit b80b7f0               DONE, gate NOT met
+                      (ratchet: darkdeck_0009, menu_0012) — decision pending
 ```
 
 Q1-Q4's result tables moved to
@@ -132,6 +132,35 @@ next one comes from Alessandro's own review of `F1-sweep`.
 ---
 
 ## What the last step shipped
+
+### Spec 0009 — four repairs, one sweep, `S4-sweep`, 2026-10-11 — final gate NOT met
+
+**The pages.** `menu_0012` reads down two columns under their own headings
+(tau 0.923 → 0.994, height 2.57× → 1.93×). `form_0007` is five sections,
+four opening on their printed heading (vocabulary 0.862 → 0.939, beside
+0.059 → 0.208). `nonlatin_0014`'s grand total lines up and prints once.
+Eleven pages draw their sources' rules. `darkdeck_0009` is worse: its four
+tiles are cards but wrap 3 + 1, and `$2.14` is gone.
+
+**The ratchet against `s3-result/` falls on two documents:**
+`darkdeck_0009` — `$2.14` stops printing, tau 0.9805 → 0.9143, beside
+0.8148 → 0.5982 — and `menu_0012` — `béarnaise` read without its accent,
+precision 0.9938 → 0.9877. `$2.14` is a wire rule's fault:
+`_without_title_echo` drops a first pair whose *label* repeats the Title,
+value and all. The tiles wrap because a Band of four Zones overflows the
+52rem column. `béarnaise` is the model's reading of a new, narrower crop.
+
+The twelve documents whose crops did not move are byte-identical to the
+floor's answers replayed through the same commit (`S4-E-replay`). Corpus
+means, `s3-result/` → `S4-sweep`: vocabulary 0.9806 → 0.9848, precision
+0.9866 → 0.9882, tau 0.9864 → 0.9872, beside 0.7549 → 0.7515, height 1.4405
+→ 1.4349. The spec's "Outcome — step E" has every table.
+
+**One fault found before the sweep, and the lesson it repeats.** As first
+committed, the separator pass ran during layout, before any Zone had a Kind,
+so its table-border test saw no tables. `rederive.py` works on finished IRs
+and could not see it; a replay beside it did. A stage's position is as much
+a way for a feature not to arrive as an unread flag.
 
 ### Spec 0009 step D — separators drawn; the receipt's paper width dropped, 2026-10-11
 
@@ -267,24 +296,18 @@ the Q5-era records", verbatim. Q1–Q4's are under "Outcome — Q1 to Q4".
 
 ---
 
-## Next — spec 0009, step E, the sweep
+## Next — Alessandro's decision on `S4-sweep`
 
-**The only open work is
-[`specs/0009-four-repairs-one-sweep.md`](specs/0009-four-repairs-one-sweep.md)**,
-issue #32 — it carries spec 0008's changes, the S3-sweep analysis by
-conversion stage, and the plan with every gate registered:
+**Whether `S4-sweep` becomes the floor**, and with which legs below
+`s3-result/` accepted. Until he decides, `s3-result/` is the floor and the
+control, and **`debug/runs/S4-sweep`, `S4-E-replay` and `S3-base` must
+survive** — the sweep is the only copy of the answers any next step replays.
 
-```
-0  freeze S3-sweep as tests/frozen/s3-result/, move the floor   DONE
-A  wire row nets — nonlatin_0014's totals                        offline, replay   DONE
-B  cut at a grid's inner splits — darkdeck_0009's tiles          layout front      DONE
-C  the detector's own sections — form_0007, menu_0012            layout front      DONE
-D  a photographed page at its paper's width — receipt_0010       DROPPED, gate D1 failed
-   (+ drawn separators, one optional attempt)                     4b DONE
-E  one sweep, S4-sweep, about 1½ hours, report against s3-result/ <- next
-```
-
-The menu's richer layout spec is deferred unless step C's stop rule fires.
+The recommendation (spec 0009, "Outcome — step E", §4): two offline
+repairs over `S4-sweep` first — the title-echo rule keeping a pair's value
+when only its label repeats the Title (`replay_run.py`), and a `grid` region
+drawn as its lanes (`rederive.py`) — then re-check `darkdeck_0009` against
+`s3-result/` and decide, accepting `menu_0012`'s one word. Not started.
 
 ---
 

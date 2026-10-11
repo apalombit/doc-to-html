@@ -1,8 +1,9 @@
 # Four repairs after the structure step, one sweep
 
-**Status: under way, issue #32 — steps 0, A, B, C and D done 2026-10-11
-(B's and C's sweep clauses wait for step E; C1 corrected and confirmed; D's
-4a dropped on a failed gate, 4b shipped). Step E, the sweep, next.**
+**Status: all steps run, 2026-10-11, issue #32 — the final gate is NOT met
+(sweep `S4-sweep`): the ratchet falls on `darkdeck_0009` and `menu_0012`.
+Whether `S4-sweep` becomes the floor is Alessandro's decision; see "Outcome —
+step E".**
 Alessandro's decision, taken on
 2026-10-11 after reviewing sweep `S3-sweep` (spec 0008's outcome):
 
@@ -554,6 +555,78 @@ checked out, so at the current commit it would already carry steps A and D.
 
 ---
 
+#### Outcome — step E, 2026-10-11, sweep `S4-sweep`: final gate NOT met — the decision is Alessandro's
+
+Sweep `S4-sweep`: commit `b80b7f0`, shipped defaults, `qwen3-vl:4b` at
+54%/46% CPU/GPU, 518 model calls, 1h36m. Reported against
+`tests/frozen/s3-result/scores.json`; sheets against `S3-base`.
+
+**What the pages look like.** `menu_0012` is two columns side by side, each
+read down under its own heading, and much shorter. `form_0007` is five
+sections, four of them opening on their printed heading, with the
+declaration's signature lines back. `nonlatin_0014`'s totals line up and
+print once. Eleven pages draw the rules their sources draw. `darkdeck_0009`
+is worse: its tiles are four cards, but they wrap three and one instead of
+standing four across, `$2.14` is gone, and `P95 LATENCY` and `184 ms` are
+split across a pair's two cells.
+
+**1. Gate**
+
+| # | clause | result |
+|---|---|---|
+| 1 | ratchet against `s3-result/`, every leg of every document | **FAILS** on two — `darkdeck_0009`: stops printing `14` (`$2.14`), tau 0.9805 → 0.9143, beside 0.8148 → 0.5982; `menu_0012`: stops printing `béarnaise`, precision 0.9938 → 0.9877 |
+| 2 | B4: four cards side by side; `P95 LATENCY`, `INGEST VOLUME`, `COST PER MILLION` print | **FAILS** — four cards, wrapped 3 + 1; all three labels print (`P95` and `LATENCY` in two cells); `$2.14` lost |
+| 2 | C5: form's headings print, vocabulary and beside rise; menu reads down, `To begin` not beside `Main courses` in a row, height falls | **holds but one heading** — 4 of 5 headings print (`2. MEMBERSHIP CATEGORY` does not); vocabulary 0.862 → 0.939, beside 0.059 → 0.208; menu tau 0.923 → 0.994, height 2.57× → 1.93×, each heading heads its own column |
+| 3 | every document not predicted to move is byte-identical | **holds** — the twelve whose crops did not move are byte-identical to `S4-E-replay`, the floor's answers served to this commit; against `s3-result/` they differ by the predicted `separators` key and drawn rules |
+| 4 | all fifteen sheets opened, pairwise against `S3-base`, this session | **holds** |
+
+**2. Where it gained**
+
+| document | gain |
+|---|---|
+| `menu_0012` | **Columns.** Read down each column under its own heading; tau 0.923 → 0.994, height 2.57× → 1.93× |
+| `form_0007` | **Sections.** Four section headings and the signature lines back; vocabulary 0.862 → 0.939, beside 0.059 → 0.208, precision 0.953 → 0.969 |
+| `nonlatin_0014` | **Totals.** The grand total in its column, printed once; precision 0.951 → 0.965 |
+| eleven pages | **Rules.** The page's separators drawn where the source draws them; heights +1-4px, no leg moves |
+
+Corpus means, `s3-result/` → `S4-sweep`: vocabulary recall 0.9806 → 0.9848,
+recall 0.9779 → 0.9825, precision 0.9866 → 0.9882, join recall 0.9538 →
+0.9567, tau 0.9864 → 0.9872, beside 0.7549 → 0.7515, height 1.4405 → 1.4349.
+`hard_breaks` 5, `figures_lost` 0, T6 8 of 42 — unchanged.
+
+**3. Remaining faults, by conversion stage**
+
+| document | what's wrong | stage | evidence |
+|---|---|---|---|
+| `darkdeck_0009` | `$2.14` gone from the cost tile | **Wire** — `_without_title_echo` | the model read `COST PER MILLION \| $2.14`; the caption pass had made `COST PER MILLION` the Title, and the rule drops a first pair whose *label* echoes it — value and all |
+| `darkdeck_0009` | four tiles wrap 3 + 1 | **Render** | one Band of four Zones, `.band > * { flex:1 1 12rem }`: 4 × 12rem + 3 × 2rem > the 52rem column. The grid region is not drawn as a grid |
+| `darkdeck_0009` | `P95 \| LATENCY`, `184 \| ms`, `-31 \| ms` | **Classify → Extract** | the caption grid veto kept `P95 LATENCY` in the crop (letter-spaced, it counts as many columns as the body), and the pairs reading split each line at its space |
+| `form_0007` | `2. MEMBERSHIP CATEGORY` missing; ticks lost | **Classify → Extract** | the same veto (`head_columns` 4 = `body_columns` 4), then the `list` reading drops the heading line and collapses the five boxes into one item without their crosses |
+| `darkdeck_0009` | `OPEN RISKS`, `DECISIONS WANTED` missing | **Extract** | as before: the list reading drops the heading line (§4, #5) |
+| `menu_0012` | `béarnaise` read `bearnaise`, `chervil` `chorvil`; the right column three cells wide, descriptions in a middle column | **Extract** | new crops, new readings of 8px italic: the model's perception, not a rule |
+
+**4. Directions, ranked by gain for cost**
+
+| # | stage | change | why | cost / how measured |
+|---|---|---|---|---|
+| 1 | Wire | `_without_title_echo`: when only a pair's *label* echoes the Title, drop the label and keep the value | `$2.14` back; the one T1 fall that is ours | offline: `replay_run.py` over `S4-sweep`'s own answers — no crop moves |
+| 2 | Render | draw a `grid` region as its lanes, as a `columns` region is drawn | darkdeck's four tiles side by side; likely most of its tau, beside and height fall | offline: `rederive.py` over `S4-sweep` |
+| 3 | Classify | the caption grid veto: a letter-spaced heading counts its words as columns | form's section 2 heading and darkdeck's `P95 LATENCY` | a crop question — a sweep |
+| 4 | Extract | the list reading keeps a heading line | `OPEN RISKS`, `DECISIONS WANTED`, `MEMBERSHIP CATEGORY` | a prompt — A1's lesson; a sweep |
+
+Not worth more effort: `menu_0012`'s `béarnaise` and `chorvil`. A 4B model
+reading 8px italic on a narrower crop; no rule reaches it.
+
+**5. Decision for Alessandro.** Whether `S4-sweep` becomes the floor, and
+with which legs below `s3-result/` accepted. Its four repairs move four
+documents a long way towards their sources and one, `darkdeck_0009`, back;
+of the ratchet's two falls, `$2.14` is a wire rule's fault and fixable
+offline, and `béarnaise` is the model's reading of a new crop.
+
+**Recommendation:** do #1 and #2 offline over `S4-sweep` (replay, then
+rederive — no sweep), re-check `darkdeck_0009` against `s3-result/`, and
+decide the floor then, accepting `menu_0012`'s one word.
+
 ## 6. Rules that bind
 
 - **The floor is `tests/frozen/s3-result/`** once step 0 lands. Always score
@@ -594,7 +667,29 @@ Lead with what the pages look like, then the numbers.
 
 ---
 
-## Handover prompt
+## Handover prompt — after `S4-sweep` (current)
+
+```
+Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then
+docs/specs/0009-four-repairs-one-sweep.md, "Outcome — step E" — spec
+0009's steps 0, A-D are committed and sweep S4-sweep (commit b80b7f0)
+measured them. The final gate is NOT met: the ratchet against
+tests/frozen/s3-result/ falls on darkdeck_0009 ($2.14 lost, tau, beside)
+and menu_0012 (one word, béarnaise, read without its accent).
+
+First check debug/runs/S4-sweep, S4-E-replay and S3-base still exist; if
+S4-sweep is gone, say so before anything else — it is the only copy of
+the answers the next step replays.
+
+Alessandro's decision is pending: whether S4-sweep becomes the floor. The
+recommendation in the outcome is two offline repairs first — the title-echo
+rule keeping a pair's value (replay over S4-sweep's answers), and a grid
+region drawn as its lanes (rederive over S4-sweep) — then re-check
+darkdeck_0009 against s3-result/ and decide. Do not start them before he
+answers. The standing rules are CLAUDE.md's and the spec's §6.
+```
+
+## Handover prompt — the one this spec was started with (record)
 
 ```
 Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then
