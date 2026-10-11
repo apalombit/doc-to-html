@@ -54,7 +54,7 @@ from .preprocess import (
     zone_pixels,
 )
 from .render import render
-from .structure import alike, cut_at_edges, structure
+from .structure import alike, cut_at_edges, separators, structure
 from .trace import Change, Disposition, Stage, Trace
 from .wire import (
     MappingError,
@@ -1170,6 +1170,9 @@ class Conversion:
         document.regions = structure(
             plain, [zone.bbox for zone in document.zones if zone.bbox is not None],
             ground=document.style.page_bg, inverted=rectified.inverted)
+        document.separators = separators(
+            plain, document.zones, ground=document.style.page_bg,
+            inverted=rectified.inverted)
         self.trace.record(
             Stage.LAYOUT, "structure", Disposition.ACCEPTED,
             seconds=time.perf_counter() - started,
@@ -1177,6 +1180,7 @@ class Conversion:
                       "flow": r.flow.value,
                       "splits": [round(x, 4) for x in r.splits],
                       "rows": r.rows} for r in document.regions],
+            separators=[round(y, 4) for y in document.separators],
         )
 
     def _cut_at_regions(self, rectified: Rectified, document: Document) -> bool:

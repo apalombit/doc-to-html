@@ -101,6 +101,59 @@ def structure(image: ImageArray, boxes: Sequence[BBox], *,
     return regions
 
 
+WIDE_RULE = 0.5
+"""How much of the page's width a horizontal rule must span to part what is
+above it from what is below — spec 0009, step D, 4b. The spec's measure: 24
+such rules lie between Zones across the corpus."""
+
+
+def separators(image: ImageArray, zones: Sequence[Zone], *,
+               ground: tuple[int, int, int],
+               inverted: bool = False) -> list[float]:
+    """Where the page draws a wide horizontal rule between its Zones, top to
+    bottom, as page fractions — spec 0009, step D, 4b.
+
+    Thirteen pages draw them and no render did: a masthead's rule, the rule
+    above a footer. A rule inside a Zone is that Zone's own — a table's row
+    rules, an underlined heading — and is left to it.
+
+    **A table's own border is not one.** `sample_table_0003`, `darkdeck_0009`
+    and `report_0011` each end their table on a rule just below the snapped
+    box, which sits on the table's content ink. It is told from a separator
+    by the table's own row rules: as wide as those, to `SAME_SIZE`, and
+    within one of their pitches of the table's box — 0.012, 0.011 and 0.005
+    of the page, against pitches of 0.051, 0.036 and 0.021. Width alone is
+    not enough: `nonlatin_0014`'s masthead and footer rules are exactly as
+    wide as its table's rows, and sit 0.25 and 0.16 away. `statement_0006`'s
+    table holds no row rules, and both rules beside it are the page's. Over
+    the corpus that leaves 21 of the 24, on eleven pages.
+    """
+    rules = [rule for rule in _rules(_marked(image, ground, inverted))
+             if not rule.vertical and rule.right - rule.left >= WIDE_RULE]
+    boxed = [zone for zone in zones if zone.bbox is not None]
+
+    def inside(rule: _Rule, zone: Zone) -> bool:
+        box = zone.bbox
+        assert box is not None
+        return (box.top < rule.top < box.bottom
+                and box.left < rule.right and rule.left < box.right)
+
+    def border(rule: _Rule, zone: Zone) -> bool:
+        box = zone.bbox
+        assert box is not None
+        own = sorted((r for r in rules if inside(r, zone)), key=lambda r: r.top)
+        if len(own) < 2:
+            return False
+        pitch = float(np.median([b.top - a.top for a, b in zip(own, own[1:])]))
+        return (_near(rule.left, own[0].left) and _near(rule.right, own[0].right)
+                and min(abs(rule.top - box.bottom), abs(box.top - rule.bottom)) <= pitch)
+
+    return sorted(
+        (rule.top + rule.bottom) / 2 for rule in rules
+        if not any(inside(rule, zone) for zone in boxed)
+        and not any(border(rule, zone) for zone in boxed if zone.kind is Kind.TABLE))
+
+
 def _marked(image: ImageArray, ground: tuple[int, int, int],
             inverted: bool) -> Any:
     """Every pixel that is not the page's ground — the mask `rectangles` reads.

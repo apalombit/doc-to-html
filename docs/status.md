@@ -47,7 +47,8 @@ Spec 0009   Four repairs after the structure step, one sweep — issue #32
               A       wire row nets, nonlatin_0014, replay        DONE, gate MET
               B       cut at a grid's lane splits, darkdeck_0009  DONE offline, gate MET
               C       the detector's own sections, form + menu    DONE offline, gate MET
-              D       page width (+ separators), rederive         <- D next
+              D       4a page width DROPPED (gate failed); 4b separators DONE
+              E       one sweep, S4-sweep                         <- next
               E       one sweep
 ```
 
@@ -131,6 +132,16 @@ next one comes from Alessandro's own review of `F1-sweep`.
 ---
 
 ## What the last step shipped
+
+### Spec 0009 step D — separators drawn; the receipt's paper width dropped, 2026-10-11
+
+**4b ships:** the wide rules a page draws between its Zones — 21 on eleven
+pages, not a table's own border — are carried in `Document.separators` and
+drawn as a hairline in the gap between the rows they part. No ratchet leg
+falls; all eleven moved sheets look closer. **4a was dropped** on a failed
+gate: at the paper's 335px the receipt's large sans type no longer fits —
+prices clipped, height 2.16× → 2.23×. It waits on the type scale. Spec,
+"Outcome — step D".
 
 ### Spec 0009 step C — the detector's own sections, 2026-10-11, gate MET offline
 
@@ -256,7 +267,7 @@ the Q5-era records", verbatim. Q1–Q4's are under "Outcome — Q1 to Q4".
 
 ---
 
-## Next — spec 0009, step D
+## Next — spec 0009, step E, the sweep
 
 **The only open work is
 [`specs/0009-four-repairs-one-sweep.md`](specs/0009-four-repairs-one-sweep.md)**,
@@ -268,9 +279,9 @@ conversion stage, and the plan with every gate registered:
 A  wire row nets — nonlatin_0014's totals                        offline, replay   DONE
 B  cut at a grid's inner splits — darkdeck_0009's tiles          layout front      DONE
 C  the detector's own sections — form_0007, menu_0012            layout front      DONE
-D  a photographed page at its paper's width — receipt_0010       offline, rederive <- next
-   (+ drawn separators, one optional attempt)
-E  one sweep, S4-sweep, about 1½ hours, report against s3-result/
+D  a photographed page at its paper's width — receipt_0010       DROPPED, gate D1 failed
+   (+ drawn separators, one optional attempt)                     4b DONE
+E  one sweep, S4-sweep, about 1½ hours, report against s3-result/ <- next
 ```
 
 The menu's richer layout spec is deferred unless step C's stop rule fires.

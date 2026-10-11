@@ -32,6 +32,8 @@ and can be recomputed from it, in the order a Conversion runs them:
                                     orchestrator.gaps               (_audit)
     7. The page's regions read off the Zones' boxes — spec 0008, step 2
                                     structure.structure  (_read_structure)
+       and the wide rules it draws between them — spec 0009, step D
+                                    structure.separators (_read_structure)
 
 then re-renders into a run-shaped directory that `doc_to_html.report` and
 `tools/visual_review.py` read without knowing the difference.
@@ -74,7 +76,7 @@ from doc_to_html.ir import Caveat, Document, Kind  # noqa: E402
 from doc_to_html.orchestrator import gaps, shortfall  # noqa: E402
 from doc_to_html.preprocess import rectify  # noqa: E402
 from doc_to_html.render import render  # noqa: E402
-from doc_to_html.structure import structure  # noqa: E402
+from doc_to_html.structure import separators, structure  # noqa: E402
 from doc_to_html.wire import (  # noqa: E402
     _title_is_its_header_cell, repadded, retrimmed, table_repairs)
 from remeasure_style import ir_of, remeasure  # noqa: E402
@@ -128,6 +130,9 @@ def rederive(document: Document, png: Path) -> None:
         document.regions = structure(
             plain, [zone.bbox for zone in document.zones if zone.bbox is not None],
             ground=document.style.page_bg, inverted=rectified.inverted)
+        document.separators = separators(
+            plain, document.zones, ground=document.style.page_bg,
+            inverted=rectified.inverted)
 
 
 def documents_in(source: Path, model: str) -> list[tuple[str, Path]]:

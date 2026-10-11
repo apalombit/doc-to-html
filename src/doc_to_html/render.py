@@ -168,22 +168,56 @@ def _body(document: Document) -> list[str]:
                 home[id(zone)] = region
                 break
     if not home:
-        return [_band(band, document) for band in document.bands()]
+        return _with_separators(
+            [(_band(band, document), band) for band in document.bands()],
+            document.separators)
 
-    out: list[str] = []
+    out: list[tuple[str, list[Zone]]] = []
     drawn: set[int] = set()
     for band in document.bands():
         outside = [zone for zone in band if id(zone) not in home]
         if outside:
-            out.append(_band(outside, document))
+            out.append((_band(outside, document), outside))
         for zone in band:
             held = home.get(id(zone))
             if held is None or id(held) in drawn:
                 continue
             drawn.add(id(held))
-            out.append(_columns(
-                held, [z for z in document.zones if home.get(id(z)) is held],
-                document))
+            inside = [z for z in document.zones if home.get(id(z)) is held]
+            out.append((_columns(held, inside, document), inside))
+    return _with_separators(out, document.separators)
+
+
+def _with_separators(rows: list[tuple[str, list[Zone]]],
+                     separators: list[float]) -> list[str]:
+    """The drawn rows, with a rule wherever the page draws one between them —
+    spec 0009, step D, 4b. See `structure.separators`.
+
+    A rule is drawn before a row when it lies between the bottom of
+    everything drawn so far and the top of that row, so a rule at a height
+    some Zone already spans is never drawn through it. One rule per gap,
+    however many the page draws there. With none, the rows come back as
+    they were.
+
+    **A bordered `div`, not an `<hr>`**, and drawn inside the gap the rows
+    already leave rather than adding one. Most sources draw these rules as a
+    border, and `projection` counts an `<hr>` as a forced line break: drawn
+    as `<hr>` with a margin of its own, the first measurement put a break on
+    eleven pages that print none and made each ~29px taller.
+    """
+    if not separators:
+        return [markup for markup, _ in rows]
+    out: list[str] = []
+    above: float | None = None
+    for markup, zones in rows:
+        boxes = [zone.bbox for zone in zones if zone.bbox is not None]
+        if boxes and above is not None and any(
+                above <= y <= min(box.top for box in boxes) for y in separators):
+            out.append('<div class="separator"></div>')
+        out.append(markup)
+        if boxes:
+            bottom = max(box.bottom for box in boxes)
+            above = bottom if above is None else max(above, bottom)
     return out
 
 
@@ -293,6 +327,11 @@ def _style_css(document: Document) -> str:
     # width matches or beats its value at 52rem. The width is already in the IR
     # waiting for that.
     rules: list[str] = []
+    # Spec 0009, step D, 4b — emitted only where there is a rule to draw, so a
+    # page without one renders as it did.
+    if document.separators:
+        rules.append(".separator { border-top:1px solid var(--rule);"
+                     " margin:-0.875rem 0 0.875rem; }")
 
     style = document.style
     if style is None:

@@ -1,7 +1,8 @@
 # Four repairs after the structure step, one sweep
 
-**Status: under way, issue #32 — steps 0, A, B and C done 2026-10-11, gates
-MET (B's and C's sweep clauses wait for step E; C1 corrected, see its outcome).**
+**Status: under way, issue #32 — steps 0, A, B, C and D done 2026-10-11
+(B's and C's sweep clauses wait for step E; C1 corrected and confirmed; D's
+4a dropped on a failed gate, 4b shipped). Step E, the sweep, next.**
 Alessandro's decision, taken on
 2026-10-11 after reviewing sweep `S3-sweep` (spec 0008's outcome):
 
@@ -439,6 +440,64 @@ then the report and the sheets.
    was opened.
 5. Tests and mypy are clean.
 
+#### Outcome — step D, 2026-10-11: 4a measured and dropped (gate D1 failed); 4b shipped
+
+**4a — the receipt at its paper's width — fails D1, and Alessandro dropped
+it.** Built as `Document.paper_px`, set only on a warped page, drawn as
+`.doc { max-width }`, and measured by rederive over `s3-result/`
+(`S4-D-rederive`, against `S4-A-rederive`):
+
+| # | clause | result |
+|---|---|---|
+| D1 | receipt at the paper's width; height ratio falls from 2.16× | **FAILS** — drawn at 335px, height ratio **2.163 → 2.233**, `clipped` 0 → 1 |
+| D2 | no ratchet leg falls on it | holds — and only because the projection still reads clipped text |
+| D3 | the other 14 identical outside the IR, inside by the new null key only | holds, 14 of 14 |
+
+In the picture the receipt got worse: at 335px the type is still the
+render's large sans, not the receipt's small monospace, so the price column
+was cut off the page, `29/08/2026` and `CONTACTLESS` were clipped, and more
+names wrapped. **What would have to become true:** the receipt's type drawn
+at its own size — the type scale, "measured, not shipped" in `docs/status.md`
+— and only then its width. The diff is not kept in the tree.
+
+**4b — drawn separators — ships.** `structure.separators` finds each wide
+horizontal rule (≥ 0.5 of the page) that lies in no Zone and is not a table's
+own border; `Document.separators` carries them, set in `_read_structure` and
+by `rederive.py` step 7; the renderer draws one bordered `div` per gap
+between drawn rows that holds a rule, inside the gap the rows already leave.
+Measured by rederive, `S4-D-separators` against `S4-D-base` (rederive at the
+step-C commit, which reproduces `S4-A-rederive` 15 of 15).
+
+| # | clause | result |
+|---|---|---|
+| D4 | no ratchet leg falls on any document; each moved sheet opened | **holds** — no leg falls on any of the fifteen against `s3-result/`; all eleven moved sheets opened beside `S4-D-base`, each rule where the source draws one, none worse |
+| D5 | tests and mypy | **holds** — `TestTheRulesBetweenZones`, seven tests; 885 pass, mypy clean |
+
+21 of the spec's 24 rules are drawn-eligible, on eleven pages (the spec's
+"13" counted pages with any wide rule; `cv_0013`'s, `receipt_0010`'s and
+`invoice_0001`'s sit inside Zones): newsletter's double masthead rule draws
+as one. Two things the first measurement found and the shipped one fixes:
+
+- **A table's border is told by its row rules *and* its nearness.** Width
+  alone dropped `nonlatin_0014`'s masthead and footer rules, which are as
+  wide as its table's rows; a border lies within one row pitch of the
+  table's box (0.012, 0.011, 0.005 against pitches 0.051, 0.036, 0.021).
+- **A `div`, not an `<hr>`, and no height of its own.** Drawn as `<hr>` with
+  a margin, every moved page grew ~29px and `hard_breaks` rose on all eleven
+  — `projection` counts an `<hr>` as a forced break, where the sources
+  mostly draw these rules as borders. As shipped, heights move 1-4px and
+  `hard_breaks` does not move.
+
+Fields that moved besides height: T5 `output_texture` on all eleven, and
+`output_ink` on `catalogue_0015` and `sample_css_0004`, whose `ink_delta`
+falls (closer) 0.439 → 0.376 and 0.341 → 0.318 — a modal shift in the ink
+sample, the rule now among the inks. The rules are drawn light
+(`var(--rule)`) where some sources draw them dark; that is a remaining
+difference, not measured here.
+
+**Step C's correction is confirmed**, Alessandro, 2026-10-11 ("go as
+recommended"): five sections for the form, and the drawn-field predicate.
+
 ### Step E — one sweep, all fifteen
 
 ```
@@ -456,18 +515,22 @@ checked out, so at the current commit it would already carry steps A and D.
 **Predicted:**
 
 - Documents that move: `nonlatin_0014` (A), `darkdeck_0009` (B), `form_0007`
-  and `menu_0012` (C), and `receipt_0010` (D).
+  and `menu_0012` (C). `receipt_0010` (D) no longer: 4a was dropped.
 - Everything else is byte-identical at `temperature: 0`, because no crop of
   theirs moves.
-- If 4b ships, every document with a drawn separator moves too, in the render
-  only.
+- 4b shipped, so the eleven pages with a drawn separator move too, in the
+  render only: `catalogue_0015`, `darkdeck_0009`, `form_0007`,
+  `invoice_0002`, `menu_0012`, `newsletter_0008`, `nonlatin_0014`,
+  `report_0011`, `sample_css_0004`, `sample_semantic_0005`,
+  `statement_0006`. Every embedded IR gains a `separators` key.
 
 **Final gate:**
 
 1. The ratchet against `s3-result/` holds on every leg of every document. A
    fall is reported with its cause and goes to Alessandro, as spec 0008's
    did.
-2. Each step's sweep-checked clause (B4, C5, D1) holds in the picture.
+2. Each step's sweep-checked clause (B4, C5) holds in the picture. D1 went
+   with 4a.
 3. Every document not predicted to move is byte-identical. If one moved,
    explain it before anything else.
 4. All fifteen sheets were opened, pairwise against `S3-base`, in this

@@ -29,7 +29,8 @@ from doc_to_html.corpus import SOURCES, SWEEP
 from doc_to_html.ir import BBox, Block, Document, Kind, Role, Source, Zone, cell
 from doc_to_html.preprocess import rectify
 from doc_to_html.render import render
-from doc_to_html.structure import Flow, Region, alike, cut_at_edges, structure
+from doc_to_html.structure import (Flow, Region, alike, cut_at_edges, separators,
+                                   structure)
 from doc_to_html.style import measure
 
 REPO = Path(__file__).resolve().parent.parent
@@ -323,3 +324,79 @@ class TestTheStructureShapesTheBoxes:
                  Zone(kind=Kind.PAIRS, bbox=BBox(0.0, 0.5, 0.4, 0.9)),
                  Zone(kind=Kind.TABLE, bbox=BBox(0.6, 0.0, 1.0, 1.0))]
         assert alike(zones, columns) == {}
+
+
+def s3_zones_of(name: str) -> list[Zone]:
+    """The floor's Zones — `s3-result/`, whose boxes are today's."""
+    html = (REPO / "tests" / "frozen" / "s3-result" / "documents" / f"{name}.html"
+            ).read_text(encoding="utf-8")
+    found = re.search(r'id="doc-ir">(.*?)</script>', html, re.S)
+    assert found
+    return Document.from_json(found.group(1).replace("<\\/", "</")).zones
+
+
+def separators_of(name: str) -> list[float]:
+    rectified = rectify(REPO / SOURCES[name].png)
+    plain = rectified.plain if rectified.plain is not None else rectified.image
+    ground = measure(plain, inverted=rectified.inverted).page_bg
+    return separators(plain, s3_zones_of(name), ground=ground,
+                      inverted=rectified.inverted)
+
+
+class TestTheRulesBetweenZones:
+    """Spec 0009, step D, 4b: the separators the page draws between its Zones."""
+
+    def test_a_masthead_rule_and_a_footer_rule_are_both_found(self) -> None:
+        """`statement_0006`: the rule under the title and the light one above
+        the footer note, each beside the transactions table but neither its
+        border."""
+        found = separators_of("statement_0006")
+        assert [round(y, 2) for y in found] == [0.07, 0.95]
+
+    def test_a_tables_own_border_is_not_a_separator(self) -> None:
+        """`darkdeck_0009`'s Service level table ends on a rule as wide as its
+        row rules; the footer rule below it is the page's."""
+        found = separators_of("darkdeck_0009")
+        assert [round(y, 2) for y in found] == [0.94]
+        assert separators_of("sample_table_0003") == []
+
+    def test_a_rule_as_wide_as_a_tables_rows_but_far_from_it_is_the_pages(
+            self) -> None:
+        """`nonlatin_0014`'s masthead and footer rules are exactly as wide as
+        its table's row rules; they sit far from the table."""
+        found = separators_of("nonlatin_0014")
+        assert found == pytest.approx([0.165, 0.932], abs=0.005)
+
+    def test_a_rule_inside_a_zone_is_the_zones_own(self) -> None:
+        assert separators_of("invoice_0001") == []
+
+    @staticmethod
+    def two_rows(separators_at: list[float]) -> Document:
+        return Document(
+            source=Source(path="page.png", sha256="0", width=900, height=700),
+            zones=[prose("Masthead", BBox(0.05, 0.05, 0.95, 0.15), 0, 0),
+                   prose("Left", BBox(0.05, 0.25, 0.45, 0.60), 1, 0),
+                   prose("Right", BBox(0.55, 0.20, 0.95, 0.60), 1, 1)],
+            separators=separators_at)
+
+    def test_the_renderer_draws_one_between_the_rows_it_separates(self) -> None:
+        html = render(self.two_rows([0.17, 0.18]))
+        body = html[html.index('<div class="doc">'):html.index('id="doc-ir"')]
+        assert body.count('<div class="separator">') == 1
+        assert body.index("Masthead") < body.index('class="separator"') < body.index("Left")
+
+    def test_a_rule_beside_a_row_draws_nothing(self) -> None:
+        """At a height a Zone of the next row already covers, a rule is not
+        between rows — `Right` starts at 0.20."""
+        assert '<div class="separator">' not in render(self.two_rows([0.22]))
+
+    def test_no_rule_renders_exactly_as_before(self) -> None:
+        html = render(self.two_rows([]))
+        assert 'separator' not in html[:html.index('id="doc-ir"')]
+
+    def test_separators_survive_the_round_trip(self) -> None:
+        document = self.two_rows([0.07, 0.95])
+        assert Document.from_json(document.to_json()).separators == [0.07, 0.95]
+        raw = json.loads(sidebar_page([]).to_json())
+        del raw["separators"]
+        assert Document.from_json(json.dumps(raw)).separators == []

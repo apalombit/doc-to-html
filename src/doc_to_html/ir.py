@@ -547,6 +547,9 @@ class Document:
     regions: list[Region] = field(default_factory=list)
     """The page's structure, top to bottom — `structure.structure`. Empty means
     nobody read it, and the page renders as Bands, as it always did."""
+    separators: list[float] = field(default_factory=list)
+    """Where the page draws a wide rule between its Zones, as page fractions,
+    top to bottom — `structure.separators`, spec 0009. Empty draws none."""
 
     def bands(self) -> list[list[Zone]]:
         """Zones grouped into Bands and ordered for rendering."""
@@ -710,6 +713,7 @@ def _decode_document(data: dict[str, Any]) -> Document:
                    splits=tuple(r.get("splits", ())), rows=r.get("rows", 1))
             for r in data.get("regions", [])
         ],
+        separators=[float(y) for y in data.get("separators", [])],
     )
 
 
