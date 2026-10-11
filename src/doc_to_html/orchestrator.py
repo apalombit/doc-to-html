@@ -60,6 +60,7 @@ from .wire import (
     MappingError,
     NotPairs,
     bands_from_boxes,
+    prints,
     table_repairs,
     validate_bands,
 )
@@ -796,6 +797,10 @@ class Conversion:
     by type at the other end.
     """
 
+    vetoed: dict[int, str] = field(init=False, default_factory=dict)
+    """Captions the model read and `CaptionBand.aligns_to_grid` refused, by
+    Zone index — kept for `_restore_vetoed_captions` after extraction."""
+
     def run(self) -> Document:
         """Rectify, lay out, classify, extract, probe, audit, refine."""
         started = time.perf_counter()
@@ -1333,9 +1338,11 @@ class Conversion:
         # most a Title, while accepting a false one costs a Kind, a row and a
         # Probe — run 71 spent all three on `invoice_0001`. The veto is therefore
         # only ever pointed at the expensive side. See `CaptionBand`.
-        vetoed = titled.title is not None and band.aligns_to_grid
-        if vetoed:
-            refused, titled.title = titled.title, None
+        refused = titled.title if band.aligns_to_grid else None
+        vetoed = refused is not None
+        if refused is not None:
+            titled.title = None
+            self.vetoed[index] = refused
 
         taken = titled.title is not None
         self.trace.record(
@@ -1614,7 +1621,46 @@ class Conversion:
                     zone_index=index, kind=zone.kind.value, note=repair,
                 )
 
+        self._restore_vetoed_captions(document)
         self._measure_shortfalls(rectified, document)
+
+    def _restore_vetoed_captions(self, document: Document) -> None:
+        """A caption the veto refused, which the reading then dropped, is the
+        Zone's Title after all — spec 0010, step A1.
+
+        **The veto keeps its job and loses only its side effect.** It refuses
+        a Title so that the Kind is asked on the whole crop, heading row
+        included, which is what it is for: equal column counts either side of
+        the cut can mean a table's heading row. But a structured reading has no
+        slot for a line that spans the region, so a refused caption that really
+        was one vanished from the page. Over sweep `S4-sweep` the veto fired
+        five times and every one was a caption — letter-spaced capitals count
+        as many columns as the body under them — and four of the five were
+        then printed nowhere: `darkdeck_0009`'s `OPEN RISKS` and `DECISIONS
+        WANTED`, `form_0007`'s `2. MEMBERSHIP CATEGORY` and `report_0011`'s
+        `TABLE 1 — MOVEMENTS AND REVENUE BY BERTH`.
+
+        **Only where nothing in the Zone prints it**, so a heading row the veto
+        rightly refused and the reading kept as a row is never doubled. The
+        fifth, `P95 LATENCY`, came back as a pair's label and value and stays
+        as read. Nothing is invented: the model read the line as a caption, and
+        the page prints it.
+        """
+        for index, refused in sorted(self.vetoed.items()):
+            if index >= len(document.zones):
+                continue
+            zone = document.zones[index]
+            if zone.title or not zone.complete or prints(zone, refused):
+                continue
+            zone.title = refused
+            self.trace.record(
+                Stage.EXTRACT, "vetoed_caption", Disposition.ACCEPTED,
+                zone_index=index, kind=zone.kind.value, title=refused,
+                changed=[Change(path=f"zones[{index}].title",
+                                before=None, after=refused)],
+                reason="the caption the grid veto refused is printed nowhere "
+                       "in the reading, so it is the Zone's Title",
+            )
 
     def _measure_shortfalls(self, rectified: Rectified,
                             document: Document) -> None:

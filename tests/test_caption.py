@@ -24,8 +24,9 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from doc_to_html.ir import BBox, Kind, Reading, Zone
+from doc_to_html.ir import BBox, Document, Kind, Reading, Source, Zone
 from doc_to_html.orchestrator import Conversion
+from doc_to_html.render import render
 from doc_to_html.preprocess import (
     PAD_Y,
     caption_band,
@@ -35,7 +36,7 @@ from doc_to_html.preprocess import (
     zone_pixels,
 )
 from doc_to_html.trace import Disposition, Stage
-from doc_to_html.wire import contents_into, table_repairs
+from doc_to_html.wire import contents_into, prints, table_repairs
 
 
 def a_reading(content: str) -> Reading:
@@ -385,7 +386,14 @@ class TestTheOrchestratorAsksInTheRightOrder:
             and band.aligns_to_grid
         ]
         assert gridded, "the fixture must contain at least one grid heading row"
-        assert all(document.zones[index].title is None for index in gridded)
+        # What the veto protects: the Kind is asked on the whole crop, so each
+        # gridded Zone is still the table its heading row makes it, and the
+        # Zone whose heading row *is* the refused line takes no Title.
+        assert all(document.zones[index].kind is Kind.TABLE for index in gridded)
+        heading_row = [index for index in gridded
+                       if prints(document.zones[index], "Payment Method")]
+        assert heading_row
+        assert all(document.zones[index].title is None for index in heading_row)
 
         vetoed = [event for event in conversion.trace.in_stage(Stage.CLASSIFY)
                   if event.step == "read_caption" and event.data.get("vetoed")]
@@ -393,6 +401,30 @@ class TestTheOrchestratorAsksInTheRightOrder:
         for event in vetoed:
             assert event.data["vetoed"] == "Payment Method"
             assert event.data["head_columns"] == event.data["body_columns"]
+            assert event.data["cut_row"] == 0
+
+    def test_a_refused_caption_the_reading_drops_becomes_the_title(self) -> None:
+        """Spec 0010, step A1. This stub serves `Payment Method` as every
+        Zone's caption, so the `Item | Price` table's veto refuses a line its
+        reading prints nowhere — the shape of `darkdeck_0009`'s `OPEN RISKS`,
+        a caption the veto refused and the list reading then dropped. Once
+        extraction is done it is the Title, and the Zone keeps its Kind and
+        every row."""
+        caption = '{"first_line": "Payment Method", "line_is": "caption"}'
+        conversion, _ = self.converted(caption_pass=True, captions=[caption] * 6)
+        document = conversion.document
+        assert document is not None
+
+        restored = [event for event in conversion.trace.in_stage(Stage.EXTRACT)
+                    if event.step == "vetoed_caption"]
+        assert restored
+        for event in restored:
+            assert event.zone_index is not None
+            zone = document.zones[event.zone_index]
+            assert zone.title == "Payment Method"
+            assert zone.kind is Kind.TABLE
+            assert zone.rows
+            assert not prints(zone, "Payment Method")
 
     def test_a_caption_naming_nothing_takes_no_title_and_cuts_nothing(
         self,
@@ -730,6 +762,38 @@ class TestATitleIsNeverPrintedTwice:
 
         assert [(p.label.text, p.value.text) for p in zone.pairs] == [
             ("Terms", "30 days")
+        ]
+
+    def test_a_pair_whose_label_repeats_the_title_keeps_its_value(self) -> None:
+        """Spec 0010, step A2 — `darkdeck_0009`'s cost tile. The caption pass
+        took `COST PER MILLION` for the Title and the pairs reading bound it to
+        `$2.14`; dropping the pair took the only print of `$2.14` with it."""
+        zone = contents_into(
+            Zone(kind=Kind.PAIRS, title="COST PER MILLION"),
+            '{"pairs": [{"label": "COST PER MILLION", "value": "$2.14"},'
+            ' {"label": "+9%", "value": ""}]}',
+            read=a_reading,
+        )
+
+        assert [(p.label.text, p.value.text) for p in zone.pairs] == [
+            ("", "$2.14"), ("+9%", "")
+        ]
+        html = render(Document(source=Source(path="x", sha256="0" * 64,
+                                             width=100, height=100),
+                               zones=[zone]))
+        assert '<dt class="alone">$2.14</dt>' in html
+        assert html.count("COST PER MILLION") == 2  # the h2, and the embedded IR
+
+    def test_a_pair_that_is_the_title_split_in_two_is_dropped(self) -> None:
+        zone = contents_into(
+            Zone(kind=Kind.PAIRS, title="Payment Method"),
+            '{"pairs": [{"label": "Payment", "value": "Method"},'
+            ' {"label": "Check #", "value": "1000"}]}',
+            read=a_reading,
+        )
+
+        assert [(p.label.text, p.value.text) for p in zone.pairs] == [
+            ("Check #", "1000")
         ]
 
     def test_an_untitled_zone_is_untouched(self) -> None:

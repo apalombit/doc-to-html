@@ -790,10 +790,14 @@ def _header_style(zone: Zone, document: Document) -> str:
 
 def _pairs(zone: Zone, document: Document) -> str:
     """One `dt` and one `dd` per pair; a pair with no value marks its label
-    `alone`, which the stylesheet draws across both columns."""
+    `alone`, which the stylesheet draws across both columns, and a value
+    whose label was its Zone's Title is drawn the same way — see
+    `wire._without_title_echo`."""
     parts = []
     for pair in zone.pairs:
         label, value = _cell(pair.label, document), _cell(pair.value, document)
+        if not label.strip() and value.strip():
+            label, value = value, ""
         tag = "<dt>" if value.strip() else '<dt class="alone">'
         parts.append(f"{tag}{label}</dt><dd>{value}</dd>")
     return '<dl class="pairs">' + "".join(parts) + "</dl>"

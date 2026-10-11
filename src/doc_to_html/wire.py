@@ -1127,6 +1127,19 @@ def _same_text(one: str, other: str) -> bool:
     return bool(_spell(one)) and _spell(one) == _spell(other)
 
 
+def prints(zone: Zone, text: str) -> bool:
+    """Whether any entry of the Zone's reading prints `text`, spelled as
+    `_same_text` spells it — within one Block, one row, or one pair's label
+    and value read together."""
+    wanted = _spell(text)
+    if not wanted:
+        return True
+    entries = [" ".join(cell.text for cell in block.lines) for block in zone.blocks]
+    entries += [" ".join(cell.text for cell in row.cells) for row in zone.rows]
+    entries += [f"{pair.label.text} {pair.value.text}" for pair in zone.pairs]
+    return any(wanted in _spell(entry) for entry in entries)
+
+
 def _without_title_echo(zone: Zone) -> Zone:
     """Drop a Zone's first entry when it only repeats the Zone's own Title.
 
@@ -1179,6 +1192,12 @@ def _without_title_echo(zone: Zone) -> Zone:
         title, " ".join(cell.text for cell in zone.rows[0].cells)
     ):
         zone.rows = repadded(zone.rows[1:])
+    elif zone.pairs and _same_text(title, zone.pairs[0].label.text) \
+            and zone.pairs[0].value.text.strip():
+        # Only the label repeats the Title, and the value is content the page
+        # prints once: `darkdeck_0009`'s `COST PER MILLION | $2.14`, where
+        # dropping the pair took `$2.14` off the page — spec 0010, step A2.
+        zone.pairs[0] = Pair(label=Cell(), value=zone.pairs[0].value)
     elif zone.pairs and (
         _same_text(title, zone.pairs[0].label.text)
         or _same_text(
