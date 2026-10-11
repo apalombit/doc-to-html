@@ -1,8 +1,11 @@
-# Status — 2026-10-10 (**spec 0008 done — awaiting Alessandro's decision**; `q5-result/` the floor)
+# Status — 2026-10-11 (**spec 0009 planned, step 0 next**; `S3-sweep` decided as the floor, frozen at step 0)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-10, when
-spec 0008's three steps finished and sweep `S3-sweep` measured them.
+spec 0008's three steps finished and sweep `S3-sweep` measured them; header,
+"Where we are" and "Next" updated 2026-10-11 for Alessandro's decision and
+spec 0009. The floor sections below still describe `q5-result/` — step 0
+rewrites them.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
@@ -41,7 +44,10 @@ Spec 0008   Page structure, opened 2026-10-10 from the F1-sweep review
               step 1  structure from pixels, offline          DONE, gate MET
               step 2  carry it in the IR and draw it, offline DONE, gate NOT met (ratchet)
               step 3  let it shape the boxes, one sweep       DONE, gate NOT met (ratchet, menu)
-              sweep S3-sweep, commit 9c42d81                   <- Alessandro's decision
+              sweep S3-sweep, commit 9c42d81 — DECIDED 2026-10-11: the new floor
+Spec 0009   Four repairs after the structure step, one sweep — planned 2026-10-11
+              step 0  freeze S3-sweep as tests/frozen/s3-result/        <- next
+              A-D     four repairs, offline where possible; E one sweep
 ```
 
 Q1-Q4's result tables moved to
@@ -222,27 +228,31 @@ the Q5-era records", verbatim. Q1–Q4's are under "Outcome — Q1 to Q4".
 
 ---
 
-## Next — Alessandro's decision on spec 0008
+## Next — spec 0009, step 0
 
-**Spec 0008's three steps are done; nothing is queued.** What is open is a
-decision, not a build:
+**Decided 2026-10-11, Alessandro, after reviewing `S3-sweep`:** it becomes
+the floor, with the three legs below `q5-result/` accepted (T3 beside on
+`cv_0013` and `darkdeck_0009`, one precision token on `catalogue_0015`); the
+menu's richer layout spec is deferred.
 
-1. Accept T3 beside below the floor on `cv_0013` and `darkdeck_0009`, and the
-   one-token precision fall on `catalogue_0015` — and so whether
-   `debug/runs/S3-sweep` becomes the floor (frozen as a directory, as
-   `q5-result/` was).
-2. `menu_0012`: the spec's "Then decide" — simple was enough for four targets
-   and nothing simple is left for the menu. If reopened it is a richer layout
-   question, its own spec.
+**The only open work is
+[`specs/0009-four-repairs-one-sweep.md`](specs/0009-four-repairs-one-sweep.md)**
+— it carries spec 0008's changes, the S3-sweep analysis by conversion stage,
+and the plan with every gate registered:
 
-**`debug/runs/S3-sweep/report.html`** is the sweep: commit `9c42d81`, shipped
-defaults, all fifteen, scored against `q5-result/`. Its fifteen review sheets
-are in `_review/`, `--previous` F1-sweep. **Until he decides, start nothing.**
+```
+0  freeze S3-sweep as tests/frozen/s3-result/, move the floor   <- next
+A  wire row nets — nonlatin_0014's totals                        offline, replay
+B  cut at a grid's inner splits — darkdeck_0009's tiles          layout front
+C  the detector's own sections — form_0007, menu_0012            layout front
+D  a photographed page at its paper's width — receipt_0010       offline, rederive
+   (+ drawn separators, one optional attempt)
+E  one sweep, S4-sweep, about 1½ hours, report against s3-result/
+```
 
-The offline arms are beside it — `S2-00-base` (rederive over F1-sweep, 15 of 15
-byte-identical to it), `S2-01-columns`, `S2-02-grid`, `S2-03-fr`,
-`S2-04-lanes` (what shipped), `S3-00-replay` — and F1-sweep, the starting
-point.
+**`debug/runs/S3-sweep` must survive until step 0 has frozen it** — it is the
+only copy of the new floor's documents and answers. Until step 0 lands,
+`q5-result/` is still what every tool and the section above name.
 
 ---
 

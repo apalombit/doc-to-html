@@ -36,9 +36,10 @@ trial axis is kept rather than rejected.
 
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
-measured numbers and what has already been tried and rejected. **0008 is the
-one open spec** (issue #31), its three steps done and awaiting Alessandro's
-decision; 0007 still defines the target.
+measured numbers and what has already been tried and rejected. **0009 is the
+one open spec** — planned 2026-10-11, not started, its tracking issue to be
+opened by the session that starts it; 0008 (issue #31) is done and decided;
+0007 still defines the target.
 
 ---
 
@@ -63,7 +64,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-10: spec 0008 done, awaiting Alessandro's decision.**
+**Where the project is — 2026-10-11: spec 0009 planned, step 0 next.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -82,7 +83,13 @@ Spec 0008   Page structure — opened 2026-10-10 from his review of
               1 structure from pixels, offline              DONE, gate MET
               2 carry it in the IR and draw it, offline     DONE, gate NOT met
               3 let it shape the boxes, one sweep           DONE, gate NOT met
-              sweep S3-sweep on 9c42d81                     <- his decision
+              sweep S3-sweep on 9c42d81 — DECIDED 2026-10-11: the new floor
+Spec 0009   Four repairs after the structure step, one sweep — planned
+              2026-10-11 from his review of S3-sweep:
+              0 freeze S3-sweep as tests/frozen/s3-result/  <- next
+              A wire row nets          B cut at a grid's inner splits
+              C the detector's own sections   D page width (+ separators)
+              E one sweep, S4-sweep
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
@@ -93,10 +100,15 @@ since 2026-09-30** — Q5's sweep, and the first frozen directory to carry the
 answers that made it. **One leg sits below it by decision since N4:**
 `catalogue_0015`'s T3 beside, which every report against it names —
 `docs/status.md`, "What the ratchet enforces". Each earlier floor, and why
-it moved, is in its README and in `docs/status.md`, "The floor".
+it moved, is in its README and in `docs/status.md`, "The floor". **On
+2026-10-11 Alessandro decided `S3-sweep` becomes the floor**, with its three
+legs below `q5-result/` accepted; spec 0009's step 0 freezes it as
+`tests/frozen/s3-result/` and moves every mention of the floor, and until it
+lands `q5-result/` is still what the tools name.
 
-**The only open work is `docs/specs/0008-page-structure.md`**, and its last
-section is the prompt to start a session with. `docs/specs/0007-handover.md`
+**The only open work is `docs/specs/0009-four-repairs-one-sweep.md`**, and
+its last section is the prompt to start a session with. It carries spec
+0008's changes and the S3-sweep analysis it was planned from. `docs/specs/0007-handover.md`
 holds spec 0007's prompts, as record.
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
@@ -475,7 +487,7 @@ each other — `CellState.DISPUTED` and the Ladder are already the vocabulary fo
 it, and `_climb_ladders` already records that it waits on a second Engine. That
 is model time and Alessandro's decision, not a detector.
 
-**Tracker state, 2026-10-10: one open issue, #31 — spec 0008.** #30 (spec 0007) closed when its
+**Tracker state, 2026-10-11: one open issue, #31 — spec 0008, done and decided; spec 0009's issue is opened by the session that starts it.** #30 (spec 0007) closed when its
 work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
 #17 (the vision layout prompt) were closed by Thread 0. Every spec is closed
 history; 0007 still defines the target.

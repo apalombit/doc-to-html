@@ -1,6 +1,6 @@
 # Read the page's structure before its boxes
 
-**Status: all three steps done 2026-10-10 — step 1 gate MET; steps 2 and 3 gates NOT met on the ratchet. Awaiting Alessandro's decision; see "Outcome — step 3" and "Then decide".** Opened 2026-10-10, Alessandro's decision,
+**Status: done and decided.** All three steps done 2026-10-10 — step 1 gate MET; steps 2 and 3 gates NOT met on the ratchet. **Decided 2026-10-11:** `S3-sweep` becomes the floor with those legs accepted, the menu's richer layout spec is deferred, and the follow-up work is [`0009-four-repairs-one-sweep.md`](0009-four-repairs-one-sweep.md). Opened 2026-10-10, Alessandro's decision,
 after reviewing the fresh sweep `F1-sweep`. Tracking issue **#31**. It works
 under spec 0007's target and ratchet; nothing in 0007 changes.
 
