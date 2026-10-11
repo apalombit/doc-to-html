@@ -287,9 +287,17 @@ the body estimate are each documented with their measurement in
 
 ### Step E — one fresh sweep, `S5-sweep`
 
-All fifteen, shipped defaults. Report against `s3-result/` re-scored, in
-spec 0009's §7 format, with all fifteen sheets opened beside `S4-sweep`'s.
-Whether it becomes the floor is Alessandro's decision.
+All fifteen, shipped defaults. Report against `s3-result/`, in spec 0009's
+§7 format, with all fifteen sheets opened beside `S4-sweep`'s. Whether it
+becomes the floor is Alessandro's decision. (Step C was reverted, so the
+floor's own `scores.json` is the ratchet, unchanged.)
+
+**Prediction, registered before the sweep finished:** no step moved a crop
+or a prompt — every replay asked exactly the questions `S4-sweep` asked — so
+at `temperature: 0` the sweep's answers are `S4-sweep`'s and **all fifteen
+documents come back byte-identical to `S5-D3-replay`**, taken at the same
+commit (`4a5fe3f`). Any document that does not is a finding about the
+determinism claim, not about this spec.
 
 ---
 
