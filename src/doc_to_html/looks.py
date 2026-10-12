@@ -43,6 +43,23 @@ asked (ADR 0005).
 
 Neither is read on a photographed page: print and light set its colours.
 
+**4c — the lines between rows and the rows' grounds**, on `Row.under` and
+`Row.fill`, for every table whose rows are placed:
+
+- **A line** in the gap under a row is a run of pixel rows, no thicker than
+  `THIN` of a glyph, that stand off the gap's own ground across the Zone:
+  `solid` where it is one colour across `SOLID` of the width and differs
+  from the rows on both sides, `dashed` where it is `DASHES` or more equal
+  dashes spanning `DASH_SPAN` of it, `double` where two solid lines lie
+  within `DOUBLE` of a glyph. A thicker run is a row's fill reaching into
+  the gap — `statement_0006`'s dark header bar.
+  The gap under the last row is read to `LAST` glyphs below it.
+- **A row's fill** is the ground of its own band, where it is not its
+  Zone's: a header bar, a zebra stripe.
+
+The lines are read on a photographed page too — `receipt_0010`'s dashed
+rules are its structure — but not their colour.
+
 Every threshold sits in the gap of its distribution, measured on 2026-10-12
 over the placed Cells of the eleven pages whose picture is its own HTML,
 each labelled with the size, weight, style and colour Chrome computed for the
@@ -51,14 +68,14 @@ source text it lands on — 658 for 4a, 650 for colour.
 
 from __future__ import annotations
 
-from typing import Sequence
+from typing import Any, Sequence
 
 import numpy as np
 
-from .ir import BBox, Cell, Document, Kind, Look, RowRole, Style, Zone
+from .ir import BBox, Cell, Document, Kind, Look, RowRole, Stroke, Style, Zone
 from .locate import cells_of
 from .preprocess import ImageArray, _cv2, crop_origin
-from .style import body_glyph, dominant, type_mask
+from .style import SAME_COLOUR, body_glyph, dominant, type_mask
 
 TALL = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZbdfhklt0123456789")
 """Letters that reach the cap height or above. A short line without one is
@@ -104,6 +121,27 @@ REACH = 1.5
 """How many body glyphs out from a Cell its ground is looked for again. A
 chip's padding is under one — `catalogue_0015`'s SKU tags 6px, `darkdeck_0009`'s
 pills 8px, on glyphs of 9 and 10."""
+
+THIN = 0.3
+"""A line is no thicker than this many glyphs, nor than 2px: `statement_0006`'s
+header bar reaches 6px into the gap under it on a 9px glyph; every rule in
+the corpus is 1 or 2px."""
+
+SOLID = 0.9
+"""A solid line covers this share of the Zone's width; a row of text never
+does."""
+
+DASHES, DASH_SPAN = 3, 0.6
+"""A dashed line is at least this many dashes, spanning this share of the
+width — `receipt_0010`'s are sixty of 3-4px over 300."""
+
+LAST = 1.5
+"""How many glyphs under the last row its line is looked for: a rule sits
+a cell's padding below the words, and needs ground after it to be one."""
+
+DOUBLE = 0.4
+"""Two solid lines within this many glyphs of each other are one double
+line."""
 
 CHIP_APART = 45
 """Channel-sum by which the ground on both sides must differ from the Cell's
@@ -271,6 +309,122 @@ def _chip(rgb: ImageArray, box: tuple[int, int, int, int],
             round(min(0.5, radius / max(1, bottom - top)), 2))
 
 
+def _spans(on: Sequence[bool]) -> list[tuple[int, int]]:
+    """Runs of True, as [start, end)."""
+    out, start = [], None
+    for index, value in enumerate(list(on) + [False]):
+        if value and start is None:
+            start = index
+        elif not value and start is not None:
+            out.append((start, index))
+            start = None
+    return out
+
+
+def _solid(pixels: ImageArray, thin: int) -> list[tuple[int, int, tuple[int, int, int]]]:
+    """Solid lines across a gap: runs of pixel rows, no thicker than `thin`,
+    one colour across `SOLID` of the width, and that colour different from
+    the rows on both sides of it. The edge of a fill differs on one side only:
+    `statement_0006`'s `#e6ebef` rules sit 61 from its white rows and 36 from
+    its stripes, and the stripe's own edge is neither."""
+    runs: list[list[Any]] = []
+    for y in range(pixels.shape[0]):
+        colour = dominant(pixels[y:y + 1])
+        if runs and _apart(runs[-1][2], colour) <= SAME_COLOUR:
+            runs[-1][1] = y + 1
+        else:
+            runs.append([y, y + 1, colour])
+    ground = dominant(pixels)
+    found = []
+    for before, (top, bottom, colour), after in zip(runs, runs[1:], runs[2:]):
+        if (bottom - top <= thin and _apart(colour, ground) > SAME_COLOUR
+                and _apart(colour, before[2]) > SAME_COLOUR
+                and _apart(colour, after[2]) > SAME_COLOUR):
+            share = (np.abs(pixels[top:bottom] - np.array(colour)).sum(axis=2)
+                     <= SAME_COLOUR).mean()
+            if share >= SOLID:
+                found.append((top, bottom, colour))
+    return found
+
+
+def _stroke(band: ImageArray, glyph: float, height: int,
+            coloured: bool) -> Stroke:
+    """The line drawn across a gap between two rows, or a Stroke of kind
+    `none`. `band` is the gap's pixels, RGB, the Zone's width."""
+    pixels = np.asarray(band, dtype=np.int64)
+    if pixels.shape[0] < 3 or pixels.shape[1] < 4:
+        return Stroke(kind="none")
+    thin = max(2, round(THIN * glyph))
+    solid = _solid(pixels, thin)
+    if solid:
+        top, bottom, colour = solid[0]
+        kind = "solid"
+        # Runs that touch are one line in two shades — a photograph's blur,
+        # or a pale rule under a row meeting a dark one over the next; the
+        # darker, as the eye reads it. Two with ground between are double.
+        for following in solid[1:]:
+            if following[0] == bottom and kind == "solid":
+                bottom = following[1]
+                if sum(following[2]) < sum(colour):
+                    colour = following[2]
+            elif following[0] - bottom <= DOUBLE * glyph and kind == "solid":
+                kind, bottom = "double", following[1]
+        return Stroke(kind=kind, color=colour if coloured else None,
+                      width=round((bottom - top) / height, 5))
+    # A dashed line: far from the gap's ground by half the most anything
+    # stands off it, so a photograph's blur between two dashes is not a dash.
+    ground = np.array(dominant(pixels))
+    apart = np.abs(pixels - ground).sum(axis=2)
+    far = apart > max(SAME_COLOUR, 0.5 * float(np.percentile(apart, 99)))
+    cover = far.mean(axis=1)
+    for top, bottom in _spans(list(cover >= 0.3)):
+        if bottom - top > thin:
+            continue
+        dashes = _spans(list(far[top + int(np.argmax(cover[top:bottom]))]))
+        lengths = np.array([end - start for start, end in dashes], dtype=float)
+        if (len(dashes) >= DASHES
+                and (dashes[-1][1] - dashes[0][0]) / pixels.shape[1] >= DASH_SPAN
+                and float(lengths.std()) <= 0.5 * float(lengths.mean())):
+            drawn = None
+            if coloured:
+                middle = np.median(pixels[top:bottom][far[top:bottom]], axis=0)
+                drawn = (int(middle[0]), int(middle[1]), int(middle[2]))
+            return Stroke(kind="dashed", color=drawn,
+                          width=round((bottom - top) / height, 5))
+    return Stroke(kind="none")
+
+
+def _rows(rgb: ImageArray, document: Document, glyph: float,
+          coloured: bool) -> None:
+    """Set `Row.under` and `Row.fill` on every table whose rows are placed."""
+    height, width = rgb.shape[:2]
+    style = document.style or Style()
+    for zone in document.zones:
+        if zone.kind is not Kind.TABLE or zone.bbox is None:
+            continue
+        left = max(0, int(zone.bbox.left * width))
+        right = min(width, int(np.ceil(zone.bbox.right * width)))
+        placed: list[tuple[int, int, int]] = []
+        for index, row in enumerate(zone.rows):
+            row.under, row.fill = None, None
+            boxes = [c.bbox for c in row.cells if c.bbox is not None and c.text.strip()]
+            if boxes:
+                placed.append((int(min(b.top for b in boxes) * height),
+                               int(np.ceil(max(b.bottom for b in boxes) * height)), index))
+        placed.sort()
+        drawn = zone.fill or style.page_bg
+        for number, (top, bottom, index) in enumerate(placed):
+            row = zone.rows[index]
+            if coloured and bottom > top:
+                ground = dominant(rgb[top:bottom, left:right])
+                if _apart(ground, drawn) > SAME_COLOUR:
+                    row.fill = ground
+            below = (placed[number + 1][0] if number + 1 < len(placed)
+                     else min(height, bottom + int(round(LAST * glyph))))
+            if below > bottom:
+                row.under = _stroke(rgb[bottom:below, left:right], glyph, height, coloured)
+
+
 def _drawn_ground(zone: Zone, row: int | None, style: Style) -> tuple[int, int, int]:
     """The ground the render draws under one of the Zone's Cells."""
     if (row is not None and zone.header_fill is not None
@@ -295,8 +449,10 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
     grey = (cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) if image.ndim == 3 else image)
     height, width = image.shape[:2]
     rgb = None
-    if image.ndim == 3 and not photographed:
-        rgb = np.asarray(255 - image if inverted else image)[:, :, ::-1]
+    if image.ndim == 3:
+        true = np.asarray(255 - image if inverted else image)[:, :, ::-1]
+        _rows(true, document, body, coloured=not photographed)
+        rgb = None if photographed else true
     style = document.style or Style()
     measured: list[tuple[Cell, float | None, float | None, float | None]] = []
     colours: dict[int, tuple[tuple[int, int, int], tuple[int, int, int] | None,

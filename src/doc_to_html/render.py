@@ -24,7 +24,7 @@ from statistics import median
 from typing import Any
 
 from .ir import (BBox, Block, Cell, CellState, Document, Flow, Kind, Pair,
-                 Region, Role, RowRole, Style, Zone)
+                 Region, Role, Row, RowRole, Style, Zone)
 from .probes import is_numeric
 from .wire import MARKS, bands_from_boxes
 
@@ -698,6 +698,8 @@ def _style_css(document: Document) -> str:
                      " margin:-0.875rem 0 0.875rem; }")
     if _has_fields(document):
         rules.extend(FIELD_CSS)
+    if any(_rows_read(zone) for zone in document.zones if zone.kind is Kind.TABLE):
+        rules.extend(ROWS_CSS)
 
     style = document.style
     if style is None:
@@ -1189,6 +1191,8 @@ def _table(zone: Zone, document: Document) -> str:
 
     groups: dict[RowRole, list[str]] = {role: [] for role in RowRole}
     ink = _house(document)
+    read = _rows_read(zone)
+    page = _page(document)
     for position, row in enumerate(zone.rows):
         tag = "th" if row.role is RowRole.HEADER else "td"
 
@@ -1207,7 +1211,8 @@ def _table(zone: Zone, document: Document) -> str:
         else:
             in_place = row.role is RowRole.SUMMARY and position < closing
         groups[RowRole.DATA if in_place else row.role].append(
-            f"<tr>{cells}</tr>")
+            f"<tr{_row_style(row, page, opens=not in_place) if read else ''}>"
+            f"{cells}</tr>")
 
     parts = []
     if groups[RowRole.HEADER]:
@@ -1217,7 +1222,44 @@ def _table(zone: Zone, document: Document) -> str:
         parts.append(f"<tbody>{''.join(groups[RowRole.DATA])}</tbody>")
     if groups[RowRole.SUMMARY]:
         parts.append(f"<tfoot>{''.join(groups[RowRole.SUMMARY])}</tfoot>")
-    return f'<div class="table-wrap"><table>{"".join(parts)}</table></div>'
+    table = '<table class="read">' if read else "<table>"
+    return f'<div class="table-wrap">{table}{"".join(parts)}</table></div>'
+
+
+ROWS_CSS = (
+    "table.read th, table.read td { border-bottom:none; }",
+    "table.read thead th { background:none; }",
+    "table.read tfoot td { border-top:none; }",
+)
+"""The stylesheet for a table whose lines and fills were read off the page
+— spec 0011, step 4c: the house rule under every cell, shade on the header
+and rule over the totals give way to each row's own. Emitted only for a page
+that has one, so every other page keeps its bytes."""
+
+
+def _rows_read(zone: Zone) -> bool:
+    return any(row.under is not None for row in zone.rows)
+
+
+def _row_style(row: Row, page: _Page, *, opens: bool) -> str:
+    """A row's own line and ground, as the page draws them: spec 0011, step
+    4c. A row not read keeps the house rule, and a header that opens the
+    table the house shade — one inside it, `menu_0012`'s `PUDDINGS`, never
+    had it."""
+    parts = []
+    if row.under is None:
+        parts.append("border-bottom:1px solid var(--rule)")
+        if row.role is RowRole.HEADER and opens:
+            parts.append("background:var(--shade)")
+    else:
+        if row.under.kind != "none":
+            least = 3 if row.under.kind == "double" else 1
+            width = max(least, round(row.under.width * page.y))
+            colour = _rgb(row.under.color) if row.under.color else "var(--ink)"
+            parts.append(f"border-bottom:{width}px {row.under.kind} {colour}")
+        if row.fill is not None:
+            parts.append(f"background:{_rgb(row.fill)}")
+    return f' style="{";".join(parts)}"' if parts else ""
 
 
 def _header_style(zone: Zone, document: Document) -> str:

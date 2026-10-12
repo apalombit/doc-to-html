@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import io
 import json
+import re
 from pathlib import Path
 
 import numpy as np
@@ -105,10 +106,11 @@ class TestARealTable:
         """Both heading rows are `#eee` in `invoice.html`, so each `thead`
         carries that fill — see `TestAHeaderRowsFillArrivesThroughAConversion`."""
         html = render(invoice[0])
-        head = '<thead style="--shade:rgb(238,238,238)">'
-        assert f"{head}<tr><th>Payment Method</th>" in html
-        assert (f'{head}<tr><th>Item</th><th class="num">Price</th></tr></thead>'
-                in html)
+        head = re.escape('<thead style="--shade:rgb(238,238,238)">')
+        # A row carries its own line and ground once read — spec 0011, 4c.
+        assert re.search(rf"{head}<tr[^>]*><th>Payment Method</th>", html)
+        assert re.search(rf'{head}<tr[^>]*><th>Item</th><th class="num">Price</th>'
+                         r"</tr></thead>", html)
 
     def test_fifteen_rows_survive(
         self, statistics: tuple[Document, ReplayTransport]
@@ -323,7 +325,7 @@ class TestAReceiptThroughAConversion:
             REPO / SOURCES["receipt_0010"].png, replies, layout=[zone])
 
         html = render(document)
-        table = html[html.index("<table>"):html.index("</table>")]
+        table = html[html.index("<table"):html.index("</table>")]
         printed = ["Till 02 Op. NADIA", "Flat white", "Elderflower press",
                    "Subtotal", "TOTAL", "Card ***4417", "Change",
                    "AID A000000031010", "Auth 084417"]
@@ -385,7 +387,7 @@ class TestTheFailureContractOnAPartlyWorkingDocument:
 
         html = render(document)
         assert 'class="skeleton"' in html
-        assert "<table>" in html
+        assert "<table" in html
         assert "could not be read" in html
 
 

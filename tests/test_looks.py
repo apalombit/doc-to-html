@@ -12,8 +12,8 @@ import cv2
 import numpy as np
 
 from doc_to_html import looks
-from doc_to_html.ir import (BBox, Block, Cell, Document, Kind, Look, Reading, Run,
-                            Source, Style, Zone, cell)
+from doc_to_html.ir import (BBox, Block, Cell, Document, Kind, Look, Reading, Row,
+                            RowRole, Run, Source, Stroke, Style, Zone, cell)
 from doc_to_html.render import SIZE_STEP, render
 
 WIDTH, HEIGHT = 700, 420
@@ -227,3 +227,115 @@ class TestDraw:
                     chip=BBox(0.1, 0.2, 0.3, 0.4))
         again = Document.from_json(paragraph(chip).to_json())
         assert again.zones[0].blocks[0].lines[0].look == chip
+
+
+def band(height: int = 14, width: int = 300) -> np.ndarray:
+    return np.full((height, width, 3), 255, np.uint8)
+
+
+class TestLinesBetweenRows:
+    """Spec 0011, step 4c: the line in the gap under a row, RGB bands."""
+
+    def test_a_pale_rule_across_the_gap_is_solid(self) -> None:
+        gap = band()
+        gap[7] = (230, 235, 239)
+        line = looks._stroke(gap, 9.0, 1000, coloured=True)
+        assert line.kind == "solid" and line.color == (230, 235, 239)
+        assert line.width == 0.001
+
+    def test_equal_dashes_are_dashed(self) -> None:
+        gap = band()
+        for x in range(0, 300, 5):
+            gap[7, x:x + 3] = (26, 26, 26)
+        assert looks._stroke(gap, 9.0, 1000, coloured=False).kind == "dashed"
+
+    def test_two_rules_with_ground_between_are_double(self) -> None:
+        gap = band()
+        gap[5] = gap[8] = (0, 0, 0)
+        assert looks._stroke(gap, 9.0, 1000, coloured=True).kind == "double"
+
+    def test_two_shades_touching_are_one_line(self) -> None:
+        # A photograph's blur splits one rule into two runs of grey.
+        gap = band()
+        gap[6], gap[7] = (120, 120, 120), (30, 30, 30)
+        line = looks._stroke(gap, 9.0, 1000, coloured=True)
+        assert line.kind == "solid" and line.color == (30, 30, 30)
+        assert line.width == 0.002
+
+    def test_a_fill_reaching_into_the_gap_is_no_line(self) -> None:
+        # `statement_0006`'s header bar runs 6px into the gap under it.
+        gap = band()
+        gap[:6] = (43, 32, 22)
+        assert looks._stroke(gap, 9.0, 1000, coloured=True).kind == "none"
+
+    def test_the_edge_of_a_stripe_is_no_line(self) -> None:
+        gap = band()
+        gap[:7] = (249, 247, 244)
+        assert looks._stroke(gap, 9.0, 1000, coloured=True).kind == "none"
+
+    def test_a_row_of_words_is_no_line(self) -> None:
+        gap = band()
+        cv2.putText(gap, "AID A000000031010", (10, 12), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.4, (0, 0, 0), 1, cv2.LINE_AA)
+        assert looks._stroke(gap, 9.0, 1000, coloured=True).kind == "none"
+
+
+def striped_table() -> tuple[np.ndarray, Document]:
+    """Four rows, RGB: a dark header bar, then white, a stripe, white; a pale
+    rule under each data row."""
+    image = np.full((HEIGHT, WIDTH, 3), 255, np.uint8)
+    rows = []
+    for number in range(4):
+        top = 40 + number * 30
+        if number == 0:
+            image[top - 6:top + 22] = (22, 32, 43)
+        elif number == 2:
+            image[top - 6:top + 22] = (244, 247, 249)
+        if number:
+            image[top + 22] = (230, 235, 239)
+        entry = cell(f"Row {number}")
+        entry.bbox = BBox(20 / WIDTH, top / HEIGHT, 120 / WIDTH, (top + 14) / HEIGHT)
+        rows.append(Row(cells=[entry], role=RowRole.HEADER if number == 0 else RowRole.DATA))
+    zone = Zone(kind=Kind.TABLE, bbox=BBox(10 / WIDTH, 30 / HEIGHT, 690 / WIDTH, 160 / HEIGHT),
+                complete=True, rows=rows)
+    return image, Document(source=Source(path="x.png", sha256="0", width=WIDTH,
+                                         height=HEIGHT), zones=[zone])
+
+
+class TestRows:
+    def test_each_row_reads_its_line_and_its_ground(self) -> None:
+        image, document = striped_table()
+        looks._rows(image, document, 9.0, coloured=True)
+        rows = document.zones[0].rows
+        assert [r.fill for r in rows] == [(22, 32, 43), None, (244, 247, 249), None]
+        assert [r.under.kind if r.under else None for r in rows] == [
+            "none", "solid", "solid", "solid"]
+
+    def test_a_photograph_reads_the_lines_and_not_their_colours(self) -> None:
+        image, document = striped_table()
+        looks._rows(image, document, 9.0, coloured=False)
+        rows = document.zones[0].rows
+        assert [r.fill for r in rows] == [None] * 4
+        assert rows[1].under is not None and rows[1].under.kind == "solid"
+        assert rows[1].under.color is None
+
+    def test_a_read_table_draws_its_rows_and_drops_the_house_rules(self) -> None:
+        under = Stroke(kind="dashed", width=0.002)
+        zone = Zone(kind=Kind.TABLE, complete=True, rows=[
+            Row(cells=[cell("Till 02")], role=RowRole.HEADER, under=under),
+            Row(cells=[cell("Flat white")], under=Stroke(kind="none"), fill=(244, 247, 249)),
+            Row(cells=[cell("Auth")], role=RowRole.HEADER)])
+        html = render(Document(source=Source(path="x.png", sha256="0", width=WIDTH,
+                                             height=HEIGHT), zones=[zone]))
+        assert '<table class="read">' in html
+        assert "table.read th, table.read td { border-bottom:none; }" in html
+        assert '<tr style="border-bottom:1px dashed var(--ink)">' in html
+        assert '<tr style="background:rgb(244,247,249)">' in html
+        # Unread, inside the table: the house rule, and no shade it never had.
+        assert '<tr style="border-bottom:1px solid var(--rule)"><th>Auth</th>' in html
+
+    def test_an_unread_table_keeps_the_house_rules(self) -> None:
+        zone = Zone(kind=Kind.TABLE, complete=True, rows=[Row(cells=[cell("a")])])
+        html = render(Document(source=Source(path="x.png", sha256="0", width=WIDTH,
+                                             height=HEIGHT), zones=[zone]))
+        assert "<table>" in html and "table.read" not in html

@@ -36,6 +36,10 @@ _Avoid_: Field (the drawn whole), box, widget, input
 How the page prints one entry — its size against the page's body, whether it is bold, whether it is italic, its colour, and the chip it stands on if it stands on one (a badge, a pill, a tag) — measured from the entry's own ink where its Cell is placed, never asked. A part not measurable is left unread, and an unread part draws as the house style does; a Look only ever adds to it.
 _Avoid_: Style (the Style Record is the page's), font, format
 
+**Stroke**:
+The line a page draws under a table row — solid, dashed, double, or none at all — measured from the gap between two placed rows and recorded on the row, with the row's own fill beside it. Unlike a Separator, a Stroke divides entries inside one Zone and is recorded, because whether a table rules every row, some rows or none is part of how it reads.
+_Avoid_: Rule, border, Separator (between Zones, never recorded)
+
 **Title**:
 A heading that belongs to a Zone rather than standing beside it — "Company Details" captioning the Pairs beneath it. A Title binds the caption to the block it names, so the grouping holds even when a neighbouring Zone in the same Band is a different height.
 _Avoid_: Heading, caption, label, panel header

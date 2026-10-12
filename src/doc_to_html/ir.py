@@ -153,6 +153,23 @@ class Reading:
     """
 
 
+STROKE_KINDS = ("none", "solid", "dashed", "double")
+"""How a line inside a Zone is drawn, as CSS names a border's style."""
+
+
+@dataclass
+class Stroke:
+    """A line the page draws between two entries — spec 0011, step 4c.
+    Measured from pixels by `looks.read`, never asked of a model."""
+
+    kind: str
+    """One of `STROKE_KINDS`."""
+
+    color: tuple[int, int, int] | None = None
+    width: float = 0.0
+    """How thick, normalised to the page's height like `BBox`."""
+
+
 @dataclass
 class Look:
     """How one entry is printed, measured from its own ink — spec 0011,
@@ -219,6 +236,15 @@ class Row:
 
     cells: list[Cell] = field(default_factory=list)
     role: RowRole = RowRole.DATA
+
+    under: Stroke | None = None
+    """The line the page draws under the row — spec 0011, step 4c. None
+    where it was not read; a Stroke of kind `none` where the page draws
+    none."""
+
+    fill: tuple[int, int, int] | None = None
+    """The row's own ground where it is not its Zone's, RGB — a header bar,
+    a zebra stripe. None on the Zone's ground, or where not read."""
 
 
 MARK_KINDS = ("box", "comb", "tick", "line")
@@ -698,6 +724,13 @@ def _bbox(data: dict[str, Any] | None) -> BBox | None:
     return BBox(**data) if data else None
 
 
+def _stroke(data: dict[str, Any] | None) -> Stroke | None:
+    if not data:
+        return None
+    return Stroke(kind=data["kind"], color=_colour(data.get("color")),
+                  width=float(data.get("width", 0.0)))
+
+
 def _reading(data: dict[str, Any]) -> Reading:
     """One Reading, with its Runs rebuilt as Runs.
 
@@ -745,6 +778,8 @@ def _zone(data: dict[str, Any]) -> Zone:
             Row(
                 cells=[_cell(c) for c in row.get("cells", [])],
                 role=RowRole(row.get("role", "data")),
+                under=_stroke(row.get("under")),
+                fill=_colour(row.get("fill")),
             )
             for row in data.get("rows", [])
         ],

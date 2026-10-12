@@ -702,6 +702,71 @@ Recorded, not argued:
   on its sheet. Recorded.
 - 973 tests, mypy clean.
 
+**Outcome — step 4c, 2026-10-12: DONE for tables, six pages better, nine
+the same, none worse.** Run `debug/runs/S6-4c-rules` (`tools/rederive.py`
+over `s5-result/`), sheets against `S6-4b-colour`. Replay (`S6-4c-replay`)
+= rederive, 15 of 15.
+
+What shipped:
+- **`ir.Stroke`** (`none`, `solid`, `dashed`, `double`; colour, width) as
+  **`Row.under`**, and **`Row.fill`**. `CONTEXT.md` has the term.
+- **`looks._rows`**, for every table, takes the placed rows in page order
+  and reads the gap under each, to 1.5 glyphs under the last:
+  - **A solid line** is a run of pixel rows no thicker than 0.3 of a glyph,
+    one colour across 90% of the width, differing from the gap's ground and
+    from the rows on both sides of it.
+  - **Two runs that touch are one line.** On the photographed receipt, one
+    1px rule blurs into two shades.
+  - **Two runs with ground between are double.**
+  - **A dashed line** is three or more equal dashes spanning 60% of the
+    width. "Far" here is half the most anything in the gap stands off its
+    ground, so a photograph's blur between dashes is not a dash.
+  - **A row's fill** is its band's modal ground, where it is not the Zone's.
+  - Lines are read on a photograph too; their colours and the fills are not.
+- **Three first cuts failed on the corpus, and each is in the docstrings:**
+  - A fixed far-threshold read the receipt's dashes as solid.
+  - That threshold also lost the statement's rule beside its stripes:
+    `#e6ebef` is 61 from white but only 36 from the stripe, so a threshold
+    set from one ground misses it on the other.
+  - The header bar's 6px reach into the gap read as a rule.
+- **`render`:** a table with any row read is `class="read"`. The house rule
+  under every cell, the shaded `thead` and the rule over `tfoot` give way
+  to each `<tr>`'s own line and ground. An unread row keeps the house rule,
+  and a header keeps the house shade only where it opens the table.
+- **One fault was found on the sheets.** The first cut shaded `menu_0012`'s
+  `PUDDINGS` and `receipt_0010`'s `AID`, unplaced headers inside the table
+  that the house had never shaded.
+
+What each table read, and the sheets against `S6-4b-colour`:
+
+| document | read | judgement | the element |
+|---|---|---|---|
+| `receipt_0010` | dashed, dashed, solid over TOTAL, dashed | better | rules only between the groups, the solid one over TOTAL, no rule between items, no grey header bars |
+| `menu_0012` | no line anywhere | better | the house rules between the dishes gone |
+| `statement_0006` | `#e6ebef` under every row, zebra fills, the dark 2px rule over Totals | better | stripes and pale rules as printed |
+| `nonlatin_0014` | pale rules under the items, none between the totals, blue 2px over the grand total | better | the blue rule where the page draws it |
+| `report_0011` | a rule under every row, no header fill | better | the header unshaded over a dark rule |
+| `cv_0013` | no line | better | the education table unruled |
+| `darkdeck_0009`, `sample_table_0003` | a rule under every row; sample_table's header fill | same | |
+| `invoice_0001` | pale rules under two items, none under the last | same | the last item unruled, as printed; the rule over `Total:`, which the page draws over the price cell only, now gone |
+| the other six | no table | same | byte-identical outside the IR |
+
+What is still not the page's:
+- **A rule over part of a row** — `invoice_0001`'s over its total — is never
+  read. A row's line is drawn across the whole row.
+- **The photographed receipt's rules are drawn at the 2px they blur to,**
+  not the 1px printed.
+- **An unplaced row keeps the house rule:** `PUDDINGS` and `AID`.
+- **Rules between blocks of prose and between Zones** are not this step's:
+  the receipt's dashed rules above `Till 02` and under `Auth` lie between
+  Zones.
+
+Recorded, not argued:
+- `vanished` is unchanged on every document.
+- Heights fall by 3-9px on six pages.
+- menu: beside 0.435 → 0.469.
+- 984 tests, mypy clean.
+
 ### Step 5 — one sweep, `S6-sweep`
 
 All fifteen, shipped defaults. Nothing in steps 1–4 changes a crop or a
