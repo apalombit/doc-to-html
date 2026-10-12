@@ -72,6 +72,22 @@ the next on that line, spanning `DASH_SPAN` of the gap — `menu_0012`'s
 dots from each dish to its price, 70 to 111 one-pixel dots spanning 94-97%
 of it. Nothing else in the corpus has one.
 
+**4f — the page's face**, on `Style.face`, one for the whole page, from
+its body-size lines of eight characters or more:
+- **mono** where the letters of a line stand on a lattice: the gaps
+  between their centres are whole multiples of one pitch, within 12% of it.
+  It holds for a median 0.89 of each line's gaps on `receipt_0010`, and at
+  most 0.60 on every other page. `MONO`.
+- **serif** where most stems stand on a foot: the run of ink a stem ends in
+  on the baseline is at least twice as wide as the stem at half the
+  x-height. It holds for 0.83-0.98 of the stems on the four serif pages and
+  at most 0.51 on the sans ones — `nonlatin_0014`'s Greek the highest. `SERIF`.
+- **sans** otherwise.
+
+Per Zone it is not clearly right: the serif pages' footers and subtitles
+fall to 0.63, and the sans pages' Zones reach 0.58. `report_0011`'s table,
+set in Arial on a Palatino page, is one face with its page.
+
 Every threshold sits in the gap of its distribution, measured on 2026-10-12
 over the placed Cells of the eleven pages whose picture is its own HTML,
 each labelled with the size, weight, style and colour Chrome computed for the
@@ -160,6 +176,21 @@ a cell's padding below the words, and needs ground after it to be one."""
 DOUBLE = 0.4
 """Two solid lines within this many glyphs of each other are one double
 line."""
+
+MONO = 0.75
+"""The share of a page's lines' letter gaps that fall on one pitch above
+which the page is set in a mono face — between 0.60 and 0.89."""
+
+FOOT = 2.0
+"""How many times as wide as its stem a stem's run on the baseline is when
+it stands on a foot."""
+
+SERIF = 2 / 3
+"""The share of a page's stems standing on a foot above which its face is a
+serif — between 0.51 and 0.83."""
+
+FACE_LINES, FACE_STEMS = 6, 50
+"""Fewer measured lines, or stems, leave the face unread."""
 
 CHIP_APART = 45
 """Channel-sum by which the ground on both sides must differ from the Cell's
@@ -282,6 +313,59 @@ def _slant(cover: ImageArray) -> float | None:
         if sharp > best:
             best, angle = sharp, float(degrees)
     return angle
+
+
+def _pitch(ink: ImageArray) -> float | None:
+    """The share of one line's letter gaps that are whole multiples of a
+    single pitch — near 1 where every letter stands the same width apart.
+    Letters are runs of inked columns; None for fewer than eight."""
+    letters = _spans(list(ink.any(axis=0)))
+    if len(letters) < 8:
+        return None
+    gaps = np.diff([(start + end) / 2 for start, end in letters])
+    best = 0.0
+    for pitch in np.arange(max(2.0, 0.8 * float(np.percentile(gaps, 10))),
+                           1.3 * float(np.percentile(gaps, 60)), 0.1):
+        times = np.round(gaps / pitch)
+        best = max(best, float(((times >= 1)
+                                & (np.abs(gaps - times * pitch) <= 0.12 * pitch)).mean()))
+    return best
+
+
+def _feet(cover: ImageArray, ink: ImageArray) -> list[float]:
+    """For each stem of a Cell's lines, how many times as wide as itself is
+    the run of ink it ends in on the baseline. A stem is a run at half the
+    x-height no wider than 0.3 of it, under exactly one baseline run, so a
+    bowl's two sides — one run below two — are not one."""
+    cv2 = _cv2()
+    widths: list[float] = []
+    for top, bottom in _lines(ink):
+        strip = ink[top:bottom + 1].astype(np.uint8)
+        stats = cv2.connectedComponentsWithStats(strip, connectivity=8)[2][1:]
+        ends = [int(y + h) for _, y, _, h, _ in stats if h >= 3]
+        if len(ends) < 4:
+            continue
+        base = top + int(np.argmax(np.bincount(ends))) - 1
+        standing = [int(h) for _, y, _, h, _ in stats
+                    if abs(int(y + h) + top - 1 - base) <= 1]
+        x_height = float(np.percentile(standing, 30)) if standing else 0.0
+        if x_height < 4:
+            continue
+        middle = _spans(list(cover[int(round(base - x_height / 2))] >= 0.5))
+        for start, end in _spans(list(cover[base] >= 0.5)):
+            over = [(a, b) for a, b in middle if a < end and b > start]
+            if len(over) == 1 and over[0][1] - over[0][0] <= 0.3 * x_height:
+                widths.append((end - start) / (over[0][1] - over[0][0]))
+    return widths
+
+
+def _face(pitches: Sequence[float], feet: Sequence[float]) -> str | None:
+    """The page's face from its lines' pitch fits and its stems' feet."""
+    if len(pitches) >= FACE_LINES and float(np.median(pitches)) >= MONO:
+        return "mono"
+    if len(feet) < FACE_STEMS:
+        return None
+    return "serif" if float(np.mean(np.asarray(feet) >= FOOT)) >= SERIF else "sans"
 
 
 def _apart(one: Sequence[float], other: Sequence[float]) -> int:
@@ -538,6 +622,8 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
     for zone in document.zones:
         for cell, _ in cells_of(zone):
             cell.look = None
+    if document.style is not None:
+        document.style.face = None
     _blocks(document)
     body = body_glyph(image, document.zones)
     if not body:
@@ -552,6 +638,8 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
         rgb = None if photographed else true
     style = document.style or Style()
     measured: list[tuple[Cell, float | None, float | None, float | None]] = []
+    pitches: list[float] = []
+    feet: list[float] = []
     colours: dict[int, tuple[tuple[int, int, int], tuple[int, int, int] | None,
                              tuple[BBox, float] | None]] = {}
     for zone in document.zones:
@@ -598,6 +686,11 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
             letters = sum(1 for letter in cell.text if letter.isalpha())
             slant = _slant(cover) if cover is not None and letters >= LETTERS else None
             measured.append((cell, glyph / body if glyph else None, weight, slant))
+            if (cover is not None and len(cell.text.strip()) >= 8
+                    and (not glyph or 0.85 <= glyph / body <= 1.15)):
+                if len(_lines(ink)) == 1 and (fit := _pitch(ink)) is not None:
+                    pitches.append(fit)
+                feet.extend(_feet(cover, ink))
 
     def median(values: Sequence[float | None]) -> float | None:
         known = [v for v in values if v is not None]
@@ -617,3 +710,5 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
             color=colour, fill=fill,
             chip=None if chip is None else chip[0],
             radius=None if chip is None else chip[1])
+    if document.style is not None:
+        document.style.face = _face(pitches, feet)

@@ -872,6 +872,57 @@ Recorded, not argued:
   nothing on those sheets changed colour.
 - `vanished` is unchanged on every document. 996 tests pass; mypy is clean.
 
+**Outcome — step 4f, 2026-10-12: DONE, five pages better, ten unchanged.**
+Run `debug/runs/S6-4f-face`, sheets against `S6-4e-blocks`. Replay
+(`S6-4f-replay`) = rederive, 15 of 15.
+
+What shipped:
+- **`Style.face`** — `serif`, `sans` or `mono` — one for the page, read by
+  `looks.read` from its body-size lines of eight characters or more. Each
+  measure has an empty band in its distribution:
+
+| measure | what it is | serif pages | sans pages | `receipt_0010` | threshold |
+|---|---|---|---|---|---|
+| pitch fit, median per line | share of a line's letter-centre gaps that are whole multiples of one pitch, within 12% of it | 0.42-0.53 | 0.45-0.60 | **0.89** | `MONO` 0.75 |
+| feet, share per page | share of stems whose run on the baseline is at least twice as wide as the stem at half the x-height | **0.83-0.98** | 0.21-0.51 | 0.91 | `SERIF` 2/3 |
+
+  Mono is decided first. The reading is right on all fifteen pages: four
+  serif, one mono, ten sans.
+- **`render`** sets the body in `Georgia` or in the system's mono face. Both
+  stand their capitals near the house face's 0.7em, so the body's measured
+  size holds unchanged. A sans page keeps the house face, and its bytes. The
+  findings and caveats are this system's notes, not the page's, and keep
+  the house face.
+- **Per Zone it is not clearly right, so it was not done.** On the serif
+  pages, footers and subtitles fall to 0.63. On the sans pages, Zones reach
+  0.58.
+
+| document | judgement | the element |
+|---|---|---|
+| `menu_0012` | better | the whole menu in a serif, as printed; the right column's dish names now fit on their line, as on the page |
+| `newsletter_0008` | better | the masthead, headline and three columns in a serif |
+| `report_0011` | better | headings and paragraphs in a serif, as printed |
+| `sample_semantic_0005` | better | title, headings, list and quotation in a serif |
+| `receipt_0010` | better | every line in a mono face, the columns standing as a till prints them |
+| the other ten | same | byte-identical outside the IR |
+
+What is still not the page's:
+- **`report_0011`'s table is set in Arial on a Palatino page**, and is
+  drawn in Georgia with its page. Georgia's old-style figures stand some
+  digits below the line. Per Zone it reads 0.31, but other Zones' figures
+  overlap, as above.
+- **Inline mono runs are not read:** `invoice_0002`'s bank numbers and
+  `sample_css_0004`'s code.
+- **The receipt's mono is heavier than its Courier.**
+- **The page's family itself is not matched** — Baskerville, Palatino and
+  Georgia are all drawn as Georgia. ADR 0005 de-prioritises it.
+
+Recorded, not argued:
+- Columns within tolerance rose on three pages: menu 0.737 → 0.947, receipt
+  0.875 → 1.000, report 0.950 → 1.000.
+- Heights: menu 1.351 → 1.306, newsletter 1.186 → 1.159.
+- `vanished` is unchanged on every document. 1001 tests pass; mypy is clean.
+
 ### Step 5 — one sweep, `S6-sweep`
 
 All fifteen, shipped defaults. Nothing in steps 1–4 changes a crop or a

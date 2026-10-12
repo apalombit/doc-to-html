@@ -474,3 +474,65 @@ class TestSpacing:
         assert ('<ul style="margin-bottom:0"><li>Line 0</li>'
                 '<li style="margin-top:28px">Line 1</li></ul>'
                 '<p style="margin-top:28px">Line 2</p>') in html
+
+
+def letters(pitch: int | None) -> np.ndarray:
+    """A line of ink: each letter centred in a cell `pitch` wide, as a mono
+    face sets it, or set proportionally, as the Hershey face does, where it
+    is None."""
+    image = np.full((30, 400), 255, np.uint8)
+    font, text = cv2.FONT_HERSHEY_SIMPLEX, "Willow milling quietly"
+    if pitch is None:
+        cv2.putText(image, text, (4, 22), font, 0.6, 0, 1)
+    else:
+        for index, letter in enumerate(text):
+            wide = cv2.getTextSize(letter, font, 0.6, 1)[0][0]
+            cv2.putText(image, letter, (4 + index * pitch + (pitch - wide) // 2, 22),
+                        font, 0.6, 0, 1)
+    return image < 128
+
+
+def stems(foot: int) -> tuple[np.ndarray, np.ndarray]:
+    """Eight stems 2px wide on one baseline, each ending in a run `foot`
+    wide; a dot over each so the line has its x-height."""
+    ink = np.zeros((24, 200), bool)
+    for index in range(8):
+        left = 10 + index * 20
+        ink[8:20, left:left + 2] = True
+        ink[18:20, left + 1 - foot // 2:left + 1 + (foot + 1) // 2] = True
+    return ink.astype(float), ink
+
+
+class TestFace:
+    """Spec 0011, step 4f: the class of face the page's body is set in."""
+
+    def test_letters_one_pitch_apart_fit_it_and_set_ones_do_not(self) -> None:
+        fixed, set_ = looks._pitch(letters(12)), looks._pitch(letters(None))
+        assert fixed is not None and fixed >= looks.MONO
+        assert set_ is not None and set_ < looks.MONO
+
+    def test_a_stem_on_a_foot_is_wider_on_the_baseline(self) -> None:
+        assert all(width >= looks.FOOT for width in looks._feet(*stems(6)))
+        assert all(width < looks.FOOT for width in looks._feet(*stems(2)))
+        assert len(looks._feet(*stems(6))) == 8
+
+    def test_the_face_is_read_from_both_and_left_unread_on_too_little(self) -> None:
+        assert looks._face([0.9] * 6, [1.0] * 60) == "mono"
+        assert looks._face([0.5] * 6, [2.0] * 50 + [1.0] * 10) == "serif"
+        assert looks._face([0.5] * 6, [2.0] * 20 + [1.0] * 40) == "sans"
+        assert looks._face([0.9] * 5, [2.0] * 49) is None
+
+    def test_a_serif_page_is_drawn_serif_and_its_findings_are_not(self) -> None:
+        document = paragraph(None)
+        document.style = Style(face="serif")
+        html = render(document)
+        assert 'body { font-family:Georgia, "Times New Roman", serif; }' in html
+        assert ".findings { font-family:-apple-system" in html
+        document.style = Style(face="sans")
+        assert "font-family:Georgia" not in render(document)
+
+    def test_the_face_survives_the_ir(self) -> None:
+        document = paragraph(None)
+        document.style = Style(face="mono")
+        again = Document.from_json(document.to_json())
+        assert again.style is not None and again.style.face == "mono"

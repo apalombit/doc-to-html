@@ -81,7 +81,7 @@ The standard the output is held to: semantic markup and correct Zone ordering, r
 _Avoid_: Accuracy, faithfulness, visual fidelity
 
 **Style Record**:
-What a page looks like, measured from its own pixels and never asked of a model: ground, ink and accent colour, shaded bands, borders and card treatment, type scale, and the page's width. It is part of the IR, so the renderer reacts to it exactly as it reacts to Kind, Role and Title. Measuring rather than asking is the decision, not an implementation detail — colour is perception, and this project has established that a model complies with instructions to decide differently and ignores instructions to perceive differently.
+What a page looks like, measured from its own pixels and never asked of a model: ground, ink and accent colour, shaded bands, borders and card treatment, type scale, the class of face its body is set in, and the page's width. It is part of the IR, so the renderer reacts to it exactly as it reacts to Kind, Role and Title. Measuring rather than asking is the decision, not an implementation detail — colour is perception, and this project has established that a model complies with instructions to decide differently and ignores instructions to perceive differently.
 _Avoid_: Theme, stylesheet, CSS, design tokens, styling
 
 **Probe**:

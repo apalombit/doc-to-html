@@ -718,6 +718,10 @@ def _style_css(document: Document) -> str:
         # element's own `em` is its parent's, and a footer's is 0.875 of it.
         rules.append(f"body {{ font-size:{style.body_px:g}px;"
                      f" --body:{style.body_px:g}px; }}")
+    if style.face in FACE_CSS:
+        # The findings are this system's notes, not the page's, and keep its face.
+        rules.append(f"body {{ font-family:{FACE_CSS[style.face]}; }}"
+                     f" .findings {{ font-family:{HOUSE_FACE}; }}")
     root = [
         f"--page-bg:{_rgb(style.page_bg)}",
         f"--ink:{_rgb(style.ink)}",
@@ -1274,6 +1278,18 @@ LEADER_CSS = (
 0011, step 4d. Emitted only for a page that has one. No minimum width: a
 name that wraps leaves its leader no room rather than a stub, and the
 column is sized as if it had none."""
+
+
+HOUSE_FACE = '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
+"""The stylesheet's own face, which `body` is set in."""
+
+FACE_CSS = {
+    "serif": 'Georgia, "Times New Roman", serif',
+    "mono": "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
+}
+"""The family a page set in a serif or a mono face is drawn in — spec 0011,
+step 4f; a sans page keeps the house's. Each stands its capitals near the
+house's 0.7em, so the body's measured size holds: `style.EM_PER_GLYPH`."""
 
 
 def _leader(row: Row, page: _Page) -> str:

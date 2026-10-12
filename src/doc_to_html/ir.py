@@ -594,6 +594,15 @@ class Style:
     body_px: float | None = None
     """The body type's size in source pixels, read off the page's lines — spec
     0010, step D1. See `style.EM_PER_GLYPH`. None draws the house 16px."""
+    face: str | None = None
+    """The class of face the page's body is set in — one of `FACES` — read
+    off the shapes of its body lines' letters: spec 0011, step 4f. See
+    `looks.read`. None, unread, draws the house face."""
+
+
+FACES = ("serif", "sans", "mono")
+"""What `Style.face` may be: a face with feet on its stems, one without, or
+one whose letters all stand the same width apart."""
 
 
 class Flow(str, Enum):
@@ -736,7 +745,8 @@ def _style(data: dict[str, Any] | None) -> Style | None:
     return Style(page_bg=ground, ink=ink,
                  accent=_colour(data.get("accent")),
                  shade=_colour(data.get("shade")),
-                 body_px=None if body is None else float(body))
+                 body_px=None if body is None else float(body),
+                 face=data.get("face"))
 
 
 def _bbox(data: dict[str, Any] | None) -> BBox | None:
