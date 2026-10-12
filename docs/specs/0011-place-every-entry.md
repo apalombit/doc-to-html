@@ -933,6 +933,17 @@ Record the scores. Report what the pages look like, in spec 0009's §7 format,
 leading with the pages. Whether `S6-sweep` becomes the baseline is
 Alessandro's decision.
 
+**Prediction, registered 2026-10-12 before the sweep started, on commit
+`54b0831`:**
+- all fifteen documents ask the same calls as `S5-sweep`, and every answer
+  comes back byte-identical to `tests/frozen/s5-result/answers/`;
+- every `document.html` is byte-identical to the replay of step 4's last
+  commit, `debug/runs/S6-4f-replay`.
+
+Steps 1-4 change nothing upstream of the model's answers: no crop, no
+prompt, no Zone. A miss on either clause names the step that moved
+something it was not meant to move.
+
 ---
 
 ## 4. What this spec does not fix
