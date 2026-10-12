@@ -15,14 +15,16 @@ from __future__ import annotations
 import html
 import json
 import re
-from dataclasses import asdict
+from collections import Counter
+from dataclasses import asdict, dataclass, field
 from enum import Enum
 from functools import lru_cache
 from itertools import groupby
+from statistics import median
 from typing import Any
 
-from .ir import (Block, Cell, CellState, Document, Flow, Kind, Pair, Region,
-                 Role, RowRole, Zone)
+from .ir import (BBox, Block, Cell, CellState, Document, Flow, Kind, Pair,
+                 Region, Role, RowRole, Zone)
 from .probes import is_numeric
 from .wire import MARKS, bands_from_boxes
 
@@ -53,7 +55,13 @@ mark { background:var(--mark-bg); color:inherit; padding:0 0.15em; }
    wide as the page draws it. Spec 0008, step 2. */
 .columns { display:flex; gap:2rem; align-items:flex-start; margin-bottom:1.75rem; }
 .lane { min-width:0; }
-.lane > .band:last-child { margin-bottom:0; }
+.lane > :last-child { margin-bottom:0; }
+/* A rectangle the page draws round a run of Zones in one lane, drawn once
+   round the run. Spec 0011, step 1a — see `rhythm.frames`. */
+.frame { border:1px solid var(--rule); border-radius:4px; margin-bottom:1.75rem; }
+/* One Zone of a Continuation, holding its own margins, so the gap drawn before it is
+   the page's and not that gap collapsed into a paragraph's. Spec 0011, 1b. */
+.cont { display:flow-root; }
 /* A `grid` Region: its Zones by row and by lane, never wrapped. Spec 0010, B1. */
 .grid { display:grid; column-gap:2rem; row-gap:1.75rem; align-items:start;
         margin-bottom:1.75rem; }
@@ -104,6 +112,10 @@ dl.pairs dt, dl.pairs dd { overflow-wrap:anywhere; }
 dl.pairs dt.alone { grid-column:1 / -1; }
 dl.pairs dt.alone + dd { display:none; }
 dl.pairs dt { color:var(--muted); }
+/* A pairs Zone whose lines the page sets centred or flush right: each pair a
+   line, label beside value, so the line can sit where the page sets it. */
+dl.pairs.lines { display:block; }
+dl.pairs.lines dt, dl.pairs.lines dd { display:inline; }
 dl.pairs dd { margin:0; }
 .zone-summary dl.pairs dd { font-weight:600; text-align:right; }
 .table-wrap { overflow-x:auto; }
@@ -150,22 +162,322 @@ def render(document: Document, *, title: str | None = None) -> str:
     )
 
 
-def _band(zones: list[Zone], document: Document) -> str:
-    return ('<div class="band">'
-            + "".join(_zone(zone, document) for zone in zones) + "</div>")
+@dataclass(frozen=True)
+class _Page:
+    """What a gap read off the page is measured in — spec 0011, step 1a.
+
+    `y` and `x` are source pixels per unit of a normalised box, and `body` the
+    size the body is drawn at. The render is laid out in the source's pixels
+    — `Style.body_px` is scaled from the rectified image to the source's
+    width — so a gap measured on the page is drawn at that many CSS pixels.
+    """
+
+    y: float
+    x: float
+    body: float
+
+
+def _page(document: Document) -> _Page:
+    source = document.source
+    wide = source.rectified_width or source.width
+    tall = source.rectified_height or source.height
+    scale = source.width / wide if wide else 1.0
+    body = (document.style.body_px if document.style is not None
+            and document.style.body_px else 16.0)
+    return _Page(y=tall * scale, x=float(source.width), body=body)
+
+
+ABOVE_INK = {"p": 0.31, "h1": 0.39, "table": 0.75, "dl": 0.31, "title": 0.88,
+             "li": 0.31}
+BELOW_INK = {"p": 0.62, "h1": 0.53, "table": 0.72, "dl": 0.25, "li": 0.22}
+"""How far the stylesheet's boxes reach past their ink, in ems — measured.
+
+Spec 0011, step 1a draws the page's own gap between two rows: the gap
+between their ink, less what CSS adds round the ink on each side. The spec
+probed it as one figure, 1.3 body ems for a paragraph over a paragraph. It
+was re-measured on 2026-10-12, each element alone in headless Chrome with this
+stylesheet, at 13 and 16px, from the first inked row to the box above and
+from the last to the box below, margins included: a paragraph 0.31 above and
+0.62 below, so 0.93 rather than 1.3; a heading 0.39 and 0.53 of its own size
+(0.62 and 0.85 at the house 1.6em); a table 0.75 and 0.72; a pairs list
+0.31 and 0.25; a Zone Title 0.88 of its own size above; a list item, inside
+a list, 0.31 and 0.22. So the figure is subtracted per side, by what each
+row opens and closes with.
+"""
+
+FILLED_PAD = 0.9
+"""`section.filled > .zone-body`'s padding, in ems: a titled Zone with a fill
+of its own reaches this much further below its ink."""
+
+
+def _opens(zone: Zone) -> float:
+    """What the stylesheet draws above a Zone's first ink, in ems of the body."""
+    if zone.title:
+        return ABOVE_INK["title"] * (zone.title_size or 0.95)
+    if zone.kind is Kind.TABLE:
+        return ABOVE_INK["table"]
+    if zone.kind is Kind.PAIRS:
+        return ABOVE_INK["dl"]
+    if zone.kind is Kind.FIGURE:
+        return 0.0
+    first = zone.blocks[0] if zone.blocks else None
+    if first is not None and first.kind == "heading":
+        return ABOVE_INK["h1"] * (first.size or 1.6)
+    return ABOVE_INK["p"]
+
+
+def _closes(zone: Zone, *, plain: bool = False) -> float:
+    """What the stylesheet draws below a Zone's last ink, in ems of the body."""
+    padded = FILLED_PAD if (zone.title and zone.fill is not None
+                            and not zone.boxed and not plain) else 0.0
+    if zone.kind is Kind.TABLE:
+        return BELOW_INK["table"] + padded
+    if zone.kind is Kind.PAIRS:
+        return BELOW_INK["dl"] + padded
+    if zone.kind is Kind.FIGURE:
+        return padded
+    last = zone.blocks[-1] if zone.blocks else None
+    if last is not None and last.kind == "heading":
+        return BELOW_INK["h1"] * (last.size or 1.6) + padded
+    return BELOW_INK["p"] + padded
+
+
+def _own_frame(zone: Zone) -> bool:
+    """Whether the Zone is drawn as its own card, so its edge is its frame's."""
+    return zone.boxed and zone.frame is not None
+
+
+def _top(zone: Zone, page: _Page) -> float | None:
+    """Where the Zone's drawn box begins on the page, in source pixels."""
+    if _own_frame(zone):
+        assert zone.frame is not None
+        return zone.frame.top * page.y
+    if zone.bbox is None:
+        return None
+    return zone.bbox.top * page.y - _opens(zone) * page.body
+
+
+def _bottom(zone: Zone, page: _Page, *, plain: bool = False) -> float | None:
+    """Where the Zone's drawn box ends on the page, in source pixels."""
+    if _own_frame(zone):
+        assert zone.frame is not None
+        return zone.frame.bottom * page.y
+    if zone.bbox is None:
+        return None
+    return zone.bbox.bottom * page.y + _closes(zone, plain=plain) * page.body
+
+
+def _px(value: float) -> str:
+    return f"{max(0.0, value):.0f}px"
+
+
+@dataclass
+class _Row:
+    """One row of a stack — a band, a region, a frame — with where the page
+    draws it, so the stack can put the page's gap after it."""
+
+    cls: str
+    inner: str
+    zones: list[Zone]
+    top: float | None
+    bottom: float | None
+    style: list[str] = field(default_factory=list)
+
+    def markup(self, margin: float | None = None) -> str:
+        style = list(self.style)
+        if margin is not None:
+            style.append(f"margin-bottom:{_px(margin)}")
+        attribute = f' style="{";".join(style)}"' if style else ""
+        return f'<div class="{self.cls}"{attribute}>{self.inner}</div>'
+
+
+def _shared(document: Document) -> set[BBox]:
+    """The frames more than one Zone is drawn inside — see `rhythm.frames`."""
+    counts = Counter(zone.frame for zone in document.zones
+                     if zone.frame is not None)
+    return {frame for frame, count in counts.items() if count > 1}
+
+
+def _units(zones: list[Zone]) -> list[list[Zone]]:
+    """`zones` with each Continuation gathered into one unit, at its first member's
+    place, members top to bottom — see `rhythm.groups`."""
+    runs: dict[int, list[Zone]] = {}
+    out: list[list[Zone]] = []
+    for zone in zones:
+        if zone.group is None:
+            out.append([zone])
+            continue
+        if zone.group not in runs:
+            runs[zone.group] = []
+            out.append(runs[zone.group])
+        runs[zone.group].append(zone)
+    for unit in out:
+        unit.sort(key=lambda z: z.bbox.top if z.bbox is not None else 0.0)
+    return out
+
+
+def _unit_box(unit: list[Zone]) -> BBox | None:
+    boxes = [zone.bbox for zone in unit if zone.bbox is not None]
+    if not boxes:
+        return None
+    return BBox(min(b.left for b in boxes), min(b.top for b in boxes),
+                max(b.right for b in boxes), max(b.bottom for b in boxes))
+
+
+def _band(units: list[list[Zone]], document: Document, page: _Page,
+          plain: set[int]) -> _Row:
+    """One row of side-by-side units. **A unit set flush right with others
+    beside it** shrinks to its content and is pushed to the row's end, so the
+    unit before it takes the room the page gives it — `Q3 2026 · INTERNAL`
+    beside `Platform review`, `Account` beside the statement's title. **Each
+    unit starts as far below the row's top as the page starts it**, so
+    `Q3 2026 · INTERNAL` stands level with the Title beside it and `2021 —
+    present` with its job, not with the heading above it."""
+    starts = [_top(unit[0], page) for unit in units]
+    known = [t for t in starts if t is not None]
+    first = min(known) if known else None
+    parts = []
+    for position, (unit, start) in enumerate(zip(units, starts)):
+        extra = []
+        if first is not None and start is not None and start - first >= 1:
+            extra.append(f"margin-top:{_px(start - first)}")
+        if (len(units) > 1 and position == len(units) - 1
+                and len(unit) == 1 and unit[0].align == "right"):
+            extra.append("flex:0 1 auto;margin-left:auto")
+        parts.append(_unit(unit, document, page,
+                           plain=id(unit[0]) in plain, extra=";".join(extra)))
+    zones = [zone for unit in units for zone in unit]
+    tops = known
+    bottoms = [b for unit in units
+               if (b := _bottom(unit[-1], page, plain=id(unit[0]) in plain))
+               is not None]
+    return _Row("band", "".join(parts), zones,
+                min(tops) if tops else None, max(bottoms) if bottoms else None)
+
+
+def _gap(above: _Row, below: _Row) -> float | None:
+    if above.bottom is None or below.top is None:
+        return None
+    return below.top - above.bottom
+
+
+def _stack(rows: list[_Row], page: _Page,
+           separators: list[float] = []) -> list[str]:
+    """Rows one under another, each followed by the gap the page leaves
+    before the next — spec 0011, step 1a.
+
+    The gap is the page's ink gap less what the stylesheet draws round the
+    ink on either side (`ABOVE_INK`, `BELOW_INK`), or measured from a drawn
+    box's edge where the row is one. **The house 1.75rem is the fallback**,
+    for a row with no box to measure.
+
+    **A rule the page draws between two rows splits the gap where it lies**
+    — spec 0009, step D, 4b: a bordered `div`, not an `<hr>`, because
+    `projection` counts an `<hr>` as a forced line break. A rule is drawn
+    before a row when it lies between the bottom of everything drawn so far
+    and the top of that row, so a rule at a height some Zone already spans is
+    never drawn through it; one rule per gap, however many the page draws
+    there.
+    """
+    out: list[str] = []
+    above: float | None = None
+    for index, row in enumerate(rows):
+        following = rows[index + 1] if index + 1 < len(rows) else None
+        rule = None
+        if following is not None and separators:
+            boxes = [z.bbox for z in row.zones if z.bbox is not None]
+            reach = max([b.bottom for b in boxes] + ([above] if above else []),
+                        default=None)
+            nexts = [z.bbox.top for z in following.zones if z.bbox is not None]
+            if reach is not None and nexts:
+                rule = next((y for y in separators
+                             if reach <= y <= min(nexts)), None)
+        if following is None:
+            out.append(row.markup())
+        elif rule is not None and row.bottom is not None and following.top is not None:
+            out.append(row.markup(rule * page.y - row.bottom))
+            out.append(f'<div class="separator" style="margin:0 0 '
+                       f'{_px(following.top - rule * page.y)}"></div>')
+        else:
+            out.append(row.markup(_gap(row, following)))
+            if rule is not None:
+                out.append('<div class="separator"></div>')
+        boxes = [z.bbox for z in row.zones if z.bbox is not None]
+        if boxes:
+            bottom = max(box.bottom for box in boxes)
+            above = bottom if above is None else max(above, bottom)
+    return out
+
+
+def _framed(rows: list[_Row], document: Document, page: _Page,
+            shared: set[BBox]) -> list[_Row]:
+    """Consecutive rows whose every Zone is drawn inside one shared frame,
+    gathered into that frame, drawn once round them — the card
+    `darkdeck_0009` draws round OPEN RISKS and DECISIONS WANTED.
+
+    Its padding is the page's: from the frame's edge to the first row's top,
+    to the Zones' left edge, and from the last row's bottom. Its fill is its
+    Zones' common fill, which they then do not paint again.
+    """
+    def frame_of(row: _Row) -> BBox | None:
+        frames = {zone.frame for zone in row.zones}
+        if len(frames) == 1:
+            (frame,) = frames
+            if frame in shared:
+                return frame
+        return None
+
+    out: list[_Row] = []
+    index = 0
+    while index < len(rows):
+        frame = frame_of(rows[index])
+        if frame is None:
+            out.append(rows[index])
+            index += 1
+            continue
+        run = [rows[index]]
+        while index + len(run) < len(rows) and frame_of(rows[index + len(run)]) == frame:
+            run.append(rows[index + len(run)])
+        index += len(run)
+        zones = [zone for row in run for zone in row.zones]
+        style = []
+        fills = {zone.fill for zone in zones}
+        if len(fills) == 1 and None not in fills:
+            (fill,) = fills
+            assert fill is not None
+            style.append(f"background:{_rgb(fill)}")
+            ink = _readable_on(fill, document.style.ink if document.style else None)
+            if ink is not None:
+                style.append(f"color:{_rgb(ink)}")
+        top = frame.top * page.y
+        bottom = frame.bottom * page.y
+        lefts = [z.bbox.left for z in zones if z.bbox is not None]
+        side = (min(lefts) - frame.left) * page.x if lefts else 0.0
+        head = run[0].top - top if run[0].top is not None else 0.0
+        foot = bottom - run[-1].bottom if run[-1].bottom is not None else 0.0
+        style.append(f"padding:{_px(head)} {_px(side)} {_px(foot)}")
+        out.append(_Row("frame", "".join(_stack(run, page)), zones, top, bottom,
+                        style))
+    return out
 
 
 def _body(document: Document) -> list[str]:
     """Every Band as a row, except where a `columns` Region reads down.
 
-    **A page with no `columns` Region is drawn exactly as before**, Band by
-    Band. Where there is one, its Zones leave the page's Bands and are drawn
-    together, where the first of them would have been: each lane a stack of
-    its own rows, read top to bottom, so `cv_0013`'s sidebar is no longer
-    paired with whichever main-column item sits at its height.
+    **A page with no `columns` Region is drawn Band by Band.** Where there is
+    one, its Zones leave the page's Bands and are drawn together, where the
+    first of them would have been: each lane a stack of its own rows, read
+    top to bottom, so `cv_0013`'s sidebar is no longer paired with whichever
+    main-column item sits at its height. A `grid` Region is drawn the same
+    way, as one grid — see `_grid`.
 
-    A `grid` Region is drawn the same way, as one grid — see `_grid`.
+    **Spec 0011, step 1.** Every row is followed by the page's own gap (see
+    `_stack`); a Continuation is drawn as one section (`_unit`); a frame a run of rows shares is drawn once round them
+    (`_framed`).
     """
+    page = _page(document)
+    shared = _shared(document)
+    plain = {id(zone) for zone in document.zones if zone.frame in shared}
     columns = [r for r in document.regions
                if r.flow in (Flow.COLUMNS, Flow.GRID)]
     home: dict[int, Region] = {}
@@ -174,62 +486,32 @@ def _body(document: Document) -> list[str]:
             if zone.bbox is not None and region.holds(zone.bbox):
                 home[id(zone)] = region
                 break
-    if not home:
-        return _with_separators(
-            [(_band(band, document), band) for band in document.bands()],
-            document.separators)
 
-    out: list[tuple[str, list[Zone]]] = []
+    later = {id(zone) for unit in _units(document.zones) for zone in unit[1:]}
+    heads = {id(unit[0]): unit for unit in _units(document.zones)}
+    rows: list[_Row] = []
     drawn: set[int] = set()
     for band in document.bands():
-        outside = [zone for zone in band if id(zone) not in home]
+        outside = [heads[id(zone)] for zone in band
+                   if id(zone) not in home and id(zone) not in later]
         if outside:
-            out.append((_band(outside, document), outside))
+            rows.append(_band(outside, document, page, plain))
         for zone in band:
             held = home.get(id(zone))
             if held is None or id(held) in drawn:
                 continue
             drawn.add(id(held))
             inside = [z for z in document.zones if home.get(id(z)) is held]
-            drawer = _grid if held.flow is Flow.GRID else _columns
-            out.append((drawer(held, inside, document), inside))
-    return _with_separators(out, document.separators)
+            if held.flow is Flow.GRID:
+                rows.append(_grid(held, inside, document, page))
+            else:
+                rows.append(_columns(held, inside, document, page, shared, plain))
+    return _stack(_framed(rows, document, page, shared), page,
+                  document.separators)
 
 
-def _with_separators(rows: list[tuple[str, list[Zone]]],
-                     separators: list[float]) -> list[str]:
-    """The drawn rows, with a rule wherever the page draws one between them —
-    spec 0009, step D, 4b. See `structure.separators`.
-
-    A rule is drawn before a row when it lies between the bottom of
-    everything drawn so far and the top of that row, so a rule at a height
-    some Zone already spans is never drawn through it. One rule per gap,
-    however many the page draws there. With none, the rows come back as
-    they were.
-
-    **A bordered `div`, not an `<hr>`**, and drawn inside the gap the rows
-    already leave rather than adding one. Most sources draw these rules as a
-    border, and `projection` counts an `<hr>` as a forced line break: drawn
-    as `<hr>` with a margin of its own, the first measurement put a break on
-    eleven pages that print none and made each ~29px taller.
-    """
-    if not separators:
-        return [markup for markup, _ in rows]
-    out: list[str] = []
-    above: float | None = None
-    for markup, zones in rows:
-        boxes = [zone.bbox for zone in zones if zone.bbox is not None]
-        if boxes and above is not None and any(
-                above <= y <= min(box.top for box in boxes) for y in separators):
-            out.append('<div class="separator"></div>')
-        out.append(markup)
-        if boxes:
-            bottom = max(box.bottom for box in boxes)
-            above = bottom if above is None else max(above, bottom)
-    return out
-
-
-def _columns(region: Region, zones: list[Zone], document: Document) -> str:
+def _columns(region: Region, zones: list[Zone], document: Document,
+             page: _Page, shared: set[BBox], plain: set[int]) -> _Row:
     """One `columns` Region: its lanes side by side, each as wide as the page
     draws it and holding its own Zones in rows worked out among themselves —
     so `2021 — present` sits beside `Senior Structural Engineer` in its lane,
@@ -247,7 +529,10 @@ def _columns(region: Region, zones: list[Zone], document: Document) -> str:
     3 to 6 times the source's height. Both look less like the page than this.
 
     A lane whose Zones all carry one fill is painted with it, so the source's
-    sidebar is one strip and its aside one panel, not a stack of cards.
+    sidebar is one strip and its aside one panel, not a stack of cards —
+    unless a frame is drawn round them, which paints it. **Each lane starts
+    as far down as the page starts it** (spec 0011, step 1a): `newsletter_0008`'s
+    third column opens on a Title set below the first column's top line.
     """
     lanes: list[list[Zone]] = [[] for _ in range(region.lanes)]
     for zone in zones:
@@ -255,27 +540,44 @@ def _columns(region: Region, zones: list[Zone], document: Document) -> str:
         lanes[region.lane_of(zone.bbox)].append(zone)
     edges = [0.0, *region.splits, 1.0]
 
+    stacks: list[list[_Row]] = []
+    for lane in lanes:
+        units = _units(lane)
+        boxes = [_unit_box(unit) for unit in units]
+        placed = bands_from_boxes([box for box in boxes if box is not None])
+        rows: dict[int, list[tuple[int, list[Zone]]]] = {}
+        for unit, (band, column) in zip([u for u, b in zip(units, boxes) if b],
+                                        placed):
+            rows.setdefault(band, []).append((column, unit))
+        stacks.append(_framed(
+            [_band([u for _, u in sorted(rows[b], key=lambda r: r[0])],
+                   document, page, plain) for b in sorted(rows)],
+            document, page, shared))
+
+    firsts = [stack[0].top for stack in stacks if stack and stack[0].top is not None]
+    start = min(firsts) if firsts else None
     parts = []
-    for index, lane in enumerate(lanes):
-        rows: dict[int, list[tuple[int, Zone]]] = {}
-        placed = bands_from_boxes([zone.bbox for zone in lane if zone.bbox])
-        for zone, (band, column) in zip(lane, placed):
-            rows.setdefault(band, []).append((column, zone))
+    for index, (lane, stack) in enumerate(zip(lanes, stacks)):
         style = f"flex:{(edges[index + 1] - edges[index]) * 100:.1f} 1 0"
         fills = {zone.fill for zone in lane}
-        if lane and len(fills) == 1 and None not in fills:
+        if (lane and len(fills) == 1 and None not in fills
+                and not all(id(zone) in plain for zone in lane)):
             (fill,) = fills
             assert fill is not None
             style += f";background:{_rgb(fill)}"
-        parts.append(
-            f'<div class="lane" style="{style}">'
-            + "".join(_band([z for _, z in sorted(rows[b], key=lambda r: r[0])],
-                            document) for b in sorted(rows))
-            + "</div>")
-    return '<div class="columns">' + "".join(parts) + "</div>"
+        if stack and start is not None and stack[0].top is not None:
+            if stack[0].top - start >= 1:
+                style += f";padding-top:{_px(stack[0].top - start)}"
+        parts.append(f'<div class="lane" style="{style}">'
+                     + "".join(_stack(stack, page)) + "</div>")
+    lasts = [stack[-1].bottom for stack in stacks
+             if stack and stack[-1].bottom is not None]
+    return _Row("columns", "".join(parts), list(zones), start,
+                max(lasts) if lasts else None)
 
 
-def _grid(region: Region, zones: list[Zone], document: Document) -> str:
+def _grid(region: Region, zones: list[Zone], document: Document,
+          page: _Page) -> _Row:
     """One `grid` Region: each Zone in the row and the lane the page puts it
     in, lanes as wide as the page draws them — spec 0010, step B1.
 
@@ -285,6 +587,9 @@ def _grid(region: Region, zones: list[Zone], document: Document) -> str:
     metric tiles need more than the 52rem column and came out three and one.
     A grid's lanes are the page's own, so they cannot wrap, and a lane with
     no Zone in some row stays empty rather than letting the next one slide in.
+
+    **Its rows are as far apart as the page sets them** (spec 0011, step 1a):
+    the median of the gaps between its rows, a grid's gap being one figure.
     """
     edges = [0.0, *region.splits, 1.0]
     tracks = " ".join(f"minmax(0,{(edges[i + 1] - edges[i]) * 100:.1f}fr)"
@@ -299,11 +604,26 @@ def _grid(region: Region, zones: list[Zone], document: Document) -> str:
         cells.append(((row, lane, zone.bbox.left),
                       f'<div style="grid-row:{row};grid-column:{lane}">'
                       f'{_zone(zone, document)}</div>'))
+    tops: dict[int, list[float]] = {}
+    bottoms: dict[int, list[float]] = {}
+    for zone, (band, _) in zip(zones, placed):
+        if (top := _top(zone, page)) is not None:
+            tops.setdefault(band, []).append(top)
+        if (bottom := _bottom(zone, page)) is not None:
+            bottoms.setdefault(band, []).append(bottom)
+    gaps = [min(tops[b]) - max(bottoms[a]) for a, b in zip(rows, rows[1:])
+            if tops.get(b) and bottoms.get(a)]
+    style = [f"grid-template-columns:{tracks}"]
+    if gaps:
+        style.append(f"row-gap:{_px(float(median(gaps)))}")
+    every_top = [t for ts in tops.values() for t in ts]
+    every_bottom = [b for bs in bottoms.values() for b in bs]
     # In reading order in the markup too, not only on the screen: a reader
     # of the HTML — and `project()` — meets them row by row, left to right.
-    return (f'<div class="grid" style="grid-template-columns:{tracks}">'
-            + "".join(markup for _, markup in sorted(cells, key=lambda c: c[0]))
-            + "</div>")
+    return _Row("grid",
+                "".join(markup for _, markup in sorted(cells, key=lambda c: c[0])),
+                list(zones), min(every_top) if every_top else None,
+                max(every_bottom) if every_bottom else None, style)
 
 
 def _rgb(colour: tuple[int, int, int]) -> str:
@@ -611,7 +931,8 @@ def _reserved(zone: Zone) -> float:
 
 
 def _inline_style(zone: Zone,
-                  document_ink: tuple[int, int, int] | None = None) -> str:
+                  document_ink: tuple[int, int, int] | None = None, *,
+                  plain: bool = False, extra: str = "") -> str:
     """A Zone's measured fill, as an inline style.
 
     Inline rather than a class, because the colour is per Zone: one document can
@@ -619,13 +940,16 @@ def _inline_style(zone: Zone,
     of classes that covers what a page might do. The palette-wide values stay in
     custom properties on `:root`; only what varies Zone by Zone lands here.
 
-    Carries two more per-Zone facts for the same reason. **The ink is chosen
+    Carries more per-Zone facts for the same reason. **The ink is chosen
     against the Zone's own fill, not the page's ground** — see `_readable_on`.
-    And a Zone reserves the width its content needs, so the band wraps around
-    it instead of clipping it — see `COLUMN_REM`.
+    A Zone reserves the width its content needs, so the band wraps around
+    it instead of clipping it — see `COLUMN_REM`. And its lines are set where
+    the page sets them — `Zone.align`, spec 0011, step 1c.
+
+    `plain` leaves the fill to a frame drawn round the Zone — see `_framed`.
     """
     parts = []
-    if zone.fill is not None:
+    if zone.fill is not None and not plain:
         parts.append(f"background:{_rgb(zone.fill)}")
         ink = _readable_on(zone.fill, document_ink)
         if ink is not None:
@@ -633,21 +957,34 @@ def _inline_style(zone: Zone,
     reserved = _reserved(zone)
     if reserved:
         parts.append(f"min-width:min({reserved:g}rem,100%)")
+    if zone.align in TEXT_ALIGN:
+        parts.append(f"text-align:{TEXT_ALIGN[zone.align]}")
+    if extra:
+        parts.append(extra)
     return f' style="{";".join(parts)}"' if parts else ""
 
 
+TEXT_ALIGN = {"centre": "center", "right": "right"}
+"""`Zone.align` and `Zone.title_align` as CSS. Left is the house default and
+draws nothing."""
+
+
 def _inline_title_style(zone: Zone) -> str:
-    """The Title bar's measured fill, when the source draws one, and the
-    Title's printed size — spec 0010, step D2."""
+    """The Title bar's measured fill, when the source draws one, the Title's
+    printed size — spec 0010, step D2 — and where its line sits over the
+    Zone — spec 0011, step 1c."""
     rules = []
     if zone.title_fill is not None:
         rules.append(f"background:{_rgb(zone.title_fill)}")
     if zone.title_size is not None:
         rules.append(f"font-size:{zone.title_size:.2f}em")
+    if zone.title_align in TEXT_ALIGN:
+        rules.append(f"text-align:{TEXT_ALIGN[zone.title_align]}")
     return f' style="{";".join(rules)}"' if rules else ""
 
 
-def _zone(zone: Zone, document: Document) -> str:
+def _zone(zone: Zone, document: Document, *, plain: bool = False,
+          extra: str = "") -> str:
     """Render one Zone, with the chrome the **source** draws and no other.
 
     **This used to key off the Title, and that was the fault.** Having a caption
@@ -663,39 +1000,87 @@ def _zone(zone: Zone, document: Document) -> str:
     the bar from `Zone.title_fill` — all three measured off the Source Image by
     `style.chrome`, all three defaulting to nothing. A Zone nobody measured
     renders as plain text on the page, which is what the majority of real Zones
-    actually are.
+    actually are. A Zone inside a frame it shares is drawn `plain`: the frame
+    is its card.
     """
+    return _section(zone, _zone_body(zone, document), document,
+                    plain=plain, extra=extra)
+
+
+def _section(zone: Zone, body: str, document: Document, *, plain: bool,
+             extra: str) -> str:
     classes = f"zone zone-{zone.role.value}"
-    if zone.boxed:
+    if zone.boxed and not plain:
         classes += " boxed"
-    elif zone.fill is not None:
+    elif zone.fill is not None and not plain:
         classes += " filled"
 
     bar = ' class="zone-title barred"' if zone.title_fill else ' class="zone-title"'
     style_of = _inline_style(
-        zone, document.style.ink if document.style else None)
+        zone, document.style.ink if document.style else None,
+        plain=plain, extra=extra)
     title = (
         f"<h2{bar}{_inline_title_style(zone)}>{html.escape(zone.title)}</h2>"
         if zone.title else ""
     )
-
-    if not zone.complete and zone.kind is not Kind.FIGURE:
-        # A titled Zone keeps its caption even while its contents are pending,
-        # so a Draft shows what is being worked on rather than an unlabelled box.
-        body = '<div class="skeleton"></div>'
-    else:
-        renderers = {
-            Kind.TABLE: _table,
-            Kind.PAIRS: _pairs,
-            Kind.PROSE: _prose,
-            Kind.LIST: _list,
-            Kind.FIGURE: _figure,
-        }
-        body = renderers[zone.kind](zone, document)
-
     if zone.title:
         body = f'<div class="zone-body">{body}</div>'
     return f'<section class="{classes}"{style_of}>{title}{body}</section>'
+
+
+def _zone_body(zone: Zone, document: Document) -> str:
+    if not zone.complete and zone.kind is not Kind.FIGURE:
+        # A titled Zone keeps its caption even while its contents are pending,
+        # so a Draft shows what is being worked on rather than an unlabelled box.
+        return '<div class="skeleton"></div>'
+    renderers = {
+        Kind.TABLE: _table,
+        Kind.PAIRS: _pairs,
+        Kind.PROSE: _prose,
+        Kind.LIST: _list,
+        Kind.FIGURE: _figure,
+    }
+    return renderers[zone.kind](zone, document)
+
+
+def _unit(unit: list[Zone], document: Document, page: _Page, *,
+          plain: bool = False, extra: str = "") -> str:
+    """One Zone, or a Continuation — Zones that continue one another —
+    drawn as one section under the first one's Title — spec 0011, step 1b.
+    See `rhythm.groups`.
+
+    **The page's gap is kept between the members**, measured as between
+    rows: a list Continuation is one `<ul>` whose item opening each member
+    stands as far below the last as the page sets it, and a prose one is its members'
+    blocks one after another, each in a `div` that holds its own margins.
+    """
+    if len(unit) == 1:
+        return _zone(unit[0], document, plain=plain, extra=extra)
+    head = unit[0]
+
+    def gap(upper: Zone, lower: Zone, ink: float) -> str:
+        if upper.bbox is None or lower.bbox is None:
+            return ""
+        space = (lower.bbox.top - upper.bbox.bottom) * page.y - ink * page.body
+        return f' style="margin-top:{_px(space)}"'
+
+    if all(zone.kind is Kind.LIST and zone.complete for zone in unit):
+        items = []
+        for position, zone in enumerate(unit):
+            for index, block in enumerate(b for b in zone.blocks if b.kind == "item"):
+                spaced = (gap(unit[position - 1], zone,
+                              BELOW_INK["li"] + ABOVE_INK["li"])
+                          if position and not index else "")
+                items.append(f"<li{spaced}>{_lines(block, document)}</li>")
+        body = f"<ul>{''.join(items)}</ul>"
+    else:
+        parts = [f'<div class="cont">{_zone_body(head, document)}</div>']
+        for upper, lower in zip(unit, unit[1:]):
+            spaced = gap(upper, lower, _closes(upper, plain=True) + _opens(lower))
+            parts.append(f'<div class="cont"{spaced}>'
+                         f'{_zone_body(lower, document)}</div>')
+        body = "".join(parts)
+    return _section(head, body, document, plain=plain, extra=extra)
 
 
 def _numeric_columns(zone: Zone) -> set[int]:
@@ -840,15 +1225,28 @@ def _pairs(zone: Zone, document: Document) -> str:
     """One `dt` and one `dd` per pair; a pair with no value marks its label
     `alone`, which the stylesheet draws across both columns, and a value
     whose label was its Zone's Title is drawn the same way — see
-    `wire._without_title_echo`."""
+    `wire._without_title_echo`.
+
+    **A pairs Zone the page sets centred or flush right is drawn as lines**
+    — spec 0011, step 1c: each pair a line, its label beside its value, so
+    `text-align` can put the line where the page does. `statement_0006`'s
+    `Account 40-21-88 / 60114427` and `invoice_0001`'s `Invoice #: 123` are
+    lines set flush right, not a two-column list."""
+    lines = zone.align in TEXT_ALIGN
     parts = []
     for pair in zone.pairs:
         label, value = _cell(pair.label, document), _cell(pair.value, document)
         if not label.strip() and value.strip():
             label, value = value, ""
+        if lines:
+            parts.append(f"<div><dt>{label}</dt>"
+                         + (f" <dd>{value}</dd>" if value.strip() else "")
+                         + "</div>")
+            continue
         tag = "<dt>" if value.strip() else '<dt class="alone">'
         parts.append(f"{tag}{label}</dt><dd>{value}</dd>")
-    return '<dl class="pairs">' + "".join(parts) + "</dl>"
+    css = "pairs lines" if lines else "pairs"
+    return f'<dl class="{css}">' + "".join(parts) + "</dl>"
 
 
 def _prose(zone: Zone, document: Document) -> str:
@@ -889,6 +1287,12 @@ def _list(zone: Zone, document: Document) -> str:
     return f"<ul>{items}</ul>"
 
 
+FIGURE_PLACE = {"centre": ";margin:0 auto", "right": ";margin-left:auto"}
+"""A picture is a block, which `text-align` does not move: it is set centred
+or flush right by its margins — `receipt_0010`'s barcode, `invoice_0002`'s
+logo. Spec 0011, step 1c."""
+
+
 def _figure(zone: Zone, document: Document) -> str:
     """A Graphic is drawn from its own pixels; a Mark keeps its text.
 
@@ -927,7 +1331,8 @@ def _figure(zone: Zone, document: Document) -> str:
             f'{_bbox_attr(zone)}>'
             f'<img src="data:image/png;base64,{zone.pixels}"'
             f' alt="{html.escape(read or kind)}"'
-            ' style="display:block;max-width:100%;height:auto"></figure>'
+            ' style="display:block;max-width:100%;height:auto'
+            f'{FIGURE_PLACE.get(zone.align or "", "")}"></figure>'
         )
 
     caption = "".join(

@@ -20,6 +20,14 @@ _Avoid_: Section, region, area
 A horizontal stripe of the Document holding one or more Zones side by side. Bands are the only expression of horizontal arrangement — Zones are a flat list, never nested, and two Zones sharing a Band render as columns.
 _Avoid_: Row, group, container, section
 
+**Frame**:
+A rectangle the page draws round one Zone — its card — or round a column of Zones in one lane that it holds and nothing else, as a panel round its lists. A Frame shared by several Zones is drawn once round them; a rectangle held across lanes, or round Zones that are not consecutive, is nobody's. Gaps are measured from a Frame's edge, not from the text inside it.
+_Avoid_: Box, card, panel, border
+
+**Continuation**:
+Zones in one lane that continue one another — same Kind, prose or list, no Title on the later one, left edges agreeing, a line pitch or so apart, no rule between and nothing beside either. Drawn as one section under the first one's Title, with the page's gap kept between them. Recorded per Zone as the index of the first; the Zones themselves are never merged.
+_Avoid_: Run (an inline Run is a span of a Cell), merge, group of Zones
+
 **Title**:
 A heading that belongs to a Zone rather than standing beside it — "Company Details" captioning the Pairs beneath it. A Title binds the caption to the block it names, so the grouping holds even when a neighbouring Zone in the same Band is a different height.
 _Avoid_: Heading, caption, label, panel header

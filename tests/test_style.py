@@ -399,7 +399,7 @@ class TestTheRendererReacts:
     def test_the_document_still_renders_its_content(self) -> None:
         """A palette change that broke the body would show here before it showed
         in `project()`."""
-        zone = Zone(kind=Kind.PROSE, bbox=(0, 0, 100, 100))
+        zone = Zone(kind=Kind.PROSE, bbox=BBox(0.0, 0.0, 1.0, 1.0))
         html = render(document(zones=[zone], page_px=800,
                                style=Style(page_bg=(255, 255, 255),
                                            ink=(26, 26, 26))))

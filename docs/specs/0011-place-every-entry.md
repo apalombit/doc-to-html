@@ -1,6 +1,6 @@
 # Place every entry where the page puts it — rhythm, location, fields, lines
 
-**Status: under way, issue #34. Step 0 DONE 2026-10-12; step 1 next.**
+**Status: under way, issue #34. Steps 0 and 1 DONE 2026-10-12; step 2 next.**
 
 Alessandro's decisions, 2026-10-12, after reviewing sweep `S5-sweep` (spec
 0010's outcome):
@@ -239,6 +239,71 @@ the `keep_runs` lesson in CLAUDE.md — not from a round number.
 - the mastheads and the menu's section titles are centred;
 - the meta blocks sit right;
 - no page is worse.
+
+**Outcome — step 1, 2026-10-12: DONE, no page worse.** Run
+`debug/runs/S6-1-rhythm` (`tools/rederive.py` over `s5-result/`), sheets
+against `S6-0-base`. A replay through a real Conversion
+(`S6-1-replay`) makes the same fifteen documents byte for byte.
+
+What shipped:
+- **1a gaps.** `render._stack` follows every row — page Bands, lane rows, a
+  grid's rows — with the page's ink gap less what the stylesheet draws round
+  the ink. **The 1.3 was re-measured per side** in headless Chrome, each
+  element alone, at 13 and 16px (`render.ABOVE_INK`, `BELOW_INK`): a
+  paragraph 0.31 above and 0.62 below, a table 0.75 and 0.72, a pairs list
+  0.31 and 0.25, a Title 0.88 of its size. A Zone drawn as its own card is
+  measured from its frame. A rule splits the gap where it lies. Each lane
+  starts as far down as the page starts it, and **each unit in a row starts
+  as far below the row's top as the page starts it** — added after the
+  first sheets put `Q3 2026 · INTERNAL` above `Platform review` and `2021 —
+  present` above its job title.
+- **`Zone.frame`**, set with the chrome. `rhythm.frames` gives a rectangle
+  several Zones claim to them when they are exactly a column of one lane;
+  `render._framed` draws it once round them and they do not paint
+  themselves.
+- **1b `Zone.group`** — a Continuation (`CONTEXT.md`). The spec's five
+  tests plus two the corpus asked for: prose and list only (cv's two skill
+  bars, invoice_0001's two tables), and neither Zone may share its row
+  (`VOL. CLII` would have left the dateline). **The gap ratio's empty band is
+  where the spec put 1.6**: continuing pairs 0.10-1.11 pitches, the rest
+  2.0 and above; `sample_css_0004`'s heading over its intro at 1.59
+  continues, and a Continuation keeps the page's gap, so it moves nothing.
+- **1c `Zone.align`, `Zone.title_align`** (`rhythm.alignment`,
+  `title_alignment`). Thresholds from the corpus distribution, in body glyph
+  heights: line edges agree within **0.3** (right-set 0.00-0.11, next 0.56;
+  centred 0.00-0.07, next 0.60); placement within **1.5** (centred
+  0.00-0.56, next 3.11; flush right 0.00-1.08). Lines decide when they agree;
+  **place decides only for a Zone of one line that is not its own card** —
+  the suite caught invoice_0002's Customer Details card, flush right in the
+  recorded geometry, drawn as right-set lines. Right and centred pairs are
+  drawn as lines; a flush-right unit beside another shrinks and is pushed to
+  the row's end; a picture is set by its margins.
+
+The sheets, against `S6-0-base`:
+
+| document | judgement | the element |
+|---|---|---|
+| `newsletter_0008` | better | each column reads as continuous text at the page's paragraph spacing; masthead and dateline centred, `PRICE 80P` flush right |
+| `darkdeck_0009` | better | the risks panel one compact bordered card holding both lists; `Q3 2026 · INTERNAL` flush right and level with the title, which takes the width |
+| `menu_0012` | better | masthead, `To begin`, `Main courses` and the footer centred |
+| `receipt_0010` | better | header, thank-you line, barcode and tail centred |
+| `statement_0006` | better | `Account / Period / Statement No.` flush right line by line |
+| `invoice_0001` | better | the invoice meta and Acme's address flush right line by line |
+| `nonlatin_0014` | better | the `ΤΠΥ 2026/0417` block flush right; footer centred |
+| `cv_0013` | better | both columns compact; `2021 — present` level with its job, at the right |
+| `report_0011` | better | sections at the page's spacing; height 1.21 → 1.00 |
+| `catalogue_0015` | better | card rows at the page's gap; `AUTUMN LIST` flush right |
+| `sample_semantic_0005` | better | the page's spacing; the TL;DR panel now starts ~12px below `Introduction`, where the page has them level — the panel is filled but not a drawn rectangle, so its edge is measured from its text |
+| `sample_css_0004` | better | the gap between the cards is the source's, not larger |
+| `sample_table_0003` | better | tighter, closer to the source |
+| `invoice_0002` | same | tighter; layout unchanged |
+| `form_0007` | same | `OFFICE USE` flush right; the field grid is step 3's |
+
+Recorded, not argued: `vanished` gains nothing on any document; vocabulary
+recall, precision, join recall and tau identical on all fifteen. Height,
+mean 1.241 → 1.163. Beside moves on six: sample_semantic 0.875 → 1.000, form
+0.167 → 0.208, nonlatin 0.985 → 0.986, darkdeck 0.658 → 0.650, newsletter
+0.650 → 0.636, cv 0.484 → 0.405. 925 tests, mypy clean.
 
 ### Step 2 — Locate: every entry's box on the page
 

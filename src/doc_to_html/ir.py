@@ -313,6 +313,31 @@ class Zone:
     it exists to fix.
     """
 
+    frame: BBox | None = None
+    """The rectangle the page draws around this Zone — spec 0011, step 1a.
+
+    Its own box when it is the only Zone inside it (then `boxed` is True
+    too), or a box it **shares** with the Zones next to it in its lane, when
+    those are exactly the Zones the box holds: `darkdeck_0009`'s OPEN RISKS
+    panel holds six. See `rhythm.frames`. The page's gaps are measured from
+    a frame rather than from the Zone's snapped text, which sits inside it.
+    """
+
+    group: int | None = None
+    """The index of the first Zone of the Continuation this one belongs
+    to, set on every member of it — spec 0011, step 1b. See
+    `rhythm.groups`.
+    `None` for a Zone that continues nothing and that nothing continues."""
+
+    align: str | None = None
+    """How this Zone's lines sit — `left`, `centre` or `right` — read off its
+    ink, or off where it sits in its row when it prints one line. Spec 0011,
+    step 1c; see `rhythm.alignment`. `None` draws it at the left."""
+
+    title_align: str | None = None
+    """Where the Title line sits over the Zone's extent — `left`, `centre` or
+    `right`. See `rhythm.title_alignment`. `None` draws it at the left."""
+
     complete: bool = False
     """False while a Zone is detected but not yet extracted.
 
@@ -673,6 +698,10 @@ def _zone(data: dict[str, Any]) -> Zone:
         title_fill=_colour(data.get("title_fill")),
         header_fill=_colour(data.get("header_fill")),
         boxed=data.get("boxed", False),
+        frame=_bbox(data.get("frame")),
+        group=data.get("group"),
+        align=data.get("align"),
+        title_align=data.get("title_align"),
         complete=data.get("complete", False),
     )
 

@@ -34,6 +34,9 @@ and can be recomputed from it, in the order a Conversion runs them:
                                     structure.structure  (_read_structure)
        and the wide rules it draws between them — spec 0009, step D
                                     structure.separators (_find_separators)
+    8. Which Zones continue one another, and how each one's lines sit —
+       spec 0011, step 1; each Zone's frame is set with the chrome, in 3
+                                    rhythm.read           (_read_rhythm)
 
 then re-renders into a run-shaped directory that `doc_to_html.report` and
 `tools/visual_review.py` read without knowing the difference.
@@ -70,7 +73,7 @@ TOOLS = Path(__file__).resolve().parent
 sys.path.insert(0, str(TOOLS.parent / "src"))
 sys.path.insert(0, str(TOOLS))
 
-from doc_to_html import probes  # noqa: E402
+from doc_to_html import probes, rhythm  # noqa: E402
 from doc_to_html.corpus import SOURCES  # noqa: E402
 from doc_to_html.ir import Caveat, Document, Kind  # noqa: E402
 from doc_to_html.orchestrator import gaps, shortfall  # noqa: E402
@@ -89,7 +92,7 @@ _REPAIR = re.compile(
 
 
 def rederive(document: Document, png: Path) -> None:
-    """Steps 1-7 of this module's docstring, in place."""
+    """Steps 1-8 of this module's docstring, in place."""
     for zone in document.zones:
         if _title_is_its_header_cell(zone):
             zone.title = None
@@ -133,6 +136,7 @@ def rederive(document: Document, png: Path) -> None:
         document.separators = separators(
             plain, document.zones, ground=document.style.page_bg,
             inverted=rectified.inverted)
+        rhythm.read(plain, document)
 
 
 def documents_in(source: Path, model: str) -> list[tuple[str, Path]]:

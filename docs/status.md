@@ -69,8 +69,8 @@ Spec 0010   Five repairs, the beside score, type at the page's size — issue #3
                       DECIDED 2026-10-12: S5-sweep is the baseline, the five legs accepted
 Spec 0011   Place every entry where the page puts it — issue #34, planned 2026-10-12
               0  freeze S5-sweep as tests/frozen/s5-result/   DONE, both loops 15 of 15
-              1  rhythm: gaps from the page, Zones grouped, alignment   <- next
-              2  locate every entry on the page
+              1  rhythm: gaps from the page, Zones grouped, alignment   DONE, none worse
+              2  locate every entry on the page   <- next
               3  fields: boxes, ticks, digit boxes, underlines
               4  lines: per-entry type, colour, rules, leaders, spacing
               5  one sweep, S6-sweep
@@ -310,7 +310,7 @@ the Q5-era records", verbatim. Q1–Q4's are under "Outcome — Q1 to Q4".
 
 ---
 
-## Next — spec 0011, step 1
+## Next — spec 0011, step 2
 
 [`specs/0011-place-every-entry.md`](specs/0011-place-every-entry.md), issue
 #34, and its handover prompt. **The common cause behind every fault

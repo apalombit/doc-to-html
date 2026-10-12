@@ -19,6 +19,7 @@ from enum import Enum
 from pathlib import Path
 
 from . import probes as probe_module
+from . import rhythm as rhythm_module
 from . import style as style_module
 from .checkpoints import Answer, CheckpointHandler, NullHandler, Question
 from .config import Settings, load
@@ -850,6 +851,7 @@ class Conversion:
             self._measure_chrome(rectified, document)
             self._measure_type(rectified, document)
             self._find_separators(rectified, document)
+            self._read_rhythm(rectified, document)
 
             document.probes = probe_module.run(document)
             for probe in document.probes:
@@ -1009,7 +1011,10 @@ class Conversion:
         # One rectangle, one Zone: a box several Zones sit inside belongs to
         # their grouping and to none of them. See `style.boxes_for`.
         own = style_module.boxes_for([z.bbox for z in document.zones], drawn)
+        # And a box a run of one lane shares is that run's — spec 0011, 1a.
+        framed = rhythm_module.frames(document.zones, drawn, document.regions)
         for index, zone in enumerate(document.zones):
+            zone.frame = framed[index]
             if zone.bbox is None:
                 continue
             # The bands are measured on the read image and the colour on the
@@ -1040,7 +1045,10 @@ class Conversion:
             rectangles=len(drawn),
             detail=[
                 {"zone": i, "fill": z.fill, "title_fill": z.title_fill,
-                 "header_fill": z.header_fill, "boxed": z.boxed}
+                 "header_fill": z.header_fill, "boxed": z.boxed,
+                 "frame": None if z.frame is None else [
+                     round(v, 4) for v in (z.frame.left, z.frame.top,
+                                           z.frame.right, z.frame.bottom)]}
                 for i, z in enumerate(document.zones)
             ],
         )
@@ -1231,6 +1239,28 @@ class Conversion:
             Stage.LAYOUT, "separators", Disposition.ACCEPTED,
             seconds=time.perf_counter() - started,
             separators=[round(y, 4) for y in document.separators])
+
+    def _read_rhythm(self, rectified: Rectified, document: Document) -> None:
+        """Which Zones continue one another, and how each one's lines sit —
+        spec 0011, step 1. See `rhythm.read`.
+
+        **Last of the measurements, after `_find_separators`**: a run may not
+        cross a rule the page draws, and it reads Kinds, Titles, fills and
+        frames, all set by now. Nothing a model is asked reads what it sets,
+        so it moves no answer.
+        """
+        if document.style is None:
+            return
+        started = time.perf_counter()
+        plain = rectified.plain if rectified.plain is not None else rectified.image
+        rhythm_module.read(plain, document)
+        self.trace.record(
+            Stage.LAYOUT, "rhythm", Disposition.ACCEPTED,
+            seconds=time.perf_counter() - started,
+            detail=[{"zone": i, "group": z.group, "align": z.align,
+                     "title_align": z.title_align}
+                    for i, z in enumerate(document.zones)
+                    if z.group is not None or z.align or z.title_align])
 
     def _cut_at_regions(self, rectified: Rectified, document: Document) -> bool:
         """Cut a Zone that crosses the edge of a grid or a column region — spec

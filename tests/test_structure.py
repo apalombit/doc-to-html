@@ -382,13 +382,13 @@ class TestTheRulesBetweenZones:
     def test_the_renderer_draws_one_between_the_rows_it_separates(self) -> None:
         html = render(self.two_rows([0.17, 0.18]))
         body = html[html.index('<div class="doc">'):html.index('id="doc-ir"')]
-        assert body.count('<div class="separator">') == 1
+        assert body.count('<div class="separator"') == 1
         assert body.index("Masthead") < body.index('class="separator"') < body.index("Left")
 
     def test_a_rule_beside_a_row_draws_nothing(self) -> None:
         """At a height a Zone of the next row already covers, a rule is not
         between rows — `Right` starts at 0.20."""
-        assert '<div class="separator">' not in render(self.two_rows([0.22]))
+        assert 'class="separator"' not in render(self.two_rows([0.22]))
 
     def test_no_rule_renders_exactly_as_before(self) -> None:
         html = render(self.two_rows([]))

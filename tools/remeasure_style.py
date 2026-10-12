@@ -12,8 +12,9 @@ What is reused and what is recomputed:
     reused       Zones, their boxes, their text, their Kinds — everything the
                  model decided. Read back out of the run's own `document.html`,
                  which embeds the IR.
-    recomputed   Document.style, each Zone's fill, title_fill, header_fill
-                 and boxed, and each leading heading Block's size.
+    recomputed   Document.style, each Zone's fill, title_fill, header_fill,
+                 boxed and frame, each leading heading Block's size, and
+                 each Zone's group, align and title_align.
                  Measured from `example/<doc>.png` through the same `rectify`
                  the Conversion used.
 
@@ -41,6 +42,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
+from doc_to_html import rhythm  # noqa: E402
 from doc_to_html import style as style_module  # noqa: E402
 from doc_to_html.corpus import SOURCES  # noqa: E402
 from doc_to_html.ir import Document, Kind, RowRole  # noqa: E402
@@ -69,8 +71,10 @@ def remeasure(document: Document, png: Path) -> tuple[int, int]:
     drawn = style_module.rectangles(
         plain, ground=document.style.page_bg, inverted=rectified.inverted)
     own = style_module.boxes_for([z.bbox for z in document.zones], drawn)
+    framed = rhythm.frames(document.zones, drawn, document.regions)
     boxed = 0
     for index, zone in enumerate(document.zones):
+        zone.frame = framed[index]
         if zone.bbox is None:
             continue
         read = zone_pixels(rectified.image, zone)
@@ -140,6 +144,10 @@ def main() -> int:
             print(f"{folder.name:<22}  skipped (no embedded IR)")
             continue
         rects, boxed = remeasure(document, REPO / SOURCES[folder.name].png)
+        # `Conversion._read_rhythm`, after the chrome and the separators.
+        rectified = rectify(REPO / SOURCES[folder.name].png)
+        rhythm.read(rectified.plain if rectified.plain is not None
+                    else rectified.image, document)
         out = target / "dump" / slug / folder.name
         out.mkdir(parents=True, exist_ok=True)
         (out / "document.html").write_text(render(document), encoding="utf-8")
