@@ -1,6 +1,6 @@
 # Place every entry where the page puts it — rhythm, location, fields, lines
 
-**Status: planned 2026-10-12, issue #34. Step 0 next.**
+**Status: under way, issue #34. Step 0 DONE 2026-10-12; step 1 next.**
 
 Alessandro's decisions, 2026-10-12, after reviewing sweep `S5-sweep` (spec
 0010's outcome):
@@ -165,6 +165,18 @@ floor in CLAUDE.md, `docs/status.md` and `tools/replay_run.py`'s usage. Keep
 `s3-result/` as record.
 
 **Done when:** both loops reproduce 15 of 15.
+
+**Outcome — step 0, 2026-10-12: DONE.** `tests/frozen/s5-result/` holds
+`S5-sweep`'s fifteen documents, its `scores.json` against `s3-result/`, its
+518 answers and its empty `dth_env.txt`. At commit `72477f2`:
+`tools/replay_run.py` over it **15 of 15 byte-identical** (13s);
+`tools/rederive.py` over it **15 of 15 byte-identical** (`S6-0-base`, 5s);
+that rederive scored against `scores.json`, **15 documents, 0 differing
+fields**. The 518 answers are byte-identical to `S4-sweep`'s, checked on
+both runs' traces. The baseline is repointed in CLAUDE.md, `docs/status.md`
+and `tools/replay_run.py`; `s3-result/`'s README is marked record.
+`debug/runs/S6-0-base` is the baseline as a run directory, and step 1's
+sheets use it as `--previous`.
 
 ### Step 1 — Rhythm: the page's gaps, its groups, its alignment
 

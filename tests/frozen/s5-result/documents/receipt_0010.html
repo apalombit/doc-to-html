@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Document</title>
+<style>
+:root { --ink:#1a1a1a; --muted:#666; --rule:#e0e0e0; --shade:#f4f4f4;
+        --page-bg:#fff; --accent:inherit;
+        --flag:#b45309; --flag-bg:#fff7ed;
+        --link:#0645ad; --mark-bg:#fff2a8; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink:#e8e8e8; --muted:#9a9a9a; --rule:#333; --shade:#1e1e1e;
+          --page-bg:#111;
+          --flag:#fbbf24; --flag-bg:#2a1f0a;
+          --link:#7aa7ff; --mark-bg:#5a4a12; }
+}
+body { font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+       color:var(--ink); background:var(--page-bg); margin:0; padding:2rem 1rem; }
+.doc { max-width:52rem; margin:0 auto; }
+/* Inline runs. `<a>` carries no href — nothing read off the page says where a
+   link goes — so it needs styling of its own to read as one. */
+a { color:var(--link); text-decoration:underline; }
+code { font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+       font-size:0.92em; }
+mark { background:var(--mark-bg); color:inherit; padding:0 0.15em; }
+.band { display:flex; gap:2rem; align-items:flex-start;
+        margin-bottom:1.75rem; flex-wrap:wrap; }
+.band > * { flex:1 1 12rem; min-width:0; }
+/* A `columns` Region: its lanes side by side, each read top to bottom and as
+   wide as the page draws it. Spec 0008, step 2. */
+.columns { display:flex; gap:2rem; align-items:flex-start; margin-bottom:1.75rem; }
+.lane { min-width:0; }
+.lane > .band:last-child { margin-bottom:0; }
+/* A `grid` Region: its Zones by row and by lane, never wrapped. Spec 0010, B1. */
+.grid { display:grid; column-gap:2rem; row-gap:1.75rem; align-items:start;
+        margin-bottom:1.75rem; }
+.grid > * { min-width:0; }
+/* A label column in a lane takes at most half of it. A lane is narrower than
+   the page, and `cv_0013`'s `Chartered Engineer, Engineers Ireland (2019)`
+   sized the `auto` track to the whole sidebar, leaving `Reg. no. 11408` a
+   sliver that `anywhere` broke after every letter — N4's fault, in a lane. */
+.columns dl.pairs { grid-template-columns:fit-content(50%) 1fr; }
+.zone-header { font-size:1.05em; }
+.zone-footer { color:var(--muted); font-size:.875em; }
+h1 { font-size:1.6em; margin:0 0 .35em; letter-spacing:.01em; }
+section.boxed { border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
+section.filled { border-radius:4px; overflow:hidden; }
+h2.zone-title { font-size:.95em; font-weight:600; margin:0; padding:.55em 0; }
+h2.zone-title.barred { padding:.55em .9em; }
+section.boxed > h2.zone-title, section.filled > h2.zone-title { padding:.55em .9em; }
+.zone-body { padding:0; }
+section.boxed > .zone-body, section.filled > .zone-body { padding:.9em; }
+section.boxed > .zone-body > .table-wrap,
+section.filled > .zone-body > .table-wrap { margin:-.9em; }
+blockquote { margin:.6em 0 .3em 1.5em; }
+p.attribution { color:var(--muted); font-size:.85em; margin:0 0 .4em; }
+ul { margin:0 0 .4em; padding-left:1.3em; }
+.zone-header ul { display:flex; flex-wrap:wrap; gap:1.1rem;
+                  list-style:none; padding:0; }
+p { margin:0 0 .4em; }
+dl.pairs { display:grid; grid-template-columns:auto 1fr; gap:.15em .75em; margin:0; }
+/* A long unbreakable value must wrap, not be hidden. `section.filled` and
+   `section.boxed` both set `overflow:hidden` to keep a fill inside its own
+   rounded corner, so anything wider than the Zone is silently cut off in the
+   screenshot — recall says the text is present and the picture does not
+   contain it. `cv_0013`'s sidebar was the corpus's one case: the `auto` track
+   sized itself to `ines.halloran@fempost.example`, which has no break
+   opportunity, giving the Zone a 368px content width inside a 256px box.
+   `anywhere` rather than `break-word` because only `anywhere` lowers the
+   min-content width the grid track is measured from. Measured 2026-09-25 over
+   all fifteen: corpus `clipped` 1 -> 0, `beside_agreement` +0.0033,
+   `alignment_agreement` +0.0019, ratchet clean, and `cv_0013`'s height_ratio
+   1.77 -> 2.14, which is the wrapped address taking the lines it needs. */
+dl.pairs dt, dl.pairs dd { overflow-wrap:anywhere; }
+/* A label with no value is not in the label column. Left there, the `auto`
+   track sizes itself to it as if a value stood beside it, and the `1fr` track
+   gets what is left: `catalogue_0015`'s `Suffolk pattern, 265 mm, beeswax` took
+   the whole card and `each`, the next line's value, was broken after every
+   letter by the `anywhere` above. Across both columns it sizes neither, so the
+   label column is as wide as the labels that have values. N4, 2026-10-10. */
+dl.pairs dt.alone { grid-column:1 / -1; }
+dl.pairs dt.alone + dd { display:none; }
+dl.pairs dt { color:var(--muted); }
+dl.pairs dd { margin:0; }
+.zone-summary dl.pairs dd { font-weight:600; text-align:right; }
+.table-wrap { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; }
+th, td { padding:.45em .6em; text-align:left; border-bottom:1px solid var(--rule); }
+thead th { background:var(--shade); font-weight:600; }
+td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+tfoot td:last-child { text-align:right; }
+tfoot td { font-weight:600; border-top:2px solid var(--rule); border-bottom:none; }
+figure.omitted { margin:0; border:1px dashed var(--rule); border-radius:3px;
+                 min-height:3rem; display:flex; align-items:center;
+                 justify-content:center; color:var(--muted); font-size:.8em; }
+figure.omitted figcaption { padding:.5em; text-align:center; }
+.mark { display:inline-block; border:2px solid var(--flag); color:var(--flag);
+        padding:.15em .6em; border-radius:3px; font-weight:600; letter-spacing:.08em; }
+.disputed { background:var(--flag-bg); border-bottom:2px solid var(--flag); cursor:help; }
+.corrected { border-bottom:2px solid var(--rule); cursor:help; }
+.skeleton { background:repeating-linear-gradient(135deg, var(--shade),
+            var(--shade) 6px, transparent 6px, transparent 12px);
+            border:1px dashed var(--rule); min-height:2.5rem; border-radius:3px; }
+.findings { border-left:3px solid var(--flag); background:var(--flag-bg);
+            padding:.6em 1em; margin:0 0 1.75rem; font-size:.875em; }
+.findings ul { margin:.3em 0 0; padding-left:1.2em; }
+.findings.caveats { border-left-color:var(--rule); background:var(--shade);
+                    color:var(--muted); }
+</style>
+<style>:root { --page-bg:rgb(255,255,255); --ink:rgb(26,26,26); --muted:rgb(102,102,102); --rule:rgb(221,221,221); --shade:rgb(241,241,241); }
+body { font-size:14.5px; }</style>
+</head>
+<body>
+<div class="doc">
+<div class="findings"><strong>Unresolved</strong><ul><li>Content found outside every detected region: 2.1% of this page&#x27;s printed ink is in here — found by ink coverage, so it may be a mark</li></ul></div><div class="band"><section class="zone zone-header"><h2 class="zone-title" style="font-size:1.23em">ELDER STREET CAFE</h2><div class="zone-body"><p>12 Elder Street<br>Castleton CT9 2BN</p><p>01632 960 118</p></div></section></div><div class="band"><section class="zone zone-body" style="min-width:min(18rem,100%)"><div class="table-wrap"><table><thead><tr><th class="num">Till 02 Op. NADIA</th><th></th><th class="num">29/08/2026</th></tr><tr><th class="num">Order 00418</th><th></th><th class="num">13:47</th></tr></thead><tbody><tr><td class="num">1</td><td>Flat white</td><td class="num">3.40</td></tr><tr><td class="num"></td><td>oat milk</td><td class="num">0.40</td></tr><tr><td class="num">2</td><td>Cortado</td><td class="num">6.20</td></tr><tr><td class="num">1</td><td>Toast, sourdough</td><td class="num">3.10</td></tr><tr><td class="num"></td><td>extra butter</td><td class="num">0.30</td></tr><tr><td class="num">1</td><td>Bacon roll</td><td class="num">5.75</td></tr><tr><td class="num">3</td><td>Shortbread</td><td class="num">4.50</td></tr><tr><td class="num">1</td><td>Elderflower press</td><td class="num">2.80</td></tr><tr><td class="num">Subtotal</td><td></td><td class="num">26.45</td></tr><tr><td class="num">Service 10%</td><td></td><td class="num">2.65</td></tr><tr><td class="num">VAT @ 20%</td><td></td><td class="num">4.85</td></tr><tr><td class="num">TOTAL</td><td></td><td class="num">29.10</td></tr><tr><td class="num">Card ***4417</td><td></td><td class="num">29.10</td></tr><tr><td class="num">Change</td><td></td><td class="num">0.00</td></tr><tr><th class="num">AID A000000031010</th><th></th><th class="num"></th></tr><tr><th class="num">Auth 084417</th><th></th><th class="num">CONTACTLESS</th></tr></tbody></table></div></section></div><div class="band"><section class="zone zone-body"><p>THANK YOU – PLEASE CALL AGAIN</p></section></div><div class="band"><section class="zone zone-body"><figure style="margin:0" data-kind="logo" data-bbox="0.3015,0.8163,0.7104,0.8715"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIkAAAAiCAIAAADknW2zAAACIElEQVRo3u2RzUqqURiF5XACcS44EUeKs3AWjrsrQRKRVEoTIwURxfwhTUGUEFPSlMQb8Ab8N/910CDwLM5L+xbOGaw1Wu/L4/62+9F8fHxc/o3T6ex2uyhXV1en0+n9/d3lcp1+8vb2JpjH42k2myjX19fYv76++nw+hdVqNcFub29fXl5QAoEA9pVK5e7uTmHlclmw+/v7UqmE8vDwgP3z83MkElHY09OTYLFYLJfLocTjcewzmUwikVBYKpUS7PHxMZlMoqTTaewBZ7NZheEQwfL5fDQaRSkUCtjj08ViUWHhcFgwXDIUCqHg8tgHg8Fqtaqwm5sbwfCX/X4/Sr1ex97r9TYaDYXhuQRrtVputxul3W5jj0fudDoKw+ML1uv1HA4HSr/f/308HgeDgUajMRqNh8MB3WQyYdzv96PRSPMTjIJZLJbdbodutVoxbrfb8XisMIyCnZ+fGwwGdJvNhnGz2UynU4Wt12vBLi4utFotut1ul/18PlfYarUSbLFYfH19oaNgXC6XGBX2+fkpGMr39zc6ABl1Op3CcLJgOFZ+gs/J/uzsTGGz2Uww3Fk6CkbcX6/XK2wymQiG15COghGvYTabFYZRMHlPdDwyRnQpkuFwKBiW0lF+aZj/NXRDNwzd0A1DN3TD0A1DN3TD0A3dMHTD0A3dMHRDNwzdMHRDNwzd0A1DNwzd0A1DN3TD0A1DN3TD0A3dMP8+fwDct9LC3HqXHgAAAABJRU5ErkJggg==" alt="logo" style="display:block;max-width:100%;height:auto"></figure></section></div><div class="band"><section class="zone zone-body"><p>0 04418 29102 6</p><p>VAT reg. 442 7719 03</p><p>Retain for your records</p></section></div>
+</div>
+<script type="application/json" id="doc-ir">{"source":{"path":"/Users/aless/Desktop/Projects/pic-to-html/doc-to-html/example/receipt.png","sha256":"31d0b4669337fc927a4077a347bfadb897a07358a92da9c4386b9739f2696ee5","width":500,"height":649,"rectified_width":335,"rectified_height":615},"ir_version":1,"rectifier_version":4,"hint":null,"page_px":500,"style":{"page_bg":[255,255,255],"ink":[26,26,26],"accent":null,"shade":[196,193,187],"body_px":14.5},"zones":[{"kind":"prose","role":"header","band":0,"column":0,"bbox":{"left":0.2208955223880597,"top":0.030894308943089432,"right":0.7731343283582089,"bottom":0.12520325203252033},"title":"ELDER STREET CAFE","rows":[],"pairs":[],"blocks":[{"kind":"address","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"12 Elder Street","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"Castleton CT9 2BN","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"size":null},{"kind":"paragraph","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"01632 960 118","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"size":null}],"graphic_kind":null,"pixels":null,"fill":null,"title_size":1.23,"title_fill":null,"header_fill":null,"boxed":false,"complete":true},{"kind":"table","role":"body","band":1,"column":0,"bbox":{"left":0.05373134328358209,"top":0.14471544715447154,"right":0.9462686567164179,"bottom":0.734959349593496},"title":null,"rows":[{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Till 02 Op. NADIA","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"29/08/2026","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"header"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Order 00418","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"13:47","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"header"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"1","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"Flat white","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"3.40","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"oat milk","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"0.40","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"2","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"Cortado","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"6.20","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"1","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"Toast, sourdough","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"3.10","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"extra butter","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"0.30","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"1","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"Bacon roll","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"5.75","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"3","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"Shortbread","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"4.50","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"1","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"Elderflower press","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"2.80","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Subtotal","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"26.45","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"summary"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Service 10%","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"2.65","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"summary"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"VAT @ 20%","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"4.85","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"summary"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"TOTAL","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"29.10","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"summary"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Card ***4417","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"29.10","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Change","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"0.00","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"data"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"AID A000000031010","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"header"},{"cells":[{"bbox":null,"readings":[{"engine":"ollama","text":"Auth 084417","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"},{"bbox":null,"readings":[{"engine":"ollama","text":"CONTACTLESS","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"role":"header"}],"pairs":[],"blocks":[],"graphic_kind":null,"pixels":null,"fill":null,"title_size":null,"title_fill":null,"header_fill":null,"boxed":false,"complete":true},{"kind":"prose","role":"body","band":2,"column":0,"bbox":{"left":0.19701492537313434,"top":0.7788617886178861,"right":0.8,"bottom":0.7902439024390244},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"paragraph","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"THANK YOU \u2013 PLEASE CALL AGAIN","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"size":null}],"graphic_kind":null,"pixels":null,"fill":null,"title_size":null,"title_fill":null,"header_fill":null,"boxed":false,"complete":true},{"kind":"figure","role":"body","band":3,"column":0,"bbox":{"left":0.30149253731343284,"top":0.816260162601626,"right":0.7104477611940299,"bottom":0.8715447154471545},"title":null,"rows":[],"pairs":[],"blocks":[],"graphic_kind":"logo","pixels":"iVBORw0KGgoAAAANSUhEUgAAAIkAAAAiCAIAAADknW2zAAACIElEQVRo3u2RzUqqURiF5XACcS44EUeKs3AWjrsrQRKRVEoTIwURxfwhTUGUEFPSlMQb8Ab8N/910CDwLM5L+xbOGaw1Wu/L4/62+9F8fHxc/o3T6ex2uyhXV1en0+n9/d3lcp1+8vb2JpjH42k2myjX19fYv76++nw+hdVqNcFub29fXl5QAoEA9pVK5e7uTmHlclmw+/v7UqmE8vDwgP3z83MkElHY09OTYLFYLJfLocTjcewzmUwikVBYKpUS7PHxMZlMoqTTaewBZ7NZheEQwfL5fDQaRSkUCtjj08ViUWHhcFgwXDIUCqHg8tgHg8Fqtaqwm5sbwfCX/X4/Sr1ex97r9TYaDYXhuQRrtVputxul3W5jj0fudDoKw+ML1uv1HA4HSr/f/308HgeDgUajMRqNh8MB3WQyYdzv96PRSPMTjIJZLJbdbodutVoxbrfb8XisMIyCnZ+fGwwGdJvNhnGz2UynU4Wt12vBLi4utFotut1ul/18PlfYarUSbLFYfH19oaNgXC6XGBX2+fkpGMr39zc6ABl1Op3CcLJgOFZ+gs/J/uzsTGGz2Uww3Fk6CkbcX6/XK2wymQiG15COghGvYTabFYZRMHlPdDwyRnQpkuFwKBiW0lF+aZj/NXRDNwzd0A1DN3TD0A1DN3TD0A3dMHTD0A3dMHRDNwzdMHRDNwzd0A1DNwzd0A1DN3TD0A1DN3TD0A3dMP8+fwDct9LC3HqXHgAAAABJRU5ErkJggg==","fill":null,"title_size":null,"title_fill":null,"header_fill":null,"boxed":false,"complete":true},{"kind":"prose","role":"body","band":4,"column":0,"bbox":{"left":0.3164179104477612,"top":0.8894308943089431,"right":0.6835820895522388,"bottom":0.9560975609756097},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"paragraph","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"0 04418 29102 6","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"size":null},{"kind":"paragraph","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"VAT reg. 442 7719 03","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"size":null},{"kind":"paragraph","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"Retain for your records","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed"}],"size":null}],"graphic_kind":null,"pixels":null,"fill":null,"title_size":null,"title_fill":null,"header_fill":null,"boxed":false,"complete":true}],"corrections":[],"probes":[{"kind":"column-sum","zone_index":1,"ok":true,"computed":"26.45","stated":"26.45","detail":"column 2, 8 data rows"}],"gaps":[{"bbox":{"left":0.05373134328358209,"top":0.7544715447154472,"right":0.9462686567164179,"bottom":0.7577235772357723},"note":"2.1% of this page's printed ink is in here \u2014 found by ink coverage, so it may be a mark","resolved":false,"ink_share":0.02051532543656124}],"failures":[],"caveats":[],"shortfalls":[],"regions":[{"top":0.0,"bottom":1.0,"flow":"single","splits":[],"rows":1}],"separators":[]}</script>
+</body>
+</html>

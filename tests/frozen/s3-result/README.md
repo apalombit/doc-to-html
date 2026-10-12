@@ -1,4 +1,10 @@
-# `s3-result/` — spec 0008's sweep, and **the floor and the control** since 2026-10-11
+# `s3-result/` — spec 0008's sweep; the floor and the control 2026-10-11 to 2026-10-12, **now record**
+
+Replaced by `s5-result/` on 2026-10-12, Alessandro's decision after reviewing
+spec 0010's sweep. Five legs there sit below this directory by that
+decision, and its README names them. Do not point `--previous` here. Where
+the text below says "the floor" or "the control", read "from 2026-10-11 to
+2026-10-12".
 
 > **Three legs sit below `q5-result/`, the floor before it, by decision.**
 > Alessandro accepted them on 2026-10-11 after reviewing the sweep: T3

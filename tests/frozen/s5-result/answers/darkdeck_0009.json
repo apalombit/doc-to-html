@@ -1,0 +1,370 @@
+{
+ "calls": [
+  {
+   "pass_name": "caption",
+   "answer": "{\"first_line\": \"Platform review\", \"line_is\": \"caption\"}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"AVAILABILITY\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"P95 LATENCY\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"INGEST VOLUME\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"COST PER MILLION\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\"first_line\": \"Where the quarter went\", \"line_is\": \"caption\"}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"OPEN RISKS\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"The archive tier has no tested restore above\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"The export rewrite did not ship. It is roughly two thirds complete and is now the largest single\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Two of four on-call engineers leave the rota in\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Service level by component\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"DECISIONS WANTED\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"What Q4 commits to\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Platform review\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Ingest held through the August peak without a paging incident. The remaining risk is concentrated in\",\n        \"the export path, where a single queue carries every tenant.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Q3 2026 · INTERNAL\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"AVAILABILITY\",\n      \"value\": \"99.97%\"\n    },\n    {\n      \"label\": \"\",\n      \"value\": \"+0.04 pts\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"AVAILABILITY\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"99.97%\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"+0.04 pts\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"P95\",\n      \"value\": \"LATENCY\"\n    },\n    {\n      \"label\": \"184\",\n      \"value\": \"ms\"\n    },\n    {\n      \"label\": \"-31\",\n      \"value\": \"ms\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"INGEST VOLUME\",\n      \"value\": \"4.8 bn\"\n    },\n    {\n      \"label\": \"\",\n      \"value\": \"+18%\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"INGEST VOLUME\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"4.8 bn\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"+18%\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"COST PER MILLION\",\n      \"value\": \"$2.14\"\n    },\n    {\n      \"label\": \"+9%\",\n      \"value\": \"\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Where the quarter went\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Two of the three planned workstreams shipped. The shard rebalancer landed in July and has\",\n        \"since moved 41 terabytes with no read errors. The schema registry went to general\",\n        \"availability in August.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "list",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"One export queue serves every tenant; a single slow consumer stalls the rest.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "list",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Cost per million rose 9% against a flat plan.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "list",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"The archive tier has no tested restore above\",\n        \"10 TB.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"The export rewrite did not ship. It is roughly two thirds complete and is now the largest single\",\n        \"item carried into Q4.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "list",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Two of four on-call engineers leave the rota in November.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "table",
+   "answer": "{\n  \"rows\": [\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"COMPONENT\",\n        \"OWNER\",\n        \"AVAILABILITY\",\n        \"P95\",\n        \"STATUS\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Ingest gateway\",\n        \"Platform\",\n        \"99.99%\",\n        \"62 ms\",\n        \"Healthy\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Stream router\",\n        \"Platform\",\n        \"99.98%\",\n        \"88 ms\",\n        \"Healthy\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Schema registry\",\n        \"Data\",\n        \"99.99%\",\n        \"21 ms\",\n        \"Healthy\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Query service\",\n        \"Data\",\n        \"99.94%\",\n        \"184 ms\",\n        \"Healthy\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Export queue\",\n        \"Platform\",\n        \"99.71%\",\n        \"2,410 ms\",\n        \"At risk\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Archive tier\",\n        \"Storage\",\n        \"99.96%\",\n        \"740 ms\",\n        \"Healthy\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"COMPONENT\",\n        \"OWNER\",\n        \"AVAILABILITY\",\n        \"P95\",\n        \"STATUS\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "list",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Approve two contractors for the export split.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"DECISIONS WANTED\",\n      \"kind\": \"strong\"\n    },\n    {\n      \"text\": \"Approve two contractors for the export split.\",\n      \"kind\": \"em\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "list",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Accept or reject the 9% cost variance.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"What Q4 commits to\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Finish the export rewrite and split the queue per tenant. Nothing else is scheduled against\",\n        \"the same team until that is done.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Prepared by the platform group · Circulated to engineering leads only\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  }
+ ]
+}

@@ -1,8 +1,9 @@
-# Status — 2026-10-12 (**spec 0011 planned — the baseline is `S5-sweep`, and steps are judged by eye**)
+# Status — 2026-10-12 (**spec 0011 under way — the baseline is `tests/frozen/s5-result/`, and steps are judged by eye**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-12, after
-Alessandro took `S5-sweep` as the baseline and asked for spec 0011.
+Alessandro took `S5-sweep` as the baseline and asked for spec 0011; step 0
+froze it the same day.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
@@ -67,8 +68,8 @@ Spec 0010   Five repairs, the beside score, type at the page's size — issue #3
                       ratchet NOT met on five documents
                       DECIDED 2026-10-12: S5-sweep is the baseline, the five legs accepted
 Spec 0011   Place every entry where the page puts it — issue #34, planned 2026-10-12
-              0  freeze S5-sweep as tests/frozen/s5-result/   <- next
-              1  rhythm: gaps from the page, Zones grouped, alignment
+              0  freeze S5-sweep as tests/frozen/s5-result/   DONE, both loops 15 of 15
+              1  rhythm: gaps from the page, Zones grouped, alignment   <- next
               2  locate every entry on the page
               3  fields: boxes, ticks, digit boxes, underlines
               4  lines: per-entry type, colour, rules, leaders, spacing
@@ -80,13 +81,15 @@ Q1-Q4's result tables moved to
 
 ---
 
-## The baseline — `S5-sweep`, DECIDED 2026-10-12
+## The baseline — `tests/frozen/s5-result/`, DECIDED 2026-10-12
 
-`debug/runs/S5-sweep`, commit `4a5fe3f` — spec 0010's sweep, all fifteen
-documents, 518 answers. It is frozen as `tests/frozen/s5-result/` at spec
-0011's step 0. Until then the run directory is its only copy: **keep it**.
-If it is lost, `FIXTURE=sweep tools/iterate.sh` on `4a5fe3f` remakes it at
-`temperature: 0`.
+Sweep `S5-sweep`, commit `4a5fe3f` — spec 0010's sweep, all fifteen
+documents, 518 answers, frozen at spec 0011's step 0 with its documents,
+scores, answers and `dth_env.txt`. Proved the day it was frozen:
+`tools/rederive.py` over it **15 of 15 byte-identical**, `tools/replay_run.py`
+from its answers **15 of 15 byte-identical**, and the rederive scored **15
+documents, 0 differing fields** against its `scores.json`. Its README has
+what moved against `s3-result/`.
 
 It sits below `s3-result/`, the floor before it, on five legs, all accepted
 by that decision:
@@ -102,8 +105,8 @@ python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
     --documents sweep --previous tests/frozen/s5-result/scores.json
 ```
 
-(`debug/runs/S5-sweep/scores.json` until step 0.) `--documents sweep` is not
-optional: without a `fixtures.txt` the report scores the iterate five.
+`--documents sweep` is not optional: without a `fixtures.txt` the report
+scores the iterate five.
 
 ### `s3-result/` — the floor 2026-10-11 to 2026-10-12
 
@@ -307,7 +310,7 @@ the Q5-era records", verbatim. Q1–Q4's are under "Outcome — Q1 to Q4".
 
 ---
 
-## Next — spec 0011, step 0
+## Next — spec 0011, step 1
 
 [`specs/0011-place-every-entry.md`](specs/0011-place-every-entry.md), issue
 #34, and its handover prompt. **The common cause behind every fault
@@ -374,8 +377,8 @@ the last two entries.
   **The exceptions are committed files:** `tests/frozen/run84/`,
   `a1-checkpoint/`, `a0-checkpoint/`, `a0-result/`, `a1-result/`,
   `a2-result/`, `a3-result/`, `reshot/`, `q5-result/`, `s3-result/` — all
-  kept as record — and, from spec 0011's step 0, **`s5-result/`, the
-  baseline**. `a3-result/` was scored on pictures missing their last lines;
+  kept as record — and **`s5-result/`, the baseline** since spec 0011's
+  step 0. `a3-result/` was scored on pictures missing their last lines;
   quote it only as that.
 - **The committed corpus picture is a screenshot of its own HTML.**
   `TestTheCorpusPictureIsItsOwnHTML` re-shoots the ten authored pages and
@@ -426,9 +429,9 @@ python tools/visual_review.py debug/runs/<label> --check
 
 **Three offline loops, each proved before it was used, and a sweep. Say which
 produced any number you report.** Start them from the baseline,
-`debug/runs/S5-sweep` (`tests/frozen/s5-result/` once spec 0011's step 0 has
-frozen it). On 2026-10-12 `tools/rederive.py` over `S5-sweep` reproduced it
-byte for byte. Both tools take a run directory as well as a frozen one.
+`tests/frozen/s5-result/`. On 2026-10-12 both `tools/rederive.py` and
+`tools/replay_run.py` over it reproduced it byte for byte. Both tools take a
+run directory as well as a frozen one.
 
 - **Downstream of the model** — renderer, style, probes. `tools/rederive.py
   <run> --label <base>` builds today's baseline; build the
