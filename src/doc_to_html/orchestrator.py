@@ -18,6 +18,7 @@ from dataclasses import dataclass, field, replace
 from enum import Enum
 from pathlib import Path
 
+from . import fields as fields_module
 from . import locate as locate_module
 from . import probes as probe_module
 from . import rhythm as rhythm_module
@@ -854,6 +855,7 @@ class Conversion:
             self._find_separators(rectified, document)
             self._read_rhythm(rectified, document)
             self._locate(rectified, document)
+            self._read_fields(rectified, document)
 
             document.probes = probe_module.run(document)
             for probe in document.probes:
@@ -1291,6 +1293,30 @@ class Conversion:
             Stage.LAYOUT, "locate", Disposition.ACCEPTED,
             seconds=time.perf_counter() - started,
             placed=placed, cells=cells, unplaced=unplaced)
+
+    def _read_fields(self, rectified: Rectified, document: Document) -> None:
+        """The marks the page draws for its entries — boxes, digit combs,
+        tick boxes, rules — attached to the pairs they belong to: spec 0011,
+        step 3. See `fields.read`.
+
+        **After `_locate`**, whose Cell boxes say which mark is whose, and
+        after `_find_separators`, since a rule a field claims stops being
+        one. Nothing a model is asked reads what it sets.
+        """
+        started = time.perf_counter()
+        plain = rectified.plain if rectified.plain is not None else rectified.image
+        before = [zone.kind for zone in document.zones]
+        fields_module.read(plain, document)
+        self.trace.record(
+            Stage.LAYOUT, "fields", Disposition.ACCEPTED,
+            seconds=time.perf_counter() - started,
+            fields=[{"zone": index, "label": pair.label.text[:40],
+                     "marks": [mark.kind for mark in pair.marks]}
+                    for index, zone in enumerate(document.zones)
+                    for pair in zone.pairs if pair.marks],
+            rebuilt=[{"zone": index, "was": was.value}
+                     for index, (was, zone) in enumerate(zip(before, document.zones))
+                     if zone.kind is not was])
 
     def _cut_at_regions(self, rectified: Rectified, document: Document) -> bool:
         """Cut a Zone that crosses the edge of a grid or a column region — spec

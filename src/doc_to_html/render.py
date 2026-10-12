@@ -233,7 +233,9 @@ def _closes(zone: Zone, *, plain: bool = False) -> float:
     if zone.kind is Kind.TABLE:
         return BELOW_INK["table"] + padded
     if zone.kind is Kind.PAIRS:
-        return BELOW_INK["dl"] + padded
+        # A Zone drawn as fields ends on its last box or rule, which is ink.
+        drawn = any(pair.marks for pair in zone.pairs)
+        return (0.0 if drawn else BELOW_INK["dl"]) + padded
     if zone.kind is Kind.FIGURE:
         return padded
     last = zone.blocks[-1] if zone.blocks else None
@@ -691,6 +693,8 @@ def _style_css(document: Document) -> str:
     if document.separators:
         rules.append(".separator { border-top:1px solid var(--rule);"
                      " margin:-0.875rem 0 0.875rem; }")
+    if _has_fields(document):
+        rules.extend(FIELD_CSS)
 
     style = document.style
     if style is None:
@@ -1221,6 +1225,208 @@ def _header_style(zone: Zone, document: Document) -> str:
     return f' style="{";".join(parts)}"'
 
 
+FIELD_CSS = (
+    ".fields { display:grid; align-items:start; }",
+    ".fields > .field { min-width:0; }",
+    ".field > .label { display:block; font-size:.85em; line-height:1.25;"
+    " color:var(--muted); white-space:nowrap; }",
+    ".field > .box { border:1px solid var(--muted); padding:0 .4em; display:flex;"
+    " align-items:center; white-space:nowrap; overflow:hidden; box-sizing:border-box; }",
+    ".field > .comb { display:flex; }",
+    ".field > .comb > span { border:1px solid var(--muted); display:flex;"
+    " align-items:center; justify-content:center; flex:none; box-sizing:border-box; }",
+    ".field > .ruled { border-bottom:1px solid var(--ink); display:flex;"
+    " align-items:flex-end; padding-left:.2em; white-space:nowrap; box-sizing:border-box; }",
+    ".field.option { display:flex; align-items:center; white-space:nowrap; }",
+    ".tick { border:1px solid var(--ink); display:inline-flex; align-items:center;"
+    " justify-content:center; font-size:.85em; line-height:1; flex:none;"
+    " box-sizing:border-box; }",
+    '.tick.on:empty::after { content:"\\2715"; }',
+)
+"""The stylesheet for fields — spec 0011, step 3c. Emitted only for a page
+that draws one (`_style_css`), so every other page keeps its bytes."""
+
+LANE_TOLERANCE = 1.0
+"""Field edges within this many body ems of each other are one grid line."""
+
+LABEL_ABOVE, LABEL_BELOW = 0.21, 0.15
+"""How far a field label's line box reaches past its ink, in body ems —
+measured 2026-10-12 in headless Chrome with `FIELD_CSS`, at 13 and 16px:
+0.19-0.23 above; below, 0.08-0.13 for a label with a descender and
+0.23-0.25 without. A gap read off the page is between inks, so these come
+off it, as `ABOVE_INK` and `BELOW_INK` do between Zones."""
+
+
+def _has_fields(document: Document) -> bool:
+    return any(pair.marks for zone in document.zones for pair in zone.pairs)
+
+
+def _lane_span(zone: Zone, document: Document) -> tuple[float, float]:
+    """The left and right edges, normalised, of the lane the Zone is read
+    in: as far as any Zone in it reaches. The fields grid spans the lane,
+    so its lines fall where the page's do."""
+    assert zone.bbox is not None
+    mates = [zone]
+    for region in document.regions:
+        if region.holds(zone.bbox) and region.flow is not Flow.GRID:
+            lane = region.lane_of(zone.bbox)
+            mates = [z for z in document.zones if z.bbox is not None
+                     and region.holds(z.bbox) and region.lane_of(z.bbox) == lane]
+            break
+    return (min(z.bbox.left for z in mates if z.bbox is not None),
+            max(z.bbox.right for z in mates if z.bbox is not None))
+
+
+def _union(boxes: list[BBox]) -> BBox:
+    return BBox(min(b.left for b in boxes), min(b.top for b in boxes),
+                max(b.right for b in boxes), max(b.bottom for b in boxes))
+
+
+def _field(pair: Pair, document: Document, page: _Page) -> str:
+    """One field: its label over its box, comb or rule; a tick box beside
+    its option; or a signature line over its caption — as the page draws
+    it. The value is the model's words; the mark is only drawn."""
+    label, value = _cell(pair.label, document), _cell(pair.value, document)
+    marks = pair.marks
+    if not marks:
+        return (f'<div class="field"><span class="label">{label}</span>'
+                f"<div>{value}</div></div>")
+    first = marks[0]
+    tall = (first.bbox.bottom - first.bbox.top) * page.y
+    wide = (first.bbox.right - first.bbox.left) * page.x
+    caption = pair.label.bbox
+    if first.kind == "tick":
+        on = " on" if first.ticked or pair.value.text.strip() else ""
+        gap = (caption.left - first.bbox.right) * page.x if caption is not None else 5.0
+        return (f'<div class="field option" style="gap:{_px(gap)}">'
+                f'<span class="tick{on}" style="width:{_px(tall)};height:{_px(tall)}">'
+                f"{value}</span><span>{label}</span></div>")
+    if first.kind == "line" and caption is not None and first.bbox.bottom <= caption.top:
+        below = (caption.top - first.bbox.bottom) * page.y - LABEL_ABOVE * page.body
+        return (f'<div class="field"><div class="ruled" style="height:1px"></div>'
+                f'<span class="label" style="margin-top:{_px(below)}">{label}</span></div>')
+    under = 0.0
+    if caption is not None:
+        under = (first.bbox.top - caption.bottom) * page.y - LABEL_BELOW * page.body
+    head = f'<span class="label" style="margin-bottom:{_px(under)}">{label}</span>'
+    if first.kind == "comb":
+        characters = pair.value.text.split()
+        if len(characters) != first.count:
+            characters = list(pair.value.text.replace(" ", ""))
+        if len(characters) == first.count:
+            spacing = tall / 8
+            each = (wide - spacing * (first.count - 1)) / first.count
+            boxes = "".join(
+                f'<span style="width:{_px(each)};height:{_px(tall)}">'
+                f"{html.escape(c)}</span>" for c in characters)
+            return (f'<div class="field">{head}<div class="comb" style="gap:{_px(spacing)}">'
+                    f"{boxes}</div></div>")
+    if first.kind == "line":
+        # The value sits on the first rule: one box from under the label to
+        # the rule, the value at its foot.
+        reach = tall
+        if caption is not None:
+            reach = (first.bbox.bottom - caption.bottom) * page.y - LABEL_BELOW * page.body
+        rules = [f'<div class="ruled" style="height:{_px(reach)}">{value}</div>']
+        for upper, lower in zip(marks, marks[1:]):
+            step = (lower.bbox.bottom - upper.bbox.bottom) * page.y
+            rules.append(f'<div class="ruled" style="height:{_px(step)}"></div>')
+        return (f'<div class="field"><span class="label">{label}</span>'
+                f'{"".join(rules)}</div>')
+    return (f'<div class="field">{head}<div class="box" style="height:{_px(tall)}">'
+            f"{value}</div></div>")
+
+
+def _fields(zone: Zone, document: Document) -> str | None:
+    """A pairs Zone the page draws as fields — spec 0011, step 3c: a grid
+    whose lines are the page's, each field where the page puts it.
+
+    The grid's lines are every field's left and right edge on the page,
+    those within `LANE_TOLERANCE` of each other taken as one, and the
+    lane's own edges; each track is as wide, in `fr`, as the page has it, so
+    `form_0007`'s two half-width columns and its full-width fields fall
+    where the page's do at any width. Fields stand in rows by where they
+    sit, each row as far below the last as the page sets it, and a row of
+    tick options flows as the page's does. A pair with nothing placed
+    leaves the Zone to `_pairs`."""
+    page = _page(document)
+    anchors: list[BBox] = []
+    for pair in zone.pairs:
+        boxes = [b for b in (pair.label.bbox, pair.value.bbox) if b is not None]
+        boxes += [mark.bbox for mark in pair.marks]
+        if not boxes:
+            return None
+        anchors.append(_union(boxes))
+    left, right = _lane_span(zone, document)
+    left = min([left] + [a.left for a in anchors])
+    right = max([right] + [a.right for a in anchors])
+    tolerance = LANE_TOLERANCE * page.body / page.x
+    lines: list[float] = []
+    for edge in sorted([left, right] + [a.left for a in anchors]
+                       + [a.right for a in anchors]):
+        if not lines or edge - lines[-1] > tolerance:
+            lines.append(edge)
+    if len(lines) < 2:
+        return None
+
+    def line(edge: float) -> int:
+        return min(range(len(lines)), key=lambda i: abs(lines[i] - edge)) + 1
+
+    def opens_with_label(i: int) -> bool:
+        pair = zone.pairs[i]
+        if pair.label.bbox is None:
+            return False
+        if not pair.marks:
+            return True
+        return (pair.marks[0].kind != "tick"
+                and pair.marks[0].bbox.top >= pair.label.bbox.bottom)
+
+    order = sorted(range(len(anchors)), key=lambda i: (anchors[i].top, anchors[i].left))
+    rows: list[list[int]] = []
+    for i in order:
+        if rows and anchors[i].top < min(anchors[j].bottom for j in rows[-1]):
+            rows[-1].append(i)
+        else:
+            rows.append([i])
+    parts = []
+    for number, members in enumerate(rows, start=1):
+        gap = 0.0
+        if number > 1:
+            gap = (min(anchors[i].top for i in members)
+                   - max(anchors[j].bottom for j in rows[number - 2])) * page.y
+            if any(opens_with_label(i) for i in members):
+                gap -= LABEL_ABOVE * page.body
+        members = sorted(members, key=lambda i: anchors[i].left)
+        if all(zone.pairs[i].marks and zone.pairs[i].marks[0].kind == "tick"
+               for i in members):
+            # A row of tick options flows like the page's, each the page's
+            # distance after the last: a track as wide as the page's text
+            # overflows when ours sets it wider.
+            spot = f"grid-row:{number};grid-column:1 / -1;display:flex"
+            if gap:
+                spot += f";margin-top:{_px(gap)}"
+            edge = lines[0]
+            options = []
+            for i in members:
+                after = (anchors[i].left - edge) * page.x
+                options.append(f'<div style="margin-left:{_px(after)};flex:none">'
+                               f"{_field(zone.pairs[i], document, page)}</div>")
+                edge = anchors[i].right
+            parts.append(f'<div style="{spot}">' + "".join(options) + "</div>")
+            continue
+        for i in members:
+            start, end = line(anchors[i].left), line(anchors[i].right)
+            end = max(end, start + 1)
+            spot = f"grid-row:{number};grid-column:{start} / {end}"
+            if gap:
+                spot += f";margin-top:{_px(gap)}"
+            parts.append(f'<div style="{spot}">{_field(zone.pairs[i], document, page)}</div>')
+    tracks = " ".join(f"minmax(0,{(b - a) * page.x:.0f}fr)"
+                      for a, b in zip(lines, lines[1:]))
+    return (f'<div class="fields" style="grid-template-columns:{tracks}">'
+            + "".join(parts) + "</div>")
+
+
 def _pairs(zone: Zone, document: Document) -> str:
     """One `dt` and one `dd` per pair; a pair with no value marks its label
     `alone`, which the stylesheet draws across both columns, and a value
@@ -1232,6 +1438,10 @@ def _pairs(zone: Zone, document: Document) -> str:
     `text-align` can put the line where the page does. `statement_0006`'s
     `Account 40-21-88 / 60114427` and `invoice_0001`'s `Invoice #: 123` are
     lines set flush right, not a two-column list."""
+    if any(pair.marks for pair in zone.pairs) and zone.bbox is not None:
+        drawn = _fields(zone, document)
+        if drawn is not None:
+            return drawn
     lines = zone.align in TEXT_ALIGN
     parts = []
     for pair in zone.pairs:

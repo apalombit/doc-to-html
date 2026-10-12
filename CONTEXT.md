@@ -28,6 +28,10 @@ _Avoid_: Box, card, panel, border
 Zones in one lane that continue one another — same Kind, prose or list, no Title on the later one, left edges agreeing, a line pitch or so apart, no rule between and nothing beside either. Drawn as one section under the first one's Title, with the page's gap kept between them. Recorded per Zone as the index of the first; the Zones themselves are never merged.
 _Avoid_: Run (an inline Run is a span of a Cell), merge, group of Zones
 
+**Mark**:
+Something the page draws for an entry to be written in — the box round a value, a comb of one-character boxes, a tick box beside an option, the rule a value is written on or a signature line over its caption. Measured from pixels and attached to a Pair by its Cells' boxes; a Pair with Marks is drawn as a field. A Mark is drawn, never a word: the value printed in it is always the model's reading.
+_Avoid_: Field (the drawn whole), box, widget, input
+
 **Title**:
 A heading that belongs to a Zone rather than standing beside it — "Company Details" captioning the Pairs beneath it. A Title binds the caption to the block it names, so the grouping holds even when a neighbouring Zone in the same Band is a different height.
 _Avoid_: Heading, caption, label, panel header

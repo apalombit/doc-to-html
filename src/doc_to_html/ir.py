@@ -191,12 +191,41 @@ class Row:
     role: RowRole = RowRole.DATA
 
 
+MARK_KINDS = ("box", "comb", "tick", "line")
+"""What a `Mark` may be: the box a value is written in, a row of boxes one
+character each, a tick box, a rule a value is written on or under."""
+
+
+@dataclass
+class Mark:
+    """Something the page draws for an entry to be written in — spec 0011,
+    step 3. Measured from pixels by `fields.find`, never asked of a model."""
+
+    kind: str
+    """One of `MARK_KINDS`."""
+
+    bbox: BBox
+    """Where the page draws it, normalised like `Zone.bbox`."""
+
+    count: int = 1
+    """How many boxes a `comb` is; 1 for every other kind."""
+
+    ticked: bool | None = None
+    """Whether a `tick` box holds a mark; None for every other kind."""
+
+
 @dataclass
 class Pair:
     """A label bound to a value, as in "Invoice No: INV-2026-0184"."""
 
     label: Cell
     value: Cell
+
+    marks: list[Mark] = field(default_factory=list)
+    """What the page draws for the value — a box, a comb, a tick box, or the
+    rules it is written on — in the order they sit, top to bottom. Empty
+    for a pair the page prints as plain text, which is nearly all of them.
+    Spec 0011, step 3; set by `fields.read`."""
 
 
 @dataclass
@@ -664,6 +693,11 @@ def _cell(data: dict[str, Any]) -> Cell:
     )
 
 
+def _mark(data: dict[str, Any]) -> Mark:
+    return Mark(kind=data["kind"], bbox=BBox(**data["bbox"]),
+                count=data.get("count", 1), ticked=data.get("ticked"))
+
+
 def _zone(data: dict[str, Any]) -> Zone:
     return Zone(
         kind=Kind(data["kind"]),
@@ -680,7 +714,8 @@ def _zone(data: dict[str, Any]) -> Zone:
             for row in data.get("rows", [])
         ],
         pairs=[
-            Pair(label=_cell(p["label"]), value=_cell(p["value"]))
+            Pair(label=_cell(p["label"]), value=_cell(p["value"]),
+                 marks=[_mark(m) for m in p.get("marks", [])])
             for p in data.get("pairs", [])
         ],
         blocks=[

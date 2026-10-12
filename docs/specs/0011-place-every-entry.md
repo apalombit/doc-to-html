@@ -1,6 +1,6 @@
 # Place every entry where the page puts it — rhythm, location, fields, lines
 
-**Status: under way, issue #34. Steps 0, 1 and 2 DONE 2026-10-12; step 3 next.**
+**Status: under way, issue #34. Steps 0 to 3 DONE 2026-10-12; step 4 next.**
 
 Alessandro's decisions, 2026-10-12, after reviewing sweep `S5-sweep` (spec
 0010's outcome):
@@ -457,6 +457,69 @@ fields spanning both.
 **Done when** `form_0007`'s sheet shows the page's two-column field grid,
 boxes, digit boxes and ticks in the right boxes; no other page moves unless
 it draws such marks; and no page is worse.
+
+**Outcome — step 3, 2026-10-12: DONE, the form better, no other page moved.**
+Run `debug/runs/S6-3-fields` (`tools/rederive.py` over `s5-result/`), sheet
+against `S6-2-locate`. Every other page's HTML is byte-identical outside the
+embedded IR, where each pair gains `"marks": []`. Replay (`S6-3-replay`) =
+rederive, 15 of 15.
+
+What shipped:
+- **`ir.Mark`** (`box`, `comb`, `tick`, `line`; its box, a comb's `count`, a
+  tick's `ticked`) and **`Pair.marks`**, in the order they sit. `CONTEXT.md`
+  has the term.
+- **`fields.find`**: every mark on the page, page-wide rather than per Zone
+  — an empty field's rules lie below its snapped Zone, and spec 0009 had
+  read `form_0007`'s two medical-field rules as separators. Components of
+  the ink, a rule thin and at least 4 glyphs long, a box an outline 1.2-4
+  glyphs tall with every edge inked and a hollow inside; three equal boxes
+  closer than half a box are a comb; a square up to 1.8 glyphs is a tick
+  box. **Ticked** is the ink inside the outline, measured over the corpus's
+  eight: empty 0.00 on all four, ticked 0.27-0.28 on all four; the
+  threshold sits in the gap at 0.10. Over the fifteen, boxes of field size
+  are found only on `form_0007` (29) and one 17×12 shape in a catalogue
+  card that touches no Cell.
+- **`fields.read`** attaches marks by the step-2 Cell boxes, in three passes
+  over a Zone's pairs: what a pair's own Cells sit in, on or beside; then
+  what lies under a blank value's label (a box, or one or more rules); then
+  a signature line over its caption. The passes are what keep the
+  competition field's rule from being the medical label's signature line. A
+  rule the model read as the value — `Ref. __________` — is set aside, so
+  `Date stamp`, centred under it, does not take it. **A list whose every
+  line stands beside a tick box, and a table whose rows go labels over
+  boxed values, become pairs Zones of fields** — Zones 3 and 5; nothing is
+  dropped or added but an empty value Cell per option. A rule a field claims
+  leaves `separators`; a Zone's box widens to its marks. Stage
+  `_read_fields` after `_locate`; `rederive.py` step 10, which moves the
+  gaps after it.
+- **`render._fields`**: a grid whose lines are the fields' edges and the
+  lane's, each track as wide in `fr` as the page has it; rows as far apart
+  as the page sets them, less what a label's line box adds round its ink —
+  **measured in Chrome, 0.21 em above and 0.15 below**. A label over its box,
+  comb or rule; a signature line over its caption; a row of tick options
+  flows as the page's does, each the page's distance after the last — the
+  first cut gave each a fixed track and `I can swim 100 metres in light
+  clothing`, wider in our face, ran into the next box. A ticked box is
+  crossed; a value the model read for it (`X`) is printed in it. The
+  stylesheet for fields is emitted only on a page that draws one.
+
+The sheet, against `S6-2-locate`:
+
+| document | judgement | the element |
+|---|---|---|
+| `form_0007` | better | the two-column field grid, the full-width Address and Email, the eight-box date comb, the tick boxes with `Full rowing`, `Locker required` and the two declarations crossed, the competition value on its rule, the medical field's two empty rules, the three signature lines over their captions; the page's height kept |
+| the other fourteen | same | byte-identical outside the IR |
+
+What is still not the page's on `form_0007`: the `OFFICE USE` box is not
+drawn round its three lines; the section bars sit tight on the field above
+them — step 1's title measure, since the bar's black left edge puts the
+Zone's top at the bar, not its text; labels are a lighter grey than the
+page's; and `Tick one category…`, which the model did not read.
+
+Recorded, not argued: only `form_0007` moved — beside 0.208 → 1.000, tau
+0.962 → 0.995, height 1.018 → 1.076, alignment 0.814 → 0.839, columns within
+tolerance 0.962 → 0.902; `vanished` unchanged on every document. 955 tests,
+mypy clean.
 
 ### Step 4 — Lines: what each entry looks like
 

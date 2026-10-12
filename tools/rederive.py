@@ -40,6 +40,10 @@ and can be recomputed from it, in the order a Conversion runs them:
     9. Where every Cell sits on the page — spec 0011, step 2; tesseract
        as a locator, its words never printed
                                     locate.locate              (_locate)
+   10. The marks the page draws for its entries, attached to their pairs —
+       spec 0011, step 3; step 6's gaps are taken after it, since it can
+       widen a Zone's box to its marks
+                                    fields.read           (_read_fields)
 
 then re-renders into a run-shaped directory that `doc_to_html.report` and
 `tools/visual_review.py` read without knowing the difference.
@@ -76,7 +80,7 @@ TOOLS = Path(__file__).resolve().parent
 sys.path.insert(0, str(TOOLS.parent / "src"))
 sys.path.insert(0, str(TOOLS))
 
-from doc_to_html import locate, probes, rhythm  # noqa: E402
+from doc_to_html import fields, locate, probes, rhythm  # noqa: E402
 from doc_to_html.corpus import SOURCES  # noqa: E402
 from doc_to_html.ir import Caveat, Document, Kind  # noqa: E402
 from doc_to_html.orchestrator import gaps, shortfall  # noqa: E402
@@ -130,7 +134,6 @@ def rederive(document: Document, png: Path) -> None:
     ]
     # Q5, 2026-09-29: a column-sum totals the rows above its summary only.
     document.probes = probes.run(document)
-    document.gaps = gaps(image, document.zones)
     plain = rectified.plain if rectified.plain is not None else rectified.image
     if document.style is not None:
         document.regions = structure(
@@ -141,6 +144,9 @@ def rederive(document: Document, png: Path) -> None:
             inverted=rectified.inverted)
         rhythm.read(plain, document)
     locate.locate(plain, document)
+    fields.read(plain, document)
+    # Last, as the audit is in a Conversion: step 10 can widen a Zone's box.
+    document.gaps = gaps(image, document.zones)
 
 
 def documents_in(source: Path, model: str) -> list[tuple[str, Path]]:
