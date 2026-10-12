@@ -251,6 +251,13 @@ class Row:
     line — `menu_0012`'s dots from a dish to its price: spec 0011, step 4d.
     None where it draws none."""
 
+    gap: float | None = None
+    """How far below the row before it, on the page, this row's ink starts:
+    from that row's lowest ink to this one's highest, normalised to the
+    page's height — spec 0011, step 4e. None for the first row, where
+    either is not placed, and where the row placed above it on the page is
+    not the one before it in the table."""
+
 
 MARK_KINDS = ("box", "comb", "tick", "line")
 """What a `Mark` may be: the box a value is written in, a row of boxes one
@@ -304,6 +311,13 @@ class Block:
     type, measured off its own ink — or None, which draws it at the house
     size for its kind. Set only on a heading the page prints smaller than a
     heading is drawn; see `style.heading_sizes`."""
+
+    gap: float | None = None
+    """How far below the Block before it, on the page, this one's ink
+    starts: from that Block's lowest ink to this one's highest, normalised to
+    the page's height — spec 0011, step 4e. None for the first Block, where
+    either is not placed, and where this one starts beside the one before
+    rather than below it."""
 
 
 @dataclass
@@ -786,6 +800,7 @@ def _zone(data: dict[str, Any]) -> Zone:
                 under=_stroke(row.get("under")),
                 fill=_colour(row.get("fill")),
                 leader=_stroke(row.get("leader")),
+                gap=row.get("gap"),
             )
             for row in data.get("rows", [])
         ],
@@ -796,7 +811,7 @@ def _zone(data: dict[str, Any]) -> Zone:
         ],
         blocks=[
             Block(kind=b["kind"], lines=[_cell(c) for c in b.get("lines", [])],
-                  size=b.get("size"))
+                  size=b.get("size"), gap=b.get("gap"))
             for b in data.get("blocks", [])
         ],
         graphic_kind=data.get("graphic_kind"),

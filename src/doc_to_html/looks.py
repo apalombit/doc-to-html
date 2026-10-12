@@ -56,6 +56,12 @@ Neither is read on a photographed page: print and light set its colours.
   The gap under the last row is read to `LAST` glyphs below it.
 - **A row's fill** is the ground of its own band, where it is not its
   Zone's: a header bar, a zebra stripe.
+- **A row's gap** (4e) is from the lowest ink of the row before it to its
+  own highest, where that row is also the one before it in the table.
+- **A Block's gap** (4e) is the same between the Blocks of a prose or list
+  Zone — paragraphs, headings, items — where the Block starts below the one
+  before it rather than beside it. It needs no pixels: the Cells' boxes are
+  their ink.
 
 The lines are read on a photographed page too — `receipt_0010`'s dashed
 rules are its structure — but not their colour.
@@ -406,6 +412,27 @@ def _stroke(band: ImageArray, glyph: float, height: int,
     return Stroke(kind="none")
 
 
+def _blocks(document: Document) -> None:
+    """Set `Block.gap` in every prose and list Zone whose Blocks are placed."""
+    for zone in document.zones:
+        if zone.kind not in (Kind.PROSE, Kind.LIST):
+            continue
+        above: float | None = None
+        for block in zone.blocks:
+            block.gap = None
+            boxes = [c.bbox for c in block.lines
+                     if c.bbox is not None and c.text.strip()]
+            if not boxes:
+                above = None
+                continue
+            top = min(box.top for box in boxes)
+            # A Block starting above the last one's lowest ink stands beside
+            # it — `sample_semantic_0005`'s menu, one item after another.
+            if above is not None and top >= above:
+                block.gap = round(top - above, 5)
+            above = max(box.bottom for box in boxes)
+
+
 def _rows(rgb: ImageArray, document: Document, glyph: float,
           coloured: bool) -> None:
     """Set `Row.under` and `Row.fill` on every table whose rows are placed."""
@@ -418,7 +445,7 @@ def _rows(rgb: ImageArray, document: Document, glyph: float,
         right = min(width, int(np.ceil(zone.bbox.right * width)))
         placed: list[tuple[int, int, int]] = []
         for index, row in enumerate(zone.rows):
-            row.under, row.fill = None, None
+            row.under, row.fill, row.gap = None, None, None
             boxes = [c.bbox for c in row.cells if c.bbox is not None and c.text.strip()]
             if boxes:
                 placed.append((int(min(b.top for b in boxes) * height),
@@ -427,6 +454,10 @@ def _rows(rgb: ImageArray, document: Document, glyph: float,
         drawn = zone.fill or style.page_bg
         for number, (top, bottom, index) in enumerate(placed):
             row = zone.rows[index]
+            # Only from the row before it in the table: across a row not
+            # placed — `receipt_0010`'s `AID` — the gap holds that row too.
+            if number and placed[number - 1][2] == index - 1:
+                row.gap = round(max(0, top - placed[number - 1][1]) / height, 5)
             if coloured and bottom > top:
                 ground = dominant(rgb[top:bottom, left:right])
                 if _apart(ground, drawn) > SAME_COLOUR:
@@ -507,6 +538,7 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
     for zone in document.zones:
         for cell, _ in cells_of(zone):
             cell.look = None
+    _blocks(document)
     body = body_glyph(image, document.zones)
     if not body:
         return

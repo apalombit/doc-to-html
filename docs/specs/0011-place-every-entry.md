@@ -804,6 +804,74 @@ What is still not the page's:
 Recorded, not argued: no scored field moved on any document; `vanished`
 unchanged; 989 tests, mypy clean.
 
+**Outcome — step 4e, 2026-10-12: DONE, eleven pages better, four the same,
+none worse.** Run `debug/runs/S6-4e-blocks`, sheets against `S6-4d-leaders`
+— table rows judged first on `S6-4e-spacing`, then Blocks on `S6-4e-blocks`
+against it. Replay (`S6-4e-replay`) = rederive, 15 of 15.
+
+What shipped:
+- **`Row.gap` and `Block.gap`**: the distance on the page from the lowest
+  ink of the row or Block before to the highest of this one, normalised to
+  the page's height. Read by `looks` from the Cells' boxes alone, so it
+  needs no pixels. It is left unread where:
+  - either one is not placed;
+  - the one placed above it on the page is not the one before it in the
+    IR — across an unplaced row, the gap would hold that row too;
+  - a Block starts beside the one before rather than below it, as in
+    `sample_semantic_0005`'s menu.
+- **`render`** draws the gap less what each line box reaches past its ink.
+  That reach was measured in headless Chrome at 11, 13 and 16px: 0.35em
+  above, and below 0.37em, or 0.20em when the words descend.
+  - **Rows:** each row's cells lose their vertical padding (`table.spaced`),
+    and the space between two rows is split half above and half below the
+    line between them.
+  - **Blocks:** the space goes above the lower Block, and the upper one's
+    margin below gives way. A heading's reach is scaled by its drawn size.
+- **Two faults in the first cut were fixed before judging:**
+  - **The whole gap went above the row.** The receipt's dashed rules then
+    sat right under the upper line with all the space below them. Splitting
+    the gap puts each rule mid-gap, as printed.
+  - **A gap was measured across a row the model's text could not place.**
+    The receipt's `AID` → `Auth` and the menu's `PUDDINGS` → `Treacle` were
+    drawn twice as far apart as printed. A gap is now only ever from the
+    row before.
+
+| document | judgement | the element |
+|---|---|---|
+| `receipt_0010` | better | its lines at the page's pitch, each dashed rule mid-gap; the address and closing lines close up as printed |
+| `menu_0012` | better | each note sits under its own dish and apart from the next; the closing two lines close up |
+| `statement_0006` | better | both pages' transactions at the page's row pitch |
+| `nonlatin_0014` | better, slightly | the line items closer to the page's pitch |
+| `sample_table_0003` | better | sixteen rows at the page's pitch, no longer spread |
+| `invoice_0001` | better | the item rows tight, as printed |
+| `report_0011` | better | the table's rows and the three footnotes at the page's pitch |
+| `cv_0013` | better | the education rows and each role's company line at the page's spacing |
+| `darkdeck_0009` | better | the component table at the page's pitch; each tile's value and delta, and the risks, closer as printed |
+| `invoice_0002` | better | the company's address lines and the closing three lines at the page's line pitch, no longer a paragraph apart |
+| `sample_semantic_0005` | better | the quotation's attribution and the footer's contact line stand as far below as printed |
+| `newsletter_0008` | same | the quotation's attribution closes up; nothing else moves |
+| `catalogue_0015`, `form_0007`, `sample_css_0004` | same | byte-identical outside the IR |
+
+What is still not the page's:
+- **Pairs are not spaced.** `invoice_0002`'s two panels and
+  `nonlatin_0014`'s address lists keep the house gap: the page sets them at
+  0.5-0.7 body ems, and the render draws 0.87. The catalogue's and the
+  form's pairs are cards and fields, not stacked lines.
+- **The line pitch inside a paragraph is the render's.** `report_0011`'s
+  serif paragraphs keep the house's 1.5.
+- **The receipt is still the tallest page against its source**, 1.58. Its
+  cause was not traced in this step.
+
+Recorded, not argued:
+- Twelve heights moved toward the source, mean 1.157 → 1.112: receipt
+  1.763 → 1.576, statement 1.298 → 1.151, sample_table 1.191 → 1.071.
+- Beside agreement moved on three documents: cv 0.400 → 0.438, darkdeck
+  0.602 → 0.583, menu 0.469 → 0.308.
+- `ink_delta` rose on report (0.063 → 0.314), menu and darkdeck. It is the
+  modal anti-aliased grey, which moves with how densely the lines are set;
+  nothing on those sheets changed colour.
+- `vanished` is unchanged on every document. 996 tests pass; mypy is clean.
+
 ### Step 5 — one sweep, `S6-sweep`
 
 All fifteen, shipped defaults. Nothing in steps 1–4 changes a crop or a

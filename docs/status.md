@@ -10,7 +10,7 @@ Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 (authoritative), then this file. If you are going to look at output — and you
 should — use the **`visual-review` skill**.
 
-Branch `scaffold`. **989 tests pass, `mypy src/` clean.**
+Branch `scaffold`. **996 tests pass, `mypy src/` clean.**
 
 **How work is judged now — Alessandro, 2026-10-12, for spec 0011.** By eye:
 every step's sheets are opened against the previous step's and each page
@@ -77,7 +77,8 @@ Spec 0011   Place every entry where the page puts it — issue #34, planned 2026
                  4b colour and chips   DONE, thirteen pages better
                  4c lines and fills between table rows   DONE, six pages better
                  4d leader dots   DONE, the menu better
-                 4e spacing inside a Zone   <- next
+                 4e spacing inside a Zone   DONE, eleven pages better
+                 4f typeface class, optional   <- next
               5  one sweep, S6-sweep
 ```
 
@@ -315,7 +316,7 @@ the Q5-era records", verbatim. Q1–Q4's are under "Outcome — Q1 to Q4".
 
 ---
 
-## Next — spec 0011, step 4e
+## Next — spec 0011, step 4f, then the sweep
 
 [`specs/0011-place-every-entry.md`](specs/0011-place-every-entry.md), issue
 #34, and its handover prompt. **The common cause behind every fault
@@ -347,8 +348,10 @@ better, none worse; `Style.ink` is mis-measured on form, nonlatin and cv,
 so their Titles keep the wrong ink. **4c is done for tables**: the line
 under each row and its fill — the receipt's dashed rules, the menu with
 none, the statement's stripes. **4d is done**: the menu's dots from each
-dish toward its price. Next is 4e, spacing inside a Zone; then, optionally,
-the typeface class.
+dish toward its price. **4e is done**: rows, paragraphs and items stand as
+far apart as the page sets them — eleven pages better, none worse; pairs
+are not spaced yet. Next is 4f, the typeface class, optional and stopped if
+not clearly right; then step 5, one sweep.
 
 ---
 

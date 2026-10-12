@@ -700,6 +700,8 @@ def _style_css(document: Document) -> str:
         rules.extend(FIELD_CSS)
     if any(_rows_read(zone) for zone in document.zones if zone.kind is Kind.TABLE):
         rules.extend(ROWS_CSS)
+    if any(row.gap is not None for zone in document.zones for row in zone.rows):
+        rules.extend(SPACED_CSS)
     if any(row.leader is not None and row.leader.kind != "none"
            for zone in document.zones for row in zone.rows):
         rules.extend(LEADER_CSS)
@@ -1082,10 +1084,14 @@ def _unit(unit: list[Zone], document: Document, page: _Page, *,
     if all(zone.kind is Kind.LIST and zone.complete for zone in unit):
         items = []
         for position, zone in enumerate(unit):
-            for index, block in enumerate(b for b in zone.blocks if b.kind == "item"):
-                spaced = (gap(unit[position - 1], zone,
-                              BELOW_INK["li"] + ABOVE_INK["li"])
-                          if position and not index else "")
+            listed = [b for b in zone.blocks if b.kind == "item"]
+            within = _spacing(listed, page) if len(listed) == len(zone.blocks) else []
+            for index, block in enumerate(listed):
+                if position and not index:
+                    spaced = gap(unit[position - 1], zone,
+                                 BELOW_INK["li"] + ABOVE_INK["li"])
+                else:
+                    spaced = _styled(within[index][0]) if within else ""
                 items.append(f"<li{_li_style(block, document, spaced)}>"
                              f"{_lines(block, document)}</li>")
         body = f"<ul>{''.join(items)}</ul>"
@@ -1196,11 +1202,30 @@ def _table(zone: Zone, document: Document) -> str:
     ink = _house(document)
     read = _rows_read(zone)
     page = _page(document)
+    places: list[bool] = []
+    for position, row in enumerate(zone.rows):
+        if row.role is RowRole.HEADER:
+            between = bool(data_at) and data_at[0] < position < data_at[-1]
+            places.append(position >= opening and (opening > 0 or between))
+        else:
+            places.append(row.role is RowRole.SUMMARY and position < closing)
+    # The order rows are drawn in: what opens the table, its body, what closes it.
+    drawn = [position for bucket in (RowRole.HEADER, RowRole.DATA, RowRole.SUMMARY)
+             for position, row in enumerate(zone.rows)
+             if (RowRole.DATA if places[position] else row.role) is bucket]
+    spaced = any(row.gap is not None for row in zone.rows)
     for position, row in enumerate(zone.rows):
         tag = "th" if row.role is RowRole.HEADER else "td"
+        padding = ""
+        if spaced:
+            at = drawn.index(position)
+            above = zone.rows[drawn[at - 1]] if at else None
+            below = zone.rows[drawn[at + 1]] if at + 1 < len(drawn) else None
+            padding = _row_padding(row, above, below, page)
 
         def styled(cell: Cell) -> str:
             looked = _look(cell, bold=row.role is not RowRole.DATA, house=ink)
+            looked = ";".join(part for part in (looked, padding) if part)
             return f' style="{looked}"' if looked else ""
 
         led = _leader(row, page)
@@ -1211,11 +1236,7 @@ def _table(zone: Zone, document: Document) -> str:
             + f"</{tag}>"
             for index, c in enumerate(row.cells)
         )
-        if row.role is RowRole.HEADER:
-            between = bool(data_at) and data_at[0] < position < data_at[-1]
-            in_place = position >= opening and (opening > 0 or between)
-        else:
-            in_place = row.role is RowRole.SUMMARY and position < closing
+        in_place = places[position]
         groups[RowRole.DATA if in_place else row.role].append(
             f"<tr{_row_style(row, page, opens=not in_place) if read else ''}>"
             f"{cells}</tr>")
@@ -1228,7 +1249,8 @@ def _table(zone: Zone, document: Document) -> str:
         parts.append(f"<tbody>{''.join(groups[RowRole.DATA])}</tbody>")
     if groups[RowRole.SUMMARY]:
         parts.append(f"<tfoot>{''.join(groups[RowRole.SUMMARY])}</tfoot>")
-    table = '<table class="read">' if read else "<table>"
+    css = " ".join(name for name, on in (("read", read), ("spaced", spaced)) if on)
+    table = f'<table class="{css}">' if css else "<table>"
     return f'<div class="table-wrap">{table}{"".join(parts)}</table></div>'
 
 
@@ -1267,6 +1289,81 @@ def _leader(row: Row, page: _Page) -> str:
     width = max(1, round(line.width * page.y))
     colour = _rgb(line.color) if line.color else "var(--muted)"
     return f"--leader:{width}px {line.kind} {colour}"
+
+
+ROW_ABOVE, ROW_BELOW, ROW_BELOW_LOW = 0.35, 0.37, 0.20
+"""How far a table row's line box reaches past its ink with no padding, in
+ems — measured 2026-10-12 in headless Chrome with this stylesheet at 11, 13
+and 16px: 0.31-0.38 above; below, 0.36-0.38, or 0.18-0.23 for a row whose
+words reach below the baseline. Spec 0011, step 4e draws the page's gap
+between rows less these."""
+
+DESCENDERS = frozenset("gjpqy,;()")
+"""Characters that reach below the baseline, so a row's ink ends lower."""
+
+SPACED_CSS = (
+    "table.spaced td, table.spaced th { padding-top:0; padding-bottom:0; }",
+)
+"""A table whose rows stand as far apart as the page sets them — spec 0011,
+step 4e. Emitted only for a page that has one."""
+
+
+def _between(upper: Row, lower: Row, page: _Page) -> float | None:
+    """The space the page leaves between two rows' line boxes, in pixels, or
+    None where the lower row's gap was not read."""
+    if lower.gap is None:
+        return None
+    low = any(set(c.text) & DESCENDERS for c in upper.cells)
+    ink = ROW_ABOVE + (ROW_BELOW_LOW if low else ROW_BELOW)
+    return max(0.0, lower.gap * page.y - ink * page.body)
+
+
+def _drawn_size(block: Block) -> float:
+    """The size a Block is drawn at, in ems of the body: a heading's own,
+    an attribution's, or the one most of its lines are measured at (4a)."""
+    if block.kind == "heading":
+        return block.size or 1.6
+    sizes = Counter(round(cell.look.size, 2) for cell in block.lines
+                    if cell.look is not None and cell.look.size is not None
+                    and abs(cell.look.size - 1.0) >= SIZE_STEP)
+    if sizes:
+        size, count = sizes.most_common(1)[0]
+        if count * 5 >= len(block.lines) * 3:
+            return size
+    return 0.85 if block.kind == "attribution" else 1.0
+
+
+def _spacing(blocks: list[Block], page: _Page) -> list[tuple[str, bool]]:
+    """Each Block's space above, and whether its own margin below gives way,
+    so it stands as far below the one before as the page sets it — spec
+    0011, step 4e, as `_between` does for rows: the gap between their ink
+    less what each line box reaches past it, all above the lower Block. A
+    gap not read keeps the house's margins."""
+    over: list[float | None] = [None]
+    for upper, lower in zip(blocks, blocks[1:]):
+        if lower.gap is None:
+            over.append(None)
+            continue
+        last = upper.lines[-1].text if upper.lines else ""
+        below = ROW_BELOW_LOW if set(last) & DESCENDERS else ROW_BELOW
+        ink = below * _drawn_size(upper) + ROW_ABOVE * _drawn_size(lower)
+        over.append(max(0.0, lower.gap * page.y - ink * page.body))
+    return [("" if space is None else f"margin-top:{_px(space)}",
+             following is not None)
+            for space, following in zip(over, over[1:] + [None])]
+
+
+def _row_padding(row: Row, above: Row | None, below: Row | None, page: _Page) -> str:
+    """A row's cells' padding, so the rows stand the page's gap apart: the
+    space between two rows split between them, so a line the page draws
+    between them falls in its middle, as `receipt_0010`'s dashed rules do.
+    The first and last rows keep the house padding outside them, which step
+    1 measures the table's own gap by; a gap not read keeps the house's."""
+    over = _between(above, row, page) if above is not None else None
+    under = _between(row, below, page) if below is not None else None
+    top = ".45em" if over is None else _px(over / 2)
+    bottom = ".45em" if under is None else _px(under / 2)
+    return f"padding-top:{top};padding-bottom:{bottom}"
 
 
 def _rows_read(zone: Zone) -> bool:
@@ -1576,15 +1673,28 @@ def _prose(zone: Zone, document: Document) -> str:
     Only *consecutive* items group, because a paragraph between two bullets ends
     the list on the page and should end it here.
     """
+    spacing = dict(zip(map(id, zone.blocks), _spacing(zone.blocks, _page(document))))
     parts = []
     for is_item, run in groupby(zone.blocks, key=lambda b: b.kind == "item"):
         if is_item:
-            items = "".join(f"<li{_li_style(b, document)}>{_lines(b, document)}</li>"
-                            for b in run)
-            parts.append(f"<ul>{items}</ul>")
+            listed = list(run)
+            items = "".join(f"<li{_li_style(b, document, _styled(spacing[id(b)][0]))}>"
+                            f"{_lines(b, document)}</li>" for b in listed)
+            # The list's own margin below gives way, as a paragraph's does.
+            closed = spacing[id(listed[-1])][1]
+            parts.append(f"<ul{_styled('margin-bottom:0' if closed else '')}>"
+                         f"{items}</ul>")
         else:
-            parts.extend(_block(b, document) for b in run)
+            for b in run:
+                above, closed = spacing[id(b)]
+                parts.append(_block(b, document, ";".join(
+                    part for part in (above, "margin-bottom:0" if closed else "")
+                    if part)))
     return "".join(parts)
+
+
+def _styled(css: str) -> str:
+    return f' style="{css}"' if css else ""
 
 
 def _list(zone: Zone, document: Document) -> str:
@@ -1595,9 +1705,13 @@ def _list(zone: Zone, document: Document) -> str:
     renders an empty `<ul>`, which is visible as the mis-read it is. `_prose`
     keeps every block because there nothing has claimed the region is a list.
     """
+    listed = [b for b in zone.blocks if b.kind == "item"]
+    # Spaced only where every Block is drawn: a gap is from the Block before.
+    spacing = ([above for above, _ in _spacing(listed, _page(document))]
+               if len(listed) == len(zone.blocks) else [""] * len(listed))
     items = "".join(
-        f"<li{_li_style(b, document)}>{_lines(b, document)}</li>"
-        for b in zone.blocks if b.kind == "item"
+        f"<li{_li_style(b, document, _styled(above))}>{_lines(b, document)}</li>"
+        for b, above in zip(listed, spacing)
     )
     return f"<ul>{items}</ul>"
 
@@ -1758,19 +1872,18 @@ def _li_style(block: Block, document: Document, spaced: str = "") -> str:
     return f' style="{looked}"'
 
 
-def _block(block: Block, document: Document) -> str:
+def _block(block: Block, document: Document, spacing: str = "") -> str:
     if block.kind == "heading":
         # A size is only ever set smaller than `h1`'s own 1.6em — see
         # `style.heading_sizes` — so the stylesheet keeps the heading's weight
         # and margins and this changes only how large it is.
         looked = _common_look(block.lines, sized=False, house=_house(document))
         size = f"font-size:{block.size:.2f}em" if block.size else ""
-        both = ";".join(part for part in (size, looked) if part)
-        style = f' style="{both}"' if both else ""
-        return f"<h1{style}>{_lines(block, document)}</h1>"
+        both = ";".join(part for part in (size, looked, spacing) if part)
+        return f"<h1{_styled(both)}>{_lines(block, document)}</h1>"
     looked = _common_look(block.lines, house=_house(
         document, muted=block.kind == "attribution"))
-    style = f' style="{looked}"' if looked else ""
+    style = _styled(";".join(part for part in (looked, spacing) if part))
     if block.kind == "quote":
         return f"<blockquote{style}>{_lines(block, document)}</blockquote>"
     if block.kind == "attribution":

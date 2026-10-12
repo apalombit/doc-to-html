@@ -107,10 +107,12 @@ class TestARealTable:
         carries that fill — see `TestAHeaderRowsFillArrivesThroughAConversion`."""
         html = render(invoice[0])
         head = re.escape('<thead style="--shade:rgb(238,238,238)">')
-        # A row carries its own line and ground once read — spec 0011, 4c.
-        assert re.search(rf"{head}<tr[^>]*><th>Payment Method</th>", html)
-        assert re.search(rf'{head}<tr[^>]*><th>Item</th><th class="num">Price</th>'
-                         r"</tr></thead>", html)
+        # A row carries its own line and ground once read — spec 0011, 4c —
+        # and its cells the page's gap between rows, 4e.
+        cell = r'( style="[^"]*")?'
+        assert re.search(rf"{head}<tr[^>]*><th{cell}>Payment Method</th>", html)
+        assert re.search(rf'{head}<tr[^>]*><th{cell}>Item</th><th class="num"{cell}>'
+                         r"Price</th></tr></thead>", html)
 
     def test_fifteen_rows_survive(
         self, statistics: tuple[Document, ReplayTransport]
@@ -125,9 +127,10 @@ class TestARealTable:
         """ISO codes and currency names sit to the right of the first column and
         must not be right-aligned for it."""
         html = render(statistics[0])
-        assert "<td>USA</td>" in html
-        assert '<td class="num">331,900,000</td>' in html
-        assert "<td>USD</td>" in html
+        cell = r'( style="[^"]*")?'  # the page's gap between rows, spec 0011, 4e
+        assert re.search(rf"<td{cell}>USA</td>", html)
+        assert re.search(rf'<td class="num"{cell}>331,900,000</td>', html)
+        assert re.search(rf"<td{cell}>USD</td>", html)
 
 
 class TestASparseNumericColumnIsStillNumeric:

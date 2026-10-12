@@ -1,4 +1,4 @@
-"""How each entry is printed, from its own ink — spec 0011, steps 4a and 4b.
+"""How each entry is printed, from its own ink — spec 0011, step 4.
 
 A synthetic page: body lines drawn with `cv2.putText`, one twice the size,
 one with strokes twice as heavy, one sheared 12 degrees — this OpenCV draws
@@ -397,3 +397,80 @@ class TestLeaders:
         _, document = dish_row(dots=True, note="with mace butter")
         document.zones[0].rows[0].leader = Stroke(kind="dotted", width=2 / HEIGHT)
         assert 'class="leader"' not in render(document)
+
+
+def stacked(*tops: int | None, left: int = 20) -> Document:
+    """A prose Zone of paragraphs, each one line 14px tall at its top, or
+    not placed where the top is None."""
+    blocks = []
+    for number, top in enumerate(tops):
+        entry = cell(f"Line {number}")
+        if top is not None:
+            entry.bbox = BBox(left / WIDTH, top / HEIGHT, 160 / WIDTH, (top + 14) / HEIGHT)
+        blocks.append(Block(kind="paragraph", lines=[entry]))
+    zone = Zone(kind=Kind.PROSE, complete=True, blocks=blocks)
+    return Document(source=Source(path="x.png", sha256="0", width=WIDTH,
+                                  height=HEIGHT), zones=[zone])
+
+
+class TestSpacing:
+    """Spec 0011, step 4e: the gap between rows and Blocks inside a Zone."""
+
+    def test_a_rows_gap_is_from_the_row_before_it_in_the_table(self) -> None:
+        image, document = striped_table()
+        rows = document.zones[0].rows
+        rows[2].cells[0].bbox = None
+        looks._rows(image, document, 9.0, coloured=True)
+        # Row 3's nearest placed row is row 1: the gap holds row 2 too.
+        assert [r.gap for r in rows] == [None, round(16 / HEIGHT, 5), None, None]
+
+    def test_a_blocks_gap_is_read_below_the_one_before_and_not_beside_it(self) -> None:
+        document = stacked(40, 70, 70, None, 120)
+        document.zones[0].blocks[2].lines[0].bbox = BBox(
+            200 / WIDTH, 70 / HEIGHT, 300 / WIDTH, 84 / HEIGHT)
+        looks._blocks(document)
+        assert [b.gap for b in document.zones[0].blocks] == [
+            None, round(16 / HEIGHT, 5), None, None, None]
+
+    def test_a_gap_survives_the_ir(self) -> None:
+        document = stacked(40, 70)
+        looks._blocks(document)
+        again = Document.from_json(document.to_json())
+        assert again.zones[0].blocks[1].gap == round(16 / HEIGHT, 5)
+
+    def test_rows_stand_the_pages_gap_apart_split_between_them(self) -> None:
+        zone = Zone(kind=Kind.TABLE, complete=True, rows=[
+            Row(cells=[cell("Flat white")]),
+            Row(cells=[cell("Cortado")], gap=40 / HEIGHT),
+            Row(cells=[cell("Bacon roll")])])
+        html = render(Document(source=Source(path="x.png", sha256="0", width=WIDTH,
+                                             height=HEIGHT), zones=[zone]))
+        # 40px of the page's gap, less 0.72em of line box round the ink at
+        # the house's 16px: 28px, half above the rule and half below it.
+        assert '<table class="spaced">' in html and "table.spaced td" in html
+        assert '<td style="padding-top:.45em;padding-bottom:14px">Flat white' in html
+        assert '<td style="padding-top:14px;padding-bottom:.45em">Cortado' in html
+        assert '<td style="padding-top:.45em;padding-bottom:.45em">Bacon roll' in html
+
+    def test_a_table_with_no_gap_read_keeps_its_bytes(self) -> None:
+        zone = Zone(kind=Kind.TABLE, complete=True, rows=[Row(cells=[cell("a")])])
+        html = render(Document(source=Source(path="x.png", sha256="0", width=WIDTH,
+                                             height=HEIGHT), zones=[zone]))
+        assert "<table>" in html and "table.spaced" not in html
+
+    def test_a_block_stands_the_pages_gap_below_the_one_before(self) -> None:
+        document = stacked(40, 94, 140)
+        document.zones[0].blocks[1].gap = 40 / HEIGHT
+        html = render(document)
+        assert ('<p style="margin-bottom:0">Line 0</p>'
+                '<p style="margin-top:28px">Line 1</p><p>Line 2</p>') in html
+
+    def test_items_stand_apart_and_their_list_gives_way_below(self) -> None:
+        document = stacked(40, 94, 140)
+        blocks = document.zones[0].blocks
+        blocks[0].kind = blocks[1].kind = "item"
+        blocks[1].gap = blocks[2].gap = 40 / HEIGHT
+        html = render(document)
+        assert ('<ul style="margin-bottom:0"><li>Line 0</li>'
+                '<li style="margin-top:28px">Line 1</li></ul>'
+                '<p style="margin-top:28px">Line 2</p>') in html

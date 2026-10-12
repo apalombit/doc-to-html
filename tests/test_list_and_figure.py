@@ -66,10 +66,13 @@ class TestEverythingExtracts:
 class TestLists:
     def test_a_bulleted_list_becomes_a_real_list(self, article: Document) -> None:
         html = render(article)
-        assert "<li>Search engines understand content hierarchy</li>" in html
+        # An item stands as far below the one before as the page sets it —
+        # spec 0011, step 4e.
+        assert re.search(r'<li( style="[^"]*")?>Search engines understand content'
+                         r" hierarchy</li>", html)
         # Counted inside the Zones only. The findings block renders a `<ul>` of
         # its own, so a page-wide count measures the audit as well as the lists.
-        assert zones_of(html).count("<ul>") == 2
+        assert len(re.findall(r"<ul[ >]", zones_of(html))) == 2
 
     def test_a_navigation_row_is_a_list_by_structure(self, article: Document) -> None:
         """Structure decides the IR; the header Role is what makes it render as a
@@ -131,7 +134,8 @@ class TestQuotations:
         self, article: Document
     ) -> None:
         html = render(article)
-        assert "<blockquote>HTML provides for a number of elements" in html
+        assert re.search(r'<blockquote( style="[^"]*")?>HTML provides for a number'
+                         r" of elements", html)
         # Printed small, as the page's figcaption is — spec 0011, step 4a.
         assert re.search(r'<p class="attribution"( style="[^"]*")?>'
                          r"— W3C HTML5\.2 specification</p>", html)
