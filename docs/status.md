@@ -10,7 +10,7 @@ Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 (authoritative), then this file. If you are going to look at output — and you
 should — use the **`visual-review` skill**.
 
-Branch `scaffold`. **898 tests pass, `mypy src/` clean.**
+Branch `scaffold`. **942 tests pass, `mypy src/` clean.**
 
 **How work is judged now — Alessandro, 2026-10-12, for spec 0011.** By eye:
 every step's sheets are opened against the previous step's and each page
@@ -70,8 +70,8 @@ Spec 0010   Five repairs, the beside score, type at the page's size — issue #3
 Spec 0011   Place every entry where the page puts it — issue #34, planned 2026-10-12
               0  freeze S5-sweep as tests/frozen/s5-result/   DONE, both loops 15 of 15
               1  rhythm: gaps from the page, Zones grouped, alignment   DONE, none worse
-              2  locate every entry on the page   <- next
-              3  fields: boxes, ticks, digit boxes, underlines
+              2  locate every entry on the page   DONE, no page changed
+              3  fields: boxes, ticks, digit boxes, underlines   <- next
               4  lines: per-entry type, colour, rules, leaders, spacing
               5  one sweep, S6-sweep
 ```
@@ -310,7 +310,7 @@ the Q5-era records", verbatim. Q1–Q4's are under "Outcome — Q1 to Q4".
 
 ---
 
-## Next — spec 0011, step 2
+## Next — spec 0011, step 3
 
 [`specs/0011-place-every-entry.md`](specs/0011-place-every-entry.md), issue
 #34, and its handover prompt. **The common cause behind every fault
@@ -327,6 +327,11 @@ The spec draws the page's own gaps and alignment (probed offline, and it
 works), locates every entry with tesseract as a locator only, then draws
 fields and per-line looks from it. There are no model calls until the
 closing sweep.
+
+**Steps 1 and 2 are done.** Step 1 draws the page's gaps, Continuations
+and alignment; no page got worse. Step 2 sets `Cell.bbox` on 847 of 868
+Cells and changes no page; its misses are named in the spec. Step 3 reads
+the boxes: it draws the form's field grid, boxes, ticks and digit boxes.
 
 ---
 

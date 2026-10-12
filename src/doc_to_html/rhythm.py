@@ -37,7 +37,7 @@ import numpy as np
 
 from .ir import BBox, Document, Flow, Kind, Region, Zone
 from .style import body_glyph, box_around, boxes_for, type_lines, type_mask
-from .preprocess import ImageArray
+from .preprocess import ImageArray, crop_origin
 
 LEFT, CENTRE, RIGHT = "left", "centre", "right"
 
@@ -148,8 +148,7 @@ def _lines(image: ImageArray, zone: Zone) -> list[_Line]:
     """Each printed line of a Zone, in the Rectified Image's pixels."""
     assert zone.bbox is not None
     mask = np.asarray(type_mask(image, zone)) > 0
-    height, width = image.shape[:2]
-    x0, y0 = int(round(zone.bbox.left * width)), int(round(zone.bbox.top * height))
+    x0, y0 = crop_origin(image, zone.bbox)
     found = []
     for top, bottom in type_lines(mask):
         columns = np.where(mask[top:bottom + 1].any(axis=0))[0]

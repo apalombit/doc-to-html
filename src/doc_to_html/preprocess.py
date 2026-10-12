@@ -186,6 +186,16 @@ def crop(image: ImageArray, bbox: BBox, *,
     return np.ascontiguousarray(image[top:bottom, left:right])
 
 
+def crop_origin(image: ImageArray, bbox: BBox, *, pad_x: float = PAD_X,
+                pad_y: float = PAD_Y) -> tuple[int, int]:
+    """Where `crop`'s pixel (0, 0) sits on the page, as (x, y) in pixels —
+    `crop`'s own arithmetic, so a position measured in a crop is put back on
+    the page by the same rounding that cut it out. Spec 0011, step 2."""
+    height, width = image.shape[:2]
+    return (int(max(0.0, bbox.left - pad_x) * width),
+            int(max(0.0, bbox.top - pad_y) * height))
+
+
 class NoGeometry(ValueError):
     """A Zone with no bounding box cannot be cropped, so it cannot be read."""
 

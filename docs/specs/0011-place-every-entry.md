@@ -1,6 +1,6 @@
 # Place every entry where the page puts it — rhythm, location, fields, lines
 
-**Status: under way, issue #34. Steps 0 and 1 DONE 2026-10-12; step 2 next.**
+**Status: under way, issue #34. Steps 0, 1 and 2 DONE 2026-10-12; step 3 next.**
 
 Alessandro's decisions, 2026-10-12, after reviewing sweep `S5-sweep` (spec
 0010's outcome):
@@ -344,6 +344,76 @@ word. Open all fifteen. Every box should sit on its own words.
 
 **Done when** the overlays show the boxes on their text on all fifteen pages,
 with the misses named.
+
+**Outcome — step 2, 2026-10-12: DONE, no page changed.** Run
+`debug/runs/S6-2-locate` (`tools/rederive.py` over `s5-result/`), overlays in
+its `_locate/`. Against `S6-1-rhythm`, every document's HTML is
+byte-identical outside the embedded IR, and inside it differs only by Cell
+boxes. A replay through a real Conversion (`S6-2-replay`) makes the same
+fifteen documents byte for byte, Cell boxes included: tesseract is
+deterministic under threads with `OMP_THREAD_LIMIT=1`.
+
+What shipped:
+- **`locate.py`** and a stage, `_locate`, **after `_read_rhythm`** rather
+  than `_measure_type` — the last of the measurements, since nothing reads a
+  Cell box before step 3. It is traced with what it placed and every Cell it
+  did not, and it says so and places nothing when there is no tesseract.
+  `rederive.py` step 9. It takes about 15 seconds over the fifteen.
+- **What tesseract is shown.** The Zone's crop in its own polarity, with
+  every straight stroke longer than two glyphs erased, and leader dots and
+  dashed rules erased: a box round a value hid the value from tesseract in
+  every page segmentation mode tried, and the menu's leaders read as letters
+  and took the prices with them. A Zone with a Cell still unplaced is read a
+  second time turned over, which reads type on a dark chip — the catalogue's
+  SKU badges, the statement's header.
+- **Matching.** Folded text (letters and digits only), similarity 0.7 or
+  more, **digits must agree**. A run may wrap onto later lines, since a Cell
+  wraps — `report_0011`'s paragraphs, the cv's bullets, the newsletter's
+  five-line paragraph. Runs as good as the best count once per place, so a
+  heading line does not join the paragraph under it. **A Cell whose text
+  another Cell in its Zone shares is placed by position** — its row's
+  height, or between its neighbours — and a place outside those bounds is
+  refused: `nonlatin_0014`'s white header `Καθαρή αξία` took the total's
+  words below it until this.
+- **Fallbacks, from the ink.** A table cell from its row × its column — the
+  menu's misread prices; a pair's label or value from its partner's line,
+  only where the Zone sets values beside labels — `nonlatin_0014`'s IBAN,
+  whose zeros tesseract reads as `O`; a prose or list line from the Zone's
+  printed lines when the two count alike.
+- `tools/locate_overlay.py` draws the overlays. `preprocess.crop_origin`,
+  and `rhythm._lines` now uses it — it ignored the crop's padding; no page
+  moved.
+
+Placed, of Cells holding text, and the misses by name:
+
+| document | placed | not placed |
+|---|---|---|
+| `statement_0006` | 224 / 224 | — |
+| `sample_table_0003` | 81 / 81 | — |
+| `report_0011` | 40 / 40 | — |
+| `sample_semantic_0005` | 21 / 21 | — |
+| `invoice_0002` | 43 / 44 | `ACME`, white type in the logo |
+| `cv_0013` | 46 / 48 | `Revit`, `Python` — their Zones are figures whose boxes miss the words; the detector's |
+| `invoice_0001` | 25 / 26 | `SPARKSUITE`, letter-spaced logo type |
+| `darkdeck_0009` | 64 / 65 | `$2.14` — digits misread, refused |
+| `menu_0012` | 42 / 43 | `PUDDINGS` |
+| `newsletter_0008` | 50 / 51 | the drop cap `T` |
+| `receipt_0010` | 47 / 48 | `AID A000000031010` — digits misread, refused |
+| `sample_css_0004` | 4 / 5 | `css`, white type on a blue chip |
+| `catalogue_0015` | 56 / 60 | `£9.80`, `£28.00`, `£22.40` — big bold prices, digits misread; the `OK-330` badge |
+| `form_0007` | 43 / 47 | `CT9 4RD`, read `CTS 4RD`; the two `X` ticks and the `Ref.` underline — marks, step 3's |
+| `nonlatin_0014` | 61 / 65 | the white table header's four cells, read in neither polarity |
+
+**Every placed box sits on its own words** on all fifteen overlays, and no
+two Cells share a box. Where the screenshot is its own HTML, a placed Cell
+whose text is one source text node lands on it on every check but one kind:
+`darkdeck_0009`'s card label `P95` and `report_0011`'s heading number `3.`
+sit on their own print, while the only source nodes spelling the same are
+the table's `P95` header and the footnote marks. `invoice_0001` lands 16 of
+19 because its picture sits up to 10px off its HTML (`CLAUDE.md`).
+
+Recorded, not argued: scores identical to `S6-1-rhythm` on all fifteen, and
+so is the `vanished` list. 942 tests, mypy clean.
 
 ### Step 3 — Fields: the form's grid, boxes, ticks and digit boxes
 

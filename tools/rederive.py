@@ -37,6 +37,9 @@ and can be recomputed from it, in the order a Conversion runs them:
     8. Which Zones continue one another, and how each one's lines sit —
        spec 0011, step 1; each Zone's frame is set with the chrome, in 3
                                     rhythm.read           (_read_rhythm)
+    9. Where every Cell sits on the page — spec 0011, step 2; tesseract
+       as a locator, its words never printed
+                                    locate.locate              (_locate)
 
 then re-renders into a run-shaped directory that `doc_to_html.report` and
 `tools/visual_review.py` read without knowing the difference.
@@ -73,7 +76,7 @@ TOOLS = Path(__file__).resolve().parent
 sys.path.insert(0, str(TOOLS.parent / "src"))
 sys.path.insert(0, str(TOOLS))
 
-from doc_to_html import probes, rhythm  # noqa: E402
+from doc_to_html import locate, probes, rhythm  # noqa: E402
 from doc_to_html.corpus import SOURCES  # noqa: E402
 from doc_to_html.ir import Caveat, Document, Kind  # noqa: E402
 from doc_to_html.orchestrator import gaps, shortfall  # noqa: E402
@@ -137,6 +140,7 @@ def rederive(document: Document, png: Path) -> None:
             plain, document.zones, ground=document.style.page_bg,
             inverted=rectified.inverted)
         rhythm.read(plain, document)
+    locate.locate(plain, document)
 
 
 def documents_in(source: Path, model: str) -> list[tuple[str, Path]]:

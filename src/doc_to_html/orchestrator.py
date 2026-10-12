@@ -18,6 +18,7 @@ from dataclasses import dataclass, field, replace
 from enum import Enum
 from pathlib import Path
 
+from . import locate as locate_module
 from . import probes as probe_module
 from . import rhythm as rhythm_module
 from . import style as style_module
@@ -852,6 +853,7 @@ class Conversion:
             self._measure_type(rectified, document)
             self._find_separators(rectified, document)
             self._read_rhythm(rectified, document)
+            self._locate(rectified, document)
 
             document.probes = probe_module.run(document)
             for probe in document.probes:
@@ -1261,6 +1263,34 @@ class Conversion:
                      "title_align": z.title_align}
                     for i, z in enumerate(document.zones)
                     if z.group is not None or z.align or z.title_align])
+
+    def _locate(self, rectified: Rectified, document: Document) -> None:
+        """Where every Cell sits on the page — spec 0011, step 2. See
+        `locate.locate`.
+
+        **tesseract is a locator here, never a reader**: its words are matched
+        against the model's and only their boxes kept. Every round re-locates
+        from scratch, because a Correction can change a Cell's text. Without
+        tesseract on `PATH` it places nothing, says so, and every Cell renders
+        as it did. Nothing a model is asked reads what it sets.
+        """
+        started = time.perf_counter()
+        plain = rectified.plain if rectified.plain is not None else rectified.image
+        placed, cells = locate_module.locate(plain, document)
+        unplaced = [{"zone": index, "text": cell.text[:60]}
+                    for index, zone in enumerate(document.zones)
+                    if zone.kind is not Kind.FIGURE
+                    for cell, _ in locate_module.cells_of(zone)
+                    if cell.bbox is None and cell.text.strip()]
+        if not locate_module.available():
+            self.trace.record(
+                Stage.LAYOUT, "locate", Disposition.REJECTED,
+                reason=f"no `{locate_module.TESSERACT}` on PATH", cells=cells)
+            return
+        self.trace.record(
+            Stage.LAYOUT, "locate", Disposition.ACCEPTED,
+            seconds=time.perf_counter() - started,
+            placed=placed, cells=cells, unplaced=unplaced)
 
     def _cut_at_regions(self, rectified: Rectified, document: Document) -> bool:
         """Cut a Zone that crosses the edge of a grid or a column region — spec

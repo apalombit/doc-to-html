@@ -63,7 +63,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-12: spec 0011 under way, step 2 next. The baseline is `tests/frozen/s5-result/`, and steps are judged by eye.**
+**Where the project is — 2026-10-12: spec 0011 under way, step 3 next. The baseline is `tests/frozen/s5-result/`, and steps are judged by eye.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -102,7 +102,7 @@ Spec 0010   Five repairs, the beside score, type at the page's size —
 Spec 0011   Place every entry where the page puts it — planned 2026-10-12
               from his review of S5-sweep, issue #34:
               0 freeze S5-sweep as tests/frozen/s5-result/   DONE
-              1 rhythm DONE  2 locate <- next  3 fields  4 lines  5 one sweep
+              1 rhythm DONE  2 locate DONE  3 fields <- next  4 lines  5 one sweep
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
