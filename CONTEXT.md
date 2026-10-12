@@ -33,7 +33,7 @@ Something the page draws for an entry to be written in — the box round a value
 _Avoid_: Field (the drawn whole), box, widget, input
 
 **Look**:
-How the page prints one entry — its size against the page's body, whether it is bold, whether it is italic — measured from the entry's own ink where its Cell is placed, never asked. A part not measurable is left unread, and an unread part draws as the house style does; a Look only ever adds to it.
+How the page prints one entry — its size against the page's body, whether it is bold, whether it is italic, its colour, and the chip it stands on if it stands on one (a badge, a pill, a tag) — measured from the entry's own ink where its Cell is placed, never asked. A part not measurable is left unread, and an unread part draws as the house style does; a Look only ever adds to it.
 _Avoid_: Style (the Style Record is the page's), font, format
 
 **Title**:

@@ -10,7 +10,7 @@ Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 (authoritative), then this file. If you are going to look at output — and you
 should — use the **`visual-review` skill**.
 
-Branch `scaffold`. **966 tests pass, `mypy src/` clean.**
+Branch `scaffold`. **973 tests pass, `mypy src/` clean.**
 
 **How work is judged now — Alessandro, 2026-10-12, for spec 0011.** By eye:
 every step's sheets are opened against the previous step's and each page
@@ -74,7 +74,8 @@ Spec 0011   Place every entry where the page puts it — issue #34, planned 2026
               3  fields: boxes, ticks, digit boxes, underlines   DONE, the form better
               4  lines: per-entry type, colour, rules, leaders, spacing
                  4a size, weight, italic   DONE, eleven pages better
-                 4b colour and fill   <- next
+                 4b colour and chips   DONE, thirteen pages better
+                 4c rules inside a Zone   <- next
               5  one sweep, S6-sweep
 ```
 
@@ -312,7 +313,7 @@ the Q5-era records", verbatim. Q1–Q4's are under "Outcome — Q1 to Q4".
 
 ---
 
-## Next — spec 0011, step 4b
+## Next — spec 0011, step 4c
 
 [`specs/0011-place-every-entry.md`](specs/0011-place-every-entry.md), issue
 #34, and its handover prompt. **The common cause behind every fault
@@ -338,8 +339,11 @@ lines — and moves no other page. Step 4 measures each placed entry's own
 look, each sub-step its own commit and sheets. **4a is done**: each Cell's
 size, weight and slant, from its own ink (`looks.py`, `Cell.look`), drawn
 on eleven pages better and none worse — weight unread on the photographed
-receipt. Next is 4b, colour and fill; then rules inside a Zone, leaders,
-spacing, and optionally the typeface class.
+receipt. **4b is done**: each Cell's ink and any chip it is printed on,
+drawn where it differs from its element's own colour — thirteen pages
+better, none worse; `Style.ink` is mis-measured on form, nonlatin and cv,
+so their Titles keep the wrong ink. Next is 4c, rules inside a Zone; then
+leaders, spacing, and optionally the typeface class.
 
 ---
 

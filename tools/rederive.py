@@ -148,7 +148,7 @@ def rederive(document: Document, png: Path) -> None:
         rhythm.read(plain, document)
     locate.locate(plain, document)
     fields.read(plain, document)
-    looks.read(plain, document, photographed=rectified.warped)
+    looks.read(plain, document, photographed=rectified.warped, inverted=rectified.inverted)
     # Last, as the audit is in a Conversion: step 10 can widen a Zone's box.
     document.gaps = gaps(image, document.zones)
 

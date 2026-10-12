@@ -24,7 +24,7 @@ from statistics import median
 from typing import Any
 
 from .ir import (BBox, Block, Cell, CellState, Document, Flow, Kind, Pair,
-                 Region, Role, RowRole, Zone)
+                 Region, Role, RowRole, Style, Zone)
 from .probes import is_numeric
 from .wire import MARKS, bands_from_boxes
 
@@ -632,6 +632,13 @@ def _rgb(colour: tuple[int, int, int]) -> str:
     return f"rgb({colour[0]},{colour[1]},{colour[2]})"
 
 
+def _toward(ink: tuple[int, int, int], ground: tuple[int, int, int],
+            part: float) -> tuple[int, int, int]:
+    """Ink moved `part` of the way toward the ground, as a colour."""
+    near = [round(i + (g - i) * part) for i, g in zip(ink, ground)]
+    return near[0], near[1], near[2]
+
+
 def _mix(ink: tuple[int, int, int], ground: tuple[int, int, int], part: float) -> str:
     """Ink moved `part` of the way toward the ground.
 
@@ -642,11 +649,7 @@ def _mix(ink: tuple[int, int, int], ground: tuple[int, int, int], part: float) -
     while `--rule:#e0e0e0` stops being a hairline and becomes the brightest
     thing on that page.
     """
-    return _rgb(
-        tuple(  # type: ignore[arg-type]
-            round(i + (g - i) * part) for i, g in zip(ink, ground)
-        )
-    )
+    return _rgb(_toward(ink, ground, part))
 
 
 def _style_css(document: Document) -> str:
@@ -1078,7 +1081,8 @@ def _unit(unit: list[Zone], document: Document, page: _Page, *,
                 spaced = (gap(unit[position - 1], zone,
                               BELOW_INK["li"] + ABOVE_INK["li"])
                           if position and not index else "")
-                items.append(f"<li{_li_style(block, spaced)}>{_lines(block, document)}</li>")
+                items.append(f"<li{_li_style(block, document, spaced)}>"
+                             f"{_lines(block, document)}</li>")
         body = f"<ul>{''.join(items)}</ul>"
     else:
         parts = [f'<div class="cont">{_zone_body(head, document)}</div>']
@@ -1184,11 +1188,12 @@ def _table(zone: Zone, document: Document) -> str:
         closing -= 1
 
     groups: dict[RowRole, list[str]] = {role: [] for role in RowRole}
+    ink = _house(document)
     for position, row in enumerate(zone.rows):
         tag = "th" if row.role is RowRole.HEADER else "td"
 
         def styled(cell: Cell) -> str:
-            looked = _look(cell, bold=row.role is not RowRole.DATA)
+            looked = _look(cell, bold=row.role is not RowRole.DATA, house=ink)
             return f' style="{looked}"' if looked else ""
 
         cells = "".join(
@@ -1295,6 +1300,12 @@ def _field(pair: Pair, document: Document, page: _Page) -> str:
     its option; or a signature line over its caption — as the page draws
     it. The value is the model's words; the mark is only drawn."""
     label, value = _cell(pair.label, document), _cell(pair.value, document)
+    tone = _look(pair.label, sized=False, bold=True, house=_house(document, muted=True))
+    if tone:
+        label = f'<span style="{tone}">{label}</span>'
+    held = _look(pair.value, sized=False, house=_house(document))
+    if held and value:
+        value = f'<span style="{held}">{value}</span>'
     marks = pair.marks
     if not marks:
         return (f'<div class="field"><span class="label">{label}</span>'
@@ -1461,11 +1472,11 @@ def _pairs(zone: Zone, document: Document) -> str:
             label, value = value, ""
             named, held = pair.value, None
 
-        def styled(cell: Cell | None, bold: bool = False) -> str:
-            looked = _look(cell, bold=bold)
+        def styled(cell: Cell | None, bold: bool = False, muted: bool = False) -> str:
+            looked = _look(cell, bold=bold, house=_house(document, muted=muted))
             return f' style="{looked}"' if looked else ""
 
-        dt, dd = styled(named), styled(held, bold=summary)
+        dt, dd = styled(named, muted=True), styled(held, bold=summary)
         if lines:
             parts.append(f"<div><dt{dt}>{label}</dt>"
                          + (f" <dd{dd}>{value}</dd>" if value.strip() else "")
@@ -1494,7 +1505,8 @@ def _prose(zone: Zone, document: Document) -> str:
     parts = []
     for is_item, run in groupby(zone.blocks, key=lambda b: b.kind == "item"):
         if is_item:
-            items = "".join(f"<li{_li_style(b)}>{_lines(b, document)}</li>" for b in run)
+            items = "".join(f"<li{_li_style(b, document)}>{_lines(b, document)}</li>"
+                            for b in run)
             parts.append(f"<ul>{items}</ul>")
         else:
             parts.extend(_block(b, document) for b in run)
@@ -1510,7 +1522,8 @@ def _list(zone: Zone, document: Document) -> str:
     keeps every block because there nothing has claimed the region is a list.
     """
     items = "".join(
-        f"<li{_li_style(b)}>{_lines(b, document)}</li>" for b in zone.blocks if b.kind == "item"
+        f"<li{_li_style(b, document)}>{_lines(b, document)}</li>"
+        for b in zone.blocks if b.kind == "item"
     )
     return f"<ul>{items}</ul>"
 
@@ -1581,13 +1594,38 @@ spec 0011, step 4a. Over the labelled Cells the measure is within 0.12 of
 the source's size nine times in ten; inside that it is noise."""
 
 
-def _look(cell: Cell | None, *, sized: bool = True, bold: bool = False) -> str:
+COLOUR_APART = 60
+"""Channel-sum by which an entry's measured ink must differ from the colour
+its element is drawn in for the render to draw it — spec 0011, step 4b.
+Over the 649 labelled Cells of the ten screenshots the measured ink is
+within 2 of the colour Chrome drew nine times in ten and within 18 nineteen
+in twenty; the nearest true difference from a page's ink is
+`statement_0006`'s green credit figures, 69."""
+
+
+def _apart(one: tuple[int, int, int], other: tuple[int, int, int]) -> int:
+    return sum(abs(a - b) for a, b in zip(one, other))
+
+
+def _house(document: Document, *, muted: bool = False) -> tuple[int, int, int]:
+    """The colour an element is drawn in when no entry says otherwise: the
+    page's ink, or for a muted element — a `dt`, an attribution, a field's
+    label — the ink a third of the way to the ground, as `--muted` is."""
+    style = document.style or Style()
+    return _toward(style.ink, style.page_bg, 0.33) if muted else style.ink
+
+
+def _look(cell: Cell | None, *, sized: bool = True, bold: bool = False,
+          house: tuple[int, int, int] | None = None) -> str:
     """The inline style for how the page prints one entry — spec 0011,
-    step 4a: its size against the page's body, and bold or italic **where
+    step 4: its size against the page's body, and bold or italic **where
     the page sets it and the stylesheet does not**. Never removes a weight
     or a slant the house style draws: the measure misses less than it
     invents in that direction. `sized` is False where the element already
-    has its own size (a heading); `bold` is True where it is already bold."""
+    has its own size (a heading); `bold` is True where it is already bold.
+    `house` is the colour the element is drawn in otherwise: the entry's
+    own is drawn where it differs by more than `COLOUR_APART` (4b). A chip
+    carries its own colour — see `_chip`."""
     look = cell.look if cell is not None else None
     if look is None:
         return ""
@@ -1598,10 +1636,33 @@ def _look(cell: Cell | None, *, sized: bool = True, bold: bool = False) -> str:
         parts.append("font-weight:700")
     if look.italic:
         parts.append("font-style:italic")
+    if (house is not None and look.color is not None and look.fill is None
+            and _apart(look.color, house) > COLOUR_APART):
+        parts.append(f"color:{_rgb(look.color)}")
     return ";".join(parts)
 
 
-def _common_look(cells: list[Cell], *, sized: bool = True) -> str:
+def _common_colour(cells: list[Cell], house: tuple[int, int, int] | None) -> str:
+    """One colour for a block of lines: the middle of theirs, where most of
+    its lines are within `COLOUR_APART` of it and it is that far from the
+    house colour."""
+    if house is None or not cells:
+        return ""
+    inks = [cell.look.color for cell in cells
+            if cell.look is not None and cell.look.color is not None
+            and cell.look.fill is None]
+    if not inks:
+        return ""
+    middle = (int(median(i[0] for i in inks)), int(median(i[1] for i in inks)),
+              int(median(i[2] for i in inks)))
+    near = sum(1 for ink in inks if _apart(ink, middle) <= COLOUR_APART)
+    if near * 5 < len(cells) * 3 or _apart(middle, house) <= COLOUR_APART:
+        return ""
+    return f"color:{_rgb(middle)}"
+
+
+def _common_look(cells: list[Cell], *, sized: bool = True,
+                 house: tuple[int, int, int] | None = None) -> str:
     """One style for a block of lines: the one most of its lines have, or
     none — a paragraph is set in one face, and a line measured otherwise is
     more likely noise than a change of face mid-paragraph."""
@@ -1609,12 +1670,13 @@ def _common_look(cells: list[Cell], *, sized: bool = True) -> str:
         return ""
     styles = Counter(_look(cell, sized=sized) for cell in cells)
     style, count = styles.most_common(1)[0]
-    return style if count * 5 >= len(cells) * 3 else ""
+    shape = style if count * 5 >= len(cells) * 3 else ""
+    return ";".join(part for part in (shape, _common_colour(cells, house)) if part)
 
 
-def _li_style(block: Block, spaced: str = "") -> str:
+def _li_style(block: Block, document: Document, spaced: str = "") -> str:
     """A list item's `style`, its own look added to any it already has."""
-    looked = _common_look(block.lines)
+    looked = _common_look(block.lines, house=_house(document))
     if not looked:
         return spaced
     if spaced:
@@ -1627,12 +1689,13 @@ def _block(block: Block, document: Document) -> str:
         # A size is only ever set smaller than `h1`'s own 1.6em — see
         # `style.heading_sizes` — so the stylesheet keeps the heading's weight
         # and margins and this changes only how large it is.
-        looked = _common_look(block.lines, sized=False)
+        looked = _common_look(block.lines, sized=False, house=_house(document))
         size = f"font-size:{block.size:.2f}em" if block.size else ""
         both = ";".join(part for part in (size, looked) if part)
         style = f' style="{both}"' if both else ""
         return f"<h1{style}>{_lines(block, document)}</h1>"
-    looked = _common_look(block.lines)
+    looked = _common_look(block.lines, house=_house(
+        document, muted=block.kind == "attribution"))
     style = f' style="{looked}"' if looked else ""
     if block.kind == "quote":
         return f"<blockquote{style}>{_lines(block, document)}</blockquote>"
@@ -1833,7 +1896,26 @@ def _cell(cell: Cell, document: Document) -> str:
             f'<span class="disputed" data-alt="{html.escape(alt)}" '
             f'title="also read as: {html.escape(alt)}">{_runs(cell)}</span>'
         )
-    return _runs(cell)
+    return _chip(cell, _runs(cell), document)
+
+
+def _chip(cell: Cell, inner: str, document: Document) -> str:
+    """The chip a Cell is printed on, when the page prints it on one — a
+    badge, a pill, a code tag: spec 0011, step 4b. Its fill, its ink, and
+    the padding and corner the page gives it, round the Cell's words."""
+    look = cell.look
+    if look is None or look.fill is None or look.chip is None or cell.bbox is None:
+        return inner
+    page, chip, box = _page(document), look.chip, cell.bbox
+    across = ((box.left - chip.left) + (chip.right - box.right)) / 2 * page.x
+    down = ((box.top - chip.top) + (chip.bottom - box.bottom)) / 2 * page.y
+    corner = (look.radius or 0.0) * (chip.bottom - chip.top) * page.y
+    parts = [f"background:{_rgb(look.fill)}", f"padding:{_px(down)} {_px(across)}",
+             f"border-radius:{_px(corner)}"]
+    if look.color is not None:
+        parts.append(f"color:{_rgb(look.color)}")
+    return f'<span class="chip" style="{";".join(parts)}">{inner}</span>'
+
 
 
 TAG_FOR_RUN = {

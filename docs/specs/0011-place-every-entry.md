@@ -622,6 +622,86 @@ Recorded, not argued:
   - darkdeck: beside 0.650 → 0.602, columns within tolerance 0.909 → 0.855.
 - 966 tests, mypy clean.
 
+**Outcome — step 4b, 2026-10-12: DONE, thirteen pages better, two the same,
+none worse.** Run `debug/runs/S6-4b-colour` (`tools/rederive.py` over
+`s5-result/`), sheets against `S6-4a-looks`. Replay (`S6-4b-replay`) =
+rederive, 15 of 15.
+
+What shipped:
+- **`Look.color`, `Look.fill`, `Look.chip`, `Look.radius`.**
+- **`looks.read`** measures each placed Cell on the unturned picture, since
+  colour is read before `Rectified.inverted`:
+  - **The ink** is the median of the Cell's pixels in the top 2% of distance
+    from its own ground. The labels are Chrome's computed colours over 649
+    Cells. Against them the ink is within 2 channel-sum nine times in ten
+    and within 18 nineteen times in twenty. At the 92nd percentile thin
+    serif strokes read 50 levels light.
+  - The ink is kept only where the Cell's ground is the ground the render
+    draws under it — the Zone's fill, the header row's, or the page's. So a
+    light word is never drawn on a ground we do not draw.
+  - **A chip** is a ground that stops before 1.5 body glyphs out on both
+    sides. Its box is where that ground ends, and its corner radius is
+    inverted from where its top row starts.
+  - Over every placed Cell the both-sides distance is 0, bar one at 31,
+    and 61 and over for the corpus's fifteen chips: seven SKU tags, two NEW
+    badges and six pills. The threshold sits at 45.
+  - Neither colour nor chip is read on a photographed page.
+- **Labelling caught out the labels, not the measure.** Chrome's block
+  colour missed eight Cells that are inline spans. On those the measure was
+  exact to the digit:
+  - darkdeck's pills: #4ad295 on #12402f, and #ff9b8a on #43201f;
+  - the statement's `.debit` #9b1c1c and `.credit` #14632b.
+- **Two faults were found on the sheets:**
+  - A Cell holding a link took the link's blue for the whole line
+    (`Contact: editor@example.com`). Its colour is now left to the `<a>`.
+  - A field's value was never given its look. It now is.
+- **`render`** draws an entry's colour where it is more than 60 channel-sum
+  from its element's own colour: the page's ink, or the muted mix for a
+  `dt`, an attribution or a field's label. The nearest true difference is
+  the statement's green credits, at 69. A block takes the middle of its
+  lines' colours when most are near it. A chip is a `<span class="chip">`
+  with the page's fill, ink, padding and radius.
+
+The sheets, against `S6-4a-looks`:
+
+| document | judgement | the element |
+|---|---|---|
+| `catalogue_0015` | better | dark SKU chips and orange NEW badges; `In stock` green; `3 left`, `6 left` and `Back order` red; descriptions grey |
+| `cv_0013` | better | `Chartered Engineer, Engineers Ireland (2019)` white on the sidebar, where 4a drew it near-invisible; `STRUCTURAL ENGINEER` slate blue; employers and dates grey |
+| `darkdeck_0009` | better | green and red deltas, green `Healthy` and red `At risk` pills, `184` back to white |
+| `form_0007` | better | labels, values and options dark, as printed |
+| `invoice_0001` | better | `Created` and `Due` dark, not muted |
+| `invoice_0002` | better | the Payment Method lines dark, not muted |
+| `menu_0012` | better | the notes, `KITCHEN & CELLAR`, `From the grill` and the footer warm brown |
+| `newsletter_0008` | better | `RIVERSIDE` red |
+| `nonlatin_0014` | better | the body black, where the page's measured ink drew it all blue |
+| `report_0011` | better | the footnotes dark grey, not muted; the table's `—` now light grey |
+| `sample_css_0004` | better | the heading's slate |
+| `sample_semantic_0005` | better | the tags blue, the copyright grey, `Contact:` grey and its link blue |
+| `statement_0006` | better | red debits and green credits, in the summary and down the table |
+| `receipt_0010`, `sample_table_0003` | same | a photograph, read for none; one ink |
+
+What is still not the page's:
+- **`Style.ink` is mis-measured on three pages:**
+  - `form_0007`: 118 grey where the page prints black;
+  - `nonlatin_0014`: its heading blue;
+  - `cv_0013`: its sidebar's slate.
+
+  Every placed Cell now draws its own colour, but Zone Titles and unplaced
+  text keep `Style.ink`, so the form's title and section heads stay grey.
+- **`report_0011`'s 1px `—`** never reaches full ink and is drawn light.
+
+Recorded, not argued:
+- `vanished` is unchanged on every document.
+- Palette fields moved toward the source:
+  - ink delta: catalogue 0.533 → 0.000, sample_semantic 0.502 → 0.000,
+    invoice_0002 0.157 → 0.031;
+  - accent delta 1.000 → 0.026–0.206 on darkdeck, statement and
+    sample_semantic.
+- `form_0007`'s alignment agreement went 0.839 → 0.661 with no text moved
+  on its sheet. Recorded.
+- 973 tests, mypy clean.
+
 ### Step 5 — one sweep, `S6-sweep`
 
 All fifteen, shipped defaults. Nothing in steps 1–4 changes a crop or a

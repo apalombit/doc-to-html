@@ -1,8 +1,9 @@
-"""How each entry is printed, from its own ink — spec 0011, step 4a.
+"""How each entry is printed, from its own ink — spec 0011, steps 4a and 4b.
 
 A synthetic page: body lines drawn with `cv2.putText`, one twice the size,
 one with strokes twice as heavy, one sheared 12 degrees — this OpenCV draws
-no italic of its own. The corpus check is the sheets.
+no italic of its own — one in red, one on a dark chip, one on a band
+running the page's width. The corpus check is the sheets.
 """
 
 from __future__ import annotations
@@ -11,7 +12,8 @@ import cv2
 import numpy as np
 
 from doc_to_html import looks
-from doc_to_html.ir import BBox, Block, Cell, Document, Kind, Look, Source, Zone, cell
+from doc_to_html.ir import (BBox, Block, Cell, Document, Kind, Look, Reading, Run,
+                            Source, Style, Zone, cell)
 from doc_to_html.render import SIZE_STEP, render
 
 WIDTH, HEIGHT = 700, 420
@@ -26,11 +28,17 @@ class Page:
         self.y = 30
 
     def put(self, text: str, scale: float = 0.6, thick: int = 1,
-            sheared: bool = False) -> Cell:
+            sheared: bool = False, ink: tuple[int, int, int] = (0, 0, 0),
+            ground: tuple[int, int, int] | None = None, across: bool = False) -> Cell:
+        """One line at `scale`; `ink` and `ground` are BGR, and a ground is a
+        chip 6px round the words or, `across`, a band the page's width."""
         font = cv2.FONT_HERSHEY_SIMPLEX
         (wide, tall), base = cv2.getTextSize(text, font, scale, thick)
         self.y += tall + 2
         y = self.y
+        if ground is not None:
+            left, right = (0, WIDTH) if across else (14, 26 + wide)
+            cv2.rectangle(self.image, (left, y - tall - 6), (right, y + base + 4), ground, -1)
         if sheared:
             patch = np.full((tall + base + 8, wide + 40, 3), 255, np.uint8)
             cv2.putText(patch, text, (4, tall + 4), font, scale, (0, 0, 0), thick,
@@ -41,11 +49,10 @@ class Page:
                                     borderValue=(255, 255, 255))
             self.image[y - tall - 4:y + base + 4, 16:16 + patch.shape[1]] = leaned
         else:
-            cv2.putText(self.image, text, (20, y), font, scale, (0, 0, 0), thick,
-                        cv2.LINE_AA)
+            cv2.putText(self.image, text, (20, y), font, scale, ink, thick, cv2.LINE_AA)
         entry = cell(text)
         entry.bbox = BBox(18 / WIDTH, (y - tall - 3) / HEIGHT,
-                          (wide + 30) / WIDTH, (y + base + 2) / HEIGHT)
+                          (wide + 22) / WIDTH, (y + base + 2) / HEIGHT)
         self.y += base + 14
         self.cells.append(entry)
         return entry
@@ -55,7 +62,8 @@ class Page:
                                                690 / WIDTH, self.y / HEIGHT),
                     complete=True, blocks=[Block(kind="paragraph", lines=self.cells)])
         return Document(source=Source(path="x.png", sha256="0", width=WIDTH,
-                                      height=HEIGHT), zones=[zone])
+                                      height=HEIGHT), zones=[zone],
+                        style=Style(ink=(0, 0, 0)))
 
 
 def body_page() -> Page:
@@ -114,6 +122,50 @@ class TestRead:
         assert stem.look is not None and stem.look.size is not None
         assert abs(stem.look.size - 1.0) < SIZE_STEP
 
+    def test_a_red_line_reads_red_and_the_body_its_ink(self) -> None:
+        page = body_page()
+        red = page.put("Paid out 5,772.36", ink=(28, 28, 155))
+        looks.read(page.image, page.document())
+        assert red.look is not None and red.look.color is not None
+        assert sum(abs(a - b) for a, b in zip(red.look.color, (155, 28, 28))) <= 30
+        assert all(c.look and c.look.color and sum(c.look.color) <= 30
+                   for c in page.cells[:3])
+        assert red.look.fill is None
+
+    def test_a_line_on_a_chip_reads_the_chip(self) -> None:
+        page = body_page()
+        tag = page.put("BR-114", ink=(255, 255, 255), ground=(28, 32, 35))
+        looks.read(page.image, page.document())
+        assert tag.look is not None and tag.look.fill == (35, 32, 28)
+        assert tag.look.color is not None and min(tag.look.color) >= 200
+        assert tag.look.chip is not None and tag.bbox is not None
+        assert tag.look.chip.left < tag.bbox.left and tag.look.chip.right > tag.bbox.right
+        assert tag.look.radius == 0.0
+
+    def test_a_band_across_the_page_is_no_chip_and_its_colour_unread(self) -> None:
+        # A shaded row: its ground goes on past the words, and is not the
+        # ground the render draws, so neither is taken from it.
+        page = body_page()
+        row = page.put("Shaded row of the table", ground=(200, 200, 200), across=True)
+        looks.read(page.image, page.document())
+        assert row.look is not None and row.look.fill is None and row.look.color is None
+
+    def test_a_photographed_page_reads_no_colour(self) -> None:
+        page = body_page()
+        red = page.put("Paid out 5,772.36", ink=(28, 28, 155))
+        tag = page.put("BR-114", ink=(255, 255, 255), ground=(28, 32, 35))
+        looks.read(page.image, page.document(), photographed=True)
+        assert red.look is not None and red.look.color is None
+        assert tag.look is not None and tag.look.fill is None
+
+    def test_a_cell_holding_a_link_reads_no_colour(self) -> None:
+        page = body_page()
+        line = page.put("Contact: editor@example.com", ink=(238, 0, 0))
+        line.readings = [Reading(engine="fixture", text=line.text, runs=[
+            Run(text="Contact: "), Run(text="editor@example.com", kind="link")])]
+        looks.read(page.image, page.document())
+        assert line.look is not None and line.look.color is None
+
     def test_an_unplaced_cell_has_no_look(self) -> None:
         page = body_page()
         loose = cell("Nowhere on the page")
@@ -150,7 +202,28 @@ class TestDraw:
         assert '<p style="font-weight:700">' in render(paragraph(heavy, heavy, regular))
         assert "<p>" in render(paragraph(heavy, regular, regular))
 
+    def test_a_colour_far_from_the_ink_is_drawn_and_a_near_one_is_not(self) -> None:
+        assert "color:rgb(155,28,28)" in render(paragraph(Look(color=(155, 28, 28))))
+        near = render(paragraph(Look(color=(40, 40, 40))))
+        assert "<p>Line 0</p>" in near
+
+    def test_a_chip_is_a_span_with_the_pages_fill_and_padding(self) -> None:
+        entry = cell("BR-114")
+        entry.bbox = BBox(43 / WIDTH, 98 / HEIGHT, 79 / WIDTH, 107 / HEIGHT)
+        entry.look = Look(color=(255, 255, 255), fill=(35, 32, 28), radius=0.12,
+                          chip=BBox(37 / WIDTH, 94 / HEIGHT, 85 / WIDTH, 111 / HEIGHT))
+        zone = Zone(kind=Kind.PROSE, complete=True,
+                    blocks=[Block(kind="paragraph", lines=[entry])])
+        html = render(Document(source=Source(path="x.png", sha256="0", width=WIDTH,
+                                             height=HEIGHT), zones=[zone]))
+        assert ('<span class="chip" style="background:rgb(35,32,28);padding:4px 6px;'
+                'border-radius:2px;color:rgb(255,255,255)">BR-114</span>') in html
+
     def test_looks_survive_the_ir(self) -> None:
         document = paragraph(Look(size=0.8, bold=None, italic=True))
         again = Document.from_json(document.to_json())
         assert again.zones[0].blocks[0].lines[0].look == Look(size=0.8, italic=True)
+        chip = Look(color=(255, 255, 255), fill=(35, 32, 28), radius=0.12,
+                    chip=BBox(0.1, 0.2, 0.3, 0.4))
+        again = Document.from_json(paragraph(chip).to_json())
+        assert again.zones[0].blocks[0].lines[0].look == chip

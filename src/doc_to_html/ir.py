@@ -164,6 +164,21 @@ class Look:
     bold: bool | None = None
     italic: bool | None = None
 
+    color: tuple[int, int, int] | None = None
+    """The entry's ink, RGB — step 4b. Set wherever its ground is the one
+    the render draws under it, or it stands on a chip; the render draws it
+    only where it differs from what the element would otherwise get."""
+
+    fill: tuple[int, int, int] | None = None
+    """The chip the entry is printed on — a badge, a pill, a code tag — RGB.
+    None for an entry printed on its Zone's own ground."""
+
+    chip: BBox | None = None
+    """The chip's own box on the page, so its padding is the page's."""
+
+    radius: float | None = None
+    """The chip's corner radius over its height, 0 to 0.5."""
+
 
 @dataclass
 class Cell:
@@ -706,8 +721,10 @@ def _cell(data: dict[str, Any]) -> Cell:
         bbox=_bbox(data.get("bbox")),
         readings=[_reading(r) for r in data.get("readings", [])],
         state=CellState(data.get("state", "agreed")),
-        look=None if look is None else Look(size=look.get("size"), bold=look.get("bold"),
-                                            italic=look.get("italic")),
+        look=None if look is None else Look(
+            size=look.get("size"), bold=look.get("bold"), italic=look.get("italic"),
+            color=_colour(look.get("color")), fill=_colour(look.get("fill")),
+            chip=_bbox(look.get("chip")), radius=look.get("radius")),
     )
 
 
