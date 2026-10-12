@@ -63,7 +63,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-12: spec 0011 under way, step 5 next. The baseline is `tests/frozen/s5-result/`, and steps are judged by eye.**
+**Where the project is — 2026-10-12: spec 0011 done; `S6-sweep` awaits Alessandro's decision. The baseline is still `tests/frozen/s5-result/`, and work is judged by eye.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -105,7 +105,8 @@ Spec 0011   Place every entry where the page puts it — planned 2026-10-12
               1 rhythm DONE  2 locate DONE  3 fields DONE
               4 lines: 4a size, weight, italic DONE  4b colour DONE  4c rules DONE
                        4d leaders DONE  4e spacing DONE  4f typeface DONE
-              5 one sweep <- next
+              5 sweep S6-sweep on 7c12935, prediction held, 14 pages better
+              DECISION PENDING: S6-sweep as the baseline; the receipt's size
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
@@ -129,9 +130,9 @@ precision token, and one coincidental beside pair each on newsletter and
 nonlatin. Spec 0010's "Outcome — step E" §5 names them. Each earlier floor,
 and why it moved, is in its README and in `docs/status.md`.
 
-**The only open work is `docs/specs/0011-place-every-entry.md`.** Its §1 has
-the faults Alessandro named in `S5-sweep`, each traced to its cause. Its last
-section is the prompt to start a session with. `docs/specs/0007-handover.md`
+**Spec 0011 is done; its "Outcome — step 5" is the error analysis of
+`S6-sweep`** — faults by stage, directions ranked — and its handover prompt
+is the one to start a session with. `docs/specs/0007-handover.md`
 holds spec 0007's prompts, as record.
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after

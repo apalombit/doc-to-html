@@ -1,9 +1,8 @@
-# Status — 2026-10-12 (**spec 0011 under way — the baseline is `tests/frozen/s5-result/`, and steps are judged by eye**)
+# Status — 2026-10-12 (**spec 0011 done — `S6-sweep` awaits Alessandro's decision; the baseline is still `tests/frozen/s5-result/`**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-12, after
-Alessandro took `S5-sweep` as the baseline and asked for spec 0011; step 0
-froze it the same day.
+spec 0011's closing sweep `S6-sweep`.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
@@ -79,7 +78,8 @@ Spec 0011   Place every entry where the page puts it — issue #34, planned 2026
                  4d leader dots   DONE, the menu better
                  4e spacing inside a Zone   DONE, eleven pages better
                  4f typeface class   DONE, five pages better
-              5  one sweep, S6-sweep   <- next
+              5  one sweep, S6-sweep   DONE, prediction held, 14 pages better
+              DECISION PENDING: S6-sweep as the baseline; the receipt's size
 ```
 
 Q1-Q4's result tables moved to
@@ -316,43 +316,53 @@ the Q5-era records", verbatim. Q1–Q4's are under "Outcome — Q1 to Q4".
 
 ---
 
-## Next — spec 0011, step 5: one sweep
+## Next — Alessandro's decisions, then the next spec
 
-[`specs/0011-place-every-entry.md`](specs/0011-place-every-entry.md), issue
-#34, and its handover prompt. **The common cause behind every fault
-Alessandro named in `S5-sweep`:** the IR knows where every Zone sits and
-nothing about where anything inside one sits (`Cell.bbox` is never set). The
-renderer also puts one fixed 1.75rem gap between any two Zones. So the
-following are all drawn in the house style:
-- the form's two-column field grid, its boxes, ticks and digit boxes;
-- the newsletter's paragraph spacing and darkdeck's risks card;
-- the receipt's dashed rules;
-- the menu's centred heads and italic notes.
+**Spec 0011 is done** ([`specs/0011-place-every-entry.md`](specs/0011-place-every-entry.md),
+issue #34). Its closing sweep `S6-sweep`, on commit `7c12935`, came back as
+predicted:
+- every one of the 518 answers byte-identical to `S5-sweep`'s;
+- every `document.html` byte-identical to step 4's last replay.
 
-The spec draws the page's own gaps and alignment (probed offline, and it
-works), locates every entry with tesseract as a locator only, then draws
-fields and per-line looks from it. There are no model calls until the
-closing sweep.
+**Against `S5-sweep`: fourteen pages better, `sample_css_0004` the same,
+none worse.** `vanished` is unchanged at the same 26 words. The largest
+changes:
+- `form_0007` is drawn as its fields;
+- `newsletter_0008` is three serif columns;
+- `receipt_0010` is mono with its dashed rules;
+- `menu_0012` has leaders and italic notes;
+- `darkdeck_0009` has its tiles and pills;
+- `catalogue_0015` has its chips and badges.
 
-**Steps 1 to 3 are done.** Step 1 draws the page's gaps, Continuations
-and alignment; no page got worse. Step 2 sets `Cell.bbox` on 847 of 868
-Cells and changes no page; its misses are named in the spec. Step 3 draws
-`form_0007` as its fields — grid, boxes, comb, ticks, rules, signature
-lines — and moves no other page. Step 4 measures each placed entry's own
-look, each sub-step its own commit and sheets. **4a is done**: each Cell's
-size, weight and slant, from its own ink (`looks.py`, `Cell.look`), drawn
-on eleven pages better and none worse — weight unread on the photographed
-receipt. **4b is done**: each Cell's ink and any chip it is printed on,
-drawn where it differs from its element's own colour — thirteen pages
-better, none worse; `Style.ink` is mis-measured on form, nonlatin and cv,
-so their Titles keep the wrong ink. **4c is done for tables**: the line
-under each row and its fill — the receipt's dashed rules, the menu with
-none, the statement's stripes. **4d is done**: the menu's dots from each
-dish toward its price. **4e is done**: rows, paragraphs and items stand as
-far apart as the page sets them — eleven pages better, none worse; pairs
-are not spaced yet. **4f is done**: the page's face — serif, sans or mono
-— read from its letters' feet and pitch, right on all fifteen, five pages
-better. Next is step 5, one sweep, `S6-sweep`, on shipped defaults.
+The spec's "Outcome — step 5" carries the error analysis in §7 format:
+- every low axis traced to what it is made of;
+- the faults left, by stage;
+- the directions ranked.
+
+In short:
+- **The 26 vanished words:** 17 are model misreads (Extract), 6 are a line
+  the pairs read dropped on the form, 2 are cv skills classified as
+  figures, and 1 is a chip the model left out. All were already gone at
+  `S5-sweep`.
+- **The visible misplacements left are mostly alignment inside a Zone:**
+  - the receipt's labels and quantities, the statement's tiles,
+    invoice_0002's labels and the menu's heads;
+  - small capitals drawn small;
+  - accent bars and small boxes not drawn.
+- **The low `alignment_agreement`, `scale_error` and two-column beside
+  numbers are largely container semantics and coincidence.** The spec
+  shows which.
+
+**Waiting on Alessandro:**
+1. Whether `S6-sweep` becomes the baseline, frozen as
+   `tests/frozen/s6-result/`.
+2. Whether the photographed receipt is drawn at its paper's share of the
+   picture, rather than as paper filling the page (spec 0010 D1).
+
+**Recommended next:** a spec on the analysis's directions 1–3 — each Cell
+aligned from its own box, small capitals, accent bars and small frames.
+All are offline and judged by eye. The spec's handover prompt is the one
+to start from.
 
 ---
 

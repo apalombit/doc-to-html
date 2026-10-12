@@ -944,6 +944,143 @@ Steps 1-4 change nothing upstream of the model's answers: no crop, no
 prompt, no Zone. A miss on either clause names the step that moved
 something it was not meant to move.
 
+**Outcome — step 5, 2026-10-12: DONE, the prediction held. Fourteen pages
+better than `S5-sweep`, one the same, none worse.** Sweep `S6-sweep`,
+commit `7c12935`, shipped defaults (no `DTH_*`), 518 model calls,
+2026-10-12 20:49–22:31, the model 40%/60% CPU/GPU. Sheets in
+`debug/runs/S6-sweep/_review/` against `S5-sweep`; report
+`debug/runs/S6-sweep/report.html`, scored against `s5-result/`.
+
+#### 1. Gate
+
+| # | clause | result |
+|---|---|---|
+| 1 | every answer byte-identical to `S5-sweep`'s | **met** — 518 of 518, 15 of 15 documents, against `s5-result/answers/` |
+| 2 | every `document.html` byte-identical to step 4's last replay | **met** — 15 of 15 against `S6-4f-replay`; scores identical too |
+| 3 | all fifteen sheets opened against `S5-sweep` | 14 better, `sample_css_0004` the same, none worse |
+| 4 | `vanished` | unchanged on all fifteen: 26 words, every one already gone at `S5-sweep` |
+
+#### 2. Where it gained — the pages, against `S5-sweep`
+
+| document | gain |
+|---|---|
+| `form_0007` | **Fields.** Two columns of label-over-box, the date comb, ticks and signature lines; a `dl` list before. |
+| `newsletter_0008` | **Columns.** Three continuous serif columns, the pull quote italic between rules; chunks 40px apart before. |
+| `receipt_0010` | **Till.** Mono, dashed rules between its groups, a rule over TOTAL, the page's line pitch; height 1.89 → 1.58. |
+| `menu_0012` | **Menu.** Serif, leader dots, small italic notes under each dish, no row rules; height 1.55 → 1.31. |
+| `darkdeck_0009` | **Tiles.** Large values, green and red deltas, Healthy and At risk pills, a compact risks card; height 1.25 → 1.15. |
+| `catalogue_0015` | **Chips.** Dark SKU chips, orange NEW badges, bold names, large prices, green and orange stock; columns within tolerance 0.46 → 0.85. |
+| `statement_0006` | **Colour.** Red debits, green credits, zebra rows, figures in the summary in colour; height 1.31 → 1.15. |
+| `cv_0013` | **Rhythm.** Roles and dates at the page's spacing, italic companies; height 1.67 → 1.23. |
+| `report_0011` | **Serif.** Headings, italic subtitle, footnotes at the page's pitch; height 1.21 → 0.99. |
+| `sample_semantic_0005` | **Serif.** The page's face and gaps; height 0.86 → 0.97. |
+| `invoice_0002` | **Labels.** Bold labels, tighter panels, the address lines at the page's pitch. |
+| `invoice_0001` | **Header.** Pairs and addresses right-aligned as printed, rows tight. |
+| `nonlatin_0014` | **Ink.** Black body over a blue page, the header right-aligned, the totals bold. |
+| `sample_table_0003` | **Pitch.** Sixteen rows at the page's pitch; height 1.23 → 1.07. |
+| `sample_css_0004` | same — the `css` badge is still a line of its own |
+
+#### 3. Agreement by axis, recorded
+
+Means over the fifteen, `s5-result/` → `S6-sweep`. Recorded, not argued:
+§3a says which of them measure the page.
+
+| axis | S5 | S6 | lowest at S6 |
+|---|---|---|---|
+| vocabulary recall | 0.988 | 0.988 | form 0.95, invoice_0002 0.97, nonlatin 0.97 |
+| precision | 0.988 | 0.988 | nonlatin, invoice_0002, report 0.97 |
+| order tau | 0.987 | 0.990 | darkdeck 0.92, sample_semantic 0.95 |
+| beside agreement | 0.764 | 0.831 | catalogue 0.24, menu 0.39, cv 0.44 |
+| columns within tolerance | 0.858 | 0.907 | cv 0.56, sample_semantic 0.67 |
+| height ratio | 1.241 | 1.107 | receipt 1.58, menu 1.31, catalogue 0.72 |
+| alignment agreement | 0.759 | 0.785 | catalogue 0.31, menu 0.36, receipt 0.60 |
+| scale error | 0.189 | 0.189 | newsletter 0.70, darkdeck 0.49, catalogue 0.41 |
+
+**3a. What the low numbers are made of — each traced on 2026-10-12** by
+pairing the two projections block by block (the scorer's own
+`_pair_blocks`), listing every disagreeing pair, and opening the page.
+- **Height is inflated by this system's own findings panel** on six pages.
+  Without the panel, darkdeck measures 1.00, statement 1.00, form 0.98,
+  menu 1.08, cv 1.12 and the receipt 1.42.
+- **Beside agreement on two-column pages is mostly coincidence.** On
+  darkdeck, cv and newsletter, most disagreeing pairs are a line in one
+  column sharing a row with a line in the other. They flip whenever one
+  column wraps differently: darkdeck's risks card is drawn 232px wide
+  against the page's 272px.
+- **Alignment agreement compares containers, not ink positions.** In the
+  source a flex item or an input box hugs or holds its text; in the render a
+  table cell or `dd` is wider. So `Potted brown shrimp` reads `fill` →
+  `left`, and form's values `left` → `fill`, with nothing moved on the
+  page. The real misalignments are listed in §4.
+- **Scale error compares which blocks are headings.** darkdeck's source
+  sets its tile values as headings, and the render sets them as large
+  paragraphs. The render instead makes small-capital labels Zone Titles at
+  9.4px (`AVAILABILITY`, newsletter's `WHAT REOPENS`). Part of it is real:
+  small capitals are drawn too small (§4).
+
+#### 4. Remaining faults, by conversion stage
+
+| document | what's wrong (on the page) | stage | evidence |
+|---|---|---|---|
+| statement | `Quillton`, `Lindward`, `1,141.30` for `1,144.30`, `210.08` for `216.08` | Extract (model misread) | `vanished`, 4 words; both Probes fire on the two figures |
+| menu, newsletter, invoice_0002, receipt, nonlatin, cv, form | `chorvil`, `bearnaise`, `Councilor`, `adipiscing`, `M0…`, a zero dropped, Greek final letters, `fempost` | Extract (model misread) | `vanished`, 13 words |
+| form | `Tick one category. Locker allocation is subject to availability.` missing | Extract — the line is inside Zone 3 (y 0.441–0.451 of 0.386–0.452), read as pairs, and a line that is no label and value was dropped | `vanished`, 6 words |
+| cv | `Revit` and `Python` printed as pictures, not text | Classify — each skill row (name over a bar) taken as a figure | `vanished`; Zones 20, 22 `figure` |
+| catalogue | `CP-402` chip missing | Extract (dropped) | `vanished` `402`; Zone 8 has no SKU |
+| darkdeck | the P95 tile split `P95 \| LATENCY`, `184 \| ms`; `$2.14` small and grey | Classify — two tiles read as pairs, not re-read as prose | Zones 3, 5 `pairs`; `$2.14` has no size |
+| receipt | quantities, and `Subtotal` to `Change`, right-aligned; the source sets them left | Render — the numeric-column rule right-aligns a column the page sets left | alignment `left` → `right` × 14 |
+| statement | summary tiles centred and right; the source sets them left with an accent bar | Render (numeric columns) + Style (left bars not read) | sheet; alignment × 6 |
+| invoice_0002 | pair labels left; the source sets them right against their values | Render — a `dl` label column has no measured alignment | alignment `right` → `left` or `fill` × 13 |
+| menu | section heads (`From the grill`, `Puddings`) left and small; the source centres them in small capitals | Render (row cells unaligned) + Style (small capitals read at x-height) | alignment `centre` → `left`; head 10.9px vs 15px |
+| menu | the right column's notes stand beside each dish, not under it | Extract — read as a third column | caveat on Zone 2: rows of 3 cells against the header's 1 |
+| newsletter | small-capital heads drawn at 9.4px against 13px; the drop cap line drawn as a bold heading | Style (small capitals) + Extract (drop cap line as `heading`) | scale; sheet |
+| receipt | drawn as its paper filling the page, 1.42 tall without the panel | Render — `body_px` sized to the paper, spec 0010 D1 | height |
+| catalogue | no picture area in any card; price, unit and stock split over two lines | IR — a Zone cannot hold a Graphic beside text; Extract reads a card as pairs | height 0.72; beside 0.24 |
+| sample_semantic, statement, form | TL;DR's left bar, the tiles' bars, the section heads' bars and the `OFFICE USE` box not drawn | Style — thick edges and small boxes not read | sheets |
+| report | footnote markers lost or inline (`2027. 3`); the Arial table drawn in Georgia; the footer left, not centred | IR (no superscript run) + 4f per page + Render | `link: 1/2/3` missing from inline; alignment `centre` → `left` |
+| cv | the sidebar's text flush with its edge; title and company merged on one line | Render (no inset in a filled lane) + Extract | sheet; `Senior Structural Engineer` unpaired |
+| invoice_0002 | `With Credit` at the title's size; `NO` and `Date` as two pairs | Extract — one title cell, one line read as two pairs | sheet |
+| sample_css | `css` badge a line of its own | Extract — a Title carries no Look | sheet |
+| invoice_0001 | the partial rule over `Total` missing | Style — a part-width rule is under `SOLID` coverage | 4c residue |
+
+#### 5. Directions, ranked by gain for cost
+
+| # | stage | change | why | cost / how measured |
+|---|---|---|---|---|
+| 1 | Render | **align each Cell from its own box** within its column — left, right or centred as placed (step 2 placed 847 of 868) | receipt, statement tiles, menu heads, invoice_0002 labels, report footer: the largest set of visible misplacements left | offline; rederive and sheets |
+| 2 | Style | **small capitals**: a line whose ascenders stand no taller than its x-height is drawn in `small-caps` at its cap size | menu heads and title, newsletter masthead and heads, darkdeck and catalogue labels | offline |
+| 3 | Style | **accent bars and small frames**: a thick edge on one side of a Zone, a box round a small Zone | TL;DR, statement tiles, form section heads, `OFFICE USE` | offline; the rectangle finder sees the boxes |
+| 4 | Extract → wire | a pairs Zone **keeps a line that is no pair** — a note under the options — as a paragraph | form's lost line, six words | a sweep — the pairs prompt and wire |
+| 5 | Classify | tiles of a label, a value and a delta read as prose; a skill row as text with a bar | darkdeck P95 and cost tiles; cv's two skills | a sweep — prompt or routing |
+| 6 | Render | a photographed page drawn at its paper's share of the picture | receipt 1.42 → about 1.0 | offline — a decision, below |
+
+Not worth more effort:
+- **Chasing `scale_error`, `alignment_agreement` or cross-column beside
+  pairs as numbers.** §3a shows they report container semantics and
+  coincidence as much as the page.
+- **Model misreads by prompt.** The 17 misread words are deterministic at
+  `temperature: 0`, and only a second reading reaches them: the Ladder, or
+  a second Engine. The statement's two figures are already caught by
+  Probes.
+
+#### 6. Decisions for Alessandro
+
+- **Whether `S6-sweep` becomes the baseline,** frozen as
+  `tests/frozen/s6-result/` with its 518 answers. Against `s5-result/`:
+  - `vanished` is unchanged on every document;
+  - no vocabulary or precision leg falls;
+  - beside agreement falls on catalogue, cv, darkdeck and menu, and rises
+    on form, newsletter and sample_semantic — the cross-column coincidences
+    of §3a.
+- **The receipt's size.** Spec 0010 D1 sizes a photographed page as its
+  paper filling the page. The source picture shows the paper at two thirds
+  of its width on a grey ground. Drawing it that way makes it look like the
+  picture; keeping D1 keeps the paper legible.
+
+**Recommendation:** take `S6-sweep` as the baseline. Plan the next spec on
+directions 1–3: all offline, judged by eye, the largest visible gain left.
+Then 4 and 5 with one sweep.
+
 ---
 
 ## 4. What this spec does not fix
@@ -1005,7 +1142,34 @@ this spec starts there.
 
 ---
 
-## Handover prompt — start of spec 0011 (current)
+## Handover prompt — after `S6-sweep` (current)
+
+```
+Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then
+docs/specs/0011-place-every-entry.md's "Outcome — step 5": spec 0011 is
+done, its prediction held, and its error analysis ranks what is left.
+
+Two decisions are Alessandro's and wait on him: whether S6-sweep becomes
+the baseline, and how the photographed receipt is sized. Ask before acting
+on either.
+
+If he takes S6-sweep: first check debug/runs/S6-sweep still exists — it
+is the only copy of its documents until frozen (if it is gone, remake it:
+FIXTURE=sweep tools/iterate.sh on commit 7c12935 reproduces it at
+temperature 0, about 1h45m). Freeze it as tests/frozen/s6-result/ the way
+s5-result/ was frozen — documents, scores against s5-result, the 518
+answers written by tools/replay_run.py --save-answers, dth_env.txt, and a
+README stating provenance — and prove the three loops 15 of 15: scored
+straight out, tools/rederive.py, tools/replay_run.py. Then update
+CLAUDE.md's frozen table and status.md.
+
+Then plan the next spec from §5's directions 1-3 — each Cell aligned from
+its own box, small capitals, accent bars and small frames — all offline,
+judged by eye on the sheets as spec 0011 was; 4 and 5 need a sweep. The
+standing rules are CLAUDE.md's and spec 0011's §6.
+```
+
+## Handover prompt — start of spec 0011 (record)
 
 ```
 Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then
