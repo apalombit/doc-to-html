@@ -767,6 +767,43 @@ Recorded, not argued:
 - menu: beside 0.435 → 0.469.
 - 984 tests, mypy clean.
 
+**Outcome — step 4d, 2026-10-12: DONE, `menu_0012` better, no other page
+moved.** Run `debug/runs/S6-4d-leaders`, sheet against `S6-4c-rules`.
+Replay (`S6-4d-replay`) = rederive, 15 of 15.
+
+What shipped:
+- **`Row.leader`**, a `Stroke`, with `dotted` among the kinds.
+- **`looks._leaders`** reads the row's first line, fixed by its topmost
+  Cell so that a note printed under a dish does not stand in for it. Along
+  the line's lower half, from the first entry to the next on that line, it
+  looks for five or more marks with evenly spaced starts (spread under 0.3
+  of the mean) spanning 60% of the gap.
+  - The menu's fifteen dishes carry 70-111 one-pixel dots spanning 94-97% of
+    their gap. Nothing else in the corpus has one.
+  - Colour as 4c's: read off the page, not on a photograph.
+- **`render`** draws the leader in the row's first cell, as a flex line whose
+  `::after` runs the page's dots to the cell's end.
+- **The first cut was worse on half the page, and was fixed before
+  judging:**
+  - **Stubs.** A 1em minimum left a stub after the names that wrap in the
+    narrow right column, and made more of them wrap. With no minimum, a
+    leader takes only the room there is.
+  - **Running into a note.** A row whose table puts a note between the dish
+    and its price (the note is printed under the dish) now draws no leader.
+
+| document | judgement | the element |
+|---|---|---|
+| `menu_0012` | better | the left column's eight dishes each dot toward their price, as printed; on the right, where a name fits on one line |
+| the other fourteen | same | byte-identical outside the IR |
+
+What is still not the page's:
+- **The right column's leaders stop at the dish's cell.** The model read
+  each note as a column beside its dish, so a table cell stands between the
+  dish and the price.
+
+Recorded, not argued: no scored field moved on any document; `vanished`
+unchanged; 989 tests, mypy clean.
+
 ### Step 5 — one sweep, `S6-sweep`
 
 All fifteen, shipped defaults. Nothing in steps 1–4 changes a crop or a

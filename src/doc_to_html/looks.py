@@ -60,6 +60,12 @@ Neither is read on a photographed page: print and light set its colours.
 The lines are read on a photographed page too — `receipt_0010`'s dashed
 rules are its structure — but not their colour.
 
+**4d — leaders**, on `Row.leader`: a line of `DOTS` or more evenly spaced
+marks along the lower half of a row's first line, from its first entry to
+the next on that line, spanning `DASH_SPAN` of the gap — `menu_0012`'s
+dots from each dish to its price, 70 to 111 one-pixel dots spanning 94-97%
+of it. Nothing else in the corpus has one.
+
 Every threshold sits in the gap of its distribution, measured on 2026-10-12
 over the placed Cells of the eleven pages whose picture is its own HTML,
 each labelled with the size, weight, style and colour Chrome computed for the
@@ -134,6 +140,12 @@ does."""
 DASHES, DASH_SPAN = 3, 0.6
 """A dashed line is at least this many dashes, spanning this share of the
 width — `receipt_0010`'s are sixty of 3-4px over 300."""
+
+DOTS = 5
+"""A leader is at least this many marks, their starts evenly spaced — the
+spacing's spread under `EVEN` of its mean."""
+
+EVEN = 0.3
 
 LAST = 1.5
 """How many glyphs under the last row its line is looked for: a rule sits
@@ -425,6 +437,58 @@ def _rows(rgb: ImageArray, document: Document, glyph: float,
                 row.under = _stroke(rgb[bottom:below, left:right], glyph, height, coloured)
 
 
+def _leaders(rgb: ImageArray, document: Document, coloured: bool) -> None:
+    """Set `Row.leader` on every table row whose first line runs a leader
+    from its first entry to the next — spec 0011, step 4d."""
+    height, width = rgb.shape[:2]
+    for zone in document.zones:
+        if zone.kind is not Kind.TABLE:
+            continue
+        for row in zone.rows:
+            row.leader = None
+            cells = [c for c in row.cells if c.bbox is not None and c.text.strip()]
+            if len(cells) < 2:
+                continue
+            top = min(cells, key=lambda c: c.bbox.top if c.bbox else 1.0)
+            assert top.bbox is not None
+            middle = (top.bbox.top + top.bbox.bottom) / 2
+            line = sorted((c for c in cells if c.bbox is not None
+                           and c.bbox.top <= middle <= c.bbox.bottom),
+                          key=lambda c: c.bbox.left if c.bbox else 0.0)
+            if len(line) < 2:
+                continue
+            first, after = line[0].bbox, line[1].bbox
+            assert first is not None and after is not None
+            left, right = int(first.right * width) + 2, int(after.left * width) - 2
+            upper = int(middle * height)
+            lower = min(height, int(np.ceil(first.bottom * height)) + 2)
+            if right - left < 10 or lower <= upper:
+                continue
+            strip = np.asarray(rgb[upper:lower, left:right], dtype=np.int64)
+            apart = np.abs(strip - np.array(dominant(strip))).sum(axis=2)
+            far = apart > max(SAME_COLOUR, 0.5 * float(np.percentile(apart, 99)))
+            marked = []
+            for y in range(far.shape[0]):
+                marks = _spans(list(far[y]))
+                starts = np.diff([start for start, _ in marks])
+                if (len(marks) >= DOTS
+                        and (marks[-1][1] - marks[0][0]) / far.shape[1] >= DASH_SPAN
+                        and float(starts.std()) <= EVEN * float(starts.mean())):
+                    marked.append(y)
+            if not marked:
+                continue
+            rows = far[marked[0]:marked[-1] + 1]
+            lengths = [end - start for start, end in _spans(list(rows.any(axis=0)))]
+            thick = marked[-1] + 1 - marked[0]
+            kind = "dotted" if float(np.median(lengths)) <= 2.5 * thick else "dashed"
+            colour = None
+            if coloured:
+                inked = strip[marked[0]:marked[-1] + 1][rows]
+                middle_ink = np.median(inked, axis=0)
+                colour = (int(middle_ink[0]), int(middle_ink[1]), int(middle_ink[2]))
+            row.leader = Stroke(kind=kind, color=colour, width=round(thick / height, 5))
+
+
 def _drawn_ground(zone: Zone, row: int | None, style: Style) -> tuple[int, int, int]:
     """The ground the render draws under one of the Zone's Cells."""
     if (row is not None and zone.header_fill is not None
@@ -452,6 +516,7 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
     if image.ndim == 3:
         true = np.asarray(255 - image if inverted else image)[:, :, ::-1]
         _rows(true, document, body, coloured=not photographed)
+        _leaders(true, document, coloured=not photographed)
         rgb = None if photographed else true
     style = document.style or Style()
     measured: list[tuple[Cell, float | None, float | None, float | None]] = []

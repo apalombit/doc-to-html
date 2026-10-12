@@ -339,3 +339,61 @@ class TestRows:
         html = render(Document(source=Source(path="x.png", sha256="0", width=WIDTH,
                                              height=HEIGHT), zones=[zone]))
         assert "<table>" in html and "table.read" not in html
+
+
+def dish_row(dots: bool, note: str = "") -> tuple[np.ndarray, Document]:
+    """A menu line, RGB: a dish at the left, its price at the right, dots
+    between them on the baseline; a note under the dish when given."""
+    image = np.full((HEIGHT, WIDTH, 3), 255, np.uint8)
+    dish, price = cell("Potted brown shrimp"), cell("9.50")
+    dish.bbox = BBox(20 / WIDTH, 40 / HEIGHT, 160 / WIDTH, 54 / HEIGHT)
+    price.bbox = BBox(400 / WIDTH, 40 / HEIGHT, 430 / WIDTH, 54 / HEIGHT)
+    if dots:
+        for x in range(166, 396, 3):
+            image[51, x] = (185, 166, 137)
+    cells = [dish]
+    if note:
+        under = cell(note)
+        under.bbox = BBox(20 / WIDTH, 58 / HEIGHT, 140 / WIDTH, 68 / HEIGHT)
+        cells.append(under)
+    cells.append(price)
+    zone = Zone(kind=Kind.TABLE, bbox=BBox(10 / WIDTH, 30 / HEIGHT, 690 / WIDTH, 80 / HEIGHT),
+                complete=True, rows=[Row(cells=cells)])
+    return image, Document(source=Source(path="x.png", sha256="0", width=WIDTH,
+                                         height=HEIGHT), zones=[zone])
+
+
+class TestLeaders:
+    def test_dots_from_a_dish_to_its_price_are_its_leader(self) -> None:
+        image, document = dish_row(dots=True)
+        looks._leaders(image, document, coloured=True)
+        leader = document.zones[0].rows[0].leader
+        assert leader is not None and leader.kind == "dotted"
+        assert leader.color == (185, 166, 137)
+
+    def test_a_note_under_the_dish_does_not_stand_in_the_way(self) -> None:
+        image, document = dish_row(dots=True, note="with mace butter")
+        looks._leaders(image, document, coloured=True)
+        assert document.zones[0].rows[0].leader is not None
+
+    def test_a_line_with_nothing_between_has_no_leader(self) -> None:
+        image, document = dish_row(dots=False)
+        looks._leaders(image, document, coloured=True)
+        assert document.zones[0].rows[0].leader is None
+
+    def test_a_leader_is_drawn_in_the_first_cell_and_styled_only_where_used(self) -> None:
+        _, document = dish_row(dots=True)
+        document.zones[0].rows[0].leader = Stroke(kind="dotted", color=(185, 166, 137),
+                                                  width=2 / HEIGHT)
+        html = render(document)
+        assert ('<span class="leader" style="--leader:2px dotted rgb(185,166,137)">'
+                "Potted brown shrimp</span>") in html
+        assert ".leader::after" in html
+        _, plain = dish_row(dots=False)
+        assert ".leader" not in render(plain)
+
+    def test_no_leader_runs_into_a_cell_with_words(self) -> None:
+        # The note printed under the dish is a column beside it in the table.
+        _, document = dish_row(dots=True, note="with mace butter")
+        document.zones[0].rows[0].leader = Stroke(kind="dotted", width=2 / HEIGHT)
+        assert 'class="leader"' not in render(document)

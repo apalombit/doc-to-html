@@ -153,7 +153,7 @@ class Reading:
     """
 
 
-STROKE_KINDS = ("none", "solid", "dashed", "double")
+STROKE_KINDS = ("none", "solid", "dashed", "dotted", "double")
 """How a line inside a Zone is drawn, as CSS names a border's style."""
 
 
@@ -245,6 +245,11 @@ class Row:
     fill: tuple[int, int, int] | None = None
     """The row's own ground where it is not its Zone's, RGB — a header bar,
     a zebra stripe. None on the Zone's ground, or where not read."""
+
+    leader: Stroke | None = None
+    """The line the page runs from the row's first entry to the next on its
+    line — `menu_0012`'s dots from a dish to its price: spec 0011, step 4d.
+    None where it draws none."""
 
 
 MARK_KINDS = ("box", "comb", "tick", "line")
@@ -780,6 +785,7 @@ def _zone(data: dict[str, Any]) -> Zone:
                 role=RowRole(row.get("role", "data")),
                 under=_stroke(row.get("under")),
                 fill=_colour(row.get("fill")),
+                leader=_stroke(row.get("leader")),
             )
             for row in data.get("rows", [])
         ],

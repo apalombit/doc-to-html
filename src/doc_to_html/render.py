@@ -700,6 +700,9 @@ def _style_css(document: Document) -> str:
         rules.extend(FIELD_CSS)
     if any(_rows_read(zone) for zone in document.zones if zone.kind is Kind.TABLE):
         rules.extend(ROWS_CSS)
+    if any(row.leader is not None and row.leader.kind != "none"
+           for zone in document.zones for row in zone.rows):
+        rules.extend(LEADER_CSS)
 
     style = document.style
     if style is None:
@@ -1200,9 +1203,12 @@ def _table(zone: Zone, document: Document) -> str:
             looked = _look(cell, bold=row.role is not RowRole.DATA, house=ink)
             return f' style="{looked}"' if looked else ""
 
+        led = _leader(row, page)
         cells = "".join(
             f'<{tag}{" class=\"num\"" if index in numeric else ""}{styled(c)}>'
-            f"{_cell(c, document)}</{tag}>"
+            + (f'<span class="leader" style="{led}">{_cell(c, document)}</span>'
+               if led and c is row.cells[0] else _cell(c, document))
+            + f"</{tag}>"
             for index, c in enumerate(row.cells)
         )
         if row.role is RowRole.HEADER:
@@ -1235,6 +1241,32 @@ ROWS_CSS = (
 — spec 0011, step 4c: the house rule under every cell, shade on the header
 and rule over the totals give way to each row's own. Emitted only for a page
 that has one, so every other page keeps its bytes."""
+
+
+LEADER_CSS = (
+    ".leader { display:flex; align-items:baseline; }",
+    '.leader::after { content:""; flex:1; min-width:0; margin-left:.3em;'
+    " border-bottom:var(--leader); }",
+)
+"""A row's leader, run from its first entry to the end of its cell — spec
+0011, step 4d. Emitted only for a page that has one. No minimum width: a
+name that wraps leaves its leader no room rather than a stub, and the
+column is sized as if it had none."""
+
+
+def _leader(row: Row, page: _Page) -> str:
+    """The `--leader` a row's first cell draws, or empty. None where a cell
+    with words stands between the first and the last: `menu_0012`'s notes,
+    printed under each dish, are a column of the table beside it, and a
+    leader would run into the note rather than to the price."""
+    line = row.leader
+    if line is None or line.kind == "none" or not row.cells:
+        return ""
+    if any(cell.text.strip() for cell in row.cells[1:-1]):
+        return ""
+    width = max(1, round(line.width * page.y))
+    colour = _rgb(line.color) if line.color else "var(--muted)"
+    return f"--leader:{width}px {line.kind} {colour}"
 
 
 def _rows_read(zone: Zone) -> bool:
