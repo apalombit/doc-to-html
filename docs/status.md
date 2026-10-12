@@ -1,8 +1,8 @@
-# Status — 2026-10-11 (**spec 0010 measured, sweep `S5-sweep`: ratchet NOT met on five documents — decision pending**; the floor is `s3-result/`)
+# Status — 2026-10-12 (**spec 0011 planned — the baseline is `S5-sweep`, and steps are judged by eye**)
 
 **Live document.** This is where the project actually is. When it goes stale,
-rewrite it; do not add a banner and leave it. Last rewritten 2026-10-11, after
-sweep `S5-sweep` measured spec 0010's repairs and type at the page's size.
+rewrite it; do not add a banner and leave it. Last rewritten 2026-10-12, after
+Alessandro took `S5-sweep` as the baseline and asked for spec 0011.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
@@ -10,6 +10,13 @@ Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 should — use the **`visual-review` skill**.
 
 Branch `scaffold`. **898 tests pass, `mypy src/` clean.**
+
+**How work is judged now — Alessandro, 2026-10-12, for spec 0011.** By eye:
+every step's sheets are opened against the previous step's and each page
+judged better / same / worse. Scores are still produced and recorded, and
+**never gate a step or carry an argument**. The ratchet below is suspended
+as a gate for the spec. The one number still read is the report's `vanished`
+list, as a pointer to a page to look at. He checks every run himself too.
 
 ---
 
@@ -57,7 +64,15 @@ Spec 0010   Five repairs, the beside score, type at the page's size — issue #3
               C       beside by row groups                  measured and REVERTED
               D       body, Titles, headings at the page's size  DONE, D-1 NOT met (two pairs)
               E       sweep S5-sweep, commit 4a5fe3f        DONE, prediction held;
-                      ratchet NOT met on five documents — decision pending
+                      ratchet NOT met on five documents
+                      DECIDED 2026-10-12: S5-sweep is the baseline, the five legs accepted
+Spec 0011   Place every entry where the page puts it — issue #34, planned 2026-10-12
+              0  freeze S5-sweep as tests/frozen/s5-result/   <- next
+              1  rhythm: gaps from the page, Zones grouped, alignment
+              2  locate every entry on the page
+              3  fields: boxes, ticks, digit boxes, underlines
+              4  lines: per-entry type, colour, rules, leaders, spacing
+              5  one sweep, S6-sweep
 ```
 
 Q1-Q4's result tables moved to
@@ -65,33 +80,36 @@ Q1-Q4's result tables moved to
 
 ---
 
-## The floor — `tests/frozen/s3-result/`, DECIDED 2026-10-11
+## The baseline — `S5-sweep`, DECIDED 2026-10-12
+
+`debug/runs/S5-sweep`, commit `4a5fe3f` — spec 0010's sweep, all fifteen
+documents, 518 answers. It is frozen as `tests/frozen/s5-result/` at spec
+0011's step 0. Until then the run directory is its only copy: **keep it**.
+If it is lost, `FIXTURE=sweep tools/iterate.sh` on `4a5fe3f` remakes it at
+`temperature: 0`.
+
+It sits below `s3-result/`, the floor before it, on five legs, all accepted
+by that decision:
+- `darkdeck_0009` tau and beside — its P95 tile is read as a table;
+- `menu_0012` — `béarnaise` read without its accent;
+- `report_0011` precision — one `1` counted as surplus;
+- `newsletter_0008` and `nonlatin_0014` beside — one coincidental pair each.
+
+Spec 0010's "Outcome — step E", §5, has the table.
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s3-result/scores.json
+    --documents sweep --previous tests/frozen/s5-result/scores.json
 ```
 
-`--documents sweep` is not optional: without a `fixtures.txt` the report
-scores the iterate five and says nothing about the other ten.
+(`debug/runs/S5-sweep/scores.json` until step 0.) `--documents sweep` is not
+optional: without a `fixtures.txt` the report scores the iterate five.
 
-**It is the floor and the control since 2026-10-11, Alessandro's decision**
-after reviewing sweep `S3-sweep` — spec 0008's outcome, commit `9c42d81`:
-the fifteen documents today's code makes, with the 490 answers that made
-them. Frozen at spec 0009's step 0 and proved that day: scored straight out
-of the directory, **15 documents, 0 differing fields**; `tools/rederive.py`
-over it reproduces it **15 of 15 byte for byte**, and so does
-`tools/replay_run.py` from its committed `answers/`; `tools/layout_front.py`'s
-Zones match its IRs on 15 of 15. `debug/runs/S3-base` is the rederive proof
-kept as a run directory — the `--previous` for spec 0009's sheets.
+### `s3-result/` — the floor 2026-10-11 to 2026-10-12
 
-**Three legs sit below `q5-result/`, the floor before it, by that decision:**
-T3 beside on `cv_0013` (0.5769 → 0.4000) and `darkdeck_0009` (0.9677 →
-0.8148) — the Band render's cross-column coincidences, which a column render
-does not reproduce — and precision on `catalogue_0015` (1.0000 → 0.9940), one
-`×` read as `x` on a spec line printed for the first time. Its README names
-them and what else moved. **N4's exception is gone:** `catalogue_0015`'s
-beside is 0.2727, above `q5-result/`'s 0.2523.
+Spec 0008's sweep `S3-sweep`, commit `9c42d81`, 490 answers. Frozen at spec
+0009's step 0, and reproduced 15 of 15 by every loop. Three of its legs sat
+below `q5-result/` by Alessandro's decision. Its README names them.
 
 ### The ones before it
 
@@ -111,23 +129,23 @@ the pipeline. Each README says what moved and why.
 | T2 tau | strict decrease, any amount |
 | T3 beside | strict decrease, any amount |
 
-`vocabulary_recall` is reported beside a failure to say how far it fell. **The
-floor never falls for any reason.** No standing exception sits against
-`s3-result/`.
+`vocabulary_recall` is reported beside a failure to say how far it fell.
+**For spec 0011 the ratchet is reported and does not gate** — see "How work
+is judged now" above.
 
 ---
 
-## Where the corpus is — at the floor, `s3-result/`
+## Where the corpus is — at the baseline, `S5-sweep` (recorded, not a target)
 
 | | mean |
 |---|---|
-| vocabulary recall | 0.9806 |
-| recall (multiset) | 0.9779 |
-| precision | 0.9866 |
-| join recall | 0.9538 |
-| tau | 0.9864 |
-| beside agreement | 0.7549 |
-| height ratio | 1.441 |
+| vocabulary recall | 0.9876 |
+| recall (multiset) | 0.9860 |
+| precision | 0.9881 |
+| join recall | 0.9599 |
+| tau | 0.9875 |
+| beside agreement | 0.7638 |
+| height ratio | 1.241 |
 | `hard_breaks` | 5 |
 | `figures_lost` | **0** |
 | T6 inline runs | 8 of 42 |
@@ -289,20 +307,23 @@ the Q5-era records", verbatim. Q1–Q4's are under "Outcome — Q1 to Q4".
 
 ---
 
-## Next — Alessandro's decision on `S5-sweep`
+## Next — spec 0011, step 0
 
-**Whether `S5-sweep` becomes the floor**, accepting the five legs above.
-Until he decides, `s3-result/` is the floor and the control, and
-**`debug/runs/S5-sweep` and `S4-sweep` must survive**: the sweep is the only
-copy of the answers any next step replays. If he takes it, freeze it as
-`tests/frozen/s5-result/` the way spec 0009's step 0 froze `s3-result/`.
+[`specs/0011-place-every-entry.md`](specs/0011-place-every-entry.md), issue
+#34, and its handover prompt. **The common cause behind every fault
+Alessandro named in `S5-sweep`:** the IR knows where every Zone sits and
+nothing about where anything inside one sits (`Cell.bbox` is never set). The
+renderer also puts one fixed 1.75rem gap between any two Zones. So the
+following are all drawn in the house style:
+- the form's two-column field grid, its boxes, ticks and digit boxes;
+- the newsletter's paragraph spacing and darkdeck's risks card;
+- the receipt's dashed rules;
+- the menu's centred heads and italic notes.
 
-The recommendation (spec 0010, "Outcome — step E", §4) is size, weight and
-colour per entry inside a Zone. Today one weight and one colour hold per
-Zone, so product names, prices, tile values and red/green amounts draw as
-body text. It is offline over the new floor (`rederive.py`). After it come
-`form_0007`'s drawn fields, then T3 `beside` by the page's own stretches.
-Not started.
+The spec draws the page's own gaps and alignment (probed offline, and it
+works), locates every entry with tesseract as a locator only, then draws
+fields and per-line looks from it. There are no model calls until the
+closing sweep.
 
 ---
 
@@ -352,9 +373,10 @@ the last two entries.
 - **Never cite or analyse a past run.** Only a run taken in this session counts.
   **The exceptions are committed files:** `tests/frozen/run84/`,
   `a1-checkpoint/`, `a0-checkpoint/`, `a0-result/`, `a1-result/`,
-  `a2-result/`, `a3-result/`, `reshot/`, `q5-result/` — all kept as record —
-  and **`s3-result/`, the floor and the control.** `a3-result/` was scored on pictures missing their last
-  lines; quote it only as that.
+  `a2-result/`, `a3-result/`, `reshot/`, `q5-result/`, `s3-result/` — all
+  kept as record — and, from spec 0011's step 0, **`s5-result/`, the
+  baseline**. `a3-result/` was scored on pictures missing their last lines;
+  quote it only as that.
 - **The committed corpus picture is a screenshot of its own HTML.**
   `TestTheCorpusPictureIsItsOwnHTML` re-shoots the ten authored pages and
   compares them to the pixel. When a page or the shooter changes, re-shoot
@@ -394,7 +416,7 @@ the last two entries.
 FIXTURE=sweep tools/iterate.sh <label>        # all fifteen, ~1¾ h — anything reviewed
 FIXTURE=iterate tools/iterate.sh <label>      # the five, ~20 min — throwaway checks only
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s3-result/scores.json
+    --documents sweep --previous tests/frozen/s5-result/scores.json
 python tools/visual_review.py debug/runs/<label> --previous debug/runs/<older>
 python tools/visual_review.py debug/runs/<label> --check
 ```
@@ -403,10 +425,10 @@ python tools/visual_review.py debug/runs/<label> --check
 `git diff HEAD > debug/runs/<label>/uncommitted.diff` beside it**, as A3 did.
 
 **Three offline loops, each proved before it was used, and a sweep. Say which
-produced any number you report.** Start them from `tests/frozen/s3-result/`,
-which today's code reproduces 15 of 15 on all three loops (2026-10-11);
-`debug/runs/S3-base` is its rederive, kept as a run directory. Both tools
-take a run directory as well as a frozen one.
+produced any number you report.** Start them from the baseline,
+`debug/runs/S5-sweep` (`tests/frozen/s5-result/` once spec 0011's step 0 has
+frozen it). On 2026-10-12 `tools/rederive.py` over `S5-sweep` reproduced it
+byte for byte. Both tools take a run directory as well as a frozen one.
 
 - **Downstream of the model** — renderer, style, probes. `tools/rederive.py
   <run> --label <base>` builds today's baseline; build the

@@ -1,6 +1,6 @@
 # Five repairs, the beside score, and type at the page's size
 
-**Status: measured, sweep `S5-sweep` — decision pending. Issue #33, opened 2026-10-11.**
+**Status: done and decided 2026-10-12 — `S5-sweep` is the baseline. Issue #33, closed. Work continues in [spec 0011](0011-place-every-entry.md).**
 
 Alessandro's decision, taken on 2026-10-11 after the close-up error analysis
 of sweep `S4-sweep` (spec 0009's outcome):
@@ -388,6 +388,14 @@ is a scorer artefact or one word the model reads differently, and every
 page looks as close to its source as at `S4-sweep` or closer. Then do #1
 and #2 offline over it.
 
+**Decided by Alessandro, 2026-10-12.** `S5-sweep` is the baseline and the five
+legs are accepted and recorded. He also changed how the next spec is judged:
+**by eye on the sheets, with scores recorded and never gating**. On his
+reading of the pages, the directions above were replaced by a wider plan
+aimed at the faults he named — the form's field grid, the newsletter's and
+darkdeck's spacing, the receipt's dashed rules, the menu's heads and lines.
+That plan is [spec 0011](0011-place-every-entry.md).
+
 ---
 
 ## 3. Rules that bind
@@ -399,7 +407,7 @@ step does not stop the plan; it is reported with its measurement.
 
 ---
 
-## Handover prompt — after `S5-sweep` (current)
+## Handover prompt — after `S5-sweep` (record; superseded by spec 0011's)
 
 ```
 Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then

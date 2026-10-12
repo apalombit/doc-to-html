@@ -36,10 +36,9 @@ trial axis is kept rather than rejected.
 
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
-measured numbers and what has already been tried and rejected. **0010 is the
-one open spec** — issue #33, started 2026-10-11, measured, its floor
-decision pending; 0009 (issue #32) folded its own decision into it; 0008
-(issue #31) is done and decided; 0007 still defines the target.
+measured numbers and what has already been tried and rejected. **0011 is the
+one open spec** — issue #34, planned 2026-10-12. 0008, 0009 and 0010 (issues
+#31–#33) are done and decided. 0007 still defines the target.
 
 ---
 
@@ -64,7 +63,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-11: spec 0010 measured by sweep `S5-sweep` — the floor is Alessandro's decision.**
+**Where the project is — 2026-10-12: spec 0011 planned, step 0 next. The baseline is `S5-sweep`, and steps are judged by eye.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -98,27 +97,40 @@ Spec 0010   Five repairs, the beside score, type at the page's size —
               C beside by row groups                         REVERTED
               D type at the page's size                      DONE
               E sweep S5-sweep on 4a5fe3f, prediction held, ratchet
-              falls on five documents, each named  <- decision pending
+              falls on five documents, each named
+              DECIDED 2026-10-12: S5-sweep is the baseline, the five legs accepted
+Spec 0011   Place every entry where the page puts it — planned 2026-10-12
+              from his review of S5-sweep, issue #34:
+              0 freeze S5-sweep as tests/frozen/s5-result/   <- next
+              1 rhythm  2 locate  3 fields  4 lines  5 one sweep
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
 outcome sections; spec 0007 keeps the design record and what was rejected.
 
-**The ratchet's floor and the control are both `tests/frozen/s3-result/`
-since 2026-10-11** — sweep `S3-sweep`, spec 0008's outcome, Alessandro's
-decision. **Three of its legs sit below `q5-result/`, the floor before it,
-by that decision:** T3 beside on `cv_0013` and `darkdeck_0009`, and one
-precision token on `catalogue_0015` — its README names each. N4's recorded
-exception is gone. Each earlier floor, and why it moved, is in its README and
-in `docs/status.md`, "The floor".
+**How work is judged now — Alessandro, 2026-10-12, for spec 0011: by eye.**
+Every step's sheets are opened against the previous step's, and each page is
+judged better / same / worse with a sentence naming the element. Scores and
+`report.html` are still produced and recorded. They **never gate a step and
+never carry an argument**, and the ratchet described below is suspended as a
+gate for the spec. The one number still read is the report's `vanished`
+list, because content must match absolutely — it is a pointer to a page to
+open, not a gate. He checks every run himself too. Spec 0011's "How to
+work" is the full statement.
 
-**The only open work is `docs/specs/0010-repairs-beside-and-type.md`'s
-decision**: whether `S5-sweep` becomes the floor. Its "Outcome — step E" has
-the measurement, the five legs below `s3-result/` with their causes, and the
-recommendation, and its last section is the prompt to start a session with.
-**Keep `debug/runs/S5-sweep` and `S4-sweep`** — the sweep is the only copy
-of the answers the next step replays. `docs/specs/0007-handover.md` holds
-spec 0007's prompts, as record.
+**The baseline is `S5-sweep` since 2026-10-12** (commit `4a5fe3f`, spec
+0010's outcome, Alessandro's decision). Spec 0011's step 0 freezes it as
+`tests/frozen/s5-result/`; until then **keep `debug/runs/S5-sweep`**, the
+only copy of its answers. It sits below `s3-result/`, the floor before it, on
+five legs, accepted: darkdeck tau and beside, menu `béarnaise`, one report
+precision token, and one coincidental beside pair each on newsletter and
+nonlatin. Spec 0010's "Outcome — step E" §5 names them. Each earlier floor,
+and why it moved, is in its README and in `docs/status.md`.
+
+**The only open work is `docs/specs/0011-place-every-entry.md`.** Its §1 has
+the faults Alessandro named in `S5-sweep`, each traced to its cause. Its last
+section is the prompt to start a session with. `docs/specs/0007-handover.md`
+holds spec 0007's prompts, as record.
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
 this section.** It says what is done, where the floor is, what is closed with
@@ -268,14 +280,15 @@ says they are.
 | `a3-result/` | A3's fifteen documents beside their scores, sweep `A3-10-figure-pixels-sweep` | record — the floor 2026-09-26 to 2026-09-29, measured on pictures missing their last lines |
 | `reshot/` | the first sweep on whole pictures, `Q5-10-reshot-sweep` | record — the floor and the control 2026-09-29 to 2026-09-30 |
 | `q5-result/` | Q5's fifteen documents beside their scores and the answers that made them, sweep `Q5-40-sweep` | record — the floor and the control 2026-09-30 to 2026-10-11 |
-| **`s3-result/`** | **spec 0008's fifteen documents beside their scores and the answers that made them, sweep `S3-sweep`** | **the floor and the control, from 2026-10-11** |
+| `s3-result/` | spec 0008's fifteen documents beside their scores and the answers that made them, sweep `S3-sweep` | record — the floor and the control 2026-10-11 to 2026-10-12 |
+| **`s5-result/`** | **spec 0010's fifteen documents, scores and answers, sweep `S5-sweep` — frozen at spec 0011's step 0** | **the baseline, from 2026-10-12** |
 
-**Ratchet against the floor by path**, and always with `--documents sweep` —
+**Score against the baseline by path**, and always with `--documents sweep` —
 without a `fixtures.txt` the report silently scores the iterate five:
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s3-result/scores.json
+    --documents sweep --previous tests/frozen/s5-result/scores.json
 ```
 
 **Each floor move was measured, not argued:** the new floor was no lower than
@@ -506,7 +519,7 @@ each other — `CellState.DISPUTED` and the Ladder are already the vocabulary fo
 it, and `_climb_ladders` already records that it waits on a second Engine. That
 is model time and Alessandro's decision, not a detector.
 
-**Tracker state, 2026-10-11: three open issues — #33, spec 0010, measured and awaiting the floor decision; #32, spec 0009, whose decision folded into #33; and #31, spec 0008, done and decided.** #30 (spec 0007) closed when its
+**Tracker state, 2026-10-12: one open issue — #34, spec 0011.** #31–#33 (specs 0008–0010) were closed on 2026-10-12, each done and decided. #30 (spec 0007) closed when its
 work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
 #17 (the vision layout prompt) were closed by Thread 0. Every spec is closed
 history; 0007 still defines the target.
