@@ -704,7 +704,10 @@ def _style_css(document: Document) -> str:
     # other size is in ems of it, and `.doc`'s width is in rems, which it
     # leaves alone.
     if style.body_px is not None:
-        rules.append(f"body {{ font-size:{style.body_px:g}px; }}")
+        # `--body` is what a Cell's measured size is in ems of (4a): an
+        # element's own `em` is its parent's, and a footer's is 0.875 of it.
+        rules.append(f"body {{ font-size:{style.body_px:g}px;"
+                     f" --body:{style.body_px:g}px; }}")
     root = [
         f"--page-bg:{_rgb(style.page_bg)}",
         f"--ink:{_rgb(style.ink)}",
@@ -1075,7 +1078,7 @@ def _unit(unit: list[Zone], document: Document, page: _Page, *,
                 spaced = (gap(unit[position - 1], zone,
                               BELOW_INK["li"] + ABOVE_INK["li"])
                           if position and not index else "")
-                items.append(f"<li{spaced}>{_lines(block, document)}</li>")
+                items.append(f"<li{_li_style(block, spaced)}>{_lines(block, document)}</li>")
         body = f"<ul>{''.join(items)}</ul>"
     else:
         parts = [f'<div class="cont">{_zone_body(head, document)}</div>']
@@ -1183,8 +1186,13 @@ def _table(zone: Zone, document: Document) -> str:
     groups: dict[RowRole, list[str]] = {role: [] for role in RowRole}
     for position, row in enumerate(zone.rows):
         tag = "th" if row.role is RowRole.HEADER else "td"
+
+        def styled(cell: Cell) -> str:
+            looked = _look(cell, bold=row.role is not RowRole.DATA)
+            return f' style="{looked}"' if looked else ""
+
         cells = "".join(
-            f'<{tag}{" class=\"num\"" if index in numeric else ""}>'
+            f'<{tag}{" class=\"num\"" if index in numeric else ""}{styled(c)}>'
             f"{_cell(c, document)}</{tag}>"
             for index, c in enumerate(row.cells)
         )
@@ -1443,18 +1451,28 @@ def _pairs(zone: Zone, document: Document) -> str:
         if drawn is not None:
             return drawn
     lines = zone.align in TEXT_ALIGN
+    summary = zone.role is Role.SUMMARY
     parts = []
     for pair in zone.pairs:
         label, value = _cell(pair.label, document), _cell(pair.value, document)
+        named: Cell | None = pair.label
+        held: Cell | None = pair.value
         if not label.strip() and value.strip():
             label, value = value, ""
+            named, held = pair.value, None
+
+        def styled(cell: Cell | None, bold: bool = False) -> str:
+            looked = _look(cell, bold=bold)
+            return f' style="{looked}"' if looked else ""
+
+        dt, dd = styled(named), styled(held, bold=summary)
         if lines:
-            parts.append(f"<div><dt>{label}</dt>"
-                         + (f" <dd>{value}</dd>" if value.strip() else "")
+            parts.append(f"<div><dt{dt}>{label}</dt>"
+                         + (f" <dd{dd}>{value}</dd>" if value.strip() else "")
                          + "</div>")
             continue
-        tag = "<dt>" if value.strip() else '<dt class="alone">'
-        parts.append(f"{tag}{label}</dt><dd>{value}</dd>")
+        tag = f"<dt{dt}>" if value.strip() else f'<dt class="alone"{dt}>'
+        parts.append(f"{tag}{label}</dt><dd{dd}>{value}</dd>")
     css = "pairs lines" if lines else "pairs"
     return f'<dl class="{css}">' + "".join(parts) + "</dl>"
 
@@ -1476,7 +1494,7 @@ def _prose(zone: Zone, document: Document) -> str:
     parts = []
     for is_item, run in groupby(zone.blocks, key=lambda b: b.kind == "item"):
         if is_item:
-            items = "".join(f"<li>{_lines(b, document)}</li>" for b in run)
+            items = "".join(f"<li{_li_style(b)}>{_lines(b, document)}</li>" for b in run)
             parts.append(f"<ul>{items}</ul>")
         else:
             parts.extend(_block(b, document) for b in run)
@@ -1492,7 +1510,7 @@ def _list(zone: Zone, document: Document) -> str:
     keeps every block because there nothing has claimed the region is a list.
     """
     items = "".join(
-        f"<li>{_lines(b, document)}</li>" for b in zone.blocks if b.kind == "item"
+        f"<li{_li_style(b)}>{_lines(b, document)}</li>" for b in zone.blocks if b.kind == "item"
     )
     return f"<ul>{items}</ul>"
 
@@ -1557,18 +1575,70 @@ def _figure(zone: Zone, document: Document) -> str:
     )
 
 
+SIZE_STEP = 0.15
+"""A Cell's measured size is drawn only this far from the body or more —
+spec 0011, step 4a. Over the labelled Cells the measure is within 0.12 of
+the source's size nine times in ten; inside that it is noise."""
+
+
+def _look(cell: Cell | None, *, sized: bool = True, bold: bool = False) -> str:
+    """The inline style for how the page prints one entry — spec 0011,
+    step 4a: its size against the page's body, and bold or italic **where
+    the page sets it and the stylesheet does not**. Never removes a weight
+    or a slant the house style draws: the measure misses less than it
+    invents in that direction. `sized` is False where the element already
+    has its own size (a heading); `bold` is True where it is already bold."""
+    look = cell.look if cell is not None else None
+    if look is None:
+        return ""
+    parts = []
+    if sized and look.size is not None and abs(look.size - 1.0) >= SIZE_STEP:
+        parts.append(f"font-size:calc({look.size:.2f} * var(--body, 1em))")
+    if look.bold and not bold:
+        parts.append("font-weight:700")
+    if look.italic:
+        parts.append("font-style:italic")
+    return ";".join(parts)
+
+
+def _common_look(cells: list[Cell], *, sized: bool = True) -> str:
+    """One style for a block of lines: the one most of its lines have, or
+    none — a paragraph is set in one face, and a line measured otherwise is
+    more likely noise than a change of face mid-paragraph."""
+    if not cells:
+        return ""
+    styles = Counter(_look(cell, sized=sized) for cell in cells)
+    style, count = styles.most_common(1)[0]
+    return style if count * 5 >= len(cells) * 3 else ""
+
+
+def _li_style(block: Block, spaced: str = "") -> str:
+    """A list item's `style`, its own look added to any it already has."""
+    looked = _common_look(block.lines)
+    if not looked:
+        return spaced
+    if spaced:
+        return spaced[:-1] + ";" + looked + '"'
+    return f' style="{looked}"'
+
+
 def _block(block: Block, document: Document) -> str:
     if block.kind == "heading":
         # A size is only ever set smaller than `h1`'s own 1.6em — see
         # `style.heading_sizes` — so the stylesheet keeps the heading's weight
         # and margins and this changes only how large it is.
-        size = f' style="font-size:{block.size:.2f}em"' if block.size else ""
-        return f"<h1{size}>{_lines(block, document)}</h1>"
+        looked = _common_look(block.lines, sized=False)
+        size = f"font-size:{block.size:.2f}em" if block.size else ""
+        both = ";".join(part for part in (size, looked) if part)
+        style = f' style="{both}"' if both else ""
+        return f"<h1{style}>{_lines(block, document)}</h1>"
+    looked = _common_look(block.lines)
+    style = f' style="{looked}"' if looked else ""
     if block.kind == "quote":
-        return f"<blockquote>{_lines(block, document)}</blockquote>"
+        return f"<blockquote{style}>{_lines(block, document)}</blockquote>"
     if block.kind == "attribution":
-        return f'<p class="attribution">{_lines(block, document)}</p>'
-    return f"<p>{_lines(block, document)}</p>"
+        return f'<p class="attribution"{style}>{_lines(block, document)}</p>'
+    return f"<p{style}>{_lines(block, document)}</p>"
 
 
 KEEPS_ITS_LINES = frozenset({"address"})

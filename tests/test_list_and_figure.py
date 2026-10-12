@@ -132,7 +132,9 @@ class TestQuotations:
     ) -> None:
         html = render(article)
         assert "<blockquote>HTML provides for a number of elements" in html
-        assert '<p class="attribution">— W3C HTML5.2 specification</p>' in html
+        # Printed small, as the page's figcaption is — spec 0011, step 4a.
+        assert re.search(r'<p class="attribution"( style="[^"]*")?>'
+                         r"— W3C HTML5\.2 specification</p>", html)
 
     def test_the_callout_sits_beside_the_section_it_summarises(
         self, article: Document

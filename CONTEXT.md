@@ -32,6 +32,10 @@ _Avoid_: Run (an inline Run is a span of a Cell), merge, group of Zones
 Something the page draws for an entry to be written in — the box round a value, a comb of one-character boxes, a tick box beside an option, the rule a value is written on or a signature line over its caption. Measured from pixels and attached to a Pair by its Cells' boxes; a Pair with Marks is drawn as a field. A Mark is drawn, never a word: the value printed in it is always the model's reading.
 _Avoid_: Field (the drawn whole), box, widget, input
 
+**Look**:
+How the page prints one entry — its size against the page's body, whether it is bold, whether it is italic — measured from the entry's own ink where its Cell is placed, never asked. A part not measurable is left unread, and an unread part draws as the house style does; a Look only ever adds to it.
+_Avoid_: Style (the Style Record is the page's), font, format
+
 **Title**:
 A heading that belongs to a Zone rather than standing beside it — "Company Details" captioning the Pairs beneath it. A Title binds the caption to the block it names, so the grouping holds even when a neighbouring Zone in the same Band is a different height.
 _Avoid_: Heading, caption, label, panel header

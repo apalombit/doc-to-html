@@ -154,12 +154,27 @@ class Reading:
 
 
 @dataclass
+class Look:
+    """How one entry is printed, measured from its own ink — spec 0011,
+    step 4. Each field None where it could not be measured."""
+
+    size: float | None = None
+    """Glyph height in ems of the page's body."""
+
+    bold: bool | None = None
+    italic: bool | None = None
+
+
+@dataclass
 class Cell:
     """A single readable value, and every account of it."""
 
     bbox: BBox | None = None
     readings: list[Reading] = field(default_factory=list)
     state: CellState = CellState.AGREED
+    look: Look | None = None
+    """How the page prints it, measured from its own pixels — spec 0011,
+    step 4; set by `looks.read`. None where the Cell is not placed."""
 
     @property
     def text(self) -> str:
@@ -686,10 +701,13 @@ def _reading(data: dict[str, Any]) -> Reading:
 
 
 def _cell(data: dict[str, Any]) -> Cell:
+    look = data.get("look")
     return Cell(
         bbox=_bbox(data.get("bbox")),
         readings=[_reading(r) for r in data.get("readings", [])],
         state=CellState(data.get("state", "agreed")),
+        look=None if look is None else Look(size=look.get("size"), bold=look.get("bold"),
+                                            italic=look.get("italic")),
     )
 
 

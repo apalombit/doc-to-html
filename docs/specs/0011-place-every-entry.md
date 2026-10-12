@@ -541,6 +541,87 @@ show no page better is dropped and recorded.
 **Done when** the targets above look like their sources on the sheets and no
 page is worse.
 
+**Outcome — step 4a, 2026-10-12: DONE, eleven pages better, four the same, none
+worse.** Run `debug/runs/S6-4a-looks` (`tools/rederive.py` over `s5-result/`),
+sheets against `S6-3-fields`. Replay (`S6-4a-replay`) = rederive, 15 of 15.
+
+What shipped:
+- **`ir.Look`** (`size` in ems of the body, `bold`, `italic`, each None where
+  unread) on **`Cell.look`**.
+- **`looks.read`**, per placed Cell, from its own pixels:
+  - **Size** is the glyph from each line's baseline (where most components
+    end) to the top of the letters standing on it, only where the model's text
+    has a letter reaching cap height. It is over the page's `body_glyph`.
+  - **Weight** is the median ink mass of a horizontal run through a stroke,
+    from anti-aliased coverage. The fitted blur intercept (0.6px) comes off it,
+    and it is over the glyph, against the page's body median. It is bold at
+    1.4×.
+  - **Slant** is the shear that best sharpens the vertical coverage profile,
+    against the page's median. It is italic at 6° or more.
+  - Each threshold sits in the gap of its distribution over the 658 placed
+    Cells of the eleven pages whose picture is its own HTML. Each Cell is
+    labelled with what Chrome computed for the source text it lands on.
+- **Four first cuts failed on that set, and each is in the docstrings:**
+  1. A distance-transform stem quantised to whole pixels.
+  2. Ink density did not separate bold.
+  3. Edge-orientation slant was noisy.
+  4. The Zone's own threshold lost a grey Cell's faint ascender, so `each`
+     measured at its x-height. Each Cell now takes its own Otsu.
+- **Two faults were found on the sheets:**
+  - **A solid stem was dropped as a bullet.** `Invoice` and `In stock` were
+    measured on their x-height. A solid block is now a bullet only when it is
+    half as wide as it is tall.
+  - **Weight is left unread on a photographed page.** `receipt_0010`'s stems
+    are print density and focus, and six regular lines measured bold while its
+    bold `TOTAL` did not.
+- Stage `_read_looks` after `_read_fields`; `rederive.py` step 11.
+- **`render._look`** adds a size (`calc(n * var(--body))`, only 0.15 or more
+  from the body), a weight and a slant. It never takes away one the house
+  style draws. A block takes the look most of its lines share (60%).
+
+The sheets, against `S6-3-fields`:
+
+| document | judgement | the element |
+|---|---|---|
+| `catalogue_0015` | better | product names bold, prices large and bold, `each`/`per pair` small |
+| `cv_0013` | better | employers and colleges italic, dates small |
+| `darkdeck_0009` | better | the tile values large |
+| `form_0007` | better | the subtitle, the `OFFICE USE` block, the field labels and the footer small |
+| `invoice_0002` | better | the panels' labels bold |
+| `menu_0012` | better | each dish's note small and italic |
+| `newsletter_0008` | better | the pull quote italic, the small capitals small |
+| `receipt_0010` | better | the total's figure larger (12px on 11), the footer small |
+| `report_0011` | better | the subtitle italic |
+| `sample_semantic_0005` | better | `Contact: editor@example.com` italic |
+| `statement_0006` | better | the summary labels small, its figures large |
+| `invoice_0001`, `nonlatin_0014`, `sample_css_0004`, `sample_table_0003` | same | |
+
+What is still not the page's, from the same labelled Cells and the sheets:
+- **False bold:** `menu_0012`'s letter-spaced `KITCHEN & CELLAR · EST. 1961`,
+  `newsletter_0008`'s display headline, and one statement figure.
+- **Sizes read short:** `Hardwood fittings` and `Ines Halloran` (1.88 for
+  2.1, and 1.6 for 1.83).
+- **Partial size:** the receipt's `AID` line is not drawn small, though `Auth`
+  and `CONTACTLESS` beside it are.
+- **A block whose lines differ takes no look.** `cv_0013`'s bold `Senior
+  Structural Engineer` shares a block with its italic employer, so neither is
+  drawn.
+
+Recorded, not argued:
+- Over the labelled Cells:
+  - size: |error| p90 0.117;
+  - bold: 531 / 3 / 4 / 61 (regular→regular, regular→bold, bold→regular,
+    bold→bold), the four misses being `report_0011`'s table header, drawn bold
+    by its role anyway;
+  - italic: 357 / 0 / 1 / 19.
+- `vanished` is unchanged on every document.
+- The fields that moved most:
+  - catalogue: columns within tolerance 0.458 → 0.847;
+  - menu: columns within tolerance 0.526 → 0.737, height 1.531 → 1.453;
+  - newsletter: beside 0.636 → 0.850;
+  - darkdeck: beside 0.650 → 0.602, columns within tolerance 0.909 → 0.855.
+- 966 tests, mypy clean.
+
 ### Step 5 — one sweep, `S6-sweep`
 
 All fifteen, shipped defaults. Nothing in steps 1–4 changes a crop or a

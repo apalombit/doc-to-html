@@ -78,7 +78,8 @@ class TestTitledPanels:
 
     def test_pairs_render_as_a_description_list(self, invoice2: Document) -> None:
         html = render(invoice2)
-        assert "<dt>Industry</dt>" in html
+        # Bold, as the page's labels are — spec 0011, step 4a.
+        assert re.search(r'<dt( style="[^"]*")?>Industry</dt>', html)
         assert "<dd>Software Development</dd>" in html
         assert "<dd>One Microsoft Way Redmond, WA 98052-7329, USA</dd>" in html
 

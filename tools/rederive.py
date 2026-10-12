@@ -44,6 +44,9 @@ and can be recomputed from it, in the order a Conversion runs them:
        spec 0011, step 3; step 6's gaps are taken after it, since it can
        widen a Zone's box to its marks
                                     fields.read           (_read_fields)
+   11. How each placed entry is printed — size, weight, slant — spec 0011,
+       step 4a
+                                    looks.read             (_read_looks)
 
 then re-renders into a run-shaped directory that `doc_to_html.report` and
 `tools/visual_review.py` read without knowing the difference.
@@ -80,7 +83,7 @@ TOOLS = Path(__file__).resolve().parent
 sys.path.insert(0, str(TOOLS.parent / "src"))
 sys.path.insert(0, str(TOOLS))
 
-from doc_to_html import fields, locate, probes, rhythm  # noqa: E402
+from doc_to_html import fields, locate, looks, probes, rhythm  # noqa: E402
 from doc_to_html.corpus import SOURCES  # noqa: E402
 from doc_to_html.ir import Caveat, Document, Kind  # noqa: E402
 from doc_to_html.orchestrator import gaps, shortfall  # noqa: E402
@@ -145,6 +148,7 @@ def rederive(document: Document, png: Path) -> None:
         rhythm.read(plain, document)
     locate.locate(plain, document)
     fields.read(plain, document)
+    looks.read(plain, document, photographed=rectified.warped)
     # Last, as the audit is in a Conversion: step 10 can widen a Zone's box.
     document.gaps = gaps(image, document.zones)
 
