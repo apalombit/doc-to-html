@@ -25,6 +25,7 @@ from doc_to_html.ir import BBox, Document, Kind, Role, Zone
 from doc_to_html.orchestrator import Conversion, convert
 from doc_to_html.preprocess import RectifyError, rectify
 from doc_to_html.render import render
+from doc_to_html.report import flagged
 from doc_to_html.wire import (
     ClassifyResponse,
     MappingError,
@@ -456,7 +457,7 @@ class TestTheFailureContract:
     def test_a_failure_is_traceable_from_the_render(
         self, transport: ReplayTransport
     ) -> None:
-        html = render(convert_invoice(transport))
+        html = flagged(convert_invoice(transport))
         assert "Unresolved" in html
         assert "could not be read" in html
 

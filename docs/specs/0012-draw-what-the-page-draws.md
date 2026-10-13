@@ -542,6 +542,32 @@ identical outside the IR.
 
 1020 tests pass, 2 expected failures; `mypy src/` clean.
 
+### How each step below was measured
+
+Each step is measured on `s7-result/` twice, at the step's commit: a
+rederive (`S8-<n>-<name>`) and a replay (`S8-<n>-<name>-replay`). **The two
+agree byte for byte on all 21 at every step** unless the step says
+otherwise — the check that `rederive.py` carries every IR-writing step. A
+page has *moved* when the report's render of it differs in a pixel from the
+previous step's (`_renders/`); the sheets are built for all 21 against the
+previous step (`tools/visual_review.py <run> --previous <previous run>`)
+and every moved one is opened.
+
+### Outcome — step 1, G1: the findings leave the page, 2026-10-13
+
+`render` draws no card; `report.flagged` writes what it said — Probes,
+Gaps, Failures, Shortfalls, Caveats, from the embedded IR — under "What the
+conversion flagged" beside each pair in `report.html`, all 21 sections.
+The page's stylesheet lost the card's rules, so every page's bytes moved;
+**nine pages moved in pixels, exactly the nine that drew the card**.
+
+| page | against step 0 |
+|---|---|
+| `statement_0006`, `receipt_0010`, `cv_0013`, `form_0007`, `darkdeck_0009`, `menu_0012` | **better** — the page opens on its own masthead; nothing else on it moved |
+| new: `certificate_0021`, `pricing_0017`, `ticket_0020` | **better**, the same way |
+
+`vanished` 55, unchanged. Run `S8-1-findings`, `report.html` there.
+
 ## 6. The sweep's prediction — to register at step U, before `S8-sweep` finishes
 
 Register it in this section, with the commit, before the sweep ends:

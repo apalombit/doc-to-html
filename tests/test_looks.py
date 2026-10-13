@@ -537,12 +537,11 @@ class TestFace:
         assert looks._face([0.5] * 6, [2.0] * 20 + [1.0] * 40) == "sans"
         assert looks._face([0.9] * 5, [2.0] * 49) is None
 
-    def test_a_serif_page_is_drawn_serif_and_its_findings_are_not(self) -> None:
+    def test_a_serif_page_is_drawn_serif(self) -> None:
         document = paragraph(None)
         document.style = Style(face="serif")
         html = render(document)
         assert 'body { font-family:Georgia, "Times New Roman", serif; }' in html
-        assert ".findings { font-family:-apple-system" in html
         document.style = Style(face="sans")
         assert "font-family:Georgia" not in render(document)
 
@@ -551,3 +550,4 @@ class TestFace:
         document.style = Style(face="mono")
         again = Document.from_json(document.to_json())
         assert again.style is not None and again.style.face == "mono"
+

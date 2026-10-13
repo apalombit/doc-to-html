@@ -27,6 +27,7 @@ from doc_to_html.ir import (
     cell,
 )
 from doc_to_html.render import render
+from doc_to_html.report import flagged
 from doc_to_html.probes import parse_number
 
 from .documents.invoice_0001 import build
@@ -156,8 +157,19 @@ class TestRender:
     def test_unresolved_findings_are_surfaced_to_the_reader(self, invoice: Document) -> None:
         invoice.zones[-1].rows[1].cells[1] = cell("$800.00")
         invoice.probes = probes.run(invoice)
-        html = render(invoice)
+        html = flagged(invoice)
         assert "Unresolved" in html
+
+    def test_and_in_the_report_not_on_the_page(self, invoice: Document) -> None:
+        """Spec 0012, G1: a reader of the page took the card for the page's
+        own. The IR keeps every finding; `report.html` shows them."""
+        invoice.zones[-1].rows[1].cells[1] = cell("$800.00")
+        invoice.probes = probes.run(invoice)
+        invoice.caveats = [Caveat(zone_index=3, kind="prose", note="re-read")]
+        page = render(invoice)
+        assert "Unresolved" not in page and "Read with a caveat" not in page
+        assert 'class="findings' not in page
+        assert any(not p.ok for p in Document.from_json(invoice.to_json()).probes)
 
     def test_a_caveat_is_not_filed_as_unresolved(self, invoice: Document) -> None:
         """A Caveat says the Zone converted with a qualifier on how. Under an
@@ -168,7 +180,7 @@ class TestRender:
             Caveat(zone_index=3, kind="prose",
                    note="classified pairs, re-read as prose")
         ]
-        html = render(invoice)
+        html = flagged(invoice)
 
         assert "Read with a caveat" in html
         assert "Unresolved" not in html
@@ -177,7 +189,7 @@ class TestRender:
         invoice.zones[-1].rows[1].cells[1] = cell("$800.00")
         invoice.probes = probes.run(invoice)
         invoice.caveats = [Caveat(zone_index=3, kind="prose", note="re-read")]
-        html = render(invoice)
+        html = flagged(invoice)
 
         assert html.index("Unresolved") < html.index("Read with a caveat"), (
             "what is missing comes before what is merely qualified"

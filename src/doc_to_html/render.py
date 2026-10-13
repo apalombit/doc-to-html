@@ -136,17 +136,12 @@ figure.omitted figcaption { padding:.5em; text-align:center; }
 .skeleton { background:repeating-linear-gradient(135deg, var(--shade),
             var(--shade) 6px, transparent 6px, transparent 12px);
             border:1px dashed var(--rule); min-height:2.5rem; border-radius:3px; }
-.findings { border-left:3px solid var(--flag); background:var(--flag-bg);
-            padding:.6em 1em; margin:0 0 1.75rem; font-size:.875em; }
-.findings ul { margin:.3em 0 0; padding-left:1.2em; }
-.findings.caveats { border-left-color:var(--rule); background:var(--shade);
-                    color:var(--muted); }
 """
 
 
 def render(document: Document, *, title: str | None = None) -> str:
     """Render the IR to a complete, self-contained HTML document."""
-    body = [_findings(document), *_body(document)]
+    body = _body(document)
 
     heading = title or _infer_title(document) or "Document"
     return (
@@ -719,9 +714,7 @@ def _style_css(document: Document) -> str:
         rules.append(f"body {{ font-size:{style.body_px:g}px;"
                      f" --body:{style.body_px:g}px; }}")
     if style.face in FACE_CSS:
-        # The findings are this system's notes, not the page's, and keep its face.
-        rules.append(f"body {{ font-family:{FACE_CSS[style.face]}; }}"
-                     f" .findings {{ font-family:{HOUSE_FACE}; }}")
+        rules.append(f"body {{ font-family:{FACE_CSS[style.face]}; }}")
     root = [
         f"--page-bg:{_rgb(style.page_bg)}",
         f"--ink:{_rgb(style.ink)}",
@@ -775,81 +768,6 @@ def _infer_title(document: Document) -> str | None:
             if block.kind == "heading" and block.lines:
                 return block.lines[0].text
     return None
-
-
-def _findings(document: Document) -> str:
-    """Surface failed Probes, Gaps, Failures, Shortfalls and Caveats at the top.
-
-    A reader should not have to open the IR to learn the system was unsure.
-
-    **Every finding about missing content says how much**, as a share of the
-    page's printed ink. That is spec 0007 Phase A-1's honesty rule, and the
-    reason it is a rule: `receipt_0010` lost 77 of its 103 tokens under "found
-    by ink coverage, so it may be a mark", and `darkdeck_0009` lost most of its
-    document and printed nothing here at all.
-
-    The panel is excluded from `projection.project` by class name, so nothing
-    written here is ever scored as content the model invented — see
-    `projection.MEASURE`'s `CHROME_SELECTORS`. That is what makes it safe for a
-    finding to be honest at length.
-
-    Two blocks, not one, because the two say opposite things about whether the
-    content below can be relied on. "Unresolved" means something is missing or
-    does not add up. A Caveat means the Zone converted and there is a qualifier
-    on *how* — read at reduced resolution, or a Kind overturned by the Extractor
-    that was handed it. Filing the second under the first tells a reader their
-    document failed while showing them a complete document, which is what a run
-    on `invoice_0001` with a re-read Zone and no Failures at all looked like.
-    """
-    items = [
-        f"Probe <code>{html.escape(p.kind)}</code> did not reconcile"
-        + (f": computed {html.escape(p.computed)}" if p.computed else "")
-        + (f" ({html.escape(p.detail)})" if p.detail else "")
-        for p in document.probes
-        if not p.ok
-    ]
-    items += [
-        "Content found outside every detected region"
-        + (f": {html.escape(g.note)}" if g.note else "")
-        for g in document.gaps
-        if not g.resolved
-    ]
-    items += [
-        f"Zone {f.zone_index} (<code>{html.escape(f.kind)}</code>) could not "
-        f"be read: {html.escape(f.reason)}"
-        + (f" — this Zone holds {f.ink_share * 100:.0f}% of the page's printed "
-           "ink, and none of it reached this document" if f.ink_share else "")
-        for f in document.failures
-    ]
-    # Read, and read short. Under "Unresolved" rather than under the Caveats
-    # below, because content that did not arrive is not a qualifier on content
-    # that did — see `ir.Shortfall`.
-    items += [
-        f"Zone {s.zone_index} (<code>{html.escape(s.kind)}</code>) was read "
-        f"short: {s.printed_lines} lines are printed in it and the reading "
-        f"returned {s.read_lines}"
-        + (f", over {s.ink_share * 100:.0f}% of the page's printed ink"
-           if s.ink_share else "")
-        for s in document.shortfalls
-    ]
-    caveats = [
-        f"Zone {c.zone_index} (<code>{html.escape(c.kind)}</code>) "
-        f"{html.escape(c.note)}"
-        for c in document.caveats
-    ]
-    return _findings_block("Unresolved", "findings", items) + _findings_block(
-        "Read with a caveat", "findings caveats", caveats
-    )
-
-
-def _findings_block(heading: str, css: str, items: list[str]) -> str:
-    if not items:
-        return ""
-    return (
-        f'<div class="{css}"><strong>{heading}</strong><ul>'
-        + "".join(f"<li>{item}</li>" for item in items)
-        + "</ul></div>"
-    )
 
 
 MIN_ON_FILL = 0.35
@@ -1279,9 +1197,6 @@ LEADER_CSS = (
 name that wraps leaves its leader no room rather than a stub, and the
 column is sized as if it had none."""
 
-
-HOUSE_FACE = '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
-"""The stylesheet's own face, which `body` is set in."""
 
 FACE_CSS = {
     "serif": 'Georgia, "Times New Roman", serif',

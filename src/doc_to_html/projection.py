@@ -104,8 +104,9 @@ def available() -> bool:
 
 MEASURE = r"""
 (() => {
-  // Our own commentary, never part of the document. `render.py` puts a
-  // findings panel at the top of a page when a Probe did not reconcile;
+  // Our own commentary, never part of the document. `render.py` put a
+  // findings panel at the top of a page until spec 0012 moved it into
+  // `report.html`, and every frozen document before that still carries one;
   // counting it as content would report the system's own diagnostics as text
   // the model invented, on exactly the runs that went worst.
   const CHROME_SELECTORS = ['.findings'];

@@ -44,6 +44,7 @@ from doc_to_html.honesty import (
 )
 from doc_to_html.ir import BBox, Document, Failure, Gap, Shortfall, Source
 from doc_to_html.render import render
+from doc_to_html.report import flagged
 from doc_to_html.scoring import score_document
 
 REPO = Path(__file__).resolve().parent.parent
@@ -206,7 +207,7 @@ class TestTheFindingsSurviveTheRoundTrip:
         document.failures = [Failure(zone_index=2, kind="table", reason="boom",
                                      ink_share=0.37)]
 
-        html = render(document)
+        html = flagged(document)
 
         assert "37% of the page&#x27;s printed ink" in html or \
                "37% of the page's printed ink" in html
@@ -219,7 +220,7 @@ class TestTheFindingsSurviveTheRoundTrip:
         document.shortfalls = [Shortfall(zone_index=4, kind="prose",
                                          printed_lines=20, read_lines=3)]
 
-        html = render(document)
+        html = flagged(document)
         unresolved = html.index("Unresolved")
         assert "was read short" in html
         assert html.index("was read short") > unresolved

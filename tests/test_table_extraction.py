@@ -30,6 +30,7 @@ from doc_to_html.preprocess import (
     zone_pixels,
 )
 from doc_to_html.render import render
+from doc_to_html.report import flagged
 from doc_to_html.wire import (
     MappingError,
     TableResponse,
@@ -391,7 +392,7 @@ class TestTheFailureContractOnAPartlyWorkingDocument:
         html = render(document)
         assert 'class="skeleton"' in html
         assert "<table" in html
-        assert "could not be read" in html
+        assert "could not be read" in flagged(document)
 
 
 def table_zone(payload: str) -> Zone:
@@ -646,7 +647,7 @@ class TestOneRepairIsReportedOnce:
 
     def test_a_conversion_reports_the_repair_once(self) -> None:
         """Through a Conversion, because a note written by `wire.py` reaches
-        the page only if the Orchestrator collects it. `invoice_0001`'s line
+        the report only if the Orchestrator collects it. `invoice_0001`'s line
         items, answered in `statement_0006`'s shape: a header one empty cell
         wider than every row under it."""
         replies = break_zone(
@@ -666,8 +667,7 @@ class TestOneRepairIsReportedOnce:
             "3 and were padded rather than discarded — the values they do have "
             "may sit in the wrong columns"
         ]
-        page = render(document).split('<script type="application/json"')[0]
-        assert page.count("padded rather than discarded") == 1
+        assert flagged(document).count("padded rather than discarded") == 1
 
 
 class TestAHeaderRepeatedToPadTheRowCount:

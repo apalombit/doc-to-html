@@ -44,6 +44,7 @@ from typing import Any, Iterable
 
 from .corpus import SOURCES, Source, split_of
 from .honesty import Accounting, account, document_in, loss_findings
+from .ir import Document
 from .projection import available, screenshot
 from .scoring import DocumentScore, normalise, score_document
 
@@ -245,6 +246,7 @@ section.doc .awkward { font-size:12px; color:var(--muted); margin:0 0 10px; }
 .findings ul { margin:0 0 10px; padding-left:16px; }
 .findings li { margin-bottom:2px; }
 .findings .none { color:var(--good); }
+.findings .flag { margin:0 0 2px; font-weight:600; color:var(--bad); }
 details { margin-top:12px; border-top:1px solid var(--rule); padding-top:9px; }
 details summary { cursor:pointer; font-size:12px; color:var(--muted);
                   letter-spacing:.04em; }
@@ -285,7 +287,83 @@ def _axis(label: str, value: str, *, hard: bool = False,
     )
 
 
-def _findings_html(score: DocumentScore) -> str:
+def flagged(document: Document) -> str:
+    """What the conversion flagged about itself, for the notes beside a
+    document's pair: failed Probes, Gaps, Failures, Shortfalls and Caveats.
+
+    **Here, and not on the page — spec 0012, G1, Alessandro 2026-10-13: "move
+    it out of the document entirely (into report.html only)".** It was a
+    card drawn at the top of every rendered document that had one — nine of
+    twenty-one at `S7-sweep` — and a reader of the page took it for the
+    page's own: `statement_0006`'s "Unresolved" was two Probes this system
+    could not reconcile, `receipt_0010`'s 2.1% of ink outside every region.
+    The IR keeps every field, and the report reads them off the IR the
+    render embeds, so nothing the card said is lost; only where it is shown
+    moved.
+
+    **Every finding about missing content says how much**, as a share of the
+    page's printed ink. That is spec 0007 Phase A-1's honesty rule, and the
+    reason it is a rule: `receipt_0010` lost 77 of its 103 tokens under "found
+    by ink coverage, so it may be a mark", and `darkdeck_0009` lost most of its
+    document and printed nothing here at all.
+
+    Two lists, not one, because the two say opposite things about whether the
+    content can be relied on. "Unresolved" means something is missing or does
+    not add up. A Caveat means the Zone converted and there is a qualifier on
+    *how* — read at reduced resolution, or a Kind overturned by the Extractor
+    that was handed it. Filing the second under the first tells a reader their
+    document failed while showing them a complete document, which is what a
+    run on `invoice_0001` with a re-read Zone and no Failures at all looked
+    like.
+    """
+    items = [
+        f"Probe <code>{html.escape(p.kind)}</code> did not reconcile"
+        + (f": computed {html.escape(p.computed)}" if p.computed else "")
+        + (f" ({html.escape(p.detail)})" if p.detail else "")
+        for p in document.probes
+        if not p.ok
+    ]
+    items += [
+        "Content found outside every detected region"
+        + (f": {html.escape(g.note)}" if g.note else "")
+        for g in document.gaps
+        if not g.resolved
+    ]
+    items += [
+        f"Zone {f.zone_index} (<code>{html.escape(f.kind)}</code>) could not "
+        f"be read: {html.escape(f.reason)}"
+        + (f" — this Zone holds {f.ink_share * 100:.0f}% of the page's printed "
+           "ink, and none of it reached this document" if f.ink_share else "")
+        for f in document.failures
+    ]
+    # Read, and read short. Under "Unresolved" rather than under the Caveats
+    # below, because content that did not arrive is not a qualifier on content
+    # that did — see `ir.Shortfall`.
+    items += [
+        f"Zone {s.zone_index} (<code>{html.escape(s.kind)}</code>) was read "
+        f"short: {s.printed_lines} lines are printed in it and the reading "
+        f"returned {s.read_lines}"
+        + (f", over {s.ink_share * 100:.0f}% of the page's printed ink"
+           if s.ink_share else "")
+        for s in document.shortfalls
+    ]
+    caveats = [
+        f"Zone {c.zone_index} (<code>{html.escape(c.kind)}</code>) "
+        f"{html.escape(c.note)}"
+        for c in document.caveats
+    ]
+    parts = ["<h3>What the conversion flagged</h3>"]
+    for heading, listed in (("Unresolved", items), ("Read with a caveat", caveats)):
+        if listed:
+            parts.append(f'<p class="flag">{heading}</p><ul>'
+                         + "".join(f"<li>{item}</li>" for item in listed)
+                         + "</ul>")
+    if len(parts) == 1:
+        parts.append('<ul><li class="none">Nothing.</li></ul>')
+    return "".join(parts)
+
+
+def _findings_html(score: DocumentScore, document: Document | None = None) -> str:
     done = score.completeness
     parts: list[str] = ["<h3>What the scorer found</h3><ul>"]
     if done.lost:
@@ -329,6 +407,8 @@ def _findings_html(score: DocumentScore) -> str:
     if len(parts) == 1:
         parts.append('<li class="none">Nothing. Every axis is clean.</li>')
     parts.append("</ul>")
+    if document is not None:
+        parts.append(flagged(document))
     return f'<div class="findings">{"".join(parts)}</div>'
 
 
@@ -423,7 +503,7 @@ def _document_section(source: Source, score: DocumentScore, *,
         + (f'<figure><figcaption>Rendered output</figcaption>'
            f'<img src="{right}" alt="render"></figure>'
            if right else '<div class="error">no render</div>')
-        + _findings_html(score)
+        + _findings_html(score, document_in(document_html))
         + "</div>" + _account_html(account) + collapsed + "</section>"
     )
 

@@ -120,8 +120,9 @@ def loss_findings(document: Document) -> tuple[str, ...]:
     its text.
 
     Each sentence carries its magnitude, because the rule is that a finding says
-    how much. `render._findings` prints these same three lists in the rendered
-    page, and `tools/inspect_run.py` shows them per Zone; this is the machine
+    how much. `report.flagged` prints these same three lists beside the
+    document in `report.html`, and `tools/inspect_run.py` shows them per Zone;
+    this is the machine
     reading of the same facts, taken from the IR rather than from the prose.
     """
     found = [
