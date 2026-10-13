@@ -791,6 +791,61 @@ No page worse; `vanished` 55. Run `S8-6-entries`. Tests:
 `tests/test_entries.py`. Menu's heads are drawn centred but not in small
 capitals, which is G7.
 
+### Outcome — step 7, G7: the type's own features, 2026-10-13
+
+All measured by `looks`, which rederive re-runs. Four new IR fields:
+`Look.caps`, `Look.face`, `Zone.title_caps` and `Zone.face`.
+
+- **Small capitals** (`_small_caps`), on heads, header rows and Titles.
+  Height cannot separate them from lowercase: a face's x-height stands at
+  about 0.7 of its capitals, which is where small capitals stand too. So
+  it counts instead: a head is in small capitals when none of its `b d h
+  k l` rises to its capitals and none of its `g j p q y` hangs below the
+  line. That is true on exactly the five heads printed so (menu's and the
+  newsletter's mastheads, `To begin`, `From the grill`, the paper's `I.
+  Introduction`); every other head shows at least one.
+  - `Main courses` has no riser or hanger. It follows `To begin` because
+    its small letters stand as tall, within a pixel, in the same colour.
+  - Each is drawn `small-caps` at its capitals' size.
+  - Tried first and rejected: counting over every Cell (italic and blurred
+    letters merge, and the report's footnotes read as small capitals), and
+    the share of columns inked above the x-height (ascender stems are
+    thin, so the shares overlap).
+- **Script** (`_joined`): an italic entry of 1.1 ems or more, mostly
+  letters, with fewer than 0.6 connected pieces per letter. The signatures
+  and the certificate's name measure 0.20–0.57, the newsletter's italic
+  pull quote 0.90–1.03. It is drawn in a joined hand.
+- **A Zone's own face** (`_zone_faces`): 30 stems of regular body-size
+  type. A Zone at most 0.25 serif is sans on a serif page; at least 0.75
+  serif is serif on a sans page. Only the report's table qualifies (0.20,
+  where the serif pages' other Zones read 0.38–1.00). Bold is left out,
+  because the paper's bold serif title reads 0.11.
+
+**During the step** the script face was set and not drawn. The font
+stack's double quotes closed the inline `style` attribute; it is now
+quoted singly.
+
+**Six pages moved in pixels.**
+
+| page | against step 6 |
+|---|---|
+| `menu_0012` | **better** — `The Copper Pot`, `To begin`, `Main courses`, `From the grill` in small capitals, as printed |
+| `newsletter_0008` | **better** — the masthead in small capitals |
+| `report_0011` | **better** — the table in sans, as printed, on the serif page |
+| new: `certificate_0021` | **better** — the name and both signatures in a script hand |
+| new: `letter_0016` | **better** — the signature in a script hand, blue as printed |
+| new: `paper_0018` | **better** — `I. Introduction` in small capitals |
+
+No page worse; `vanished` 55. Run `S8-7-type`. Tests: `tests/test_type.py`.
+
+**Not closed.** Several heads were read in capitals by the model:
+`II. METHOD`, `III. RESULTS`, the newsletter's section heads and the
+certificate's title. They are drawn as capitals at their small capitals'
+height, without the larger initials. Darkdeck's and catalogue's labels are
+letter-spaced capitals, not small capitals. The letter's serif name has
+too few stems to read its face. The certificate's face is retaken at step
+U.
+
 ## 6. The sweep's prediction — to register at step U, before `S8-sweep` finishes
 
 Register it in this section, with the commit, before the sweep ends:

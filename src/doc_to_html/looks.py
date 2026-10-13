@@ -107,7 +107,7 @@ import numpy as np
 from .ir import BBox, Cell, Document, Kind, Look, RowRole, Run, Stroke, Style, Zone
 from .locate import cells_of
 from .preprocess import ImageArray, _cv2, crop_origin
-from .style import SAME_COLOUR, body_glyph, dominant, type_mask
+from .style import SAME_COLOUR, body_glyph, dominant, type_lines, type_mask
 
 TALL = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZbdfhklt0123456789")
 """Letters that reach the cap height or above. A short line without one is
@@ -216,6 +216,163 @@ word of three letters is about 1.5."""
 FILLED = 0.9
 """The share of a column's pixels off the Cell's ground for it to count as
 filled edge to edge."""
+
+
+ASCENDS = frozenset("bdhkl")
+"""Lowercase letters that stand above the x-height in every face. Not `t`,
+which an italic stands short, nor `f`, which an italic hangs below."""
+
+DESCENDS = frozenset("gjpqy")
+"""Lowercase letters that hang below the baseline."""
+
+CAPITAL = 0.85
+"""How tall, of its line's capitals, a letter must stand to reach their
+height."""
+
+HANGS = 0.15
+"""How far below the baseline, in its capitals' height, a letter must hang
+to descend."""
+
+SCRIPT_JOINED = 0.6
+"""Connected pieces per letter under which a line's letters are joined —
+spec 0012, G7. Over the twenty-one's italic entries of 1.1 ems and more:
+the signatures and the certificate's name 0.20-0.57, the newsletter's pull
+quote 0.90-1.03."""
+
+SCRIPT_SIZE = 1.1
+"""How large, in ems of the body, an entry must be to be read as script:
+small italic type joins its letters by blur — the menu's dish notes measure
+0.33-0.44."""
+
+SCRIPT_LETTERS = 0.8
+"""The share of an entry's characters that must be letters: pricing's
+`2 / user / month` joins its digits and slashes, 0.56."""
+
+ZONE_STEMS = 30
+"""Stems a Zone's regular body-size type must stand on before its own face
+is read — spec 0012, G7."""
+
+OTHER_FACE = 0.25
+"""How far, as a share of stems standing on a foot, a Zone must sit from its
+page's face to be set in the other: on a serif page at most this share, on a
+sans page at least one less it. Over every Zone of thirty stems: the serif
+pages' 0.38-1.00, but `report_0011`'s sans table at 0.20; the sans pages'
+0.03-0.58."""
+
+
+def _standing(ink: ImageArray, text: str) -> tuple[list[tuple[int, int]], int, float, float] | None:
+    """One printed line's pieces, its baseline, its capitals' height and
+    its small letters' — the median of what stands on the baseline below
+    the capitals — in pixels. None for a line with no capital."""
+    cv2 = _cv2()
+    capitals = sum(1 for letter in text if letter.isupper())
+    lines = _lines(ink)
+    if not capitals or len(lines) != 1:
+        return None
+    top, bottom = lines[0]
+    stats = cv2.connectedComponentsWithStats(ink[top:bottom + 1].astype(np.uint8),
+                                             connectivity=8)[2][1:]
+    pieces = [(int(y), int(y + h)) for _, y, _, h, _ in stats if h >= 2]
+    if len(pieces) < 3:
+        return None
+    baseline = int(np.argmax(np.bincount([end for _, end in pieces])))
+    standing = sorted((end - start for start, end in pieces if abs(end - baseline) <= 1),
+                      reverse=True)
+    if len(standing) <= capitals:
+        return None
+    return (pieces, baseline, float(np.median(standing[:capitals])),
+            float(np.median(standing[capitals:])))
+
+
+def _small_caps(ink: ImageArray, text: str) -> tuple[bool, float] | None:
+    """Whether one printed line of a head is set in small capitals, with its
+    capitals' height in pixels — spec 0012, G7. None where its text cannot
+    say: no capital, no lowercase letter, or none of `ASCENDS` or
+    `DESCENDS`.
+
+    **Counted, not measured.** A face's x-height stands at about 0.7 of its
+    capitals, which is where small capitals stand too, so a height ratio
+    cannot tell them apart; what can is that a lowercase `b` rises to the
+    capitals and a `g` hangs below the line, and a small capital does
+    neither. Over every head, header row and Title of the twenty-one, those
+    in small capitals — the menu's and the newsletter's mastheads, `To
+    begin`, `From the grill`, the paper's `I. Introduction` — show none of
+    their risers and hangers, and every other shows one at least.
+    """
+    capitals = sum(1 for letter in text if letter.isupper())
+    expected = sum(1 for letter in text if letter in ASCENDS or letter in DESCENDS)
+    measured = _standing(ink, text)
+    if measured is None or not expected or not any(letter.islower() for letter in text):
+        return None
+    pieces, baseline, height, _ = measured
+    risen = sum(1 for start, end in pieces
+                if abs(end - baseline) <= 1 and end - start >= CAPITAL * height) - capitals
+    hung = sum(1 for _, end in pieces if end - baseline >= HANGS * height)
+    return max(0, risen) + hung <= expected // 4, height
+
+
+def _joined(ink: ImageArray, text: str) -> bool:
+    """Whether an entry's letters are joined, as handwriting's are: few
+    connected pieces of any height per letter. See `SCRIPT_JOINED`."""
+    cv2 = _cv2()
+    letters = sum(1 for letter in text if letter.isalpha())
+    shown = [letter for letter in text if not letter.isspace()]
+    if letters < LETTERS or letters < SCRIPT_LETTERS * len(shown):
+        return False
+    stats = cv2.connectedComponentsWithStats(ink.astype(np.uint8), connectivity=8)[2][1:]
+    tallest = max((int(h) for *_, h, _ in stats), default=0)
+    pieces = sum(1 for *_, h, _ in stats if h >= 0.4 * tallest)
+    return pieces < SCRIPT_JOINED * letters
+
+
+def _title_caps(image: ImageArray, document: Document, body: float) -> None:
+    """Small capitals on a Zone's Title, and its size at its capitals' —
+    spec 0012, G7. A Title whose letters cannot say — menu's `Main
+    courses`, with no riser or hanger — is set as a Title of its page in
+    small capitals is, where its small letters stand as tall, within a
+    pixel, and its colour is that one's."""
+    found: list[tuple[bool, float] | None] = []
+    small: list[float | None] = []
+    for zone in document.zones:
+        zone.title_caps = False
+        found.append(None)
+        small.append(None)
+        if not zone.title or zone.bbox is None:
+            continue
+        mask = np.asarray(type_mask(image, zone)) > 0
+        lines = type_lines(mask)
+        if not lines:
+            continue
+        top, bottom = lines[0]
+        ink = mask[top:bottom + 1]
+        columns = np.where(ink.any(axis=0))[0]
+        if not len(columns):
+            continue
+        ink = ink[:, columns.min():columns.max() + 1]
+        found[-1] = _small_caps(ink, zone.title)
+        measured = _standing(ink, zone.title)
+        small[-1] = None if measured is None else measured[3]
+    styles: list[tuple[float, tuple[int, int, int] | None, float]] = []
+    for zone, verdict, letters in zip(document.zones, found, small):
+        if verdict is not None and verdict[0]:
+            zone.title_caps = True
+            zone.title_size = round(verdict[1] / body, 2)
+            if letters is not None:
+                styles.append((letters, zone.title_color, zone.title_size))
+
+    def alike(one: tuple[int, int, int] | None, other: tuple[int, int, int] | None) -> bool:
+        if one is None or other is None:
+            return one is other
+        return _apart(one, other) <= SAME_COLOUR
+
+    for zone, verdict, letters in zip(document.zones, found, small):
+        if not zone.title or verdict is not None or letters is None:
+            continue
+        match = next((size for height, colour, size in styles
+                      if abs(height - letters) <= 1 and alike(colour, zone.title_color)), None)
+        if match is not None:
+            zone.title_caps = True
+            zone.title_size = match
 
 
 def _lines(ink: ImageArray) -> list[tuple[int, int]]:
@@ -742,6 +899,7 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
     cv2 = _cv2()
     for zone in document.zones:
         zone.title_color = None
+        zone.title_caps, zone.face = False, None
         for cell, _ in cells_of(zone):
             cell.look = None
     if document.style is not None:
@@ -762,6 +920,13 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
     style = document.style or Style()
     if rgb is not None:
         _titles(rgb, document, style)
+    _title_caps(image, document, body)
+    heads = {id(cell) for zone in document.zones for block in zone.blocks
+             if block.kind == "heading" for cell in block.lines}
+    heads |= {id(cell) for zone in document.zones for row in zone.rows
+              if row.role is RowRole.HEADER for cell in row.cells}
+    shaped: dict[int, tuple[bool | None, bool]] = {}
+    stems: dict[int, list[tuple[Cell, list[float]]]] = {}
     measured: list[tuple[Cell, float | None, float | None, float | None]] = []
     pitches: list[float] = []
     feet: list[float] = []
@@ -814,11 +979,16 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
             letters = sum(1 for letter in cell.text if letter.isalpha())
             slant = _slant(cover) if cover is not None and letters >= LETTERS else None
             measured.append((cell, glyph / body if glyph else None, weight, slant))
-            if (cover is not None and len(cell.text.strip()) >= 8
-                    and (not glyph or 0.85 <= glyph / body <= 1.15)):
-                if len(_lines(ink)) == 1 and (fit := _pitch(ink)) is not None:
-                    pitches.append(fit)
-                feet.extend(_feet(cover, ink))
+            # Spec 0012, G7: small capitals on a head, joined letters.
+            small = _small_caps(ink, cell.text) if id(cell) in heads else None
+            shaped[id(cell)] = (None if small is None else small[0], _joined(ink, cell.text))
+            if cover is not None and (not glyph or 0.85 <= glyph / body <= 1.15):
+                own_feet = _feet(cover, ink)
+                stems.setdefault(id(zone), []).append((cell, own_feet))
+                if len(cell.text.strip()) >= 8:
+                    if len(_lines(ink)) == 1 and (fit := _pitch(ink)) is not None:
+                        pitches.append(fit)
+                    feet.extend(own_feet)
 
     def median(values: Sequence[float | None]) -> float | None:
         known = [v for v in values if v is not None]
@@ -829,14 +999,51 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
     upright = median([s for *_, s in measured])
     for cell, size, weight, slant in measured:
         colour, fill, chip = colours.get(id(cell), (None, None, None))
+        italic = (None if slant is None or upright is None
+                  else upright - slant >= ITALIC)
+        caps, joined = shaped.get(id(cell), (None, False))
         cell.look = Look(
             size=None if size is None else round(size, 2),
             bold=(None if weight is None or not regular or photographed
                   else weight / regular >= BOLD),
-            italic=(None if slant is None or upright is None
-                    else upright - slant >= ITALIC),
+            italic=italic,
             color=colour, fill=fill,
             chip=None if chip is None else chip[0],
-            radius=None if chip is None else chip[1])
+            radius=None if chip is None else chip[1],
+            caps=caps or None,
+            face=("script" if italic and joined and size is not None and size >= SCRIPT_SIZE
+                  else None))
+    face = _face(pitches, feet)
     if document.style is not None:
-        document.style.face = _face(pitches, feet)
+        document.style.face = face
+    _zone_faces(document, stems, face, regular, photographed)
+    # A head in small capitals is drawn at its capitals' size, which its
+    # lines measure; its Block's size was taken over its small letters.
+    for zone in document.zones:
+        for block in zone.blocks:
+            looks = [cell.look for cell in block.lines if cell.look is not None]
+            if (block.kind == "heading" and looks and all(look.caps for look in looks)
+                    and all(look.size is not None for look in looks)):
+                block.size = round(float(np.median([look.size for look in looks
+                                                    if look.size is not None])), 2)
+
+
+def _zone_faces(document: Document, stems: dict[int, list[tuple[Cell, list[float]]]],
+                page: str | None, regular: float | None, photographed: bool) -> None:
+    """A Zone's own face where its regular body-size type stands otherwise
+    than its page's — spec 0012, G7, `OTHER_FACE`. Bold type is left out:
+    its stems are wide for their feet, and the paper's bold serif title
+    reads 0.11. Not on a photographed page, whose weights are unread."""
+    for zone in document.zones:
+        zone.face = None
+        if page not in ("serif", "sans") or photographed or not regular:
+            continue
+        feet = [foot for cell, own in stems.get(id(zone), [])
+                if cell.look is None or not cell.look.bold for foot in own]
+        if len(feet) < ZONE_STEMS:
+            continue
+        share = float(np.mean(np.asarray(feet) >= FOOT))
+        if page == "serif" and share <= OTHER_FACE:
+            zone.face = "sans"
+        elif page == "sans" and share >= 1 - OTHER_FACE:
+            zone.face = "serif"

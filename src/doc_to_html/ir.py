@@ -246,6 +246,14 @@ class Look:
     radius: float | None = None
     """The chip's corner radius over its height, 0 to 0.5."""
 
+    caps: bool | None = None
+    """Set in small capitals — spec 0012, G7: a head whose lowercase
+    letters stand neither above its x-height nor below its baseline."""
+
+    face: str | None = None
+    """The entry's own face where it is not its page's: `script`, joined
+    handwriting letters — spec 0012, G7."""
+
 
 @dataclass
 class Cell:
@@ -439,6 +447,14 @@ class Zone:
     title_size: float | None = None
     """The Title's printed size, in ems of the page's body — spec 0010, step
     D2. See `style.title_sizes`. None draws the house size."""
+
+    title_caps: bool = False
+    """The Title is set in small capitals — spec 0012, G7, by `looks`; its
+    `title_size` is then its capitals' size."""
+
+    face: str | None = None
+    """The Zone's own face where it is not its page's — spec 0012, G7, by
+    `looks`: `report_0011`'s sans table on a serif page."""
 
     title_color: tuple[int, int, int] | None = None
     """The Title's own ink, RGB — spec 0012, G3a — measured as an entry's
@@ -855,7 +871,8 @@ def _cell(data: dict[str, Any]) -> Cell:
         look=None if look is None else Look(
             size=look.get("size"), bold=look.get("bold"), italic=look.get("italic"),
             color=_colour(look.get("color")), fill=_colour(look.get("fill")),
-            chip=_bbox(look.get("chip")), radius=look.get("radius")),
+            chip=_bbox(look.get("chip")), radius=look.get("radius"),
+            caps=look.get("caps"), face=look.get("face")),
     )
 
 
@@ -900,6 +917,8 @@ def _zone(data: dict[str, Any]) -> Zone:
         # because this function builds each object field by field.
         fill=_colour(data.get("fill")),
         title_size=data.get("title_size"),
+        title_caps=data.get("title_caps", False),
+        face=data.get("face"),
         title_color=_colour(data.get("title_color")),
         title_fill=_colour(data.get("title_fill")),
         header_fill=_colour(data.get("header_fill")),

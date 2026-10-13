@@ -1367,6 +1367,8 @@ def _inline_style(zone: Zone,
         parts.append(f"min-width:min({reserved:g}rem,100%)")
     if zone.align in TEXT_ALIGN:
         parts.append(f"text-align:{TEXT_ALIGN[zone.align]}")
+    if zone.face in OWN_FACE:
+        parts.append(f"font-family:{OWN_FACE[zone.face]}")
     if extra:
         parts.append(extra)
     return f' style="{";".join(parts)}"' if parts else ""
@@ -1389,6 +1391,8 @@ def _inline_title_style(zone: Zone, extra: str = "") -> str:
         rules.append(f"font-size:{zone.title_size:.2f}em")
     if zone.title_align in TEXT_ALIGN:
         rules.append(f"text-align:{TEXT_ALIGN[zone.title_align]}")
+    if zone.title_caps:
+        rules.append("font-variant:small-caps")
     return f' style="{";".join(rules)}"' if rules else ""
 
 
@@ -1997,6 +2001,16 @@ FACE_CSS = {
 """The family a page set in a serif or a mono face is drawn in — spec 0011,
 step 4f; a sans page keeps the house's. Each stands its capitals near the
 house's 0.7em, so the body's measured size holds: `style.EM_PER_GLYPH`."""
+
+OWN_FACE = {
+    "serif": "Georgia, 'Times New Roman', serif",
+    "mono": FACE_CSS["mono"],
+    "sans": "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    "script": "'Snell Roundhand', 'Apple Chancery', 'Segoe Script', cursive",
+}
+"""The family an entry or a Zone set in its own face is drawn in — spec
+0012, G7: a sans Zone on a serif page, the house's own; script, a joined
+hand. Quoted singly, since it is drawn in a `style` attribute."""
 
 
 def _leader(row: Row, page: _Page) -> str:
@@ -2711,6 +2725,10 @@ def _look(cell: Cell | None, *, sized: bool = True, bold: bool = False,
         parts.append("font-weight:700")
     if look.italic:
         parts.append("font-style:italic")
+    if look.caps:
+        parts.append("font-variant:small-caps")
+    if look.face in OWN_FACE:
+        parts.append(f"font-family:{OWN_FACE[look.face]}")
     if (house is not None and look.color is not None and look.fill is None
             and _apart(look.color, house) > COLOUR_APART):
         parts.append(f"color:{_rgb(look.color)}")
