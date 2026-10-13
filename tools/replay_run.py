@@ -37,6 +37,19 @@ That is a finding about the change, not a fault in the tool — the change
 moved a crop, and a crop costs a sweep. Answers left unserved are named too:
 the code asked fewer questions than the run did.
 
+**A replay also says when a call was asked differently** — spec 0012 §4b,
+2026-10-13. Serving by pass and order, a change that asks the same number
+of calls *differently* — a grid hint of 8 rows where the run asked 4, a
+crop moved a few pixels — is served the old answers and comes back looking
+like a change that did nothing. So every call records a hash of its prompt,
+its picture and its schema (`trace.asked_of`), the frozen answers keep it,
+and the replay compares today's call with the one whose answer it was
+served. A document with any call that moved is marked **ASKED DIFFERENTLY —
+not a measurement**, naming each call as `NN_<pass>` and the parts that
+moved, byte-identical or not. That list is what a sweep's prediction names
+before the sweep is taken. Answers frozen before that day carry no hash,
+and the replay counts them rather than passing them.
+
 **Proved 2026-09-30**, before it was relied on: over sweep `Q5-40-sweep`, taken
 at the commit this tool was written against, it reproduced **15 of 15**
 documents byte for byte, and again from `tests/frozen/q5-result/`'s answers.
@@ -70,9 +83,11 @@ from doc_to_html.corpus import SOURCES  # noqa: E402
 from doc_to_html.engines.transport import Response  # noqa: E402
 from replay import ReplayTransport, reasoning_channel  # noqa: E402
 
-KEPT = ("pass_name", "answer", "truncated", "error")
+KEPT = ("pass_name", "answer", "truncated", "error", "asked")
 """What a replay needs of a call. The prompt is not among it: it is what
-today's code sends, and serving by pass and order never reads it."""
+today's code sends, and serving by pass and order never reads it. Its hash
+is — `asked`, with the picture's and the schema's — so a replay can say
+when today's code put a call differently from the run."""
 
 
 class Source:
@@ -123,6 +138,39 @@ def recorded(name: str, calls: list[dict[str, Any]],
         queues.setdefault(call["pass_name"], []).append(
             reasoning_channel(answer, truncated=call["truncated"]))
     return queues
+
+
+def asked_differently(recorded_calls: list[dict[str, Any]],
+                      today: list[Any]) -> tuple[list[str], int]:
+    """Each call today's code put differently from the run, and how many of
+    the run's calls carry no hash to compare against.
+
+    Paired the way the answers are served — by pass, in order — so the call
+    named is the one whose answer was served to it. Named as `NN_<pass>` by
+    the run's numbering, which is what `--swap` takes, with the parts that
+    moved: `07_table picture`. A call the run never asked is not here; the
+    Conversion's Failure names it, and the document is ASKED MORE THAN THE
+    RUN.
+    """
+    served: dict[str, list[tuple[int, dict[str, str]]]] = {}
+    for index, call in enumerate(recorded_calls):
+        served.setdefault(call["pass_name"], []).append(
+            (index, call.get("asked") or {}))
+    moved: list[str] = []
+    unhashed = 0
+    for call in today:
+        queue = served.get(call.pass_name)
+        if not queue:
+            continue
+        index, then = queue.pop(0)
+        if not then:
+            unhashed += 1
+            continue
+        parts = [part for part in ("prompt", "picture", "schema")
+                 if then.get(part) != call.asked.get(part)]
+        if parts:
+            moved.append(f"{index:02d}_{call.pass_name} {'+'.join(parts)}")
+    return moved, unhashed
 
 
 def exported(root: Path) -> dict[str, str]:
@@ -216,7 +264,7 @@ def main() -> int:
         f"tools/replay_run.py; no model call\n"
         + "".join(f"swap {s}\n" for s in args.swap))
 
-    identical = 0
+    identical = differently = unhashed = 0
     for attempt in attempts:
         name = attempt.fixture
         replies = transports[name].replies
@@ -227,15 +275,29 @@ def main() -> int:
                 and before.read_text(encoding="utf-8") == attempt.html)
         identical += same
         unanswered = [f for f in attempt.failures if "were recorded" in f]
-        outcome = ("byte-identical" if same
-                   else "ASKED MORE THAN THE RUN — not a measurement"
-                   if unanswered else attempt.error or "differs from the run")
+        moved, blind = asked_differently(
+            source.calls(name),
+            attempt.trace.calls if attempt.trace is not None else [])
+        differently += bool(moved)
+        unhashed += blind
+        # A call asked differently was served the answer to another
+        # question, so nothing after it is a measurement — however the page
+        # came out, byte-identical included.
+        outcome = ("ASKED MORE THAN THE RUN — not a measurement" if unanswered
+                   else "ASKED DIFFERENTLY — not a measurement" if moved
+                   else "byte-identical" if same
+                   else attempt.error or "differs from the run")
         print(f"{name:<22} {len(transports[name].calls):>3} calls  {outcome}"
               + (f"  unserved: {left}" if left else ""))
         for failure in unanswered:
             print(f"{'':<28}{failure}")
+        if moved:
+            print(f"{'':<28}asked differently: {', '.join(moved)}")
     print(f"\n{identical} of {len(attempts)} byte-identical to "
-          f"{source.root.name}\n-> {target.relative_to(REPO)}")
+          f"{source.root.name}; {differently} asked differently"
+          + (f"; {unhashed} calls recorded no hash, so whether they were "
+             f"asked differently is unknown" if unhashed else "")
+          + f"\n-> {target.relative_to(REPO)}")
     return 0
 
 

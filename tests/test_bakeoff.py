@@ -28,6 +28,7 @@ from doc_to_html.bakeoff import (
 )
 from doc_to_html.config import Settings
 from doc_to_html.engines.transport import Response, Transport
+from doc_to_html.trace import Call, Trace
 
 from .replay import ReplayTransport, break_zone, recorded_for
 
@@ -328,6 +329,78 @@ class TestTiming:
             timing(model="m", pass_name=name, prompt="p", images=[],
                    schema={"title": "BlocksResponse"}, num_ctx=1)
         assert [t.pass_name for t in timing.timings] == ["prose", "list"]
+
+
+class TestEachCallRecordsWhatItAsked:
+    """Spec 0012 §4b. A replay serves answers by pass and order, so it needs
+    a record of what each answer was the answer *to*."""
+
+    @staticmethod
+    def asked(prompt: str = "p", images: list[bytes] | None = None,
+              schema: dict[str, object] | None = None) -> dict[str, str]:
+        trace = Trace()
+        timing = TimingTransport(
+            inner=lambda **kwargs: Response(content="{}", truncated=False),  # type: ignore[arg-type]
+            trace=trace)
+        timing(model="m", pass_name="table", prompt=prompt,
+               images=[b"crop"] if images is None else images,
+               schema={"title": "T"} if schema is None else schema, num_ctx=1)
+        return trace.calls[0].asked
+
+    def test_the_same_question_hashes_the_same(self) -> None:
+        assert self.asked() == self.asked()
+        assert set(self.asked()) == {"prompt", "picture", "schema"}
+
+    def test_each_part_moves_only_its_own_hash(self) -> None:
+        base = self.asked()
+        for changed, part in ((self.asked(prompt="8 rows"), "prompt"),
+                              (self.asked(images=[b"other crop"]), "picture"),
+                              (self.asked(schema={"title": "U"}), "schema")):
+            assert [k for k in base if base[k] != changed[k]] == [part]
+
+    def test_a_trace_written_before_the_hash_still_reads(self) -> None:
+        old = '{"calls": [{"pass_name": "table", "model": "m", "prompt": "p"}]}'
+        assert Trace.from_json(old).calls[0].asked == {}
+
+
+class TestTheReplaySaysWhenACallWasAskedDifferently:
+    """`tools/replay_run.asked_differently`, paired the way answers are served."""
+
+    @staticmethod
+    def replay_tool() -> object:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "replay_run", REPO / "tools" / "replay_run.py")
+        assert spec is not None and spec.loader is not None
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    def test_a_call_asked_alike_is_not_named(self) -> None:
+        asked = {"prompt": "a", "picture": "b", "schema": "c"}
+        run = [{"pass_name": "table", "asked": asked}]
+        today = [Call(pass_name="table", model="m", prompt="p", asked=asked)]
+        assert self.replay_tool().asked_differently(run, today) == ([], 0)  # type: ignore[attr-defined]
+
+    def test_the_moved_call_is_named_by_the_runs_numbering(self) -> None:
+        """Pass by pass, so a classify call in between does not shift which
+        table answer is compared with which table question."""
+        one = {"prompt": "a", "picture": "b", "schema": "c"}
+        run = [{"pass_name": "table", "asked": one},
+               {"pass_name": "classify", "asked": one},
+               {"pass_name": "table", "asked": one}]
+        today = [Call(pass_name="classify", model="m", prompt="", asked=one),
+                 Call(pass_name="table", model="m", prompt="", asked=one),
+                 Call(pass_name="table", model="m", prompt="",
+                      asked={**one, "prompt": "8 rows", "picture": "x"})]
+        moved, unhashed = self.replay_tool().asked_differently(run, today)  # type: ignore[attr-defined]
+        assert moved == ["02_table prompt+picture"] and unhashed == 0
+
+    def test_an_answer_frozen_with_no_hash_is_counted_not_passed(self) -> None:
+        run = [{"pass_name": "table"}]
+        today = [Call(pass_name="table", model="m", prompt="",
+                      asked={"prompt": "a", "picture": "b", "schema": "c"})]
+        assert self.replay_tool().asked_differently(run, today) == ([], 1)  # type: ignore[attr-defined]
 
 
 class TestTheReportIsSomethingToActOn:

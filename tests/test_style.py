@@ -20,7 +20,7 @@ from pathlib import Path
 
 import numpy as np
 
-from doc_to_html.corpus import NEW, SOURCES, SWEEP
+from doc_to_html.corpus import SOURCES, SWEEP
 from doc_to_html.ir import (
     BBox,
     Block,
@@ -558,8 +558,13 @@ class TestFindingBoxesInTheCorpus:
     increment replaces was a detector that answered zero on all fifteen."""
 
     def test_the_carded_documents_get_their_cards(self) -> None:
+        # Spec 0012 step 0, from the source HTML: pricing's three `.plan`
+        # cards — a box inside a card, its button, is one component with
+        # it — and the timetable's table, ruled both ways, whose frame is
+        # one drawn box as `invoice_0002`'s bordered tables are.
         for name, expected in (("sample_css_0004", 2), ("darkdeck_0009", 5),
-                               ("nonlatin_0014", 2), ("catalogue_0015", 9)):
+                               ("nonlatin_0014", 2), ("catalogue_0015", 9),
+                               ("pricing_0017", 3), ("timetable_0019", 1)):
             rectified = rectify(REPO / SOURCES[name].png)
             plain = rectified.plain if rectified.plain is not None \
                 else rectified.image
@@ -572,9 +577,14 @@ class TestFindingBoxesInTheCorpus:
         """The failure mode this replaces went the other way — the old
         `section.titled` rule carded roughly ten of fifteen documents whose
         sources draw nothing of the kind."""
+        # The letter and the paper draw rules and no box; the ticket is a
+        # photographed card whose strips run to its edges; the certificate's
+        # double frame is the page's own border, past `PAGE_SHARE`.
         for name in ("sample_table_0003", "statement_0006", "receipt_0010",
                      "menu_0012", "cv_0013", "report_0011",
-                     "newsletter_0008", "sample_semantic_0005"):
+                     "newsletter_0008", "sample_semantic_0005",
+                     "letter_0016", "paper_0018", "ticket_0020",
+                     "certificate_0021"):
             rectified = rectify(REPO / SOURCES[name].png)
             plain = rectified.plain if rectified.plain is not None \
                 else rectified.image
@@ -586,19 +596,19 @@ class TestFindingBoxesInTheCorpus:
     def test_every_sweep_document_is_covered_by_one_of_those_lists(self) -> None:
         """So a document added to the corpus cannot quietly go unchecked."""
         carded = {"sample_css_0004", "darkdeck_0009", "nonlatin_0014",
-                  "catalogue_0015"}
+                  "catalogue_0015", "pricing_0017", "timetable_0019"}
         plain_pages = {"sample_table_0003", "statement_0006", "receipt_0010",
                        "menu_0012", "cv_0013", "report_0011",
-                       "newsletter_0008", "sample_semantic_0005"}
+                       "newsletter_0008", "sample_semantic_0005",
+                       "letter_0016", "paper_0018", "ticket_0020",
+                       "certificate_0021"}
         # invoice_0001 is the page-guard case and invoice_0002 and form_0007
         # are counted in the run report rather than pinned here: form_0007
         # finds 13 of its 14 in-range boxes and that number is a measurement,
         # not a target.
         known = carded | plain_pages | {"invoice_0001", "invoice_0002",
                                         "form_0007"}
-        # The six added 2026-10-13 are held out until the next spec's step 0
-        # writes down what each page draws.
-        assert set(SWEEP) - known == set(NEW)
+        assert set(SWEEP) - known == set()
 
 
 class TestOneRectangleOneZone:

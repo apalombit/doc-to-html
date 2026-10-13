@@ -854,9 +854,9 @@ class Conversion:
             self._measure_chrome(rectified, document)
             self._measure_type(rectified, document)
             self._find_separators(rectified, document)
-            self._read_rhythm(rectified, document)
             self._locate(rectified, document)
             self._read_fields(rectified, document)
+            self._read_rhythm(rectified, document)
             self._read_looks(rectified, document)
 
             document.probes = probe_module.run(document)
@@ -1250,10 +1250,14 @@ class Conversion:
         """Which Zones continue one another, and how each one's lines sit —
         spec 0011, step 1. See `rhythm.read`.
 
-        **Last of the measurements, after `_find_separators`**: a run may not
-        cross a rule the page draws, and it reads Kinds, Titles, fills and
-        frames, all set by now. Nothing a model is asked reads what it sets,
-        so it moves no answer.
+        **After `_find_separators`**: a run may not cross a rule the page
+        draws, and it reads Kinds, Titles, fills and frames, all set by now.
+        **And after `_read_fields`** — spec 0012 step 0 — which can turn a
+        table into pairs and widen a box to its marks: read before it,
+        `form_0007`'s Zone 5 was skipped as a table and drawn as pairs with
+        no alignment, and `tools/rederive.py`, which meets the Zone already
+        pairs, disagreed with the Conversion by that one field. Nothing a
+        model is asked reads what it sets, so it moves no answer.
         """
         if document.style is None:
             return

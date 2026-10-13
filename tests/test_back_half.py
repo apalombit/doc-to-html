@@ -336,10 +336,10 @@ class TestTheStatementsArithmeticReachesThePage:
     1,144.30 read 1,141.30, and Wexford Insurance's 216.08 read 210.08."""
 
     @staticmethod
-    def floor(name: str) -> Document:
+    def floor(name: str, frozen: str = "s3-result") -> Document:
         import re
         from pathlib import Path
-        html = (Path(__file__).resolve().parent / "frozen" / "s3-result"
+        html = (Path(__file__).resolve().parent / "frozen" / frozen
                 / "documents" / f"{name}.html").read_text(encoding="utf-8")
         found = re.search(r'id="doc-ir">(.*?)</script>', html, re.S)
         assert found
@@ -362,8 +362,12 @@ class TestTheStatementsArithmeticReachesThePage:
 
     def test_no_other_document_on_the_floor_fails_a_probe(self) -> None:
         from doc_to_html.corpus import NEW, SWEEP
-        # The floor holds the fifteen; the six added 2026-10-13 have none.
+        # The six added 2026-10-13 are first held in `s7-result/`. None
+        # prints a sum, a balance or a line total to check: pricing's
+        # "£144 per user" is twelve months of £12 in a sentence, not a
+        # table. Spec 0012 step 0.
         for name in SWEEP:
-            if name == "statement_0006" or name in NEW:
+            if name == "statement_0006":
                 continue
-            assert all(r.ok for r in probes.run(self.floor(name))), name
+            floor = self.floor(name, "s7-result" if name in NEW else "s3-result")
+            assert all(r.ok for r in probes.run(floor)), name

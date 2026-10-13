@@ -34,16 +34,17 @@ and can be recomputed from it, in the order a Conversion runs them:
                                     structure.structure  (_read_structure)
        and the wide rules it draws between them — spec 0009, step D
                                     structure.separators (_find_separators)
-    8. Which Zones continue one another, and how each one's lines sit —
-       spec 0011, step 1; each Zone's frame is set with the chrome, in 3
-                                    rhythm.read           (_read_rhythm)
-    9. Where every Cell sits on the page — spec 0011, step 2; tesseract
+    8. Where every Cell sits on the page — spec 0011, step 2; tesseract
        as a locator, its words never printed
                                     locate.locate              (_locate)
-   10. The marks the page draws for its entries, attached to their pairs —
+    9. The marks the page draws for its entries, attached to their pairs —
        spec 0011, step 3; step 6's gaps are taken after it, since it can
        widen a Zone's box to its marks
                                     fields.read           (_read_fields)
+   10. Which Zones continue one another, and how each one's lines sit —
+       spec 0011, step 1; each Zone's frame is set with the chrome, in 3.
+       After step 9 since spec 0012's step 0, which can make a table pairs
+                                    rhythm.read           (_read_rhythm)
    11. How each placed entry is printed — size, weight, slant — spec 0011,
        step 4a
                                     looks.read             (_read_looks)
@@ -102,7 +103,7 @@ _REPAIR = re.compile(
 
 
 def rederive(document: Document, png: Path) -> None:
-    """Steps 1-8 of this module's docstring, in place."""
+    """Every step of this module's docstring, in order, in place."""
     for zone in document.zones:
         if _title_is_its_header_cell(zone):
             zone.title = None
@@ -145,9 +146,10 @@ def rederive(document: Document, png: Path) -> None:
         document.separators = separators(
             plain, document.zones, ground=document.style.page_bg,
             inverted=rectified.inverted)
-        rhythm.read(plain, document)
     locate.locate(plain, document)
     fields.read(plain, document)
+    if document.style is not None:
+        rhythm.read(plain, document)
     looks.read(plain, document, photographed=rectified.warped, inverted=rectified.inverted)
     # Last, as the audit is in a Conversion: step 10 can widen a Zone's box.
     document.gaps = gaps(image, document.zones)

@@ -501,6 +501,47 @@ is gone.
 
 ---
 
+### Outcome — the baseline, proved 2026-10-13 at `92ec769`
+
+`tools/replay_run.py tests/frozen/s7-result --label S8-0-replay`: **21 of 21
+byte-identical**. `tools/rederive.py` (`S8-0-base`): 20 of 21 byte for byte,
+`form_0007` differing in Zone 5's `align` only (`null` → `"left"`), its page
+identical outside the IR.
+
+### Outcome — step 0, the loop work, 2026-10-13
+
+- **ASKED DIFFERENTLY.** Every recorded call carries `asked`, a hash of its
+  prompt, picture and schema (`trace.asked_of`, set by the bake-off's
+  transport); the frozen answers keep it (`replay_run.KEPT`); the replay
+  pairs today's calls with the run's by pass and order, as it serves them,
+  and names each one that moved as `NN_<pass> prompt|picture|schema`.
+  `s7-result/answers/` carries the hashes, taken from a replay at this
+  commit — all 751 prompts hash as `S7-sweep`'s own trace recorded them.
+  **Armed and proved:** a scratch wrapper adding 4 rows to the table hint
+  replayed `timetable_0019` and `invoice_0001` **byte-identical on the old
+  answers — the trap — and marked both ASKED DIFFERENTLY**, naming
+  `09_table` and `17_table`, `18_table`.
+- **Fields before rhythm**, in the Conversion and in `rederive.py`. Replay
+  of `s7-result/` (`S8-0-step0`): 20 of 21 byte-identical, `form_0007`
+  differing in Zone 5's `align` only, page identical; **0 calls asked
+  differently, 0 unhashed**. Rederive (`S8-0-step0-rd`) and that replay
+  agree **byte for byte on all 21**. No page moved, so no sheet to open.
+- **The six's answers in the three guards**, written from their HTML.
+  Structure: pricing a grid of three (splits 0.345, 0.655), paper two
+  columns at 0.501, the ticket two lanes at its dashed rule (0.716 of the
+  rectified pass), letter, timetable and certificate single. Rectangles:
+  pricing 3 cards, the timetable's ruled table 1, the other four none.
+  Probes: none of the six prints arithmetic, none fails. **Two expected
+  failures, strict, each naming its step:** pricing (G4's split, step U)
+  and the ticket (G3b's dashed rule, step U).
+- **Found on the way, not in §1:** the rectified ticket cuts its top strip
+  through the middle of `BOARDING PASS` — the quad `rectify` finds starts
+  below the pass's top edge — so `BOARDING FOUR` is the model reading half
+  a word, not a misread of a whole one. §7 files it under the model; it
+  belongs to Rectify.
+
+1020 tests pass, 2 expected failures; `mypy src/` clean.
+
 ## 6. The sweep's prediction — to register at step U, before `S8-sweep` finishes
 
 Register it in this section, with the commit, before the sweep ends:

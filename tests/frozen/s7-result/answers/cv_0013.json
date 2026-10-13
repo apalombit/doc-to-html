@@ -4,583 +4,1068 @@
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "c6f3f87b0471",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "caption",
    "answer": "{\n  \"first_line\": \"EXPERIENCE\",\n  \"line_is\": \"caption\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "2e8658b4eb1e",
+    "schema": "7519cd3269d9"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "fc10ef6f7db6",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "cc4e5329ec87",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "6e5d67aa02bc",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "caption",
    "answer": "{\n  \"first_line\": \"Lead engineer on the Gracefield footbridge, a 64 m weathering-steel tied arch delivered\",\n  \"line_is\": \"content\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "0d9437e61e09",
+    "schema": "7519cd3269d9"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "0d9437e61e09",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "7ec58b69f45a",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "caption",
    "answer": "{\n  \"first_line\": \"Responsible for the practice's approach to embodied carbon; introduced a per-scheme\",\n  \"line_is\": \"content\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "c96dd860be06",
+    "schema": "7519cd3269d9"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "c96dd860be06",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "602f2034a608",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "ee5bfca10ebb",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "c0151d9bf73b",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "caption",
    "answer": "{\n  \"first_line\": \"Structural Engineer\",\n  \"line_is\": \"content\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "e209bd12a2c5",
+    "schema": "7519cd3269d9"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "e209bd12a2c5",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "2341d102bd56",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "56a4ea672c92",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "1a5776a8f2ce",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "2deb2563b3e0",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "deadd47ac8da",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "caption",
    "answer": "{\"first_line\": \"Graduate Engineer\", \"line_is\": \"content\"}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "c42ebbc115a0",
+    "schema": "7519cd3269d9"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "c42ebbc115a0",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "e5a9b57b9190",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "8f48dc692734",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "c19dafee8698",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"figure\",\n  \"graphic\": \"logo\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "76983eb6e1f2",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "caption",
    "answer": "{\n  \"first_line\": \"EDUCATION\",\n  \"line_is\": \"caption\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "b2a70f257736",
+    "schema": "7519cd3269d9"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "17164422e7cd",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"figure\",\n  \"graphic\": \"logo\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "dd134eac86ca",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "7f8234232991",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "2bfc9fd200b7",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "284271dbb7e1",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "902da266583a",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "9d8f483f5caf",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "caption",
    "answer": "{\n  \"first_line\": \"SELECTED PUBLICATIONS\",\n  \"line_is\": \"caption\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "789870237de1",
+    "schema": "7519cd3269d9"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "253dd3460a99",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "631b6f4a2a41",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "caption",
    "answer": "{\n  \"first_line\": \"Halloran, I. (2023) \\\"Reassessing riveted connections in nineteenth-century road bridges\\\",\",\n  \"line_is\": \"content\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "a4ad8b4b27ff",
+    "schema": "7519cd3269d9"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "a4ad8b4b27ff",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Ines Halloran\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"STRUCTURAL ENGINEER\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "c6f3f87b0471",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"Ines Halloran\",\n      \"kind\": \"strong\"\n    },\n    {\n      \"text\": \"STRUCTURAL ENGINEER\",\n      \"kind\": \"strong\"\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "c6f3f87b0471",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"EXPERIENCE\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Senior Structural Engineer\",\n        \"Marrow & Kealy Consulting, Dublin\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "2e8658b4eb1e",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"Senior Structural Engineer\",\n      \"kind\": \"strong\"\n    },\n    {\n      \"text\": \"Marrow & Kealy Consulting, Dublin\",\n      \"kind\": \"em\"\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "2e8658b4eb1e",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"2021 — present\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "cc4e5329ec87",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"2021\",\n      \"kind\": \"code\"\n    },\n    {\n      \"text\": \"present\",\n      \"kind\": \"em\"\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "cc4e5329ec87",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"CONTACT\"\n      ]\n    },\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"ines.halloran@fempost.example\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "6e5d67aa02bc",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"ines.halloran@fempost.example\",\n      \"kind\": \"link\"\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "6e5d67aa02bc",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "list",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Lead engineer on the Gracefield footbridge, a 64 m weathering-steel tied arch delivered under budget in 2024.\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "049705fbe02f",
+    "picture": "0d9437e61e09",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "0d9437e61e09",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"+353 1 555 0142\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "7ec58b69f45a",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"+353 1 555 0142\",\n      \"kind\": \"link\"\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "7ec58b69f45a",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "list",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Responsible for the practice's approach to embodied carbon; introduced a per-scheme target now applied to all new work.\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "049705fbe02f",
+    "picture": "c96dd860be06",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "c96dd860be06",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"Dublin 8, Ireland\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "602f2034a608",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "602f2034a608",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "list",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Supervise four engineers and two technicians.\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "049705fbe02f",
+    "picture": "ee5bfca10ebb",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "ee5bfca10ebb",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "pairs",
    "answer": "{\n    \"pairs\": [\n        {\n            \"label\": \"REGISTRATION\",\n            \"value\": \"\"\n        },\n        {\n            \"label\": \"Chartered Engineer, Engineers Ireland (2019)\",\n            \"value\": \"Reg. no. 11408\"\n        }\n    ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "c0151d9bf73b",
+    "schema": "82c49f2c0bc4"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Structural Engineer\"\n      ]\n    },\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"Ardagh Rowe, Cork\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "e209bd12a2c5",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"Structural Engineer\",\n      \"kind\": \"strong\"\n    },\n    {\n      \"text\": \"Ardagh Rowe, Cork\",\n      \"kind\": \"em\"\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "e209bd12a2c5",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"2017—2021\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "2341d102bd56",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"2017\",\n      \"kind\": \"code\"\n    },\n    {\n      \"text\": \"2021\",\n      \"kind\": \"code\"\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "2341d102bd56",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "list",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Frame design for eight mid-rise residential schemes, the largest of eleven storeys.\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "049705fbe02f",
+    "picture": "56a4ea672c92",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "56a4ea672c92",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"SOFTWARE\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "1a5776a8f2ce",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"S\",\n      \"kind\": \"code\"\n    },\n    {\n      \"text\": \"OFTWARE\",\n      \"kind\": \"code\"\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "1a5776a8f2ce",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "list",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Temporary works for the Union Quay retaining wall replacement.\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "049705fbe02f",
+    "picture": "2deb2563b3e0",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "2deb2563b3e0",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Robot Structural Analysis\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "deadd47ac8da",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "deadd47ac8da",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Graduate Engineer\"\n      ]\n    },\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"Ardagh Rowe, Cork\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "c42ebbc115a0",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"Graduate Engineer\",\n      \"kind\": \"strong\"\n    },\n    {\n      \"text\": \"Ardagh Rowe, Cork\",\n      \"kind\": \"em\"\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "c42ebbc115a0",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"2015—2017\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "e5a9b57b9190",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"2015—2017\",\n      \"kind\": \"mark\"\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "e5a9b57b9190",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Tekla Structures\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "8f48dc692734",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"Tekla Structures\",\n      \"kind\": \"mark\"\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "8f48dc692734",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "list",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Rotated through bridges, buildings and geotechnics.\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "049705fbe02f",
+    "picture": "c19dafee8698",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "c19dafee8698",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "figure",
    "answer": "{\n  \"graphic\": \"logo\",\n  \"text\": [\n    \"Revit\"\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "2bd08d0c016f",
+    "picture": "76983eb6e1f2",
+    "schema": "076cd0b9aaab"
+   }
   },
   {
    "pass_name": "table",
    "answer": "{\n  \"rows\": [\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"EDUCATION\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"MEng Civil Engineering\",\n        \"2015\",\n        \"Diploma, Timber Design\",\n        \"2022\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Trinity College Dublin\",\n        \"\",\n        \"TU Dublin, part time\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"First class honours. Thesis on the fatigue\",\n        \"\",\n        \"Distinction.\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"life of riveted wrought-iron connections.\",\n        \"\",\n        \"\",\n        \"\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "d85259c17858",
+    "picture": "b2a70f257736",
+    "schema": "32d195a8c340"
+   }
   },
   {
    "pass_name": "figure",
    "answer": "{\n  \"graphic\": \"logo\",\n  \"text\": [\n    \"Python\"\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "2bd08d0c016f",
+    "picture": "dd134eac86ca",
+    "schema": "076cd0b9aaab"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"LANGUAGES\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "7f8234232991",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"LANGUAGES\",\n      \"kind\": \"mark\"\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "7f8234232991",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"English — native\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "2bfc9fd200b7",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"native\",\n      \"kind\": \"mark\"\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "2bfc9fd200b7",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Irish — fluent\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "284271dbb7e1",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"Irish\",\n      \"kind\": \"em\"\n    },\n    {\n      \"text\": \"—\",\n      \"kind\": \"mark\"\n    },\n    {\n      \"text\": \"fluent\",\n      \"kind\": \"em\"\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "284271dbb7e1",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"German — working\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "902da266583a",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"German — working\",\n      \"kind\": \"mark\"\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "902da266583a",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"INTERESTS\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "9d8f483f5caf",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"INTERESTS\",\n      \"kind\": \"mark\"\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "9d8f483f5caf",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "list",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Halloran, I. and Kealy, P. (2025) \\\"Embodied carbon in small span highway bridges\\\", The Structural Engineer, 103(4).\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "049705fbe02f",
+    "picture": "789870237de1",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "789870237de1",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Sea swimming, timber joinery, the history of iron\",\n        \"bridges.\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "631b6f4a2a41",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "631b6f4a2a41",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "list",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Halloran, I. (2023) \\\"Reassessing riveted connections in nineteenth-century road bridges\\\",\",\n        \"Proceedings of the ICE.\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "049705fbe02f",
+    "picture": "a4ad8b4b27ff",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "a4ad8b4b27ff",
+    "schema": "334959f8ecb0"
+   }
   }
  ]
 }

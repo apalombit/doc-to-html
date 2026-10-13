@@ -24,6 +24,16 @@ The same shape as `s6-result/`, over twenty-one documents:
 - **`dth_env.txt`** — the `DTH_*` the sweep was taken under: none, the
   shipped defaults.
 
+**Each call's `asked` hashes were added on 2026-10-13, spec 0012 step 0** —
+a hash of its prompt, its picture and its schema, so `tools/replay_run.py`
+can mark a call today's code asks differently. Taken from a replay at
+`92ec769` plus step 0's hash recorder, which asks exactly what the sweep
+asked: the only change to `src/` since `639d882` is `9cd4ae2`'s, in
+`looks.read`, after every call. Checked against the sweep's own record: all
+**751 prompts** hash as `S7-sweep`'s `trace.json` recorded them, and every
+answer, `truncated` and `error` is unchanged — the key was added and
+nothing else moved.
+
 ## Provenance — two commits, said exactly
 
 **Sweep `S7-sweep`**, commit `639d882` (the six documents added, no
@@ -50,13 +60,18 @@ pipeline change), taken 2026-10-13 09:04–11:20, **2h16m**, model
 loops run over it, each proved on 2026-10-13 at commit `9cd4ae2`:
 
 - **Replay:** `tools/replay_run.py tests/frozen/s7-result --label S8-0-replay`
-  reproduces **21 of 21 byte-identical**.
+  reproduces **21 of 21 byte-identical**. Since spec 0012 step 0 moved
+  `_read_rhythm` after `_read_fields`, a replay gives `form_0007` Zone 5
+  `align: "left"` where this file has `null` — the page is the same — and
+  0 calls asked differently.
 - **Rederive:** `tools/rederive.py tests/frozen/s7-result --label S8-0-base`
   gives **21 of 21 identical pages, 20 of 21 byte-identical files**.
   `form_0007` differs in one field of its embedded IR, as at `s6-result/`:
   Zone 5's `align` is `null` here and `"left"` after a rederive, because
   step 3 (`fields.read`) turns the Zone from a table into pairs after step 1
-  (`rhythm.read`) skipped it as a table. The page is the same.
+  (`rhythm.read`) skipped it as a table. The page is the same. **Spec 0012
+  step 0 put fields before rhythm in both**, and a replay and a rederive
+  have agreed byte for byte on all 21 since.
 - **Scores:** that rederive, scored against `s6-result/`, gives **21
   documents, 0 differing fields** against `scores.json`.
 

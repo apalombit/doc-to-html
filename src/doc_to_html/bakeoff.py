@@ -60,7 +60,7 @@ from .engines.ollama import OllamaEngine
 from .engines.transport import OllamaTransport, Response, Transport
 from .orchestrator import Conversion, EngineSet, _layout_engine
 from .render import render
-from .trace import Call, Trace
+from .trace import Call, Trace, asked_of
 
 CANDIDATES = ("qwen3-vl:4b", "qwen3-vl:2b", "granite3.2-vision:latest")
 """The models `docs/status.md` has open questions about.
@@ -132,7 +132,8 @@ class TimingTransport:
                  num_ctx: int) -> Response:
         started = time.perf_counter()
         call = Call(pass_name=pass_name, model=model, prompt=prompt,
-                    num_ctx=num_ctx)
+                    num_ctx=num_ctx,
+                    asked=asked_of(prompt, images, schema))
         reply = None
         try:
             reply = self.inner(

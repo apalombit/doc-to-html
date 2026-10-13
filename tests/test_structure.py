@@ -35,6 +35,8 @@ from doc_to_html.style import measure
 
 REPO = Path(__file__).resolve().parent.parent
 FLOOR = REPO / "tests" / "frozen" / "q5-result" / "documents"
+FLOOR_NEW = REPO / "tests" / "frozen" / "s7-result" / "documents"
+"""The six added 2026-10-13 are first held in `s7-result/`."""
 
 SPLIT_TOLERANCE = 0.03
 
@@ -79,11 +81,45 @@ EXPECTED: dict[str, list[Expected]] = {
     "form_0007": [],
     "receipt_0010": [],
     "report_0011": [],
+    # The six added 2026-10-13, each written from its source HTML — what the
+    # page is, not what the render does — spec 0012 step 0.
+    #
+    # `.plans`, three `flex:1` cards with 18px gaps at 335-354 and
+    # 646-665px; the middle card's ribbon rises to 173px, the cards' tops
+    # are at 183 and their bottoms at 617, the note below starts at 640.
+    "pricing_0017": [
+        Expected(Flow.GRID, (0.345, 0.655), (0.240, 0.270), (0.880, 0.925))],
+    # `.cols`, two `flex:1` columns with a rule down the left one's right
+    # edge at 451px; the abstract's lower rule is at 255 and the first head
+    # at 282, the columns' last line ends at 625 of 659.
+    "paper_0018": [
+        Expected(Flow.COLUMNS, (0.501,), (0.385, 0.430), (0.940, 1.000))],
+    # The stub, divided off by a dashed rule at x 570 of the rectified
+    # pass's 797, beside the main part for the pass's full height.
+    "ticket_0020": [
+        Expected(Flow.COLUMNS, (0.716,), (0.000, 0.100), (0.900, 1.000))],
+    # A letterhead and an address block set either side, like an invoice's
+    # head — single, as `invoice_0001`'s is.
+    "letter_0016": [],
+    # A table, ruled both ways: one Zone, no lanes.
+    "timetable_0019": [],
+    # Everything centred inside one frame; the signatures and the seal are
+    # one row of three unlike things, not copies and not lanes.
+    "certificate_0021": [],
 }
+
+TODAY_FAILS = {
+    "pricing_0017": "G4's split, step U: the emphasised middle card is "
+                    "not taken as a copy, and the grid of two splits it at 0.50",
+    "ticket_0020": "G3b, step U: the dashed vertical rule makes no lane",
+}
+"""Written answers today's code does not reach, each naming the group of
+spec 0012 that is to fix it. Strict, so the fix has to take its name off."""
 
 
 def boxes_of(name: str) -> list[BBox]:
-    html = (FLOOR / f"{name}.html").read_text(encoding="utf-8")
+    floor = FLOOR_NEW if name in NEW else FLOOR
+    html = (floor / f"{name}.html").read_text(encoding="utf-8")
     found = re.search(r'id="doc-ir">(.*?)</script>', html, re.S)
     assert found, f"{name}: no embedded IR"
     document = Document.from_json(found.group(1).replace("<\\/", "</"))
@@ -98,35 +134,45 @@ def regions_of(name: str) -> list[Region]:
                      inverted=rectified.inverted)
 
 
+def laid_out_wrongly(name: str) -> list[str]:
+    """How the page's regions differ from its written answer; empty if not."""
+    expected = EXPECTED[name]
+    found = [r for r in regions_of(name) if r.flow is not Flow.SINGLE]
+    if len(found) != len(expected):
+        return [f"{name}: {len(found)} regions, expected "
+                f"{len(expected)}: {found}"]
+    wrong: list[str] = []
+    for region, want in zip(found, expected):
+        if (region.flow is not want.flow
+                or region.lanes != len(want.splits) + 1
+                or region.rows != want.rows):
+            wrong.append(f"{name}: {region} is not {want}")
+            continue
+        if any(abs(got - at) > SPLIT_TOLERANCE
+               for got, at in zip(region.splits, want.splits)):
+            wrong.append(f"{name}: splits {region.splits}, expected "
+                         f"{want.splits}")
+        if not (want.top[0] <= region.top <= want.top[1]
+                and want.bottom[0] <= region.bottom <= want.bottom[1]):
+            wrong.append(f"{name}: y {region.top:.3f}-{region.bottom:.3f} "
+                         f"outside {want.top} / {want.bottom}")
+    return wrong
+
+
 class TestTheCorpusPages:
     def test_every_sweep_document_has_its_answer_written_down(self) -> None:
-        # The six added 2026-10-13 are held out until their answers are
-        # written from a frozen result that holds them — the next spec's
-        # step 0. Named here, so none of them goes unchecked quietly.
-        assert set(EXPECTED) == set(SWEEP) - set(NEW)
+        assert set(EXPECTED) == set(SWEEP)
 
     def test_each_page_reads_as_its_source_is_laid_out(self) -> None:
-        wrong: list[str] = []
-        for name, expected in EXPECTED.items():
-            found = [r for r in regions_of(name) if r.flow is not Flow.SINGLE]
-            if len(found) != len(expected):
-                wrong.append(f"{name}: {len(found)} regions, expected "
-                             f"{len(expected)}: {found}")
-                continue
-            for region, want in zip(found, expected):
-                if (region.flow is not want.flow
-                        or region.lanes != len(want.splits) + 1
-                        or region.rows != want.rows):
-                    wrong.append(f"{name}: {region} is not {want}")
-                    continue
-                if any(abs(got - at) > SPLIT_TOLERANCE
-                       for got, at in zip(region.splits, want.splits)):
-                    wrong.append(f"{name}: splits {region.splits}, expected "
-                                 f"{want.splits}")
-                if not (want.top[0] <= region.top <= want.top[1]
-                        and want.bottom[0] <= region.bottom <= want.bottom[1]):
-                    wrong.append(f"{name}: y {region.top:.3f}-{region.bottom:.3f} "
-                                 f"outside {want.top} / {want.bottom}")
+        wrong = [line for name in EXPECTED if name not in TODAY_FAILS
+                 for line in laid_out_wrongly(name)]
+        assert not wrong, "\n".join(wrong)
+
+    @pytest.mark.parametrize("name", [
+        pytest.param(name, marks=pytest.mark.xfail(strict=True, reason=why))
+        for name, why in TODAY_FAILS.items()])
+    def test_the_pages_a_later_step_is_to_fix(self, name: str) -> None:
+        wrong = laid_out_wrongly(name)
         assert not wrong, "\n".join(wrong)
 
     def test_the_regions_cover_each_page_once_top_to_bottom(self) -> None:

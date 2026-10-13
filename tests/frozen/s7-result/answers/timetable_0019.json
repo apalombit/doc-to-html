@@ -4,61 +4,111 @@
    "pass_name": "caption",
    "answer": "{\n  \"first_line\": \"Form 9C — weekly timetable\",\n  \"line_is\": \"caption\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "90cd7641f688",
+    "schema": "7519cd3269d9"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "db5355ae3b34",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "af4793481d68",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "caption",
    "answer": "{\"first_line\": \"Time\", \"line_is\": \"header\"}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "9e50ca356966",
+    "schema": "7519cd3269d9"
+   }
   },
   {
    "pass_name": "classify",
    "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "9e50ca356966",
+    "schema": "7ea6826d1557"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Form 9C — weekly timetable\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Autumn term 2026 · Week A\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "90cd7641f688",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "90cd7641f688",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "prose",
    "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"Tutor: Mr D. Achebe · Room B12\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "af4793481d68",
+    "schema": "2a31e0885054"
+   }
   },
   {
    "pass_name": "runs",
    "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"Mr D. Achebe\",\n      \"kind\": \"em\"\n    },\n    {\n      \"text\": \"Room B12\",\n      \"kind\": \"em\"\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "af4793481d68",
+    "schema": "334959f8ecb0"
+   }
   },
   {
    "pass_name": "table",
    "answer": "{\n  \"rows\": [\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"Time\",\n        \"Monday\",\n        \"Tuesday\",\n        \"Wednesday\",\n        \"Thursday\",\n        \"Friday\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"\",\n        \"\",\n        \"\",\n        \"\",\n        \"\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"08:40\",\n        \"\",\n        \"\",\n        \"Registration and tutor time\",\n        \"\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"09:00\",\n        \"Mathematics\",\n        \"English\",\n        \"Science\",\n        \"Mathematics\",\n        \"Art\"\n      ]\n    }\n  ]\n}",
    "truncated": false,
-   "error": null
+   "error": null,
+   "asked": {
+    "prompt": "9a9d793c53bd",
+    "picture": "9e50ca356966",
+    "schema": "32d195a8c340"
+   }
   }
  ]
 }

@@ -36,6 +36,7 @@ where it changed the Document, it says what it changed.
 
 from __future__ import annotations
 
+import hashlib
 import json
 from dataclasses import asdict, dataclass, field
 from enum import Enum
@@ -134,6 +135,35 @@ class Call:
     error: str | None = None
     """Set when the call raised. Recorded rather than dropped: a run that reports
     only its successes cannot explain a gap in its own numbering."""
+
+    asked: dict[str, str] = field(default_factory=dict)
+    """What was put to the model, as a short hash of each part — `prompt`,
+    `picture` and `schema`. See `asked_of`.
+
+    Recorded so a replay can say when today's code asks a call differently
+    from the run it serves answers from — spec 0012 §4b. A replay serves by
+    pass and order, so a crop moved or a grid hint of 8 rows where the run
+    asked 4 is otherwise served the old answer and reads as a change that
+    did nothing. Empty on a trace written before 2026-10-13."""
+
+
+def asked_of(prompt: str, images: list[bytes],
+             schema: dict[str, Any]) -> dict[str, str]:
+    """A call's `asked` hashes: its prompt, its picture and its schema.
+
+    Hashes of exactly what the transport is handed — the picture's encoded
+    bytes, the schema with its keys sorted — so any change to what the model
+    is shown or told is one. Twelve hex digits each: a record to compare,
+    not a secret to keep."""
+    picture = hashlib.sha256()
+    for image in images:
+        picture.update(hashlib.sha256(image).digest())
+    return {
+        "prompt": hashlib.sha256(prompt.encode("utf-8")).hexdigest()[:12],
+        "picture": picture.hexdigest()[:12],
+        "schema": hashlib.sha256(json.dumps(schema, sort_keys=True).encode(
+            "utf-8")).hexdigest()[:12],
+    }
 
 
 @dataclass
