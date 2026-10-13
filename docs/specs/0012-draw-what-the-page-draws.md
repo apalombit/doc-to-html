@@ -653,6 +653,32 @@ Zone is drawn only as wide as the Zone. The timetable's lesson tints are
 found as one fill across the grid. **G3b must mask a fill by its colour, not
 its box**, or `table_grid` loses the type on it.
 
+### Outcome — step 4, G4's drawing half: boxes and lanes, 2026-10-13
+
+Render only, so the IRs are step 3's. Three changes:
+- **Copies one height.** A grid row of cards whose frames stand within
+  `SAME_HEIGHT` (0.01) of one height stretches each card to the row.
+- **The inset is the page's.** A card with no Title, and a lane on a fill
+  the furniture found, is padded from its edge to its placed type. The
+  lane also starts where its fill starts.
+- **A pairs Zone by its printed lines.** Where the page prints two pairs on
+  one line, or a value under its label, the Zone is drawn line by line,
+  each entry starting where its box starts, the last flush right where the
+  page sets it there (`_printed_lines`, `_placed`). Any other pairs Zone
+  keeps the `dl`.
+
+**Six pages' bytes moved, four in pixels.**
+
+| page | against step 3 |
+|---|---|
+| `catalogue_0015` | **better** — each row of cards one height, the type inset from the card's edge, price, unit and stock on one line with the stock flush right |
+| `darkdeck_0009` | **better** — the four tiles one height |
+| `cv_0013` | **better** — the sidebar's type inset from the fill's edge, the fill the page's height, `Reg. no. 11408` under `Chartered Engineer…` as printed. The main column is narrower for it until G5 |
+| `invoice_0002` | **better** — `NO 554775/R1 Date 01/01/2015` on one line, as printed |
+
+No page worse; `vanished` 55. Run `S8-4-boxes`. G4's split, and with it
+pricing's cards, is step U.
+
 ## 6. The sweep's prediction — to register at step U, before `S8-sweep` finishes
 
 Register it in this section, with the commit, before the sweep ends:
