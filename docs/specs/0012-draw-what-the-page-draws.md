@@ -568,6 +568,28 @@ The page's stylesheet lost the card's rules, so every page's bytes moved;
 
 `vanished` 55, unchanged. Run `S8-1-findings`, `report.html` there.
 
+### Outcome — step 2, G2: a highlight only where the page draws one, 2026-10-13
+
+`looks.unmarked`, inside `looks.read`: a `mark` run stays only where the
+Cell's box holds a band of columns filled edge to edge in another colour
+than the Cell's own ground, `HIGHLIGHT` (1.2) line heights wide; otherwise
+it becomes plain text and joins its neighbours. A chip behind the whole
+Cell is its ground, so a mark inside a ribbon or a button goes too.
+Measured over all 1032 placed Cells first: type alone fills a column for at
+most 0.71 of a line height, and the corpus's one partial fill —
+`sample_css_0004`'s `<style>` code span — is 4.59.
+
+**Six runs unmarked, on exactly the four pages; four pages moved.**
+
+| page | against step 1 |
+|---|---|
+| `cv_0013` | **better** — `native` no longer on a yellow band |
+| `nonlatin_0014` | **better** — `myDATA` plain, as printed |
+| new: `letter_0016` | **better** — `08812274` plain |
+| new: `pricing_0017` | **better** — `£144` plain; `POPULAR` and `14-day` were inside the ribbon and the button and look the same |
+
+No word changed; `vanished` 55. Run `S8-2-marks`.
+
 ## 6. The sweep's prediction — to register at step U, before `S8-sweep` finishes
 
 Register it in this section, with the commit, before the sweep ends:

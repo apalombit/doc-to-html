@@ -88,6 +88,10 @@ Per Zone it is not clearly right: the serif pages' footers and subtitles
 fall to 0.63, and the sans pages' Zones reach 0.58. `report_0011`'s table,
 set in Arial on a Palatino page, is one face with its page.
 
+**Highlights — spec 0012, G2.** A `mark` run the inline-runs pass returned
+is kept only where the page draws a fill behind part of its Cell's line;
+otherwise it is plain text (`unmarked`). The words never change.
+
 Every threshold sits in the gap of its distribution, measured on 2026-10-12
 over the placed Cells of the eleven pages whose picture is its own HTML,
 each labelled with the size, weight, style and colour Chrome computed for the
@@ -100,7 +104,7 @@ from typing import Any, Sequence
 
 import numpy as np
 
-from .ir import BBox, Cell, Document, Kind, Look, RowRole, Stroke, Style, Zone
+from .ir import BBox, Cell, Document, Kind, Look, RowRole, Run, Stroke, Style, Zone
 from .locate import cells_of
 from .preprocess import ImageArray, _cv2, crop_origin
 from .style import SAME_COLOUR, body_glyph, dominant, type_mask
@@ -198,6 +202,20 @@ for it to stand on a chip. Over every placed Cell of the fourteen
 screenshots: 0 for a ground that goes on, bar `darkdeck_0009`'s `184` at 31
 on a KPI card near its edge; 61 and over for the corpus's fifteen chips —
 seven SKU tags, two NEW badges, six pills."""
+
+HIGHLIGHT = 1.2
+"""How wide, in the Cell's own line heights, a band of columns filled edge
+to edge in another colour than the Cell's ground must be for the page to
+draw a highlight there — spec 0012, G2. Measured 2026-10-13 over all 1032
+placed Cells of the twenty-one: type alone fills a column for at most
+**0.71** of a line height (`receipt_0010`'s blurred `Castleton CT9 2BN`,
+`cv_0013`'s letter-spaced `INTERESTS`), and the one fill behind part of a
+line, `sample_css_0004`'s `<style>` code span, is **4.59**. A highlighted
+word of three letters is about 1.5."""
+
+FILLED = 0.9
+"""The share of a column's pixels off the Cell's ground for it to count as
+filled edge to edge."""
 
 
 def _lines(ink: ImageArray) -> list[tuple[int, int]]:
@@ -612,6 +630,67 @@ def _drawn_ground(zone: Zone, row: int | None, style: Style) -> tuple[int, int, 
     return zone.fill or style.page_bg
 
 
+def _highlighted(rgb: ImageArray, box: BBox) -> bool:
+    """Whether the page draws a fill behind part of this Cell's line: a band
+    of columns filled edge to edge, `HIGHLIGHT` line heights wide, in another
+    colour than the Cell's own ground. A chip behind the whole Cell is its
+    ground, so it does not count."""
+    height, width = rgb.shape[:2]
+    left, top = max(0, int(box.left * width)), max(0, int(box.top * height))
+    right = min(width, int(np.ceil(box.right * width)))
+    bottom = min(height, int(np.ceil(box.bottom * height)))
+    pixels = np.asarray(rgb[top:bottom, left:right], dtype=np.int64)
+    if pixels.size < 60:
+        return False
+    off = np.abs(pixels - np.array(dominant(rgb[top:bottom, left:right]))
+                 ).sum(axis=2) > GROUND_SAME
+    widest = max((end - start for start, end in
+                  _spans(list(off.mean(axis=0) >= FILLED))), default=0)
+    return widest >= HIGHLIGHT * (bottom - top)
+
+
+def unmarked(image: ImageArray, document: Document, *,
+             inverted: bool = False) -> int:
+    """Make a `mark` run plain text wherever the page draws no highlight
+    behind its Cell — spec 0012, G2. Returns how many runs it unmarked.
+
+    **None of the twenty-one sources prints a highlight**, and the inline-
+    runs pass returned six `mark` runs on four of them — `cv_0013`'s
+    `native`, `nonlatin_0014`'s `myDATA`, `letter_0016`'s `08812274`,
+    `pricing_0017`'s `POPULAR`, `£144` and `14-day` — each drawn as a yellow
+    band the page does not have. Whether a word is highlighted is
+    perception, and the pixels are in hand, so the page decides, the way
+    colour is measured rather than asked.
+
+    A Cell not placed has no pixels to show a highlight, and its marks go:
+    the six measured were wrong six times, so a kept mark must be seen.
+    Only the run's kind changes — **marking may never change the words** —
+    and a neighbouring plain run is joined to it, so the Cell reads as one
+    run where nothing else is marked."""
+    pixels = np.asarray(image)
+    if pixels.ndim == 2:
+        pixels = np.repeat(pixels[:, :, None], 3, axis=2)
+    rgb = (255 - pixels if inverted else pixels)[:, :, ::-1]
+    count = 0
+    for zone in document.zones:
+        for cell, _ in cells_of(zone):
+            if not cell.readings or not any(run.kind == "mark"
+                                            for run in cell.readings[0].runs):
+                continue
+            if cell.bbox is not None and _highlighted(rgb, cell.bbox):
+                continue
+            joined: list[Run] = []
+            for run in cell.readings[0].runs:
+                kind = "text" if run.kind == "mark" else run.kind
+                count += run.kind == "mark"
+                if joined and kind == "text" and joined[-1].kind == "text":
+                    joined[-1] = Run(text=joined[-1].text + run.text)
+                else:
+                    joined.append(Run(text=run.text, kind=kind))
+            cell.readings[0].runs = joined
+    return count
+
+
 def read(image: ImageArray, document: Document, *, photographed: bool = False,
          inverted: bool = False) -> None:
     """Set `Cell.look` on every placed Cell — spec 0011, step 4. `image`
@@ -624,6 +703,7 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
             cell.look = None
     if document.style is not None:
         document.style.face = None
+    unmarked(image, document, inverted=inverted)
     _blocks(document)
     body = body_glyph(image, document.zones)
     if not body:

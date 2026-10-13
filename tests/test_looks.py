@@ -551,3 +551,68 @@ class TestFace:
         again = Document.from_json(document.to_json())
         assert again.style is not None and again.style.face == "mono"
 
+
+def marked(page: Page, text: str, word: str) -> Cell:
+    """`text` on the page, its Cell read with `word` as a `mark` run."""
+    entry = page.put(text)
+    before, _, after = text.partition(word)
+    entry.readings[0].runs = [Run(text=before), Run(text=word, kind="mark"),
+                              Run(text=after)]
+    return entry
+
+
+class TestHighlights:
+    """Spec 0012, G2: a `mark` run stays only where the page draws one."""
+
+    def test_a_mark_on_plain_ground_becomes_text_and_keeps_its_words(self) -> None:
+        page = body_page()
+        entry = marked(page, "Registered in England No. 08812274", "08812274")
+        document = page.document()
+
+        assert looks.unmarked(page.image, document) == 1
+        assert [run.kind for run in entry.runs] == ["text"]
+        assert entry.text == "Registered in England No. 08812274"
+
+    def test_a_fill_behind_the_word_keeps_the_mark(self) -> None:
+        page = body_page()
+        entry = marked(page, "Registered in England No. 08812274", "08812274")
+        assert entry.bbox is not None
+        top, bottom = int(entry.bbox.top * HEIGHT), int(entry.bbox.bottom * HEIGHT)
+        highlit = page.image.copy()
+        under = highlit[top:bottom, 260:340]
+        under[(under > 200).all(axis=2)] = (120, 240, 255)
+        document = page.document()
+
+        assert looks.unmarked(highlit, document) == 0
+        assert [run.kind for run in entry.runs] == ["text", "mark", "text"]
+
+    def test_a_chip_behind_the_whole_line_is_its_ground_not_a_highlight(self) -> None:
+        """`pricing_0017`'s ribbon: `MOST POPULAR` on blue, `POPULAR` marked.
+        The chip is drawn from `Look.fill`; a mark on part of it is not
+        the page's."""
+        page = body_page()
+        entry = page.put("MOST POPULAR", ink=(255, 255, 255), ground=(200, 90, 70))
+        entry.readings[0].runs = [Run(text="MOST "), Run(text="POPULAR", kind="mark")]
+        document = page.document()
+
+        assert looks.unmarked(page.image, document) == 1
+        assert [run.kind for run in entry.runs] == ["text"]
+
+    def test_a_mark_on_a_cell_not_placed_goes(self) -> None:
+        page = body_page()
+        entry = marked(page, "Registered in England No. 08812274", "08812274")
+        entry.bbox = None
+        document = page.document()
+
+        assert looks.unmarked(page.image, document) == 1
+
+    def test_other_runs_are_left_as_they_are(self) -> None:
+        page = body_page()
+        entry = page.put("Write to editor@example.com today")
+        entry.readings[0].runs = [Run(text="Write to "),
+                                  Run(text="editor@example.com", kind="link"),
+                                  Run(text=" today")]
+        document = page.document()
+
+        assert looks.unmarked(page.image, document) == 0
+        assert [run.kind for run in entry.runs] == ["text", "link", "text"]

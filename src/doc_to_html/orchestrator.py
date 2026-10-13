@@ -1327,10 +1327,14 @@ class Conversion:
     def _read_looks(self, rectified: Rectified, document: Document) -> None:
         """How each placed entry is printed — its size, weight, slant,
         colour and any chip, from its own ink: spec 0011, step 4. See `looks.read`. After
-        `_locate`, whose boxes it measures inside. Nothing a model is asked
-        reads what it sets."""
+        `_locate`, whose boxes it measures inside. It also unmarks a `mark`
+        run the page draws no highlight behind — spec 0012, G2. Nothing a
+        model is asked reads what it sets."""
         started = time.perf_counter()
         plain = rectified.plain if rectified.plain is not None else rectified.image
+        marked = sum(1 for zone in document.zones
+                     for cell, _ in locate_module.cells_of(zone)
+                     for run in cell.runs if run.kind == "mark")
         looks_module.read(plain, document, photographed=rectified.warped,
                           inverted=rectified.inverted)
         cells = [cell for zone in document.zones
@@ -1338,6 +1342,9 @@ class Conversion:
         self.trace.record(
             Stage.LAYOUT, "looks", Disposition.ACCEPTED,
             seconds=time.perf_counter() - started, measured=len(cells),
+            unmarked=marked - sum(1 for zone in document.zones
+                                  for cell, _ in locate_module.cells_of(zone)
+                                  for run in cell.runs if run.kind == "mark"),
             bold=sum(1 for cell in cells if cell.look and cell.look.bold),
             italic=sum(1 for cell in cells if cell.look and cell.look.italic),
             chips=sum(1 for cell in cells if cell.look and cell.look.fill))
