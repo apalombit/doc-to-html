@@ -679,6 +679,58 @@ Render only, so the IRs are step 3's. Three changes:
 No page worse; `vanished` 55. Run `S8-4-boxes`. G4's split, and with it
 pricing's cards, is step U.
 
+### Outcome — step 5, G5: the page's width, a photograph at its share, 2026-10-13
+
+- **The width is the page's.** The body is padded to the page's margins
+  and `.doc` is as wide as its content (`render._measure`). Across, the
+  content reaches as far as anything the page draws: type, a card's frame,
+  furniture. Inside a page frame the frame sets the margins.
+- **A photographed page is its paper.** `rectify` records
+  `Source.paper` (the quad's place, flattened) and `Source.surround` (the
+  median colour outside it). `.doc` is drawn on the page's ground at the
+  paper's place and share; the body takes the surround. Type and gaps
+  scale by the share (`_page`). `rederive.py` sets both from the picture.
+- **A frame is not a sheet** (`preprocess.SHEET_APART`, 36 on one
+  channel). Only the certificate's quad has the same colour inside and out
+  (0 apart; the receipt is 57, the ticket 196). The warp itself is G3b.
+- **A cell the page prints under the one before it is drawn under it**
+  (`render._under`). It fires on one column in the corpus: menu's
+  descriptions under its `Main courses` dishes. The row sits on its first
+  line's baseline, so the price is on the dish's line.
+
+**Three pages got worse during the step, each traced and fixed before
+commit.** The certificate stacked its signatures: its frame had been read
+as a photographed sheet, which is the `SHEET_APART` fix. `sample_css_0004`
+and `sample_table_0003` came out narrower than printed, because the width
+was taken from the type alone; it now comes from everything the page
+draws. Menu's right column wrapped four dish names, because each
+description took a column beside its dish; that is the `_under` fix.
+
+**All 21 pages moved in pixels.**
+
+| page | against step 4 |
+|---|---|
+| `darkdeck_0009` | **better** — the page at the source's width; the risks card ends with its text |
+| `receipt_0010` | **better** — drawn at its paper's share on the grey round it, its type scaled to match |
+| `invoice_0002` | **better** — `Invoice With Credit` on one line; the panels at the page's width |
+| `cv_0013` | **better** — the sidebar flush to the page's edge, the main column at its own width |
+| `catalogue_0015` | **better** — margins as printed; the cards nearer their printed size |
+| `newsletter_0008` | **better** — the three columns at their printed widths |
+| `report_0011` | **better** — margins as printed; the first paragraph breaks after `terms of the`, as printed |
+| `menu_0012` | **better** — margins as printed; the right column's descriptions under each dish, the price on the dish's line |
+| `sample_css_0004` | **better** — the width set by the cards' frames; the opening line on one line, as printed |
+| `sample_table_0003` | **better** — the table at the page's width |
+| `sample_semantic_0005` | **better** — margins as printed; TL;DR wraps as printed |
+| `form_0007`, `statement_0006`, `nonlatin_0014`, `invoice_0001` | **better**, minor — margins and width as printed |
+| new: `ticket_0020` | **better** — on its slate surround at its share |
+| new: `certificate_0021` | **better** — the signatures beside the seal, the page's proportions nearer the source's. The frame sits nearer the edge than printed, because the warp crops to it (G3b) |
+| new: `letter_0016` | **better** — margins as printed; the three body paragraphs run to 4, 4 and 3 lines, as printed (they were 3, 3, 3) |
+| new: `paper_0018` | **better**, minor — width as printed; the footnote wraps as printed |
+| new: `pricing_0017` | **same** — at its width; the cards are step U's |
+| new: `timetable_0019` | **same** — margins as printed; still one lesson row (G9, U) |
+
+No page worse; `vanished` 55. Run `S8-5-width`. Tests: `tests/test_width.py`.
+
 ## 6. The sweep's prediction — to register at step U, before `S8-sweep` finishes
 
 Register it in this section, with the commit, before the sweep ends:

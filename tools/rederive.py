@@ -25,7 +25,9 @@ and can be recomputed from it, in the order a Conversion runs them:
        bar, header bar, border
                                     remeasure_style.remeasure  (_measure_chrome)
        and each leading heading's size      (_measure_type)
-    4. Shortfalls re-measured, since step 1 changes a read-line count
+    4. a photographed page's paper and its surround — spec 0012, G5
+                                    preprocess.rectify   (Source.paper)
+       and Shortfalls re-measured, since step 1 changes a read-line count
                                     orchestrator.shortfall  (_measure_shortfalls)
     5. Probes re-run over the tables as they now stand
                                     probes.run         (after _measure_type)
@@ -137,6 +139,9 @@ def rederive(document: Document, png: Path) -> None:
     remeasure(document, png)
 
     rectified = rectify(png)
+    # Spec 0012, G5: a photographed page's paper and what surrounds it.
+    document.source.paper = rectified.source.paper
+    document.source.surround = rectified.source.surround
     image = rectified.image
     document.shortfalls = [
         found for index, zone in enumerate(document.zones)

@@ -342,6 +342,14 @@ filling a white image has no page edge to find, and the largest contour is the
 image border. Warping to the border is a no-op with rounding error attached.
 """
 
+SHEET_APART = 36
+"""How far, on its most different channel, a sheet's colour must differ from what lies round it
+for the quadrilateral to be a sheet in a picture — `Source.paper`, spec 0012,
+G5. `certificate_0021`'s double frame is a quadrilateral too, cream inside
+and cream outside (0 apart); the receipt's paper sits on grey (57 on one
+channel), the ticket's on slate (196). A frame drawn on a page is not a
+photographed page, and its picture is drawn as a page."""
+
 MAX_DESKEW_DEGREES = 15.0
 """Beyond this, the estimate is not skew.
 
@@ -1728,6 +1736,7 @@ def rectify(path: Path) -> Rectified:
     rectified = resize_long_edge(equalise(straight), TARGET_LONG_EDGE)
     # Same geometry, none of the photometry. See `Rectified.plain`.
     plain = resize_long_edge(straight, TARGET_LONG_EDGE)
+    surround = None if quad is None else surround_of(image, quad)
 
     return Rectified(
         image=rectified,
@@ -1741,8 +1750,43 @@ def rectify(path: Path) -> Rectified:
             height=height,
             rectified_width=rectified.shape[1],
             rectified_height=rectified.shape[0],
+            paper=None if quad is None or surround is None else paper_box(quad, width, height),
+            surround=surround,
         ),
     )
+
+
+def paper_box(quad: ImageArray, width: int, height: int) -> BBox:
+    """The paper's place in the picture and its size flattened, normalised —
+    `Source.paper`, spec 0012, G5: centred where the quadrilateral is, as wide
+    and as tall as `warp_to_quad` flattens it."""
+    top_left, top_right, bottom_right, bottom_left = np.asarray(quad, dtype=float)
+    wide = max(float(np.linalg.norm(top_right - top_left)),
+               float(np.linalg.norm(bottom_right - bottom_left)))
+    tall = max(float(np.linalg.norm(bottom_left - top_left)),
+               float(np.linalg.norm(bottom_right - top_right)))
+    middle_x, middle_y = (float(v) for v in np.asarray(quad, dtype=float).mean(axis=0))
+    return BBox(round((middle_x - wide / 2) / width, 5), round((middle_y - tall / 2) / height, 5),
+                round((middle_x + wide / 2) / width, 5), round((middle_y + tall / 2) / height, 5))
+
+
+def surround_of(image: ImageArray, quad: ImageArray) -> tuple[int, int, int] | None:
+    """The picture's colour round the paper, RGB — the median of every pixel
+    outside the quadrilateral. `Source.surround`. None where there is nothing
+    outside, or where it is the sheet's own colour (`SHEET_APART`): a frame
+    the page draws, not a sheet the picture holds."""
+    cv2 = _cv2()
+    inside = np.zeros(image.shape[:2], np.uint8)
+    cv2.fillPoly(inside, [np.asarray(quad, dtype=np.int32)], 1)
+    pixels = np.asarray(image).reshape(-1, 3)
+    outside, sheet = pixels[inside.ravel() == 0], pixels[inside.ravel() == 1]
+    if len(outside) == 0 or len(sheet) == 0:
+        return None
+    around, paper = np.median(outside, axis=0), np.median(sheet, axis=0)
+    if float(np.abs(around - paper).max()) < SHEET_APART:
+        return None
+    blue, green, red = (int(v) for v in around)
+    return red, green, blue
 
 
 def slice_points(height: int, budget: int = MODEL_INPUT_LONG_EDGE,

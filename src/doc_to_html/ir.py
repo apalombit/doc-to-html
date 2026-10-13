@@ -709,6 +709,14 @@ class Source:
     height: int
     rectified_width: int | None = None
     rectified_height: int | None = None
+    paper: BBox | None = None
+    """On a photographed page, where the paper lies in the picture and how
+    large it is flattened, normalised to the picture — spec 0012, G5: the
+    render draws the page at this share of the picture, not across all of
+    it. None for a screenshot or a scan, whose paper is the picture."""
+    surround: tuple[int, int, int] | None = None
+    """On a photographed page, the colour the picture shows round the
+    paper, RGB. None where there is no paper's edge."""
 
 
 @dataclass
@@ -906,7 +914,7 @@ def _zone(data: dict[str, Any]) -> Zone:
 
 def _decode_document(data: dict[str, Any]) -> Document:
     return Document(
-        source=Source(**data["source"]),
+        source=_source(data["source"]),
         ir_version=data.get("ir_version", IR_VERSION),
         rectifier_version=data.get("rectifier_version", RECTIFIER_VERSION),
         hint=data.get("hint"),
@@ -953,6 +961,14 @@ def _decode_document(data: dict[str, Any]) -> Document:
         separators=[float(y) for y in data.get("separators", [])],
         furniture=[_furniture(f) for f in data.get("furniture", [])],
     )
+
+
+def _source(data: dict[str, Any]) -> Source:
+    fields = dict(data)
+    paper = fields.pop("paper", None)
+    surround = fields.pop("surround", None)
+    return Source(**fields, paper=None if paper is None else BBox(**paper),
+                  surround=_colour(surround))
 
 
 def _furniture(data: dict[str, Any]) -> Furniture:

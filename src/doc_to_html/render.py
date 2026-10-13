@@ -179,10 +179,16 @@ def _page(document: Document) -> _Page:
     source = document.source
     wide = source.rectified_width or source.width
     tall = source.rectified_height or source.height
-    scale = source.width / wide if wide else 1.0
-    body = (document.style.body_px if document.style is not None
+    # Spec 0012, G5: a photographed page is drawn at its paper's share of the
+    # picture, so its type and its gaps are that share of what they would be
+    # across the whole picture. `Style.body_px` is measured as if the paper
+    # filled it.
+    share = source.paper.right - source.paper.left if source.paper is not None else 1.0
+    across = source.width * share
+    scale = across / wide if wide else 1.0
+    body = (document.style.body_px * share if document.style is not None
             and document.style.body_px else 16.0)
-    return _Page(y=tall * scale, x=float(source.width), body=body)
+    return _Page(y=tall * scale, x=float(across), body=body)
 
 
 ABOVE_INK = {"p": 0.31, "h1": 0.39, "table": 0.75, "dl": 0.31, "title": 0.88,
@@ -889,25 +895,11 @@ def _style_css(document: Document) -> str:
     compares the most-saturated non-neutral on each side, so a fabricated
     accent turns a clean 0.00 into a finding.
     """
-    # `document.page_px` is measured, traced and carried in the IR, and the
-    # renderer deliberately does **not** act on it yet. Run `89-style-record`
-    # set `.doc` to the source's own width and `invoice_0002`'s
-    # `beside_agreement` fell 0.640 -> 0.295 — a hard-tier regression, isolated
-    # to the width by re-rendering that run's own IR four ways with the palette
-    # held fixed. It bought `height_ratio` 1.63 -> 1.60 on that one document and
-    # nothing on the other four, which do not wrap at either width.
-    #
-    # The cause is the band model rather than the number: at the wider column
-    # our `dl` rows re-wrap and stop lining up row for row with the source's
-    # panels, so pairs the source has beside each other — `Email` beside
-    # `Phone`, and six more — stop overlapping vertically in ours. That is
-    # column shares and `Zone.align`, which stayed in **A2**.
-    #
-    # **What would have to become true**, written down so this is re-tried
-    # rather than forgotten: A2 gives a Band a real column model instead of
-    # `flex:1 1 12rem`, and `invoice_0002`'s `beside_agreement` at the source's
-    # width matches or beats its value at 52rem. The width is already in the IR
-    # waiting for that.
+    # `document.page_px` was carried and ignored from run 89 to spec 0012:
+    # at the source's width `invoice_0002`'s `dl` rows re-wrapped and its
+    # beside score fell, and the shelf note asked for "a real column model"
+    # first. Spec 0008's lanes and Regions are that model, and spec 0012, G5
+    # acts on the width — see `_measure`.
     rules: list[str] = []
     # Spec 0009, step D, 4b — emitted only where there is a rule to draw, so a
     # page without one renders as it did. Since spec 0012, G3a, each rule
@@ -939,8 +931,10 @@ def _style_css(document: Document) -> str:
     if style.body_px is not None:
         # `--body` is what a Cell's measured size is in ems of (4a): an
         # element's own `em` is its parent's, and a footer's is 0.875 of it.
-        rules.append(f"body {{ font-size:{style.body_px:g}px;"
-                     f" --body:{style.body_px:g}px; }}")
+        body = round(_page(document).body, 2)
+        rules.append(f"body {{ font-size:{body:g}px;"
+                     f" --body:{body:g}px; }}")
+    rules.extend(_measure(document))
     if style.face in FACE_CSS:
         rules.append(f"body {{ font-family:{FACE_CSS[style.face]}; }}")
     root = [
@@ -980,6 +974,55 @@ def _style_css(document: Document) -> str:
         root.append(f"--accent:{_rgb(style.accent)}")
 
     return _wrap(root, rules)
+
+
+def _measure(document: Document) -> list[str]:
+    """The page's own width and margins — spec 0012, G5 — where the house
+    drew every page in a 52rem column with 2rem round it.
+
+    The body is padded to the page's margins and `.doc` is as wide as the
+    page's type, so at the source's width every line wraps where the page
+    wraps it; in a wider window the page stays centred. A frame round the
+    page is `.doc`'s border (`_page_frame`), so the margins are outside it.
+    **A photographed page is its paper**: `.doc` is drawn on the paper's
+    ground at the paper's place and share of the picture, padded to its
+    margins on the paper, and the body takes the colour round it."""
+    if document.page_px is None or document.style is None:
+        return []
+    boxes = [zone.bbox for zone in document.zones if zone.bbox is not None]
+    if not boxes:
+        return []
+    page = _page(document)
+    frame = furnish.anchor(document).page
+    # Across, the page's content reaches as far as anything it draws: a
+    # card's frame and a rule run past the type they hold (sample_css_0004).
+    # Inside a page frame the type sets the width, as `_page_frame` pads.
+    drawn = boxes if frame is not None else [
+        *boxes, *(zone.frame for zone in document.zones if zone.frame is not None),
+        *(item.bbox for item in document.furniture)]
+    content = _union(drawn)
+    tops = [t for zone in document.zones if (t := _top(zone, page)) is not None]
+    bottoms = [b for zone in document.zones if (b := _bottom(zone, page)) is not None]
+    if frame is not None:
+        edges = (frame.bbox.top * page.y, page.x - frame.bbox.right * page.x,
+                 page.y - frame.bbox.bottom * page.y, frame.bbox.left * page.x)
+    else:
+        edges = (min(tops, default=0.0), page.x - content.right * page.x,
+                 page.y - max(bottoms, default=page.y), content.left * page.x)
+    wide = (content.right - content.left) * page.x
+    paper = document.source.paper
+    if paper is None:
+        return [f"body {{ padding:{' '.join(_px(e) for e in edges)}; }}",
+                f".doc {{ max-width:{wide:.0f}px; }}"]
+    across, down = document.source.width, document.source.height
+    around = (paper.top * down, across - paper.right * across,
+              down - paper.bottom * down, paper.left * across)
+    rules = [f"body {{ padding:{' '.join(_px(e) for e in around)}; }}",
+             f".doc {{ max-width:{wide:.0f}px; padding:{' '.join(_px(e) for e in edges)};"
+             " background:var(--page-bg); }"]
+    if document.source.surround is not None:
+        rules.append(f"html, body {{ background:{_rgb(document.source.surround)}; }}")
+    return rules
 
 
 def _wrap(root: list[str], rules: list[str]) -> str:
@@ -1410,6 +1453,36 @@ def _unit(unit: list[Zone], document: Document, page: _Page, *,
     return _section(head, body, document, plain=plain, extra=extra)
 
 
+UNDER_SLACK = 0.004
+"""How far, as a share of the page, a cell may overlap the bottom of the
+cell before it, or start left of it, and still be printed under it."""
+
+
+def _under(zone: Zone) -> set[int]:
+    """Columns the page prints *under* the column before them, not beside it
+    — spec 0012, G5: `menu_0012`'s `Main courses` holds each dish's
+    description as a second cell, and the page prints it below the dish,
+    from the dish's left. Drawn beside, it took a third of the column and
+    wrapped four dish names once the page had its own width.
+
+    A column qualifies when every entry in it has a box that starts below
+    its row's previous cell and inside that cell's span. One header entry, or
+    one entry with no box, and it is a column."""
+    width = max((len(row.cells) for row in zone.rows), default=0)
+    under = set()
+    for column in range(1, width):
+        entries = [(row, row.cells[column], row.cells[column - 1]) for row in zone.rows
+                   if column < len(row.cells) and row.cells[column].text.strip()]
+        if entries and all(
+                row.role is not RowRole.HEADER and cell.bbox is not None
+                and before.bbox is not None
+                and cell.bbox.top >= before.bbox.bottom - UNDER_SLACK
+                and before.bbox.left - UNDER_SLACK <= cell.bbox.left < before.bbox.right
+                for row, cell, before in entries):
+            under.add(column)
+    return under
+
+
 def _numeric_columns(zone: Zone) -> set[int]:
     """Column indices whose data rows are predominantly numbers.
 
@@ -1495,6 +1568,7 @@ def _table(zone: Zone, document: Document) -> str:
     moves no other document.
     """
     numeric = _numeric_columns(zone)
+    under = _under(zone)
     roles = [row.role for row in zone.rows]
     data_at = [i for i, role in enumerate(roles) if role is RowRole.DATA]
     opening = next((i for i, role in enumerate(roles)
@@ -1546,18 +1620,34 @@ def _table(zone: Zone, document: Document) -> str:
             return f' style="{looked}"' if looked else ""
 
         led = _leader(row, page)
+
+        def entry(index: int, c: Cell) -> str:
+            text = (f'<span class="leader" style="{led}">{_cell(c, document)}</span>'
+                    if led and c is row.cells[0] else _cell(c, document))
+            following = index + 1
+            while following in under and following < len(row.cells):
+                below = row.cells[following]
+                if below.text.strip():
+                    look = _look(below, house=ink)
+                    text += (f'<div{f" style=\"{look}\"" if look else ""}>'
+                             f'{_cell(below, document)}</div>')
+                following += 1
+            return text
+
         cells = "".join(
             f'<{tag}{" class=\"num\"" if index in numeric else ""}{styled(c, index)}>'
-            + (f'<span class="leader" style="{led}">{_cell(c, document)}</span>'
-               if led and c is row.cells[0] else _cell(c, document))
-            + f"</{tag}>"
-            for index, c in enumerate(row.cells)
+            + entry(index, c) + f"</{tag}>"
+            for index, c in enumerate(row.cells) if index not in under
         )
         in_place = places[position]
         hatch = anchors.rows.get((index_of, position)) if anchors else None
         styled_row = _row_style(row, page, opens=not in_place) if read else ""
         if hatch is not None:
             styled_row = _merged(styled_row, _hatching(hatch, page))
+        if any(column < len(row.cells) and row.cells[column].text.strip() for column in under):
+            # The price is printed on the dish's line, not between it and
+            # the line under it.
+            styled_row = _merged(styled_row, "vertical-align:baseline")
         groups[RowRole.DATA if in_place else row.role].append(
             f"<tr{styled_row}>{cells}</tr>")
 
