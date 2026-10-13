@@ -13,7 +13,7 @@ as a run the report and the visual review read like any other.
     python tools/replay_run.py <run or frozen dir> --label <label> \\
         --documents invoice_0001 --swap invoice_0001:07=answer.json
     python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \\
-        --documents sweep --previous tests/frozen/s5-result/scores.json
+        --documents sweep --previous tests/frozen/s6-result/scores.json
 
 The source is a run directory, read from each document's `trace.json`, or a
 frozen directory carrying `answers/<document>.json` — the same calls with

@@ -63,7 +63,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-12: spec 0011 done; `S6-sweep` awaits Alessandro's decision. The baseline is still `tests/frozen/s5-result/`, and work is judged by eye.**
+**Where the project is — 2026-10-13: spec 0011 done; the baseline is `tests/frozen/s6-result/`; the corpus is being widened before the next spec. Work is judged by eye.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -106,7 +106,9 @@ Spec 0011   Place every entry where the page puts it — planned 2026-10-12
               4 lines: 4a size, weight, italic DONE  4b colour DONE  4c rules DONE
                        4d leaders DONE  4e spacing DONE  4f typeface DONE
               5 sweep S6-sweep on 7c12935, prediction held, 14 pages better
-              DECISION PENDING: S6-sweep as the baseline; the receipt's size
+              DECIDED 2026-10-13: S6-sweep is the baseline, frozen as s6-result/
+Next        six new corpus documents, one sweep on unchanged code over all
+              21, then a report notebook for the next spec's clean chat
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
@@ -122,13 +124,13 @@ list, because content must match absolutely — it is a pointer to a page to
 open, not a gate. He checks every run himself too. Spec 0011's "How to
 work" is the full statement.
 
-**The baseline is `tests/frozen/s5-result/` since 2026-10-12** — sweep
-`S5-sweep`, commit `4a5fe3f`, spec 0010's outcome, Alessandro's decision,
-frozen at spec 0011's step 0 with its 518 answers. It sits below `s3-result/`, the floor before it, on
-five legs, accepted: darkdeck tau and beside, menu `béarnaise`, one report
-precision token, and one coincidental beside pair each on newsletter and
-nonlatin. Spec 0010's "Outcome — step E" §5 names them. Each earlier floor,
-and why it moved, is in its README and in `docs/status.md`.
+**The baseline is `tests/frozen/s6-result/` since 2026-10-13** — sweep
+`S6-sweep`, commit `7c12935`, spec 0011's outcome, Alessandro's decision,
+frozen with its 518 answers (byte-identical to `S5-sweep`'s). It sits below
+`s5-result/`, the floor before it, on four beside legs, accepted:
+catalogue, cv, darkdeck and menu — cross-column coincidences, spec 0011's
+"Outcome — step 5" §3a. Each earlier floor, and why it moved, is in its
+README and in `docs/status.md`.
 
 **Spec 0011 is done; its "Outcome — step 5" is the error analysis of
 `S6-sweep`** — faults by stage, directions ranked — and its handover prompt
@@ -284,14 +286,15 @@ says they are.
 | `reshot/` | the first sweep on whole pictures, `Q5-10-reshot-sweep` | record — the floor and the control 2026-09-29 to 2026-09-30 |
 | `q5-result/` | Q5's fifteen documents beside their scores and the answers that made them, sweep `Q5-40-sweep` | record — the floor and the control 2026-09-30 to 2026-10-11 |
 | `s3-result/` | spec 0008's fifteen documents beside their scores and the answers that made them, sweep `S3-sweep` | record — the floor and the control 2026-10-11 to 2026-10-12 |
-| **`s5-result/`** | **spec 0010's fifteen documents, scores and answers, sweep `S5-sweep` — frozen at spec 0011's step 0** | **the baseline, from 2026-10-12** |
+| `s5-result/` | spec 0010's fifteen documents, scores and answers, sweep `S5-sweep` — frozen at spec 0011's step 0 | record — the baseline 2026-10-12 to 2026-10-13 |
+| **`s6-result/`** | **spec 0011's fifteen documents, scores and answers, sweep `S6-sweep`** | **the baseline, from 2026-10-13** |
 
 **Score against the baseline by path**, and always with `--documents sweep` —
 without a `fixtures.txt` the report silently scores the iterate five:
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s5-result/scores.json
+    --documents sweep --previous tests/frozen/s6-result/scores.json
 ```
 
 **Each floor move was measured, not argued:** the new floor was no lower than
@@ -306,11 +309,13 @@ pipeline, and its README names every leg on which it falls below
 render's cross-column T3 beside agreements, and `catalogue_0015` printed a
 spec line for the first time with one `×` read as `x`. Its README names the
 three legs. **`s5-result/` is the third**, five legs below `s3-result/`,
-accepted 2026-10-12; its README names them.
+accepted 2026-10-12; its README names them. **`s6-result/` is the fourth**,
+four beside legs below `s5-result/`, accepted 2026-10-13.
 
 **A directory holding documents beside scores buys a loop, not a number.**
-Scored straight out of `s5-result/`, **15 documents, 0 differing fields**, and **`tools/rederive.py`
-over it reproduces it byte for byte** at the commit it was taken on. When code downstream of the model moves, `rederive.py` brings
+Scored straight out of `s6-result/`, **15 documents, 0 differing fields**, and **`tools/rederive.py`
+over it reproduces every page** at the commit it was taken on — 14 of 15
+files byte for byte; `form_0007` differs in one IR field, its README says why. When code downstream of the model moves, `rederive.py` brings
 the IRs up to it — re-applying every step downstream of the model — and that,
 not a plain re-render, is the baseline a change is measured one apart from. So a
 change downstream of the model is measured pairwise, in about a minute, with
@@ -320,12 +325,12 @@ to `rederive.py`**, or the loop measures yesterday's code. It is not a target
 to match.
 
 **A directory that also holds the answers buys a second loop.** `q5-result/`
-was the first to carry `answers/`, and `s3-result/` and `s5-result/` carry them too — each document's model answers, in the
+was the first to carry `answers/`, and `s3-result/`, `s5-result/` and `s6-result/` carry them too — each document's model answers, in the
 order they were asked — and **`tools/replay_run.py` serves them to today's
 code through a real Conversion**: wire, mapper and every pass, which
 `rederive.py` cannot re-run. With `--swap` it serves one new answer, so a
 prompt change probed on one crop is measured on its whole document, ratchet
-included, with no sweep. It reproduces `s5-result/` **15 of 15 byte for byte** from its answers. A
+included, with no sweep. It reproduces `s6-result/` **15 of 15 byte for byte** from its answers. A
 document it marks **ASKED MORE THAN THE RUN** is not a measurement: the
 change moved a crop, and a crop costs a sweep.
 

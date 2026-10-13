@@ -1,4 +1,6 @@
-# `s5-result/` — spec 0010's sweep, and **the baseline** since 2026-10-12
+# `s5-result/` — spec 0010's sweep; the baseline 2026-10-12 to 2026-10-13, now record
+
+> **Record since 2026-10-13**, when `s6-result/` became the baseline.
 
 > **For spec 0011 the scores here are recorded, not gated.** Alessandro's
 > operating preference of 2026-10-12: every step is judged by opening its

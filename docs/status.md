@@ -1,4 +1,4 @@
-# Status — 2026-10-12 (**spec 0011 done — `S6-sweep` awaits Alessandro's decision; the baseline is still `tests/frozen/s5-result/`**)
+# Status — 2026-10-13 (**spec 0011 done — the baseline is `tests/frozen/s6-result/`; the corpus is being widened**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-12, after
@@ -79,7 +79,7 @@ Spec 0011   Place every entry where the page puts it — issue #34, planned 2026
                  4e spacing inside a Zone   DONE, eleven pages better
                  4f typeface class   DONE, five pages better
               5  one sweep, S6-sweep   DONE, prediction held, 14 pages better
-              DECISION PENDING: S6-sweep as the baseline; the receipt's size
+              DECIDED 2026-10-13: S6-sweep is the baseline, frozen as s6-result/
 ```
 
 Q1-Q4's result tables moved to
@@ -87,29 +87,36 @@ Q1-Q4's result tables moved to
 
 ---
 
-## The baseline — `tests/frozen/s5-result/`, DECIDED 2026-10-12
+## The baseline — `tests/frozen/s6-result/`, DECIDED 2026-10-13
 
-Sweep `S5-sweep`, commit `4a5fe3f` — spec 0010's sweep, all fifteen
-documents, 518 answers, frozen at spec 0011's step 0 with its documents,
-scores, answers and `dth_env.txt`. Proved the day it was frozen:
-`tools/rederive.py` over it **15 of 15 byte-identical**, `tools/replay_run.py`
-from its answers **15 of 15 byte-identical**, and the rederive scored **15
-documents, 0 differing fields** against its `scores.json`. Its README has
-what moved against `s3-result/`.
+Sweep `S6-sweep`, commit `7c12935` — spec 0011's sweep, all fifteen
+documents, 518 answers byte-identical to `S5-sweep`'s, frozen with its
+documents, scores, answers and `dth_env.txt`. Proved the day it was frozen:
+- `tools/replay_run.py` from its answers: **15 of 15 byte-identical**.
+- the rederive scored: **15 documents, 0 differing fields**.
+- `tools/rederive.py` over it: **15 of 15 identical pages, 14 of 15
+  byte-identical files**. `form_0007` differs in Zone 5's `align` inside
+  its IR, a step-order effect named in its README.
 
-It sits below `s3-result/`, the floor before it, on five legs, all accepted
-by that decision:
+It sits below `s5-result/` on four beside legs, accepted: catalogue, cv,
+darkdeck and menu — cross-column coincidences. Its README has what moved.
+
+```
+python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
+    --documents sweep --previous tests/frozen/s6-result/scores.json
+```
+
+### `s5-result/` — the baseline 2026-10-12 to 2026-10-13
+
+Sweep `S5-sweep`, commit `4a5fe3f`, 518 answers, frozen at spec 0011's
+step 0 and reproduced 15 of 15 by every loop. It sat below `s3-result/`, the
+floor before it, on five legs, all accepted by that decision:
 - `darkdeck_0009` tau and beside — its P95 tile is read as a table;
 - `menu_0012` — `béarnaise` read without its accent;
 - `report_0011` precision — one `1` counted as surplus;
 - `newsletter_0008` and `nonlatin_0014` beside — one coincidental pair each.
 
 Spec 0010's "Outcome — step E", §5, has the table.
-
-```
-python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s5-result/scores.json
-```
 
 `--documents sweep` is not optional: without a `fixtures.txt` the report
 scores the iterate five.
@@ -412,9 +419,9 @@ the last two entries.
 - **Never cite or analyse a past run.** Only a run taken in this session counts.
   **The exceptions are committed files:** `tests/frozen/run84/`,
   `a1-checkpoint/`, `a0-checkpoint/`, `a0-result/`, `a1-result/`,
-  `a2-result/`, `a3-result/`, `reshot/`, `q5-result/`, `s3-result/` — all
-  kept as record — and **`s5-result/`, the baseline** since spec 0011's
-  step 0. `a3-result/` was scored on pictures missing their last lines;
+  `a2-result/`, `a3-result/`, `reshot/`, `q5-result/`, `s3-result/`,
+  `s5-result/` — all kept as record — and **`s6-result/`, the baseline**
+  since 2026-10-13. `a3-result/` was scored on pictures missing their last lines;
   quote it only as that.
 - **The committed corpus picture is a screenshot of its own HTML.**
   `TestTheCorpusPictureIsItsOwnHTML` re-shoots the ten authored pages and
@@ -455,7 +462,7 @@ the last two entries.
 FIXTURE=sweep tools/iterate.sh <label>        # all fifteen, ~1¾ h — anything reviewed
 FIXTURE=iterate tools/iterate.sh <label>      # the five, ~20 min — throwaway checks only
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s5-result/scores.json
+    --documents sweep --previous tests/frozen/s6-result/scores.json
 python tools/visual_review.py debug/runs/<label> --previous debug/runs/<older>
 python tools/visual_review.py debug/runs/<label> --check
 ```
@@ -465,8 +472,8 @@ python tools/visual_review.py debug/runs/<label> --check
 
 **Three offline loops, each proved before it was used, and a sweep. Say which
 produced any number you report.** Start them from the baseline,
-`tests/frozen/s5-result/`. On 2026-10-12 both `tools/rederive.py` and
-`tools/replay_run.py` over it reproduced it byte for byte. Both tools take a
+`tests/frozen/s6-result/`. On 2026-10-13 `tools/replay_run.py` over it
+reproduced it byte for byte, and `tools/rederive.py` every page. Both tools take a
 run directory as well as a frozen one.
 
 - **Downstream of the model** — renderer, style, probes. `tools/rederive.py

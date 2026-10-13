@@ -1,7 +1,7 @@
 """Draw every located Cell on its page — spec 0011, step 2's check.
 
     python tools/locate_overlay.py debug/runs/<label>
-    python tools/locate_overlay.py tests/frozen/s5-result --out /tmp/overlays \\
+    python tools/locate_overlay.py tests/frozen/s6-result --out /tmp/overlays \\
         --documents form_0007,menu_0012
 
 For each document: the Rectified Image — the frame `Cell.bbox` is in — with

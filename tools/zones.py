@@ -1,6 +1,6 @@
 """Print a rendered document's Zones, read back out of its embedded IR.
 
-    python tools/zones.py tests/frozen/s5-result/documents/form_0007.html
+    python tools/zones.py tests/frozen/s6-result/documents/form_0007.html
     python tools/zones.py debug/runs/<label> --documents form_0007,menu_0012
 
 One line per Zone — index, kind, band and column, box in source pixels,
