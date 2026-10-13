@@ -627,6 +627,29 @@ class Shortfall:
 
 
 @dataclass
+class Unclaimed:
+    """A printed line inside a Zone that no Cell claims — spec 0012, G9.
+
+    **Reported, never inserted.** The witness the Shortfall lacks:
+    `preprocess.printed_lines` is the same projection as the grid count, so
+    when decoration makes both count `timetable_0019`'s eight-row table as
+    four, the model is asked for four rows, returns four, and the shortfall
+    check finds nothing missing. tesseract is a second reader of the same
+    pixels: `locate` reads every Zone's words to place its Cells, and a line
+    of its words no placed Cell covers, alike to no Cell's text and to no
+    Title, is a line the reading does not have. Its words are never kept —
+    only where the line is, how many words it holds and its share of the
+    page's ink. See `locate.unclaimed` for what counts.
+    """
+
+    zone_index: int
+    bbox: BBox
+    words: int
+    ink_share: float = 0.0
+    """How much of the page's printed ink is in the line. See `Gap.ink_share`."""
+
+
+@dataclass
 class Caveat:
     """Something worth knowing about *how* a Zone was read, on one that was read.
 
@@ -769,6 +792,9 @@ class Document:
     failures: list[Failure] = field(default_factory=list)
     caveats: list[Caveat] = field(default_factory=list)
     shortfalls: list[Shortfall] = field(default_factory=list)
+    unclaimed: list[Unclaimed] = field(default_factory=list)
+    """Printed lines no Cell claims — spec 0012, G9, `locate.unclaimed`.
+    Empty means none was found, or nobody looked."""
     regions: list[Region] = field(default_factory=list)
     """The page's structure, top to bottom — `structure.structure`. Empty means
     nobody read it, and the page renders as Bands, as it always did."""
@@ -972,6 +998,9 @@ def _decode_document(data: dict[str, Any]) -> Document:
         failures=[Failure(**f) for f in data.get("failures", [])],
         caveats=[Caveat(**c) for c in data.get("caveats", [])],
         shortfalls=[Shortfall(**s) for s in data.get("shortfalls", [])],
+        unclaimed=[Unclaimed(zone_index=u["zone_index"], bbox=BBox(**u["bbox"]),
+                             words=u["words"], ink_share=u.get("ink_share", 0.0))
+                   for u in data.get("unclaimed", [])],
         regions=[
             Region(top=r["top"], bottom=r["bottom"], flow=Flow(r["flow"]),
                    splits=tuple(r.get("splits", ())), rows=r.get("rows", 1))

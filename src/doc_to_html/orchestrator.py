@@ -1320,7 +1320,10 @@ class Conversion:
         self.trace.record(
             Stage.LAYOUT, "locate", Disposition.ACCEPTED,
             seconds=time.perf_counter() - started,
-            placed=placed, cells=cells, unplaced=unplaced)
+            placed=placed, cells=cells, unplaced=unplaced,
+            unclaimed=[{"zone": line.zone_index, "words": line.words,
+                        "top": round(line.bbox.top, 3)}
+                       for line in document.unclaimed])
 
     def _read_fields(self, rectified: Rectified, document: Document) -> None:
         """The marks the page draws for its entries — boxes, digit combs,

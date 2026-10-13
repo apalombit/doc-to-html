@@ -44,7 +44,7 @@ from typing import Any, Iterable
 
 from .corpus import SOURCES, Source, split_of
 from .honesty import Accounting, account, document_in, loss_findings
-from .ir import Document
+from .ir import Document, Unclaimed
 from .projection import available, screenshot
 from .scoring import DocumentScore, normalise, score_document
 
@@ -289,7 +289,8 @@ def _axis(label: str, value: str, *, hard: bool = False,
 
 def flagged(document: Document) -> str:
     """What the conversion flagged about itself, for the notes beside a
-    document's pair: failed Probes, Gaps, Failures, Shortfalls and Caveats.
+    document's pair: failed Probes, Gaps, Failures, Shortfalls, lines no
+    Cell claims, and Caveats.
 
     **Here, and not on the page — spec 0012, G1, Alessandro 2026-10-13: "move
     it out of the document entirely (into report.html only)".** It was a
@@ -347,6 +348,25 @@ def flagged(document: Document) -> str:
            if s.ink_share else "")
         for s in document.shortfalls
     ]
+    # Spec 0012, G9: lines a second reader finds and no Cell claims, one
+    # item per Zone. Where and how much, never what: tesseract is a locator.
+    lines: dict[int, list[Unclaimed]] = {}
+    for line in document.unclaimed:
+        lines.setdefault(line.zone_index, []).append(line)
+    for index, found in lines.items():
+        kind = (document.zones[index].kind.value
+                if index < len(document.zones) else "?")
+        top = min(line.bbox.top for line in found)
+        bottom = max(line.bbox.bottom for line in found)
+        words = sum(line.words for line in found)
+        share = sum(line.ink_share for line in found)
+        items.append(
+            f"Zone {index} (<code>{html.escape(kind)}</code>) has "
+            f"{len(found)} printed line{'s' if len(found) != 1 else ''} no Cell "
+            f"claims, {words} words between {top * 100:.0f}% and "
+            f"{bottom * 100:.0f}% down the page"
+            + (f", {share * 100:.0f}% of the page's printed ink" if share else "")
+            + " — tesseract finds them; the reading has none of them")
     caveats = [
         f"Zone {c.zone_index} (<code>{html.escape(c.kind)}</code>) "
         f"{html.escape(c.note)}"

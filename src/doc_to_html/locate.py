@@ -64,8 +64,8 @@ from typing import Iterator, Sequence
 
 import numpy as np
 
-from .ir import BBox, Cell, Document, Kind, Zone
-from .preprocess import ImageArray, _cv2, crop_origin, zone_pixels
+from .ir import BBox, Cell, Document, Kind, Unclaimed, Zone
+from .preprocess import ImageArray, _cv2, content_ink, crop_origin, zone_pixels
 from .style import body_glyph, type_lines, type_mask
 
 TESSERACT = "tesseract"
@@ -122,6 +122,8 @@ class Word:
     text: str
     box: BBox
     line: tuple[int, int, int]
+    confidence: float = 100.0
+    """tesseract's own, 0 to 100. Read only by `unclaimed`."""
 
 
 LEADER_DOT = 0.35
@@ -229,7 +231,7 @@ def words(image: ImageArray, zone: Zone, *, glyph: float,
         found.append(Word(text, BBox(page_x(left), page_y(top),
                                      page_x(left + wide), page_y(top + tall)),
                           (int(inverted), int(cols[2]) * 1000 + int(cols[3]),
-                           int(cols[4]))))
+                           int(cols[4])), float(cols[10])))
     return found
 
 
@@ -527,6 +529,72 @@ def _from_ink(image: ImageArray, zone: Zone,
     return out
 
 
+CONFIDENT = 60.0
+"""tesseract's confidence, 0 to 100, at or above which an unclaimed word
+counts. Measured 2026-10-13 over all twenty-one at `S8-8-echo`, as the mean
+over a line's letters: the lines nothing reads — `timetable_0019`'s lost
+rows and the form's `Tick one` — stand at 65-97; what tesseract makes of a
+QR code, a hatch or letter-spaced capitals, at 0-48."""
+
+UNCLAIMED_WORDS = 2
+"""How many confident words of two letters or more make a line. One word
+alone is how a misread Title (`puppincs` for `Puddings`) or a stray fragment
+looks; every line the reading lost holds two or more."""
+
+
+def _covered(word: Word, boxes: Sequence[BBox]) -> bool:
+    """Whether the word's centre lies in a placed Cell's box, give or take
+    `SLACK`."""
+    x = (word.box.left + word.box.right) / 2
+    y = (word.box.top + word.box.bottom) / 2
+    return any(box.left - SLACK <= x <= box.right + SLACK
+               and box.top - SLACK <= y <= box.bottom + SLACK for box in boxes)
+
+
+SLACK = 0.003
+"""A page fraction: a word's centre this far outside a Cell's box is still in
+it, for a box placed from the ink rather than from the words."""
+
+
+def _claims(text: str, words_: Sequence[Word]) -> bool:
+    """Whether one Cell's or Title's text holds at least half of a line's
+    distinct words. Word by word, because a word tesseract is unsure of is
+    left out of the line: `nonlatin_0014`'s `Ανάλυση παρεχόμενων υπηρεσιών`
+    keeps its first and last word and is still its table's Title. Distinct,
+    because the timetable's lost `12:20 Art English PE English` is not the
+    Cell `English` twice over."""
+    distinct = {word.text for word in words_}
+    return 2 * sum(word in text for word in distinct) >= len(distinct)
+
+
+def unclaimed(zone: Zone, found: Sequence[Word],
+              boxes: Sequence[BBox]) -> list[tuple[BBox, int]]:
+    """The lines of a Zone's words no Cell claims: each line's box and how
+    many words it holds — spec 0012, G9.
+
+    A word counts when tesseract is `CONFIDENT` of it and it has two letters
+    or more, and it is claimed when it lies in any placed Cell's box on the
+    page. A line of `UNCLAIMED_WORDS` or more unclaimed words is still
+    claimed when one of the Zone's Cells, or its Title, holds half its words
+    (`_claims`): a Cell placed on the wrong ink (`ticket_0020`'s `Gate
+    closes`), or one placed nowhere, still has its line read. One text at a
+    time and never the Zone's words pooled, because the rows the timetable
+    lost hold `Science` and `English` too, each a Cell of a row it read."""
+    texts = [text for text in [fold(zone.title or "")]
+             + [fold(cell.text) for cell, _ in cells_of(zone)] if text]
+    lines: dict[tuple[int, int, int], list[Word]] = {}
+    for word in found:
+        if (word.confidence >= CONFIDENT and len(word.text) >= 2
+                and not _covered(word, boxes)):
+            lines.setdefault(word.line, []).append(word)
+    out = []
+    for words_ in lines.values():
+        if len(words_) < UNCLAIMED_WORDS or any(_claims(text, words_) for text in texts):
+            continue
+        out.append((_union(words_, 0, len(words_) - 1), len(words_)))
+    return out
+
+
 def locate(image: ImageArray, document: Document) -> tuple[int, int]:
     """Set `Cell.bbox` on every Cell that can be placed — and None on every
     one that cannot, so a later round keeps no stale box. Returns (placed,
@@ -536,6 +604,7 @@ def locate(image: ImageArray, document: Document) -> tuple[int, int]:
     for zone in document.zones:
         for cell, _ in cells_of(zone):
             cell.bbox = None
+    document.unclaimed = []
     glyph = body_glyph(image, document.zones)
     if not zones or not glyph or not available():
         return 0, sum(1 for z in document.zones for cell, _ in cells_of(z)
@@ -572,4 +641,18 @@ def locate(image: ImageArray, document: Document) -> tuple[int, int]:
             cell.bbox = box
             placed += box is not None
             total += bool(cell.text.strip())
+    located = [cell.bbox for zone in document.zones for cell, _ in cells_of(zone)
+               if cell.bbox is not None]
+    ink = content_ink(image) > 0
+    height, width = ink.shape[:2]
+    index_of = {id(zone): index for index, zone in enumerate(document.zones)}
+    whole = float(ink.sum()) or 1.0
+    for zone, found in zip(zones, read):
+        for box, count in unclaimed(zone, found, located):
+            inside = ink[int(box.top * height):int(np.ceil(box.bottom * height)),
+                         int(box.left * width):int(np.ceil(box.right * width))]
+            document.unclaimed.append(Unclaimed(
+                zone_index=index_of[id(zone)], bbox=box, words=count,
+                ink_share=round(float(inside.sum()) / whole, 4)))
+    document.unclaimed.sort(key=lambda u: (u.zone_index, u.bbox.top))
     return placed, total

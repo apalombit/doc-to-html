@@ -874,6 +874,49 @@ No page worse; `vanished` 55. Run `S8-8-echo`. Tests in
 `tests/test_caption.py` (`TestATitleIsNeverPrintedTwice`) and
 `tests/test_locate.py` (`TestBetweenPlacedLines`).
 
+### Outcome — step 9, G9: the lines no Cell claims, reported, 2026-10-14
+
+`locate.unclaimed`, run inside `locate.locate` on the words it already
+reads, so rederive re-derives it. The results go into
+`Document.unclaimed`, a list of `ir.Unclaimed`: the Zone, the line's box,
+its word count and its share of the page's ink. Tesseract's words are
+never kept. `report.flagged` lists them under "Unresolved", one item per
+Zone. The trace's `locate` step records them too.
+
+**What counts:**
+- **A word:** tesseract is at least `CONFIDENT` (60) of it, and it has two
+  letters or more.
+- **Claimed by its box:** its centre lies in any placed Cell's box on the
+  page.
+- **A line:** two or more unclaimed words.
+- **Claimed by its text:** one of the Zone's Cells, or its Title, holds at
+  least half of the line's distinct words.
+
+The thresholds come from the distribution over all twenty-one at
+`S8-8-echo`. Lines nothing reads have a letter-weighted confidence of
+65–97. What tesseract makes of the ticket's QR code, a hatch or
+letter-spaced capitals has 0–48.
+
+**Tried and rejected on the way:**
+- **Matching word by word** against the Zone's whole text. The timetable's
+  lost rows hold `Science` and `English`, which are Cells of the rows it
+  read, so the lost rows were claimed.
+- **Matching the joined line against one text.** The ticket's
+  `Gate closes` Cell sits on the wrong ink and would be reported. A word
+  tesseract is unsure of drops out of the middle of
+  `Ανάλυση παρεχόμενων υπηρεσιών`, so its Title would not match either.
+
+**Found, at the baseline's answers — the only two pages:**
+
+| page | what the report names |
+|---|---|
+| new: `timetable_0019` | Zone 2 (table): **11 lines, 84 words, 24% of the page's ink**, between 41% and 93% down the page. On the picture these are every lesson row the reading lost, their room lines, `Lunch` and the legend. The 09:00 subjects it read are not named |
+| `form_0007` | Zone 3 (pairs): 1 line, 9 words, 2% — `Tick one category. Locker allocation is subject to availability.`, the line its vanished list holds |
+
+None on the other nineteen. Every page renders byte for byte as it did at
+step 8, with `vanished` still 55. Run `S8-9-unclaimed`. Tests:
+`tests/test_locate.py` (`TestUnclaimedLines`).
+
 ## 6. The sweep's prediction — to register at step U, before `S8-sweep` finishes
 
 Register it in this section, with the commit, before the sweep ends:

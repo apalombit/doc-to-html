@@ -14,10 +14,11 @@ import pytest
 
 from doc_to_html import locate
 from doc_to_html.ir import (BBox, Block, Document, Kind, Pair, Row, RowRole,
-                            Source, Zone, cell)
+                            Source, Unclaimed, Zone, cell)
 from doc_to_html.locate import (Word, _between, _from_grid, _from_pairs, fold, leaders,
-                                place)
+                                place, unclaimed)
 from doc_to_html.render import render
+from doc_to_html.report import flagged
 
 SIDE = 400
 
@@ -205,6 +206,73 @@ class TestBetweenPlacedLines:
         heading, email = BBox(0.1, 0.0, 0.9, 0.24), BBox(0.3, 0.72, 0.7, 0.78)
         placed: list[BBox | None] = [heading, None, None, email]
         assert _between(self.LINES, placed, 0, 100) == []
+
+
+def sure(text: str, left: int, top: int, line: int, confidence: float = 95.0) -> Word:
+    found = word(text, left, top, line)
+    return Word(found.text, found.box, found.line, confidence)
+
+
+class TestUnclaimedLines:
+    """Spec 0012, G9 — a printed line no Cell claims is reported."""
+
+    def timetable(self) -> Zone:
+        zone = table((RowRole.HEADER, ["Time", "Monday", "Tuesday"]),
+                     (RowRole.DATA, ["09:00", "Mathematics", "English"]))
+        for index, (left, right) in enumerate([(0, 40), (60, 160), (200, 260)]):
+            zone.rows[1].cells[index].bbox = at(left, 20, right, 30)
+        return zone
+
+    def test_a_row_nobody_read_is_a_line_no_cell_claims(self) -> None:
+        zone = self.timetable()
+        found = [sure("09:00", 0, 20, 1), sure("Mathematics", 60, 20, 1),
+                 sure("English", 200, 20, 1),
+                 sure("10:00", 0, 60, 2), sure("Science", 60, 60, 2),
+                 sure("English", 200, 60, 2)]
+        boxes = [c.bbox for row in zone.rows for c in row.cells if c.bbox]
+        lines = unclaimed(zone, found, boxes)
+        assert [(round(box.top * SIDE), count) for box, count in lines] == [(60, 3)]
+
+    def test_a_word_tesseract_is_unsure_of_does_not_count(self) -> None:
+        zone = self.timetable()
+        found = [sure("Studio", 0, 60, 2, 20.0), sure("Varga", 60, 60, 2, 30.0)]
+        assert unclaimed(zone, found, []) == []
+
+    def test_one_word_alone_is_not_a_line(self) -> None:
+        assert unclaimed(self.timetable(), [sure("Puddings", 0, 60, 2)], []) == []
+
+    def test_a_cell_placed_on_the_wrong_ink_still_claims_its_line(self) -> None:
+        zone = prose("Gate closes 20 minutes before departure")
+        found = [sure("Gate", 0, 60, 2), sure("close", 40, 60, 2),
+                 sure("minutes", 100, 60, 2)]
+        assert unclaimed(zone, found, []) == []
+
+    def test_a_title_with_a_word_left_out_still_claims_its_line(self) -> None:
+        zone = table((RowRole.HEADER, ["Περιγραφή", "Ώρες"]))
+        zone.title = "Ανάλυση παρεχόμενων υπηρεσιών"
+        found = [sure("Ανάλυση", 0, 10, 1), sure("υπηρεσιών", 120, 10, 1)]
+        assert unclaimed(zone, found, []) == []
+
+    def test_a_word_twice_is_one_word(self) -> None:
+        zone = table((RowRole.DATA, ["English"]))
+        found = [sure("12:20", 0, 60, 2), sure("Art", 50, 60, 2),
+                 sure("English", 100, 60, 2), sure("PE", 180, 60, 2),
+                 sure("English", 220, 60, 2)]
+        assert [count for _, count in unclaimed(zone, found, [])] == [5]
+
+    def test_they_are_reported_with_their_share_and_survive_the_json(self) -> None:
+        document = Document(source=Source(path="x", sha256="0" * 64, width=100,
+                                          height=100),
+                            zones=[self.timetable()],
+                            unclaimed=[Unclaimed(zone_index=0, bbox=at(0, 160, 300, 172),
+                                                 words=14, ink_share=0.023),
+                                       Unclaimed(zone_index=0, bbox=at(0, 180, 300, 192),
+                                                 words=6, ink_share=0.009)])
+        back = Document.from_json(document.to_json())
+        assert back.unclaimed == document.unclaimed
+        html = flagged(back)
+        assert ("Zone 0 (<code>table</code>) has 2 printed lines no Cell claims, "
+                "20 words between 40% and 48% down the page, 3% of the page") in html
 
 
 class TestOnAPicture:

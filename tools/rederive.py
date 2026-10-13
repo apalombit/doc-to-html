@@ -41,7 +41,8 @@ and can be recomputed from it, in the order a Conversion runs them:
        and the wide rules it draws between them — spec 0009, step D
                                     structure.separators (_find_separators)
     8. Where every Cell sits on the page — spec 0011, step 2; tesseract
-       as a locator, its words never printed
+       as a locator, its words never printed — and the printed lines no
+       Cell claims, spec 0012, G9
                                     locate.locate              (_locate)
     9. The marks the page draws for its entries, attached to their pairs —
        spec 0011, step 3; step 6's gaps are taken after it, since it can
