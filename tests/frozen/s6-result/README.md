@@ -1,4 +1,7 @@
-# `s6-result/` — spec 0011's sweep, and **the baseline** since 2026-10-13
+# `s6-result/` — spec 0011's sweep; the baseline 2026-10-13, superseded the same day by `s7-result/`
+
+> **Record since 2026-10-13.** `s7-result/` holds these fifteen documents
+> byte for byte, beside the six the corpus gained; it is the baseline.
 
 > **Taken as the baseline by Alessandro on 2026-10-13**, after reviewing
 > `S6-sweep` against `S5-sweep`: fourteen pages better, `sample_css_0004`

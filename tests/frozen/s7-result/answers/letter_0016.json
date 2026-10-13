@@ -1,0 +1,304 @@
+{
+ "calls": [
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"14 Quarry Hill, Leeds LS2 7HE\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Halden & Pryce\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Ms Priya Nandakumar\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"2 October 2026\",\n  \"line_is\": \"header\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Re: Condition survey of Wharfside Court, blocks A and B\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\"first_line\": \"Thank you for instructing us to carry out the condition survey of Wharfside Court.\", \"line_is\": \"content\"}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"The enclosed report records our findings element by element.\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"We recommend that the roof is renewed before the coming winter and that the remaining items, set out in the cost\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Tomas Halden MRICS\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"14 Quarry Hill, Leeds LS2 7HE\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"0113 496 0218 · office@hal denpryce.example\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Registered in England No. 08812274\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"office@hal denpryce.example\",\n      \"kind\": \"link\"\n    },\n    {\n      \"text\": \"08812274\",\n      \"kind\": \"mark\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Halden & Pryce\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"CHARTERED SURVEYORS\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"Halden & Pryce\",\n      \"kind\": \"em\"\n    },\n    {\n      \"text\": \"CHARTERED SURVEYORS\",\n      \"kind\": \"em\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Ms Priya Nandakumar\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Facilities Manager\"\n      ]\n    },\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"Brightwater Housing Trust\",\n        \"3 Canal Wharf\",\n        \"Leeds LS11 5PS\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"3 Canal Wharf\",\n      \"kind\": \"mark\"\n    },\n    {\n      \"text\": \"Leeds LS11 5PS\",\n      \"kind\": \"mark\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"2 October 2026\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Our ref:\",\n      \"value\": \"HP/2026/0419\"\n    },\n    {\n      \"label\": \"Your ref:\",\n      \"value\": \"BHT-FM-77\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Re: Condition survey of Wharfside Court, blocks A and B\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Dear Ms Nandakumar,\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Thank you for instructing us to carry out the condition survey of Wharfside Court. Our team inspected both blocks between 15 and 19 September, with access to every communal area, the roof coverings of block A and eleven of the twelve flats you had arranged. The one flat we could not enter, 2B/07, was surveyed from the balcony and the corridor only.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"The enclosed report records our findings element by element. In summary, the structure of both blocks is sound and we found no evidence of continuing movement. The flat roof over block B has reached the end of its life: the membrane is blistered over roughly a third of its area and has failed at two outlets, which accounts for the staining reported in flats 3B/02 and 3B/03.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"We recommend that the roof is renewed before the coming winter and that the remaining items, set out in the cost\",\n        \"schedule, are programmed over the next three years. We would be glad to prepare a specification for the roof works and\",\n        \"to obtain competitive tenders on your behalf.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Please do not hesitate to contact me if you would like to discuss the report or arrange a meeting on site.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"quote\",\n      \"lines\": [\n        \"Yours sincerely,\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Tomas Halden\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"Tomas\",\n      \"kind\": \"em\"\n    },\n    {\n      \"text\": \"Halden\",\n      \"kind\": \"em\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Tomas Halden MRICS\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Partner, Building Surveying\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Enc. Condition survey report, cost schedule\",\n        \"cc: Ruth Okafor, Brightwater Housing Trust\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Halden & Pryce LLP is regulated by RICS. A list of partners is available at our registered office.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Page 1 of 1\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"Page\",\n      \"kind\": \"em\"\n    },\n    {\n      \"text\": \"1\",\n      \"kind\": \"link\"\n    },\n    {\n      \"text\": \"of\",\n      \"kind\": \"em\"\n    },\n    {\n      \"text\": \"1\",\n      \"kind\": \"link\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  }
+ ]
+}

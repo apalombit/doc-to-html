@@ -1,0 +1,238 @@
+{
+ "calls": [
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Frost Heave Under Lightweight Footbridges: \",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Abstract—Short-span timber footbridges on shallow pad foundations are often built on frost-susceptible soils.\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"I. Introduction\",\n  \"line_is\": \"header\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"figure\",\n  \"graphic\": \"chart\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"This paper reports two winters of monitoring at three such crossings and\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"II. Method\",\n  \"line_is\": \"header\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"TABLE I. SITE SUMMARY\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"'The national guidance permits this where\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\"first_line\": \"With α fitted at Brekke, (1) predicted the peak heave at the other two sites\", \"line_is\": \"content\"}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Frost Heave Under Lightweight Footbridges: A Field Study of Three Timber Crossings\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Maren Solberg¹, Pieter Achterberg² and Lucia Ferrante¹\"\n      ]\n    },\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"¹Department of Civil Engineering, Fjordvik University, Norway\",\n        \"²Delta Structural Monitoring BV, Delft, the Netherlands\"\n      ]\n    },\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"{m.solberg, l.ferrante}@fjordvik.example\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"{m.solberg, 1.ferrante}@fjordvik.example\",\n      \"kind\": \"link\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Abstract—Short-span timber footbridges on shallow pad foundations are often built on frost-susceptible soils. We monitored three crossings in central Norway through two winters and found seasonal heave of 8 to 15 mm at the abutments, enough to open the deck joints and tilt the handrail posts. Heave tracked the square root of the frost index closely, and a simple coefficient fitted at one site predicted the other two within 2 mm.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"I. Introduction\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Most footbridges built by small municipalities are light timber structures\",\n        \"with a single span of 15 to 35 m. Their foundations are chosen for cost, and\",\n        \"where the ground freezes, pad footings above the frost line are common.¹\",\n        \"The resulting movement is rarely measured, although it is a frequent cause of\",\n        \"maintenance calls.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"III. RESULTS\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Heave began within a week of the first sustained frost and peaked in late\",\n        \"February at all three sites. Fig. 1 shows the mean heave by month, and Table I\",\n        \"summarises each crossing.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "figure",
+   "answer": "{\"graphic\": \"chart\", \"text\": []}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"This paper reports two winters of monitoring at three such crossings and\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"proposes a one-parameter model for the heave of their abutments.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"II. METHOD\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Each abutment carried two survey targets read weekly with a total station.\",\n        \"Air temperature was logged hourly, and the frost index F was taken as the\",\n        \"sum of daily mean temperatures below zero. We fitted the relation\",\n        \"Δh = α √F\",\n        \"(1)\",\n        \"where Δh is the heave in millimetres and α a site coefficient.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"caption\",\n      \"lines\": [\n        \"Fig. 1. Mean abutment heave by month, November to April.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "table",
+   "answer": "{\n  \"rows\": [\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"Site\",\n        \"Span (m)\",\n        \"Peak heave (mm)\",\n        \"Frost days\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Brekke\",\n        \"18\",\n        \"12.4\",\n        \"64\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [ \"Lundtoft\", \"24\", \"8.1\", \"51\" ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Eidsvoll\",\n        \"31\",\n        \"15.0\",\n        \"77\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"quote\",\n      \"lines\": [\n        \"'The national guidance permits this where\",\n        \"the span is under 40 m and the deck is not\",\n        \"continuous over the supports.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"With α fitted at Brekke, (1) predicted the peak heave at the other two sites\",\n        \"within 2 mm.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null
+  }
+ ]
+}
