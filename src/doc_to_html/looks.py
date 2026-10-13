@@ -646,7 +646,7 @@ def _highlighted(rgb: ImageArray, box: BBox) -> bool:
                  ).sum(axis=2) > GROUND_SAME
     widest = max((end - start for start, end in
                   _spans(list(off.mean(axis=0) >= FILLED))), default=0)
-    return widest >= HIGHLIGHT * (bottom - top)
+    return bool(widest >= HIGHLIGHT * (bottom - top))
 
 
 def unmarked(image: ImageArray, document: Document, *,
