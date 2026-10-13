@@ -470,10 +470,40 @@ def _from_pairs(image: ImageArray, zone: Zone,
     return out
 
 
+def _between(lines: list[tuple[int, int]], placed: list[BBox | None],
+             y0: int, height: int) -> list[tuple[int, tuple[int, int]]]:
+    """Each run of unplaced Cells beside the printed lines lying between the
+    placed Cells either side of it, where the two count alike — spec 0012,
+    G8. `paper_0018`'s title is set on two lines and held as one Cell, so
+    the Zone counts one line more than it has Cells, and its author and
+    affiliation lines, which tesseract misreads, sit between a placed
+    heading and a placed e-mail line: three lines, three Cells."""
+    out: list[tuple[int, tuple[int, int]]] = []
+    index = 0
+    while index < len(placed):
+        if placed[index] is not None:
+            index += 1
+            continue
+        end = index
+        while end < len(placed) and placed[end] is None:
+            end += 1
+        before, after = placed[index - 1] if index else None, \
+            placed[end] if end < len(placed) else None
+        floor = before.bottom if before else -1.0
+        ceiling = after.top if after else 2.0
+        inside = [line for line in lines
+                  if floor < (y0 + (line[0] + line[1]) / 2) / height < ceiling]
+        if len(inside) == end - index:
+            out.extend(zip(range(index, end), inside))
+        index = end
+    return out
+
+
 def _from_ink(image: ImageArray, zone: Zone,
               placed: list[BBox | None]) -> list[BBox | None]:
     """Unplaced lines of a prose or list Zone, from its printed lines, when
-    the two count alike."""
+    the two count alike — over the Zone, or else between the placed Cells
+    either side (`_between`)."""
     if zone.kind not in (Kind.PROSE, Kind.LIST) or None not in placed:
         return placed
     assert zone.bbox is not None
@@ -481,12 +511,12 @@ def _from_ink(image: ImageArray, zone: Zone,
     lines = type_lines(mask)
     if zone.title:
         lines = lines[1:]
-    if len(lines) != len(placed):
-        return placed
     height, width = image.shape[:2]
     x0, y0 = crop_origin(image, zone.bbox)
+    pairs = (list(enumerate(lines)) if len(lines) == len(placed)
+             else _between(lines, placed, y0, height))
     out = list(placed)
-    for index, (top, bottom) in enumerate(lines):
+    for index, (top, bottom) in pairs:
         if out[index] is not None:
             continue
         columns = np.where(mask[top:bottom + 1].any(axis=0))[0]

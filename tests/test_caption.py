@@ -596,6 +596,32 @@ class TestATitleIsNeverPrintedTwice:
         )
         assert [line.text for b in dropped.blocks for line in b.lines] == ["body"]
 
+    def test_a_title_that_starts_its_heading_goes_and_the_heading_stays(self) -> None:
+        """Spec 0012, G8 — `paper_0018`'s title, set on two lines: the caption
+        pass read the first, the heading Block holds both, and the page drew
+        the first line twice."""
+        zone = contents_into(
+            Zone(kind=Kind.PROSE, title="Frost Heave Under Lightweight Footbridges:"),
+            '{"blocks": [{"kind": "heading", "lines": ["Frost Heave Under Lightweight'
+            ' Footbridges: A Field Study of Three Timber Crossings"]},'
+            ' {"kind": "paragraph", "lines": ["M. Lindqvist"]}]}',
+            read=a_reading,
+        )
+
+        assert zone.title is None
+        assert [b.lines[0].text for b in zone.blocks] == [
+            "Frost Heave Under Lightweight Footbridges: A Field Study of Three"
+            " Timber Crossings", "M. Lindqvist"]
+
+    def test_a_paragraph_opening_with_the_titles_words_keeps_it(self) -> None:
+        zone = contents_into(
+            self.zone(),
+            '{"blocks": [{"kind": "paragraph", "lines": ["Deferred works were'
+            ' agreed at the Board."]}]}',
+            read=a_reading,
+        )
+        assert zone.title == "Deferred works" and len(zone.blocks) == 1
+
     def test_only_the_first_block_is_ever_looked_at(self) -> None:
         """Measured rather than chosen: every one of the checkpoint's 27 Block
         echoes was `blocks[0]`, with nothing between 0.80 similarity and an

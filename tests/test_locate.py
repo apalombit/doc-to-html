@@ -15,7 +15,8 @@ import pytest
 from doc_to_html import locate
 from doc_to_html.ir import (BBox, Block, Document, Kind, Pair, Row, RowRole,
                             Source, Zone, cell)
-from doc_to_html.locate import Word, _from_grid, _from_pairs, fold, leaders, place
+from doc_to_html.locate import (Word, _between, _from_grid, _from_pairs, fold, leaders,
+                                place)
 from doc_to_html.render import render
 
 SIDE = 400
@@ -189,6 +190,23 @@ def test_the_boxes_change_no_byte_of_the_page_outside_the_ir() -> None:
 
 
 @pytest.mark.skipif(not locate.available(), reason="no tesseract on PATH")
+class TestBetweenPlacedLines:
+    """Spec 0012, G8 — a heading on two printed lines held as one Cell."""
+
+    LINES = [(0, 10), (14, 24), (40, 48), (52, 58), (62, 68), (72, 78)]
+
+    def test_unplaced_lines_between_two_placed_ones_take_the_lines_between(self) -> None:
+        heading, email = BBox(0.1, 0.0, 0.9, 0.24), BBox(0.3, 0.72, 0.7, 0.78)
+        placed: list[BBox | None] = [heading, None, None, None, email]
+        assert _between(self.LINES, placed, 0, 100) == [
+            (1, (40, 48)), (2, (52, 58)), (3, (62, 68))]
+
+    def test_a_run_counting_otherwise_takes_nothing(self) -> None:
+        heading, email = BBox(0.1, 0.0, 0.9, 0.24), BBox(0.3, 0.72, 0.7, 0.78)
+        placed: list[BBox | None] = [heading, None, None, email]
+        assert _between(self.LINES, placed, 0, 100) == []
+
+
 class TestOnAPicture:
     @staticmethod
     def page() -> tuple[np.ndarray, Document]:

@@ -13,6 +13,8 @@ and can be recomputed from it, in the order a Conversion runs them:
 
     1. a table Title that is its own header row's first cell is dropped
                                     wire._title_is_its_header_cell  (in _extract)
+       and a Title that is the start of its first Block — spec 0012, G8
+                                    wire._title_starts_its_block    (in _extract)
        and every table's rows padded to the header that is left, not to a
        caption row the echo rule dropped    wire.repadded  (in _extract)
        after a row padded on the left is trimmed to the header and a
@@ -100,7 +102,8 @@ from doc_to_html.preprocess import rectify  # noqa: E402
 from doc_to_html.render import render  # noqa: E402
 from doc_to_html.structure import separators, structure  # noqa: E402
 from doc_to_html.wire import (  # noqa: E402
-    _title_is_its_header_cell, repadded, retrimmed, table_repairs)
+    _title_is_its_header_cell, _title_starts_its_block, repadded, retrimmed,
+    table_repairs)
 from remeasure_style import ir_of, remeasure  # noqa: E402
 
 REPO = TOOLS.parent
@@ -113,7 +116,7 @@ _REPAIR = re.compile(
 def rederive(document: Document, png: Path) -> None:
     """Every step of this module's docstring, in order, in place."""
     for zone in document.zones:
-        if _title_is_its_header_cell(zone):
+        if _title_is_its_header_cell(zone) or _title_starts_its_block(zone):
             zone.title = None
         if zone.kind is Kind.TABLE:
             zone.rows = repadded(retrimmed(zone.rows))

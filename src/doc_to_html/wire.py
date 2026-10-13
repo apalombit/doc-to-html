@@ -1188,6 +1188,8 @@ def _without_title_echo(zone: Zone) -> Zone:
         title, " ".join(cell.text for cell in zone.blocks[0].lines)
     ):
         zone.blocks = zone.blocks[1:]
+    elif _title_starts_its_block(zone):
+        zone.title = None
     elif zone.rows and _same_text(
         title, " ".join(cell.text for cell in zone.rows[0].cells)
     ):
@@ -1243,6 +1245,25 @@ def repadded(rows: list[Row]) -> list[Row]:
             cells += [Cell(readings=[]) for _ in range(width - len(cells))]
         row.cells = cells
     return rows
+
+
+def _title_starts_its_block(zone: Zone) -> bool:
+    """Whether a Zone's Title is the start of its first Block, which runs on
+    past it — spec 0012, G8. The caption pass read the first printed line of
+    a heading set on two, and the Block holds the whole heading:
+    `paper_0018`'s `Frost Heave Under Lightweight Footbridges:` over its
+    Block's `Frost Heave Under Lightweight Footbridges: A Field Study of
+    Three Timber Crossings`, printed twice. **The Title goes and the Block
+    stays**, so the heading is printed once and whole. Only the first Block,
+    as `_without_title_echo`, only a heading — a paragraph opening with the
+    Title's words is a sentence, not the heading run on — and only at a
+    word's end."""
+    if not zone.title or not zone.blocks or zone.blocks[0].kind != "heading":
+        return False
+    head = _spell(zone.title)
+    text = _spell(" ".join(cell.text for cell in zone.blocks[0].lines))
+    return bool(head) and len(text) > len(head) and text.startswith(head) \
+        and text[len(head)] == " "
 
 
 def _title_is_its_header_cell(zone: Zone) -> bool:

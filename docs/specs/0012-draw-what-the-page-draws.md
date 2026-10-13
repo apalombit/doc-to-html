@@ -846,6 +846,34 @@ letter-spaced capitals, not small capitals. The letter's serif name has
 too few stems to read its face. The certificate's face is retaken at step
 U.
 
+### Outcome — step 8, G8: a Title echoing the start of its Block, 2026-10-13
+
+`wire._title_starts_its_block`, called in `_without_title_echo` and
+re-applied by rederive. When a Zone's Title is the start of its first
+Block, ending at a word's end, the Title is dropped and the Block keeps the
+whole heading. This applies only when that Block is a heading: a paragraph
+opening with the Title's words is a sentence.
+
+**During the step** the paper's author and affiliation lines lost their
+boxes, and with them their italic, their size and their spacing. They had
+been placed by `locate._from_ink`, which places a Zone's lines only when
+the printed lines and the Cells count alike. The dropped Title had covered
+the first of the heading's two printed lines. Without it, the count was
+six lines against five Cells, and the fallback refused. `locate._between`
+now also counts the unplaced run between two placed Cells: three printed
+lines lie between the placed heading and the placed e-mail line, and there
+are three Cells. The same rule placed pricing's `£0 / month`, which moves
+one margin by a pixel, in a card both renders hide (step U).
+
+| page | against step 7 |
+|---|---|
+| new: `paper_0018` | **better** — the title printed once, whole, where it was its first line and then both |
+| new: `pricing_0017` | **same** — one margin a pixel smaller, in the Starter card both renders hide |
+
+No page worse; `vanished` 55. Run `S8-8-echo`. Tests in
+`tests/test_caption.py` (`TestATitleIsNeverPrintedTwice`) and
+`tests/test_locate.py` (`TestBetweenPlacedLines`).
+
 ## 6. The sweep's prediction — to register at step U, before `S8-sweep` finishes
 
 Register it in this section, with the commit, before the sweep ends:
