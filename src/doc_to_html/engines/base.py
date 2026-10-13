@@ -11,7 +11,7 @@ from __future__ import annotations
 from typing import Protocol, runtime_checkable
 
 from ..ir import BBox, Reading, Zone
-from ..preprocess import ImageArray
+from ..preprocess import ImageArray, TableGrid
 
 
 @runtime_checkable
@@ -91,8 +91,10 @@ class VisionEngine(Protocol):
         ...
 
     def extract_zone(self, image: ImageArray, zone: Zone,
-                     hint: str | None = None) -> Zone:
-        """Fill in a Zone's contents from a full-resolution crop of it."""
+                     hint: str | None = None, grid: TableGrid | None = None) -> Zone:
+        """Fill in a Zone's contents from a full-resolution crop of it.
+        `grid` is a table's grid as the caller measured it, with what the
+        page draws known — spec 0012, G3b; None measures the crop alone."""
         ...
 
     def read_cell(self, image: ImageArray, bbox: BBox,

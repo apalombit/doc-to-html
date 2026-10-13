@@ -917,9 +917,115 @@ None on the other nineteen. Every page renders byte for byte as it did at
 step 8, with `vanished` still 55. Run `S8-9-unclaimed`. Tests:
 `tests/test_locate.py` (`TestUnclaimedLines`).
 
-## 6. The sweep's prediction — to register at step U, before `S8-sweep` finishes
+### Outcome — step U: G3b and G4's split, the upstream halves, 2026-10-14
 
-Register it in this section, with the commit, before the sweep ends:
+Five changes, each upstream of the model or feeding something that is.
+
+1. **A frame is not a sheet** (`preprocess.rectify`). A quadrilateral with
+   the same colour on both sides of it (`SHEET_APART`) is not warped to.
+   Only the certificate moves; `RECTIFIER_VERSION` is now 5.
+2. **A heavy letter is small both ways** (`furniture.LETTER`, its longer
+   side). Three fills the page draws are now recorded: the timetable's dark
+   header, the statement's table header, and pricing's `Annual` toggle.
+   Measured on its own by rederive (`S8-U0-fills`): the IR only, **no page
+   moved**.
+3. **The grid and the printed lines with the drawing known**
+   (`preprocess.Drawn`, `furniture.drawn`). The rules and frames are
+   cleared from the ink. A dark fill across the table is left out of its
+   columns. Where the table rules its rows (more than half its line gaps
+   hold a rule or a fill's edge), two lines with nothing drawn between
+   them, set closer than half the ruled gaps, are one row. Where it draws
+   two vertical rules or more, a column is a space between them that holds
+   ink. The Conversion measures the grid and hands it to the engine
+   (`extract_zone(..., grid=)`). `shortfall` and the trace count with the
+   drawing too.
+
+   | table | before | after | the page |
+   |---|---|---|---|
+   | `timetable_0019` | 4 × 1 | **9 × 6** | 8 rows and the legend; 6 columns |
+   | `nonlatin_0014` | 10 × 1 | 10 × 4 | caption + 9 rows; 4 columns |
+   | `statement_0006` transactions | 43 × 1 | 43 × 5 | 6 columns |
+   | `receipt_0010` | 18 × 1 | 18 × 2 | 3 columns |
+   | `paper_0018` | 1 × 1 | 5 × 3 | caption + 4 rows; 4 columns |
+   | `cv_0013` EDUCATION | 5 × 1 | 5 × 3 | 4 columns |
+   | `ticket_0020` stub | 9 × 2 | 8 × 2 | — |
+
+   The other nine tables are unchanged. Every count that moved moved
+   toward the page's own. Two first cuts were rejected:
+   - **Lines joined across every unruled gap.** This merged nonlatin's two
+     totals, which the page does not rule apart.
+   - **Every fill across the table left out of the columns.** The
+     timetable's pale lesson tints are one such fill, and Thursday and
+     Friday lost all their ink.
+4. **A dashed vertical rule divides lanes** (`structure._broken`, from the
+   furniture). Only the ticket moves: its stub is a lane beside the pass.
+   No Zone crosses the split, so no crop changes.
+5. **An emphasised copy is a copy, and no split crosses a drawn box**
+   (`structure.EMPHASIS`, `_grids`). Across the corpus, copies on one row
+   differ in size by at most 0.5%. Pricing's middle card differs by 3.7%,
+   and the nearest pair that is not copies by 43%. Pricing is now a grid of
+   three, split at 0.345 and 0.655, and its middle card is no longer cut.
+
+**Measured, as step U's row asks.**
+- `tools/layout_front.py` at step 9's commit and now: the certificate's
+  Zones 9 → 7, pricing's 26 → 21, the ticket's regions, and three new
+  fills. **The other sixteen differ by `rectifier_version` alone.**
+- The replay of `s7-result/` marks **nine** documents ASKED DIFFERENTLY:
+  - the certificate (every crop) and pricing (its Zones);
+  - one table call each in cv, nonlatin, paper, receipt, statement, ticket
+    and the timetable.
+- The other twelve render byte for byte as the replay at step 9's commit,
+  and their IRs differ by `rectifier_version` alone.
+- At the old answers, the timetable's IR gains a Shortfall: the shortfall
+  check now sees the loss.
+- The ticket, by eye against that replay: **better** — the stub beside
+  the pass, behind its perforation.
+- step 0's guards: pricing and ticket now meet their written answers, and
+  `TODAY_FAILS` is empty.
+
+6. **A fill is covered by its outline** (`furniture.FILLED`). Unwarped,
+   the certificate's seal covered 0.72 of its box, with its type punched
+   out, and its gold read as the page's ink again. By its outline, with
+   the holes filled, it covers 0.785. Of the twenty-one, only the
+   certificate gains a fill. The replay was retaken on this commit's code,
+   and the same nine documents are marked.
+
+**One guard rewritten from the source.** `tests/test_style.py` listed the
+certificate as a page that draws no box: while it was warped, its frame
+was the page's edge. Its HTML draws two boxes, `.frame` (6px double) and
+`.inner` (1px), and both are now found inside the page.
+
+Tests: `tests/test_drawn.py`, `tests/test_rectification.py`,
+`tests/test_furniture.py`, and the corpus guards in `tests/test_structure.py`
+and `tests/test_style.py`.
+
+## 6. The sweep's prediction — registered at step U, 2026-10-14, before `S8-sweep` started
+
+**Registered.** The replay at step U's commit names the calls:
+
+| document | marked ASKED DIFFERENTLY | what is expected |
+|---|---|---|
+| `timetable_0019` | `09_table` prompt (4 × 1 → 9 × 6) | its **seven lesson rows**, `Lunch`, every room line; the 24 vanished words back; `report.html`'s unclaimed lines no longer name its rows |
+| `certificate_0021` | every crop (not warped); 7 calls unserved | the inner frame's sides drawn; the face read again, serif if the warp's resampling was what blurred it |
+| `pricing_0017` | its Zones: 26 → 21, 18 calls unserved | three cards as three lanes; no `MOST POPUL` / `OST POPULAR`; Starter's text in its own card |
+| `ticket_0020` | `12_table` prompt (9 × 2 → 8 × 2) | the stub beside the pass, as at the replay |
+| `nonlatin_0014` | `20_table` (10 × 1 → 10 × 4) | its rows as read at the baseline, or better |
+| `statement_0006` | `14_table` (43 × 1 → 43 × 5) | as above |
+| `cv_0013` | `79_table` (5 × 1 → 5 × 3) | as above |
+| `receipt_0010` | `10_table` (18 × 1 → 18 × 2) | as above — **the risk**: the page has 3 columns, and the model may join quantity and item to return the 2 it is told |
+| `paper_0018` | `34_table` (1 × 1 → 5 × 3) | as above — **the risk**: 4 columns told 3 |
+
+- **Every call the replay does not mark comes back byte-identical** to
+  `s7-result/answers/`: every call of the other twelve documents, and
+  every call but the table call in the seven table documents. No later
+  call quotes a table's answer, because the runs pass is asked of prose
+  and list only. A miss names a change that moved something it was not
+  meant to.
+- **The twelve unmarked documents render byte-identical to
+  `S8-U-replay`** — the replay at step U's commit — because steps 1–9 are
+  all downstream of the model and step U moved none of their Zones.
+
+The original prediction, as written at planning:
 
 - **Every call that step U's replay does not mark ASKED DIFFERENTLY comes
   back byte-identical** to `s7-result/answers/`. A miss names a change that

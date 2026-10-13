@@ -60,7 +60,7 @@ class Answers:
         self.asked: list[Kind] = []
 
     def extract_zone(self, image: object, zone: Zone,
-                     hint: str | None = None) -> Zone:
+                     hint: str | None = None, grid: object = None) -> Zone:
         self.asked.append(zone.kind)
         return contents_into(zone, self.replies[zone.kind],
                              read=lambda t: Reading(engine="test", text=t))

@@ -20,7 +20,7 @@ from typing import Any
 IR_VERSION = 1
 """Bump when the shape below changes incompatibly. Written into every IR."""
 
-RECTIFIER_VERSION = 4
+RECTIFIER_VERSION = 5
 """Bump when rectification changes geometrically.
 
 Corrections are anchored to coordinates in the rectified space. If rectification
@@ -39,6 +39,12 @@ votes on the page's tilt. It moves no page of the corpus as the floor recorded
 it — all fifteen read level before and after — but a page whose full-height
 panel used to rotate it by up to 15 degrees now stays straight, which is a
 different mapping from source pixels.
+
+**5** is spec 0012, G3b, 2026-10-14: a quadrilateral with the sheet's own
+colour on both sides is a frame the page draws, and the page is not warped
+to it. Of the twenty-one only `certificate_0021` moves: its double frame
+had been taken for a photographed sheet's edge, and the page was cropped
+to it.
 """
 
 

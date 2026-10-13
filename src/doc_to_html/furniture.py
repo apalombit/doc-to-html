@@ -49,7 +49,8 @@ from typing import Any, Sequence
 import numpy as np
 
 from .ir import BBox, Furniture, Kind, Zone
-from .preprocess import ImageArray, _cv2, content_ink
+from .preprocess import (INK_LEVEL, PAD_X, PAD_Y, Drawn, ImageArray, _cv2, content_ink,
+                         crop_origin)
 from .style import dominant
 
 OFF = 40
@@ -158,11 +159,18 @@ HATCH_ALONG = 0.005
 
 LETTER = 6.0
 """The widest a heavy letter is, in glyphs: `ticket_0020`'s 46px `R`,
-opened, leaves a block of the page's ink 3.6 glyphs wide."""
+opened, leaves a block of the page's ink 3.6 glyphs wide. Its longer side,
+since spec 0012's step U: a letter is small both ways, and a band in the
+type's colour long one way and short the other is a fill — the dark header
+of `timetable_0019`'s table, 4.9 glyphs tall and 128 across, and of
+`statement_0006`'s, and pricing's `Annual` toggle."""
 
 FILLED = 0.75
 """How much of its box a fill covers: a round seal, pi over four, and not a
-large letter's strokes — `ticket_0020`'s `OSL` covers half its box."""
+large letter's strokes — `ticket_0020`'s `OSL` covers half its box. Measured
+by its outline, holes filled, since spec 0012's step U: `certificate_0021`'s
+seal, unwarped, covers 0.72 of its box with the `GUILD GTE 2026` printed on
+it punched out, and 0.785 by its outline."""
 
 BARS = 4
 """The fewest parallel lines, each within `BAR_GAP` of the next, that are
@@ -646,7 +654,8 @@ def _fills(rgb: Any, ground: tuple[int, int, int], ink: Any, unit: float,
            hatched: list[_Fill]) -> list[_Fill]:
     """Areas of colour off the page's ground, `FILL` glyphs across once type
     is opened away, covering `FILLED` of their box — and not a hatch, nor a
-    heavy letter: in the page's ink and no wider than `LETTER` glyphs."""
+    heavy letter: in the page's ink and no longer than `LETTER` glyphs
+    either way."""
     cv2 = _cv2()
     height, width = rgb.shape[:2]
     off = np.abs(rgb - np.array(ground)).sum(axis=2) > GROUND_SAME
@@ -661,15 +670,22 @@ def _fills(rgb: Any, ground: tuple[int, int, int], ink: Any, unit: float,
     count, labels, stats, _ = cv2.connectedComponentsWithStats(solid, connectivity=8)
     found: list[_Fill] = []
     for index in range(1, count):
-        x, y, w, h, area = stats[index]
-        if (w < FILL * unit or h < FILL * unit or w * h > 0.8 * width * height
-                or area < FILLED * w * h):
+        x, y, w, h, _ = stats[index]
+        if w < FILL * unit or h < FILL * unit or w * h > 0.8 * width * height:
+            continue
+        # Covered by its outline, holes filled: type printed on a fill is
+        # not a gap in it.
+        shape = (labels[y:y + h, x:x + w] == index).astype(np.uint8)
+        outline, _ = cv2.findContours(shape, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        whole = np.zeros_like(shape)
+        cv2.drawContours(whole, outline, -1, 1, thickness=-1)
+        if int(whole.sum()) < FILLED * w * h:
             continue
         if any(_inside(x, y, x + w, y + h, hatch) for hatch in hatched):
             continue
         inside = rgb[y:y + h, x:x + w][labels[y:y + h, x:x + w] == index]
         colour = dominant(inside.reshape(-1, 1, 3).astype(np.uint8))
-        if (printed is not None and min(w, h) <= LETTER * unit
+        if (printed is not None and max(w, h) <= LETTER * unit
                 and np.abs(np.array(colour) - np.array(printed)).sum() <= GROUND_SAME):
             continue
         found.append(_Fill(int(x), int(y), int(x + w), int(y + h), colour))
@@ -760,6 +776,52 @@ def mask(furniture: Sequence[Furniture], shape: tuple[int, ...]) -> Any:
         else:
             out[top:bottom, left:right] = True
     return out
+
+
+def drawn(furniture: Sequence[Furniture], image: ImageArray, box: BBox) -> Drawn:
+    """What the page draws over the crop of `box` — `preprocess.crop`'s
+    window on `image` — in the crop's pixels, for the grid count and the
+    printed-line count: spec 0012, G3b. See `preprocess.Drawn`.
+
+    A fill is left out of a crop's columns only when it is dark — darker
+    than `INK_LEVEL`, so `content_ink` reads it as ink end to end — and
+    spans more than half the crop: `timetable_0019`'s header. Its lessons'
+    pale tints are no ink, and their type is the columns."""
+    height, width = image.shape[:2]
+    x0, y0 = crop_origin(image, box)
+    right_edge = int(min(1.0, box.right + PAD_X) * width)
+    bottom_edge = int(min(1.0, box.bottom + PAD_Y) * height)
+    wide, tall = right_edge - x0, bottom_edge - y0
+    rules = np.zeros((max(0, tall), max(0, wide)), bool)
+    across = np.zeros_like(rules)
+    edges: list[float] = []
+    downs: list[float] = []
+    for item in furniture:
+        b = item.bbox
+        left = max(0, int(b.left * width) - 1 - x0)
+        top = max(0, int(b.top * height) - 1 - y0)
+        right = min(wide, int(np.ceil(b.right * width)) + 1 - x0)
+        bottom = min(tall, int(np.ceil(b.bottom * height)) + 1 - y0)
+        if right <= left or bottom <= top:
+            continue
+        if item.kind == "fill":
+            edges += [b.top * height - y0, b.bottom * height - y0]
+            grey = 0.299 * item.color[0] + 0.587 * item.color[1] + 0.114 * item.color[2]
+            if grey < INK_LEVEL and right - left > 0.5 * wide:
+                across[top:bottom, left:right] = True
+        elif item.kind == "frame":
+            line = max(1, int(np.ceil(item.thickness * width))) + 1
+            rules[top:top + line, left:right] = True
+            rules[max(top, bottom - line):bottom, left:right] = True
+            rules[top:bottom, left:left + line] = True
+            rules[top:bottom, max(left, right - line):right] = True
+        else:
+            rules[top:bottom, left:right] = True
+            if item.vertical:
+                downs.append((b.left + b.right) / 2 * width - x0)
+            else:
+                edges.append((b.top + b.bottom) / 2 * height - y0)
+    return Drawn(rules=rules, across=across, edges=tuple(edges), downs=tuple(downs))
 
 
 def place(furniture: Sequence[Furniture], zones: Sequence[Zone]) -> None:

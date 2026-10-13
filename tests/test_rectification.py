@@ -196,6 +196,20 @@ class TestWhenTheQuadrilateralCannotBeFound:
         canvas[250:350, 350:450] = 255
         assert find_page_quad(canvas) is None
 
+    def test_a_frame_the_page_draws_is_not_warped_to(self, tmp_path: Path) -> None:
+        """Spec 0012, G3b — `certificate_0021`'s double frame: cream inside
+        and out, so a frame on the page, not the edge of a sheet."""
+        page = np.full((600, 900, 3), (230, 244, 250), np.uint8)
+        page[20:580, 20:24] = page[20:580, 876:880] = (60, 140, 180)
+        page[20:24, 20:880] = page[576:580, 20:880] = (60, 140, 180)
+        page[280:300, 300:600] = 30
+        path = tmp_path / "framed.png"
+        cv2.imwrite(str(path), page)
+        assert find_page_quad(page) is not None, "the frame is a quadrilateral"
+        result = rectify(path)
+        assert result.warped is False and result.source.paper is None
+        assert (result.source.rectified_width, result.source.rectified_height) == (900, 600)
+
     def test_an_unusable_image_is_refused_rather_than_guessed_at(
         self, tmp_path: Path
     ) -> None:

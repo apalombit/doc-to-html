@@ -149,7 +149,7 @@ def rederive(document: Document, png: Path) -> None:
     image = rectified.image
     document.shortfalls = [
         found for index, zone in enumerate(document.zones)
-        if (found := shortfall(image, zone, index)) is not None
+        if (found := shortfall(image, zone, index, document.furniture)) is not None
     ]
     # Q5, 2026-09-29: a column-sum totals the rows above its summary only.
     document.probes = probes.run(document)
@@ -157,7 +157,8 @@ def rederive(document: Document, png: Path) -> None:
     if document.style is not None:
         document.regions = structure(
             plain, [zone.bbox for zone in document.zones if zone.bbox is not None],
-            ground=document.style.page_bg, inverted=rectified.inverted)
+            ground=document.style.page_bg, inverted=rectified.inverted,
+            furniture=document.furniture)
         document.separators = separators(
             plain, document.zones, ground=document.style.page_bg,
             inverted=rectified.inverted)

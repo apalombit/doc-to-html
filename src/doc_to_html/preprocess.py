@@ -348,7 +348,8 @@ for the quadrilateral to be a sheet in a picture — `Source.paper`, spec 0012,
 G5. `certificate_0021`'s double frame is a quadrilateral too, cream inside
 and cream outside (0 apart); the receipt's paper sits on grey (57 on one
 channel), the ticket's on slate (196). A frame drawn on a page is not a
-photographed page, and its picture is drawn as a page."""
+photographed page: since G3b it is not warped to (`rectify`), and its
+picture is drawn as a page."""
 
 MAX_DESKEW_DEGREES = 15.0
 """Beyond this, the estimate is not skew.
@@ -701,21 +702,108 @@ class TableGrid:
     column_bands: list[tuple[int, int]]
 
 
-def table_grid(crop: ImageArray) -> TableGrid:
+@dataclass(frozen=True)
+class Drawn:
+    """What the page draws over one crop, in the crop's pixels — spec 0012,
+    G3b. Built from `Document.furniture` by `furniture.drawn`.
+
+    The grid count and the printed-line count project ink, and the
+    decoration is ink: `timetable_0019`'s 4px colour bars, each down two
+    lesson rows, join 09:00 to 14:10 into one band, and its dark header,
+    read as ink end to end, makes the table one column. So the table was
+    measured 4 rows by 1, the model was asked for that and returned it, and
+    24 words never reached the page."""
+
+    rules: ImageArray
+    """Rules and frames, cleared from the ink before anything is counted."""
+    across: ImageArray
+    """Dark fills across most of the crop: a row's ground, which says how
+    tall its row is and nothing about its columns."""
+    edges: tuple[float, ...]
+    """Where a horizontal rule, or a fill's top or bottom edge, crosses."""
+    downs: tuple[float, ...]
+    """Where each vertical rule stands, left to right."""
+
+
+RULE_SLACK = 3
+"""Pixels within which two vertical rules are one column boundary: a cell's
+border and the colour bar drawn just inside it."""
+
+
+def _rows_as_ruled(bands: list[tuple[int, int]],
+                   edges: tuple[float, ...]) -> list[tuple[int, int]]:
+    """Printed lines as the table's rows, where it rules them.
+
+    A table rules its rows when more than half the gaps between its printed
+    lines hold a rule or a fill's edge. Then two lines with nothing drawn
+    between them, set closer than half the ruled gaps' median, are one row
+    — a lesson's subject and its room. Two lines no closer than ruled rows
+    stay two rows: `nonlatin_0014` rules its items and not the totals under
+    them, `Καθαρή αξία` and `ΦΠΑ 24%`, which are 16px apart, as its ruled
+    rows are 18. A table ruling half its gaps or fewer — `paper_0018`'s
+    three rules, the receipt's two dashed ones — is counted by its lines."""
+    if len(bands) < 2:
+        return bands
+    ruled = [any(above[1] <= y <= below[0] for y in edges)
+             for above, below in zip(bands, bands[1:])]
+    if 2 * sum(ruled) <= len(ruled):
+        return bands
+    sizes = [below[0] - above[1] for above, below in zip(bands, bands[1:])]
+    apart = float(np.median([size for size, rule in zip(sizes, ruled) if rule]))
+    rows = [bands[0]]
+    for rule, size, band in zip(ruled, sizes, bands[1:]):
+        if rule or size >= apart / 2:
+            rows.append(band)
+        else:
+            rows[-1] = (rows[-1][0], band[1])
+    return rows
+
+
+def _columns_as_ruled(ink: ImageArray, downs: tuple[float, ...]) -> list[tuple[int, int]]:
+    """Columns as the table draws them: where it draws two vertical rules or
+    more, each space between them holding a band of ink is one column — so
+    a legend set under `timetable_0019`'s grid, its swatches in the gaps,
+    does not make columns of its own. Otherwise the projection's bands."""
+    width = ink.shape[1]
+    places: list[float] = []
+    for x in sorted(downs):
+        if not places or x - places[-1] > 2 * RULE_SLACK:
+            places.append(x)
+    if len(places) < 2:
+        return ink_bands(ink.sum(axis=0), MIN_COLUMN_GAP, MIN_BAND)
+    cuts = [0] + [int(round(x)) for x in places] + [width]
+    return [(left, right - 1) for left, right in zip(cuts, cuts[1:]) if right > left
+            and ink_bands(ink[:, left:right].sum(axis=0), MIN_COLUMN_GAP, MIN_BAND)]
+
+
+def table_grid(crop: ImageArray, drawn: Drawn | None = None) -> TableGrid:
     """Count a table crop's rows and columns by projecting its ink.
 
     Down the crop for rows, across it for columns. Separators are already gone —
     `content_ink` removes them — so the horizontal rule above a totals row does
     not become a sixth row, and a column divider does not become a column.
+
+    **With `drawn`, the page's own drawing — spec 0012, G3b.** Its rules
+    and frames are cleared from the ink, a dark fill across the crop is left
+    out of the columns, and where the table rules its rows or its columns
+    the count follows the rules (`_rows_as_ruled`, `_columns_as_ruled`).
+    `timetable_0019` measures 9 by 6 — its eight rows and its legend, its
+    six columns — where it measured 4 by 1.
     """
     mask = content_ink(crop)
-    rows = ink_bands(mask.sum(axis=1), MIN_ROW_GAP, MIN_BAND)
-    columns = ink_bands(mask.sum(axis=0), MIN_COLUMN_GAP, MIN_BAND)
+    if drawn is None:
+        rows = ink_bands(mask.sum(axis=1), MIN_ROW_GAP, MIN_BAND)
+        columns = ink_bands(mask.sum(axis=0), MIN_COLUMN_GAP, MIN_BAND)
+    else:
+        ink = (mask > 0) & ~drawn.rules
+        rows = _rows_as_ruled(ink_bands(ink.sum(axis=1), MIN_ROW_GAP, MIN_BAND),
+                              drawn.edges)
+        columns = _columns_as_ruled(ink & ~drawn.across, drawn.downs)
     return TableGrid(rows=len(rows), columns=len(columns),
                      row_bands=rows, column_bands=columns)
 
 
-def printed_lines(crop: ImageArray) -> int:
+def printed_lines(crop: ImageArray, drawn: Drawn | None = None) -> int:
     """How many lines of type are printed in this crop. No model, no reading.
 
     The measurement behind spec 0007 Phase A-1's honesty rule. A Zone that was
@@ -732,13 +820,25 @@ def printed_lines(crop: ImageArray) -> int:
     line that is not a row at all. So it is only ever safe as a floor under a
     gross shortfall, never as an expected count. `orchestrator.shortfall` is
     where that judgement lives, and it is deliberately coarse.
+
+    With `drawn`, the rules the page draws are cleared first — spec 0012,
+    G3b: the same colour bars that made `table_grid` count four rows made
+    this count four lines, so the shortfall check found nothing missing.
     """
-    return len(printed_bands(crop))
+    return len(printed_bands(crop, drawn))
 
 
-def printed_bands(crop: ImageArray) -> list[tuple[int, int]]:
+def _type_ink(crop: ImageArray, drawn: Drawn | None) -> ImageArray:
+    """`content_ink`, with the page's rules cleared when they are known."""
+    mask = content_ink(crop)
+    if drawn is not None:
+        mask = np.where(drawn.rules, 0, mask).astype(mask.dtype)
+    return mask
+
+
+def printed_bands(crop: ImageArray, drawn: Drawn | None = None) -> list[tuple[int, int]]:
     """Each printed line's first and last crop row. See `printed_lines`."""
-    mask = _without_vertical_rules(content_ink(crop))
+    mask = _without_vertical_rules(_type_ink(crop, drawn))
     return ink_bands(mask.sum(axis=1), MIN_ROW_GAP, MIN_BAND)
 
 
@@ -764,7 +864,7 @@ gave the same Shortfalls on all fifteen documents.
 """
 
 
-def hard_lines(crop: ImageArray) -> int:
+def hard_lines(crop: ImageArray, drawn: Drawn | None = None) -> int:
     """How many lines of type are printed in this crop, a wrapped line once.
 
     `printed_lines` counts every line the type occupies. The prose and list
@@ -779,9 +879,10 @@ def hard_lines(crop: ImageArray) -> int:
     Coarse in the direction `printed_lines` is. The widest line *is* the edge,
     so among short lines broken on purpose the widest counts as wrapped unless
     it is the last, and an address can read one line fewer than it prints. That
-    undercount can only silence a finding, never raise one.
+    undercount can only silence a finding, never raise one. With `drawn`, as
+    `printed_lines`.
     """
-    mask = _without_vertical_rules(content_ink(crop))
+    mask = _without_vertical_rules(_type_ink(crop, drawn))
     bands = ink_bands(mask.sum(axis=1), MIN_ROW_GAP, MIN_BAND)
     if not bands:
         return 0
@@ -1701,6 +1802,9 @@ def rectify(path: Path) -> Rectified:
     measurement. It changes the pixels the model is shown as well as the pixels
     the CV reads, which is why `Rectified.inverted` records that it happened.
 
+    A quadrilateral with the same colour on both sides is a frame the page
+    draws and is not warped to — `SHEET_APART`, spec 0012, G3b.
+
     A page whose quadrilateral cannot be found is used as-is rather than guessed
     at — a bad warp is worse than no warp, because it silently distorts every
     coordinate downstream. All five of the project's fixtures take that path: a
@@ -1726,6 +1830,11 @@ def rectify(path: Path) -> Rectified:
     height, width = image.shape[:2]
 
     quad = find_page_quad(image)
+    surround = None if quad is None else surround_of(image, quad)
+    if surround is None:
+        # Spec 0012, G3b: the same colour on both sides of the quadrilateral
+        # is a frame the page draws, not a sheet's edge — `SHEET_APART`.
+        quad = None
     flattened = image if quad is None else warp_to_quad(image, quad)
     inverted = ground_is_dark(flattened)
     if inverted:
@@ -1736,7 +1845,6 @@ def rectify(path: Path) -> Rectified:
     rectified = resize_long_edge(equalise(straight), TARGET_LONG_EDGE)
     # Same geometry, none of the photometry. See `Rectified.plain`.
     plain = resize_long_edge(straight, TARGET_LONG_EDGE)
-    surround = None if quad is None else surround_of(image, quad)
 
     return Rectified(
         image=rectified,
@@ -1750,7 +1858,7 @@ def rectify(path: Path) -> Rectified:
             height=height,
             rectified_width=rectified.shape[1],
             rectified_height=rectified.shape[0],
-            paper=None if quad is None or surround is None else paper_box(quad, width, height),
+            paper=None if quad is None else paper_box(quad, width, height),
             surround=surround,
         ),
     )

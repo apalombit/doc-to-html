@@ -561,10 +561,13 @@ class TestFindingBoxesInTheCorpus:
         # Spec 0012 step 0, from the source HTML: pricing's three `.plan`
         # cards — a box inside a card, its button, is one component with
         # it — and the timetable's table, ruled both ways, whose frame is
-        # one drawn box as `invoice_0002`'s bordered tables are.
+        # one drawn box as `invoice_0002`'s bordered tables are. Since step
+        # U the certificate is not warped to its frame, and its `.frame`
+        # (6px double) and `.inner` (1px) are two boxes on the page.
         for name, expected in (("sample_css_0004", 2), ("darkdeck_0009", 5),
                                ("nonlatin_0014", 2), ("catalogue_0015", 9),
-                               ("pricing_0017", 3), ("timetable_0019", 1)):
+                               ("pricing_0017", 3), ("timetable_0019", 1),
+                               ("certificate_0021", 2)):
             rectified = rectify(REPO / SOURCES[name].png)
             plain = rectified.plain if rectified.plain is not None \
                 else rectified.image
@@ -578,13 +581,11 @@ class TestFindingBoxesInTheCorpus:
         `section.titled` rule carded roughly ten of fifteen documents whose
         sources draw nothing of the kind."""
         # The letter and the paper draw rules and no box; the ticket is a
-        # photographed card whose strips run to its edges; the certificate's
-        # double frame is the page's own border, past `PAGE_SHARE`.
+        # photographed card whose strips run to its edges.
         for name in ("sample_table_0003", "statement_0006", "receipt_0010",
                      "menu_0012", "cv_0013", "report_0011",
                      "newsletter_0008", "sample_semantic_0005",
-                     "letter_0016", "paper_0018", "ticket_0020",
-                     "certificate_0021"):
+                     "letter_0016", "paper_0018", "ticket_0020"):
             rectified = rectify(REPO / SOURCES[name].png)
             plain = rectified.plain if rectified.plain is not None \
                 else rectified.image
@@ -596,12 +597,12 @@ class TestFindingBoxesInTheCorpus:
     def test_every_sweep_document_is_covered_by_one_of_those_lists(self) -> None:
         """So a document added to the corpus cannot quietly go unchecked."""
         carded = {"sample_css_0004", "darkdeck_0009", "nonlatin_0014",
-                  "catalogue_0015", "pricing_0017", "timetable_0019"}
+                  "catalogue_0015", "pricing_0017", "timetable_0019",
+                  "certificate_0021"}
         plain_pages = {"sample_table_0003", "statement_0006", "receipt_0010",
                        "menu_0012", "cv_0013", "report_0011",
                        "newsletter_0008", "sample_semantic_0005",
-                       "letter_0016", "paper_0018", "ticket_0020",
-                       "certificate_0021"}
+                       "letter_0016", "paper_0018", "ticket_0020"}
         # invoice_0001 is the page-guard case and invoice_0002 and form_0007
         # are counted in the run report rather than pinned here: form_0007
         # finds 13 of its 14 in-range boxes and that number is a measurement,

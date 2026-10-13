@@ -25,6 +25,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+from doc_to_html import furniture
 from doc_to_html.corpus import NEW, SOURCES, SWEEP
 from doc_to_html.ir import (BBox, Block, Document, Furniture, Kind, Role, Source, Zone,
                              cell)
@@ -109,13 +110,11 @@ EXPECTED: dict[str, list[Expected]] = {
     "certificate_0021": [],
 }
 
-TODAY_FAILS = {
-    "pricing_0017": "G4's split, step U: the emphasised middle card is "
-                    "not taken as a copy, and the grid of two splits it at 0.50",
-    "ticket_0020": "G3b, step U: the dashed vertical rule makes no lane",
-}
+TODAY_FAILS: dict[str, str] = {}
 """Written answers today's code does not reach, each naming the group of
-spec 0012 that is to fix it. Strict, so the fix has to take its name off."""
+spec 0012 that is to fix it. Strict, so the fix has to take its name off.
+Empty since step U: pricing's emphasised middle card is a copy, and the
+ticket's dashed rule makes its lane."""
 
 
 def boxes_of(name: str) -> list[BBox]:
@@ -131,8 +130,9 @@ def regions_of(name: str) -> list[Region]:
     rectified = rectify(REPO / SOURCES[name].png)
     plain = rectified.plain if rectified.plain is not None else rectified.image
     ground = measure(plain, inverted=rectified.inverted).page_bg
+    drawn = furniture.find(plain, inverted=rectified.inverted, read=rectified.image)
     return structure(plain, boxes_of(name), ground=ground,
-                     inverted=rectified.inverted)
+                     inverted=rectified.inverted, furniture=drawn)
 
 
 def laid_out_wrongly(name: str) -> list[str]:

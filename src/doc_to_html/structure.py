@@ -21,7 +21,8 @@ Two kinds of evidence, both *drawn*:
   tiles;
 - a **column** needs a drawn divider — a panel's side (`darkdeck_0009`'s
   aside), the edge of a fill running the page's height (`cv_0013`'s sidebar),
-  or a vertical rule (`newsletter_0008`) — with the content on its two sides
+  or a vertical rule (`newsletter_0008`), dashed ones too (`ticket_0020`'s
+  perforation, spec 0012) — with the content on its two sides
   stacked independently: some block on one side stands beside two stacked
   blocks on the other. That is exactly the shape a Band cannot hold, and a
   float is not it — `sample_semantic_0005`'s TL;DR panel stands beside one
@@ -47,7 +48,7 @@ from typing import Any, Sequence
 
 import numpy as np
 
-from .ir import BBox, Flow, Kind, Region, Role, Zone
+from .ir import BBox, Flow, Furniture, Kind, Region, Role, Zone
 from .preprocess import (MIN_GAP_THICKNESS, MIN_ZONE_INK, SEPARATOR_ASPECT,
                          ImageArray, _cv2, ink_fraction, snap_to_ink, zone_pixels)
 from .style import CONTAINED, SAME_COLOUR, rectangles
@@ -76,16 +77,19 @@ reaches 0.5 wider than a page-edge hairline.
 
 def structure(image: ImageArray, boxes: Sequence[BBox], *,
               ground: tuple[int, int, int],
-              inverted: bool = False) -> list[Region]:
+              inverted: bool = False,
+              furniture: Sequence[Furniture] = ()) -> list[Region]:
     """The page's regions, top to bottom, covering it from 0 to 1.
 
     `image` and `ground` are what `style.rectangles` takes — the plain
     Rectified Image and the measured page ground — and `boxes` are the Zones'.
+    `furniture` is `Document.furniture`, for the broken rules (`_broken`).
     """
     drawn = rectangles(image, ground=ground, inverted=inverted)
     marked = _marked(image, ground, inverted)
     containers = list(drawn) + _strips(marked, boxes)
-    found = _grids(drawn) + _columns(boxes, containers, _rules(marked))
+    found = _grids(drawn) + _columns(boxes, containers,
+                                     _rules(marked) + _broken(furniture))
 
     regions: list[Region] = []
     cursor = 0.0
@@ -219,12 +223,60 @@ def _rules(marked: Any) -> list[_Rule]:
     return found
 
 
+def _broken(furniture: Sequence[Furniture]) -> list[_Rule]:
+    """The page's dashed and dotted vertical rules — spec 0012, G3b.
+
+    `_rules` reads one connected stroke, and a dashed rule is many short
+    ones, so `ticket_0020`'s perforation between the pass and its stub was
+    never a divider and the stub was drawn under the pass. `furniture`
+    joins the dashes into one rule; a solid rule `_rules` already sees."""
+    return [_Rule(x=(item.bbox.left + item.bbox.right) / 2, top=item.bbox.top,
+                  bottom=item.bbox.bottom, left=item.bbox.left,
+                  right=item.bbox.right, vertical=True)
+            for item in furniture
+            if item.kind == "rule" and item.vertical and item.style in ("dashed", "dotted")]
+
+
+EMPHASIS = 0.1
+"""How much larger, both ways, a drawn box may be than its row's copies and
+still be one of them, emphasised — spec 0012, step U. `pricing_0017`'s
+middle card is 3.7% taller and 3.1% wider than the two beside it, for its
+2px accent border and its ribbon, and centred on their row. Measured over
+every pair of side-by-side boxes centred on one row across the corpus:
+copies differ by at most 0.5%, and the nearest pair that is not copies,
+`invoice_0002`'s panels, by 43%."""
+
+
+def _emphasised(box: BBox, group: list[BBox]) -> bool:
+    """Whether `box` is a copy of the group's, drawn larger — centred on a
+    member's row, and larger both ways by no more than `EMPHASIS`."""
+    wide, tall = group[0].right - group[0].left, group[0].bottom - group[0].top
+    middle = (box.top + box.bottom) / 2
+    return (wide <= box.right - box.left <= wide * (1 + EMPHASIS)
+            and tall <= box.bottom - box.top <= tall * (1 + EMPHASIS)
+            and any(_near(middle, (b.top + b.bottom) / 2) for b in group))
+
+
+def _as_copy(box: BBox, like: BBox) -> BBox:
+    """`box` at `like`'s size, about its own centre."""
+    x, y = (box.left + box.right) / 2, (box.top + box.bottom) / 2
+    wide, tall = (like.right - like.left) / 2, (like.bottom - like.top) / 2
+    return BBox(x - wide, y - tall, x + wide, y + tall)
+
+
 def _grids(drawn: Sequence[BBox]) -> list[Region]:
     """Each full lattice of same-size drawn boxes at least two columns wide.
 
     A full lattice — every row holding a box in every column — so that
     `form_0007`'s input boxes, eleven of one size scattered among labels and
     full-width fields, are not one.
+
+    **Spec 0012, step U, two rules.** A box larger than its row's copies by
+    a border, a shadow or a ribbon is still one of them (`EMPHASIS`), and is
+    placed in the lattice at their size. And a split that would cross a
+    drawn box is no grid's: `pricing_0017`'s outer cards alone made a grid
+    of two whose split ran through the middle card, and its Zones were cut
+    there — `MOST POPUL` and `OST POPULAR`.
     """
     groups: list[list[BBox]] = []
     for box in drawn:
@@ -235,9 +287,18 @@ def _grids(drawn: Sequence[BBox]) -> list[Region]:
                 break
         else:
             groups.append([box])
+    whole = {id(group): list(group) for group in groups}
+    for group in [g for g in groups if len(g) >= 2]:
+        for other in [g for g in groups if len(g) == 1 and g[0] not in group]:
+            if other and _emphasised(other[0], group):
+                whole[id(group)].append(other[0])
+                group.append(_as_copy(other[0], group[0]))
+                other.clear()
 
     found: list[Region] = []
     for group in groups:
+        if not group:
+            continue
         lefts = _clusters([box.left for box in group])
         tops = _clusters([box.top for box in group])
         if len(lefts) < 2 or len(lefts) * len(tops) != len(group):
@@ -247,14 +308,18 @@ def _grids(drawn: Sequence[BBox]) -> list[Region]:
             continue
         rights = [max(box.right for box in group if _near(box.left, left))
                   for left in lefts]
-        found.append(Region(
-            top=float(min(box.top for box in group)),
-            bottom=float(max(box.bottom for box in group)),
-            flow=Flow.GRID,
-            splits=tuple(float(right + left) / 2
-                         for right, left in zip(rights, lefts[1:])),
-            rows=len(tops),
-        ))
+        splits = tuple(float(right + left) / 2
+                       for right, left in zip(rights, lefts[1:]))
+        members = whole[id(group)]
+        top = float(min(box.top for box in members))
+        bottom = float(max(box.bottom for box in members))
+        if any(box.left < x < box.right and box.top < bottom and box.bottom > top
+               and not any(member.overlap_ratio(box) >= CONTAINED
+                           or box.overlap_ratio(member) >= CONTAINED for member in members)
+               for box in drawn for x in splits):
+            continue
+        found.append(Region(top=top, bottom=bottom, flow=Flow.GRID,
+                            splits=splits, rows=len(tops)))
     return found
 
 

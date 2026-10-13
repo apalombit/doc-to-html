@@ -753,7 +753,7 @@ class OllamaEngine:
         )
 
     def extract_zone(self, image: ImageArray, zone: Zone,
-                     hint: str | None = None) -> Zone:
+                     hint: str | None = None, grid: TableGrid | None = None) -> Zone:
         """Fill in a Zone's contents from the pixels it was handed.
 
         The pixels are already this Zone's crop — the Extractor owns
@@ -772,7 +772,9 @@ class OllamaEngine:
                 f"{zone.kind.value} extraction not yet wired"
             )
         if zone.kind is Kind.TABLE and self.table_grid_hint:
-            prompt = with_grid(prompt, table_grid(image))
+            # Spec 0012, G3b: the caller's grid, measured with what the page
+            # draws known, when it has one.
+            prompt = with_grid(prompt, grid if grid is not None else table_grid(image))
         content = self.ask(
             zone.kind.value, with_hint(prompt, hint), image, schema_of(schema)
         )
@@ -839,7 +841,9 @@ def with_grid(prompt: str, grid: TableGrid) -> str:
     wide row in half failed — run 48's answers were byte-identical to the run
     before it — and a measurement is not an instruction. The counts come from
     `preprocess.table_grid`, an ink projection over the very pixels about to be
-    sent, so the prompt and the picture cannot disagree.
+    sent, so the prompt and the picture cannot disagree. Since spec 0012's
+    G3b the Conversion measures it with the page's rules and fills known
+    (`preprocess.Drawn`), so decoration is not counted as rows or columns.
 
     **A Title is a printed line and not a row, and the grid is now measured on
     a crop that no longer holds one.** `table_grid` counts bands of ink and

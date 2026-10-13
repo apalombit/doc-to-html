@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import logging
 import time
+from collections.abc import Sequence
 from dataclasses import dataclass, field, replace
 from enum import Enum
 from pathlib import Path
@@ -31,16 +32,18 @@ from .engines.base import LayoutEngine, VisionEngine
 from .engines.ollama import OllamaEngine
 from .extractors import for_kind, resolution_caveat
 from .ir import (
-    Caveat, Document, Failure, Gap, Kind, Role, RowRole, Shortfall, Zone,
+    Caveat, Document, Failure, Furniture, Gap, Kind, Role, RowRole, Shortfall, Zone,
 )
 from .preprocess import (
     MIN_ZONE_INK,
     MODEL_INPUT_LONG_EDGE,
     PAD_X,
     PAD_Y,
+    Drawn,
     EmptyZone,
     ImageArray,
     Rectified,
+    TableGrid,
     caption_band,
     content_ink,
     crop_row_as_fraction,
@@ -254,7 +257,24 @@ def _crop_data(image: ImageArray, zone: Zone, *,
     }
 
 
-def _grid_data(image: ImageArray, zone: Zone) -> dict[str, int] | None:
+def _drawn(image: ImageArray, zone: Zone,
+           furniture: Sequence[Furniture]) -> Drawn | None:
+    """What the page draws over a Zone's crop — spec 0012, G3b — or None
+    where nothing was found, so the counts are taken as they always were."""
+    if not furniture or zone.bbox is None:
+        return None
+    return furniture_module.drawn(furniture, image, zone.bbox)
+
+
+def _grid(image: ImageArray, zone: Zone,
+          furniture: Sequence[Furniture]) -> TableGrid:
+    """A table Zone's grid, measured on its crop with the page's drawing
+    known. What the Extractor's prompt states and the trace records."""
+    return table_grid(zone_pixels(image, zone), _drawn(image, zone, furniture))
+
+
+def _grid_data(image: ImageArray, zone: Zone,
+               furniture: Sequence[Furniture] = ()) -> dict[str, int] | None:
     """What the *page* says a table's shape is, beside what the model returned.
 
     Recorded for table Zones only, so the contact sheet can put the two claims
@@ -269,7 +289,7 @@ def _grid_data(image: ImageArray, zone: Zone) -> dict[str, int] | None:
     """
     if zone.kind is not Kind.TABLE or zone.bbox is None:
         return None
-    grid = table_grid(zone_pixels(image, zone))
+    grid = _grid(image, zone, furniture)
     return {"rows": grid.rows, "columns": grid.columns}
 
 
@@ -581,7 +601,8 @@ def body_px(image: ImageArray, zones: list[Zone], source_width: int) -> float | 
                        * source_width / image.shape[1] * 2) / 2)
 
 
-def shortfall(image: ImageArray, zone: Zone, index: int) -> Shortfall | None:
+def shortfall(image: ImageArray, zone: Zone, index: int,
+              furniture: Sequence[Furniture] = ()) -> Shortfall | None:
     """Whether this Zone was read short of what is printed in it.
 
     The honesty rule's last mile, and the only check in the system that can see
@@ -607,10 +628,12 @@ def shortfall(image: ImageArray, zone: Zone, index: int) -> Shortfall | None:
     if zone.kind is Kind.FIGURE or not zone.complete or zone.bbox is None:
         return None
     crop = zone_pixels(image, zone)
+    # Spec 0012, G3b: the lines counted without the rules the page draws.
+    drawn = _drawn(image, zone, furniture)
     if zone.kind in (Kind.PROSE, Kind.LIST):
-        printed, margin = hard_lines(crop), SHORTFALL_HARD_LINES
+        printed, margin = hard_lines(crop, drawn), SHORTFALL_HARD_LINES
     else:
-        printed, margin = printed_lines(crop), SHORTFALL_LINES
+        printed, margin = printed_lines(crop, drawn), SHORTFALL_LINES
     got = read_lines(zone)
     if printed - got < margin or got >= SHORTFALL_RATIO * printed:
         return None
@@ -1221,7 +1244,8 @@ class Conversion:
         plain = rectified.plain if rectified.plain is not None else rectified.image
         document.regions = structure(
             plain, [zone.bbox for zone in document.zones if zone.bbox is not None],
-            ground=document.style.page_bg, inverted=rectified.inverted)
+            ground=document.style.page_bg, inverted=rectified.inverted,
+            furniture=document.furniture)
         self.trace.record(
             Stage.LAYOUT, "structure", Disposition.ACCEPTED,
             seconds=time.perf_counter() - started,
@@ -1735,13 +1759,19 @@ class Conversion:
             asked = zone.kind.value
             mark, started = self.trace.next_call, time.perf_counter()
             try:
+                # Spec 0012, G3b: a table's grid is measured here, where the
+                # page's drawing is known, and stated to the model as it is.
+                grid = (_grid(rectified.image, zone, document.furniture)
+                        if zone.kind is Kind.TABLE else None)
                 extractor.extract(
-                    rectified.image, zone, self.engines.extract, document.hint
+                    rectified.image, zone, self.engines.extract, document.hint,
+                    grid=grid,
                 )
             except NotPairs as diagnosis:
                 self._record_extract(index, asked, extractor, rectified, zone,
                                      mark, started, Disposition.REROUTED,
-                                     error=f"{type(diagnosis).__name__}: {diagnosis}")
+                                     error=f"{type(diagnosis).__name__}: {diagnosis}",
+                                     furniture=document.furniture)
                 try:
                     self._reread_as_prose(rectified, document, index, diagnosis)
                 except Exception as error:
@@ -1753,7 +1783,8 @@ class Conversion:
             except Exception as error:
                 self._record_extract(index, asked, extractor, rectified, zone,
                                      mark, started, Disposition.REJECTED,
-                                     error=f"{type(error).__name__}: {error}")
+                                     error=f"{type(error).__name__}: {error}",
+                                     furniture=document.furniture)
                 document.failures.append(
                     failed(index, zone, error,
                            share=_share_of(rectified.image, zone))
@@ -1761,7 +1792,8 @@ class Conversion:
                 continue
             else:
                 self._record_extract(index, asked, extractor, rectified, zone,
-                                     mark, started, Disposition.ACCEPTED)
+                                     mark, started, Disposition.ACCEPTED,
+                                     furniture=document.furniture)
                 self._read_runs(rectified, document, index)
 
             note = resolution_caveat(rectified.image, zone)
@@ -1842,7 +1874,7 @@ class Conversion:
         """
         document.shortfalls = []
         for index, zone in enumerate(document.zones):
-            short = shortfall(rectified.image, zone, index)
+            short = shortfall(rectified.image, zone, index, document.furniture)
             if short is None:
                 continue
             document.shortfalls.append(short)
@@ -1860,7 +1892,8 @@ class Conversion:
     def _record_extract(self, index: int, asked: str, extractor: object,
                         rectified: Rectified, zone: Zone, mark: int,
                         started: float, disposition: Disposition,
-                        error: str | None = None) -> None:
+                        error: str | None = None,
+                        furniture: Sequence[Furniture] = ()) -> None:
         """One Event for one extraction attempt, however it ended.
 
         A method rather than three copies inline because the four exits from the
@@ -1885,7 +1918,7 @@ class Conversion:
             call=call, calls=made,
             kind_asked=asked, extractor=type(extractor).__name__,
             crop=_crop_data(rectified.image, zone),
-            grid=_grid_data(rectified.image, zone),
+            grid=_grid_data(rectified.image, zone, furniture),
             rows=len(zone.rows), pairs=len(zone.pairs), blocks=len(zone.blocks),
             complete=zone.complete, error=error,
             changed=[Change(path=f"zones[{index}].complete",

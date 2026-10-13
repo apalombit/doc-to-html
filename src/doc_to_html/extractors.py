@@ -21,6 +21,7 @@ from .ir import Kind, Zone
 from .preprocess import (
     MODEL_INPUT_LONG_EDGE,
     ImageArray,
+    TableGrid,
     height_over_input_budget,
     slice_points,
     zone_pixels,
@@ -31,7 +32,7 @@ class Extractor(Protocol):
     kind: Kind
 
     def extract(self, image: ImageArray, zone: Zone, engine: VisionEngine,
-                hint: str | None = None) -> Zone: ...
+                hint: str | None = None, grid: TableGrid | None = None) -> Zone: ...
 
 
 def resolution_caveat(image: ImageArray, zone: Zone) -> str | None:
@@ -75,8 +76,8 @@ class CropAndRead:
     kind: Kind
 
     def extract(self, image: ImageArray, zone: Zone, engine: VisionEngine,
-                hint: str | None = None) -> Zone:
-        return engine.extract_zone(zone_pixels(image, zone), zone, hint)
+                hint: str | None = None, grid: TableGrid | None = None) -> Zone:
+        return engine.extract_zone(zone_pixels(image, zone), zone, hint, grid=grid)
 
 
 class TableExtractor(CropAndRead):
