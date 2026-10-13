@@ -20,7 +20,7 @@ from pathlib import Path
 
 import numpy as np
 
-from doc_to_html.corpus import SOURCES, SWEEP
+from doc_to_html.corpus import NEW, SOURCES, SWEEP
 from doc_to_html.ir import (
     BBox,
     Block,
@@ -596,7 +596,9 @@ class TestFindingBoxesInTheCorpus:
         # not a target.
         known = carded | plain_pages | {"invoice_0001", "invoice_0002",
                                         "form_0007"}
-        assert set(SWEEP) - known == set()
+        # The six added 2026-10-13 are held out until the next spec's step 0
+        # writes down what each page draws.
+        assert set(SWEEP) - known == set(NEW)
 
 
 class TestOneRectangleOneZone:

@@ -25,7 +25,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from doc_to_html.corpus import SOURCES, SWEEP
+from doc_to_html.corpus import NEW, SOURCES, SWEEP
 from doc_to_html.ir import BBox, Block, Document, Kind, Role, Source, Zone, cell
 from doc_to_html.preprocess import rectify
 from doc_to_html.render import render
@@ -100,7 +100,10 @@ def regions_of(name: str) -> list[Region]:
 
 class TestTheCorpusPages:
     def test_every_sweep_document_has_its_answer_written_down(self) -> None:
-        assert set(EXPECTED) == set(SWEEP)
+        # The six added 2026-10-13 are held out until their answers are
+        # written from a frozen result that holds them — the next spec's
+        # step 0. Named here, so none of them goes unchecked quietly.
+        assert set(EXPECTED) == set(SWEEP) - set(NEW)
 
     def test_each_page_reads_as_its_source_is_laid_out(self) -> None:
         wrong: list[str] = []

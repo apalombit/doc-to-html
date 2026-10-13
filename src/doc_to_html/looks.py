@@ -670,8 +670,11 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
                         colours[id(cell)] = (_ink(pixels, ground), None, None)
             left = max(0, int(box.left * width) - x0 - 1)
             top = max(0, int(box.top * height) - y0 - 1)
-            right = int(np.ceil(box.right * width)) - x0 + 1
-            bottom = int(np.ceil(box.bottom * height)) - y0 + 1
+            # Kept to the Zone's crop, so the page's pixels and the mask cut
+            # alike: a box `locate` drew a pixel past its Zone's crop stops
+            # `pricing_0017` with a 13 by 22 patch over a 13 by 21 mask.
+            right = min(mask.shape[1], int(np.ceil(box.right * width)) - x0 + 1)
+            bottom = min(mask.shape[0], int(np.ceil(box.bottom * height)) - y0 + 1)
             zoned = mask[top:bottom, left:right]
             if not zoned.any() or float(zoned.mean()) > CHIP:
                 measured.append((cell, None, None, None))

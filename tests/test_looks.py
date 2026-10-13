@@ -14,6 +14,7 @@ import numpy as np
 from doc_to_html import looks
 from doc_to_html.ir import (BBox, Block, Cell, Document, Kind, Look, Reading, Row,
                             RowRole, Run, Source, Stroke, Style, Zone, cell)
+from doc_to_html.preprocess import PAD_X
 from doc_to_html.render import SIZE_STEP, render
 
 WIDTH, HEIGHT = 700, 420
@@ -165,6 +166,20 @@ class TestRead:
             Run(text="Contact: "), Run(text="editor@example.com", kind="link")])]
         looks.read(page.image, page.document())
         assert line.look is not None and line.look.color is None
+
+    def test_a_box_past_its_zones_edge_is_read_inside_it(self) -> None:
+        # `pricing_0017` stopped here: `locate` drew a box a pixel past its
+        # Zone's crop, the page's pixels were cut to the box and the mask to
+        # the crop.
+        page = body_page()
+        wide = page.put("Hello there friend of mine")
+        document = page.document()
+        zone = document.zones[0]
+        assert zone.bbox is not None and wide.bbox is not None
+        zone.bbox = BBox(zone.bbox.left, zone.bbox.top,
+                         wide.bbox.right - PAD_X - 4 / WIDTH, zone.bbox.bottom)
+        looks.read(page.image, document)
+        assert wide.look is not None
 
     def test_an_unplaced_cell_has_no_look(self) -> None:
         page = body_page()

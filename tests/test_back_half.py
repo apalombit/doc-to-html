@@ -361,8 +361,9 @@ class TestTheStatementsArithmeticReachesThePage:
         assert [(r.computed, r.stated) for r in near] == [("5766.36", "5772.36")]
 
     def test_no_other_document_on_the_floor_fails_a_probe(self) -> None:
-        from doc_to_html.corpus import SWEEP
+        from doc_to_html.corpus import NEW, SWEEP
+        # The floor holds the fifteen; the six added 2026-10-13 have none.
         for name in SWEEP:
-            if name == "statement_0006":
+            if name == "statement_0006" or name in NEW:
                 continue
             assert all(r.ok for r in probes.run(self.floor(name))), name
