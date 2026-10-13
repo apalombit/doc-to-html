@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Paper</title>
+<style>
+  /* The first page of a conference paper: a centred title, authors with
+     superscript affiliation marks, an abstract between two rules, then two
+     justified columns divided by a vertical rule. Section heads are centred
+     small capitals; one equation is centred with its number flush right; a
+     bar chart and a three-rule table carry captions; a footnote closes the
+     first column under a short rule. */
+  body { font:12px/1.42 "Times New Roman", Times, serif; color:#111;
+         background:#fff; margin:0; padding:40px 54px 34px; }
+  h1 { font-size:22px; text-align:center; margin:0 0 10px; font-weight:700;
+       line-height:1.25; }
+  .authors { text-align:center; font-size:13px; margin:0 0 3px; }
+  .affil { text-align:center; font-size:10.5px; font-style:italic; margin:0;
+           color:#333; }
+  .email { text-align:center; font:10px/1.4 "Courier New", Courier, monospace;
+           margin:3px 0 16px; }
+  sup { font-size:.68em; line-height:0; }
+  .abstract { margin:0 34px 18px; padding:9px 4px; border-top:1px solid #111;
+              border-bottom:1px solid #111; font-size:11px; text-align:justify; }
+  .abstract b { font-style:italic; }
+  .cols { display:flex; }
+  .col { flex:1; text-align:justify; }
+  .col.left { border-right:1px solid #8c8c8c; padding-right:20px; }
+  .col.right { padding-left:20px; }
+  h2 { font-size:12px; font-variant:small-caps; letter-spacing:.05em;
+       text-align:center; margin:10px 0 6px; font-weight:normal; }
+  h2:first-child { margin-top:0; }
+  p { margin:0 0 6px; text-indent:1.2em; }
+  .eq { display:flex; align-items:center; margin:8px 0; }
+  .eq .f { flex:1; text-align:center; font-size:13px; }
+  figure { margin:8px 0 10px; }
+  .chart { height:92px; display:flex; align-items:flex-end; gap:9px;
+           padding:0 10px; border-left:1px solid #111; border-bottom:1px solid #111; }
+  .chart span { flex:1; background:#7b8fb3; }
+  figcaption { font-size:10.5px; margin-top:5px; text-align:center; }
+  .tcap { font-size:10.5px; font-variant:small-caps; text-align:center;
+          margin:8px 0 4px; letter-spacing:.04em; }
+  table { border-collapse:collapse; width:100%; font-size:10.5px; margin:0 0 8px; }
+  thead tr { border-top:1.5px solid #111; border-bottom:1px solid #111; }
+  tbody tr:last-child { border-bottom:1.5px solid #111; }
+  th, td { padding:2px 6px; text-align:right; font-weight:normal; }
+  th:first-child, td:first-child { text-align:left; }
+  .fn { border-top:1px solid #111; width:45%; margin-top:12px; padding-top:4px;
+        font-size:9.5px; text-indent:0; }
+</style>
+</head>
+<body>
+<h1>Frost Heave Under Lightweight Footbridges:<br>A Field Study of Three Timber Crossings</h1>
+<p class="authors">Maren Solberg<sup>1</sup>, Pieter Achterberg<sup>2</sup> and Lucia Ferrante<sup>1</sup></p>
+<p class="affil"><sup>1</sup>Department of Civil Engineering, Fjordvik University, Norway</p>
+<p class="affil"><sup>2</sup>Delta Structural Monitoring BV, Delft, the Netherlands</p>
+<p class="email">{m.solberg, l.ferrante}@fjordvik.example</p>
+<div class="abstract"><b>Abstract</b>—Short-span timber footbridges on shallow pad foundations are often built on frost-susceptible soils. We monitored three crossings in central Norway through two winters and found seasonal heave of 8 to 15 mm at the abutments, enough to open the deck joints and tilt the handrail posts. Heave tracked the square root of the frost index closely, and a simple coefficient fitted at one site predicted the other two within 2 mm.</div>
+<div class="cols">
+  <div class="col left">
+    <h2>I. Introduction</h2>
+    <p>Most footbridges built by small municipalities are light timber structures with a single span of 15 to 35 m. Their foundations are chosen for cost, and where the ground freezes, pad footings above the frost line are common.<sup>1</sup> The resulting movement is rarely measured, although it is a frequent cause of maintenance calls.</p>
+    <p>This paper reports two winters of monitoring at three such crossings and proposes a one-parameter model for the heave of their abutments.</p>
+    <h2>II. Method</h2>
+    <p>Each abutment carried two survey targets read weekly with a total station. Air temperature was logged hourly, and the frost index <i>F</i> was taken as the sum of daily mean temperatures below zero. We fitted the relation</p>
+    <div class="eq"><span class="f"><i>Δh</i> = <i>α</i> √<i>F</i></span><span>(1)</span></div>
+    <p>where <i>Δh</i> is the heave in millimetres and <i>α</i> a site coefficient.</p>
+    <p class="fn"><sup>1</sup>The national guidance permits this where the span is under 40 m and the deck is not continuous over the supports.</p>
+  </div>
+  <div class="col right">
+    <h2>III. Results</h2>
+    <p>Heave began within a week of the first sustained frost and peaked in late February at all three sites. Fig. 1 shows the mean heave by month, and Table I summarises each crossing.</p>
+    <figure>
+      <div class="chart"><span style="height:12%"></span><span style="height:34%"></span><span style="height:61%"></span><span style="height:88%"></span><span style="height:72%"></span><span style="height:30%"></span></div>
+      <figcaption>Fig. 1. Mean abutment heave by month, November to April.</figcaption>
+    </figure>
+    <p class="tcap">Table I. Site summary</p>
+    <table>
+      <thead><tr><th>Site</th><th>Span (m)</th><th>Peak heave (mm)</th><th>Frost days</th></tr></thead>
+      <tbody>
+        <tr><td>Brekke</td><td>18</td><td>12.4</td><td>64</td></tr>
+        <tr><td>Lundtoft</td><td>24</td><td>8.1</td><td>51</td></tr>
+        <tr><td>Eidsvoll</td><td>31</td><td>15.0</td><td>77</td></tr>
+      </tbody>
+    </table>
+    <p>With <i>α</i> fitted at Brekke, (1) predicted the peak heave at the other two sites within 2 mm.</p>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Letter</title>
+<style>
+  /* A business letter: a letterhead ruled off in the firm's colour, the
+     sender set right, the recipient's address block left, a date and two
+     references set right beside it, justified paragraphs, a signature in a
+     script face, and small print under a hairline rule. */
+  body { font:13px/1.55 "Helvetica Neue", Arial, sans-serif; color:#222;
+         background:#fff; margin:0; padding:34px 56px 30px; }
+  .head { display:flex; justify-content:space-between; align-items:flex-end;
+          border-bottom:3px solid #0f5c4d; padding-bottom:10px; }
+  .mark { font:700 22px/1 Georgia, "Times New Roman", serif; color:#0f5c4d;
+          letter-spacing:.02em; }
+  .mark small { display:block; font:11px/1.4 "Helvetica Neue", Arial, sans-serif;
+                color:#5b6b67; letter-spacing:.14em; text-transform:uppercase;
+                margin-top:5px; }
+  .from { text-align:right; font-size:11px; color:#5b6b67; line-height:1.5; }
+  .meta { display:flex; justify-content:space-between; margin:26px 0 22px; }
+  .to { line-height:1.45; }
+  .date { text-align:right; line-height:1.45; }
+  .ref { font-size:11px; color:#5b6b67; }
+  .subject { font-weight:700; margin:0 0 14px; }
+  p { margin:0 0 11px; text-align:justify; }
+  .close { margin-top:18px; }
+  .sig { font:28px/1.1 "Snell Roundhand", "Apple Chancery", cursive; color:#1d3d6b;
+         margin:8px 0 4px; }
+  .name { font-weight:700; }
+  .role { color:#5b6b67; font-size:12px; }
+  .enc { margin-top:20px; font-size:12px; line-height:1.5; }
+  .foot { margin-top:30px; border-top:1px solid #c9d3d0; padding-top:8px;
+          font-size:10px; color:#7a8784; display:flex; justify-content:space-between; }
+</style>
+</head>
+<body>
+<div class="head">
+  <div class="mark">Halden &amp; Pryce<small>Chartered Surveyors</small></div>
+  <div class="from">14 Quarry Hill, Leeds LS2 7HE<br>0113 496 0218 · office@haldenpryce.example<br>Registered in England No. 08812274</div>
+</div>
+<div class="meta">
+  <div class="to">Ms Priya Nandakumar<br>Facilities Manager<br>Brightwater Housing Trust<br>3 Canal Wharf<br>Leeds LS11 5PS</div>
+  <div class="date">2 October 2026<br><span class="ref">Our ref: HP/2026/0419<br>Your ref: BHT-FM-77</span></div>
+</div>
+<p class="subject">Re: Condition survey of Wharfside Court, blocks A and B</p>
+<p>Dear Ms Nandakumar,</p>
+<p>Thank you for instructing us to carry out the condition survey of Wharfside Court. Our team inspected both blocks between 15 and 19 September, with access to every communal area, the roof coverings of block A and eleven of the twelve flats you had arranged. The one flat we could not enter, 2B/07, was surveyed from the balcony and the corridor only.</p>
+<p>The enclosed report records our findings element by element. In summary, the structure of both blocks is sound and we found no evidence of continuing movement. The flat roof over block B has reached the end of its life: the membrane is blistered over roughly a third of its area and has failed at two outlets, which accounts for the staining reported in flats 3B/02 and 3B/03.</p>
+<p>We recommend that the roof is renewed before the coming winter and that the remaining items, set out in the cost schedule, are programmed over the next three years. We would be glad to prepare a specification for the roof works and to obtain competitive tenders on your behalf.</p>
+<p>Please do not hesitate to contact me if you would like to discuss the report or arrange a meeting on site.</p>
+<div class="close">Yours sincerely,</div>
+<div class="sig">Tomas Halden</div>
+<div class="name">Tomas Halden MRICS</div>
+<div class="role">Partner, Building Surveying</div>
+<div class="enc">Enc. Condition survey report, cost schedule<br>cc: Ruth Okafor, Brightwater Housing Trust</div>
+<div class="foot"><span>Halden &amp; Pryce LLP is regulated by RICS. A list of partners is available at our registered office.</span><span>Page 1 of 1</span></div>
+</body>
+</html>

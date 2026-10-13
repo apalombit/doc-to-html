@@ -10,8 +10,9 @@ half an hour each, rewritten in full every time the IR widened.
 
 **Two splits, because the two questions cost differently.** `ITERATE` is the
 original five, about seventeen minutes of model time, and is what a change is
-measured on. `SWEEP` is all fifteen, about fifty minutes, and is what a phase
-gate is measured on. A single number taken on `ITERATE` and compared with one
+measured on. `SWEEP` is every document — twenty-one since 2026-10-13 — and is
+what a phase gate is measured on. `NEW` names the six added that day, a
+held-out set. A single number taken on `ITERATE` and compared with one
 taken on `SWEEP` is two different quantities, so the split each result came from
 is recorded beside it everywhere it is reported.
 
@@ -102,6 +103,34 @@ _SOURCES = (
     Source("catalogue_0015", "example/catalogue.html", "example/catalogue.png",
            "product grid",
            "a 3x3 grid of repeated sibling cards with shaded backgrounds"),
+    # Six added 2026-10-13, after spec 0011, each meaningfully different in
+    # its formatting from the fifteen and none of them ever tuned on: the
+    # held-out set `NEW` names.
+    Source("letter_0016", "example/letter.html", "example/letter.png",
+           "business letter",
+           "a ruled letterhead, address and date blocks set apart, justified "
+           "prose, a signature in a script face"),
+    Source("pricing_0017", "example/pricing.html", "example/pricing.png",
+           "pricing tiers",
+           "three equal-height cards, a ribbon across one card's edge, tick and "
+           "cross lists, button-like boxes"),
+    Source("paper_0018", "example/paper.html", "example/paper.png",
+           "conference paper page",
+           "superscript affiliations, a ruled abstract, two columns divided by "
+           "a vertical rule, an equation, a three-rule table"),
+    Source("timetable_0019", "example/timetable.html", "example/timetable.png",
+           "weekly timetable",
+           "a grid ruled both ways, cells spanning rows and columns, tinted "
+           "blocks with coloured edges, a hatched band"),
+    Source("ticket_0020", "example/ticket.html", "example/ticket.png",
+           "boarding pass, photographed",
+           "a card turned 1.5 degrees on a dark desk, huge codes, small-capital "
+           "labels over values, a dashed perforation"),
+    Source("certificate_0021", "example/certificate.html",
+           "example/certificate.png",
+           "certificate",
+           "a double-ruled frame, everything centred, small capitals, a script "
+           "name, signature lines beside a round seal"),
 )
 
 SOURCES: dict[str, Source] = {source.name: source for source in _SOURCES}
@@ -123,9 +152,18 @@ allowed to be decided here.
 """
 
 SWEEP = tuple(source.name for source in _SOURCES)
-"""All fifteen. Run at phase gates. About fifty minutes of model time."""
+"""Every document, twenty-one since 2026-10-13. Run at phase gates."""
 
-SPLITS: dict[str, tuple[str, ...]] = {"iterate": ITERATE, "sweep": SWEEP}
+NEW = (
+    "letter_0016", "pricing_0017", "paper_0018", "timetable_0019",
+    "ticket_0020", "certificate_0021",
+)
+"""The six added 2026-10-13 — a held-out set: no threshold, prompt or step
+was set on them. Their first sweep was taken on the code `s6-result/` was
+made with, so what it shows is how that code meets pages it has never seen."""
+
+SPLITS: dict[str, tuple[str, ...]] = {"iterate": ITERATE, "sweep": SWEEP,
+                                      "new": NEW}
 
 
 def names(split: str) -> tuple[str, ...]:

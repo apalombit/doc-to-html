@@ -158,10 +158,11 @@ class TestTheCorpusLoadsFromDisk:
         for image in corpus.values():
             assert image.is_file()  # type: ignore[attr-defined]
 
-    def test_the_whole_sweep_is_fifteen(self) -> None:
-        from doc_to_html.corpus import SWEEP
+    def test_the_whole_sweep_is_twenty_one(self) -> None:
+        from doc_to_html.corpus import NEW, SWEEP
 
-        assert len(load_corpus(REPO, SWEEP)) == 15
+        assert len(load_corpus(REPO, SWEEP)) == 21
+        assert set(NEW) <= set(SWEEP) and len(NEW) == 6
 
     def test_a_root_with_no_images_says_which_document_is_missing(
         self, tmp_path: Path

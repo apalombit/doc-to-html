@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Boarding pass</title>
+<style>
+  /* A boarding pass photographed on a desk: the pass is turned a degree and
+     a half and casts a shadow. A coloured strip carries the airline; the
+     route is two huge airport codes either side of a plane; a grid of small
+     capital labels sits over their values; a dashed perforation divides off
+     the stub, which repeats the essentials over a block code. */
+  body { margin:0; padding:46px 0 50px; background:#3c4148; }
+  .pass { width:800px; margin:0 auto; background:#fff; border-radius:14px;
+          display:flex; transform:rotate(-1.5deg);
+          box-shadow:0 8px 22px rgba(0,0,0,.5);
+          font:13px/1.35 "Helvetica Neue", Arial, sans-serif; color:#1b2330; }
+  .main { flex:1; }
+  .strip { background:#0b6e8a; color:#fff; padding:10px 22px; display:flex;
+           justify-content:space-between; align-items:center; }
+  .main .strip { border-top-left-radius:14px; }
+  .stub .strip { border-top-right-radius:14px; justify-content:center; }
+  .strip b { font-size:16px; letter-spacing:.08em; }
+  .strip span { font-size:11px; letter-spacing:.18em; text-transform:uppercase; }
+  .who { padding:14px 22px 0; }
+  .lab { font-size:9.5px; letter-spacing:.16em; text-transform:uppercase;
+         color:#5a6676; }
+  .val { font-size:16px; font-weight:600; }
+  .route { display:flex; align-items:center; justify-content:space-between;
+           padding:12px 22px 6px; }
+  .code { font-size:46px; font-weight:700; letter-spacing:.02em; line-height:1; }
+  .cname { font-size:11px; color:#5a6676; text-transform:uppercase;
+           letter-spacing:.12em; margin-top:3px; }
+  .to { text-align:right; }
+  .plane { font-size:28px; color:#0b6e8a; }
+  .grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:10px 14px;
+          padding:10px 22px 18px; }
+  .stub { width:210px; border-left:2px dashed #b9c2cc; }
+  .stub .body { padding:12px 18px 14px; }
+  .stub .row { display:flex; justify-content:space-between; margin-bottom:8px; }
+  .stub .val { font-size:14px; }
+  .qr { width:92px; height:92px; margin:6px auto 8px;
+        background:
+          repeating-linear-gradient(0deg, transparent 0 7px, #fff 7px 9px),
+          repeating-linear-gradient(90deg, #1b2330 0 5px, #fff 5px 9px, #1b2330 9px 12px, #fff 12px 15px); }
+  .small { font-size:10px; color:#5a6676; text-align:center; }
+</style>
+</head>
+<body>
+<div class="pass">
+  <div class="main">
+    <div class="strip"><b>NORDLYS AIR</b><span>Boarding pass</span></div>
+    <div class="who"><div class="lab">Passenger</div><div class="val">HALVORSEN / ASTRID MS</div></div>
+    <div class="route">
+      <div><div class="code">OSL</div><div class="cname">Oslo Gardermoen</div></div>
+      <div class="plane">✈</div>
+      <div class="to"><div class="code">TRD</div><div class="cname">Trondheim Værnes</div></div>
+    </div>
+    <div class="grid">
+      <div><div class="lab">Flight</div><div class="val">NL 0482</div></div>
+      <div><div class="lab">Date</div><div class="val">14 OCT 2026</div></div>
+      <div><div class="lab">Boarding</div><div class="val">07:35</div></div>
+      <div><div class="lab">Departs</div><div class="val">08:05</div></div>
+      <div><div class="lab">Gate</div><div class="val">C14</div></div>
+      <div><div class="lab">Seat</div><div class="val">12A</div></div>
+      <div><div class="lab">Group</div><div class="val">2</div></div>
+      <div><div class="lab">Class</div><div class="val">Economy</div></div>
+    </div>
+  </div>
+  <div class="stub">
+    <div class="strip"><span>Nordlys Air</span></div>
+    <div class="body">
+      <div class="lab">Passenger</div><div class="val" style="margin-bottom:8px">HALVORSEN / A</div>
+      <div class="row"><div><div class="lab">Flight</div><div class="val">NL 0482</div></div><div><div class="lab">Seat</div><div class="val">12A</div></div></div>
+      <div class="row"><div><div class="lab">Gate</div><div class="val">C14</div></div><div><div class="lab">Group</div><div class="val">2</div></div></div>
+      <div class="qr"></div>
+      <div class="small">Gate closes 20 minutes before departure</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

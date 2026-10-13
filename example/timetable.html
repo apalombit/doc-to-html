@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Timetable</title>
+<style>
+  /* A school week as a grid ruled in both directions: days across, times
+     down. Double lessons span two rows, registration spans the week, lunch
+     is a hatched band across every day, and each subject is a tinted block
+     with a coloured bar on its left edge. A legend of swatches follows. */
+  body { font:12px/1.35 "Helvetica Neue", Arial, sans-serif; color:#20262e;
+         background:#fff; margin:0; padding:28px 32px 26px; }
+  h1 { font-size:20px; margin:0; }
+  .term { display:flex; justify-content:space-between; color:#66707c;
+          margin:3px 0 14px; }
+  table { border-collapse:collapse; width:100%; table-layout:fixed; }
+  th, td { border:1px solid #cfd5dc; padding:4px 7px; vertical-align:top;
+           height:24px; text-align:left; }
+  thead th { background:#20262e; color:#fff; font-weight:600; text-align:center;
+             border-color:#20262e; }
+  th.time { width:58px; background:#f2f4f6; color:#4b5560; font-weight:500;
+            text-align:right; }
+  thead th.time { background:#20262e; }
+  td.reg { background:#f2f4f6; color:#4b5560; text-align:center; }
+  .maths { background:#e6f0fb; box-shadow:inset 4px 0 #2f6fb5; }
+  .sci { background:#e7f6ec; box-shadow:inset 4px 0 #2f8f53; }
+  .eng { background:#fdf0e3; box-shadow:inset 4px 0 #c97a1e; }
+  .art { background:#f6e9f6; box-shadow:inset 4px 0 #9a4a9a; }
+  .pe { background:#fbe9e9; box-shadow:inset 4px 0 #c0392b; }
+  td b { display:block; font-weight:600; padding-left:4px; }
+  .room { display:block; font-size:10px; color:#66707c; padding-left:4px; }
+  td.lunch { background:repeating-linear-gradient(45deg, #f4f5f7 0 6px, #e7eaee 6px 12px);
+             text-align:center; color:#66707c; font-style:italic; vertical-align:middle; }
+  .legend { margin-top:12px; display:flex; gap:20px; font-size:11px; color:#4b5560; }
+  .legend i { display:inline-block; width:12px; height:12px; border-radius:2px;
+              vertical-align:-2px; margin-right:6px; }
+</style>
+</head>
+<body>
+<h1>Form 9C — weekly timetable</h1>
+<div class="term"><span>Autumn term 2026 · Week A</span><span>Tutor: Mr D. Achebe · Room B12</span></div>
+<table>
+  <thead>
+    <tr><th class="time">Time</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th></tr>
+  </thead>
+  <tbody>
+    <tr><th class="time">08:40</th><td class="reg" colspan="5">Registration and tutor time</td></tr>
+    <tr><th class="time">09:00</th>
+      <td class="maths" rowspan="2"><b>Mathematics</b><span class="room">B04 · Ms Ilves</span></td>
+      <td class="eng"><b>English</b><span class="room">A11 · Mr Doran</span></td>
+      <td class="sci" rowspan="2"><b>Science</b><span class="room">Lab 2 · Dr Mensah</span></td>
+      <td class="maths"><b>Mathematics</b><span class="room">B04 · Ms Ilves</span></td>
+      <td class="art" rowspan="2"><b>Art</b><span class="room">Studio · Ms Varga</span></td></tr>
+    <tr><th class="time">10:00</th>
+      <td class="sci"><b>Science</b><span class="room">Lab 1 · Dr Mensah</span></td>
+      <td class="eng"><b>English</b><span class="room">A11 · Mr Doran</span></td></tr>
+    <tr><th class="time">11:20</th>
+      <td class="eng"><b>English</b><span class="room">A11 · Mr Doran</span></td>
+      <td class="pe" rowspan="2"><b>PE</b><span class="room">Sports hall · Mr Kowal</span></td>
+      <td class="maths"><b>Mathematics</b><span class="room">B04 · Ms Ilves</span></td>
+      <td class="sci"><b>Science</b><span class="room">Lab 1 · Dr Mensah</span></td>
+      <td class="maths"><b>Mathematics</b><span class="room">B04 · Ms Ilves</span></td></tr>
+    <tr><th class="time">12:20</th>
+      <td class="art"><b>Art</b><span class="room">Studio · Ms Varga</span></td>
+      <td class="eng"><b>English</b><span class="room">A11 · Mr Doran</span></td>
+      <td class="pe"><b>PE</b><span class="room">Field · Mr Kowal</span></td>
+      <td class="eng"><b>English</b><span class="room">A11 · Mr Doran</span></td></tr>
+    <tr><th class="time">13:20</th><td class="lunch" colspan="5">Lunch</td></tr>
+    <tr><th class="time">14:10</th>
+      <td class="sci"><b>Science</b><span class="room">Lab 2 · Dr Mensah</span></td>
+      <td class="maths"><b>Mathematics</b><span class="room">B04 · Ms Ilves</span></td>
+      <td class="art"><b>Art</b><span class="room">Studio · Ms Varga</span></td>
+      <td class="pe"><b>PE</b><span class="room">Sports hall · Mr Kowal</span></td>
+      <td class="sci"><b>Science</b><span class="room">Lab 1 · Dr Mensah</span></td></tr>
+  </tbody>
+</table>
+<div class="legend"><span><i style="background:#2f6fb5"></i>Mathematics</span><span><i style="background:#2f8f53"></i>Science</span><span><i style="background:#c97a1e"></i>English</span><span><i style="background:#9a4a9a"></i>Art</span><span><i style="background:#c0392b"></i>PE</span></div>
+</body>
+</html>

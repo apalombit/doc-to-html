@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pricing</title>
+<style>
+  /* Three plan cards side by side, stretched to one height, the middle one
+     outlined in the accent and carrying a ribbon across its top edge. Each
+     card centres its tier, price and blurb, rules them off from a list of
+     ticks and crosses, and ends on a button-like box. */
+  body { font:14px/1.5 "Avenir Next", "Helvetica Neue", Arial, sans-serif;
+         color:#1f2430; background:#f3f5f9; margin:0; padding:36px 44px 30px; }
+  header { text-align:center; margin-bottom:30px; }
+  h1 { font-size:30px; margin:0 0 4px; font-weight:700; }
+  .sub { color:#5d6577; margin:0 0 14px; }
+  .toggle { display:inline-flex; border:1px solid #c9cfdb; border-radius:999px;
+            padding:3px; background:#fff; font-size:12px; vertical-align:middle; }
+  .toggle span { padding:3px 14px; border-radius:999px; color:#5d6577; }
+  .toggle .on { background:#1f2430; color:#fff; }
+  .save { color:#1a7f4b; font-size:12px; margin-left:10px; font-weight:600; }
+  .plans { display:flex; gap:18px; align-items:stretch; }
+  .plan { flex:1; background:#fff; border:1px solid #dde2ea; border-radius:10px;
+          padding:24px 22px 20px; display:flex; flex-direction:column;
+          position:relative; }
+  .plan.pop { border:2px solid #4b5bdc; box-shadow:0 4px 14px rgba(75,91,220,.15); }
+  .ribbon { position:absolute; top:-11px; left:50%; transform:translateX(-50%);
+            background:#4b5bdc; color:#fff; font-size:10px; letter-spacing:.12em;
+            text-transform:uppercase; padding:3px 12px; border-radius:999px;
+            font-weight:600; white-space:nowrap; }
+  .tier { font-size:12px; letter-spacing:.16em; text-transform:uppercase;
+          color:#5d6577; font-weight:600; margin:0 0 8px; text-align:center; }
+  .price { text-align:center; font-size:40px; font-weight:700; margin:0;
+           line-height:1.1; }
+  .price small { font-size:14px; font-weight:400; color:#5d6577; }
+  .billed { text-align:center; font-size:12px; color:#5d6577; margin:3px 0 12px; }
+  .desc { text-align:center; font-size:13px; color:#3b4252; margin:0 0 16px; }
+  hr { border:0; border-top:1px solid #e3e7ee; margin:0 0 12px; }
+  ul { list-style:none; margin:0 0 20px; padding:0; flex:1; }
+  li { padding:4px 0 4px 24px; position:relative; font-size:13px; }
+  li::before { content:"✓"; position:absolute; left:2px; color:#1a7f4b;
+               font-weight:700; }
+  li.no { color:#a0a7b4; }
+  li.no::before { content:"✕"; color:#c0c6d1; }
+  .btn { display:block; text-align:center; border:1px solid #1f2430;
+         border-radius:6px; padding:9px 0; font-weight:600; font-size:13px; }
+  .pop .btn { background:#4b5bdc; border-color:#4b5bdc; color:#fff; }
+  .note { text-align:center; font-size:11px; color:#7a8294; margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Plans for teams of every size</h1>
+  <p class="sub">Simple pricing, no setup fees. Change or cancel your plan at any time.</p>
+  <div><span class="toggle"><span>Monthly</span><span class="on">Annual</span></span><span class="save">Save 20% with annual billing</span></div>
+</header>
+<div class="plans">
+  <div class="plan">
+    <div class="tier">Starter</div>
+    <p class="price">£0<small> / month</small></p>
+    <p class="billed">Free for one user</p>
+    <p class="desc">For individuals trying things out on a side project.</p>
+    <hr>
+    <ul>
+      <li>3 projects</li>
+      <li>1 GB storage</li>
+      <li>Community support</li>
+      <li class="no">Custom domains</li>
+      <li class="no">Audit log and single sign-on</li>
+    </ul>
+    <div class="btn">Start for free</div>
+  </div>
+  <div class="plan pop">
+    <div class="ribbon">Most popular</div>
+    <div class="tier">Team</div>
+    <p class="price">£12<small> / user / month</small></p>
+    <p class="billed">Billed annually at £144 per user</p>
+    <p class="desc">For small teams that plan, build and ship together.</p>
+    <hr>
+    <ul>
+      <li>Unlimited projects</li>
+      <li>50 GB storage per user</li>
+      <li>Email support within one working day</li>
+      <li>Custom domains</li>
+      <li class="no">Audit log and single sign-on</li>
+    </ul>
+    <div class="btn">Start a 14-day trial</div>
+  </div>
+  <div class="plan">
+    <div class="tier">Business</div>
+    <p class="price">£29<small> / user / month</small></p>
+    <p class="billed">Billed annually at £348 per user</p>
+    <p class="desc">For organisations with security and compliance needs.</p>
+    <hr>
+    <ul>
+      <li>Unlimited projects</li>
+      <li>1 TB storage per user</li>
+      <li>Priority support with a named contact</li>
+      <li>Custom domains</li>
+      <li>Audit log and single sign-on</li>
+    </ul>
+    <div class="btn">Contact sales</div>
+  </div>
+</div>
+<p class="note">Prices exclude VAT. Annual plans are billed upfront; monthly plans are billed on the first of each month.</p>
+</body>
+</html>

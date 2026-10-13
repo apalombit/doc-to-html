@@ -45,6 +45,12 @@ WIDTHS: dict[str, int] = {
     "cv_0013": 900,
     "nonlatin_0014": 940,
     "catalogue_0015": 900,
+    "letter_0016": 820,
+    "pricing_0017": 1000,
+    "paper_0018": 900,
+    "timetable_0019": 960,
+    "ticket_0020": 900,
+    "certificate_0021": 1000,
 }
 """The width each authored document is shot at, and therefore compared at.
 
