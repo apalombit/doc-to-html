@@ -994,13 +994,7 @@ def _measure(document: Document) -> list[str]:
         return []
     page = _page(document)
     frame = furnish.anchor(document).page
-    # Across, the page's content reaches as far as anything it draws: a
-    # card's frame and a rule run past the type they hold (sample_css_0004).
-    # Inside a page frame the type sets the width, as `_page_frame` pads.
-    drawn = boxes if frame is not None else [
-        *boxes, *(zone.frame for zone in document.zones if zone.frame is not None),
-        *(item.bbox for item in document.furniture)]
-    content = _union(drawn)
+    content = _union(boxes) if frame is not None else _content(document) or _union(boxes)
     tops = [t for zone in document.zones if (t := _top(zone, page)) is not None]
     bottoms = [b for zone in document.zones if (b := _bottom(zone, page)) is not None]
     if frame is not None:
@@ -1023,6 +1017,210 @@ def _measure(document: Document) -> list[str]:
     if document.source.surround is not None:
         rules.append(f"html, body {{ background:{_rgb(document.source.surround)}; }}")
     return rules
+
+
+def _content(document: Document) -> BBox | None:
+    """How far across the page's content reaches — spec 0012, G5: as far as
+    anything it draws, since a card's frame and a rule run past the type
+    they hold (`sample_css_0004`). Inside a page frame the type sets it, as
+    `_page_frame` pads."""
+    boxes = [zone.bbox for zone in document.zones if zone.bbox is not None]
+    if not boxes:
+        return None
+    if furnish.anchor(document).page is None:
+        boxes += [*(zone.frame for zone in document.zones if zone.frame is not None),
+                  *(item.bbox for item in document.furniture)]
+    return _union(boxes)
+
+
+ALIGN_SLACK = 1.0
+"""How far apart, in ems of the body, two edges may stand and still be
+one edge — spec 0012, G6. Half of it for the edges of a column's entries,
+which are set to one edge exactly."""
+
+CENTRED_ROOM = 2.0
+"""The room, in ems, an entry must leave on both sides to be centred."""
+
+FLUSH_ROOM = 4.0
+"""The room, in ems, an entry must leave on one side to be set flush to
+the other."""
+
+ONE_LINE = 1.8
+"""How tall, in its own size, a box may be and hold one printed line."""
+
+BREAK_ROOM = 1.5
+"""The room, in ems, a line must leave after the next line's first word
+for the page to have broken it, not wrapped it."""
+
+
+@dataclass(frozen=True)
+class _Lane:
+    """The measure a Zone's lines are set in, across, normalised, and
+    whether the Zone has it to itself."""
+
+    low: float
+    high: float
+    alone: bool
+
+
+def _lane(zone: Zone, document: Document) -> _Lane | None:
+    """Spec 0012, G6: a Zone's lane in a `columns` Region, or the page's
+    content, narrowed by the Zones beside it in that lane."""
+    box = zone.bbox
+    if box is None:
+        return None
+    home = furnish.container(box, document.regions)
+    mates = [other.bbox for other in document.zones if other.bbox is not None
+             and furnish.container(other.bbox, document.regions) == home]
+    whole = _content(document) if home is None else _union(mates)
+    if whole is None:
+        return None
+    low, high, alone = whole.left, whole.right, True
+    for other in mates:
+        if other is box or min(other.bottom, box.bottom) <= max(other.top, box.top):
+            continue
+        if other.right <= box.left:
+            low, alone = max(low, other.right), False
+        elif other.left >= box.right:
+            high, alone = min(high, other.left), False
+    return _Lane(low, high, alone)
+
+
+def _spread(values: Sequence[float], page: _Page) -> float:
+    return (max(values) - min(values)) * page.x / page.body
+
+
+def _set(block: Block, lane: _Lane, page: _Page) -> str | None:
+    """How the page sets one Block in its lane, from its entries' boxes —
+    spec 0012, G6. `centre`, `right` or `left` for entries of one printed
+    line each; `spans` where the Block reaches both edges; `even` for taller
+    entries with even room both sides, which may be centred lines or an
+    indented column — the boxes cannot say which; None otherwise, and where
+    no entry has a box. Entries with no box are left out of the judgement:
+    the paper's equation, between two lines that span its column."""
+    located = [cell.bbox for cell in block.lines if cell.bbox is not None]
+    if not located:
+        return None
+    extent = _union(located)
+    left = (extent.left - lane.low) * page.x / page.body
+    right = (lane.high - extent.right) * page.x / page.body
+    if left <= ALIGN_SLACK and right <= ALIGN_SLACK:
+        return "spans"
+    even = (min(left, right) > CENTRED_ROOM
+            and abs(left - right) <= max(ALIGN_SLACK, 0.15 * max(left, right)))
+    size = _drawn_size(block) * page.body
+    if any((box.bottom - box.top) * page.y > ONE_LINE * size for box in located):
+        return "even" if even else None
+    if len(located) > 1:
+        if _spread([box.left for box in located], page) <= ALIGN_SLACK / 2:
+            return "left"
+        if _spread([box.right for box in located], page) <= ALIGN_SLACK / 2:
+            return "right" if left > FLUSH_ROOM else None
+        middles = [(box.left + box.right) / 2 for box in located]
+        return "centre" if even and _spread(middles, page) <= ALIGN_SLACK else None
+    if even:
+        return "centre"
+    if right <= ALIGN_SLACK and left > FLUSH_ROOM:
+        return "right"
+    if left <= ALIGN_SLACK and right > FLUSH_ROOM:
+        return "left"
+    return None
+
+
+def _block_aligns(zone: Zone, document: Document) -> dict[int, str]:
+    """Each Block's `text-align`, by id, where the page sets it otherwise
+    than its Zone — spec 0012, G6: `report_0011`'s centred footer under a
+    footnote; the paper's centred heads over their columns. Only for a Zone
+    with its lane to itself, whose box is the lane: beside another, its box
+    is its share of a row. **A Zone of centred Blocks is centred whole**,
+    the Blocks with no box with it — the certificate's `✦ ✦ ✦` under its
+    title — unless one of them is set otherwise."""
+    lane = _lane(zone, document)
+    if lane is None or not lane.alone:
+        return {}
+    page = _page(document)
+    sets = [_set(block, lane, page) for block in zone.blocks]
+    drawn = zone.align if zone.align in ("centre", "right") else "left"
+    if (drawn != "centre" and "centre" in sets
+            and all(each in ("centre", "even", None) for each in sets)):
+        return {id(block): "center" for block in zone.blocks}
+    return {id(block): TEXT_ALIGN.get(each, "left")
+            for block, each in zip(zone.blocks, sets)
+            if each in ("centre", "right", "left") and each != drawn}
+
+
+INDENT = (0.5, 4.0)
+"""How far, in ems, a paragraph's first line may start right of its others
+to be a first-line indent — spec 0012, G6: the paper's 1.2."""
+
+
+def _indent(block: Block, page: _Page) -> str:
+    """A paragraph's first-line indent, from its lines' boxes: the first
+    starts right of the others, half of which at least start together — the
+    paper's equation and its number are among them. Three located lines at
+    least: two of a centred Block start apart by chance."""
+    located = [cell.bbox for cell in block.lines if cell.bbox is not None]
+    if len(located) < 3 or block.lines[0].bbox is None:
+        return ""
+    first, rest = located[0], located[1:]
+    least = min(box.left for box in rest)
+    together = [box for box in rest if (box.left - least) * page.x <= ALIGN_SLACK / 2 * page.body]
+    if 2 * len(together) < len(rest):
+        return ""
+    into = (first.left - least) * page.x
+    if not INDENT[0] <= into / page.body <= INDENT[1]:
+        return ""
+    return f"text-indent:{_px(into)}"
+
+
+def _broken(block: Block, lane: _Lane, page: _Page) -> tuple[set[int], set[int]]:
+    """Where the page breaks a Block's lines rather than wrapping them, and
+    which lines it sets flush right on their own — spec 0012, G6.
+
+    A line is broken, not wrapped, when the next line's first word would
+    have fitted after it with `BREAK_ROOM` to spare: the letter's `Enc.` and
+    `cc:`, the certificate's `Helena Brandt` over `COURSE LEADER`, the
+    paper's line before its equation. The measure is the lane, narrowed on
+    both sides by the Block's own indent; a centred Block is measured by its
+    lines' widths. A line of a left-set Block that starts past the middle of
+    the lane and ends at its edge, where every other line starts in the
+    lane's left half, is set flush right on its own: the paper's equation
+    number. Nothing is judged in a Block that runs out of its lane. Returns
+    the indices a break comes before, and the indices set flush right."""
+    located = [cell.bbox for cell in block.lines if cell.bbox is not None]
+    em = page.body / page.x
+    slack = ALIGN_SLACK * em
+    if not located or any(box.left < lane.low - slack or box.right > lane.high + slack
+                          for box in located):
+        # A Block that runs out of its lane has no measure to judge by:
+        # `pricing_0017`'s Zones, cut through its middle card (step U).
+        return set(), set()
+    least = min(box.left for box in located)
+    middles = [(box.left + box.right) / 2 for box in located]
+    centred = (len(located) > 1
+               and _spread([box.left for box in located], page) > ALIGN_SLACK / 2
+               >= _spread(middles, page))
+    high = lane.high - max(0.0, least - lane.low)
+    widths = sorted((cell.bbox.right - cell.bbox.left) / len(cell.text)
+                    for cell in block.lines if cell.bbox is not None and cell.text)
+    per = widths[len(widths) // 2] if widths else 0.0
+    middle = (lane.low + lane.high) / 2
+    breaks, right = set(), set()
+    for index, (line, after) in enumerate(zip(block.lines, block.lines[1:]), start=1):
+        box = after.bbox
+        if (not centred and box is not None and box.left > middle
+                and lane.high - box.right <= ALIGN_SLACK * em
+                and all(other.left < middle for other in located if other is not box)):
+            right.add(index)
+            continue
+        if line.bbox is None or not after.text.split():
+            continue
+        need = (len(after.text.split()[0]) + 1) * per
+        room = ((lane.high - lane.low) - (line.bbox.right - line.bbox.left) if centred
+                else high - line.bbox.right)
+        if room - need > BREAK_ROOM * em:
+            breaks.add(index)
+    return breaks, right
 
 
 def _wrap(root: list[str], rules: list[str]) -> str:
@@ -1174,9 +1372,9 @@ def _inline_style(zone: Zone,
     return f' style="{";".join(parts)}"' if parts else ""
 
 
-TEXT_ALIGN = {"centre": "center", "right": "right"}
+TEXT_ALIGN = {"centre": "center", "right": "right", "justify": "justify"}
 """`Zone.align` and `Zone.title_align` as CSS. Left is the house default and
-draws nothing."""
+draws nothing; `justify` is a prose Zone's only (spec 0012, G6)."""
 
 
 def _inline_title_style(zone: Zone, extra: str = "") -> str:
@@ -1483,6 +1681,96 @@ def _under(zone: Zone) -> set[int]:
     return under
 
 
+def _spans(zone: Zone, page: _Page, under: set[int]) -> dict[tuple[int, int], int]:
+    """How many columns each entry the page prints across its neighbours
+    spans, by (row, column) — spec 0012, G6. An entry whose box runs past
+    where the next column's entries start, over that column's empty cell,
+    takes it: `receipt_0010`'s `Subtotal` and `TOTAL` over its item column,
+    `statement_0006`'s `Totals for the period` over the descriptions. Drawn
+    in one column, each widened its column to itself. A row whose one entry
+    is its first, with no box to place it by, spans the row where the
+    others hold entries elsewhere: the receipt's `AID` line. So does a row
+    of one cell: menu's `From the grill`."""
+    width = max((len(row.cells) for row in zone.rows), default=0)
+    starts: dict[int, float] = {}
+    for column in range(width):
+        lefts = [row.cells[column].bbox.left for row in zone.rows  # type: ignore[union-attr]
+                 if column < len(row.cells) and row.cells[column].bbox is not None
+                 and row.cells[column].text.strip()]
+        if lefts:
+            starts[column] = min(lefts)
+    past = ALIGN_SLACK / 2 * page.body / page.x
+    out: dict[tuple[int, int], int] = {}
+    for position, row in enumerate(zone.rows):
+        filled = [index for index, cell in enumerate(row.cells) if cell.text.strip()]
+        if len(row.cells) == 1 < width or (
+                filled == [0] and row.cells[0].bbox is None and len(row.cells) == width > 1
+                and not under and all(column in starts for column in range(1, width))):
+            out[(position, 0)] = width
+            continue
+        for column in filled:
+            box = row.cells[column].bbox
+            if box is None:
+                continue
+            end = column + 1
+            while (end < len(row.cells) and end not in under and end in starts
+                   and not row.cells[end].text.strip() and box.right > starts[end] + past):
+                end += 1
+            if end > column + 1:
+                out[(position, column)] = end - column
+    return out
+
+
+def _centred_in(cell: Cell, zone: Zone, page: _Page) -> bool:
+    """Whether an entry across its whole table sits centred in it — menu's
+    `From the grill` over its dishes: even room both sides, `CENTRED_ROOM`
+    at least."""
+    if cell.bbox is None or zone.bbox is None:
+        return False
+    left = (cell.bbox.left - zone.bbox.left) * page.x / page.body
+    right = (zone.bbox.right - cell.bbox.right) * page.x / page.body
+    return (min(left, right) > CENTRED_ROOM
+            and abs(left - right) <= max(ALIGN_SLACK, 0.15 * max(left, right)))
+
+
+def _column_aligns(zone: Zone, page: _Page, spans: dict[tuple[int, int], int],
+                   numeric: set[int]) -> dict[int, str]:
+    """Each column's `text-align`, where its entries' boxes set it otherwise
+    than the stylesheet — spec 0012, G6. Edges agree within half
+    `ALIGN_SLACK` over the column's data entries in rows of the table's
+    full width, or with its header where there is one data row — a tile's
+    label over its value: lefts and not rights is
+    left, rights and not lefts right, centres and neither centre. Both is
+    entries of one width, which say nothing. `statement_0006`'s balance
+    tiles, set left over numbers; darkdeck's `P95` times, set right."""
+    width = max((len(row.cells) for row in zone.rows), default=0)
+    edge = ALIGN_SLACK / 2
+    out: dict[int, str] = {}
+    for column in range(width):
+        entries = [(row.role, row.cells[column].bbox) for position, row in enumerate(zone.rows)
+                   if len(row.cells) == width and row.cells[column].text.strip()
+                   and (position, column) not in spans]
+        located = [box for role, box in entries if box is not None and role is RowRole.DATA]
+        if len(located) < 2:
+            located = [box for _, box in entries if box is not None]
+        if len(located) < 2:
+            continue
+        lefts = _spread([box.left for box in located], page)
+        rights = _spread([box.right for box in located], page)
+        middles = _spread([(box.left + box.right) / 2 for box in located], page)
+        if lefts <= edge < rights:
+            want = "left"
+        elif rights <= edge < lefts:
+            want = "right"
+        elif min(lefts, rights) > edge >= middles:
+            want = "center"
+        else:
+            continue
+        if want != ("right" if column in numeric else "left"):
+            out[column] = want
+    return out
+
+
 def _numeric_columns(zone: Zone) -> set[int]:
     """Column indices whose data rows are predominantly numbers.
 
@@ -1569,6 +1857,10 @@ def _table(zone: Zone, document: Document) -> str:
     """
     numeric = _numeric_columns(zone)
     under = _under(zone)
+    width = max((len(row.cells) for row in zone.rows), default=0)
+    page = _page(document)
+    spans = _spans(zone, page, under)
+    aligned = _column_aligns(zone, page, spans, numeric)
     roles = [row.role for row in zone.rows]
     data_at = [i for i, role in enumerate(roles) if role is RowRole.DATA]
     opening = next((i for i, role in enumerate(roles)
@@ -1580,7 +1872,6 @@ def _table(zone: Zone, document: Document) -> str:
     groups: dict[RowRole, list[str]] = {role: [] for role in RowRole}
     ink = _house(document)
     read = _rows_read(zone)
-    page = _page(document)
     places: list[bool] = []
     for position, row in enumerate(zone.rows):
         if row.role is RowRole.HEADER:
@@ -1609,6 +1900,10 @@ def _table(zone: Zone, document: Document) -> str:
         def styled(cell: Cell, number: int) -> str:
             looked = _look(cell, bold=row.role is not RowRole.DATA, house=ink)
             drawn = []
+            if number in aligned and (position, number) not in spans:
+                drawn.append(f"text-align:{aligned[number]}")
+            elif spans.get((position, number)) == width and _centred_in(cell, zone, page):
+                drawn.append("text-align:center")
             if anchors is not None:
                 bar = anchors.cell_lefts.get((index_of, position, number))
                 if bar is not None:
@@ -1634,10 +1929,19 @@ def _table(zone: Zone, document: Document) -> str:
                 following += 1
             return text
 
+        def opened(index: int, c: Cell) -> str:
+            span = spans.get((position, index))
+            number = (is_numeric(c.text) if span is not None else index in numeric)
+            return (f'<{tag}{" class=\"num\"" if number else ""}'
+                    f'{f" colspan=\"{span}\"" if span is not None else ""}'
+                    f'{styled(c, index)}>')
+
+        covered = {index for (at, start), span in spans.items() if at == position
+                   for index in range(start + 1, start + span)}
         cells = "".join(
-            f'<{tag}{" class=\"num\"" if index in numeric else ""}{styled(c, index)}>'
-            + entry(index, c) + f"</{tag}>"
-            for index, c in enumerate(row.cells) if index not in under
+            opened(index, c) + entry(index, c) + f"</{tag}>"
+            for index, c in enumerate(row.cells)
+            if index not in under and index not in covered
         )
         in_place = places[position]
         hatch = anchors.rows.get((index_of, position)) if anchors else None
@@ -2060,6 +2364,7 @@ def _pairs(zone: Zone, document: Document) -> str:
     pushed = _below_hatch(zone, document, [
         min((c.bbox.top for c in (pair.label, pair.value) if c.bbox is not None),
             default=None) for pair in zone.pairs])
+    flush = _labels_flush(zone, page)
     parts = []
     for position, pair in enumerate(zone.pairs):
         label, value = _cell(pair.label, document), _cell(pair.value, document)
@@ -2074,6 +2379,8 @@ def _pairs(zone: Zone, document: Document) -> str:
             return f' style="{looked}"' if looked else ""
 
         dt, dd = styled(named, muted=True), styled(held, bold=summary)
+        if flush and not lines:
+            dt = _merged(dt, "text-align:right")
         rule = anchors.pairs.get((index, position)) if anchors else None
         if rule is not None and not lines:
             # Spec 0012, G3a: a rule the page draws over this pair, across
@@ -2092,6 +2399,20 @@ def _pairs(zone: Zone, document: Document) -> str:
         parts.append(f"{tag}{label}</dt><dd{dd}>{value}</dd>")
     css = "pairs lines" if lines else "pairs"
     return f'<dl class="{css}">' + "".join(parts) + "</dl>"
+
+
+def _labels_flush(zone: Zone, page: _Page) -> bool:
+    """Whether the page sets a pairs list's labels flush right against
+    their values — spec 0012, G6, `invoice_0002`'s `Name`, `Industry` and
+    `Tax Office`: their right edges agree within half `ALIGN_SLACK` and
+    their left edges do not."""
+    labels = [pair.label.bbox for pair in zone.pairs if pair.label.bbox is not None
+              and pair.label.text.strip() and pair.value.text.strip()]
+    located = [box for box in labels if box is not None]
+    if len(located) < 2:
+        return False
+    return (_spread([box.right for box in located], page) <= ALIGN_SLACK / 2
+            < _spread([box.left for box in located], page))
 
 
 def _printed_lines(zone: Zone) -> list[list[tuple[Cell, bool]]] | None:
@@ -2203,12 +2524,16 @@ def _prose(zone: Zone, document: Document) -> str:
     spacing = dict(zip(map(id, zone.blocks), _spacing(zone.blocks, _page(document))))
     for key, ruled in _ruled(zone, document).items():
         spacing[key] = (ruled, spacing[key][1])
+    # Spec 0012, G6: each Block set where the page sets it, its lines
+    # broken where the page breaks them.
+    aligns = _block_aligns(zone, document)
+    lane = _lane(zone, document)
     parts = []
     for is_item, run in groupby(zone.blocks, key=lambda b: b.kind == "item"):
         if is_item:
             listed = list(run)
             items = "".join(f"<li{_li_style(b, document, _styled(spacing[id(b)][0]))}>"
-                            f"{_lines(b, document)}</li>" for b in listed)
+                            f"{_lines(b, document, lane)}</li>" for b in listed)
             # The list's own margin below gives way, as a paragraph's does.
             closed = spacing[id(listed[-1])][1]
             parts.append(f"<ul{_styled('margin-bottom:0' if closed else '')}>"
@@ -2216,9 +2541,10 @@ def _prose(zone: Zone, document: Document) -> str:
         else:
             for b in run:
                 above, closed = spacing[id(b)]
+                aligned = f"text-align:{aligns[id(b)]}" if id(b) in aligns else ""
                 parts.append(_block(b, document, ";".join(
-                    part for part in (above, "margin-bottom:0" if closed else "")
-                    if part)))
+                    part for part in (above, "margin-bottom:0" if closed else "", aligned)
+                    if part), lane))
     return "".join(parts)
 
 
@@ -2433,7 +2759,8 @@ def _li_style(block: Block, document: Document, spaced: str = "") -> str:
     return f' style="{looked}"'
 
 
-def _block(block: Block, document: Document, spacing: str = "") -> str:
+def _block(block: Block, document: Document, spacing: str = "",
+           lane: _Lane | None = None) -> str:
     if block.kind == "heading":
         # A size is only ever set smaller than `h1`'s own 1.6em — see
         # `style.heading_sizes` — so the stylesheet keeps the heading's weight
@@ -2441,15 +2768,16 @@ def _block(block: Block, document: Document, spacing: str = "") -> str:
         looked = _common_look(block.lines, sized=False, house=_house(document))
         size = f"font-size:{block.size:.2f}em" if block.size else ""
         both = ";".join(part for part in (size, looked, spacing) if part)
-        return f"<h1{_styled(both)}>{_lines(block, document)}</h1>"
+        return f"<h1{_styled(both)}>{_lines(block, document, lane)}</h1>"
     looked = _common_look(block.lines, house=_house(
         document, muted=block.kind == "attribution"))
-    style = _styled(";".join(part for part in (looked, spacing) if part))
+    style = _styled(";".join(part for part in (looked, spacing,
+                                                _indent(block, _page(document))) if part))
     if block.kind == "quote":
-        return f"<blockquote{style}>{_lines(block, document)}</blockquote>"
+        return f"<blockquote{style}>{_lines(block, document, lane)}</blockquote>"
     if block.kind == "attribution":
-        return f'<p class="attribution"{style}>{_lines(block, document)}</p>'
-    return f"<p{style}>{_lines(block, document)}</p>"
+        return f'<p class="attribution"{style}>{_lines(block, document, lane)}</p>'
+    return f"<p{style}>{_lines(block, document, lane)}</p>"
 
 
 KEEPS_ITS_LINES = frozenset({"address"})
@@ -2580,22 +2908,34 @@ disputed cell renders wrapped in a `<span>` and the hyphen is then inside it.
 """
 
 
-def _lines(block: Block, document: Document) -> str:
+def _lines(block: Block, document: Document, lane: _Lane | None = None) -> str:
     """The block's lines, reflowed unless its kind keeps them.
 
     **Reflowing must not delete the per-line Cells** — they are what a
     Correction anchors to and what makes each reading a ground-truth label, so
     this joins `block.lines` for display only and leaves the IR alone. The IR
     embedded in the rendered file still carries one Cell per printed line.
+
+    **Given its lane, a line the page breaks stays broken** — spec 0012, G6,
+    `_broken` — and a line it sets flush right on its own is drawn so.
     """
     rendered = [_cell(line, document) for line in block.lines]
     if block.kind in KEEPS_ITS_LINES or len(rendered) < 2:
         return "<br>".join(rendered)
+    breaks, right = (_broken(block, lane, _page(document)) if lane is not None
+                     else (set(), set()))
+    for index in right:
+        rendered[index] = f'<span style="display:block;text-align:right">{rendered[index]}</span>'
 
     out = [rendered[0]]
-    for previous, cell, piece in zip(block.lines, block.lines[1:], rendered[1:]):
+    for index, (previous, cell, piece) in enumerate(
+            zip(block.lines, block.lines[1:], rendered[1:]), start=1):
         how = _how_to_join(previous.text.rstrip(), cell.text.lstrip())
-        if how == DEHYPHENATE:
+        if index in right or index - 1 in right:
+            out.append(piece)
+        elif index in breaks:
+            out.append("<br>" + piece)
+        elif how == DEHYPHENATE:
             out[-1] = _TRAILING_HYPHEN.sub("", out[-1])
             out.append(piece)
         elif how == TIGHT:

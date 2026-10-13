@@ -730,6 +730,66 @@ description took a column beside its dish; that is the `_under` fix.
 | new: `timetable_0019` | **same** — margins as printed; still one lesson row (G9, U) |
 
 No page worse; `vanished` 55. Run `S8-5-width`. Tests: `tests/test_width.py`.
+`_under` also closes §1a's menu row filed under §7: the right column's
+notes drawn on the dish's line.
+
+### Outcome — step 6, G6: every entry placed by its own box, 2026-10-13
+
+**Traced first (§1b).** The equation, `Enc.`/`cc:` and `Helena Brandt` /
+`COURSE LEADER` were each separate line Cells in the IR. The model kept
+them apart and the render's reflow joined them.
+
+Render-only except justification, all from the boxes spec 0011 step 2
+placed:
+- **A Block set in its lane** (`_block_aligns`). A Block of single printed
+  lines, in a Zone with its lane to itself, is centred, flush right or
+  left where its box says so. A Zone whose Blocks are all centred is
+  centred whole, unlocated ones with it (the certificate's `✦ ✦ ✦`).
+- **A line the page breaks stays broken** (`_broken`). A break is kept
+  where the next line's first word would have fitted with `BREAK_ROOM`
+  (1.5 em) to spare. A centred Block is measured by width. A line of a
+  left-set Block that starts past the lane's middle and ends at its edge
+  is set flush right on its own. Nothing is judged in a Block that runs
+  out of its lane.
+- **Table entries by their boxes.** An entry over an empty neighbour
+  column spans it (`_spans`), as does a one-cell row. A column's
+  alignment follows its entries' edges (`_column_aligns`). A spanning row
+  centred in its table is centred.
+- **Labels flush right** where their right edges agree (`_labels_flush`).
+- **First-line indents** from three or more located lines (`_indent`).
+- **Justification**, the one IR change: `rhythm` sets `Zone.align =
+  "justify"` on a left-set prose Zone whose printed lines end together
+  but for a paragraph's last (`RAGGED`, measured in pixels: the letter's
+  paragraphs are one Cell each). Set on the letter (3 Zones), the
+  newsletter (8) and the paper (4) only.
+
+**During the step** the paper's METHOD paragraph came out centred: a
+Block with an unlocated equation line let its Zone follow the centred
+head. `COURSE LEADER` was set flush right, and pricing's `together.` too.
+Each was traced and fixed before the step was measured.
+
+**15 pages' bytes moved, 14 in pixels.**
+
+| page | against step 5 |
+|---|---|
+| `receipt_0010` | **better** — quantities at the left beside their items; `Till 02`, `Order`, `Subtotal`, `TOTAL`, `Card`, `Change`, `AID` set left across the item column. `oat milk` and `extra butter` are not set in, as printed |
+| `statement_0006` | **better** — the balance tiles set left over their numbers; the Date column as narrow as its dates, `Totals for the period` spanning |
+| `invoice_0002` | **better** — the labels flush right against their values |
+| `cv_0013` | **better** — `Senior Structural Engineer` over `Marrow & Kealy Consulting, Dublin`; the first-class note spans its column and breaks as printed |
+| `darkdeck_0009` | **better** — the lede breaks where the page's own measure breaks it; the `P95` times flush right |
+| `newsletter_0008` | **better** — the columns justified. The drop-capped opening, read as a heading, is justified with them, and its second line is set in as beside the cap |
+| `nonlatin_0014` | **better** — the issuer's name, address and tax line on three lines |
+| `menu_0012` | **better** — `From the grill` centred over its dishes. `PUDDINGS` has no box and stays left |
+| `report_0011` | **better**, minor — the footer centred |
+| new: `paper_0018` | **better** — heads, authors and affiliations centred; abstract and columns justified, paragraphs indented; the equation on its own line, its number flush right on the next (the source sets both on one line, and the equation has no box) |
+| new: `letter_0016` | **better** — the body justified; `Enc.` and `cc:` on two lines |
+| new: `certificate_0021` | **better** — the title and its ornaments centred; `Helena Brandt` over `COURSE LEADER` |
+| new: `pricing_0017` | **same** — subline and note centred; the cards' lines broken as printed, inside cards that are still step U's |
+| new: `ticket_0020` | **same** — `HALVORSEN / A` spans its row |
+
+No page worse; `vanished` 55. Run `S8-6-entries`. Tests:
+`tests/test_entries.py`. Menu's heads are drawn centred but not in small
+capitals, which is G7.
 
 ## 6. The sweep's prediction — to register at step U, before `S8-sweep` finishes
 

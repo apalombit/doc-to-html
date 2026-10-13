@@ -39,7 +39,7 @@ from .ir import BBox, Document, Flow, Kind, Region, Zone
 from .style import body_glyph, box_around, boxes_for, type_lines, type_mask
 from .preprocess import ImageArray, crop_origin
 
-LEFT, CENTRE, RIGHT = "left", "centre", "right"
+LEFT, CENTRE, RIGHT, JUSTIFY = "left", "centre", "right", "justify"
 
 LINE_EDGE = 0.3
 """How far, in glyph heights, a block's line edges may spread and still agree.
@@ -64,6 +64,19 @@ block; the flush-right ones sit **0.00-1.08** from the edge. The Titles
 over their Zones measure the same way: centred **0.00-0.27**, and the next,
 a Title as wide as its Zone, at 0.50 with both sides under one glyph — which
 is spanning, not centred."""
+
+RAGGED = 4.0
+"""How far short of its Zone's widest line, in glyph heights, a line may end
+and still be a ragged line rather than a paragraph's last — spec 0012, G6.
+
+Measured over every prose Zone of three printed lines or more: the
+justified ones (the letter's body, the newsletter's columns, the paper's
+abstract and columns) end every line but a paragraph's last within
+`LINE_EDGE` of the edge, the newsletter's drop-capped paragraph one at
+0.6; a paragraph's last line ends 7.0 short or more, but for one at 3.4 on
+the broken pricing page. The ragged ones (the letter's addresses, the
+newsletter's pull quote, the paper's title block) end lines 1.2-8.3
+short."""
 
 CONTINUES = 1.6
 """How many of the upper Zone's line pitches the gap may be for the lower
@@ -306,6 +319,23 @@ def _by_place(index: int, zones: Sequence[Zone],
     return LEFT
 
 
+def _justified(lines: list[_Line], body: float) -> bool:
+    """Whether a Zone's printed lines are set justified: most start at one
+    left edge, and its lines end at one right edge but for a paragraph's
+    last — two such lines and no ragged one, or three and a ragged one in
+    four. See `RAGGED`."""
+    if len(lines) < 3:
+        return False
+    left = min(line.left for line in lines)
+    right = max(line.right for line in lines)
+    if 2 * sum(1 for line in lines if line.left - left <= LINE_EDGE * body) <= len(lines):
+        return False
+    short = [(right - line.right) / body for line in lines]
+    full = sum(1 for each in short if each <= LINE_EDGE)
+    ragged = sum(1 for each in short if LINE_EDGE < each <= RAGGED)
+    return (full >= 3 and ragged <= full // 4) or (full >= 2 and not ragged)
+
+
 def alignment(image: ImageArray, zones: Sequence[Zone],
               regions: Sequence[Region], *, body: float) -> list[str | None]:
     """For each Zone, how its lines sit — or None for a table, a grid's cell,
@@ -325,6 +355,9 @@ def alignment(image: ImageArray, zones: Sequence[Zone],
     text sits. Found by the suite, not the corpus: `invoice_0002`'s
     Customer Details card, flush right in its row in the recorded geometry,
     was drawn as right-set lines.
+
+    **A left-set prose Zone whose lines are justified is `justify`** —
+    spec 0012, G6, `_justified`: the letter's and the paper's body text.
     """
     width = image.shape[1]
     homes = [container(regions, z.bbox) if z.bbox is not None else None
@@ -338,7 +371,9 @@ def alignment(image: ImageArray, zones: Sequence[Zone],
         printed = ([] if zone.kind is Kind.FIGURE
                    else _body_lines(zone, _lines(image, zone)))
         lines = _by_lines(printed, body)
-        if lines is None and (len(printed) > 1 or zone.boxed):
+        if zone.kind is Kind.PROSE and lines in (None, LEFT) and _justified(printed, body):
+            out.append(JUSTIFY)
+        elif lines is None and (len(printed) > 1 or zone.boxed):
             out.append(LEFT)
         elif lines == LEFT:
             out.append(LEFT)
