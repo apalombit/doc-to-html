@@ -113,7 +113,8 @@ Corpus      six held-out documents added 2026-10-13, the fifteen kept;
               DECIDED 2026-10-13: S7-sweep is the baseline, frozen as s7-result/
 Spec 0012   Draw what the page draws — planned 2026-10-13, issue #35:
               the report notebook from S7-sweep, faults grouped G1-G9,
-              workflow changes, ten offline steps then one sweep. NOT STARTED
+              workflow changes; groups G1-G9 in order, the upstream halves
+              in step U, then ONE sweep S8-sweep over all 21. NOT STARTED
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's

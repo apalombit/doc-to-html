@@ -4,8 +4,13 @@
 notebook Alessandro asked for after the sweep over the widened corpus: every
 fault found, traced to its cause, grouped into what should be solved
 together, and the pipeline and workflow changes the run argues for. It is
-written to be implemented from a clean chat — its last section is the
-prompt to start one with.
+the handover material for implementing it from a cleared chat: §5 is the
+plan, group by group, and the last section is the prompt to start with.
+
+**Reading order for the implementing session:** decisions and "How to work"
+below → §1 (what each page shows, and why) → §3 (the groups) → §4 (the
+workflow changes) → §5 (the plan) → §8 (where things are in the code) →
+§9 (rules).
 
 Alessandro's decisions, 2026-10-13:
 
@@ -24,13 +29,16 @@ Alessandro's decisions, 2026-10-13:
 5. This notebook groups the faults "to solve together" and explores
    whether the workflow needs steps added or changed. §3 is the grouping,
    §4 the workflow.
+6. **Implement the groups in order, one after another, then one full
+   end-to-end sweep at the end** to see the result — "we sweep at the end
+   to check if improved wrt timetable". No sweep in between. §5 is the
+   plan.
 
 ---
 
 ## How to work
 
-**Carried over from spec 0011 — confirm with Alessandro at the start that
-it still applies:**
+**Carried over from spec 0011:**
 
 - **By eye.** Every step ends with sheets for **all twenty-one documents**
   against the previous step: `tools/visual_review.py <run> --previous
@@ -421,9 +429,9 @@ Proposed:
    Probes over a floor).
    - Write each answer from the source HTML: what the page *is*, not what
      the render does.
-   - Mark the ones today's code fails as expected failures naming the step
+   - Mark the ones today's code fails as expected failures naming the group
      that fixes them. For example, pricing is a grid of three, with splits
-     near 0.34 and 0.66.
+     near 0.34 and 0.66 — G4, step U.
 3. **A furniture overlay**, like `tools/locate_overlay.py`: the page with
    every furniture record drawn on it, so G3 is judged by eye before
    anything is drawn from it.
@@ -446,45 +454,72 @@ Proposed:
 
 ---
 
-## 5. Work plan
+## 5. Work plan — group by group, then one sweep
 
-| step | what | runs on | pages it should move |
-|---|---|---|---|
-| 0 | the loop work of §4b: the six's answers in the guards, replay's ASKED DIFFERENTLY, the furniture overlay; fields before rhythm | offline | none |
-| 1 | **G1** findings into `report.html` | rederive | the nine |
-| 2 | **G2** highlights from pixels | rederive | cv, nonlatin, letter, pricing |
-| 3 | **G3a** furniture measured, in the IR, drawn; ink over type | rederive | letter, paper, cv, newsletter, statement, sample_semantic, form, invoice_0001, catalogue, timetable, certificate, ticket |
-| 4 | **G5** width and margins; a photographed page at its paper's share | rederive | all; receipt, ticket |
-| 5 | **G4**'s drawing half: copies one height, lane insets, card entries | rederive | darkdeck, cv, catalogue, pricing |
-| 6 | **G6** alignment from boxes, lines kept apart (trace first), justification and indent | rederive | receipt, statement, menu, invoice_0002, report, paper, certificate, letter |
-| 7 | **G7** small capitals, script, face per entry | rederive | menu, newsletter, paper, certificate, letter, report, darkdeck, catalogue |
-| 8 | **G8** the Title that echoes its Block's start | replay | paper |
-| 9 | **G9** unclaimed located lines reported | rederive | timetable among them |
-| 10 | **upstream**: G3b (grid count, photograph test, dashed lane) and G4's split. Measure with `tools/layout_front.py` and the replay; ASKED DIFFERENTLY lists what the sweep will move | offline prediction | timetable, certificate, pricing, ticket |
-| 11 | **one sweep, `S8-sweep`, all twenty-one** — register the prediction before it finishes (§6) | the model | all |
+**Decided 2026-10-13 (Alessandro): implement the groups in order, one after
+another, and run one full end-to-end sweep at the end** to see the result —
+the timetable's repair included. No sweep in between.
 
-**Why this order.** The offline steps come first, each measured one change
-apart from `s7-result/` by rederive in about a minute. The upstream changes
-come last, predicted offline as far as possible, and are spent in one sweep.
+**Each group is built in two halves when it has an upstream part.**
+- **The downstream half** — everything after the model's answers — is built
+  in the group's turn and measured offline, one change apart from the step
+  before.
+- **The upstream half** — anything that changes a crop, a Zone or a prompt
+  — cannot be measured by rederive or replay: those loops serve the
+  baseline's answers to the baseline's questions. So the upstream halves of
+  G3 and G4 are built together in step U, just before the sweep, and the
+  sweep measures them.
 
-**The one judgement call — Alessandro's.** The timetable is content lost,
-the most severe fault here, and its repair is in step 10. If he wants it
-earlier, step 10's grid-count change can go first and take its own sweep:
-2h16m more.
+Building an upstream half in its group's turn would leave every later
+offline step measured against a mixture: some pages with the new crops and
+the old answers.
+
+| step | group | what | runs on | done when — on the sheets |
+|---|---|---|---|---|
+| 0 | — | the loop work of §4b: ASKED DIFFERENTLY in the replay; the six's answers in the three guards, expected failures naming their group; fields before rhythm | tests, replay, rederive | replay of `s7-result/` 21 of 21 byte-identical **and** 0 calls asked differently; rederive of `form_0007` byte-identical too |
+| 1 | **G1** | the findings card off the page, into `report.html` | rederive | no page draws the card; `report.html` shows each document's findings beside its pair |
+| 2 | **G2** | a `mark` run kept only over a fill | rederive | no highlight on cv, nonlatin, letter or pricing; no word changed |
+| 3 | **G3a** | `_find_furniture` and `Document.furniture`; the overlay tool; the renderer draws every record; style's ink over type only | rederive | the letterhead's 3px green rule; cv's title rules, the sidebar's too; newsletter's and paper's column rules; the certificate's frame, name rule and signature lines; the side bars of statement, TL;DR, form and timetable; catalogue's and the lunch row's hatch; the certificate's and the ticket's type dark |
+| 4 | **G4**, drawing | copies in a row one height; a filled or framed lane's inset; a card's entries by their boxes | rederive | darkdeck's tiles one height; cv's sidebar text inset from its edge; catalogue's price, unit and stock on one line |
+| 5 | **G5** | the page's own width and margins; a photographed page at its paper's share, the quad in the IR | rederive | every page's lines wrap where the source's do; the receipt and the ticket drawn at their share of the picture |
+| 6 | **G6** | each Cell aligned from its box; lines kept apart where the page breaks them (trace first); justification and indent | rederive | the receipt's totals, statement's tiles, menu's heads, invoice_0002's labels, report's footer as printed; paper's equation on its own line with its number at the right |
+| 7 | **G7** | small capitals; a script face; face per entry | rederive | menu's, newsletter's and paper's heads in small capitals; the letter's signature and the certificate's name in script |
+| 8 | **G8** | a Title echoing the start of its Block | replay | paper's title printed once |
+| 9 | **G9** | located lines no Cell claims, reported | rederive | `report.html` names the timetable's unread rows |
+| U | **G3b**, **G4**'s split | grid count and printed lines without the furniture; a frame is not a sheet; a dashed vertical rule makes a lane; a grid's split never crosses a drawn box, an emphasised copy still a copy | `tools/layout_front.py`, replay with ASKED DIFFERENTLY | the replay marks exactly the documents predicted, every other document is byte-identical to a replay at step 9's commit, and §6's prediction is registered in this spec |
+| S | — | **`S8-sweep`**: all twenty-one, shipped defaults, started detached | the model | §6 checked; all 21 sheets opened against the baseline; the outcome written in §5 format |
+
+**Order inside the plan.** G9 comes before U on purpose. At step 9 the
+report names the timetable's unread rows at the baseline. If U repairs
+them, the sweep's report no longer names them, and that is the test.
+
+**What the final review compares.** Open the sweep's sheets against the
+baseline: `tools/visual_review.py debug/runs/S8-sweep --previous
+debug/runs/S8-0-replay`. `S8-0-replay` is `s7-result/` replayed, byte for
+byte, in the run layout the review tool reads. Recreate it at step 0 if it
+is gone.
 
 ---
 
-## 6. The sweep's prediction — to register before `S8-sweep` finishes
+## 6. The sweep's prediction — to register at step U, before `S8-sweep` finishes
 
-- Every call that step 10's replay does **not** mark ASKED DIFFERENTLY comes
-  back byte-identical to `s7-result/answers/`.
-- The documents it marks are the only ones whose answers can move. Expect
-  at least the timetable (its grid hint), the certificate (its crops, once
-  it is not warped), pricing (its Zones) and the ticket (its lane).
-- The timetable returns its seven lesson rows.
+Register it in this section, with the commit, before the sweep ends:
 
-A miss on the first clause names a step that moved something it was not
-meant to.
+- **Every call that step U's replay does not mark ASKED DIFFERENTLY comes
+  back byte-identical** to `s7-result/answers/`. A miss names a change that
+  moved something it was not meant to.
+- **The documents it marks are the only ones whose answers can move.**
+  Expect at least the timetable (its grid hint), the certificate (its crops,
+  once it is not warped), pricing (its Zones) and the ticket (its lane).
+  Name each one, with the calls marked.
+- **Every document it does not mark renders byte-identical to a replay at
+  step 9's commit**, because steps 1–9 are all downstream of the model.
+- **The timetable returns its seven lesson rows**, and the 24 words come
+  back.
+
+Then report the sweep in §5 of spec 0011's format: where it gained, the
+faults left by stage, the directions ranked, a recommendation. Lead with
+the pages, the six in their own lines.
 
 ---
 
@@ -516,7 +551,7 @@ meant to.
 | entry boxes | `locate` (spec 0011 step 2); `tools/locate_overlay.py` |
 | the findings panel | `render._findings`, `_findings_block`; `report.py` |
 | the page column | `render.py` `.doc { max-width:52rem }`, `page_px` |
-| the loops | `tools/rederive.py`, `tools/replay_run.py` (`KEPT`), `tools/layout_front.py`, `tools/visual_review.py` |
+| the loops | `tools/rederive.py`, `tools/replay_run.py` (`KEPT`), `tools/layout_front.py`, `tools/visual_review.py` — its `--previous` reads a run directory, not a frozen one, so compare against `S8-0-replay` |
 | the held-out guards | `tests/test_structure.py` `EXPECTED`; `tests/test_style.py` `TestFindingBoxesInTheCorpus`; `tests/test_back_half.py` |
 
 A Zone printer is still worth writing first: load the IR from a
@@ -543,24 +578,46 @@ Zone's index, kind, band and column, box, Title and contents. Every trace in
 
 ---
 
-## Handover prompt — start of spec 0012 (current)
+## Handover prompt — implement spec 0012 group by group, then one sweep (current)
 
 ```
 Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then
-docs/specs/0012-draw-what-the-page-draws.md — the only open work, issue
-#35. It is the report notebook from the 21-document sweep: every fault
-traced, grouped G1-G9, the workflow changes, and the work plan.
+docs/specs/0012-draw-what-the-page-draws.md end to end — the only open
+work, issue #35. It is the report notebook from the 21-document sweep:
+every fault traced to its cause (§1), the faults grouped G1-G9 (§3), the
+Conversion and loop changes (§4), and the work plan (§5).
 
-The baseline is tests/frozen/s7-result/ (21 documents, 751 answers). Prove
-it first, before any change: tools/replay_run.py over it reproduces 21 of
-21 byte-identical, and tools/rederive.py 21 of 21 identical pages (20 byte
-for byte; form_0007 differs in one IR field, its README says why).
+Alessandro's decisions, 2026-10-13: implement the groups in order, one
+after another — G1 findings off the page, G2 highlights from pixels,
+G3a furniture, G4 boxes and lanes, G5 width and the photographed page, G6
+entries by their boxes, G7 type features, G8 the title echo, G9 unread
+lines reported — then step U (the upstream halves of G3 and G4, which
+change crops and prompts), then ONE full sweep, S8-sweep, over all 21. The
+timetable's lost rows are judged at that sweep. No sweep in between.
 
-Ask Alessandro whether spec 0011's by-eye rule still applies, and whether
-the timetable's repair (step 10, which needs a sweep) should go first.
-Then do the work plan in order, each step its own commit and its own
-sheets for all 21 against the previous step, the six held-out pages
-reported in their own lines. Report each step to him with what the pages
-look like and the report.html path; continue unless a page got worse.
-The standing rules are CLAUDE.md's and the spec's §9.
+Before any change, prove the baseline tests/frozen/s7-result/ (21
+documents, 751 answers): tools/replay_run.py over it reproduces 21 of 21
+byte-identical as debug/runs/S8-0-replay, and tools/rederive.py 21 of 21
+identical pages (20 byte for byte; form_0007 differs in one IR field, its
+README says why). Then do step 0, the loop work, first: the replay must
+mark a call ASKED DIFFERENTLY when its prompt or picture changed, or step
+U cannot be predicted.
+
+Judge every step by eye, as spec 0011 did: sheets for all 21 against the
+previous step's run, each moved page better / same / worse with a
+sentence; scores recorded, never argued from; the vanished list read as a
+pointer. The six new pages (corpus.NEW) are held out — report them in
+their own lines, and treat a fix that helps the fifteen and breaks one of
+the six as tuned, not general. Each step its own commit, every new
+IR-writing step added to tools/rederive.py. Report each group to
+Alessandro with what the pages look like and the report.html path, and
+continue unless a page got worse.
+
+Register §6's prediction at step U, before the sweep finishes. The sweep
+takes about 2h16m: start it detached (nohup ... & disown; docs/status.md's
+loop has the line) and wait on its log. Then check the prediction, open
+all 21 sheets against S8-0-replay, and report it in spec 0011's §5
+format, leading with the pages. Whether S8-sweep becomes the baseline is
+Alessandro's decision. The standing rules are CLAUDE.md's and the spec's
+§9.
 ```

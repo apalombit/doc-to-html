@@ -203,7 +203,12 @@ It records:
   that is not type, which six partial readers each see a part of today;
 - **the workflow changes** (§4): where the new step sits, and a replay
   that says when a call was asked differently;
-- **a work plan**: ten offline steps, then one sweep.
+- **a work plan, decided by Alessandro 2026-10-13: the groups in order,
+  one after another, then one full sweep, `S8-sweep`, over all 21** — the
+  timetable's repair judged there. Each group's downstream half is measured
+  offline in its turn; the upstream halves (G3b, G4's split) are built
+  together in step U, just before the sweep, because no offline loop can
+  measure a changed crop or prompt.
 
 Its handover prompt is the one to start from.
 
