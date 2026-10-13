@@ -19,6 +19,7 @@ from enum import Enum
 from pathlib import Path
 
 from . import fields as fields_module
+from . import furniture as furniture_module
 from . import locate as locate_module
 from . import looks as looks_module
 from . import probes as probe_module
@@ -856,6 +857,7 @@ class Conversion:
             self._find_separators(rectified, document)
             self._locate(rectified, document)
             self._read_fields(rectified, document)
+            self._place_furniture(rectified, document)
             self._read_rhythm(rectified, document)
             self._read_looks(rectified, document)
 
@@ -946,10 +948,16 @@ class Conversion:
         # `plain`, never `image`. See `Rectified.plain`: equalisation is what
         # makes faint type readable and colour unreadable, and this is the pass
         # that reads colour.
+        plain = rectified.plain if rectified.plain is not None else rectified.image
+        # Spec 0012, G3a: everything the page draws that is not type, found
+        # first, so the ink is measured over type only. See `furniture`.
+        document.furniture = furniture_module.find(
+            plain, inverted=rectified.inverted, read=rectified.image)
         measured = style_module.measure(
-            rectified.plain if rectified.plain is not None else rectified.image,
+            plain,
             inverted=rectified.inverted,
             read=rectified.image,
+            without=furniture_module.mask(document.furniture, plain.shape),
         )
         document.style = measured
         document.page_px = rectified.source.width
@@ -963,6 +971,7 @@ class Conversion:
             ink=list(measured.ink),
             accent=None if measured.accent is None else list(measured.accent),
             shade=None if measured.shade is None else list(measured.shade),
+            furniture=len(document.furniture),
         )
 
     def _measure_chrome(self, rectified: Rectified, document: Document) -> None:
@@ -1245,6 +1254,19 @@ class Conversion:
             Stage.LAYOUT, "separators", Disposition.ACCEPTED,
             seconds=time.perf_counter() - started,
             separators=[round(y, 4) for y in document.separators])
+
+    def _place_furniture(self, rectified: Rectified, document: Document) -> None:
+        """Which Zone holds each rule the page draws — spec 0012, G3a. See
+        `furniture.place`.
+
+        **After `_read_fields`**, the last step that moves a Zone's box: it
+        widens a form's Zone to its marks. Nothing a model is asked reads it.
+        """
+        furniture_module.place(document.furniture, document.zones)
+        self.trace.record(
+            Stage.LAYOUT, "furniture", Disposition.ACCEPTED,
+            found=len(document.furniture),
+            placed=[item.zone for item in document.furniture])
 
     def _read_rhythm(self, rectified: Rectified, document: Document) -> None:
         """Which Zones continue one another, and how each one's lines sit —

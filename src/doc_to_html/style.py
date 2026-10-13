@@ -241,7 +241,7 @@ def _ink_mask(read: ImageArray, shape: tuple[int, ...]) -> Any:
 
 
 def measure(image: ImageArray, *, inverted: bool = False,
-            read: ImageArray | None = None) -> Style:
+            read: ImageArray | None = None, without: Any = None) -> Style:
     """The page's palette, from its own pixels.
 
     `image` is `Rectified.plain` — the page's real colours, as OpenCV holds
@@ -259,6 +259,13 @@ def measure(image: ImageArray, *, inverted: bool = False,
 
     `read=None` falls back to measuring both on `image`, which is right for a
     synthetic page and for any caller holding only one array.
+
+    `without` is a mask of pixels that are not type, left out of the ink —
+    `furniture.mask`, spec 0012, G3a. The ink is the dominant colour of
+    every ink pixel, and a page's decoration can outweigh its type:
+    `certificate_0021`'s gold frame, seal and ornaments are 27% of them,
+    `ticket_0020`'s two teal strips 24.5% against its type's 11.5%, and
+    each page drew every line in that colour.
     """
     pixels = np.asarray(image, dtype=np.int64)
     if inverted:
@@ -279,6 +286,8 @@ def measure(image: ImageArray, *, inverted: bool = False,
     marked = _ink_mask(read if read is not None else image, pixels.shape[:2])
     if marked is None:
         marked = from_ground > INK_NEAR
+    if without is not None and np.shape(without) == marked.shape:
+        marked = marked & ~np.asarray(without, dtype=bool)
     ink = dominant(pixels[marked]) if marked.any() else None
     if ink is None or _contrast(ink, ground) < MIN_INK_CONTRAST:
         # Not "measured as grey" — *not measured*. The default is the house ink,

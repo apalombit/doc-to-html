@@ -13,7 +13,7 @@ import re
 
 import numpy as np
 
-from doc_to_html.ir import (BBox, Block, Document, Flow, Kind, Pair, Region,
+from doc_to_html.ir import (BBox, Block, Document, Flow, Furniture, Kind, Pair, Region,
                             Source, Style, Zone, cell)
 from doc_to_html.render import ABOVE_INK, BELOW_INK, render
 from doc_to_html.rhythm import (CENTRE, LEFT, RIGHT, _by_lines, _Line,
@@ -224,9 +224,14 @@ class TestTheGapsAreThePages:
         assert margins(render(document(self.two()))) == [round(expected)]
 
     def test_a_rule_splits_the_gap_where_it_lies(self) -> None:
-        html = body_of(render(document(self.two(), separators=[0.22])))
-        assert re.search(r'class="band" style="margin-bottom:14px".*?'
-                         r'class="separator" style="margin:0 0 27px"', html)
+        """Since spec 0012, G3a, the rule is one the page draws: its own
+        width and colour, at its own height — 219.5 to 220.5 of 1000."""
+        rule = Furniture(kind="rule", bbox=BBox(0.1, 0.2195, 0.9, 0.2205),
+                         thickness=0.001, color=(10, 20, 30))
+        html = body_of(render(document(self.two(), furniture=[rule])))
+        assert re.search(r'class="band" style="margin-bottom:13px".*?'
+                         r'class="separator" style="border-top:1px solid '
+                         r'rgb\(10,20,30\);margin:0 0 26px"', html)
 
     def test_a_zone_with_no_box_keeps_the_house_gap(self) -> None:
         zones = self.two()

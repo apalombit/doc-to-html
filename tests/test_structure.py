@@ -26,7 +26,8 @@ import numpy as np
 import pytest
 
 from doc_to_html.corpus import NEW, SOURCES, SWEEP
-from doc_to_html.ir import BBox, Block, Document, Kind, Role, Source, Zone, cell
+from doc_to_html.ir import (BBox, Block, Document, Furniture, Kind, Role, Source, Zone,
+                             cell)
 from doc_to_html.preprocess import rectify
 from doc_to_html.render import render
 from doc_to_html.structure import (Flow, Region, alike, cut_at_edges, separators,
@@ -421,17 +422,21 @@ class TestTheRulesBetweenZones:
 
     @staticmethod
     def two_rows(separators_at: list[float]) -> Document:
+        """Since spec 0012, G3a, the renderer draws the page's furniture, not
+        `separators`: a rule at each height, the page's width."""
         return Document(
             source=Source(path="page.png", sha256="0", width=900, height=700),
             zones=[prose("Masthead", BBox(0.05, 0.05, 0.95, 0.15), 0, 0),
                    prose("Left", BBox(0.05, 0.25, 0.45, 0.60), 1, 0),
                    prose("Right", BBox(0.55, 0.20, 0.95, 0.60), 1, 1)],
-            separators=separators_at)
+            separators=separators_at,
+            furniture=[Furniture(kind="rule", bbox=BBox(0.05, y - 0.001, 0.95, y + 0.001),
+                                 thickness=0.002) for y in separators_at])
 
-    def test_the_renderer_draws_one_between_the_rows_it_separates(self) -> None:
+    def test_the_renderer_draws_each_between_the_rows_it_separates(self) -> None:
         html = render(self.two_rows([0.17, 0.18]))
         body = html[html.index('<div class="doc">'):html.index('id="doc-ir"')]
-        assert body.count('<div class="separator"') == 1
+        assert body.count('<div class="separator"') == 2
         assert body.index("Masthead") < body.index('class="separator"') < body.index("Left")
 
     def test_a_rule_beside_a_row_draws_nothing(self) -> None:

@@ -42,7 +42,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from doc_to_html import rhythm  # noqa: E402
+from doc_to_html import furniture, rhythm  # noqa: E402
 from doc_to_html import style as style_module  # noqa: E402
 from doc_to_html.corpus import SOURCES  # noqa: E402
 from doc_to_html.ir import Document, Kind, RowRole  # noqa: E402
@@ -67,7 +67,13 @@ def remeasure(document: Document, png: Path) -> tuple[int, int]:
     """Recompute every pixel-derived field in place. Returns (rects, boxed)."""
     rectified = rectify(png)
     plain = rectified.plain if rectified.plain is not None else rectified.image
-    document.style = style_module.measure(plain, inverted=rectified.inverted)
+    # Spec 0012, G3a: as `Conversion._measure_style` takes them — the
+    # furniture first, then the ink over type only.
+    document.furniture = furniture.find(plain, inverted=rectified.inverted,
+                                        read=rectified.image)
+    document.style = style_module.measure(
+        plain, inverted=rectified.inverted, read=rectified.image,
+        without=furniture.mask(document.furniture, plain.shape))
     drawn = style_module.rectangles(
         plain, ground=document.style.page_bg, inverted=rectified.inverted)
     own = style_module.boxes_for([z.bbox for z in document.zones], drawn)

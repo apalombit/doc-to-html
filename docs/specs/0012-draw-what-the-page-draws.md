@@ -590,6 +590,69 @@ most 0.71 of a line height, and the corpus's one partial fill —
 
 No word changed; `vanished` 55. Run `S8-2-marks`.
 
+### Outcome — step 3, G3a: furniture found and drawn, 2026-10-13
+
+**Found.** `furniture.find`, in `_measure_style` straight after `rectify`:
+rules (solid, dashed, double), frames and fills (plain, hatched), from
+pixels, in the polarity of whatever ground each sits on, every threshold in
+glyph heights. **301 records on the 21 pages**: 228 solid rules, 7 dashed, 1
+double; 33 frames and 1 double frame; 20 fills, 11 hatched. Judged by eye
+first, on `tools/furniture_overlay.py`'s overlays. A barcode's bars are a
+texture, not rules (`BARS`); a hatch needs 2 glyphs, a plain fill 3, so
+the timetable's 22px lunch row is found.
+
+**Placed and drawn.** `_place_furniture`, after `_read_fields`, sets each
+rule's Zone. `furnish.anchor` gives each record the element whose border it
+is — the page, a card, a lane, a Zone, its Title, a Block, a pair, a cell,
+a row, or the gap between two rows of a stack — and `render` draws it at its
+own width, style and colour. Nothing is placed by coordinates. **121 of the
+301 are drawn**; the rest are drawn already by something else (a field's
+box, a table's lines, a Zone's fill) or lie inside a figure.
+
+**The ink is the type's.** `style.measure(without=furniture.mask(...))`: the
+certificate's ink went gold to dark brown, the ticket's teal to near black,
+form's grey to black, nonlatin's blue to black. That last one exposed a gap:
+nonlatin's Titles were blue only because the page's ink was. **A Title's
+own colour is now measured** — `Zone.title_color`, by `looks`, over the
+first printed line above the Zone's first entry — and drawn where it differs
+from the ink. `structure.separators` is kept, because `rhythm` and `fields`
+read it, but the render no longer draws it. Folding it into the furniture
+would move `rhythm`'s runs, so it is left.
+
+**20 pages moved in pixels; `sample_table_0003` did not.**
+
+| page | against step 2 |
+|---|---|
+| `cv_0013` | **better** — rules under the main column's three headings, under the sidebar's five, and its four skill bars. EXPERIENCE's rule is only as wide as its Zone, which shares its line with `2021 — present` |
+| `catalogue_0015` | **better** — the nine hatched pictures, the SKU chips printed on them, each card's name pushed below its picture. The page runs taller, as the source does |
+| `form_0007` | **better** — ink black, not grey; `OFFICE USE` boxed; the rule under the title; the five heads' bars |
+| `newsletter_0008` | **better** — the two column rules, the pull quote's rules above and below |
+| `statement_0006` | **better** — the four balance tiles' side bars |
+| `sample_semantic_0005` | **better** — the TL;DR bar |
+| `invoice_0001` | **better** — the rule over `Total` |
+| `menu_0012` | **better** — the short rule under `KITCHEN & CELLAR`; `To begin` and `Main courses` brown, as printed |
+| `sample_css_0004` | **better** — the rule under `Sample HTML` blue; the card titles slate |
+| `receipt_0010` | **better** — dashed rules over `Till 02` and over `THANK YOU` |
+| `report_0011` | **better**, minor — the rule over the footnotes dark, as printed |
+| `darkdeck_0009` | **better**, partial — the rule under `Platform review`, only as wide as that Zone |
+| `nonlatin_0014` | **same** — body dark and Titles blue, as before, now each measured |
+| `invoice_0002` | **same** — the panels' borders in their measured grey |
+| new: `certificate_0021` | **better** — dark type, not gold; the gold double frame round the page; the name rule; both signature lines. The inner frame's sides are not drawn, because the page is still read as warped: G3b |
+| new: `letter_0016` | **better** — the letterhead rule 3px and green |
+| new: `paper_0018` | **better** — the abstract's rules black, the column rule, the table's top rule |
+| new: `ticket_0020` | **better** — the type dark, not teal; the stub's dashed divider |
+| new: `timetable_0019` | **better**, minor — lesson bars on the one lesson row it reads |
+| new: `pricing_0017` | **same** — the toggle's top and bottom edges drawn as two rules; the cards unchanged (G4) |
+
+No page got worse. `nonlatin_0014` did during the step, until the Title
+colour went in. `vanished` 55. Run `S8-3-furniture`.
+
+**Left for later steps.** The certificate's inner frame is four loose rules
+until G3b straightens the page. A rule under a Title that runs on past its
+Zone is drawn only as wide as the Zone. The timetable's lesson tints are
+found as one fill across the grid. **G3b must mask a fill by its colour, not
+its box**, or `table_grid` loses the type on it.
+
 ## 6. The sweep's prediction — to register at step U, before `S8-sweep` finishes
 
 Register it in this section, with the commit, before the sweep ends:

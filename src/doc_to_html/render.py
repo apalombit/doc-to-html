@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import html
 import json
+import math
 import re
 from collections import Counter
 from dataclasses import asdict, dataclass, field
@@ -21,10 +22,11 @@ from enum import Enum
 from functools import lru_cache
 from itertools import groupby
 from statistics import median
-from typing import Any
+from typing import Any, Sequence
 
-from .ir import (BBox, Block, Cell, CellState, Document, Flow, Kind, Pair,
-                 Region, Role, Row, RowRole, Style, Zone)
+from . import furnish
+from .ir import (BBox, Block, Cell, CellState, Document, Flow, Furniture, Kind,
+                 Pair, Region, Role, Row, RowRole, Style, Zone)
 from .probes import is_numeric
 from .wire import MARKS, bands_from_boxes
 
@@ -142,6 +144,7 @@ figure.omitted figcaption { padding:.5em; text-align:center; }
 def render(document: Document, *, title: str | None = None) -> str:
     """Render the IR to a complete, self-contained HTML document."""
     body = _body(document)
+    framed = _page_frame(document)
 
     heading = title or _infer_title(document) or "Document"
     return (
@@ -152,7 +155,7 @@ def render(document: Document, *, title: str | None = None) -> str:
         f"<style>{STYLESHEET}</style>\n"
         f"{_style_css(document)}"
         "</head>\n<body>\n"
-        f'<div class="doc">\n{"".join(filter(None, body))}\n</div>\n'
+        f'<div class="doc"{framed}>\n{"".join(filter(None, body))}\n</div>\n'
         f"{_embedded_ir(document)}\n</body>\n</html>\n"
     )
 
@@ -268,6 +271,130 @@ def _px(value: float) -> str:
     return f"{max(0.0, value):.0f}px"
 
 
+def _index(document: Document, zone: Zone) -> int:
+    """The Zone's place in the Document, by identity."""
+    return next((i for i, z in enumerate(document.zones) if z is zone), -1)
+
+
+def _line(item: Furniture, page: _Page, side: str | None = "top") -> str:
+    """A rule or frame the page draws, as the border on `side` of the
+    element it belongs to — all four for None — at its own width, style and
+    colour. Spec 0012, G3a; see `furnish`."""
+    style = item.style if item.style in ("dashed", "dotted", "double") else "solid"
+    width = max(3 if style == "double" else 1, round(item.thickness * page.x))
+    edge = "border" if side is None else f"border-{side}"
+    return f"{edge}:{width}px {style} {_rgb(item.color)}"
+
+
+def _strip(item: Furniture, page: _Page) -> str:
+    """One rule drawn on its own: its border, or a dashed one's dashes at the
+    period the page draws them, which a CSS dashed border does not keep."""
+    if item.style == "dashed" and item.period:
+        width = max(1, round(item.thickness * page.x))
+        period = item.period * page.x
+        return (f"height:{width}px;background:repeating-linear-gradient(90deg,"
+                f"{_rgb(item.color)} 0 {period / 2:.1f}px,transparent "
+                f"{period / 2:.1f}px {period:.1f}px)")
+    return _line(item, page)
+
+
+def _hatching(item: Furniture, page: _Page, prop: str = "background") -> str:
+    """A hatched fill's two colours in stripes, at its angle and period. The
+    period is measured along a row of pixels; a gradient's runs across its
+    stripes, at 45 degrees to the row."""
+    period = (item.period or 0.0) * page.x / math.sqrt(2) or 12.0
+    half = period / 2
+    return (f"{prop}:repeating-linear-gradient({item.angle or 45}deg,"
+            f"{_rgb(item.color)} 0 {half:.1f}px,"
+            f"{_rgb(item.second or item.color)} {half:.1f}px {period:.1f}px)")
+
+
+def _middle(item: Furniture) -> float:
+    return (item.bbox.top + item.bbox.bottom) / 2
+
+
+def _span(zones: Sequence[Zone]) -> tuple[float, float] | None:
+    """How far across the page a stack's Zones reach — what a rule drawn
+    between them is measured against."""
+    boxes = [zone.bbox for zone in zones if zone.bbox is not None]
+    if not boxes:
+        return None
+    return min(b.left for b in boxes), max(b.right for b in boxes)
+
+
+FULL = 0.02
+"""How near each end of its stack, as a share of the stack's width, a rule
+reaches to be drawn the stack's full width."""
+
+
+def _rule_lines(rules: Sequence[Furniture], page: _Page,
+                span: tuple[float, float] | None, below: float | None,
+                after: float | None = None) -> list[str]:
+    """Rules between two rows of a stack, top to bottom, each line at the
+    height the page draws it: the rules beside one another on one line —
+    `certificate_0021`'s two signature lines — drawn as one. `below` is where
+    the next row starts, in source pixels, and `after`, where given, where
+    the row above ends."""
+    lines: list[list[Furniture]] = []
+    for rule in sorted(rules, key=lambda r: r.bbox.top):
+        if lines and rule.bbox.top <= max(r.bbox.bottom for r in lines[-1]):
+            lines[-1].append(rule)
+        else:
+            lines.append([rule])
+    out = []
+    for at, line in enumerate(lines):
+        bottom = max(r.bbox.bottom for r in line) * page.y
+        following = lines[at + 1] if at + 1 < len(lines) else None
+        to = (min(r.bbox.top for r in following) * page.y
+              if following is not None else below)
+        above = (_px(min(r.bbox.top for r in line) * page.y - after)
+                 if after is not None and not at else "0")
+        margin = (f"margin:{above} 0 {_px(to - bottom)}" if to is not None
+                  else f"margin-top:{above}" if above != "0" else "")
+        out.append(_rule_line(line, page, span, margin))
+    return out
+
+
+def _rule_line(line: list[Furniture], page: _Page,
+               span: tuple[float, float] | None, margin: str) -> str:
+    left = span[0] if span else min(r.bbox.left for r in line)
+    right = span[1] if span else max(r.bbox.right for r in line)
+    wide = max(right - left, 1e-6)
+    pieces = sorted(line, key=lambda r: r.bbox.left)
+    if (len(pieces) == 1 and pieces[0].bbox.left <= left + FULL * wide
+            and pieces[0].bbox.right >= right - FULL * wide):
+        style = ";".join(part for part in (_strip(pieces[0], page), margin) if part)
+        return f'<div class="separator" style="{style}"></div>'
+    parts = []
+    cursor = left
+    for rule in pieces:
+        start, end = max(rule.bbox.left, cursor), min(rule.bbox.right, right)
+        if end <= start:
+            continue
+        parts.append(f'<div style="margin-left:{(start - cursor) / wide * 100:.2f}%;'
+                     f'width:{(end - start) / wide * 100:.2f}%;{_strip(rule, page)}"></div>')
+        cursor = end
+    return f'<div class="separator rules"{_styled(margin)}>{"".join(parts)}</div>'
+
+
+def _page_frame(document: Document) -> str:
+    """The frame the page draws round everything, as `.doc`'s border, with
+    the space the page leaves inside it — `certificate_0021`."""
+    frame = furnish.anchor(document).page
+    inside = _union([z.bbox for z in document.zones if z.bbox is not None]) \
+        if any(z.bbox is not None for z in document.zones) else None
+    if frame is None or inside is None:
+        return ""
+    page = _page(document)
+    width = max(1, round(frame.thickness * page.x))
+    box = frame.bbox
+    padding = (f"padding:{_px((inside.top - box.top) * page.y - width)} "
+               f"{_px((box.right - inside.right) * page.x - width)} "
+               f"{_px((box.bottom - inside.bottom) * page.y - width)} "
+               f"{_px((inside.left - box.left) * page.x - width)}")
+    return f' style="{_line(frame, page, None)};{padding}"'
+
+
 @dataclass
 class _Row:
     """One row of a stack — a band, a region, a frame — with where the page
@@ -358,8 +485,8 @@ def _gap(above: _Row, below: _Row) -> float | None:
     return below.top - above.bottom
 
 
-def _stack(rows: list[_Row], page: _Page,
-           separators: list[float] = []) -> list[str]:
+def _stack(rows: list[_Row], page: _Page, rules: Sequence[Furniture] = (),
+           span: tuple[float, float] | None = None) -> list[str]:
     """Rows one under another, each followed by the gap the page leaves
     before the next — spec 0011, step 1a.
 
@@ -371,35 +498,44 @@ def _stack(rows: list[_Row], page: _Page,
     **A rule the page draws between two rows splits the gap where it lies**
     — spec 0009, step D, 4b: a bordered `div`, not an `<hr>`, because
     `projection` counts an `<hr>` as a forced line break. A rule is drawn
-    before a row when it lies between the bottom of everything drawn so far
-    and the top of that row, so a rule at a height some Zone already spans is
-    never drawn through it; one rule per gap, however many the page draws
-    there.
+    after a row when it lies between the bottom of everything drawn so far
+    and the top of the next row, so a rule at a height some Zone already
+    spans is never drawn through it; above the first row, or below the last,
+    when it lies there. **Since spec 0012, G3a, every rule is one of
+    `furnish`'s**, drawn as the page draws it — width, style, colour, and how
+    far across `span` it runs — where spec 0009 drew `Document.separators`
+    as the house's thin grey line, full width.
     """
     out: list[str] = []
+    pending = sorted(rules, key=lambda r: r.bbox.top)
     above: float | None = None
     for index, row in enumerate(rows):
-        following = rows[index + 1] if index + 1 < len(rows) else None
-        rule = None
-        if following is not None and separators:
-            boxes = [z.bbox for z in row.zones if z.bbox is not None]
-            reach = max([b.bottom for b in boxes] + ([above] if above else []),
-                        default=None)
-            nexts = [z.bbox.top for z in following.zones if z.bbox is not None]
-            if reach is not None and nexts:
-                rule = next((y for y in separators
-                             if reach <= y <= min(nexts)), None)
-        if following is None:
-            out.append(row.markup())
-        elif rule is not None and row.bottom is not None and following.top is not None:
-            out.append(row.markup(rule * page.y - row.bottom))
-            out.append(f'<div class="separator" style="margin:0 0 '
-                       f'{_px(following.top - rule * page.y)}"></div>')
-        else:
-            out.append(row.markup(_gap(row, following)))
-            if rule is not None:
-                out.append('<div class="separator"></div>')
         boxes = [z.bbox for z in row.zones if z.bbox is not None]
+        if index == 0 and pending and boxes:
+            lead = [r for r in pending if _middle(r) <= min(b.top for b in boxes)]
+            if lead:
+                out += _rule_lines(lead, page, span, row.top)
+        following = rows[index + 1] if index + 1 < len(rows) else None
+        reach = max([b.bottom for b in boxes] + ([above] if above is not None else []),
+                    default=None)
+        drawn: list[Furniture] = []
+        if pending and reach is not None:
+            if following is None:
+                drawn = [r for r in pending if _middle(r) >= reach]
+            else:
+                nexts = [z.bbox.top for z in following.zones if z.bbox is not None]
+                if nexts:
+                    drawn = [r for r in pending if reach <= _middle(r) <= min(nexts)]
+        if not drawn:
+            out.append(row.markup(None if following is None else _gap(row, following)))
+        elif row.bottom is not None:
+            out.append(row.markup(min(r.bbox.top for r in drawn) * page.y - row.bottom))
+            out += _rule_lines(drawn, page, span,
+                               following.top if following is not None
+                               else max(r.bbox.bottom for r in drawn) * page.y)
+        else:
+            out.append(row.markup(None if following is None else _gap(row, following)))
+            out += _rule_lines(drawn, page, span, None)
         if boxes:
             bottom = max(box.bottom for box in boxes)
             above = bottom if above is None else max(above, bottom)
@@ -414,8 +550,11 @@ def _framed(rows: list[_Row], document: Document, page: _Page,
 
     Its padding is the page's: from the frame's edge to the first row's top,
     to the Zones' left edge, and from the last row's bottom. Its fill is its
-    Zones' common fill, which they then do not paint again.
+    Zones' common fill, which they then do not paint again. Its border is the
+    one the page draws, where `furniture` found it — spec 0012, G3a — and
+    the rules inside it are drawn between its rows.
     """
+    anchors = furnish.anchor(document)
     def frame_of(row: _Row) -> BBox | None:
         frames = {zone.frame for zone in row.zones}
         if len(frames) == 1:
@@ -453,9 +592,18 @@ def _framed(rows: list[_Row], document: Document, page: _Page,
         head = run[0].top - top if run[0].top is not None else 0.0
         foot = bottom - run[-1].bottom if run[-1].bottom is not None else 0.0
         style.append(f"padding:{_px(head)} {_px(side)} {_px(foot)}")
-        out.append(_Row("frame", "".join(_stack(run, page)), zones, top, bottom,
-                        style))
+        drawn = anchors.frames.get(frame)
+        if drawn is not None:
+            style.append(_line(drawn, page, None))
+        inside = [r for r in anchors.between if _within(r.bbox, frame)]
+        out.append(_Row("frame", "".join(_stack(run, page, inside, _span(zones))),
+                        zones, top, bottom, style))
     return out
+
+
+def _within(box: BBox, outer: BBox) -> bool:
+    middle_x, middle_y = (box.left + box.right) / 2, (box.top + box.bottom) / 2
+    return outer.left <= middle_x <= outer.right and outer.top <= middle_y <= outer.bottom
 
 
 def _body(document: Document) -> list[str]:
@@ -503,8 +651,15 @@ def _body(document: Document) -> list[str]:
                 rows.append(_grid(held, inside, document, page))
             else:
                 rows.append(_columns(held, inside, document, page, shared, plain))
-    return _stack(_framed(rows, document, page, shared), page,
-                  document.separators)
+    # The rules drawn between the page's own rows: none a lane's, a grid's
+    # or a shared frame's, which their own stacks draw or the page's never
+    # reaches. Spec 0012, G3a.
+    inner = [r for r in document.regions if r.flow in (Flow.COLUMNS, Flow.GRID)]
+    rules = [rule for rule in furnish.anchor(document).between
+             if not any(r.top <= _middle(rule) <= r.bottom for r in inner)
+             and not any(_within(rule.bbox, frame) for frame in shared)]
+    return _stack(_framed(rows, document, page, shared), page, rules,
+                  _span(document.zones))
 
 
 def _columns(region: Region, zones: list[Zone], document: Document,
@@ -551,7 +706,22 @@ def _columns(region: Region, zones: list[Zone], document: Document,
                    document, page, plain) for b in sorted(rows)],
             document, page, shared))
 
-    firsts = [stack[0].top for stack in stacks if stack and stack[0].top is not None]
+    # Spec 0012, G3a: each lane's own rules, and the rule down its left edge.
+    anchors = furnish.anchor(document)
+    number = next((i for i, r in enumerate(document.regions) if r is region), -1)
+    held = [[r for r in anchors.between
+             if furnish.container(r.bbox, document.regions) == (number, lane)]
+            for lane in range(region.lanes)]
+    dividers = {lane: rule for kept, lane, rule in anchors.lanes if kept is region}
+    heads: list[float | None] = []
+    for stack, rules in zip(stacks, held):
+        tops: list[float] = [stack[0].top] if stack and stack[0].top is not None else []
+        first = [z.bbox.top for z in (stack[0].zones if stack else [])
+                 if z.bbox is not None]
+        if first:
+            tops += [r.bbox.top * page.y for r in rules if _middle(r) <= min(first)]
+        heads.append(min(tops) if tops else None)
+    firsts = [head for head in heads if head is not None]
     start = min(firsts) if firsts else None
     parts = []
     for index, (lane, stack) in enumerate(zip(lanes, stacks)):
@@ -562,11 +732,17 @@ def _columns(region: Region, zones: list[Zone], document: Document,
             (fill,) = fills
             assert fill is not None
             style += f";background:{_rgb(fill)}"
-        if stack and start is not None and stack[0].top is not None:
-            if stack[0].top - start >= 1:
-                style += f";padding-top:{_px(stack[0].top - start)}"
+        head = heads[index]
+        if stack and start is not None and head is not None and head - start >= 1:
+            style += f";padding-top:{_px(head - start)}"
+        divider = dividers.get(index)
+        if divider is not None:
+            inks = [z.bbox.left for z in lane if z.bbox is not None]
+            gap = (min(inks) - divider.bbox.right) * page.x if inks else 0.0
+            style += f";{_line(divider, page, 'left')};padding-left:{_px(gap)}"
         parts.append(f'<div class="lane" style="{style}">'
-                     + "".join(_stack(stack, page)) + "</div>")
+                     + "".join(_stack(stack, page, held[index], _span(lane)))
+                     + "</div>")
     lasts = [stack[-1].bottom for stack in stacks
              if stack and stack[-1].bottom is not None]
     return _Row("columns", "".join(parts), list(zones), start,
@@ -687,10 +863,12 @@ def _style_css(document: Document) -> str:
     # waiting for that.
     rules: list[str] = []
     # Spec 0009, step D, 4b — emitted only where there is a rule to draw, so a
-    # page without one renders as it did.
-    if document.separators:
-        rules.append(".separator { border-top:1px solid var(--rule);"
-                     " margin:-0.875rem 0 0.875rem; }")
+    # page without one renders as it did. Since spec 0012, G3a, each rule
+    # carries its own border: this is the place it takes in a gap nobody
+    # measured, and a line of several rules side by side.
+    if furnish.anchor(document).between:
+        rules.append(".separator { margin:-0.875rem 0 0.875rem; }")
+        rules.append(".rules { display:flex; } .rules > div { flex:none; }")
     if _has_fields(document):
         rules.extend(FIELD_CSS)
     if any(_rows_read(zone) for zone in document.zones if zone.kind is Kind.TABLE):
@@ -908,11 +1086,12 @@ TEXT_ALIGN = {"centre": "center", "right": "right"}
 draws nothing."""
 
 
-def _inline_title_style(zone: Zone) -> str:
+def _inline_title_style(zone: Zone, extra: str = "") -> str:
     """The Title bar's measured fill, when the source draws one, the Title's
-    printed size — spec 0010, step D2 — and where its line sits over the
-    Zone — spec 0011, step 1c."""
-    rules = []
+    printed size — spec 0010, step D2 — where its line sits over the
+    Zone — spec 0011, step 1c — and the rules the page draws beside or
+    under it — spec 0012, G3a."""
+    rules = [extra] if extra else []
     if zone.title_fill is not None:
         rules.append(f"background:{_rgb(zone.title_fill)}")
     if zone.title_size is not None:
@@ -954,17 +1133,116 @@ def _section(zone: Zone, body: str, document: Document, *, plain: bool,
     elif zone.fill is not None and not plain:
         classes += " filled"
 
+    own, titled, lead = _furnished(zone, document, plain=plain)
+    # The Title's own ink, where it is not the one it would be drawn in.
+    house = document.style.ink if document.style is not None else None
+    if zone.fill is not None and not plain:
+        house = _readable_on(zone.fill, house) or house
+    if (zone.title_color is not None and house is not None
+            and _apart(zone.title_color, house) > COLOUR_APART):
+        titled = ";".join(part for part in (titled, f"color:{_rgb(zone.title_color)}")
+                          if part)
     bar = ' class="zone-title barred"' if zone.title_fill else ' class="zone-title"'
     style_of = _inline_style(
         zone, document.style.ink if document.style else None,
-        plain=plain, extra=extra)
+        plain=plain, extra=";".join(part for part in (extra, own) if part))
     title = (
-        f"<h2{bar}{_inline_title_style(zone)}>{html.escape(zone.title)}</h2>"
+        f"<h2{bar}{_inline_title_style(zone, titled)}>{html.escape(zone.title)}</h2>"
         if zone.title else ""
     )
     if zone.title:
         body = f'<div class="zone-body">{body}</div>'
-    return f'<section class="{classes}"{style_of}>{title}{body}</section>'
+    return f'<section class="{classes}"{style_of}>{lead}{title}{body}</section>'
+
+
+def _furnished(zone: Zone, document: Document, *,
+               plain: bool) -> tuple[str, str, str]:
+    """What the page draws on this Zone, from `furnish`: the section's own
+    borders, its Title's, and a hatch drawn over its top — spec 0012, G3a.
+
+    Each border keeps the space the page leaves between it and the type:
+    a side bar's from the Zone's ink, a rule under the Zone from its last
+    line, a frame from its entries — less what the stylesheet already draws
+    round the ink. A Zone drawn as a card or a fill keeps the card's own
+    padding inside its bar."""
+    if not document.furniture:
+        return "", "", ""
+    anchors = furnish.anchor(document)
+    index = _index(document, zone)
+    page = _page(document)
+    own: list[str] = []
+    titled: list[str] = []
+    lead = ""
+    box = zone.bbox
+    entries = _union(furnish._entries(zone)) if furnish._entries(zone) else box
+    padded = zone.boxed or (zone.fill is not None and not plain)
+
+    frame = anchors.boxes.get(index)
+    if frame is not None and not plain:
+        own.append(_line(frame, page, None))
+        if not zone.boxed and entries is not None:
+            width = max(1, round(frame.thickness * page.x))
+            edge = frame.bbox
+            own.append(
+                f"padding:{_px((entries.top - edge.top) * page.y - width - _opens(zone) * page.body)} "
+                f"{_px((edge.right - entries.right) * page.x - width)} "
+                f"{_px((edge.bottom - entries.bottom) * page.y - width - _closes(zone) * page.body)} "
+                f"{_px((entries.left - edge.left) * page.x - width)}")
+    side = anchors.sides.get(index)
+    if side is not None and box is not None:
+        own.append(_line(side, page, "left"))
+        if not padded:
+            own.append(f"padding-left:{_px((box.left - side.bbox.right) * page.x)}")
+    rule = anchors.tops.get(index)
+    if rule is not None and entries is not None:
+        own.append(_line(rule, page, "top"))
+        own.append(f"padding-top:{_px((entries.top - rule.bbox.bottom) * page.y - _opens(zone) * page.body)}")
+    rule = anchors.bottoms.get(index)
+    if rule is not None and box is not None:
+        own.append(_line(rule, page, "bottom"))
+        own.append(f"padding-bottom:{_px((rule.bbox.top - box.bottom) * page.y - _closes(zone, plain=plain) * page.body)}")
+    bar = anchors.title_sides.get(index)
+    if bar is not None and box is not None:
+        titled.append(_line(bar, page, "left"))
+        if not zone.title_fill:
+            titled.append(f"padding-left:{_px((box.left - bar.bbox.right) * page.x)}")
+    rule = anchors.under_title.get(index)
+    if rule is not None:
+        titled.append(_line(rule, page, "bottom"))
+    hatch = anchors.hatches.get(index)
+    if hatch is not None:
+        # A band across the top of the Zone's box, behind whatever the page
+        # prints over it; the entries below it are pushed under it by the
+        # Zone's own body — see `_below_hatch`.
+        holder = zone.frame or box
+        assert holder is not None
+        own.append(_hatching(hatch, page, "background-image"))
+        own.append(f"background-size:100% {_px((hatch.bbox.bottom - holder.top) * page.y)};"
+                   "background-repeat:no-repeat")
+    return ";".join(own), ";".join(titled), lead
+
+
+def _below_hatch(zone: Zone, document: Document,
+                 tops: list[float | None]) -> tuple[int, str] | None:
+    """The first of a Zone's entries, by their tops, that the page prints
+    below a hatch across its top, with the margin that puts it there — spec
+    0012, G3a. The entries above it are printed over the hatch."""
+    if not document.furniture:
+        return None
+    hatch = furnish.anchor(document).hatches.get(_index(document, zone))
+    if hatch is None:
+        return None
+    page = _page(document)
+    holder = zone.frame or zone.bbox
+    assert holder is not None
+    last = holder.top
+    for position, top in enumerate(tops):
+        if top is None:
+            continue
+        if top >= hatch.bbox.bottom:
+            return position, f"margin-top:{_px((top - last) * page.y - page.body)}"
+        last = top + page.body / page.y
+    return None
 
 
 def _zone_body(zone: Zone, document: Document) -> str:
@@ -996,6 +1274,15 @@ def _unit(unit: list[Zone], document: Document, page: _Page, *,
     if len(unit) == 1:
         return _zone(unit[0], document, plain=plain, extra=extra)
     head = unit[0]
+    # Spec 0012, G3a: a rule the page draws between two members is drawn
+    # between them — `cv_0013`'s rules under its sidebar's headings.
+    rules = furnish.anchor(document).between if document.furniture else []
+    box = _unit_box(unit)
+    home = furnish.container(box, document.regions) if box is not None else None
+    # Measured across the lane it is drawn in, as the lane's own rules are.
+    span = _span([z for z in document.zones if z.bbox is not None
+                  and furnish.container(z.bbox, document.regions) == home]
+                 if home is not None else unit)
 
     def gap(upper: Zone, lower: Zone, ink: float) -> str:
         if upper.bbox is None or lower.bbox is None:
@@ -1003,13 +1290,28 @@ def _unit(unit: list[Zone], document: Document, page: _Page, *,
         space = (lower.bbox.top - upper.bbox.bottom) * page.y - ink * page.body
         return f' style="margin-top:{_px(space)}"'
 
+    def among(upper: Zone, lower: Zone) -> list[Furniture]:
+        if upper.bbox is None or lower.bbox is None or span is None:
+            return []
+        return [r for r in rules
+                if upper.bbox.bottom <= _middle(r) <= lower.bbox.top
+                and r.bbox.left < span[1] and r.bbox.right > span[0]]
+
     if all(zone.kind is Kind.LIST and zone.complete for zone in unit):
         items = []
         for position, zone in enumerate(unit):
             listed = [b for b in zone.blocks if b.kind == "item"]
             within = _spacing(listed, page) if len(listed) == len(zone.blocks) else []
             for index, block in enumerate(listed):
-                if position and not index:
+                drawn = among(unit[position - 1], zone) if position and not index else []
+                if drawn and zone.bbox is not None and unit[position - 1].bbox is not None:
+                    rule, previous = drawn[0], unit[position - 1].bbox
+                    assert previous is not None
+                    spaced = _styled(
+                        f"margin-top:{_px((rule.bbox.top - previous.bottom) * page.y - BELOW_INK['li'] * page.body)};"
+                        f"{_line(rule, page)};"
+                        f"padding-top:{_px((zone.bbox.top - rule.bbox.bottom) * page.y - ABOVE_INK['li'] * page.body)}")
+                elif position and not index:
                     spaced = gap(unit[position - 1], zone,
                                  BELOW_INK["li"] + ABOVE_INK["li"])
                 else:
@@ -1020,7 +1322,15 @@ def _unit(unit: list[Zone], document: Document, page: _Page, *,
     else:
         parts = [f'<div class="cont">{_zone_body(head, document)}</div>']
         for upper, lower in zip(unit, unit[1:]):
-            spaced = gap(upper, lower, _closes(upper, plain=True) + _opens(lower))
+            drawn = among(upper, lower)
+            if drawn and upper.bbox is not None and lower.bbox is not None:
+                parts += _rule_lines(
+                    drawn, page, span,
+                    lower.bbox.top * page.y - _opens(lower) * page.body,
+                    upper.bbox.bottom * page.y + _closes(upper, plain=True) * page.body)
+                spaced = ' style="margin-top:0"'
+            else:
+                spaced = gap(upper, lower, _closes(upper, plain=True) + _opens(lower))
             parts.append(f'<div class="cont"{spaced}>'
                          f'{_zone_body(lower, document)}</div>')
         body = "".join(parts)
@@ -1136,6 +1446,10 @@ def _table(zone: Zone, document: Document) -> str:
              for position, row in enumerate(zone.rows)
              if (RowRole.DATA if places[position] else row.role) is bucket]
     spaced = any(row.gap is not None for row in zone.rows)
+    # Spec 0012, G3a: the bars beside a cell, the rules over one that
+    # `looks` did not draw, and a hatch behind a row.
+    anchors = furnish.anchor(document) if document.furniture else None
+    index_of = _index(document, zone)
     for position, row in enumerate(zone.rows):
         tag = "th" if row.role is RowRole.HEADER else "td"
         padding = ""
@@ -1145,23 +1459,34 @@ def _table(zone: Zone, document: Document) -> str:
             below = zone.rows[drawn[at + 1]] if at + 1 < len(drawn) else None
             padding = _row_padding(row, above, below, page)
 
-        def styled(cell: Cell) -> str:
+        def styled(cell: Cell, number: int) -> str:
             looked = _look(cell, bold=row.role is not RowRole.DATA, house=ink)
-            looked = ";".join(part for part in (looked, padding) if part)
+            drawn = []
+            if anchors is not None:
+                bar = anchors.cell_lefts.get((index_of, position, number))
+                if bar is not None:
+                    drawn.append(_line(bar, page, "left"))
+                rule = anchors.cell_tops.get((index_of, position, number))
+                if rule is not None:
+                    drawn.append(_line(rule, page, "top"))
+            looked = ";".join(part for part in (looked, padding, *drawn) if part)
             return f' style="{looked}"' if looked else ""
 
         led = _leader(row, page)
         cells = "".join(
-            f'<{tag}{" class=\"num\"" if index in numeric else ""}{styled(c)}>'
+            f'<{tag}{" class=\"num\"" if index in numeric else ""}{styled(c, index)}>'
             + (f'<span class="leader" style="{led}">{_cell(c, document)}</span>'
                if led and c is row.cells[0] else _cell(c, document))
             + f"</{tag}>"
             for index, c in enumerate(row.cells)
         )
         in_place = places[position]
+        hatch = anchors.rows.get((index_of, position)) if anchors else None
+        styled_row = _row_style(row, page, opens=not in_place) if read else ""
+        if hatch is not None:
+            styled_row = _merged(styled_row, _hatching(hatch, page))
         groups[RowRole.DATA if in_place else row.role].append(
-            f"<tr{_row_style(row, page, opens=not in_place) if read else ''}>"
-            f"{cells}</tr>")
+            f"<tr{styled_row}>{cells}</tr>")
 
     parts = []
     if groups[RowRole.HEADER]:
@@ -1565,8 +1890,13 @@ def _pairs(zone: Zone, document: Document) -> str:
             return drawn
     lines = zone.align in TEXT_ALIGN
     summary = zone.role is Role.SUMMARY
+    anchors = furnish.anchor(document) if document.furniture else None
+    index, page = _index(document, zone), _page(document)
+    pushed = _below_hatch(zone, document, [
+        min((c.bbox.top for c in (pair.label, pair.value) if c.bbox is not None),
+            default=None) for pair in zone.pairs])
     parts = []
-    for pair in zone.pairs:
+    for position, pair in enumerate(zone.pairs):
         label, value = _cell(pair.label, document), _cell(pair.value, document)
         named: Cell | None = pair.label
         held: Cell | None = pair.value
@@ -1579,6 +1909,15 @@ def _pairs(zone: Zone, document: Document) -> str:
             return f' style="{looked}"' if looked else ""
 
         dt, dd = styled(named, muted=True), styled(held, bold=summary)
+        rule = anchors.pairs.get((index, position)) if anchors else None
+        if rule is not None and not lines:
+            # Spec 0012, G3a: a rule the page draws over this pair, across
+            # both columns — `catalogue_0015`'s rule over each card's foot.
+            drawn = f"{_line(rule, page)};padding-top:.4em;margin-top:.4em"
+            dt = _merged(dt, drawn)
+            dd = _merged(dd, drawn)
+        if pushed is not None and pushed[0] == position:
+            dt, dd = _merged(dt, pushed[1]), _merged(dd, pushed[1])
         if lines:
             parts.append(f"<div><dt{dt}>{label}</dt>"
                          + (f" <dd{dd}>{value}</dd>" if value.strip() else "")
@@ -1588,6 +1927,13 @@ def _pairs(zone: Zone, document: Document) -> str:
         parts.append(f"{tag}{label}</dt><dd{dd}>{value}</dd>")
     css = "pairs lines" if lines else "pairs"
     return f'<dl class="{css}">' + "".join(parts) + "</dl>"
+
+
+def _merged(attribute: str, css: str) -> str:
+    """A ` style="..."` attribute with `css` added to it."""
+    if not attribute:
+        return f' style="{css}"'
+    return attribute[:-1] + f';{css}"'
 
 
 def _prose(zone: Zone, document: Document) -> str:
@@ -1605,6 +1951,8 @@ def _prose(zone: Zone, document: Document) -> str:
     the list on the page and should end it here.
     """
     spacing = dict(zip(map(id, zone.blocks), _spacing(zone.blocks, _page(document))))
+    for key, ruled in _ruled(zone, document).items():
+        spacing[key] = (ruled, spacing[key][1])
     parts = []
     for is_item, run in groupby(zone.blocks, key=lambda b: b.kind == "item"):
         if is_item:
@@ -1628,6 +1976,36 @@ def _styled(css: str) -> str:
     return f' style="{css}"' if css else ""
 
 
+def _ruled(zone: Zone, document: Document) -> dict[int, str]:
+    """The Blocks a rule the page draws stands over, by id, each with the
+    style that draws it — spec 0012, G3a: the space from the Block above
+    to the rule, the rule, and the space from it to the Block's own ink,
+    each less what the line boxes reach past the ink, as `_spacing` takes
+    it. `certificate_0021`'s signature lines, `cv_0013`'s sidebar rules."""
+    if not document.furniture:
+        return {}
+    anchors = furnish.anchor(document)
+    index = _index(document, zone)
+    page = _page(document)
+    out: dict[int, str] = {}
+    for position, block in enumerate(zone.blocks):
+        rule = anchors.blocks.get((index, position))
+        if rule is None or not position:
+            continue
+        uppers = [c.bbox for c in zone.blocks[position - 1].lines if c.bbox is not None]
+        lowers = [c.bbox for c in block.lines if c.bbox is not None]
+        if not uppers or not lowers:
+            continue
+        upper, lower = _union(uppers), _union(lowers)
+        above = (rule.bbox.top - upper.bottom) * page.y \
+            - ROW_BELOW * _drawn_size(zone.blocks[position - 1]) * page.body
+        below = (lower.top - rule.bbox.bottom) * page.y \
+            - ROW_ABOVE * _drawn_size(block) * page.body
+        out[id(block)] = (f"margin-top:{_px(above)};{_line(rule, page)};"
+                          f"padding-top:{_px(below)}")
+    return out
+
+
 def _list(zone: Zone, document: Document) -> str:
     """Items only, and deliberately nothing else.
 
@@ -1640,6 +2018,8 @@ def _list(zone: Zone, document: Document) -> str:
     # Spaced only where every Block is drawn: a gap is from the Block before.
     spacing = ([above for above, _ in _spacing(listed, _page(document))]
                if len(listed) == len(zone.blocks) else [""] * len(listed))
+    ruled = _ruled(zone, document) if len(listed) == len(zone.blocks) else {}
+    spacing = [ruled.get(id(b), above) for b, above in zip(listed, spacing)]
     items = "".join(
         f"<li{_li_style(b, document, _styled(above))}>{_lines(b, document)}</li>"
         for b, above in zip(listed, spacing)

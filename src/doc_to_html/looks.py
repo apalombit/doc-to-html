@@ -622,6 +622,48 @@ def _leaders(rgb: ImageArray, document: Document, coloured: bool) -> None:
             row.leader = Stroke(kind=kind, color=colour, width=round(thick / height, 5))
 
 
+def _titles(rgb: ImageArray, document: Document, style: Style) -> None:
+    """Each Title's ink — spec 0012, G3a: the first printed line in the band
+    from its Zone's top to its first placed entry, or to a rule or fill the
+    page draws under it — `nonlatin_0014`'s table header bar — measured as
+    an entry is (`_ink`), where its ground is the one the render draws
+    under it. The first line only, as a Title is one: `darkdeck_0009`'s
+    tile labels stand over a value placed no higher than its own line. A
+    Zone with no placed entry, or a Title beside its entries rather than
+    over them, keeps None."""
+    height, width = rgb.shape[:2]
+    for zone in document.zones:
+        box = zone.bbox
+        if not zone.title or box is None:
+            continue
+        tops = [cell.bbox.top for cell, _ in cells_of(zone) if cell.bbox is not None]
+        if not tops:
+            continue
+        under = zone.title_fill or zone.fill or style.page_bg
+        bottom = min([min(tops)] + [
+            item.bbox.top for item in document.furniture
+            if (item.kind == "fill" or (item.kind == "rule" and not item.vertical))
+            and box.top < item.bbox.top < min(tops)
+            and item.bbox.left < box.right and item.bbox.right > box.left
+            and _apart(item.color, under) > GROUND_SAME])
+        pixels = rgb[int(box.top * height):int(bottom * height),
+                     int(box.left * width):int(np.ceil(box.right * width))]
+        if pixels.size < 60:
+            continue
+        ground = dominant(pixels)
+        if _apart(ground, under) > GROUND_SAME:
+            continue
+        far = (np.abs(np.asarray(pixels, dtype=np.int64) - np.array(ground)).sum(axis=2)
+               > GROUND_SAME).any(axis=1)
+        lines = [(a, b) for a, b in _spans(list(far)) if b - a >= 3]
+        if not lines:
+            continue
+        top, end = lines[0]
+        line = pixels[top:end]
+        if line.size >= 60:
+            zone.title_color = _ink(line, ground)
+
+
 def _drawn_ground(zone: Zone, row: int | None, style: Style) -> tuple[int, int, int]:
     """The ground the render draws under one of the Zone's Cells."""
     if (row is not None and zone.header_fill is not None
@@ -699,6 +741,7 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
     and colour unread. A Cell not placed, or not measurable, keeps None."""
     cv2 = _cv2()
     for zone in document.zones:
+        zone.title_color = None
         for cell, _ in cells_of(zone):
             cell.look = None
     if document.style is not None:
@@ -717,6 +760,8 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
         _leaders(true, document, coloured=not photographed)
         rgb = None if photographed else true
     style = document.style or Style()
+    if rgb is not None:
+        _titles(rgb, document, style)
     measured: list[tuple[Cell, float | None, float | None, float | None]] = []
     pitches: list[float] = []
     feet: list[float] = []

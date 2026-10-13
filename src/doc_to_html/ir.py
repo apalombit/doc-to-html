@@ -170,6 +170,56 @@ class Stroke:
     """How thick, normalised to the page's height like `BBox`."""
 
 
+FURNITURE_KINDS = ("rule", "frame", "fill")
+FURNITURE_STYLES = ("solid", "dashed", "dotted", "double", "hatched")
+
+
+@dataclass
+class Furniture:
+    """One mark the page draws that is not type — spec 0012, G3: a rule, a
+    frame, a side bar, a filled or hatched area. Measured from pixels by
+    `furniture.find`, never asked of a model.
+
+    A side bar is a short vertical rule; which one a rule is — a column's
+    divider, a block's side bar, a heading's underline — is where it lies
+    against the Zones, which `furniture.place` and the renderer read."""
+
+    kind: str
+    """One of `FURNITURE_KINDS`."""
+
+    bbox: BBox
+    """Its extent on the page, normalised like every box. A rule's box is
+    the line itself; a frame's, its outer edge."""
+
+    thickness: float = 0.0
+    """The line's width — a double rule's, both lines and the space between
+    — as a share of the page's width. 0 for a fill."""
+
+    color: tuple[int, int, int] = (0, 0, 0)
+    """RGB, in the page's own colours — on a dark page as printed."""
+
+    style: str = "solid"
+    """One of `FURNITURE_STYLES`."""
+
+    second: tuple[int, int, int] | None = None
+    """A hatch's other colour, RGB; None for anything else."""
+
+    period: float | None = None
+    """The repeat of a dash or a hatch, as a share of the page's width."""
+
+    angle: int | None = None
+    """A hatch's stripes as CSS draws them: 45 where they run down to the
+    right, 135 where they run up. None for anything else."""
+
+    zone: int | None = None
+    """The Zone that holds it, by index, once the Zones are final — set by
+    `furniture.place`. None where it lies between Zones."""
+
+    @property
+    def vertical(self) -> bool:
+        return (self.bbox.bottom - self.bbox.top) > (self.bbox.right - self.bbox.left)
+
+
 @dataclass
 class Look:
     """How one entry is printed, measured from its own ink — spec 0011,
@@ -389,6 +439,12 @@ class Zone:
     title_size: float | None = None
     """The Title's printed size, in ems of the page's body — spec 0010, step
     D2. See `style.title_sizes`. None draws the house size."""
+
+    title_color: tuple[int, int, int] | None = None
+    """The Title's own ink, RGB — spec 0012, G3a — measured as an entry's
+    is, by `looks`. None where it was not: the Title is drawn in the page's
+    ink, which is how `nonlatin_0014`'s blue Titles were blue only while the
+    page's ink was measured over its blue rules and fills."""
 
     title_fill: tuple[int, int, int] | None = None
     """The Title band's own background, where it differs from the Zone's.
@@ -694,7 +750,12 @@ class Document:
     nobody read it, and the page renders as Bands, as it always did."""
     separators: list[float] = field(default_factory=list)
     """Where the page draws a wide rule between its Zones, as page fractions,
-    top to bottom — `structure.separators`, spec 0009. Empty draws none."""
+    top to bottom — `structure.separators`, spec 0009. Empty draws none.
+    Since spec 0012, G3, each is a horizontal rule of `furniture` that lies
+    between Zones, and is drawn as that record measures it."""
+    furniture: list[Furniture] = field(default_factory=list)
+    """Everything the page draws that is not type — spec 0012, G3. Empty
+    means nobody read it, and the page draws only what it drew before."""
 
     def bands(self) -> list[list[Zone]]:
         """Zones grouped into Bands and ordered for rendering."""
@@ -831,6 +892,7 @@ def _zone(data: dict[str, Any]) -> Zone:
         # because this function builds each object field by field.
         fill=_colour(data.get("fill")),
         title_size=data.get("title_size"),
+        title_color=_colour(data.get("title_color")),
         title_fill=_colour(data.get("title_fill")),
         header_fill=_colour(data.get("header_fill")),
         boxed=data.get("boxed", False),
@@ -889,7 +951,18 @@ def _decode_document(data: dict[str, Any]) -> Document:
             for r in data.get("regions", [])
         ],
         separators=[float(y) for y in data.get("separators", [])],
+        furniture=[_furniture(f) for f in data.get("furniture", [])],
     )
+
+
+def _furniture(data: dict[str, Any]) -> Furniture:
+    return Furniture(
+        kind=data["kind"], bbox=BBox(**data["bbox"]),
+        thickness=float(data.get("thickness", 0.0)),
+        color=_colour(data.get("color")) or (0, 0, 0),
+        style=data.get("style", "solid"), second=_colour(data.get("second")),
+        period=None if data.get("period") is None else float(data["period"]),
+        angle=data.get("angle"), zone=data.get("zone"))
 
 
 def cell(text: str, engine: str = "fixture", bbox: BBox | None = None) -> Cell:

@@ -20,7 +20,9 @@ and can be recomputed from it, in the order a Conversion runs them:
                                     wire.retrimmed  (in rows_from_table)
     2. table-repair Caveats re-derived from each table's rows
                                     wire.table_repairs              (in _extract)
-    3. palette and chrome re-measured — fill, title bar, header bar, border
+    3. the page's furniture found — spec 0012, G3a — then the palette,
+       its ink over type only, and the chrome re-measured — fill, title
+       bar, header bar, border
                                     remeasure_style.remeasure  (_measure_chrome)
        and each leading heading's size      (_measure_type)
     4. Shortfalls re-measured, since step 1 changes a read-line count
@@ -41,11 +43,15 @@ and can be recomputed from it, in the order a Conversion runs them:
        spec 0011, step 3; step 6's gaps are taken after it, since it can
        widen a Zone's box to its marks
                                     fields.read           (_read_fields)
-   10. Which Zones continue one another, and how each one's lines sit —
+   10. Which Zone holds each rule the page draws — spec 0012, G3a; the
+       rules themselves are found with the palette, in 3, and the ink
+       measured with them masked out
+                                    furniture.place   (_place_furniture)
+   11. Which Zones continue one another, and how each one's lines sit —
        spec 0011, step 1; each Zone's frame is set with the chrome, in 3.
        After step 9 since spec 0012's step 0, which can make a table pairs
                                     rhythm.read           (_read_rhythm)
-   11. How each placed entry is printed — size, weight, slant — spec 0011,
+   12. How each placed entry is printed — size, weight, slant — spec 0011,
        step 4a
                                     looks.read             (_read_looks)
 
@@ -84,7 +90,7 @@ TOOLS = Path(__file__).resolve().parent
 sys.path.insert(0, str(TOOLS.parent / "src"))
 sys.path.insert(0, str(TOOLS))
 
-from doc_to_html import fields, locate, looks, probes, rhythm  # noqa: E402
+from doc_to_html import fields, furniture, locate, looks, probes, rhythm  # noqa: E402
 from doc_to_html.corpus import SOURCES  # noqa: E402
 from doc_to_html.ir import Caveat, Document, Kind  # noqa: E402
 from doc_to_html.orchestrator import gaps, shortfall  # noqa: E402
@@ -148,10 +154,11 @@ def rederive(document: Document, png: Path) -> None:
             inverted=rectified.inverted)
     locate.locate(plain, document)
     fields.read(plain, document)
+    furniture.place(document.furniture, document.zones)
     if document.style is not None:
         rhythm.read(plain, document)
     looks.read(plain, document, photographed=rectified.warped, inverted=rectified.inverted)
-    # Last, as the audit is in a Conversion: step 10 can widen a Zone's box.
+    # Last, as the audit is in a Conversion: step 9 can widen a Zone's box.
     document.gaps = gaps(image, document.zones)
 
 
