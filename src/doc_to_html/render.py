@@ -443,6 +443,28 @@ def _shared(document: Document) -> set[BBox]:
     return {frame for frame, count in counts.items() if count > 1}
 
 
+def _ground(zones: list[Zone]) -> tuple[int, int, int] | None:
+    """The fill a frame's Zones stand on, which the frame paints: the one
+    most of them carry. A Zone of another fill paints its own — spec 0013
+    step 3a, `pricing_0017`'s Team card, white, with its `Start a 14-day
+    trial` button blue. Where all carry one fill, as `darkdeck_0009`'s
+    OPEN RISKS panel, it is that one."""
+    ranked = Counter(zone.fill for zone in zones).most_common()
+    if not ranked or ranked[0][0] is None or (len(ranked) > 1
+                                               and ranked[1][1] == ranked[0][1]):
+        return None
+    return ranked[0][0]
+
+
+def _plain(document: Document, shared: set[BBox]) -> set[int]:
+    """The Zones a shared frame paints: those standing on its ground."""
+    grounds = {frame: _ground([z for z in document.zones if z.frame == frame])
+               for frame in shared}
+    return {id(zone) for zone in document.zones
+            if zone.frame in shared and (zone.fill is None
+                                         or zone.fill == grounds[zone.frame])}
+
+
 def _units(zones: list[Zone]) -> list[list[Zone]]:
     """`zones` with each Continuation gathered into one unit, at its first member's
     place, members top to bottom — see `rhythm.groups`."""
@@ -598,10 +620,8 @@ def _framed(rows: list[_Row], document: Document, page: _Page,
         index += len(run)
         zones = [zone for row in run for zone in row.zones]
         style = []
-        fills = {zone.fill for zone in zones}
-        if len(fills) == 1 and None not in fills:
-            (fill,) = fills
-            assert fill is not None
+        fill = _ground(zones)
+        if fill is not None:
             style.append(f"background:{_rgb(fill)}")
             ink = _readable_on(fill, document.style.ink if document.style else None)
             if ink is not None:
@@ -643,7 +663,7 @@ def _body(document: Document) -> list[str]:
     """
     page = _page(document)
     shared = _shared(document)
-    plain = {id(zone) for zone in document.zones if zone.frame in shared}
+    plain = _plain(document, shared)
     columns = [r for r in document.regions
                if r.flow in (Flow.COLUMNS, Flow.GRID)]
     home: dict[int, Region] = {}
@@ -668,7 +688,7 @@ def _body(document: Document) -> list[str]:
                 continue
             drawn.add(id(held))
             inside = [z for z in document.zones if home.get(id(z)) is held]
-            if held.flow is Flow.GRID:
+            if held.flow is Flow.GRID and not _cards(held, inside):
                 rows.append(_grid(held, inside, document, page))
             else:
                 rows.append(_columns(held, inside, document, page, shared, plain))
@@ -681,6 +701,23 @@ def _body(document: Document) -> list[str]:
              and not any(_within(rule.bbox, frame) for frame in shared)]
     return _stack(_framed(rows, document, page, shared), page, rules,
                   _span(document.zones))
+
+
+def _cards(region: Region, zones: list[Zone]) -> bool:
+    """Whether a `grid` Region is a row of cards read as several Zones each,
+    and so drawn lane by lane, each lane one stack in its frame (`_columns`,
+    `_framed`) — spec 0013, step 3a.
+
+    `pricing_0017`'s three plans are one row of copies, each card five to
+    seven Zones. Drawn as a grid, each Zone took the row of its band, and a
+    band holds parts of different cards: Team's price sat far below its
+    name, every feature list started where the tallest price ended. A grid
+    of one row has one cell to a lane, so its lane is the card; a lane of
+    one Zone stays a cell of `_grid`, one height with its copies."""
+    if region.rows != 1:
+        return False
+    lanes = Counter(region.lane_of(z.bbox) for z in zones if z.bbox is not None)
+    return any(count > 1 for count in lanes.values())
 
 
 def _columns(region: Region, zones: list[Zone], document: Document,

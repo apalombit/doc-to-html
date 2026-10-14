@@ -77,6 +77,26 @@ class TestFrames:
                  prose("c", BBox(0.60, 0.45, 0.90, 0.55))]
         assert frames(zones, (self.PANEL,), self.LANES) == [None, None, None]
 
+    CARDS = (BBox(0.04, 0.26, 0.33, 0.89), BBox(0.35, 0.25, 0.65, 0.90),
+             BBox(0.67, 0.26, 0.96, 0.89))
+
+    def cards(self) -> list[Zone]:
+        """`pricing_0017`: three cards, each read as several Zones."""
+        return [prose(f"{name}{part}", BBox(left + 0.02, top, left + 0.25, top + 0.05))
+                for name, left in (("starter", 0.04), ("team", 0.35), ("business", 0.67))
+                for part, top in enumerate((0.30, 0.55, 0.80))]
+
+    def test_a_lane_of_a_one_row_grid_is_a_run(self) -> None:
+        # Spec 0013 step 3a: a one-row grid is a row of cards, each lane one.
+        grid = [Region(top=0.2, bottom=0.95, flow=Flow.GRID, splits=(0.345, 0.655))]
+        assert frames(self.cards(), self.CARDS, grid) == [
+            card for card in self.CARDS for _ in range(3)]
+
+    def test_a_grid_of_several_rows_places_its_cells_by_the_grid(self) -> None:
+        grid = [Region(top=0.2, bottom=0.95, flow=Flow.GRID, splits=(0.345, 0.655),
+                       rows=3)]
+        assert frames(self.cards(), self.CARDS, grid) == [None] * 9
+
 
 class TestGroups:
     """`rhythm.groups` — Zones that continue one another down a lane."""
@@ -276,6 +296,39 @@ class TestRunsAndFrames:
         assert run.count("<ul>") == 1
         expected = 20 - (BELOW_INK["li"] + ABOVE_INK["li"]) * 10
         assert f'<li style="margin-top:{round(expected)}px">two</li>' in run
+
+    def test_a_card_in_a_one_row_grid_is_one_framed_stack(self) -> None:
+        # Spec 0013 step 3a, `pricing_0017`: drawn band by band, each card's
+        # parts sat in rows running across the three, Team's price far
+        # below its name. Each lane is one stack, inside its card.
+        zones = TestFrames().cards()
+        cards = TestFrames.CARDS
+        for index, zone in enumerate(zones):
+            zone.band, zone.column = [0, 1, 2][index % 3], index // 3
+            zone.frame = cards[index // 3]
+            zone.fill = (255, 255, 255)
+        grid = Region(top=0.2, bottom=0.95, flow=Flow.GRID, splits=(0.345, 0.655))
+        html = body_of(render(document(zones, regions=[grid])))
+        frames = html.split('class="frame"')[1:]
+        assert len(frames) == 3
+        for frame, name in zip(frames, ("starter", "team", "business")):
+            assert [frame.index(f"{name}{part}") for part in range(3)] == sorted(
+                frame.index(f"{name}{part}") for part in range(3))
+            assert "background:rgb(255,255,255)" in frame[:frame.index(">")]
+
+    def test_a_button_in_a_card_keeps_its_own_fill(self) -> None:
+        # `pricing_0017`'s Team card: white, and its `Start a 14-day trial`
+        # button blue. The card is painted white, the button blue.
+        zones = TestFrames().cards()
+        for index, zone in enumerate(zones):
+            zone.band, zone.column = [0, 1, 2][index % 3], index // 3
+            zone.frame = TestFrames.CARDS[index // 3]
+            zone.fill = (255, 255, 255)
+        zones[5].fill = (75, 91, 220)
+        grid = Region(top=0.2, bottom=0.95, flow=Flow.GRID, splits=(0.345, 0.655))
+        team = body_of(render(document(zones, regions=[grid]))).split('class="frame"')[2]
+        assert "background:rgb(255,255,255)" in team[:team.index(">")]
+        assert "background:rgb(75,91,220)" in team
 
     def test_a_frame_paints_the_lane_not_the_lane_itself(self) -> None:
         lane = body_of(render(self.risks())).split('class="lane"')[2]

@@ -122,7 +122,19 @@ def frames(zones: Sequence[Zone], drawn: tuple[BBox, ...],
     giving the panel to each would draw six; a run of one lane is drawn once,
     around the run, so the IR can now say "these six share a box" without
     nesting. Anything else several Zones claim stays nobody's.
+
+    **A lane of a one-row grid is a run too** — spec 0013, step 3a. A
+    one-row grid is a row of cards, one to a lane, and `pricing_0017` reads
+    each of its three as five to seven Zones. `container` places a grid's
+    cells by the grid; one row has one cell to a lane, so its lane is where
+    its Zones are read, as a column's is.
     """
+    def home(box: BBox) -> tuple[int, int] | None:
+        for index, region in enumerate(regions):
+            if region.flow is Flow.GRID and region.rows == 1 and region.holds(box):
+                return index, region.lane_of(box)
+        return container(regions, box)
+
     own = boxes_for([zone.bbox for zone in zones], drawn)
     out: list[BBox | None] = list(own)
     claims: dict[BBox, list[int]] = {}
@@ -134,14 +146,14 @@ def frames(zones: Sequence[Zone], drawn: tuple[BBox, ...],
             claims.setdefault(claim, []).append(index)
     for box, members in claims.items():
         held = [b for i in members if (b := zones[i].bbox) is not None]
-        homes = {container(regions, b) for b in held}
+        homes = {home(b) for b in held}
         if len(members) < 2 or len(homes) != 1 or None in homes:
             continue
-        (home,) = homes
+        (lane,) = homes
         top = min(b.top for b in held)
         bottom = max(b.bottom for b in held)
         run = {j for j, zone in enumerate(zones)
-               if zone.bbox is not None and container(regions, zone.bbox) == home
+               if zone.bbox is not None and home(zone.bbox) == lane
                and top <= zone.bbox.top <= bottom}
         if run == set(members):
             for index in members:
