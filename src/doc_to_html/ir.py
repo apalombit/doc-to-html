@@ -431,6 +431,15 @@ class Zone:
     blocks: list[Block] = field(default_factory=list)
     """Populated when kind is PROSE, LIST, or FIGURE (a caption, if any)."""
 
+    extra: list[Block] = field(default_factory=list)
+    """Lines the Zone prints that its Kind's reading has no place for — spec
+    0014, step 1: `form_0007`'s note under its tick boxes, a pairs Zone, and
+    `timetable_0019`'s legend under its grid, a table. Each was read on its
+    own crop, by `Conversion._read_unclaimed`, and is held here rather than
+    forced into the Kind's shape. Drawn before or after the body, never
+    between its rows or pairs: see `render._zone_body`. Empty for nearly
+    every Zone."""
+
     graphic_kind: str | None = None
     """For FIGURE Zones, one of `wire.GRAPHIC_KINDS`.
 
@@ -929,6 +938,11 @@ def _mark(data: dict[str, Any]) -> Mark:
                 count=data.get("count", 1), ticked=data.get("ticked"))
 
 
+def _block(data: dict[str, Any]) -> Block:
+    return Block(kind=data["kind"], lines=[_cell(c) for c in data.get("lines", [])],
+                 size=data.get("size"), gap=data.get("gap"))
+
+
 def _zone(data: dict[str, Any]) -> Zone:
     return Zone(
         kind=Kind(data["kind"]),
@@ -953,11 +967,8 @@ def _zone(data: dict[str, Any]) -> Zone:
                  marks=[_mark(m) for m in p.get("marks", [])])
             for p in data.get("pairs", [])
         ],
-        blocks=[
-            Block(kind=b["kind"], lines=[_cell(c) for c in b.get("lines", [])],
-                  size=b.get("size"), gap=b.get("gap"))
-            for b in data.get("blocks", [])
-        ],
+        blocks=[_block(b) for b in data.get("blocks", [])],
+        extra=[_block(b) for b in data.get("extra", [])],
         graphic_kind=data.get("graphic_kind"),
         pixels=data.get("pixels"),
         # Named one by one, like every other field here, and the reason is on

@@ -140,6 +140,25 @@ gains `"extra": []` on every Zone. No sheet moves.
 
 **Done when** that holds, and the suite and mypy are clean.
 
+### Outcome — step 1, 2026-10-14
+
+**Step 0 proved the baseline** at `a8a64d4`: the replay `S10-0-replay` 21
+of 21 byte-identical, 0 asked differently; the rederive `S10-0-base` 21 of
+21 files byte-identical to `s9-result/documents/`; 1142 passed, 1 skipped;
+mypy clean.
+
+**The prediction held.** `S10-1` is 21 of 21 byte-identical to
+`S10-0-base` once `"extra":[],` is taken out of the embedded IR, and the
+key stands on all 217 Zones. Scored against `s9-result/scores.json`, 0
+fields differ but the label and the time. No sheet moves, so none was
+opened. `debug/runs/S10-1/report.html`.
+
+What else moved with the field, each so the body is counted as before:
+`_from_pairs` pairs the label and value Cells only, `_from_grid` and
+`_from_ink` count the body's Cells only, and a list Continuation with
+an `extra` line is drawn member by member through `_zone_body`. 1150
+passed, 1 skipped; mypy clean.
+
 ---
 
 ## 3. Step 2 — read what nobody read (a new pass, the model)

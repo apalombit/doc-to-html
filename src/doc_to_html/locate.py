@@ -236,7 +236,17 @@ def words(image: ImageArray, zone: Zone, *, glyph: float,
 
 
 def cells_of(zone: Zone) -> list[tuple[Cell, int | None]]:
-    """A Zone's Cells in reading order, each with its table row or None."""
+    """A Zone's Cells in reading order, each with its table row or None —
+    and then the lines its Kind has no place for, `Zone.extra`, each with
+    None (spec 0014, step 1). Last, so a body Cell's position in this list
+    is the one `_from_grid` and `_from_pairs` count it by; and in it, so
+    they are placed, claim their line in `unclaimed`, and are measured by
+    `looks.read` like any other Cell."""
+    return _body_of(zone) + [(cell, None) for block in zone.extra
+                             for cell in block.lines]
+
+
+def _body_of(zone: Zone) -> list[tuple[Cell, int | None]]:
     if zone.kind is Kind.TABLE:
         return [(cell, index) for index, row in enumerate(zone.rows)
                 for cell in row.cells]
@@ -397,7 +407,7 @@ def _from_grid(image: ImageArray, zone: Zone,
     if zone.kind is not Kind.TABLE or None not in placed:
         return placed
     assert zone.bbox is not None
-    cells = cells_of(zone)
+    cells = _body_of(zone)
     where = [(index, column) for index, line in enumerate(zone.rows)
              for column in range(len(line.cells))]
     mask = np.asarray(type_mask(image, zone)) > 0
@@ -437,7 +447,9 @@ def _from_pairs(image: ImageArray, zone: Zone,
     if zone.kind is not Kind.PAIRS or None not in placed:
         return placed
     assert zone.bbox is not None
-    both = [(label, value) for label, value in zip(placed[0::2], placed[1::2])
+    # The pairs only: `Zone.extra`'s lines come after them and have no partner.
+    body = len(_body_of(zone))
+    both = [(label, value) for label, value in zip(placed[0:body:2], placed[1:body:2])
             if label is not None and value is not None]
     beside = sum(1 for label, value in both
                  if label.right <= value.left
@@ -451,7 +463,7 @@ def _from_pairs(image: ImageArray, zone: Zone,
     # was read from: tesseract reads `Πειραιά` and not the `Α΄` before it.
     column = float(np.median([value.left for _, value in both]))
     out = list(placed)
-    for index, (cell, _) in enumerate(cells_of(zone)):
+    for index, (cell, _) in enumerate(_body_of(zone)):
         partner = placed[index ^ 1]
         if out[index] is not None or partner is None or not cell.text.strip():
             continue
@@ -579,8 +591,12 @@ def _from_ink(image: ImageArray, zone: Zone,
         lines = lines[1:]
     height, width = image.shape[:2]
     x0, y0 = crop_origin(image, zone.bbox)
-    pairs = (list(enumerate(lines)) if len(lines) == len(placed)
-             else _between(lines, placed, y0, height))
+    # The Blocks' lines only, which are in the order the page prints them;
+    # `Zone.extra`'s come after them, wherever they are printed, and are
+    # placed by their words.
+    own = placed[:len(_body_of(zone))]
+    pairs = (list(enumerate(lines)) if len(lines) == len(own)
+             else _between(lines, own, y0, height))
     out = list(placed)
     for index, (top, bottom) in pairs:
         if out[index] is not None:

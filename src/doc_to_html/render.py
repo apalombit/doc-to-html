@@ -25,6 +25,7 @@ from statistics import median
 from typing import Any, Sequence
 
 from . import furnish
+from .locate import cells_of
 from .looks import TWO_SIZES
 from .ir import (BBox, Block, Cell, CellState, Document, Flow, Furniture, Kind,
                  Pair, Region, Role, Row, RowRole, Run, Style, Zone)
@@ -1629,7 +1630,34 @@ def _zone_body(zone: Zone, document: Document) -> str:
         Kind.LIST: _list,
         Kind.FIGURE: _figure,
     }
-    return renderers[zone.kind](zone, document)
+    body = renderers[zone.kind](zone, document)
+    if not zone.extra:
+        return body
+    before, after = _extra(zone, document)
+    return before + body + after
+
+
+def _extra(zone: Zone, document: Document) -> tuple[str, str]:
+    """The lines the Zone's Kind has no place for, `Zone.extra`, each drawn
+    as a prose Block inside the Zone's own container — spec 0014, step 1.
+
+    **Before the body or after it, never between its rows or pairs.** A
+    Block goes before when its first placed line lies above the body's
+    first placed Cell — its middle over that Cell's top — and after it
+    otherwise, which is also where a Block nothing placed goes:
+    `form_0007`'s note under its tick boxes, `timetable_0019`'s legend
+    under its grid."""
+    extra = {id(cell) for block in zone.extra for cell in block.lines}
+    first = next((cell.bbox for cell, _ in cells_of(zone)
+                  if cell.bbox is not None and id(cell) not in extra), None)
+    before: list[str] = []
+    after: list[str] = []
+    for block in zone.extra:
+        line = next((cell.bbox for cell in block.lines if cell.bbox is not None), None)
+        above = (line is not None and first is not None
+                 and (line.top + line.bottom) / 2 < first.top)
+        (before if above else after).append(_block(block, document))
+    return "".join(before), "".join(after)
 
 
 def _unit(unit: list[Zone], document: Document, page: _Page, *,
@@ -1669,7 +1697,10 @@ def _unit(unit: list[Zone], document: Document, page: _Page, *,
                 if upper.bbox.bottom <= _middle(r) <= lower.bbox.top
                 and r.bbox.left < span[1] and r.bbox.right > span[0]]
 
-    if all(zone.kind is Kind.LIST and zone.complete for zone in unit):
+    # A member holding lines its Kind has no place for is drawn through
+    # `_zone_body`, which draws them: the one `<ul>` here has no place either.
+    if all(zone.kind is Kind.LIST and zone.complete and not zone.extra
+           for zone in unit):
         items = []
         for position, zone in enumerate(unit):
             listed = [b for b in zone.blocks if b.kind == "item"]
