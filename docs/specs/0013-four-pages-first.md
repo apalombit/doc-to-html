@@ -577,6 +577,50 @@ text (`rectify`'s docstring).
 the sweep. Whatever is still missing there, such as the stub's block
 code, is reported and is not built in this spec.
 
+### Outcome — step 5, 2026-10-14
+
+**The change**, in `preprocess`:
+- `sheet_beyond` — of the quadrilateral's four edges, the largest share
+  of the line `SHEET_STEP` (4 px at `DETECT_LONG_EDGE`) outside it that
+  is `SHEET_APART` from the surround. Re-measured on the small copy:
+  the receipt **0.00**; the ticket **0.85** (top), 0.09, 0.23, 0.42.
+- `sheet_outline` — everything `SHEET_APART` from the surround, closed,
+  its largest outer contour, four rough corners off the hull; then each
+  side fitted to the contour along its middle eight tenths and the
+  corners taken where the fitted sides meet. A hull's corners stand on
+  the card's rounded corners, inside the paper, and a side between them
+  leans: the prototype's left edge stood upright at x 54 while the
+  ticket's runs 46 to 54. The ticket gives **(46, 56), (845, 37),
+  (853, 342), (54, 361)**, every edge 0.00.
+- `rectify`: where `sheet_beyond` exceeds `SHEET_BEYOND` = 0.5 — the
+  middle of the band from 0.00 to 0.85 — the outline is taken if its own
+  edges pass the same test, and the surround is re-read round it. A
+  quadrilateral every edge of which has the desk beyond it is kept
+  exactly as found. `RECTIFIER_VERSION` 6.
+
+**Measured:**
+- Rectified pixels over all 21, `image` and `plain`, against the same
+  code with the test held at 0.0: **the ticket alone moves.**
+- The layout front (`front-4` → `front-5`): every IR but the ticket's
+  differs in `rectifier_version` alone. The ticket goes 5 Zones to 6:
+  the stub whole with its `NORDLYS AIR`, `NORDLYS AIR` and `BOARDING
+  PASS` each whole, the body in two — the passenger, `OSL` and the left
+  fields; `TRD` with `DEPARTS` and `CLASS`.
+- **One new Zone that is not content:** `cover_the_page` recovers an
+  8 px strip along the foot of the teal header (0.209–0.733 ×
+  0.108–0.141). It is `equalise`'s halo where the band meets the white
+  card — the band's interior is blown out pale and its last rows read
+  as ink. It holds no type, and it is 8 px, on `MIN_RECOVERED_PX`. The
+  model will be asked what it is; that answer comes at the sweep.
+- The replay (`S9-5-replay`): the ticket and the certificate ASKED MORE
+  THAN THE RUN, the five table calls of step 1 ASKED DIFFERENTLY,
+  nothing else.
+
+**By eye** (the rectified ticket, old warp beside new): **ticket —
+better.** The page is the whole card, level: both headers whole,
+`BOARDING PASS` uncut, the stub's `NORDLYS AIR` back, the left margin's
+first letters and the foot's `departure` inside the picture.
+
 ---
 
 ## 6. Lower priority — a table row that spells its Zone's Title goes

@@ -25,13 +25,18 @@ from doc_to_html.preprocess import (
     PAD_X,
     PAD_Y,
     ImageArray,
+    SHEET_BEYOND,
     RectifyError,
     crop,
     deskew,
     equalise,
     find_page_quad,
+    paper_box,
     rectify,
+    sheet_beyond,
+    sheet_outline,
     skew_angle,
+    surround_of,
     warp_to_quad,
 )
 
@@ -217,6 +222,82 @@ class TestWhenTheQuadrilateralCannotBeFound:
         broken.write_bytes(b"not an image at all")
         with pytest.raises(RectifyError, match="could not decode"):
             rectify(broken)
+
+
+DESK = (72, 65, 60)
+TEAL = (138, 110, 11)
+"""`ticket_0020`'s slate desk and teal header, BGR: 64 and 84 in grey."""
+
+
+def banded_card(tilt: float = 1.5) -> tuple[ImageArray, ImageArray]:
+    """A white card with a teal band along its top, on a slate desk, tilted —
+    and its four true corners. In grey the band is nearly the desk."""
+    canvas = np.full((420, 900, 3), DESK, np.uint8)
+    card = np.full_like(canvas, 255)
+    card[60:100] = TEAL
+    for top in range(140, 330, 30):
+        card[top:top + 10, 100:600] = 30
+    shape = np.zeros(canvas.shape[:2], np.uint8)
+    cv2.rectangle(shape, (60, 60), (840, 350), 255, -1)
+    spin = cv2.getRotationMatrix2D((450, 210), tilt, 1.0)
+    shape = cv2.warpAffine(shape, spin, (900, 420))
+    card = cv2.warpAffine(card, spin, (900, 420))
+    canvas[shape > 127] = card[shape > 127]
+    corners = np.array([[[60, 60], [840, 60], [840, 350], [60, 350]]], np.float32)
+    return canvas, cv2.transform(corners, spin)[0]
+
+
+class TestThePapersWholeOutline:
+    """Spec 0013, step 5 — `find_page_quad` reads edges in grey, so a sheet
+    whose border is the desk's shade there loses it, and the warp cuts the
+    border off. An edge with the sheet beyond it is not the paper's edge."""
+
+    def test_an_edge_with_the_sheet_beyond_it_is_not_the_papers(self) -> None:
+        image, _ = banded_card()
+        found = find_page_quad(image)
+        assert found is not None
+        surround = surround_of(image, found)
+        assert surround is not None
+        assert sheet_beyond(image, found, surround) > SHEET_BEYOND
+
+    def test_the_outline_is_read_off_the_sheets_colour(self) -> None:
+        image, true = banded_card()
+        outline = sheet_outline(image, (60, 65, 72))
+        assert outline is not None
+        assert float(np.abs(outline - true).max()) < 1.5
+        assert sheet_beyond(image, outline, (60, 65, 72)) == 0.0
+
+    def test_the_band_is_kept_in_the_warp(self, tmp_path: Path) -> None:
+        image, _ = banded_card()
+        path = tmp_path / "card.png"
+        cv2.imwrite(str(path), image)
+        top = rectify(path).plain[6:12, 100:-100].reshape(-1, 3).mean(axis=0)
+        assert np.abs(top - np.array(TEAL)).max() < 30
+
+    def test_the_tickets_stub_keeps_its_header(self) -> None:
+        """Warped to the grey quadrilateral, the stub's top eighth was the
+        foot of its teal band over white card, `NORDLYS AIR` cut off."""
+        result = rectify(EXAMPLES / "ticket.png")
+        assert result.warped
+        height, width = result.plain.shape[:2]
+        stub = result.plain[:height // 8, int(0.78 * width):int(0.97 * width)]
+        teal = np.abs(stub.astype(int) - np.array(TEAL)).max(axis=2) < 30
+        assert teal.mean() > 0.8
+        assert (stub.min(axis=2) > 200).sum() > 30, "its name, in white"
+
+    def test_a_sheet_with_the_desk_beyond_every_edge_keeps_its_quadrilateral(
+        self,
+    ) -> None:
+        """`receipt_0010`: the receipt's pixels must not move."""
+        image = cv2.imread(str(EXAMPLES / "receipt.png"), cv2.IMREAD_COLOR)
+        found = find_page_quad(image)
+        assert found is not None
+        surround = surround_of(image, found)
+        assert surround is not None
+        assert sheet_beyond(image, found, surround) == 0.0
+        height, width = image.shape[:2]
+        assert rectify(EXAMPLES / "receipt.png").source.paper == paper_box(
+            found, width, height)
 
 
 class TestDeskewCorrectsATiltAndNotAnOrientation:

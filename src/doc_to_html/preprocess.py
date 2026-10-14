@@ -351,6 +351,24 @@ channel), the ticket's on slate (196). A frame drawn on a page is not a
 photographed page: since G3b it is not warped to (`rectify`), and its
 picture is drawn as a page."""
 
+SHEET_BEYOND = 0.5
+"""How much of a quadrilateral's edge may have the sheet's own colour just
+beyond it before that edge is not the paper's — spec 0013, step 5.
+
+`find_page_quad` reads edges in grey, and a sheet whose border is the desk's
+shade there loses that border. `ticket_0020`'s teal header is 84 in grey on
+a slate desk at 64, so the quadrilateral's top edge ran along the white
+body's top instead, sloping against the ticket, and the warp cut `BOARDING
+PASS` in half. Measured `SHEET_STEP` outside each edge, the share further
+than `SHEET_APART` from the surround: the receipt's four edges **0.00**
+each; the ticket's worst **0.85**, its top. Half an edge is the middle of
+that empty band, and says what the test means — most of the edge has the
+sheet beyond it."""
+
+SHEET_STEP = 4
+"""How far outside an edge, in pixels at `DETECT_LONG_EDGE`, `SHEET_BEYOND`
+looks: past the two 3 px dilations `find_page_quad` draws its edges with."""
+
 MAX_DESKEW_DEGREES = 15.0
 """Beyond this, the estimate is not skew.
 
@@ -1625,6 +1643,97 @@ def find_page_quad(image: ImageArray) -> ImageArray | None:
     return None
 
 
+def sheet_beyond(image: ImageArray, quad: ImageArray,
+                 surround: tuple[int, int, int]) -> float:
+    """The largest share, over the quadrilateral's four edges, of the line
+    `SHEET_STEP` outside it that is the sheet's colour rather than the
+    surround's — 0.0 where the desk lies beyond every edge. `SHEET_BEYOND`."""
+    small = resize_long_edge(image, DETECT_LONG_EDGE)
+    corners = np.asarray(quad, dtype=float) / (max(image.shape[:2]) / max(small.shape[:2]))
+    around = np.array(surround[::-1], dtype=int)
+    height, width = small.shape[:2]
+    middle = corners.mean(axis=0)
+    worst = 0.0
+    for index in range(4):
+        start, end = corners[index], corners[(index + 1) % 4]
+        along = end - start
+        out = np.array([along[1], -along[0]]) / max(float(np.linalg.norm(along)), 1e-9)
+        if np.dot((start + end) / 2 - middle, out) < 0:
+            out = -out
+        points = np.array([start + t * along + SHEET_STEP * out
+                           for t in np.linspace(0.05, 0.95, 200)]).round().astype(int)
+        inside = ((points[:, 0] >= 0) & (points[:, 0] < width)
+                  & (points[:, 1] >= 0) & (points[:, 1] < height))
+        if not inside.any():
+            continue
+        pixels = small[points[inside, 1], points[inside, 0]].astype(int)
+        worst = max(worst, float((np.abs(pixels - around).max(axis=1) >= SHEET_APART).mean()))
+    return worst
+
+
+def sheet_outline(image: ImageArray,
+                  surround: tuple[int, int, int]) -> ImageArray | None:
+    """The sheet's four corners read off its colour against the surround, in
+    full-resolution coordinates, or None — spec 0013, step 5.
+
+    Everything `SHEET_APART` from the surround, closed, its largest outer
+    contour, four corners off its hull. Each side is then fitted to the
+    contour along its middle eight tenths and the corners are where the
+    fitted sides meet: a hull's corners stand on a card's rounded corners,
+    inside the paper, and a side between them leans. `ticket_0020` gives
+    (46, 56), (845, 37), (853, 342), (54, 361) — its outline at its slope —
+    and the receipt a quadrilateral 2 px inside `find_page_quad`'s.
+    """
+    cv2 = _cv2()
+    small = resize_long_edge(image, DETECT_LONG_EDGE)
+    scale = max(image.shape[:2]) / max(small.shape[:2])
+    apart = np.abs(small.astype(np.int16)
+                   - np.array(surround[::-1], dtype=np.int16)).max(axis=2)
+    sheet = cv2.morphologyEx((apart >= SHEET_APART).astype(np.uint8),
+                             cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8))
+    contours, _ = cv2.findContours(sheet, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    if not contours:
+        return None
+    contour = max(contours, key=cv2.contourArea)
+    hull = cv2.convexHull(contour)
+    rough = cv2.approxPolyDP(hull, 0.02 * cv2.arcLength(hull, True), True)
+    if len(rough) != 4:
+        return None
+
+    rough_corners = rough.reshape(4, 2).astype(float)
+    points = contour.reshape(-1, 2).astype(float)
+    sides = []
+    for index in range(4):
+        start, end = rough_corners[index], rough_corners[(index + 1) % 4]
+        length = float(np.linalg.norm(end - start))
+        if length < 1:
+            return None
+        unit = (end - start) / length
+        offset = points - start
+        along = offset @ unit / length
+        off = np.abs(offset[:, 0] * unit[1] - offset[:, 1] * unit[0])
+        side = points[(along > 0.1) & (along < 0.9) & (off < 3)]
+        if len(side) < 10:
+            return None
+        vx, vy, x0, y0 = cv2.fitLine(side.astype(np.float32), cv2.DIST_L2, 0, 0.01, 0.01).ravel()
+        sides.append((np.array([x0, y0], dtype=float), np.array([vx, vy], dtype=float)))
+
+    corners = []
+    for index in range(4):
+        (first, first_way), (second, second_way) = sides[index - 1], sides[index]
+        ways = np.array([first_way, -second_way]).T
+        if abs(float(np.linalg.det(ways))) < 1e-6:
+            return None
+        reach = np.linalg.solve(ways, second - first)
+        corners.append(first + reach[0] * first_way)
+    ordered = _order_corners(np.array(corners))
+    share = cv2.contourArea(ordered) / float(small.shape[0] * small.shape[1])
+    if not MIN_PAGE_AREA <= share <= MAX_PAGE_AREA:
+        return None
+    found: ImageArray = ordered * scale
+    return found
+
+
 def warp_to_quad(image: ImageArray, quad: ImageArray) -> ImageArray:
     """Flatten the page, sizing the output from the quadrilateral's own edges."""
     cv2 = _cv2()
@@ -1850,6 +1959,13 @@ def rectify(path: Path) -> Rectified:
         # Spec 0012, G3b: the same colour on both sides of the quadrilateral
         # is a frame the page draws, not a sheet's edge — `SHEET_APART`.
         quad = None
+    elif quad is not None and sheet_beyond(image, quad, surround) > SHEET_BEYOND:
+        # Spec 0013, step 5: an edge with the sheet beyond it is not the
+        # paper's edge, so the paper is read off its colour — `SHEET_BEYOND`.
+        outline = sheet_outline(image, surround)
+        if outline is not None and sheet_beyond(image, outline, surround) <= SHEET_BEYOND:
+            quad = outline
+            surround = surround_of(image, quad) or surround
     flattened = image if quad is None else warp_to_quad(image, quad)
     inverted = ground_is_dark(flattened)
     if inverted:

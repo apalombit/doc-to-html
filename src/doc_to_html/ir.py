@@ -20,7 +20,7 @@ from typing import Any
 IR_VERSION = 1
 """Bump when the shape below changes incompatibly. Written into every IR."""
 
-RECTIFIER_VERSION = 5
+RECTIFIER_VERSION = 6
 """Bump when rectification changes geometrically.
 
 Corrections are anchored to coordinates in the rectified space. If rectification
@@ -45,6 +45,12 @@ colour on both sides is a frame the page draws, and the page is not warped
 to it. Of the twenty-one only `certificate_0021` moves: its double frame
 had been taken for a photographed sheet's edge, and the page was cropped
 to it.
+
+**6** is spec 0013, step 5, 2026-10-14: a quadrilateral with the sheet's
+colour beyond an edge is read off the sheet's colour instead
+(`preprocess.SHEET_BEYOND`). Of the twenty-one only `ticket_0020` moves:
+its teal header is the desk's shade in grey, and the page had been warped
+to the white body's top, cutting `BOARDING PASS` in half.
 """
 
 
