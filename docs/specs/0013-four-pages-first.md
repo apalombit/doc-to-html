@@ -795,6 +795,57 @@ Then report the sweep in the error-analysis format:
 
 Whether `S9-sweep` becomes the baseline is Alessandro's decision.
 
+### Registered — step P, 2026-10-14, at `a84404c`
+
+From `S9-P-replay` (`s8-result/`'s answers served to the last commit)
+and `S9-P-swap` (the same, with step 1's four `s7-result/` answers
+swapped in):
+
+**The calls the replay marks — seven documents:**
+
+| document | marked | why |
+|---|---|---|
+| `receipt_0010` | call 10, table, prompt | step 1 |
+| `statement_0006` | call 14, table, prompt | step 1 |
+| `cv_0013` | call 79, table, prompt | step 1 |
+| `nonlatin_0014` | call 20, table, prompt | step 1 |
+| `paper_0018` | call 34, table, prompt | step 1 — 5 × 1, never asked of its picture |
+| `certificate_0021` | ASKED MORE THAN THE RUN: 8 classify for 7 recorded; pictures move from call 3 | step 4, 7 Zones to 8 |
+| `ticket_0020` | ASKED MORE THAN THE RUN: 6 classify for 5; every picture moves | step 5, a new warp; 5 Zones to 6 |
+
+Nothing else is marked. The fourteen others — catalogue, darkdeck, form,
+both invoices, letter, menu, newsletter, pricing, report, sample_css,
+sample_semantic, sample_table, timetable — ask every call as `s8-result/`
+did.
+
+**The prediction:**
+1. **Every call not marked comes back byte-identical** to
+   `s8-result/answers/`: every call of the fourteen, and every call of the
+   five step-1 documents but its one table call.
+2. **The four step-1 table answers come back byte-identical to
+   `s7-result/`'s**, so receipt, statement, cv and nonlatin render
+   byte-identical to `S9-P-swap`, their embedded IR included.
+3. **The fourteen unmarked documents render byte-identical to
+   `S9-P-replay`**, their embedded IR included.
+4. **paper**'s table answer is new and not predicted. If it returns the
+   caption as a row again, step 6 drops it; the page prints the caption
+   once either way.
+5. **certificate**: new answers over 8 Zones. Expected: the signatures,
+   the seal and the number drawn as four groups, not one interleaved
+   paragraph; the name with `This is to certify that`, not as the
+   paragraph's heading; no stray ornament.
+6. **ticket**: new answers over 6 Zones. Expected: `BOARDING PASS` read
+   whole, the stub's `NORDLYS AIR`, the left margin's first letters,
+   `SEAT 12A`, `departure`. **The 8 px strip** at the header's foot is
+   asked too: expected empty, or a figure; text printed from it is
+   invented, and traced to step 5's halo.
+
+The chain the steps were judged on agrees: `S9-7` (rederived step by
+step from `S9-1`) draws nineteen documents byte-identical to these two
+replays, its IR differing in `rectifier_version` alone — a rederive keeps
+the frozen IR's 5. The certificate and the ticket cannot be compared:
+their replays stop where they are asked more.
+
 ---
 
 ## 10. Where things are
