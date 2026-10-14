@@ -282,6 +282,23 @@ class TestDraw:
         assert "<p>Line 0 Line 1</p>" in render(paragraph(Look(size=1.25),
                                                           Look(size=1.0)))
 
+    def test_items_printed_on_one_line_are_drawn_on_one(self) -> None:
+        # Spec 0013 step 3d: `pricing_0017`'s toggle, `Monthly` and `Annual`
+        # side by side with no marker, was drawn as a bulleted column.
+        items = [cell("Monthly"), cell("Annual")]
+        items[0].bbox = BBox(0.36, 0.188, 0.40, 0.206)
+        items[1].bbox = BBox(0.43, 0.185, 0.47, 0.206)
+        zone = Zone(kind=Kind.LIST, complete=True, bbox=BBox(0.34, 0.17, 0.49, 0.22),
+                    blocks=[Block(kind="item", lines=[item]) for item in items])
+        html = render(Document(source=Source(path="x.png", sha256="0", width=1000,
+                                             height=1000), zones=[zone]))
+        assert ('<ul style="display:flex;flex-wrap:wrap;gap:30px;list-style:none;'
+                'padding:0"><li>Monthly</li><li>Annual</li></ul>') in html
+        zone.align = "right"
+        html = render(Document(source=Source(path="x.png", sha256="0", width=1000,
+                                             height=1000), zones=[zone]))
+        assert "padding:0;justify-content:flex-end\"><li>Monthly" in html
+
     def test_looks_survive_the_ir(self) -> None:
         document = paragraph(Look(size=0.8, bold=None, italic=True))
         again = Document.from_json(document.to_json())

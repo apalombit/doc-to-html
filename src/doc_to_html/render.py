@@ -2659,6 +2659,14 @@ def _list(zone: Zone, document: Document) -> str:
     keeps every block because there nothing has claimed the region is a list.
     """
     listed = [b for b in zone.blocks if b.kind == "item"]
+    across = _side_by_side(listed, zone, document)
+    if across is not None:
+        items = "".join(f"<li{_li_style(b, document)}>{_lines(b, document)}</li>"
+                        for b in listed)
+        justify = {"centre": ";justify-content:center",
+                   "right": ";justify-content:flex-end"}.get(zone.align or "", "")
+        return (f'<ul style="display:flex;flex-wrap:wrap;gap:{_px(across)};'
+                f'list-style:none;padding:0{justify}">{items}</ul>')
     # Spaced only where every Block is drawn: a gap is from the Block before.
     spacing = ([above for above, _ in _spacing(listed, _page(document))]
                if len(listed) == len(zone.blocks) else [""] * len(listed))
@@ -2669,6 +2677,24 @@ def _list(zone: Zone, document: Document) -> str:
         for b, above in zip(listed, spacing)
     )
     return f"<ul>{items}</ul>"
+
+
+def _side_by_side(items: list[Block], zone: Zone, document: Document) -> float | None:
+    """The gap between items the page prints side by side on one printed
+    line, in pixels, or None — spec 0013, step 3d. `pricing_0017`'s
+    Monthly / Annual toggle and `sample_semantic_0005`'s `html, web,
+    standards` were drawn as bulleted columns; neither page prints a
+    marker. A header's list is drawn on one line by the house style."""
+    boxes = [line.bbox for block in items for line in block.lines]
+    if (zone.role is Role.HEADER or len(items) < 2
+            or any(len(block.lines) != 1 for block in items)):
+        return None
+    placed = [box for box in boxes if box is not None]
+    if (len(placed) != len(boxes) or max(b.top for b in placed) >= min(b.bottom for b in placed)
+            or any(b.left < a.right for a, b in zip(placed, placed[1:]))):
+        return None
+    page = _page(document)
+    return float(median((b.left - a.right) * page.x for a, b in zip(placed, placed[1:])))
 
 
 FIGURE_PLACE = {"centre": ";margin:0 auto", "right": ";margin-left:auto"}

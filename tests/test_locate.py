@@ -216,6 +216,35 @@ class TestBetweenPlacedLines:
         assert _between(lines, placed, 0, 100) == [(0, (0, 30))]
 
 
+class TestCutCopies:
+    """Spec 0013 step 3d — `pricing_0017`'s toggle read a third item, `Sav`,
+    located on the first letters of `Save 20% with annual billing`, which
+    the Zone beside it prints whole."""
+
+    def toggle(self, last: str = "Sav") -> Document:
+        items = [cell("Monthly"), cell("Annual"), cell(last)]
+        for item, left in zip(items, (136, 172, 200)):
+            item.bbox = at(left, 74, left + 20, 80)
+        toggle = Zone(kind=Kind.LIST, bbox=at(136, 70, 195, 87), complete=True,
+                      blocks=[Block(kind="item", lines=[item]) for item in items])
+        save = cell("Save 20% with annual billing")
+        save.bbox = at(200, 74, 263, 82)
+        beside = Zone(kind=Kind.PROSE, bbox=at(200, 74, 263, 82), complete=True,
+                      blocks=[Block(kind="paragraph", lines=[save])])
+        return Document(source=Source(path="x.png", sha256="0", width=SIDE,
+                                      height=SIDE), zones=[toggle, beside])
+
+    def test_a_cut_copy_of_the_line_it_lies_on_goes(self) -> None:
+        document = self.toggle()
+        assert locate.without_cut_copies(document) == [(0, "Sav")]
+        assert [b.lines[0].text for b in document.zones[0].blocks] == ["Monthly", "Annual"]
+
+    def test_a_cell_that_does_not_start_the_line_stays(self) -> None:
+        document = self.toggle("Yearly")
+        assert locate.without_cut_copies(document) == []
+        assert len(document.zones[0].blocks) == 3
+
+
 def sure(text: str, left: int, top: int, line: int, confidence: float = 95.0) -> Word:
     found = word(text, left, top, line)
     return Word(found.text, found.box, found.line, confidence)

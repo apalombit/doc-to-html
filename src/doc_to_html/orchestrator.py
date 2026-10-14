@@ -1331,6 +1331,9 @@ class Conversion:
         started = time.perf_counter()
         plain = rectified.plain if rectified.plain is not None else rectified.image
         placed, cells = locate_module.locate(plain, document)
+        # Spec 0013 step 3d: a line placed on another Zone's line, whose
+        # text it starts, is a cut-off copy of words that Zone prints.
+        copies = locate_module.without_cut_copies(document)
         unplaced = [{"zone": index, "text": cell.text[:60]}
                     for index, zone in enumerate(document.zones)
                     if zone.kind is not Kind.FIGURE
@@ -1345,6 +1348,7 @@ class Conversion:
             Stage.LAYOUT, "locate", Disposition.ACCEPTED,
             seconds=time.perf_counter() - started,
             placed=placed, cells=cells, unplaced=unplaced,
+            cut_copies=[{"zone": zone, "text": text[:60]} for zone, text in copies],
             unclaimed=[{"zone": line.zone_index, "words": line.words,
                         "top": round(line.bbox.top, 3)}
                        for line in document.unclaimed])

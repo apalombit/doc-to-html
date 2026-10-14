@@ -503,6 +503,52 @@ def _between(lines: list[tuple[int, int]], placed: list[BBox | None],
     return out
 
 
+def without_cut_copies(document: Document) -> list[tuple[int, str]]:
+    """Drop each line of a Block placed on another Zone's line whose text it
+    starts — a cut-off copy of words that Zone prints whole — and say which,
+    as (Zone, text). Spec 0013, step 3d.
+
+    `pricing_0017`'s toggle read a third item, `Sav`, placed at 0.499 —
+    outside its own Zone (0.341–0.488) and on the first letters of the Zone
+    beside it, `Save 20% with annual billing`. Its words are all printed by
+    that Zone, so dropping it can lose none. Measured over the twenty-one
+    at `S9-3c`, it is the only Cell lying on another Zone's line that it
+    starts. A line placed in its own Zone, or not starting the one it lies
+    on, stays."""
+    dropped: list[tuple[int, str]] = []
+    for index, zone in enumerate(document.zones):
+        if zone.bbox is None:
+            continue
+        for block in zone.blocks:
+            kept = []
+            for line in block.lines:
+                if _cut_copy(line, zone, index, document):
+                    dropped.append((index, line.text))
+                else:
+                    kept.append(line)
+            block.lines = kept
+        zone.blocks = [block for block in zone.blocks if block.lines]
+    return dropped
+
+
+def _cut_copy(line: Cell, zone: Zone, index: int, document: Document) -> bool:
+    folded = fold(line.text)
+    if line.bbox is None or not folded or zone.bbox is None:
+        return False
+    x = (line.bbox.left + line.bbox.right) / 2
+    y = (line.bbox.top + line.bbox.bottom) / 2
+
+    def holds(box: BBox | None) -> bool:
+        return box is not None and box.left <= x <= box.right and box.top <= y <= box.bottom
+
+    if holds(zone.bbox):
+        return False
+    return any(holds(other.bbox) and holds(cell.bbox) and fold(cell.text).startswith(folded)
+               and fold(cell.text) != folded
+               for number, other in enumerate(document.zones) if number != index
+               for cell, _ in cells_of(other))
+
+
 def _touching(lines: list[tuple[int, int]]) -> list[tuple[int, int]]:
     """Printed lines with no blank row between them, as one — spec 0013,
     step 3c. `type_lines` parts touching lines at the valleys of their ink,

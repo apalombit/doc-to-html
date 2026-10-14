@@ -44,6 +44,9 @@ and can be recomputed from it, in the order a Conversion runs them:
        as a locator, its words never printed — and the printed lines no
        Cell claims, spec 0012, G9
                                     locate.locate              (_locate)
+       and a line placed on another Zone's line whose text it starts
+       dropped, a cut-off copy — spec 0013, step 3d
+                                    locate.without_cut_copies  (_locate)
     9. The marks the page draws for its entries, attached to their pairs —
        spec 0011, step 3; step 6's gaps are taken after it, since it can
        widen a Zone's box to its marks
@@ -163,6 +166,7 @@ def rederive(document: Document, png: Path) -> None:
             plain, document.zones, ground=document.style.page_bg,
             inverted=rectified.inverted)
     locate.locate(plain, document)
+    locate.without_cut_copies(document)
     fields.read(plain, document)
     furniture.place(document.furniture, document.zones)
     if document.style is not None:
