@@ -169,6 +169,33 @@ statement's header reads light on its dark band under its caption; cv
 prints `2022`; no other page moved but paper's, and paper is judged at the
 sweep.
 
+### Outcome — step 1, 2026-10-14
+
+**Step 0 proved the baseline** at `624b18f`: the replay `S9-0-replay`
+21 of 21 byte-identical, 0 asked differently; the rederive `S9-0-base` 21
+of 21 files byte-identical. The swap at that code, `S9-0-swap`, moved the
+receipt, the statement and cv, and left nonlatin byte-identical.
+
+**The prediction held.** The replay `S9-1-replay` marks exactly the five
+calls, each `prompt` only. The four prompts hash equal to `s7-result/`'s,
+picture and schema too; paper's new prompt is the same text as cv's
+(5 × 1), never asked of its picture. `S9-1` — the replay with the four
+`s7-result/` answers swapped in — renders the four pages byte-identical to
+`S9-0-swap`, and the other seventeen byte-identical to `s8-result/`.
+
+**By eye, against `S9-0-replay`:**
+- **receipt — better:** all eight prices at the right, `oat milk` and
+  `extra butter` indented under their items, the summary values at the
+  right.
+- **statement — better:** `Transactions in date order` back over the
+  table, the header row white on its dark band, and the paid-out column no
+  longer a row out from 12 Aug.
+- **cv — better:** `2022` beside `Diploma, Timber Design`.
+- every other page byte-identical; paper is judged at the sweep.
+
+`vanished` 40 → 32: the receipt's six price tokens, `castleton`, `2022`
+back; nothing left. `debug/runs/S9-1/report.html`.
+
 ---
 
 ## 2. The certificate — its width inside two frames

@@ -759,18 +759,20 @@ def _rows_as_ruled(bands: list[tuple[int, int]],
     return rows
 
 
-def _columns_as_ruled(ink: ImageArray, downs: tuple[float, ...]) -> list[tuple[int, int]]:
+def _columns_as_ruled(ink: ImageArray,
+                      downs: tuple[float, ...]) -> list[tuple[int, int]] | None:
     """Columns as the table draws them: where it draws two vertical rules or
     more, each space between them holding a band of ink is one column — so
     a legend set under `timetable_0019`'s grid, its swatches in the gaps,
-    does not make columns of its own. Otherwise the projection's bands."""
+    does not make columns of its own. Otherwise None: the table does not
+    draw its columns, and `table_grid` counts them as it did before."""
     width = ink.shape[1]
     places: list[float] = []
     for x in sorted(downs):
         if not places or x - places[-1] > 2 * RULE_SLACK:
             places.append(x)
     if len(places) < 2:
-        return ink_bands(ink.sum(axis=0), MIN_COLUMN_GAP, MIN_BAND)
+        return None
     cuts = [0] + [int(round(x)) for x in places] + [width]
     return [(left, right - 1) for left, right in zip(cuts, cuts[1:]) if right > left
             and ink_bands(ink[:, left:right].sum(axis=0), MIN_COLUMN_GAP, MIN_BAND)]
@@ -789,16 +791,29 @@ def table_grid(crop: ImageArray, drawn: Drawn | None = None) -> TableGrid:
     the count follows the rules (`_rows_as_ruled`, `_columns_as_ruled`).
     `timetable_0019` measures 9 by 6 — its eight rows and its legend, its
     six columns — where it measured 4 by 1.
+
+    **Columns follow the drawing only where the table draws them** — spec
+    0013 step 1. Cleared of its rules and its dark fill, the projection of
+    a table that draws no vertical rule undercounted the page by one on
+    `receipt_0010` (2 of 3), `statement_0006` (5 of 6) and `cv_0013` (3 of
+    4), and the model obeyed each near count by dropping or merging a
+    column: the receipt's eight prices, the statement's caption, cv's
+    `2022`. Counted with nothing cleared, each measures 1 — a count so far
+    off that the model reads every column regardless. **A near count is
+    obeyed; an absurd one is not.** So a table ruling fewer than two
+    column places is counted as before step U; its rows stay as ruled.
     """
     mask = content_ink(crop)
+    plain = ink_bands(mask.sum(axis=0), MIN_COLUMN_GAP, MIN_BAND)
     if drawn is None:
         rows = ink_bands(mask.sum(axis=1), MIN_ROW_GAP, MIN_BAND)
-        columns = ink_bands(mask.sum(axis=0), MIN_COLUMN_GAP, MIN_BAND)
+        columns = plain
     else:
         ink = (mask > 0) & ~drawn.rules
         rows = _rows_as_ruled(ink_bands(ink.sum(axis=1), MIN_ROW_GAP, MIN_BAND),
                               drawn.edges)
-        columns = _columns_as_ruled(ink & ~drawn.across, drawn.downs)
+        ruled = _columns_as_ruled(ink & ~drawn.across, drawn.downs)
+        columns = plain if ruled is None else ruled
     return TableGrid(rows=len(rows), columns=len(columns),
                      row_bands=rows, column_bands=columns)
 

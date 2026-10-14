@@ -58,6 +58,20 @@ class TestTheGridAsThePageDrawsIt:
         grid = table_grid(crop(page, box))
         assert grid.columns == 1, "the dark header is one band across"
 
+    def test_columns_the_page_does_not_rule_are_counted_as_without_it(self) -> None:
+        # Spec 0013 step 1: `receipt_0010`, `statement_0006` and `cv_0013`
+        # draw no vertical rule, and step U's cleared projection undercounted
+        # each by one — a near count, which the model obeyed by dropping a
+        # column. With fewer than two rule places the columns are the
+        # projection's with nothing cleared; the rows stay as ruled.
+        page, furniture = timetable()
+        unruled = [f for f in furniture
+                   if not (f.kind == "rule" and f.bbox.bottom - f.bbox.top > 0.5)]
+        box = BBox(10 / 400, 10 / 200, 390 / 400, 190 / 200)
+        grid = table_grid(crop(page, box), drawn(unruled, page, box))
+        assert grid.columns == table_grid(crop(page, box)).columns
+        assert grid.rows == 5, "header, three rows, legend"
+
     def test_lines_as_far_apart_as_ruled_rows_stay_rows(self) -> None:
         # `nonlatin_0014`'s totals: ruled items, unruled totals 16px apart.
         ink = np.zeros((120, 100), np.uint8)
