@@ -5,8 +5,10 @@ step U were implemented, then `S8-sweep` ran over all twenty-one: §6's
 prediction held, eighteen pages better, three worse (receipt, statement,
 certificate), each traced in "Outcome — the sweep". **Alessandro took
 `S8-sweep` as the baseline, frozen as `tests/frozen/s8-result/`.**
-Directions 1–5 of that outcome are spec 0013; everything else in this spec
-not done was cleared the same day. This is the report
+Spec 0013 carries directions 1–5 of that outcome, reordered around the
+four pages Alessandro named (receipt, certificate, pricing, ticket), with
+the certificate's portrait width and the ticket's outline added.
+Everything else in this spec not done was cleared the same day. This is the report
 notebook Alessandro asked for after the sweep over the widened corpus: every
 fault found, traced to its cause, grouped into what should be solved
 together, and the pipeline and workflow changes the run argues for. It is

@@ -124,12 +124,13 @@ Spec 0012   Draw what the page draws — planned 2026-10-13, issue #35:
 RESET       2026-10-14, Alessandro: everything not in spec 0013 cleared —
               spec 0012 §7's list, the faults on S8-sweep's sheets 0013
               does not name, every earlier queue and idea
-Spec 0013   Five repairs after S8 — planned 2026-10-14, issue #36:
-              1 the column count only where the table draws its columns
-              2 a table row spelling its Zone's Title goes, at the wire
-              3 type on a drawn fill keeps its colour
-              4 the certificate's groups on the unwarped page
-              5 pricing's cards as cards
+Spec 0013   Four pages first — planned 2026-10-14, issue #36:
+              1 receipt: the column count only where the table draws them
+              2 certificate: its width inside two frames
+              3 pricing: three cards, not scattered sections
+              4 certificate: its groups on the unwarped page
+              5 ticket: the paper's whole outline in rectify
+              6, 7 lower priority: paper's caption row; type on a fill
               then ONE sweep S9-sweep over all 21. NOT STARTED
 ```
 
@@ -156,9 +157,11 @@ it drew eighteen pages better and three worse, each traced in spec 0012's
 and reported in their own lines. Each earlier floor, and why it moved, is
 in its README and in `docs/status.md`.
 
-**The only open work is `docs/specs/0013-five-repairs-after-s8.md`** —
-five repairs, each traced to its cause at `s8-result/` with its prediction
-written down, then one sweep, `S9-sweep`. **Everything else was cleared
+**The only open work is `docs/specs/0013-four-pages-first.md`** — the
+four pages Alessandro named after `S8-sweep` (receipt, certificate,
+pricing, ticket) and two smaller repairs, each traced to its cause at
+`s8-result/` with its prediction written down, then one sweep,
+`S9-sweep`. **Everything else was cleared
 by Alessandro on 2026-10-14**; do not pick anything up unless he names it.
 The spec's handover prompt marked *current* is the one to start a session
 with. `docs/specs/0007-handover.md` holds spec 0007's

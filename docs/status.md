@@ -8,7 +8,7 @@ open item.
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file, then
-[`specs/0013-five-repairs-after-s8.md`](specs/0013-five-repairs-after-s8.md),
+[`specs/0013-four-pages-first.md`](specs/0013-four-pages-first.md),
 the only open work. If you are going to look at output — and you should —
 use the **`visual-review` skill**.
 
@@ -52,10 +52,13 @@ Spec 0012   Draw what the page draws — issue #35
 Reset       2026-10-14, Alessandro: everything not in spec 0013 cleared —
               spec 0012 §7's list, the faults on S8-sweep's sheets 0013
               does not name, every earlier queue and idea.
-Spec 0013   Five repairs after S8 — issue #36, planned 2026-10-14
-              1 column count only where ruled   2 the caption row at the wire
-              3 type on a drawn fill keeps its colour   4 certificate's groups
-              5 pricing's cards — then ONE sweep, S9-sweep. NOT STARTED
+Spec 0013   Four pages first — issue #36, planned 2026-10-14
+              1 receipt: column count only where ruled
+              2 certificate: its width inside two frames
+              3 pricing: three cards   4 certificate: its groups
+              5 ticket: the paper's whole outline
+              6, 7 lower priority: paper's caption row; type on a fill
+              then ONE sweep, S9-sweep. NOT STARTED
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -177,26 +180,18 @@ and `specs/0007-handover.md` for the A phases and the queue.
 
 ## Next — spec 0013, the only open work
 
-[`specs/0013-five-repairs-after-s8.md`](specs/0013-five-repairs-after-s8.md),
-issue #36, planned 2026-10-14. Five repairs, each traced to its cause at
-`s8-result/` with its prediction written down, then one sweep:
+[`specs/0013-four-pages-first.md`](specs/0013-four-pages-first.md), issue
+#36, planned 2026-10-14. **Alessandro's priority is four pages**, each
+cause measured at `s8-result/` with its prediction written down:
 
-1. **The column count only where the table draws its columns.** Of the
-   seven tables step U re-counted, only the timetable's columns come from
-   drawn rules. The four that undercount the page were obeyed by dropping
-   or merging a column.
-   - Measurable with no model for receipt, statement, cv and nonlatin:
-     their prompts return to `s7-result/`'s, and its answers are swapped
-     in.
-   - Paper's new count is answered at the sweep.
-2. **A table row spelling its Zone's Title goes**, at the wire: paper's
-   caption printed twice.
-3. **Type on a drawn fill keeps its colour** (`looks._drawn_ground`): the
-   statement's header.
-4. **The certificate's groups on the unwarped page**: the layout front,
-   traced stage by stage.
-5. **Pricing's cards as cards**: lanes as framed stacks, Team's frame, a
-   price line in two sizes.
+| step | page | cause, measured | runs on |
+|---|---|---|---|
+| 1 | receipt (statement, cv) | the table hint's column count, taken from the cleared projection, undercounts the page and is obeyed | replay, with `s7-result/`'s answers swapped in |
+| 2 | certificate, drawn portrait | the frame-to-text gap counted twice: `render._page_frame` and the inner frame both pad to the content | rederive |
+| 3 | pricing, scattered | each card in 5–7 Zones laid band by band; Team's frame not found; one size per price line; the toggle a bulleted column | rederive |
+| 4 | certificate, mixed-up signature row | the detector groups the unwarped page differently; the snap is refused on it | layout front; answers at the sweep |
+| 5 | ticket, `BOARDING FOUR` | `find_page_quad`'s grey edges miss the teal header, so the warp cuts it in half | layout front; answers at the sweep |
+| 6, 7 | paper, statement | lower priority: a caption row at the wire; type on a drawn fill keeps its colour | replay, rederive |
 
 Then `S9-sweep` over all 21. Its handover prompt is the one to start from.
 **Nothing else is open:** Alessandro cleared every other item on
