@@ -40,6 +40,7 @@ from doc_to_html.engines.detector import (
     cut_at_sections,
     prefer_container,
     from_name,
+    open_unsure_containers,
     outermost,
     split_containers,
     split_side_by_side,
@@ -79,6 +80,33 @@ def page(marks: list[tuple[int, int, int, int]]) -> np.ndarray:
     for left, top, right, bottom in marks:
         image[top:bottom, left:right] = 15
     return image
+
+
+class TestAContainerLessSureThanItsParts:
+    """Spec 0013 step 4 — `certificate_0021`'s signature row: a 0.40
+    `key_value_region` over two signature blocks (0.60, 0.50) and the seal
+    between them (0.90). `outermost` kept the container and the row was read
+    as one paragraph, the signatures' lines interleaved."""
+
+    PARTS = [(72, 262, 226, 330), (266, 263, 334, 330), (374, 288, 528, 330)]
+
+    def row(self, container: float) -> tuple[list[Detection], list[Detection], np.ndarray]:
+        left = box(0.120, 0.656, 0.376, 0.824, "key_value_region", 0.60)
+        seal = box(0.443, 0.657, 0.557, 0.842, "picture", 0.90)
+        right = box(0.624, 0.719, 0.880, 0.824, "key_value_region", 0.50)
+        whole = box(0.123, 0.656, 0.871, 0.843, "key_value_region", container)
+        confident = [left, seal, right, whole]
+        ink = (page(self.PARTS)[:, :, 0] < 128).astype(np.uint8)
+        return outermost(confident), confident, ink
+
+    def test_its_parts_replace_it(self) -> None:
+        kept, confident, ink = self.row(0.40)
+        opened = open_unsure_containers(kept, confident, ink)
+        assert sorted(d.score for d in opened) == [0.50, 0.60, 0.90]
+
+    def test_a_container_surer_than_a_part_stays(self) -> None:
+        kept, confident, ink = self.row(0.55)
+        assert open_unsure_containers(kept, confident, ink) == kept
 
 
 class TestKeepingTheContainerAndDroppingWhatItContains:
@@ -173,6 +201,15 @@ class TestDroppingWhatAUnionSwallowed:
         first = box(0.1, 0.1, 0.9, 0.3, "text")
         second = box(0.1, 0.1, 0.9, 0.3, "list")
         assert without_enclosed([first, second]) == [first]
+
+    def test_inside_to_a_pixel_is_inside(self) -> None:
+        """Spec 0013 step 4: `certificate_0021`'s middle star stood 0.08 px
+        below the title's box the star beside it grew, and so was kept, and
+        overlapped it."""
+        title = box(0.27610, 0.18401, 0.72203, 0.27882, "section_header")
+        star = box(0.48742, 0.25743, 0.50016, 0.27895, "picture")
+        assert without_enclosed([title, star]) == [title, star]
+        assert without_enclosed([title, star], (612, 1000)) == [title]
 
     def test_nothing_in_gives_nothing_out(self) -> None:
         assert without_enclosed([]) == []
@@ -311,6 +348,20 @@ class TestJudgingTheGapAgainstTheGapAbove:
 
         assert len(attach_headings(page)) == 3, "absolute: 0.06 exceeds 0.05"
         assert len(attach_headings(page, relative=True)) == 2
+
+    def test_a_line_set_nearer_what_it_follows_is_not_its_bodys_heading(self) -> None:
+        """Spec 0013 step 4, `certificate_0021`'s name: 0.020 below `This is
+        to certify that` and 0.038 above the paragraph its sentence runs on
+        into — 1.873, which 1.9 merged. Over all twenty-one the true merges
+        reach 1.664, `letter_0016`'s signature over its name and title."""
+        line = box(0.430, 0.317, 0.570, 0.344)
+        name = box(0.289, 0.364, 0.719, 0.442, "section_header")
+        body = box(0.185, 0.480, 0.814, 0.580)
+        assert len(attach_headings([line, name, body], relative=True)) == 3
+        signed = box(0.067, 0.791 - 0.018, 0.244, 0.791 - 0.010)
+        signature = box(0.067, 0.791, 0.244, 0.829, "section_header")
+        title = box(0.068, 0.829 + 0.0133, 0.354, 0.896)
+        assert len(attach_headings([signed, signature, title], relative=True)) == 2
 
     def test_nothing_above_measures_to_the_top_of_the_page(self) -> None:
         """Otherwise the rule is not total.

@@ -139,6 +139,42 @@ def outermost(found: list[Detection]) -> list[Detection]:
     return [found[index] for index in sorted(kept)]
 
 
+def open_unsure_containers(kept: list[Detection], confident: list[Detection],
+                           mask: ImageArray) -> list[Detection]:
+    """A container of text holding a picture the detector is surer of than
+    of the container is its parts — spec 0013, step 4.
+
+    `prefer_container`'s rule, on the boxes `outermost` kept: a picture is a
+    region of its own, and gathered into a text Zone it is read as text.
+    `certificate_0021`'s signature row is a `key_value_region` at 0.40, the
+    threshold itself, over two signature blocks at 0.60 and 0.50 and the
+    seal between them, a `picture` at 0.90. Kept, the row was one Zone, read
+    as one paragraph, the two signatures' lines interleaved round the
+    seal's.
+
+    The parts are the outermost of the confident boxes the container holds,
+    each surer than it, carrying `SPLIT_INK` of its ink between them, so no
+    ink leaves every crop. **Without the picture the rule is too wide**, and
+    was measured so over all twenty-one: a container less sure than each of
+    its parts also opens `invoice_0002`'s pairs into their fourteen words,
+    `nonlatin_0014`'s totals line into label and value, and darkdeck's and
+    the ticket's pictures. With it, it opens the certificate's row alone.
+    """
+    out: list[Detection] = []
+    for parent in kept:
+        inside = [box for box in confident if box is not parent
+                  and _covered_by(box, parent) >= CONTAINED]
+        parts = outermost(inside)
+        if (parent.label != "picture" and len(parts) >= 2
+                and any(part.label == "picture" for part in parts)
+                and all(part.score > parent.score for part in parts)
+                and _ink_share(mask, parts) >= SPLIT_INK * _ink_share(mask, [parent])):
+            out.extend(parts)
+        else:
+            out.append(parent)
+    return out
+
+
 def without_overreaching_pictures(found: list[Detection],
                                   mask: ImageArray) -> list[Detection]:
     """Drop a `picture` that is a surer picture plus whatever stands beside it.
@@ -207,7 +243,8 @@ def without_overreaching_pictures(found: list[Detection],
     return [box for box in found if not overreaches(box)]
 
 
-def without_enclosed(found: list[Detection]) -> list[Detection]:
+def without_enclosed(found: list[Detection],
+                     shape: tuple[int, int] | None = None) -> list[Detection]:
     """Drop every box lying wholly inside another, once the unions have run.
 
     **`outermost` runs first, and two of the steps after it undo its
@@ -240,9 +277,17 @@ def without_enclosed(found: list[Detection]) -> list[Detection]:
 
     Of two identical boxes the first survives, so a region found twice is kept
     once rather than lost.
+
+    **Inside to a pixel**, given the page's `shape` — spec 0013, step 4.
+    `certificate_0021`'s title grew over one of the three stars under it,
+    and the middle star's foot stood 0.08 px below that box: kept, it
+    overlapped the title and the snap was refused for the whole page. An
+    edge within a pixel of the container's is on it.
     """
+    slack_y, slack_x = (1 / shape[0], 1 / shape[1]) if shape else (0.0, 0.0)
+
     def encloses(outer: int, inner: int) -> bool:
-        if not _within(found[inner], found[outer]):
+        if not _within(found[inner], found[outer], slack_x, slack_y):
             return False
         return _area(found[outer]) > _area(found[inner]) or outer < inner
 
@@ -279,7 +324,7 @@ title into the line below it and `sample_semantic_0005`'s masthead into the nav
 bar, and it fails to merge either of `sample_css_0004`'s two cards.
 """
 
-HEADING_GAP_RATIO = 1.9
+HEADING_GAP_RATIO = 1.77
 """How much further below a heading its content may sit than the heading sits
 below whatever precedes it.
 
@@ -314,6 +359,15 @@ end, un-merging them changes no finding on either fixture — the references spl
 `<header><h1>+<nav>` into two Zones while making `<div class="card"><h2>+<p>` one,
 and that inconsistency is a fixture question, filed in spec 0006 and deliberately
 not answered inside a geometry change.
+
+**1.9 became 1.77 in spec 0013's step 4, taken again over all twenty-one.**
+The true merges now reach **1.664** (`letter_0016`'s signature over its name
+and title) with `cv_0013`'s name at 1.552, and the nearest leave is
+**1.873**: `certificate_0021`'s name, set 0.020 below `This is to certify
+that` and 0.038 above the paragraph its sentence runs on into, which 1.9
+drew into that paragraph's Zone. Next is `invoice_0002`'s `Services /
+Products` at 1.992. 1.77 is the geometric middle of 1.664 and 1.873, and
+over the twenty-one the layout front moves the certificate alone.
 """
 
 HEADING_GAP_MAX = 0.10
@@ -928,10 +982,12 @@ def _area(box: Detection) -> float:
     return max(0.0, box.right - box.left) * max(0.0, box.bottom - box.top)
 
 
-def _within(inner: Detection, outer: Detection) -> bool:
-    """Whether every edge of `inner` lies on or inside `outer`."""
-    return (inner.left >= outer.left and inner.top >= outer.top
-            and inner.right <= outer.right and inner.bottom <= outer.bottom)
+def _within(inner: Detection, outer: Detection,
+            slack_x: float = 0.0, slack_y: float = 0.0) -> bool:
+    """Whether every edge of `inner` lies on or inside `outer`, to the slack."""
+    return (inner.left >= outer.left - slack_x and inner.top >= outer.top - slack_y
+            and inner.right <= outer.right + slack_x
+            and inner.bottom <= outer.bottom + slack_y)
 
 
 def _covered_by(inner: Detection, outer: Detection) -> float:
@@ -1194,8 +1250,9 @@ class LayoutEngine:
         """
         pool = self.detector.detect(image)
         ink = content_ink(image)
-        found = outermost(without_overreaching_pictures(
-            [d for d in pool if d.score >= self.confidence], ink))
+        confident = without_overreaching_pictures(
+            [d for d in pool if d.score >= self.confidence], ink)
+        found = open_unsure_containers(outermost(confident), confident, ink)
         found = split_containers(found, pool, ink)
         found = split_side_by_side(found, pool, ink, self.confidence)
         if any(box.label in SECTIONED for box in found):
@@ -1205,7 +1262,7 @@ class LayoutEngine:
         found = attach_headings(found, relative=self.heading_rule == "relative")
         if self.prefer_container:
             found = prefer_container(found, pool, ink, self.confidence)
-        found = without_enclosed(found)
+        found = without_enclosed(found, image.shape[:2])
         found.sort(key=lambda d: (round(d.top, 3), d.left))
 
         boxes = snap_to_ink(image, [BBox(d.left, d.top, d.right, d.bottom)

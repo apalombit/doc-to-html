@@ -446,6 +446,64 @@ row and the name.
 **Done when:** the layout front shows the groups the page prints; the
 pages are judged at the sweep.
 
+### Outcome — step 4, 2026-10-14
+
+**The trace**, `detect_zones` replayed stage by stage on the rectified
+page with the engine a Conversion builds. Three causes, each a knife edge:
+
+- **The signature row — `outermost`.** A `key_value_region` at 0.40, the
+  threshold itself, spans the row (0.123–0.871 × 0.656–0.843); inside it
+  the two signature blocks at 0.60 and 0.50 and the seal, a `picture` at
+  0.90. `outermost` keeps the container and drops the surer parts, and
+  `attach_trailing_rows` then extends it over the number.
+- **The name — `attach_headings`.** The name is a `section_header` 0.020
+  below `This is to certify that` and 0.038 above the paragraph its
+  sentence runs on into: **1.873**, under `HEADING_GAP_RATIO`'s 1.9, so it
+  became that paragraph's Title.
+- **The ornament — `without_enclosed`.** The title's union grew over one
+  star; the middle star's foot stood **0.08 px** below that box, so it was
+  not inside, was kept, overlapped the title, and `validate_bands` refused
+  the snap for the whole page.
+
+**The change**, all in `engines/detector.py`:
+- `open_unsure_containers`, after `outermost`: a container of text whose
+  outermost confident parts hold a `picture`, are each surer than it and
+  carry `SPLIT_INK` of its ink is its parts. Without the picture condition
+  it also opened `invoice_0002`'s pairs, `nonlatin_0014`'s totals line and
+  darkdeck's and the ticket's pictures — measured, then narrowed.
+- `HEADING_GAP_RATIO` 1.9 → **1.77**. Over all twenty-one, the true merges
+  reach 1.664 (`letter_0016`'s signature over its name and title), the
+  nearest leave is the certificate's 1.873, then `invoice_0002`'s 1.992.
+  1.77 is their geometric middle.
+- `without_enclosed` takes an edge within one pixel of the container's as
+  on it, given the page's shape.
+
+**The layout front over all 21** (`front-base` → `front-4`): the
+certificate alone moves, 7 Zones to 8; the other twenty are identical in
+band, column and box. The snap now applies to the certificate. Its Zones:
+`GUILD OF TIMBER ENGINEERS`; the title with its three stars; `This is to
+certify that` with the name; the paragraph with `Awarded on the ninth of
+October, 2026`; one band of three — the left signature, the seal, the
+right signature; the number.
+
+**Not met to the letter: the name is not its own Zone.** Unmerged from
+the paragraph, it is gathered by `prefer_container` with the line above,
+into the detector's own 0.19 box over the two — the line it is nearest
+and whose sentence it completes. Splitting it further would take a rule
+against a container the detector draws round two lines, and none was
+found that moves the certificate alone. Whether it reads as the page
+does is the sweep's to show.
+
+**The replay** (`S9-4-replay`): the certificate is ASKED MORE THAN THE
+RUN — its answers come at the sweep — and the five table calls step 1
+moved are ASKED DIFFERENTLY, as at `S9-1`. Nothing else.
+
+**By eye** (the Zones drawn on the unwarped page, `front-base` beside
+`front-4`): **certificate — better.** The signatures, the seal and the
+number are four groups where they were one box, the stray star Zone is
+gone inside the title's, and the name sits with its line rather than as
+the paragraph's heading.
+
 ---
 
 ## 5. The ticket — the paper's whole outline
