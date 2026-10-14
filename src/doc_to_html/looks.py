@@ -100,6 +100,7 @@ source text it lands on — 658 for 4a, 650 for colour.
 
 from __future__ import annotations
 
+import re
 from typing import Any, Sequence
 
 import numpy as np
@@ -422,6 +423,78 @@ def _glyph(ink: ImageArray, text: str) -> float | None:
         if standing:
             heights.append(float(baseline - min(standing)))
     return float(np.median(heights)) if heights else None
+
+
+TWO_SIZES = 2.0
+"""How many times another's size one part of an entry is set at, at least,
+to be a size of its own and not noise in the measure — spec 0013, step 3c.
+Measured over all twenty-one at `S9-3b`: within one Block the lines' sizes
+stand at most 1.25 apart (`paper_0018`'s justified lines), and
+`pricing_0017`'s `£0` stands 3.0 times its `/ month`; within one line a
+capital stands about 1.4 times a lowercase letter, and `£29` 3.0 times its
+`/ user / month`. Nothing lies between 1.25 and 3.0."""
+
+
+def _two_sizes(ink: ImageArray, text: str,
+               body: float) -> tuple[tuple[int, float], ...] | None:
+    """Where one printed line is set in two sizes — a price's figure large
+    and its unit small, `pricing_0017`'s `£29 / user / month` — each part's
+    first character and its size in ems of the body; None for one size.
+
+    The large part is the stretch from the first to the last glyph standing
+    on the baseline more than half as tall as the tallest, and everything
+    else on the line, to one side of it, is the small part. Glyphs are not
+    letters — a bold face runs two together, `%` is three — so the large
+    part is matched to whole words, the words whose letters its glyphs count
+    nearest; the spaces between go with the small part. The small part is
+    sized as `_glyph` sizes a line: it must hold a letter that reaches the
+    cap height, so a closing full stop is no part of its own."""
+    cv2 = _cv2()
+    lines = _lines(ink)
+    words = [(m.start(), m.end()) for m in re.finditer(r"\S+", text)]
+    if len(lines) != 1 or len(words) < 2:
+        return None
+    top, bottom = lines[0]
+    strip = ink[top:bottom + 1].astype(np.uint8)
+    stats = cv2.connectedComponentsWithStats(strip, connectivity=8)[2][1:]
+    glyphs = sorted((int(x), int(y), int(y + h)) for x, y, _, h, _ in stats if h >= 2)
+    if len(glyphs) < 2:
+        return None
+    baseline = int(np.argmax(np.bincount([end for *_, end in glyphs])))
+    standing = [end - start for _, start, end in glyphs if abs(end - baseline) <= 1]
+    if not standing:
+        return None
+    tallest = max(standing)
+    large = [i for i, height in enumerate(standing) if height * TWO_SIZES > tallest]
+    first, last = large[0], large[-1]
+    before, after = standing[:first], standing[last + 1:]
+    if bool(before) == bool(after):
+        return None
+    letters = [end - start for start, end in words]
+    count = last - first + 1
+    if after:
+        taken = min(range(1, len(words)), key=lambda w: abs(sum(letters[:w]) - count))
+        cut, small_text, rest = words[taken - 1][1], text[words[taken - 1][1]:], after
+    else:
+        taken = min(range(1, len(words)), key=lambda w: abs(sum(letters[w:]) - count))
+        cut, small_text, rest = words[taken][0], text[:words[taken][0]], before
+    if not any(letter in TALL for letter in small_text):
+        return None
+    if not (_counts_as(count, text[:cut] if after else text[cut:])
+            and _counts_as(len(rest), small_text)):
+        return None
+    large_size, small_size = round(tallest / body, 2), round(max(rest) / body, 2)
+    return (((0, large_size), (cut, small_size)) if after
+            else ((0, small_size), (cut, large_size)))
+
+
+def _counts_as(glyphs: int, text: str) -> bool:
+    """Whether a part's glyphs count like its letters, within half: a full
+    stop alone does not count as `credits.` — measured over all twenty-one,
+    every line `_two_sizes` took wrongly without this was a closing stop or
+    a stray mark matched to a whole word."""
+    letters = sum(1 for letter in text if not letter.isspace())
+    return abs(glyphs - letters) <= max(1, letters // 2)
 
 
 def _own_ink(patch: ImageArray, zoned: ImageArray) -> ImageArray:
@@ -928,6 +1001,7 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
     shaped: dict[int, tuple[bool | None, bool]] = {}
     stems: dict[int, list[tuple[Cell, list[float]]]] = {}
     measured: list[tuple[Cell, float | None, float | None, float | None]] = []
+    parted: dict[int, tuple[tuple[int, float], ...]] = {}
     pitches: list[float] = []
     feet: list[float] = []
     colours: dict[int, tuple[tuple[int, int, int], tuple[int, int, int] | None,
@@ -973,6 +1047,8 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
             patch = 255 - patch if turned else patch
             ink = _own_ink(patch, zoned)
             glyph = _glyph(ink, cell.text)
+            if glyph and (parts := _two_sizes(ink, cell.text, body)) is not None:
+                parted[id(cell)] = parts
             cover = _cover(patch.astype(float), ink)
             stem = _stem(cover, glyph) if cover is not None and glyph else None
             weight = (stem - BLUR) / glyph if stem is not None and glyph else None
@@ -1012,7 +1088,8 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
             radius=None if chip is None else chip[1],
             caps=caps or None,
             face=("script" if italic and joined and size is not None and size >= SCRIPT_SIZE
-                  else None))
+                  else None),
+            sizes=parted.get(id(cell)))
     face = _face(pitches, feet)
     if document.style is not None:
         document.style.face = face

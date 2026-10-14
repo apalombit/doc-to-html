@@ -260,6 +260,14 @@ class Look:
     """The entry's own face where it is not its page's: `script`, joined
     handwriting letters — spec 0012, G7."""
 
+    sizes: tuple[tuple[int, float], ...] | None = None
+    """Where the entry's one printed line changes size — spec 0013, step 3c:
+    each part's first character, in the Cell's text, and its size in ems of
+    the body. `pricing_0017`'s `£29 / user / month` is `((0, 3.33), (3,
+    1.11))`, the figure large and its unit small. None for a line set in one
+    size, which is every other line in the corpus. `size` stays the line's
+    tallest, as it is measured."""
+
 
 @dataclass
 class Cell:
@@ -904,7 +912,9 @@ def _cell(data: dict[str, Any]) -> Cell:
             size=look.get("size"), bold=look.get("bold"), italic=look.get("italic"),
             color=_colour(look.get("color")), fill=_colour(look.get("fill")),
             chip=_bbox(look.get("chip")), radius=look.get("radius"),
-            caps=look.get("caps"), face=look.get("face")),
+            caps=look.get("caps"), face=look.get("face"),
+            sizes=None if look.get("sizes") is None
+            else tuple((int(at), float(size)) for at, size in look["sizes"])),
     )
 
 

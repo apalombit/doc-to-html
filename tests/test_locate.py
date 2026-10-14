@@ -207,6 +207,14 @@ class TestBetweenPlacedLines:
         placed: list[BBox | None] = [heading, None, None, email]
         assert _between(self.LINES, placed, 0, 100) == []
 
+    def test_touching_lines_one_cell_counts_as_one_line(self) -> None:
+        # Spec 0013 step 3c, `pricing_0017`'s `£12 / user / month`: its
+        # figure, set three times its unit's size, is parted at the valleys
+        # of its own ink into three lines with no blank row between them.
+        lines = [(0, 12), (13, 19), (20, 30), (40, 48)]
+        placed: list[BBox | None] = [None, BBox(0.1, 0.40, 0.9, 0.48)]
+        assert _between(lines, placed, 0, 100) == [(0, (0, 30))]
+
 
 def sure(text: str, left: int, top: int, line: int, confidence: float = 95.0) -> Word:
     found = word(text, left, top, line)

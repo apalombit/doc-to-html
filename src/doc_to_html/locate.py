@@ -495,9 +495,27 @@ def _between(lines: list[tuple[int, int]], placed: list[BBox | None],
         ceiling = after.top if after else 2.0
         inside = [line for line in lines
                   if floor < (y0 + (line[0] + line[1]) / 2) / height < ceiling]
+        if len(inside) > end - index:
+            inside = _touching(inside)
         if len(inside) == end - index:
             out.extend(zip(range(index, end), inside))
         index = end
+    return out
+
+
+def _touching(lines: list[tuple[int, int]]) -> list[tuple[int, int]]:
+    """Printed lines with no blank row between them, as one — spec 0013,
+    step 3c. `type_lines` parts touching lines at the valleys of their ink,
+    and a line set in two sizes has valleys of its own: `pricing_0017`'s
+    `£12 / user / month` came out three lines for one Cell, and was never
+    placed. Measured over every prose and list Zone of the twenty-one at
+    `S9-3b`, the next nearest two lines stand is three blank rows."""
+    out: list[tuple[int, int]] = []
+    for top, bottom in lines:
+        if out and top <= out[-1][1] + 1:
+            out[-1] = (out[-1][0], bottom)
+        else:
+            out.append((top, bottom))
     return out
 
 

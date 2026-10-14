@@ -25,8 +25,9 @@ from statistics import median
 from typing import Any, Sequence
 
 from . import furnish
+from .looks import TWO_SIZES
 from .ir import (BBox, Block, Cell, CellState, Document, Flow, Furniture, Kind,
-                 Pair, Region, Role, Row, RowRole, Style, Zone)
+                 Pair, Region, Role, Row, RowRole, Run, Style, Zone)
 from .probes import is_numeric
 from .wire import MARKS, bands_from_boxes
 
@@ -2991,6 +2992,17 @@ def _lines(block: Block, document: Document, lane: _Lane | None = None) -> str:
     `_broken` — and a line it sets flush right on its own is drawn so.
     """
     rendered = [_cell(line, document) for line in block.lines]
+    # Spec 0013 step 3c: a line set `TWO_SIZES` from its block's size is
+    # not noise in the measure but a size of its own — `pricing_0017`'s
+    # `£0` beside its `/ month`.
+    drawn = _drawn_size(block)
+    for index, line in enumerate(block.lines):
+        look = line.look
+        if (block.kind != "heading" and look is not None and look.size
+                and not look.sizes
+                and max(look.size / drawn, drawn / look.size) >= TWO_SIZES):
+            size = look.size
+            rendered[index] = f'<span style="font-size:{_calc(size)}">{rendered[index]}</span>'
     if block.kind in KEEPS_ITS_LINES or len(rendered) < 2:
         return "<br>".join(rendered)
     breaks, right = (_broken(block, lane, _page(document)) if lane is not None
@@ -3102,6 +3114,14 @@ def _runs(cell: Cell) -> str:
     that the span is set apart as a link, which is what T6 asks.
     """
     runs = cell.runs
+    sizes = cell.look.sizes if cell.look is not None else None
+    if sizes:
+        return "".join(f'<span style="font-size:{_calc(size)}">{_marked(part)}</span>'
+                       for size, part in _cut(runs, sizes) if part)
+    return _marked(runs)
+
+
+def _marked(runs: list[Run]) -> str:
     if len(runs) == 1 and runs[0].kind == "text":
         return html.escape(runs[0].text)
     out = []
@@ -3110,6 +3130,29 @@ def _runs(cell: Cell) -> str:
         tag = TAG_FOR_RUN.get(run.kind)
         out.append(f"<{tag}>{text}</{tag}>" if tag else text)
     return "".join(out)
+
+
+def _calc(size: float) -> str:
+    return f"calc({size:.2f} * var(--body, 1em))"
+
+
+def _cut(runs: list[Run], sizes: tuple[tuple[int, float], ...]
+         ) -> list[tuple[float, list[Run]]]:
+    """A Cell's Runs cut where its line changes size (`Look.sizes`), each
+    part with its size — spec 0013, step 3c. Cutting only splits Runs, so
+    the parts still spell the Cell's text."""
+    starts = [at for at, _ in sizes] + [sum(len(run.text) for run in runs)]
+    out: list[tuple[float, list[Run]]] = []
+    for (start, size), end in zip(sizes, starts[1:]):
+        part: list[Run] = []
+        offset = 0
+        for run in runs:
+            low, high = max(start, offset), min(end, offset + len(run.text))
+            if low < high:
+                part.append(Run(text=run.text[low - offset:high - offset], kind=run.kind))
+            offset += len(run.text)
+        out.append((size, part))
+    return out
 
 
 def _bbox_attr(zone: Zone) -> str:

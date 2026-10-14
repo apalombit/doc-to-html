@@ -123,6 +123,29 @@ class TestRead:
         assert stem.look is not None and stem.look.size is not None
         assert abs(stem.look.size - 1.0) < SIZE_STEP
 
+    def test_a_figure_and_its_unit_on_one_line_read_each_its_size(self) -> None:
+        # Spec 0013 step 3c, `pricing_0017`'s `£29 / user / month`: the
+        # figure three times the unit's size, one baseline, one Cell.
+        page = body_page()
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        base = page.y + 40
+        (wide, tall), _ = cv2.getTextSize("29", font, 1.8, 3)
+        cv2.putText(page.image, "29", (20, base), font, 1.8, (0, 0, 0), 3, cv2.LINE_AA)
+        (rest, _), drop = cv2.getTextSize(" / user / month", font, 0.6, 1)
+        cv2.putText(page.image, " / user / month", (20 + wide, base), font, 0.6,
+                    (0, 0, 0), 1, cv2.LINE_AA)
+        price = cell("29 / user / month")
+        price.bbox = BBox(18 / WIDTH, (base - tall - 3) / HEIGHT,
+                          (22 + wide + rest) / WIDTH, (base + drop + 2) / HEIGHT)
+        page.cells.append(price)
+        page.y = base + 20
+        looks.read(page.image, page.document())
+        assert price.look is not None and price.look.sizes is not None
+        (start, large), (cut, small) = price.look.sizes
+        assert (start, cut) == (0, 2)
+        assert large >= 2.5 and abs(small - 1.0) < SIZE_STEP
+        assert all(c.look is not None and c.look.sizes is None for c in page.cells[:3])
+
     def test_a_red_line_reads_red_and_the_body_its_ink(self) -> None:
         page = body_page()
         red = page.put("Paid out 5,772.36", ink=(28, 28, 155))
@@ -234,6 +257,31 @@ class TestDraw:
         assert ('<span class="chip" style="background:rgb(35,32,28);padding:4px 6px;'
                 'border-radius:2px;color:rgb(255,255,255)">BR-114</span>') in html
 
+    def test_a_line_in_two_sizes_is_drawn_in_two(self) -> None:
+        html = render(paragraph(Look(size=3.33, sizes=((0, 3.33), (6, 1.11)))))
+        assert ('<span style="font-size:calc(3.33 * var(--body, 1em))">Line 0</span>'
+                in html)
+        assert ('<span style="font-size:calc(1.11 * var(--body, 1em))"></span>'
+                not in html)
+        price = cell("£29 / user / month")
+        price.look = Look(size=3.33, sizes=((0, 3.33), (3, 1.11)))
+        zone = Zone(kind=Kind.PROSE, complete=True,
+                    blocks=[Block(kind="paragraph", lines=[price])])
+        html = render(Document(source=Source(path="x.png", sha256="0", width=WIDTH,
+                                             height=HEIGHT), zones=[zone]))
+        assert ('<span style="font-size:calc(3.33 * var(--body, 1em))">£29</span>'
+                '<span style="font-size:calc(1.11 * var(--body, 1em))"> / user / month'
+                '</span>') in html
+
+    def test_a_figure_twice_its_blocks_size_is_drawn_at_its_own(self) -> None:
+        # `pricing_0017`'s Starter: `£0` and `/ month`, two lines of one
+        # paragraph, 3.33 and 1.11 — not noise in a paragraph's measure.
+        html = render(paragraph(Look(size=3.33), Look(size=1.11)))
+        assert ('<span style="font-size:calc(3.33 * var(--body, 1em))">Line 0</span>'
+                ' Line 1') in html
+        assert "<p>Line 0 Line 1</p>" in render(paragraph(Look(size=1.25),
+                                                          Look(size=1.0)))
+
     def test_looks_survive_the_ir(self) -> None:
         document = paragraph(Look(size=0.8, bold=None, italic=True))
         again = Document.from_json(document.to_json())
@@ -242,6 +290,9 @@ class TestDraw:
                     chip=BBox(0.1, 0.2, 0.3, 0.4))
         again = Document.from_json(paragraph(chip).to_json())
         assert again.zones[0].blocks[0].lines[0].look == chip
+        two = Look(size=3.33, sizes=((0, 3.33), (3, 1.11)))
+        again = Document.from_json(paragraph(two).to_json())
+        assert again.zones[0].blocks[0].lines[0].look == two
 
 
 def band(height: int = 14, width: int = 300) -> np.ndarray:
