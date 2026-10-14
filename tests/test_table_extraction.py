@@ -754,6 +754,56 @@ class TestAHeaderRepeatedToPadTheRowCount:
         assert len(zone.rows) == 2
 
 
+class TestARowSpellingItsZonesTitle:
+    """Spec 0013, step 6 — `paper_0018`'s caption, lifted as the Zone's
+    Title and returned again as a row after the data, so the page printed
+    `Table I. Site summary` twice."""
+
+    MEASURED = (
+        '{"rows": [{"role": "header", "cells": ["Site", "Span (m)", '
+        '"Peak heave (mm)", "Frost days"]},'
+        ' {"role": "data", "cells": ["Brekke", "18", "12.4", "64"]},'
+        ' {"role": "data", "cells": ["Lundtoft", "24", "8.1", "51"]},'
+        ' {"role": "data", "cells": ["Eidsvoll", "31", "15.0", "77"]},'
+        ' {"role": "header", "cells": ["Table I. Site summary", "", "", ""]}]}'
+    )
+    """`s8-result/`'s answer for that table, as the model returned it."""
+
+    @staticmethod
+    def titled(payload: str, title: str) -> Zone:
+        from doc_to_html.ir import Reading
+
+        zone = Zone(kind=Kind.TABLE, title=title)
+        contents_into(zone, payload, read=lambda t: Reading(engine="test", text=t))
+        return zone
+
+    def test_the_row_goes_and_the_title_stays(self) -> None:
+        zone = self.titled(self.MEASURED, "TABLE I. SITE SUMMARY")
+        assert zone.title == "TABLE I. SITE SUMMARY"
+        assert [[c.text for c in r.cells] for r in zone.rows] == [
+            ["Site", "Span (m)", "Peak heave (mm)", "Frost days"],
+            ["Brekke", "18", "12.4", "64"],
+            ["Lundtoft", "24", "8.1", "51"],
+            ["Eidsvoll", "31", "15.0", "77"],
+        ]
+
+    def test_a_row_naming_its_section_beside_a_value_stays(self) -> None:
+        zone = self.titled(
+            '{"rows": [{"role": "header", "cells": ["Item", "Amount"]},'
+            ' {"role": "data", "cells": ["Design", "300.00"]},'
+            ' {"role": "summary", "cells": ["Total", "300.00"]}]}', "Total")
+        assert len(zone.rows) == 3
+
+    def test_a_heading_row_holding_the_title_and_more_stays(self) -> None:
+        """`darkdeck_0009`'s `AVAILABILITY`: that Title goes instead, by
+        `_title_is_its_header_cell`, and the row keeps its place."""
+        zone = self.titled(
+            '{"rows": [{"role": "header", "cells": ["AVAILABILITY", "P95 LATENCY"]},'
+            ' {"role": "data", "cells": ["99.98%", "182 ms"]}]}', "AVAILABILITY")
+        assert zone.title is None
+        assert [c.text for c in zone.rows[0].cells] == ["AVAILABILITY", "P95 LATENCY"]
+
+
 class TestATotalsRowPaddedOnTheLeft:
     """`nonlatin_0014`'s totals came back a cell too wide, and the last twice.
 

@@ -621,6 +621,13 @@ better.** The page is the whole card, level: both headers whole,
 `BOARDING PASS` uncut, the stub's `NORDLYS AIR` back, the left margin's
 first letters and the foot's `departure` inside the picture.
 
+**The rederive chain is not a measurement of this page.** `S9-5`
+(`S9-3d` rederived at this commit) moves the ticket alone, and what it
+draws is the old Zones, cut on the old warp, measured on the new
+pixels: its type sizes and places are read where the words no longer
+are. The ticket's answers come at the sweep; every other page is
+byte-identical.
+
 ---
 
 ## 6. Lower priority — a table row that spells its Zone's Title goes
@@ -648,6 +655,22 @@ headers.
 only.
 
 **Done when:** at `s8-result/`'s answers, paper prints its caption once.
+
+### Outcome — step 6, 2026-10-14
+
+`wire.without_title_rows` drops a table row whose non-empty cells
+together spell the Zone's Title. `contents_into` applies it after
+`_without_title_echo` and re-pads what is left (`repadded`);
+`tools/rederive.py` applies it in its step 1. Re-measured over
+`s8-result/`: one row in twenty-one documents, paper Zone 8's last,
+`['Table I. Site summary', '', '', '']`, tagged `header`.
+
+**Rederive** `S9-5` → `S9-6`: `paper_0018` alone moves; the other twenty
+are byte-identical. `vanished` unchanged, 32.
+
+**By eye — paper, better:** the bold `Table I. Site summary` row under
+the table is gone; the caption prints once, small capitals above the
+table, as the page sets it. `debug/runs/S9-6/report.html`.
 
 ---
 

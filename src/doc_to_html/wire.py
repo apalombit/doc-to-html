@@ -1299,6 +1299,30 @@ def _title_is_its_header_cell(zone: Zone) -> bool:
             and any(cell.text.strip() for cell in first.cells[1:]))
 
 
+def without_title_rows(zone: Zone) -> list[Row]:
+    """A table's rows, less any whose printed cells together spell the
+    Zone's Title — spec 0013, step 6.
+
+    `paper_0018` prints `Table I. Site summary` once, as the table's
+    caption. The caption pass took it as the Zone's Title, and the model,
+    told five rows where the table has four, returned the four plus
+    `['Table I. Site summary', '', '', '']` tagged `header` — after the
+    data, so `_without_title_echo`, which looks at the first entry only,
+    never saw it, and the page printed the caption again as a bold row
+    under the table. Over all twenty-one of `s8-result/` it is the only
+    row that spells its Zone's Title.
+
+    The Title prints every word the row held, so nothing can vanish. **Not
+    `_title_is_its_header_cell`'s case:** a heading row holding the Title
+    and the table's other labels spells more than the Title, and is kept.
+    """
+    if not zone.title or not _spell(zone.title):
+        return zone.rows
+    return [row for row in zone.rows
+            if not _same_text(zone.title, " ".join(
+                cell.text for cell in row.cells if cell.text.strip()))]
+
+
 def contents_into(zone: Zone, content: str, *, read: Read) -> Zone:
     """Validate an extraction response for this Zone's Kind and fill it in.
 
@@ -1334,7 +1358,10 @@ def contents_into(zone: Zone, content: str, *, read: Read) -> Zone:
         raise NotImplementedError(f"{zone.kind.value} extraction not yet wired")
 
     zone.complete = True
-    return _without_title_echo(zone)
+    zone = _without_title_echo(zone)
+    if len(rows := without_title_rows(zone)) != len(zone.rows):
+        zone.rows = repadded(rows)
+    return zone
 
 
 def figure_into(zone: Zone, response: FigureResponse, *, read: Read) -> Zone:

@@ -20,6 +20,9 @@ and can be recomputed from it, in the order a Conversion runs them:
        after a row padded on the left is trimmed to the header and a
        summary repeating the one above it dropped — spec 0009, step A
                                     wire.retrimmed  (in rows_from_table)
+       and a row whose printed cells spell the Zone's Title dropped —
+       spec 0013, step 6
+                                    wire.without_title_rows  (in _extract)
     2. table-repair Caveats re-derived from each table's rows
                                     wire.table_repairs              (in _extract)
     3. the page's furniture found — spec 0012, G3a — then the palette,
@@ -107,7 +110,7 @@ from doc_to_html.render import render  # noqa: E402
 from doc_to_html.structure import separators, structure  # noqa: E402
 from doc_to_html.wire import (  # noqa: E402
     _title_is_its_header_cell, _title_starts_its_block, repadded, retrimmed,
-    table_repairs)
+    table_repairs, without_title_rows)
 from remeasure_style import ir_of, remeasure  # noqa: E402
 
 REPO = TOOLS.parent
@@ -123,7 +126,7 @@ def rederive(document: Document, png: Path) -> None:
         if _title_is_its_header_cell(zone) or _title_starts_its_block(zone):
             zone.title = None
         if zone.kind is Kind.TABLE:
-            zone.rows = repadded(retrimmed(zone.rows))
+            zone.rows = repadded(retrimmed(without_title_rows(zone)))
 
     caveats: list[Caveat] = []
     redone: set[int] = set()
