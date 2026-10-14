@@ -331,6 +331,67 @@ Every other page is byte-identical.
 page's order, Team's frame blue; each price's figure large and its unit
 small; the toggle one line with `Annual` in its pill; no page worse.
 
+### Outcome — step 3, 2026-10-14
+
+Four commits, each measured by rederive from the one before:
+`S9-2` → `S9-3a` → `S9-3b` → `S9-3c` → `S9-3d`.
+
+- **3a — a card is one framed stack.** `rhythm.frames` takes a lane of a
+  one-row grid as a run, as a column's lane, so each card's Zones share
+  its rectangle; the render draws such a grid lane by lane
+  (`render._cards` → `_columns`, `_framed`). A frame is painted with the
+  fill most of its Zones stand on (`_ground`); a Zone of another fill —
+  Team's blue button — paints its own. Pricing alone moved.
+- **3b — Team's frame.** The hypothesis held: the pill cut Team's top edge
+  in two, x 363–443 and 557–637. `furniture._bridged` joins two pieces of
+  one line where the page draws the line's colour across the gap, within
+  `SAME` — tighter than any line stands off the ground. At `2 × SAME` the
+  ground bridged Starter's and Business's faint bottom edges across Team's
+  card; at `SAME` that gap holds 0.89 and the pill's 1.00. `furnish._frame`
+  gives a frame holding exactly the Zones that share one box to that box,
+  since the box takes in the ribbon and the shadow. Furniture over all 21:
+  pricing gains the frame, and the timetable's column rule at x 0.452 is
+  joined beside the blue `Mathematics` bar, as the page draws it — its
+  drawn markup byte-identical.
+- **3c — two sizes, measured both ways.** Only pricing has such lines
+  (scanned over all 21; darkdeck's `4.8 bn` is one size). The line's size
+  from its longer part draws every price at body size, no figure large, so
+  **a size per part was chosen**, written on the Look rather than the Run
+  — a Run belongs to the model's reading. `Look.sizes`: where the line
+  changes size, by character. `looks._two_sizes` measures it; each part's
+  glyphs must count like its letters, or a closing full stop is taken for
+  a small part — it was, on twelve pages, until that check. The render
+  cuts the runs there, and draws a line `TWO_SIZES` from its block's size
+  at its own: Starter's `£0` beside its `/ month`. Within a block, noise
+  stands at most 1.25 apart and the figure 3.0. **Team's price was never
+  placed**: `type_lines` parted its line at the valleys of its own ink into
+  three, so `_from_ink` counted three lines for one Cell. `locate._touching`
+  takes lines with no blank row between them as one where they outnumber
+  the Cells; over all 21 the next nearest two lines stand is three blank
+  rows. **Say which bytes:** from 3c every Look carries `sizes`, null
+  everywhere but pricing's two price lines.
+- **3d — the toggle.** Rule 1 touched, from the IR: pricing's toggle and
+  `sample_semantic_0005`'s `html, web, standards`, a body list printed on
+  one line; its header nav is already drawn inline by the house style and
+  is left to it. Rule 2 touched pricing's `Sav` only.
+  `locate.without_cut_copies` runs after `locate`, in the Conversion and
+  in `tools/rederive.py`.
+
+**By eye, step by step:**
+- **pricing — better at each part:** three cards, each one framed stack
+  in the page's order, Team's price under its name (3a); Team's frame blue
+  (3b); `£0`, `£12`, `£29` large and each unit small, the cards near one
+  height (3c); `Monthly` and `Annual` in its pill on one line beside `Save
+  20%`, `Sav` gone (3d). Still unlike the page, and not this step's: the
+  buttons' outlines, the check marks drawn as bullets, Starter's and
+  Business's centred type set left.
+- **sample_semantic — better (3d):** `html web standards` on one line, as
+  the page prints them, where it was a bulleted column.
+- every other page byte-identical at each part, but for the null `sizes`
+  from 3c and the timetable's embedded IR at 3b.
+
+`vanished` unchanged, 32. `debug/runs/S9-3d/report.html`.
+
 ---
 
 ## 4. The certificate — its groups on the unwarped page
