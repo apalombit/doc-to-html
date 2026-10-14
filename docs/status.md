@@ -1,19 +1,19 @@
-# Status — 2026-10-14 (**the baseline is `tests/frozen/s8-result/`; spec 0013 planned, not started — the only open work**)
+# Status — 2026-10-14 (**spec 0013 done, `S9-sweep` taken — the baseline is Alessandro's decision; until then it is `tests/frozen/s8-result/`**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-14,
-after Alessandro took `S8-sweep` as the baseline and cleared every other
-open item.
+after `S9-sweep` closed spec 0013's work plan.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file, then
-[`specs/0013-four-pages-first.md`](specs/0013-four-pages-first.md),
-the only open work. If you are going to look at output — and you should —
-use the **`visual-review` skill**.
+[`specs/0013-four-pages-first.md`](specs/0013-four-pages-first.md) — its
+"Outcome — the sweep" and its handover prompt marked *current*. If you are
+going to look at output — and you should — use the **`visual-review`
+skill**.
 
-Branch `scaffold`. **1114 tests pass (1 skipped), `mypy src/` clean** — at
-`ba0c110`'s code, 2026-10-14.
+Branch `scaffold`. **1142 tests pass (1 skipped), `mypy src/` clean** — at
+`a84404c`'s code (`a3969f3` adds the spec only), 2026-10-14.
 
 **How work is judged — Alessandro, 2026-10-12, for spec 0011; carried
 over by specs 0012 and 0013.** By eye: every step's sheets are opened
@@ -47,18 +47,14 @@ Spec 0011   Place every entry where the page puts it — issue #34
 Corpus      Six held-out documents added 2026-10-13, fifteen kept
               DONE; S7-sweep over all 21 the baseline 2026-10-13
 Spec 0012   Draw what the page draws — issue #35
-              G1-G9, step U, sweep S8-sweep on ba0c110: 18 pages better, 3 worse
-              DECIDED 2026-10-14: S8-sweep the baseline, frozen as s8-result/
-Reset       2026-10-14, Alessandro: everything not in spec 0013 cleared —
-              spec 0012 §7's list, the faults on S8-sweep's sheets 0013
-              does not name, every earlier queue and idea.
-Spec 0013   Four pages first — issue #36, planned 2026-10-14
-              1 receipt: column count only where ruled
-              2 certificate: its width inside two frames
-              3 pricing: three cards   4 certificate: its groups
-              5 ticket: the paper's whole outline
-              6, 7 lower priority: paper's caption row; type on a fill
-              then ONE sweep, S9-sweep. NOT STARTED
+              DONE; S8-sweep the baseline 2026-10-14, frozen as s8-result/
+Reset       2026-10-14, Alessandro: everything not in spec 0013 cleared.
+Spec 0013   Four pages first — issue #36
+              1 receipt 2 certificate 3 pricing 4 certificate 5 ticket
+              6 paper 7 statement — each DONE, judged by eye
+              S  S9-sweep on a3969f3, 2026-10-14: prediction held to the
+                 byte; 7 pages better, 13 same, 1 worse (ticket)
+              DECISION PENDING: whether S9-sweep becomes the baseline
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -66,21 +62,24 @@ in [`specs/0007-handover.md`](specs/0007-handover.md).
 
 ---
 
-## The baseline — `tests/frozen/s8-result/`, DECIDED 2026-10-14
+## The baseline — `tests/frozen/s8-result/`, until Alessandro decides on `S9-sweep`
 
 **Twenty-one documents, 725 answers.** Sweep `S8-sweep`, commit `ba0c110`
 (spec 0012 step U), 2026-10-14 00:49–03:00 (**2h12m**), shipped defaults.
-Taken by Alessandro after review: against `s7-result/`, eighteen pages
-better and three worse — receipt, statement, certificate — each traced in
-spec 0012's "Outcome — the sweep" and repaired by spec 0013.
+Proved at `624b18f` the day spec 0013 began: replay 21 of 21
+byte-identical, 0 asked differently; rederive 21 of 21 byte-identical.
+**At today's code it is no longer reproduced**: spec 0013 moved nine
+pages, and the replay marks seven documents asked differently — the
+list §9 registered.
 
-Proved the day it was frozen, at `ba0c110`'s code:
-- `tools/replay_run.py tests/frozen/s8-result`: **21 of 21 byte-identical,
-  0 asked differently**.
-- `tools/rederive.py` over it: **21 of 21 byte-identical files** — the
-  `form_0007` field that differed at `s7-result/` no longer does.
-- the rederive scored against `s7-result/`: **21 documents, 0 differing
-  fields**.
+**The candidate — `debug/runs/S9-sweep/`**, commit `a3969f3`, 2026-10-14
+11:13–13:29 (**2h16m**), 732 calls, shipped defaults, 40%/60% CPU/GPU.
+Proved 2026-10-14 at that code: `tools/replay_run.py debug/runs/S9-sweep`
+**21 of 21 byte-identical, 0 asked differently**; `tools/rederive.py`
+over it **21 of 21 byte-identical files**. Its answers with their hashes
+are saved by `tools/replay_run.py debug/runs/S9-sweep --save-answers
+<dir>`. `debug/` is gitignored: **if Alessandro takes it, freeze it as
+`tests/frozen/s9-result/` before anything clears `debug/runs/`.**
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
@@ -93,8 +92,8 @@ scores the iterate five.
 ### The baselines before it
 
 - **`s7-result/`** — the first sweep over twenty-one, `S7-sweep`. The
-  baseline 2026-10-13 to 2026-10-14. Four of its table answers are spec
-  0013 step 1's target.
+  baseline 2026-10-13 to 2026-10-14. Four of its table answers were spec
+  0013 step 1's target, and `S9-sweep` returned them byte for byte.
 - **`s6-result/`**, **`s5-result/`**, **`s3-result/`**, **`q5-result/`**,
   **`reshot/`** and the A-phase directories — each README says what it is
   and why its floor moved.
@@ -114,88 +113,83 @@ scores the iterate five.
 
 ---
 
-## Where the corpus is — at the baseline, recorded, not a target
+## Where the corpus is — recorded, not a target
 
-Means over `s8-result/`:
+Means over `S9-sweep`, against `s8-result/`:
 
 | | all 21 | the fifteen | the six new |
 |---|---|---|---|
-| vocabulary recall | 0.984 | 0.982 | 0.989 |
-| precision | 0.988 | 0.988 | 0.990 |
-| join recall | 0.950 | 0.950 | 0.949 |
-| tau | 0.968 | 0.990 | 0.912 |
-| beside agreement | 0.802 | 0.843 | 0.700 |
-| height ratio | 1.100 | 1.029 | 1.276 |
-| alignment agreement | 0.796 | 0.833 | 0.705 |
-| scale error | 0.200 | 0.129 | 0.378 |
+| vocabulary recall | 0.984 → 0.977 | 0.982 → 0.988 | 0.989 → 0.952 |
+| precision | 0.988 → 0.988 | 0.988 → 0.988 | 0.990 → 0.988 |
+| join recall | 0.950 → 0.945 | 0.950 → 0.960 | 0.949 → 0.905 |
+| tau | 0.968 → 0.951 | 0.990 → 0.990 | 0.912 → 0.853 |
+| beside agreement | 0.802 → 0.757 | 0.843 → 0.849 | 0.700 → 0.528 |
+| height ratio | 1.100 → 1.069 | 1.029 → 1.028 | 1.276 → 1.171 |
+| alignment agreement | 0.796 → 0.805 | 0.833 → 0.840 | 0.705 → 0.718 |
+| scale error | 0.200 → 0.220 | 0.129 → 0.154 | 0.378 → 0.383 |
 
-**`vanished`: 40 words.** Spec 0013 names the ones it repairs: the
-receipt's eight prices, the statement's `castleton` and cv's `2022`, all
-from step U's column count.
+The six's falls are the ticket's (vocabulary 0.975 → 0.750) and the
+certificate's signature row (beside 1.000 → 0.000).
+
+**`vanished`: 40 → 41 words.** Back: the receipt's six price tokens,
+`castleton`, `2022`, the ticket's `pass`. Gone: ten of the ticket's —
+`nordlys`, `air`, `osl`, `oslo`, `gardermoen` and its gate note.
 
 ---
 
 ## What the last work shipped
 
-### Spec 0012 — draw what the page draws, `S8-sweep`, 2026-10-14
+### Spec 0013 — four pages first, `S9-sweep`, 2026-10-14
 
-**The pages, against `s7-result/`: eighteen better, three worse.**
+**Against `S9-0-replay` (`s8-result/` at the code it began on): seven
+pages better, thirteen the same, one worse.**
 
-- **Better, the six:** the timetable's lesson rows and every room line
-  back; pricing's three cards as three lanes, the middle one whole; the
-  ticket's stub beside the pass; paper's title once, small capitals,
-  justification and its equation; the letter's green rule and script
-  signature.
-- **Better, the fifteen:** no findings card on any page; highlights only
-  where the page draws one; the rules, side bars, frames, hatches and
-  fills each page draws; tiles one height; each page at its own width; the
-  receipt and the ticket at their paper's share; entries aligned from
-  their boxes; small capitals and script.
-- **Worse:**
-  - `receipt_0010` lost its price column;
-  - `statement_0006`'s header row is drawn in its band's own colour;
-  - `certificate_0021`'s signature row is one boxed paragraph and its name
-    a three-line heading.
+- **Better:** the receipt's eight prices at the right; the certificate
+  landscape, its name one line, its signature row no longer one
+  interleaved paragraph; pricing's three framed cards; the statement's
+  header readable on its band; cv's `2022`; paper's caption once;
+  sample_semantic's tags on one line.
+- **Worse:** `ticket_0020`. Its warp now holds the whole card and
+  `BOARDING PASS` is read whole, but the new crops' answers lose `OSL`,
+  `OSLO GARDERMOEN`, both `NORDLYS AIR` and the gate note, and an 8 px
+  `equalise` halo recovered as a Zone is read as `The` / `The`.
 
-What shipped:
-- G1–G9 are downstream of the model, each measured offline and judged by
-  eye in its turn.
-- Step U is upstream:
-  - the grid and the printed lines counted with the page's drawing known;
-  - a frame is not a sheet;
-  - a dashed vertical rule makes a lane;
-  - an emphasised copy is still a copy, and no grid split crosses a drawn
-    box.
+What shipped, one commit a step:
+- 1 `preprocess.table_grid`: the column count from the page's rules only
+  where it rules two or more;
+- 2 `render`: a frame round the page and the frames inside it padded once;
+- 3 cards as framed stacks (`rhythm`, `render._cards`), a frame bridged
+  through a ribbon (`furniture._bridged`), a line in two sizes
+  (`Look.sizes`), a cut copy dropped (`locate.without_cut_copies`), a list
+  printed on one line drawn so;
+- 4 `detector`: a text container round a surer picture opened,
+  `HEADING_GAP_RATIO` 1.9 → 1.77, inside to a pixel;
+- 5 `preprocess.rectify`: an edge with the sheet beyond it is not the
+  paper's, the outline read off the sheet's colour; `RECTIFIER_VERSION` 6;
+- 6 `wire.without_title_rows`, the sixth wire-level row net;
+- 7 `looks._drawn_ground`: a drawn fill under the Cell.
 
-§6's prediction held:
-- 636 calls asked the same, every answer byte-identical;
-- the calls asked differently, exactly the registered ones.
+§9's prediction held to the byte: 0 of the calls asked the same
+answered differently; the four step-1 table answers equal `s7-result/`'s.
 
 ### Earlier
 
-Specs 0008–0011 and the corpus widening: each spec's "Outcome" sections,
+Specs 0008–0012 and the corpus widening: each spec's "Outcome" sections,
 and `specs/0007-handover.md` for the A phases and the queue.
 
 ---
 
-## Next — spec 0013, the only open work
+## Next — Alessandro's decision on `S9-sweep`
 
-[`specs/0013-four-pages-first.md`](specs/0013-four-pages-first.md), issue
-#36, planned 2026-10-14. **Alessandro's priority is four pages**, each
-cause measured at `s8-result/` with its prediction written down:
+**Nothing else is open.** Spec 0013's "Outcome — the sweep" ranks five
+directions from the faults left — the ticket's halo Zone and its pairs
+reading, the certificate's row and seal — **as record, not as a queue:
+do not pick one up unless he names it.**
 
-| step | page | cause, measured | runs on |
-|---|---|---|---|
-| 1 | receipt (statement, cv) | the table hint's column count, taken from the cleared projection, undercounts the page and is obeyed | replay, with `s7-result/`'s answers swapped in |
-| 2 | certificate, drawn portrait | the frame-to-text gap counted twice: `render._page_frame` and the inner frame both pad to the content | rederive |
-| 3 | pricing, scattered | each card in 5–7 Zones laid band by band; Team's frame not found; one size per price line; the toggle a bulleted column | rederive |
-| 4 | certificate, mixed-up signature row | the detector groups the unwarped page differently; the snap is refused on it | layout front; answers at the sweep |
-| 5 | ticket, `BOARDING FOUR` | `find_page_quad`'s grey edges miss the teal header, so the warp cuts it in half | layout front; answers at the sweep |
-| 6, 7 | paper, statement | lower priority: a caption row at the wire; type on a drawn fill keeps its colour | replay, rederive |
-
-Then `S9-sweep` over all 21. Its handover prompt is the one to start from.
-**Nothing else is open:** Alessandro cleared every other item on
-2026-10-14.
+If he takes `S9-sweep`: freeze it as `tests/frozen/s9-result/` (documents,
+scores, answers with hashes, `dth_env.txt`, a README naming the ticket's
+leg as `s8-result/`'s README names its three), prove the freeze by replay
+and rederive 21 of 21, and update `CLAUDE.md`'s baseline lines.
 
 ---
 
@@ -247,7 +241,9 @@ the last two entries.
   `a1-checkpoint/`, `a0-checkpoint/`, `a0-result/`, `a1-result/`,
   `a2-result/`, `a3-result/`, `reshot/`, `q5-result/`, `s3-result/`,
   `s5-result/`, `s6-result/`, `s7-result/` — all kept as record — and
-  **`s8-result/`, the baseline** since 2026-10-14, twenty-one documents. `a3-result/` was scored on pictures missing their last lines;
+  **`s8-result/`, the baseline** since 2026-10-14, twenty-one documents.
+  `debug/runs/S9-sweep/` is not one until it is frozen.
+  `a3-result/` was scored on pictures missing their last lines;
   quote it only as that.
 - **The committed corpus picture is a screenshot of its own HTML.**
   `TestTheCorpusPictureIsItsOwnHTML` re-shoots the ten authored pages and
@@ -258,9 +254,10 @@ the last two entries.
 - **Never score against `tests/documents/SAMPLE_DOCUMENTS`.**
 - **Never edit a script a running sweep reads** — `tools/iterate.sh` above
   all. Bash reads a script as it goes; `S8-sweep`'s died after its bake-off.
-- **Do not delete the four shipped defaults or the five wire-level row nets** —
+- **Do not delete the four shipped defaults or the six wire-level row nets** —
   `_without_empty_rows`, `_join_split_header_row`, `_without_repeated_header`,
-  and since spec 0009 `_trimmed_to_header` and `_without_repeated_total`.
+  since spec 0009 `_trimmed_to_header` and `_without_repeated_total`, and
+  since spec 0013 `without_title_rows`.
 - **`project()` compares a normalised view, never raw markup.**
 - **Every run must produce `debug/runs/<label>/report.html`.**
 - **Any reviewed run is a full sweep**, all twenty-one documents.
@@ -281,6 +278,12 @@ the last two entries.
 - **Type at the page's size shipped in spec 0010** (step D), crossing
   `beside` by one coincidental pair on two documents. Q3's oracle arm is
   recorded in `style.py`'s module docstring.
+- **A colour kept on a row's measured fill** — spec 0013 step 7. Kept
+  `timetable_0019`'s `B04 · Ms Ilves` teal beside its lesson's blue bar;
+  a drawn furniture fill shipped instead.
+- **Opening any container less sure than its parts** — spec 0013 step 4.
+  Also opened `invoice_0002`'s pairs, `nonlatin_0014`'s totals line and
+  two pictures; it ships only round a picture.
 
 ---
 
@@ -299,7 +302,7 @@ python tools/visual_review.py debug/runs/<label> --check
 `git diff HEAD > debug/runs/<label>/uncommitted.diff` beside it**, as A3 did.
 
 **A sweep outlasts a two-hour background task** — `S7-sweep` took 2h16m,
-`S8-sweep` 2h12m. Start it detached and wait on its log, and **never edit
+`S8-sweep` 2h12m, `S9-sweep` 2h16m. Start it detached and wait on its log, and **never edit
 `tools/iterate.sh` while a sweep is running**: bash reads the script as
 it goes, and `S8-sweep`'s script died after its bake-off on a line the
 edit had shifted:
@@ -308,10 +311,10 @@ A document that raises keeps its answers in the dump, and `tools/replay_run.py`
 converts it once the bug is fixed, with no model call.
 
 **Three offline loops, each proved before it was used, and a sweep. Say which
-produced any number you report.** Start them from the baseline,
-`tests/frozen/s8-result/`. On 2026-10-14 `tools/replay_run.py` and
-`tools/rederive.py` over it each reproduced it byte for byte, 21 of 21. Both tools take a
-run directory as well as a frozen one.
+produced any number you report.** Start them from the baseline. At
+today's code they reproduce `debug/runs/S9-sweep/` byte for byte, 21 of
+21 each (2026-10-14); `s8-result/` they reproduced at `624b18f`. Both
+tools take a run directory as well as a frozen one.
 
 - **Downstream of the model** — renderer, style, probes. `tools/rederive.py
   <run> --label <base>` builds today's baseline; build the

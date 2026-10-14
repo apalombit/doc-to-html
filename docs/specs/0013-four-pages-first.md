@@ -846,6 +846,105 @@ replays, its IR differing in `rectifier_version` alone — a rederive keeps
 the frozen IR's 5. The certificate and the ticket cannot be compared:
 their replays stop where they are asked more.
 
+### Outcome — the sweep, `S9-sweep`, 2026-10-14
+
+Commit `a3969f3`, 11:13–13:29 (**2h16m**), shipped defaults, **732
+calls**, the model 40%/60% CPU/GPU. All twenty-one converted.
+
+**The prediction held, every clause:**
+1. Every call asked as `s8-result/` asked it answered byte for byte the
+   same — 0 differ. Asked differently: the five step-1 table calls, 25 of
+   the certificate's 28, all 17 of the ticket's.
+2. The four step-1 table answers are byte-identical to `s7-result/`'s;
+   receipt, statement, cv and nonlatin render byte-identical to
+   `S9-P-swap`.
+3. The fourteen unmarked documents render byte-identical to
+   `S9-P-replay`.
+
+**By eye, all 21 sheets against `S9-0-replay`: seven pages better,
+thirteen the same, one worse.**
+
+**1. The four pages, against Alessandro's note on each**
+
+| page | his note | now |
+|---|---|---|
+| receipt | the price column lost | **better** — all eight prices at the right, quantities left, `oat milk` and `extra butter` indented, the summary values right |
+| certificate | portrait; the signature row one boxed paragraph; the name a three-line heading | **better** — landscape; the name one script line under `This is to certify that`; signatures, seal and number separate. **Not the page's row:** the two signatures stack down the left, the seal an orange text chip `GUILD GTE 2026` to the right |
+| pricing | sections scattered | **better** — three framed cards in order, Team's frame blue, the figures large, the toggle on one line |
+| ticket | `BOARDING FOUR`; the stub's header missing; a cut-down band | **worse** — `BOARDING PASS` whole, but `OSL`, `OSLO GARDERMOEN`, the stub's `NORDLYS AIR` and `Gate closes 20 minutes before departure` gone, the stub drawn at the top, and a teal band printing `The` / `The` across the page |
+
+Also better: **statement** (`Transactions in date order` back, the
+header white on its band, the paid-out column in its rows), **cv**
+(`2022`), **paper** (its caption once), **sample_semantic** (`html web
+standards` on one line). The same: the twelve whose drawn markup did not
+move, nonlatin, and the timetable (its room lines grey, as printed — not
+visible at sheet scale).
+
+**2. The six held-out pages** — recorded, not argued from:
+
+| page | by eye | vocabulary recall | tau | beside |
+|---|---|---|---|---|
+| certificate | better; the signature row stacked | 1.000 → 1.000 | 1.000 → 1.000 | 1.000 → 0.000 |
+| letter | same | 0.995 → 0.995 | 1.000 → 1.000 | 1.000 → 1.000 |
+| paper | better | 0.985 → 0.985 | 1.000 → 1.000 | 0.547 → 0.547 |
+| pricing | better | 1.000 → 1.000 | 0.622 → 0.880 | 0.244 → 0.629 |
+| ticket | **worse** | 0.975 → 0.750 | 0.892 → 0.282 | 0.418 → 0.000 |
+| timetable | same | 0.982 → 0.982 | 0.957 → 0.957 | 0.991 → 0.991 |
+
+`vanished` 40 → 41: back — the receipt's six price tokens, `castleton`,
+`2022`, the ticket's `pass`; gone — ten of the ticket's: `nordlys`,
+`air`, `osl`, `oslo`, `gardermoen`, and `closes`, `20`, `minutes`,
+`before`, `departure` from its gate note.
+
+Means, against `s8-result/` (all 21 / the fifteen / the six): vocabulary
+recall 0.984 → 0.977 / 0.982 → 0.988 / 0.989 → 0.952; tau 0.968 → 0.951
+/ 0.990 → 0.990 / 0.912 → 0.853; beside 0.802 → 0.757 / 0.843 → 0.849 /
+0.700 → 0.528. The six's falls are the ticket's and the certificate's
+row.
+
+**3. Where it gained**
+
+| page | gain |
+|---|---|
+| receipt | **prices** — eight back at the right; six price tokens out of `vanished` |
+| statement | **header** — readable on its band; `castleton` back; the paid-out column in its rows |
+| certificate | **shape** — landscape; the name one line; the row's lines no longer interleaved |
+| pricing | **cards** — three framed stacks; tau 0.622 → 0.880 |
+| cv | **`2022`** beside its diploma |
+| paper | **caption once** |
+| sample_semantic | **tags on one line** |
+
+**4. The faults left, by stage**
+
+| page | what the page shows | stage | evidence |
+|---|---|---|---|
+| ticket | a teal band printing `The` / `The` | Layout | `cover_the_page` recovered the 8 px `equalise` halo at the header's foot (step 5's outcome named it); prose answer `["The"], ["The"]` |
+| ticket | `OSL`, `OSLO GARDERMOEN`, the gate note, the stub's `NORDLYS AIR` gone | Classify → Extract | the stub and the left body classified `pairs`; the pairs answers hold only label–value pairs |
+| ticket | `NORDLYS AIR` drawn as a picture | Classify | the header Zone classified `figure`, `logo`; its text is `alt`, never printed |
+| ticket | the stub drawn above the body | Layout → Render | the stub's Zone spans the page's height in band 0; regions read `single` |
+| certificate | the signatures stacked, the seal beside one | Structure → Render | one `single` region; band 4's three Zones wrap; beside 1.000 → 0.000 |
+| certificate | the seal an orange text chip | Render | figure answered `badge` with text; drawn as a chip, not its pixels |
+| certificate | the course name plain, the stars black | Style | Look: bold not read on the run; the stars' colour not kept |
+| pricing | buttons with no outline, check marks as bullets, Team's header left | Render | furniture of the buttons not drawn; list marks the house's |
+| sample_semantic | `Tags:` and the commas missing | Extract | the list answer holds the three tags only |
+
+**5. Directions, ranked by gain for cost**
+
+| # | stage | change | why | cost |
+|---|---|---|---|---|
+| 1 | Layout | a recovered patch must hold type, not only a solid block's halo | removes the ticket's `The` / `The`, invented text | layout front offline; answers at a sweep |
+| 2 | Structure | a band whose Zones stand side by side on the page is drawn as a row | the certificate's signature row; beside 0.000 | rederive offline |
+| 3 | Render | a figure is drawn from its pixels whatever text it carries | the certificate's seal | rederive offline |
+| 4 | Classify → Extract | a pairs Zone whose answer leaves printed lines unread is read again as prose | the ticket's `OSL`, airport, gate note, stub header | a model question; replay with swaps, then a sweep |
+| 5 | Classify | a line of type in a header is not a logo | the ticket's `NORDLYS AIR` | a model question; a sweep |
+
+**6. Recommendation.** Seven pages better, three of them Alessandro's
+four, and the prediction held to the byte. The ticket is the cost: its
+new crops are whole and their answers lose ten words. **Whether
+`S9-sweep` becomes the baseline is Alessandro's decision**; if taken, the
+ticket's leg is named here as `s8-result/`'s three were, and directions
+1 and 4 are its repair.
+
 ---
 
 ## 10. Where things are
@@ -893,7 +992,45 @@ Zones on `rectify(path).image` yourself. Its channels are BGR.
 
 ---
 
-## Handover prompt — implement spec 0013, four pages first, then one sweep (current)
+## Handover prompt — after `S9-sweep`: Alessandro's decision, then the freeze (current)
+
+```
+Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then
+docs/specs/0013-four-pages-first.md's "Outcome — the sweep". Spec 0013's
+work plan is done; nothing is open except Alessandro's decision on
+S9-sweep. Do not pick anything up unless he names it — the five
+directions in the outcome are record, not a queue.
+
+State, re-measured 2026-10-14 at a3969f3 (code as a84404c):
+- the suite: 1142 passed, 1 skipped; mypy src clean;
+- debug/runs/S9-sweep/: 21 documents, 732 calls, 2h16m;
+  tools/replay_run.py debug/runs/S9-sweep reproduces 21 of 21
+  byte-identical, 0 asked differently; tools/rederive.py over it gives
+  21 of 21 byte-identical files;
+- by eye against S9-0-replay: 7 pages better (receipt, certificate,
+  pricing, statement, cv, paper, sample_semantic), 13 same, 1 worse
+  (ticket_0020: ten words gone, and an 8 px halo Zone read as "The").
+
+If debug/runs/S9-sweep/ is gone, say so and stop: it cannot be remade
+without a sweep.
+
+If Alessandro takes S9-sweep as the baseline: freeze it as
+tests/frozen/s9-result/ in the shape of s8-result/ — documents/,
+scores.json, answers/ (tools/replay_run.py debug/runs/S9-sweep
+--save-answers <dir>, with hashes), dth_env.txt, and a README giving its
+provenance, the prediction it held, and the ticket's leg named as
+s8-result/'s README names its three. Prove the freeze: replay and
+rederive of tests/frozen/s9-result each 21 of 21 byte-identical, and
+the report scored straight out of it against s8-result/. Then update
+CLAUDE.md's baseline lines and docs/status.md, one commit.
+
+If he does not, ask what he wants done with the ticket first. Whatever
+comes next is his to name.
+```
+
+---
+
+## Handover prompt — implement spec 0013, four pages first, then one sweep (record — done 2026-10-14)
 
 ```
 Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then

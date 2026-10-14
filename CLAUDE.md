@@ -36,9 +36,9 @@ trial axis is kept rather than rejected.
 
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
-measured numbers and what has already been tried and rejected. **0013 is the
-one open spec** — issue #36, planned 2026-10-14, not started. 0008 to 0012
-(issues #31–#35) are done and decided. 0007 still defines the target.
+measured numbers and what has already been tried and rejected. **0013's work plan
+is done** — issue #36, `S9-sweep` taken 2026-10-14, the baseline decision
+Alessandro's. 0008 to 0012 (issues #31–#35) are done and decided. 0007 still defines the target.
 
 ---
 
@@ -63,7 +63,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-14: the baseline is `tests/frozen/s8-result/`; spec 0013 planned, not started, and nothing else is open. Work is judged by eye.**
+**Where the project is — 2026-10-14: spec 0013 done and `S9-sweep` taken; whether it becomes the baseline is Alessandro's decision, and until then the baseline is `tests/frozen/s8-result/`. Nothing else is open. Work is judged by eye.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -131,7 +131,10 @@ Spec 0013   Four pages first — planned 2026-10-14, issue #36:
               4 certificate: its groups on the unwarped page
               5 ticket: the paper's whole outline in rectify
               6, 7 lower priority: paper's caption row; type on a fill
-              then ONE sweep S9-sweep over all 21. NOT STARTED
+              each DONE, judged by eye
+              S  S9-sweep on a3969f3, 2026-10-14: prediction held to the
+                 byte, 7 pages better, 13 same, 1 worse (ticket)
+              DECISION PENDING: whether S9-sweep becomes the baseline
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
@@ -157,12 +160,12 @@ it drew eighteen pages better and three worse, each traced in spec 0012's
 and reported in their own lines. Each earlier floor, and why it moved, is
 in its README and in `docs/status.md`.
 
-**The only open work is `docs/specs/0013-four-pages-first.md`** — the
-four pages Alessandro named after `S8-sweep` (receipt, certificate,
-pricing, ticket) and two smaller repairs, each traced to its cause at
-`s8-result/` with its prediction written down, then one sweep,
-`S9-sweep`. **Everything else was cleared
-by Alessandro on 2026-10-14**; do not pick anything up unless he names it.
+**Nothing is open but Alessandro's decision on `S9-sweep`** —
+`docs/specs/0013-four-pages-first.md`'s "Outcome — the sweep": receipt,
+certificate, pricing and four more pages better, the ticket worse, each
+traced, with five directions ranked **as record, not a queue**.
+**Everything else was cleared by Alessandro on 2026-10-14**; do not pick
+anything up unless he names it.
 The spec's handover prompt marked *current* is the one to start a session
 with. `docs/specs/0007-handover.md` holds spec 0007's
 prompts, as record.
@@ -433,7 +436,7 @@ Phase A0 fixed the condition — 2026-09-22.** `if row.cells` is truthy for
 drop it and rendered as a blank line inside the table. The net itself stayed:
 the finding was that it tested the wrong thing, not that it should not exist.
 
-**There are five wire-level row nets as of 2026-10-11, not one.** Each invents
+**There are six wire-level row nets as of 2026-10-14, not one.** Each invents
 nothing and discards nothing, and each exists because a measured run lost
 content without it: `_without_empty_rows` (above), `_join_split_header_row`,
 and `_without_repeated_header` — which drops a second `role == "header"` row
@@ -442,7 +445,9 @@ grid hint asks for more rows than the table has. Spec 0009 added two for
 `nonlatin_0014`'s totals, which were misplaced and doubled rather than lost:
 `_trimmed_to_header` takes the leading empty cells off a row wider than the
 header, and `_without_repeated_total` drops a summary row repeating the
-summary above it.
+summary above it. Spec 0013 added `without_title_rows`: a row whose printed
+cells spell the Zone's Title goes, `paper_0018`'s caption returned as a
+row after its data.
 
 ### The rectangle finder — `style.rectangles`, built in 2/B on 2026-09-21
 
@@ -570,7 +575,8 @@ each other — `CellState.DISPUTED` and the Ladder are already the vocabulary fo
 it, and `_climb_ladders` already records that it waits on a second Engine. That
 is model time and Alessandro's decision, not a detector.
 
-**Tracker state, 2026-10-14: one open issue — #36, spec 0013.** #31–#35 (specs 0008–0012) are closed, each done and decided. #30 (spec 0007) closed when its
+**Tracker state, 2026-10-14: one open issue — #36, spec 0013, its work
+plan done and its sweep awaiting Alessandro's decision.** #31–#35 (specs 0008–0012) are closed, each done and decided. #30 (spec 0007) closed when its
 work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
 #17 (the vision layout prompt) were closed by Thread 0. Every spec is closed
 history; 0007 still defines the target.
