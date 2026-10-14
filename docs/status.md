@@ -1,16 +1,16 @@
-# Status — 2026-10-14 (**the baseline is `tests/frozen/s9-result/`; nothing open until Alessandro names the next work**)
+# Status — 2026-10-14 (**the baseline is `tests/frozen/s9-result/`; spec 0014 planned, not started**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-14,
-after Alessandro took `S9-sweep` as the baseline.
+after Alessandro took `S9-sweep` as the baseline; spec 0014 planned the
+same day.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file, then
-[`specs/0013-four-pages-first.md`](specs/0013-four-pages-first.md) — its
-"Outcome — the sweep" and its handover prompt marked *current*. If you are
-going to look at output — and you should — use the **`visual-review`
-skill**.
+[`specs/0014-every-line-a-place.md`](specs/0014-every-line-a-place.md) —
+end to end, and its handover prompt marked *current*. If you are going to
+look at output — and you should — use the **`visual-review` skill**.
 
 Branch `scaffold`. **1142 tests pass (1 skipped), `mypy src/` clean** — at
 `a84404c`'s code (`a3969f3` adds the spec only), 2026-10-14.
@@ -55,6 +55,10 @@ Spec 0013   Four pages first — issue #36
               S  S9-sweep on a3969f3, 2026-10-14: prediction held to the
                  byte; 7 pages better, 13 same, 1 worse (ticket)
               DECIDED 2026-10-14: S9-sweep the baseline, frozen as s9-result/
+Spec 0014   Every printed line has a place — issue #37
+              1 Zone.extra  2 read what nobody read  3 copies alike by
+              the Kind that keeps most — then ONE sweep S10-sweep.
+              NOT STARTED
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -179,12 +183,27 @@ and `specs/0007-handover.md` for the A phases and the queue.
 
 ---
 
-## Next — Alessandro names it
+## Next — spec 0014, issue #37, not started
 
-**Nothing is open.** Spec 0013's "Outcome — the sweep" ranks directions
-from the faults left — the ticket's halo Zone and its pairs reading, the
-certificate's row and seal — **as record, not as a queue: do not pick one
-up unless he names it.**
+**[`specs/0014-every-line-a-place.md`](specs/0014-every-line-a-place.md)
+is the only open work.** Alessandro asked, after `S9-sweep`, for general
+repairs rather than per-page ones. Its fault, measured at `s9-result/` on
+seven pages: a printed line the Zone's reading has no place for is
+dropped, or forced into the Kind's shape. Examples are the form's note
+under its tick boxes, the timetable's legend, the ticket's `OSLO
+GARDERMOEN`, darkdeck's `P95` → `LATENCY`, and the catalogue's cards.
+
+The spec's three steps, then one sweep, `S10-sweep`:
+1. `Zone.extra`: a Zone can hold, and draw, lines its Kind has no place
+   for.
+2. Each line `locate.unclaimed` flags is read on its own crop, as a
+   separate pass.
+3. A grid's copies take the Kind that keeps the most of a line, not the
+   majority.
+
+**Not in it: type read as a figure.** That waits on his call whether a
+wordmark is text. Spec 0013's directions stay record. Do not pick up
+anything else unless he names it.
 
 ---
 

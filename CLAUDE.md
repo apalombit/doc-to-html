@@ -36,9 +36,9 @@ trial axis is kept rather than rejected.
 
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
-measured numbers and what has already been tried and rejected. **0013's work plan
-is done** — issue #36, `S9-sweep` taken 2026-10-14, the baseline decision
-Alessandro's. 0008 to 0012 (issues #31–#35) are done and decided. 0007 still defines the target.
+measured numbers and what has already been tried and rejected. **0014 is the
+one open spec** — issue #37, planned 2026-10-14, not started. 0008 to 0013
+(issues #31–#36) are done and decided. 0007 still defines the target.
 
 ---
 
@@ -63,7 +63,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-14: the baseline is `tests/frozen/s9-result/`, spec 0013's sweep; nothing is open until Alessandro names the next work. Work is judged by eye.**
+**Where the project is — 2026-10-14: the baseline is `tests/frozen/s9-result/`, spec 0013's sweep; spec 0014 planned, not started, and nothing else is open. Work is judged by eye.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -135,6 +135,13 @@ Spec 0013   Four pages first — planned 2026-10-14, issue #36:
               S  S9-sweep on a3969f3, 2026-10-14: prediction held to the
                  byte, 7 pages better, 13 same, 1 worse (ticket)
               DECIDED 2026-10-14: S9-sweep is the baseline, frozen as s9-result/
+Spec 0014   Every printed line has a place — planned 2026-10-14 from his
+              ask for general, principled repairs, issue #37:
+              1 Zone.extra: lines a Zone's Kind has no place for, drawn
+              2 read what nobody read: locate's unclaimed lines, each
+                read on its own crop, a separate pass
+              3 copies take the Kind that keeps the most of a line
+              then ONE sweep S10-sweep over all 21. NOT STARTED
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
@@ -160,10 +167,12 @@ traced in spec 0013's "Outcome — the sweep" and named in its README. The six a
 and reported in their own lines. Each earlier floor, and why it moved, is
 in its README and in `docs/status.md`.
 
-**Nothing is open until Alessandro names the next work.**
-`docs/specs/0013-four-pages-first.md`'s "Outcome — the sweep" traces
-what is left, the ticket first, with directions ranked **as record, not
-a queue**.
+**The only open work is `docs/specs/0014-every-line-a-place.md`** —
+a printed line the Zone's reading has no place for is dropped or forced
+into the Kind's shape, measured on seven pages at `s9-result/`; three
+steps, then one sweep, `S10-sweep`. It came from Alessandro's ask, after
+`S9-sweep`, for general repairs rather than per-page ones. Type read as a
+figure is **not** in it: it waits on his call whether a wordmark is text.
 **Everything else was cleared by Alessandro on 2026-10-14**; do not pick
 anything up unless he names it.
 The spec's handover prompt marked *current* is the one to start a session
@@ -577,8 +586,8 @@ each other — `CellState.DISPUTED` and the Ladder are already the vocabulary fo
 it, and `_climb_ladders` already records that it waits on a second Engine. That
 is model time and Alessandro's decision, not a detector.
 
-**Tracker state, 2026-10-14: one open issue — #36, spec 0013, its work
-plan done and its sweep awaiting Alessandro's decision.** #31–#35 (specs 0008–0012) are closed, each done and decided. #30 (spec 0007) closed when its
+**Tracker state, 2026-10-14: one open issue — #37, spec 0014, not
+started.** #31–#36 (specs 0008–0013) are closed, each done and decided. #30 (spec 0007) closed when its
 work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
 #17 (the vision layout prompt) were closed by Thread 0. Every spec is closed
 history; 0007 still defines the target.
