@@ -992,7 +992,7 @@ Zones on `rectify(path).image` yourself. Its channels are BGR.
 
 ---
 
-## Handover prompt — after `S9-sweep`: Alessandro's decision, then the freeze (current)
+## Handover prompt — after `S9-sweep`: Alessandro's decision, then the freeze (record — done 2026-10-14)
 
 ```
 Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then

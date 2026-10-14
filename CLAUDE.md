@@ -63,7 +63,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-14: spec 0013 done and `S9-sweep` taken; whether it becomes the baseline is Alessandro's decision, and until then the baseline is `tests/frozen/s8-result/`. Nothing else is open. Work is judged by eye.**
+**Where the project is — 2026-10-14: the baseline is `tests/frozen/s9-result/`, spec 0013's sweep; nothing is open until Alessandro names the next work. Work is judged by eye.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -134,7 +134,7 @@ Spec 0013   Four pages first — planned 2026-10-14, issue #36:
               each DONE, judged by eye
               S  S9-sweep on a3969f3, 2026-10-14: prediction held to the
                  byte, 7 pages better, 13 same, 1 worse (ticket)
-              DECISION PENDING: whether S9-sweep becomes the baseline
+              DECIDED 2026-10-14: S9-sweep is the baseline, frozen as s9-result/
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
@@ -151,19 +151,19 @@ list, because content must match absolutely — it is a pointer to a page to
 open, not a gate. He checks every run himself too. Spec 0011's "How to
 work" is the full statement.
 
-**The baseline is `tests/frozen/s8-result/` since 2026-10-14** — sweep
-`S8-sweep` on `ba0c110`, spec 0012's, all **twenty-one documents**,
-Alessandro's decision, frozen with its 725 answers. Against `s7-result/`
-it drew eighteen pages better and three worse, each traced in spec 0012's
-"Outcome — the sweep"; spec 0013 repairs them. The six added 2026-10-13
+**The baseline is `tests/frozen/s9-result/` since 2026-10-14** — sweep
+`S9-sweep` on `a3969f3`, spec 0013's, all **twenty-one documents**,
+Alessandro's decision, frozen with its 732 answers. Against `s8-result/`
+it drew seven pages better, thirteen the same and one worse — the ticket,
+traced in spec 0013's "Outcome — the sweep" and named in its README. The six added 2026-10-13
 (`corpus.NEW`) stay **held out** — authored after every measure was tuned,
 and reported in their own lines. Each earlier floor, and why it moved, is
 in its README and in `docs/status.md`.
 
-**Nothing is open but Alessandro's decision on `S9-sweep`** —
-`docs/specs/0013-four-pages-first.md`'s "Outcome — the sweep": receipt,
-certificate, pricing and four more pages better, the ticket worse, each
-traced, with five directions ranked **as record, not a queue**.
+**Nothing is open until Alessandro names the next work.**
+`docs/specs/0013-four-pages-first.md`'s "Outcome — the sweep" traces
+what is left, the ticket first, with directions ranked **as record, not
+a queue**.
 **Everything else was cleared by Alessandro on 2026-10-14**; do not pick
 anything up unless he names it.
 The spec's handover prompt marked *current* is the one to start a session
@@ -322,14 +322,15 @@ says they are.
 | `s5-result/` | spec 0010's fifteen documents, scores and answers, sweep `S5-sweep` — frozen at spec 0011's step 0 | record — the baseline 2026-10-12 to 2026-10-13 |
 | `s6-result/` | spec 0011's fifteen documents, scores and answers, sweep `S6-sweep` | record — the baseline for 2026-10-13, its fifteen held byte for byte in `s7-result/` |
 | `s7-result/` | all twenty-one documents, scores and 751 answers, sweep `S7-sweep` | record — the baseline 2026-10-13 to 2026-10-14; four of its table answers are spec 0013 step 1's target |
-| **`s8-result/`** | **all twenty-one documents, scores and 725 answers, sweep `S8-sweep`** | **the baseline, from 2026-10-14** |
+| `s8-result/` | all twenty-one documents, scores and 725 answers, sweep `S8-sweep` | record — the baseline for 2026-10-14, until spec 0013's sweep |
+| **`s9-result/`** | **all twenty-one documents, scores and 732 answers, sweep `S9-sweep`** | **the baseline, from 2026-10-14** |
 
 **Score against the baseline by path**, and always with `--documents sweep` —
 without a `fixtures.txt` the report silently scores the iterate five:
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s8-result/scores.json
+    --documents sweep --previous tests/frozen/s9-result/scores.json
 ```
 
 **Each floor move was measured, not argued:** the new floor was no lower than
@@ -349,10 +350,11 @@ four beside legs below `s5-result/`, accepted 2026-10-13. **`s7-result/`
 moves no leg**: it adds six documents, and its fifteen are `s6-result/`'s
 byte for byte. **`s8-result/` was judged by eye**, the first floor taken
 that way: three pages worse, each traced and accepted 2026-10-14, its
-README names them.
+README names them. **`s9-result/` likewise**: one page worse, the ticket,
+accepted the same day.
 
 **A directory holding documents beside scores buys a loop, not a number.**
-Scored straight out of `s8-result/`, **21 documents, 0 differing fields**, and **`tools/rederive.py`
+Scored straight out of `s9-result/`, **21 documents, 0 differing fields**, and **`tools/rederive.py`
 over it reproduces every page** at the commit it was taken on — 21 of 21
 files byte for byte. When code downstream of the model moves, `rederive.py` brings
 the IRs up to it — re-applying every step downstream of the model — and that,
@@ -364,12 +366,12 @@ to `rederive.py`**, or the loop measures yesterday's code. It is not a target
 to match.
 
 **A directory that also holds the answers buys a second loop.** `q5-result/`
-was the first to carry `answers/`, and `s3-result/`, `s5-result/`, `s6-result/`, `s7-result/` and `s8-result/` carry them too — each document's model answers, in the
+was the first to carry `answers/`, and `s3-result/`, `s5-result/`, `s6-result/`, `s7-result/`, `s8-result/` and `s9-result/` carry them too — each document's model answers, in the
 order they were asked — and **`tools/replay_run.py` serves them to today's
 code through a real Conversion**: wire, mapper and every pass, which
 `rederive.py` cannot re-run. With `--swap` it serves one new answer, so a
 prompt change probed on one crop is measured on its whole document, ratchet
-included, with no sweep. It reproduces `s8-result/` **21 of 21 byte for byte** from its answers. A
+included, with no sweep. It reproduces `s9-result/` **21 of 21 byte for byte** from its answers. A
 document it marks **ASKED MORE THAN THE RUN** is not a measurement: the
 change moved a crop, and a crop costs a sweep. **It serves by pass and
 order**, so a change that asks the same number of calls *differently* — a

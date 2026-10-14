@@ -1,8 +1,8 @@
-# Status — 2026-10-14 (**spec 0013 done, `S9-sweep` taken — the baseline is Alessandro's decision; until then it is `tests/frozen/s8-result/`**)
+# Status — 2026-10-14 (**the baseline is `tests/frozen/s9-result/`; nothing open until Alessandro names the next work**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-14,
-after `S9-sweep` closed spec 0013's work plan.
+after Alessandro took `S9-sweep` as the baseline.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
@@ -54,7 +54,7 @@ Spec 0013   Four pages first — issue #36
               6 paper 7 statement — each DONE, judged by eye
               S  S9-sweep on a3969f3, 2026-10-14: prediction held to the
                  byte; 7 pages better, 13 same, 1 worse (ticket)
-              DECISION PENDING: whether S9-sweep becomes the baseline
+              DECIDED 2026-10-14: S9-sweep the baseline, frozen as s9-result/
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -62,28 +62,25 @@ in [`specs/0007-handover.md`](specs/0007-handover.md).
 
 ---
 
-## The baseline — `tests/frozen/s8-result/`, until Alessandro decides on `S9-sweep`
+## The baseline — `tests/frozen/s9-result/`, DECIDED 2026-10-14
 
-**Twenty-one documents, 725 answers.** Sweep `S8-sweep`, commit `ba0c110`
-(spec 0012 step U), 2026-10-14 00:49–03:00 (**2h12m**), shipped defaults.
-Proved at `624b18f` the day spec 0013 began: replay 21 of 21
-byte-identical, 0 asked differently; rederive 21 of 21 byte-identical.
-**At today's code it is no longer reproduced**: spec 0013 moved nine
-pages, and the replay marks seven documents asked differently — the
-list §9 registered.
+**Twenty-one documents, 732 answers.** Sweep `S9-sweep`, commit `a3969f3`
+(spec 0013 step P), 2026-10-14 11:13–13:29 (**2h16m**), shipped defaults.
+Taken by Alessandro after review: against `s8-result/`, seven pages better,
+thirteen the same, one worse — the ticket, traced in spec 0013's
+"Outcome — the sweep" and named in the README.
 
-**The candidate — `debug/runs/S9-sweep/`**, commit `a3969f3`, 2026-10-14
-11:13–13:29 (**2h16m**), 732 calls, shipped defaults, 40%/60% CPU/GPU.
-Proved 2026-10-14 at that code: `tools/replay_run.py debug/runs/S9-sweep`
-**21 of 21 byte-identical, 0 asked differently**; `tools/rederive.py`
-over it **21 of 21 byte-identical files**. Its answers with their hashes
-are saved by `tools/replay_run.py debug/runs/S9-sweep --save-answers
-<dir>`. `debug/` is gitignored: **if Alessandro takes it, freeze it as
-`tests/frozen/s9-result/` before anything clears `debug/runs/`.**
+Proved the day it was frozen, at `a3969f3`'s code:
+- `tools/replay_run.py tests/frozen/s9-result`: **21 of 21 byte-identical,
+  0 asked differently**;
+- `tools/rederive.py` over it: **21 of 21 byte-identical files**;
+- the rederive scored against `s8-result/`: **21 documents, 0 differing
+  fields**;
+- its 732 answers against the sweep's `trace.json`: 0 differ.
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s8-result/scores.json
+    --documents sweep --previous tests/frozen/s9-result/scores.json
 ```
 
 `--documents sweep` is not optional: without a `fixtures.txt` the report
@@ -91,6 +88,9 @@ scores the iterate five.
 
 ### The baselines before it
 
+- **`s8-result/`** — spec 0012's sweep, `S8-sweep`. The baseline for
+  2026-10-14 until spec 0013's sweep; three pages worse than `s7-result/`,
+  each repaired by spec 0013.
 - **`s7-result/`** — the first sweep over twenty-one, `S7-sweep`. The
   baseline 2026-10-13 to 2026-10-14. Four of its table answers were spec
   0013 step 1's target, and `S9-sweep` returned them byte for byte.
@@ -115,7 +115,7 @@ scores the iterate five.
 
 ## Where the corpus is — recorded, not a target
 
-Means over `S9-sweep`, against `s8-result/`:
+Means over `s9-result/`, against `s8-result/`:
 
 | | all 21 | the fifteen | the six new |
 |---|---|---|---|
@@ -179,17 +179,12 @@ and `specs/0007-handover.md` for the A phases and the queue.
 
 ---
 
-## Next — Alessandro's decision on `S9-sweep`
+## Next — Alessandro names it
 
-**Nothing else is open.** Spec 0013's "Outcome — the sweep" ranks five
-directions from the faults left — the ticket's halo Zone and its pairs
-reading, the certificate's row and seal — **as record, not as a queue:
-do not pick one up unless he names it.**
-
-If he takes `S9-sweep`: freeze it as `tests/frozen/s9-result/` (documents,
-scores, answers with hashes, `dth_env.txt`, a README naming the ticket's
-leg as `s8-result/`'s README names its three), prove the freeze by replay
-and rederive 21 of 21, and update `CLAUDE.md`'s baseline lines.
+**Nothing is open.** Spec 0013's "Outcome — the sweep" ranks directions
+from the faults left — the ticket's halo Zone and its pairs reading, the
+certificate's row and seal — **as record, not as a queue: do not pick one
+up unless he names it.**
 
 ---
 
@@ -240,9 +235,9 @@ the last two entries.
   **The exceptions are committed files:** `tests/frozen/run84/`,
   `a1-checkpoint/`, `a0-checkpoint/`, `a0-result/`, `a1-result/`,
   `a2-result/`, `a3-result/`, `reshot/`, `q5-result/`, `s3-result/`,
-  `s5-result/`, `s6-result/`, `s7-result/` — all kept as record — and
-  **`s8-result/`, the baseline** since 2026-10-14, twenty-one documents.
-  `debug/runs/S9-sweep/` is not one until it is frozen.
+  `s5-result/`, `s6-result/`, `s7-result/`,
+  `s8-result/` — all kept as record — and **`s9-result/`, the baseline**
+  since 2026-10-14, twenty-one documents.
   `a3-result/` was scored on pictures missing their last lines;
   quote it only as that.
 - **The committed corpus picture is a screenshot of its own HTML.**
@@ -293,7 +288,7 @@ the last two entries.
 FIXTURE=sweep tools/iterate.sh <label>        # all twenty-one, ~2¼ h — anything reviewed
 FIXTURE=iterate tools/iterate.sh <label>      # the five, ~20 min — throwaway checks only
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s8-result/scores.json
+    --documents sweep --previous tests/frozen/s9-result/scores.json
 python tools/visual_review.py debug/runs/<label> --previous debug/runs/<older>
 python tools/visual_review.py debug/runs/<label> --check
 ```
@@ -311,9 +306,9 @@ A document that raises keeps its answers in the dump, and `tools/replay_run.py`
 converts it once the bug is fixed, with no model call.
 
 **Three offline loops, each proved before it was used, and a sweep. Say which
-produced any number you report.** Start them from the baseline. At
-today's code they reproduce `debug/runs/S9-sweep/` byte for byte, 21 of
-21 each (2026-10-14); `s8-result/` they reproduced at `624b18f`. Both
+produced any number you report.** Start them from the baseline,
+`tests/frozen/s9-result/`. On 2026-10-14 `tools/replay_run.py` and
+`tools/rederive.py` over it each reproduced it byte for byte, 21 of 21. Both
 tools take a run directory as well as a frozen one.
 
 - **Downstream of the model** — renderer, style, probes. `tools/rederive.py
