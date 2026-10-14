@@ -131,8 +131,9 @@ only**: the picture and schema hashes are equal.
   ```
 
   **Checked 2026-10-14:** that swap at `ba0c110`'s code renders all four
-  pages byte-identical to the replay at step U (`S8-U-replay`). Those are
-  the pages expected:
+  pages byte-identical to the replay at step U (`S8-U-replay`). Take the
+  same swap at step 0, before any change, and keep it: it needs only
+  committed files, and its four pages are the ones expected:
   - the receipt with its prices;
   - the statement with its header light on its band and its caption back;
   - cv with `2022`.
@@ -319,7 +320,7 @@ small; no page worse.
 | step | what | runs on | done when |
 |---|---|---|---|
 | 0 | prove the baseline: replay and rederive of `s8-result/` | replay, rederive | 21 of 21 byte-identical each, 0 asked differently |
-| 1 | the column count only where ruled | replay with swaps | §1's five calls marked, no other; four prompts equal to `s7-result/`'s; the four pages as `S8-U-replay`'s |
+| 1 | the column count only where ruled | replay with swaps | §1's five calls marked, no other; four prompts equal to `s7-result/`'s; the four pages byte-identical to a replay of `s8-result/` at the step-0 commit with the same four answers swapped in — committed inputs only |
 | 2 | the caption row at the wire | replay, rederive | paper only moves |
 | 3 | type on a drawn fill keeps its colour | rederive | statement only moves, at `s8-result/`'s answers |
 | 4 | the certificate's groups | layout front, replay | the certificate's Zones only move |
