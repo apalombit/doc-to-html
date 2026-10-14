@@ -188,6 +188,24 @@ class TestTheRenderDrawsThem:
         assert re.search(r'<div class="doc" style="border:6px double rgb\(138,109,47\);'
                          r'padding:\d+px', html)
 
+    def test_a_frame_inside_the_page_frame_is_padded_to_once(self) -> None:
+        # Spec 0013 step 2, `certificate_0021`: `.doc` padded from the page
+        # frame to the Zones, and the inner frame padded from itself to them
+        # again, left a third of the page for the text — drawn portrait.
+        outer = Furniture(kind="frame", bbox=BBox(0.01, 0.01, 0.99, 0.99),
+                          thickness=0.006, style="double", color=(138, 109, 47))
+        inner = Furniture(kind="frame", bbox=BBox(0.03, 0.03, 0.97, 0.97),
+                          thickness=0.001, color=(199, 173, 106))
+        zones = [zone("Guild", BBox(0.2, 0.2, 0.8, 0.3)),
+                 zone("Awarded", BBox(0.2, 0.6, 0.8, 0.8), band=1)]
+        for each in zones:
+            each.frame = inner.bbox   # as `rhythm.frames` gives it
+        html = render(document(zones, [outer, inner], page_px=1000))
+        assert '<div class="doc" style="border:6px double rgb(138,109,47);' \
+               'padding:14px 14px 14px 14px"' in html
+        assert ".doc { max-width:940px; }" in html
+        assert re.search(r'class="frame" style="padding:\d+px 170px', html)
+
     def test_the_title_rule_is_its_border(self) -> None:
         heading = zone("Senior engineer", BBox(0.1, 0.1, 0.5, 0.3), title="EXPERIENCE")
         html = render(document([heading], [rule(0.1, 0.15, 0.9, 0.152)]))

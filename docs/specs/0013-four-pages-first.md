@@ -238,6 +238,28 @@ source's width.
 **Done when:** the certificate is drawn landscape, both frames where the
 page draws them, its paragraph on the page's three lines.
 
+### Outcome — step 2, 2026-10-14
+
+**The first way:** `render._held` — what `.doc` holds inside a page frame
+is the Zones and the frames drawn round them (`_shared`). `_page_frame`
+pads to it and `_measure` sizes `.doc` to it: the certificate's `.doc` is
+`padding:9px` and `max-width:918px`, the inner frame keeps its 137 px, and
+the gap is counted once, by the inner frame. The second way would put the
+same numbers in two places.
+
+**The prediction held.** Rederive of `S9-1` → `S9-2`: the certificate
+moved, the other twenty byte-identical.
+
+**By eye, against `S9-1`:**
+- **certificate — better:** landscape, both frames where the page draws
+  them, the paragraph on three lines, the name on two where it took three.
+  **One element worse:** band 1's title now stands left of centre on two
+  lines with the ornament Zone (0.489–0.500) off to its right, where they
+  were stacked and centred. It is step 4's stray ornament, given room to
+  stand beside the title; step 4 gives it to the title's Zone.
+
+`vanished` unchanged, 32. `debug/runs/S9-2/report.html`.
+
 ---
 
 ## 3. Pricing — three cards, not scattered sections

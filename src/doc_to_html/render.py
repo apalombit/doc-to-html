@@ -383,12 +383,27 @@ def _rule_line(line: list[Furniture], page: _Page,
     return f'<div class="separator rules"{_styled(margin)}>{"".join(parts)}</div>'
 
 
+def _held(document: Document) -> BBox | None:
+    """What `.doc` holds inside a page frame: the Zones, and the frames the
+    render draws round them (`_framed`).
+
+    **Spec 0013 step 2.** `certificate_0021` draws a second frame inside
+    its page frame. `.doc` was padded from the page frame to the Zones and
+    as wide as them, and the inner frame, a row inside `.doc`, padded from
+    itself to the Zones again: the gap counted twice left 360 of 1000 px
+    for the text, and the page was drawn portrait. Padded to the inner
+    frame and as wide as it, the gap is counted once, by the inner frame."""
+    boxes = [zone.bbox for zone in document.zones if zone.bbox is not None]
+    return _union(boxes + list(_shared(document))) \
+        if boxes else None
+
+
 def _page_frame(document: Document) -> str:
     """The frame the page draws round everything, as `.doc`'s border, with
-    the space the page leaves inside it — `certificate_0021`."""
+    the space the page leaves inside it — `certificate_0021` — to what it
+    holds (`_held`)."""
     frame = furnish.anchor(document).page
-    inside = _union([z.bbox for z in document.zones if z.bbox is not None]) \
-        if any(z.bbox is not None for z in document.zones) else None
+    inside = _held(document)
     if frame is None or inside is None:
         return ""
     page = _page(document)
@@ -994,7 +1009,8 @@ def _measure(document: Document) -> list[str]:
         return []
     page = _page(document)
     frame = furnish.anchor(document).page
-    content = _union(boxes) if frame is not None else _content(document) or _union(boxes)
+    content = (_held(document) if frame is not None else _content(document)) \
+        or _union(boxes)
     tops = [t for zone in document.zones if (t := _top(zone, page)) is not None]
     bottoms = [b for zone in document.zones if (b := _bottom(zone, page)) is not None]
     if frame is not None:
