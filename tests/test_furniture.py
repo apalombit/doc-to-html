@@ -60,6 +60,19 @@ class TestTheFinderOnThePages:
         assert any(f.style == "double" and (f.bbox.right - f.bbox.left)
                    * (f.bbox.bottom - f.bbox.top) >= 0.8 for f in frames)
 
+    def test_pricings_three_cards_are_framed_teams_through_its_ribbon(self) -> None:
+        # Spec 0013 step 3b: the `MOST POPULAR` pill is drawn over Team's
+        # top edge, in the edge's own blue, cutting it in two.
+        frames = sorted((f for f in page("pricing_0017")[0]
+                         if f.kind == "frame" and f.bbox.bottom - f.bbox.top > 0.5),
+                        key=lambda f: f.bbox.left)
+        assert len(frames) == 3
+        assert all(abs(f.bbox.left - left) <= 0.005
+                   for f, left in zip(frames, (0.044, 0.353, 0.665)))
+        team = frames[1]
+        assert np.abs(np.array(team.color) - (75, 91, 220)).sum() <= 30
+        assert round(team.bbox.top, 2) == 0.26
+
     def test_the_ticket_stub_is_parted_by_a_dashed_rule(self) -> None:
         (divider,) = rules("ticket_0020", vertical=True)
         assert divider.style == "dashed" and divider.period is not None
@@ -166,6 +179,20 @@ class TestWhatDrawsEachRecord:
         line = rule(0.1, 0.17, 0.45, 0.171)
         anchors = furnish.anchor(document([form, figure], [axis, line]))
         assert anchors == furnish.Anchors()
+
+    def test_a_frame_round_the_zones_sharing_a_box_is_its_border(self) -> None:
+        # Spec 0013 step 3b, `pricing_0017`'s Team card: the box its Zones
+        # share takes in the ribbon over its top edge and its shadow, so it
+        # is not the frame's box; the frame holds exactly those Zones.
+        card = BBox(0.350, 0.249, 0.650, 0.899)
+        zones = [zone("MOST POPULAR", BBox(0.45, 0.249, 0.55, 0.318)),
+                 zone("£12", BBox(0.38, 0.34, 0.62, 0.50), band=1),
+                 zone("Unlimited", BBox(0.38, 0.55, 0.60, 0.76), band=2)]
+        for each in zones:
+            each.frame = card
+        frame = Furniture(kind="frame", bbox=BBox(0.353, 0.262, 0.647, 0.889),
+                          thickness=0.002, color=(75, 91, 220))
+        assert furnish.anchor(document(zones, [frame])).frames == {card: frame}
 
     def test_a_frame_round_the_page_is_the_pages(self) -> None:
         frame = Furniture(kind="frame", bbox=BBox(0.01, 0.01, 0.99, 0.99),

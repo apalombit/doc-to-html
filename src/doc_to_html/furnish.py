@@ -201,6 +201,17 @@ def _frame(item: Furniture, document: Document, counts: dict[BBox, int],
             return
     inside = [index for index, zone in enumerate(document.zones)
               if zone.bbox is not None and _holds(box, zone.bbox, scale)]
+    # Spec 0013 step 3b: the box Zones share may take in what is drawn on
+    # the frame's edge — `pricing_0017`'s Team card, its ribbon over the
+    # top edge and its shadow below — and so not be the frame's box. A
+    # frame holding exactly the Zones that share one box is that box's.
+    boxes = {document.zones[index].frame for index in inside}
+    if len(inside) > 1 and len(boxes) == 1 and None not in boxes:
+        (shared,) = boxes
+        assert shared is not None
+        if counts.get(shared, 0) == len(inside):
+            out.frames[shared] = item
+            return
     if len(inside) == 1:
         zone = document.zones[inside[0]]
         assert zone.bbox is not None

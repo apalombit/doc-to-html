@@ -244,6 +244,7 @@ def find(image: ImageArray, *, inverted: bool = False,
     lines = _untextured(lines, unit)
     lines = _doubled(lines, unit)
     lines = _rejoined(lines + _dashed(rgb, ground, ink, unit), unit)
+    lines = _bridged(lines, rgb, unit)
 
     frames, loose = _frames(lines, unit)
     loose = [line for line in loose if line.vertical or not _in_type(line, bare, unit)]
@@ -549,6 +550,47 @@ def _rejoined(lines: list[_Line], unit: float) -> list[_Line]:
             continue
         out.append(line)
     return out
+
+
+def _bridged(lines: list[_Line], rgb: Any, unit: float) -> list[_Line]:
+    """Two pieces of one line, in line, of one colour and thickness, one
+    line where the page draws that colour across the gap between them: a
+    badge set on a frame's edge — spec 0013 step 3b. `pricing_0017`'s
+    `MOST POPULAR` pill, in the blue of Team's frame, cuts its top edge in
+    two, x 363–443 and 557–637, and a frame's side must reach both corners.
+
+    Every row, or column, of the gap must hold the line's colour within a
+    glyph of it, and within `SAME` — nearer than any line stands off the
+    ground (`OFF`), so the ground never bridges. Measured on pricing: the
+    pill's 114 columns all do; between Starter's and Business's faint grey
+    bottom edges, across Team's card and the ground either side of it,
+    0.89 do, and they stay two lines. A gap of another colour — the seal
+    between the certificate's signature lines — leaves two lines too."""
+    reach = int(round(unit))
+    out: list[_Line] = []
+    for line in sorted(lines, key=lambda l: (l.vertical, l.at, l.start)):
+        last = out[-1] if out else None
+        if (last is not None and last.vertical == line.vertical
+                and abs(last.at - line.at) <= 1 and last.width == line.width
+                and last.style == line.style == "solid" and line.start > last.end
+                and np.abs(np.array(last.color) - np.array(line.color)).sum() <= 2 * SAME
+                and _drawn_across(rgb, last, line.start, reach)):
+            out[-1] = _Line(last.vertical, min(last.at, line.at), last.width,
+                            last.start, max(last.end, line.end), last.color)
+            continue
+        out.append(line)
+    return out
+
+
+def _drawn_across(rgb: Any, line: _Line, to: int, reach: int) -> bool:
+    """Whether every row, or column, from `line`'s end to `to` holds its
+    colour within `reach` of it."""
+    low, high = max(0, line.at - reach), line.at + line.width + reach
+    band = (rgb[line.end:to, low:high] if line.vertical
+            else rgb[low:high, line.end:to])
+    near = np.abs(band - np.array(line.color)).sum(axis=2) <= SAME
+    held = near.any(axis=1) if line.vertical else near.any(axis=0)
+    return bool(held.size and held.all())
 
 
 def _beside(piece: _Line, typed: Any, band: int) -> float:
