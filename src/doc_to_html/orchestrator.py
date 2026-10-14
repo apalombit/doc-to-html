@@ -879,6 +879,7 @@ class Conversion:
             self._measure_type(rectified, document)
             self._find_separators(rectified, document)
             self._locate(rectified, document)
+            self._read_unclaimed(rectified, document)
             self._read_fields(rectified, document)
             self._place_furniture(rectified, document)
             self._read_rhythm(rectified, document)
@@ -1319,14 +1320,17 @@ class Conversion:
                     if z.group is not None or z.align or z.title_align])
 
     def _locate(self, rectified: Rectified, document: Document) -> None:
-        """Where every Cell sits on the page — spec 0011, step 2. See
-        `locate.locate`.
+        """Where every Cell sits on the page — spec 0011, step 2 — and which
+        printed lines no Cell claims, spec 0012, G9. See `locate.locate`.
 
-        **tesseract is a locator here, never a reader**: its words are matched
-        against the model's and only their boxes kept. Every round re-locates
-        from scratch, because a Correction can change a Cell's text. Without
-        tesseract on `PATH` it places nothing, says so, and every Cell renders
-        as it did. Nothing a model is asked reads what it sets.
+        **tesseract is never a reader here.** Its words are matched against
+        the model's and only their boxes kept; and where a line of its words
+        is claimed by no Cell, it says where to look, and the model reads
+        what is there — `_read_unclaimed`, spec 0014, step 2. Its own words
+        are never printed. Every round re-locates from scratch, because a
+        Correction can change a Cell's text, and `_read_unclaimed` runs this
+        once more when it keeps a line. Without tesseract on `PATH` it places
+        nothing, finds no line, says so, and every Cell renders as it did.
         """
         started = time.perf_counter()
         plain = rectified.plain if rectified.plain is not None else rectified.image
@@ -1352,6 +1356,76 @@ class Conversion:
             unclaimed=[{"zone": line.zone_index, "words": line.words,
                         "top": round(line.bbox.top, 3)}
                        for line in document.unclaimed])
+
+    def _read_unclaimed(self, rectified: Rectified, document: Document) -> None:
+        """Read each printed line no Cell claims on its own crop, and keep
+        what its Zone does not print in `Zone.extra` — spec 0014, step 2.
+
+        `locate.unclaimed` finds the lines — the form's note under its tick
+        boxes, a ticket's `OSLO GARDERMOEN`, a timetable's legend — and
+        until this pass only reported them. Each is read with the prose
+        prompt and schema every prose Zone is read with, on a crop cut as
+        every Zone's is. **A separate pass, after extraction**: no Extractor
+        prompt or schema changes, so at `temperature: 0` every answer given
+        before is given again — CLAUDE.md, "where you ask is a bigger lever
+        than how you ask". One call per line, and no inline runs asked.
+
+        What was read is kept **unless the Zone already prints it**
+        (`locate.holds`), so a line read again is never printed twice. It
+        is judged as the line it was read from, its Blocks read together:
+        `timetable_0019`'s legend comes back as five items, each a word
+        its grid prints, and judged one Block at a time it was refused
+        whole, though the page prints those words a second time.
+        If anything was kept, `_locate` runs once more: the new lines are
+        placed, the unclaimed list is recomputed, and they claim their own
+        line. A call that raises costs that line alone, which stays on the
+        unclaimed list. `_extract` clears a Zone's `extra` when it reads
+        the Zone again.
+        """
+        kept = 0
+        for line in list(document.unclaimed):
+            zone = document.zones[line.zone_index]
+            transient = Zone(kind=Kind.PROSE, bbox=line.bbox)
+            mark, started = self.trace.next_call, time.perf_counter()
+            try:
+                for_kind(Kind.PROSE).extract(
+                    rectified.image, transient, self.engines.extract, document.hint
+                )
+            except Exception as error:
+                call, made = self.trace.calls_since(mark)
+                self.trace.record(
+                    Stage.EXTRACT, "unclaimed", Disposition.REJECTED,
+                    zone_index=line.zone_index, seconds=time.perf_counter() - started,
+                    call=call, calls=made, box=_box_data(transient), words=line.words,
+                    error=f"{type(error).__name__}: {error}",
+                    reason="the line was not read, and stays unclaimed",
+                )
+                continue
+            # The line read together, as the detector found it: the
+            # timetable's legend comes back five items, each a word its grid
+            # prints too, and the page prints them again.
+            read = [" ".join(cell.text for cell in block.lines)
+                    for block in transient.blocks]
+            held = locate_module.holds(zone, " ".join(read))
+            texts, refused = ([], read) if held else (read, [])
+            if not held:
+                zone.extra.extend(transient.blocks)
+            kept += len(texts)
+            call, made = self.trace.calls_since(mark)
+            self.trace.record(
+                Stage.EXTRACT, "unclaimed",
+                Disposition.ACCEPTED if texts else Disposition.REJECTED,
+                zone_index=line.zone_index, seconds=time.perf_counter() - started,
+                call=call, calls=made, box=_box_data(transient), words=line.words,
+                kept=texts, refused=refused,
+                changed=[Change(path=f"zones[{line.zone_index}].extra",
+                                before=None, after=text) for text in texts],
+                reason=None if texts else
+                "the Zone already prints what was read" if refused else
+                "nothing was read",
+            )
+        if kept:
+            self._locate(rectified, document)
 
     def _read_fields(self, rectified: Rectified, document: Document) -> None:
         """The marks the page draws for its entries — boxes, digit combs,
@@ -1759,6 +1833,9 @@ class Conversion:
             if zone.complete or index in self.unclassified:
                 continue
 
+            # Spec 0014, step 2: what `_read_unclaimed` kept was read beside
+            # the reading this replaces.
+            zone.extra = []
             extractor = for_kind(zone.kind)
             asked = zone.kind.value
             mark, started = self.trace.next_call, time.perf_counter()

@@ -301,9 +301,13 @@ class TestTheOrchestratorClassifiesBetweenGeometryAndExtraction:
         """
         _, transport = convert_classifying(["prose", "prose"], ["prose", "pairs"])
 
-        assert [call.pass_name for call in transport.calls] == [
-            "classify", "classify", "prose", "runs", "pairs",
-        ]
+        asked = [call.pass_name for call in transport.calls]
+        assert asked[:5] == ["classify", "classify", "prose", "runs", "pairs"]
+        # Spec 0014, step 2: after extraction, each printed line no Cell
+        # claims is read again as prose. These boxes are invented, so the
+        # page's lines are left unclaimed, and every call after the batch
+        # is one of those.
+        assert set(asked[5:]) <= {"prose"}
 
     def test_the_kind_that_routes_a_zone_comes_from_classification(self) -> None:
         """The whole spec, as one assertion: geometry said prose, the crop said
@@ -311,7 +315,9 @@ class TestTheOrchestratorClassifiesBetweenGeometryAndExtraction:
         document, transport = convert_classifying(["prose"], ["pairs"])
 
         assert document.zones[0].kind is Kind.PAIRS
-        assert transport.calls[-1].pass_name == "pairs"
+        # The call after the Kind question — not the last: spec 0014's
+        # re-reads of unclaimed lines follow the extraction.
+        assert transport.calls[1].pass_name == "pairs"
 
     def test_classification_is_routable_to_its_own_model(self) -> None:
         """A model that locates blocks well and one that reads them well need

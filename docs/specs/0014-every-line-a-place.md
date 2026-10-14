@@ -232,6 +232,54 @@ tools/iterate.sh S10-2-check`, then sheets against `S10-1` for those three.
 
 The sweep is the review.
 
+### Outcome — step 2, 2026-10-14
+
+**The prediction held.** The replay `S10-2-replay` marks exactly form,
+ticket and timetable **ASKED MORE THAN THE RUN**, `1 prose` each, and 0
+calls asked differently; all 21 pages are byte-identical to `S10-1`, since
+a replayed re-read runs dry and keeps nothing.
+
+**The replay had to learn to say so.** It marked ASKED MORE only off a
+Conversion's Failures, and a pass that swallows its own error, as this one
+and the inline runs do, leaves none. `tools/replay_run.asked_more` now
+counts each pass's calls against the run's and names the pass.
+
+**The targeted run `S10-2-check`** (on the step's code before the change
+below; its diff beside it): every call `s9-result/` asked came back byte
+for byte, 25 + 17 + 10, and one new prose call each. Form read `Tick one
+category. Locker allocation is subject to availability.`, ticket `OSLO
+GARDERMOEN`, both kept. The timetable read its legend as five `item`
+Blocks, `Mathematics` … `PE`, and **the guard refused all five**: judged
+one Block at a time, each is a word its grid prints too, though the page
+prints them again, as a line.
+
+**Changed from §3, two places:**
+- **The guard judges the line, not the Block** — the call's Blocks read
+  together, the unit the detector flagged and the question asked about.
+- **`_extra` draws consecutive items as `_list` does**: on one line with
+  the page's gap where the page prints them side by side
+  (`_side_by_side`), else as a list. Five `<p>`s would have stacked it.
+
+Measured by replaying `S10-2-check`'s own answers through that code,
+`S10-2`: form and ticket byte-identical to the check run, the timetable
+keeps its legend; the unclaimed list is empty on all three.
+
+**By eye, `S10-2` against `S10-1`** (`debug/runs/S10-2/_review/`) — each
+page's HTML outside the IR differs by one insertion and nothing else:
+- **form — better:** the note sits under the tick boxes, small and grey,
+  as the page prints it.
+- **ticket — better:** `OSLO GARDERMOEN` is printed. It stands at the
+  foot of its Zone, after `GROUP 2`, not under `OSL`: placed at 0.495,
+  below the Zone's first placed Cell, and between pairs is §6's.
+- **timetable — better:** the legend is one grey line under the grid.
+  `Science` is drawn bold, where the page sets all five regular; the
+  swatches are not drawn.
+
+`vanished` against `s9-result/`: form 7 → 1 (`fernpost`, a misread §6
+names), ticket 10 → 8 (`oslo`, `gardermoen` back), timetable 1 → 1
+(`lunch`). `debug/runs/S10-2/report.html`. 1166 passed, 1 skipped;
+mypy clean.
+
 ---
 
 ## 4. Step 3 — copies take the Kind that keeps the most of a line

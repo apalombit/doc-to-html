@@ -30,7 +30,9 @@ sweep. Q5 measured the withheld one-column grid hint this way.
 one the run did not — a box moved, a Zone split, a swapped Kind routed to
 another Extractor — the queue for that pass runs dry, and the Conversion
 records a Failure for that Zone and carries on, as it would for any pass that
-raised. The tool marks that document **ASKED MORE THAN THE RUN**, and nothing
+raised — or, for a pass that swallows its own error, records nothing. The
+tool counts each pass's calls against the run's (`asked_more`), marks that
+document **ASKED MORE THAN THE RUN** and names the pass, and nothing
 it produced there is a measurement: answers are served in order, so once the
 questions change, the answers that were served may belong to other questions.
 That is a finding about the change, not a fault in the tool — the change
@@ -148,9 +150,8 @@ def asked_differently(recorded_calls: list[dict[str, Any]],
     Paired the way the answers are served — by pass, in order — so the call
     named is the one whose answer was served to it. Named as `NN_<pass>` by
     the run's numbering, which is what `--swap` takes, with the parts that
-    moved: `07_table picture`. A call the run never asked is not here; the
-    Conversion's Failure names it, and the document is ASKED MORE THAN THE
-    RUN.
+    moved: `07_table picture`. A call the run never asked is not here;
+    `asked_more` counts it, and the document is ASKED MORE THAN THE RUN.
     """
     served: dict[str, list[tuple[int, dict[str, str]]]] = {}
     for index, call in enumerate(recorded_calls):
@@ -171,6 +172,25 @@ def asked_differently(recorded_calls: list[dict[str, Any]],
         if parts:
             moved.append(f"{index:02d}_{call.pass_name} {'+'.join(parts)}")
     return moved, unhashed
+
+
+def asked_more(recorded_calls: list[dict[str, Any]],
+               today: list[Any]) -> dict[str, int]:
+    """How many calls more than the run today's code made, by pass.
+
+    Counted off the transport rather than read off the Conversion's
+    Failures, because a pass that swallows its own error — the inline runs,
+    spec 0014's re-read of an unclaimed line — leaves no Failure when its
+    queue runs dry, and the document would come back looking like one that
+    asked nothing new."""
+    then: dict[str, int] = {}
+    for call in recorded_calls:
+        then[call["pass_name"]] = then.get(call["pass_name"], 0) + 1
+    now: dict[str, int] = {}
+    for call in today:
+        now[call.pass_name] = now.get(call.pass_name, 0) + 1
+    return {name: count - then.get(name, 0) for name, count in now.items()
+            if count > then.get(name, 0)}
 
 
 def exported(root: Path) -> dict[str, str]:
@@ -275,6 +295,7 @@ def main() -> int:
                 and before.read_text(encoding="utf-8") == attempt.html)
         identical += same
         unanswered = [f for f in attempt.failures if "were recorded" in f]
+        more = asked_more(source.calls(name), transports[name].calls)
         moved, blind = asked_differently(
             source.calls(name),
             attempt.trace.calls if attempt.trace is not None else [])
@@ -283,14 +304,17 @@ def main() -> int:
         # A call asked differently was served the answer to another
         # question, so nothing after it is a measurement — however the page
         # came out, byte-identical included.
-        outcome = ("ASKED MORE THAN THE RUN — not a measurement" if unanswered
-                   else "ASKED DIFFERENTLY — not a measurement" if moved
+        outcome = ("ASKED MORE THAN THE RUN — not a measurement"
+                   if unanswered or more else "ASKED DIFFERENTLY — not a measurement" if moved
                    else "byte-identical" if same
                    else attempt.error or "differs from the run")
         print(f"{name:<22} {len(transports[name].calls):>3} calls  {outcome}"
               + (f"  unserved: {left}" if left else ""))
         for failure in unanswered:
             print(f"{'':<28}{failure}")
+        if more:
+            print(f"{'':<28}asked more: "
+                  + ", ".join(f"{count} {pass_name}" for pass_name, count in more.items()))
         if moved:
             print(f"{'':<28}asked differently: {', '.join(moved)}")
     print(f"\n{identical} of {len(attempts)} byte-identical to "

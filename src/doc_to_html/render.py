@@ -1646,18 +1646,36 @@ def _extra(zone: Zone, document: Document) -> tuple[str, str]:
     first placed Cell — its middle over that Cell's top — and after it
     otherwise, which is also where a Block nothing placed goes:
     `form_0007`'s note under its tick boxes, `timetable_0019`'s legend
-    under its grid."""
+    under its grid. Consecutive items go together, as `_prose` gathers
+    them (`_items`)."""
     extra = {id(cell) for block in zone.extra for cell in block.lines}
     first = next((cell.bbox for cell, _ in cells_of(zone)
                   if cell.bbox is not None and id(cell) not in extra), None)
     before: list[str] = []
     after: list[str] = []
-    for block in zone.extra:
-        line = next((cell.bbox for cell in block.lines if cell.bbox is not None), None)
+    for is_item, run in groupby(zone.extra, key=lambda b: b.kind == "item"):
+        blocks = list(run)
+        line = next((cell.bbox for block in blocks for cell in block.lines
+                     if cell.bbox is not None), None)
         above = (line is not None and first is not None
                  and (line.top + line.bottom) / 2 < first.top)
-        (before if above else after).append(_block(block, document))
+        (before if above else after).append(
+            _items(blocks, zone, document) if is_item
+            else "".join(_block(block, document) for block in blocks))
     return "".join(before), "".join(after)
+
+
+def _items(listed: list[Block], zone: Zone, document: Document) -> str:
+    """Items in a list — on one line, with the page's gap, where the page
+    prints them side by side (`_side_by_side`): `timetable_0019`'s legend
+    under its grid. Spec 0014, step 2."""
+    across = _side_by_side(listed, zone, document)
+    items = "".join(f"<li{_li_style(b, document)}>{_lines(b, document)}</li>"
+                    for b in listed)
+    if across is None:
+        return f"<ul>{items}</ul>"
+    return (f'<ul style="display:flex;flex-wrap:wrap;gap:{_px(across)};'
+            f'list-style:none;padding:0">{items}</ul>')
 
 
 def _unit(unit: list[Zone], document: Document, page: _Page, *,

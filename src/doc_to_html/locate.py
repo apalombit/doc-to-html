@@ -246,6 +246,22 @@ def cells_of(zone: Zone) -> list[tuple[Cell, int | None]]:
                              for cell in block.lines]
 
 
+def holds(zone: Zone, text: str) -> bool:
+    """Whether the Zone already prints `text`, folded — spec 0014, step 2:
+    inside its Title, inside any one of its Cells, or inside one Block, row
+    or pair read together. The guard that keeps a line read again from
+    printing a word twice. An empty text is held."""
+    wanted = fold(text)
+    if not wanted:
+        return True
+    entries = [zone.title or ""] + [cell.text for cell, _ in cells_of(zone)]
+    entries += [" ".join(cell.text for cell in block.lines)
+                for block in zone.blocks + zone.extra]
+    entries += [" ".join(cell.text for cell in row.cells) for row in zone.rows]
+    entries += [f"{pair.label.text} {pair.value.text}" for pair in zone.pairs]
+    return any(wanted in fold(entry) for entry in entries)
+
+
 def _body_of(zone: Zone) -> list[tuple[Cell, int | None]]:
     if zone.kind is Kind.TABLE:
         return [(cell, index) for index, row in enumerate(zone.rows)

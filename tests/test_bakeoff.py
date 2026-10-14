@@ -402,6 +402,16 @@ class TestTheReplaySaysWhenACallWasAskedDifferently:
                       asked={"prompt": "a", "picture": "b", "schema": "c"})]
         assert self.replay_tool().asked_differently(run, today) == ([], 1)  # type: ignore[attr-defined]
 
+    def test_a_call_more_than_the_run_is_counted_by_its_pass(self) -> None:
+        """Spec 0014, step 2: a pass that swallows its own error leaves no
+        Failure when its queue runs dry, so the calls are counted."""
+        run = [{"pass_name": "prose"}, {"pass_name": "table"}]
+        today = [Call(pass_name="prose", model="m", prompt=""),
+                 Call(pass_name="table", model="m", prompt=""),
+                 Call(pass_name="prose", model="m", prompt="")]
+        assert self.replay_tool().asked_more(run, today) == {"prose": 1}  # type: ignore[attr-defined]
+        assert self.replay_tool().asked_more(run, today[:2]) == {}  # type: ignore[attr-defined]
+
 
 class TestTheReportIsSomethingToActOn:
     def attempts(self) -> list[Attempt]:

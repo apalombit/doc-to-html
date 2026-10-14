@@ -50,6 +50,11 @@ and can be recomputed from it, in the order a Conversion runs them:
        and a line placed on another Zone's line whose text it starts
        dropped, a cut-off copy — spec 0013, step 3d
                                     locate.without_cut_copies  (_locate)
+       The unclaimed lines the model read again, each Zone's `extra` —
+       spec 0014, step 2 — are a model's answers, so they are carried as
+       the IR holds them and never asked again; `cells_of` yields them,
+       so this step places them, as the Conversion's second `_locate` does
+                                    orchestrator._read_unclaimed (after _locate)
     9. The marks the page draws for its entries, attached to their pairs —
        spec 0011, step 3; step 6's gaps are taken after it, since it can
        widen a Zone's box to its marks

@@ -659,7 +659,11 @@ class Shortfall:
 class Unclaimed:
     """A printed line inside a Zone that no Cell claims — spec 0012, G9.
 
-    **Reported, never inserted.** The witness the Shortfall lacks:
+    **Its words are never inserted; since spec 0014 the line is read
+    again.** `Conversion._read_unclaimed` hands each one to the model on its
+    own crop and keeps what the Zone does not print in `Zone.extra`, which
+    then claims the line; one still listed after it is a line that reading
+    added nothing to. The witness the Shortfall lacks:
     `preprocess.printed_lines` is the same projection as the grid count, so
     when decoration makes both count `timetable_0019`'s eight-row table as
     four, the model is asked for four rows, returns four, and the shortfall
