@@ -1,0 +1,246 @@
+{
+ "calls": [
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "947d5d9ad338",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"CERTIFICATE OF COMPLETION\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "6d310b039d2b",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "6d310b039d2b",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"figure\",\n  \"graphic\": \"logo\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "61151003741d",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "34a8129af1b9",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Eleanor Ashworth-Reyes\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "2f620946b278",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "5fcadede015d",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "34f1dac15146",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Dr Samuel Okonkwo\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "6edd92959009",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"figure\",\n  \"graphic\": \"logo\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "6edd92959009",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"GUILD OF TIMBER ENGINEERS\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "947d5d9ad338",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "947d5d9ad338",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"CERTIFICATE OF COMPLETION\"\n      ]\n    },\n    {\n      \"kind\": \"mark\",\n      \"lines\": [\n        \"★\",\n        \"★\",\n        \"★\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "6d310b039d2b",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "6d310b039d2b",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "figure",
+   "answer": "{\n  \"graphic\": \"logo\",\n  \"text\": []\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "2bd08d0c016f",
+    "picture": "61151003741d",
+    "schema": "076cd0b9aaab"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"This is to certify that\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "34a8129af1b9",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "34a8129af1b9",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Eleanor Ashworth-Reyes\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"has successfully completed the forty-hour course Design of Timber Footbridges to\",\n        \"Eurocode 5, including the assessed design project, and is awarded six continuing professional\",\n        \"development credits.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "2f620946b278",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"Design of Timber Footbridges to\",\n      \"kind\": \"em\"\n    },\n    {\n      \"text\": \"Eurocode 5\",\n      \"kind\": \"em\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "2f620946b278",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Awarded on the ninth of October, 2026\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "34f1dac15146",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "34f1dac15146",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "figure",
+   "answer": "{\n  \"graphic\": \"badge\",\n  \"text\": [\n    \"S. Okonkwo\",\n    \"Dr Samuel Okonkwo\",\n    \"DIRECTOR OF STUDIES\",\n    \"GUILD\",\n    \"GTE\",\n    \"2026\",\n    \"H. Brandt\",\n    \"Helena Brandt\",\n    \"COURSE LEADER\",\n    \"Certificate No. GTE-CPD-2026-0381\"\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "2bd08d0c016f",
+    "picture": "6edd92959009",
+    "schema": "076cd0b9aaab"
+   }
+  }
+ ]
+}

@@ -1,16 +1,18 @@
 # Draw what the page draws — its marks, lanes, width and type
 
-**Status: implemented 2026-10-14 — G1–G9 and step U, then `S8-sweep`
-over all twenty-one, §6's prediction held. Eighteen pages better, three
-worse (receipt, statement, certificate), each traced in "Outcome — the
-sweep". Whether `S8-sweep` becomes the baseline is Alessandro's decision,
-open. Issue #35.** This is the report
+**Status: done and decided 2026-10-14. Issue #35, closed.** G1–G9 and
+step U were implemented, then `S8-sweep` ran over all twenty-one: §6's
+prediction held, eighteen pages better, three worse (receipt, statement,
+certificate), each traced in "Outcome — the sweep". **Alessandro took
+`S8-sweep` as the baseline, frozen as `tests/frozen/s8-result/`.**
+Directions 1–5 of that outcome are spec 0013; everything else in this spec
+not done was cleared the same day. This is the report
 notebook Alessandro asked for after the sweep over the widened corpus: every
 fault found, traced to its cause, grouped into what should be solved
 together, and the pipeline and workflow changes the run argues for. It is
 the handover material for implementing it from a cleared chat: §5 is the
-plan, group by group, and the handover prompt marked *current*, near the
-end, is the one to start with.
+plan, group by group. Its handover prompts are record; spec 0013's is
+current.
 
 **Reading order for the implementing session:** decisions and "How to work"
 below → §1 (what each page shows, and why) → §3 (the groups) → §4 (the
@@ -1147,7 +1149,9 @@ The fifteen:
 | 4 | Layout | keep the certificate's signature row as three Zones and the name as its own Zone on the unwarped page | the certificate's three worst faults | the layout front measures the Zones offline; the answers cost a sweep |
 | 5 | Style (looks) | pricing's Business price size; card parts drawn as one card | pricing's two remaining faults | offline |
 
-**Open decisions, Alessandro's.**
+**Decided 2026-10-14 (Alessandro): `S8-sweep` is the baseline**, frozen
+as `tests/frozen/s8-result/`. Directions 1–5 are spec 0013, then one sweep.
+The open decisions as they stood:
 
 - **Is `S8-sweep` the baseline?** Three pages are worse than the baseline,
   and each worse page is named above with its cause. If direction 1 is
@@ -1166,7 +1170,10 @@ and 3 in the same block, offline.
 
 ---
 
-## 7. Not in this spec — later, and Alessandro's call
+## 7. Not in this spec — cleared 2026-10-14
+
+**Cleared by Alessandro on 2026-10-14**, with every other item not in spec
+0013. The list stays as record of what was seen; none of it is queued.
 
 | fault | why not now |
 |---|---|
@@ -1221,7 +1228,7 @@ Zone's index, kind, band and column, box, Title and contents. Every trace in
 
 ---
 
-## Handover prompt — after `S8-sweep`: the decision, then the column count (current)
+## Handover prompt — after `S8-sweep`: the decision, then the column count (record, superseded 2026-10-14 by spec 0013's)
 
 ```
 Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then

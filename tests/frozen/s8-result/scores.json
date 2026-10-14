@@ -1,0 +1,3210 @@
+{
+  "label": "S8-sweep",
+  "model": "qwen3-vl:4b",
+  "taken": "2026-10-14 01:03 UTC",
+  "documents": [
+    {
+      "name": "invoice_0001",
+      "split": "iterate",
+      "width": 862,
+      "source_height": 563,
+      "output_height": 584,
+      "completeness": {
+        "recall": 1.0,
+        "precision": 1.0,
+        "join_recall": 0.8571428571428571,
+        "vocabulary_recall": 1.0,
+        "vanished": [],
+        "source_tokens": 50,
+        "output_tokens": 50,
+        "lost": [],
+        "duplicated": [],
+        "invented": [],
+        "broken_joins": [
+          [
+            "invoice",
+            "123"
+          ],
+          [
+            "created",
+            "january"
+          ],
+          [
+            "due",
+            "february"
+          ],
+          [
+            "12345",
+            "sunny"
+          ]
+        ],
+        "figures_lost": 0,
+        "hard_breaks": 4,
+        "source_hard_breaks": 6,
+        "short_lines": 4,
+        "source_short_lines": 6
+      },
+      "order": {
+        "tau": 1.0,
+        "matched": 16,
+        "of": 16
+      },
+      "layout": {
+        "beside_agreement": 1.0,
+        "beside_pairs": 7,
+        "column_error": 0.02178545802002323,
+        "columns_within_tolerance": 1.0,
+        "height_ratio": 1.0373001776198933,
+        "matched_blocks": 16,
+        "of_blocks": 16,
+        "split_regions": 0,
+        "merged_regions": 0,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 1.0,
+        "output_scale": 1.0,
+        "scale_error": 0.0,
+        "heading_levels_source": 0,
+        "heading_levels_output": 0,
+        "alignment_agreement": 0.875,
+        "aligned_blocks": 16
+      },
+      "palette": {
+        "source_background": [
+          248,
+          248,
+          248
+        ],
+        "output_background": [
+          248,
+          248,
+          248
+        ],
+        "source_ink": [
+          112,
+          112,
+          112
+        ],
+        "output_ink": [
+          104,
+          104,
+          104
+        ],
+        "source_accent": null,
+        "output_accent": null,
+        "background_delta": 0.0,
+        "ink_delta": 0.03137254901960784,
+        "accent_delta": 0.0,
+        "source_texture": 0.02048044217687075,
+        "output_texture": 0.021223316912972086
+      },
+      "inline": {
+        "found": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "of": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "missing": []
+      },
+      "notes": [],
+      "error": null
+    },
+    {
+      "name": "invoice_0002",
+      "split": "iterate",
+      "width": 1164,
+      "source_height": 718,
+      "output_height": 735,
+      "completeness": {
+        "recall": 0.9662162162162162,
+        "precision": 0.9662162162162162,
+        "join_recall": 0.9292929292929293,
+        "vocabulary_recall": 0.970873786407767,
+        "vanished": [
+          "adipisicing",
+          "blanditiis",
+          "mo123456789456123"
+        ],
+        "source_tokens": 148,
+        "output_tokens": 148,
+        "lost": [
+          [
+            "mo123456789456123",
+            3
+          ],
+          [
+            "adipisicing",
+            1
+          ],
+          [
+            "blanditiis",
+            1
+          ]
+        ],
+        "duplicated": [],
+        "invented": [
+          [
+            "m0123456789456123",
+            3
+          ],
+          [
+            "adipiscing",
+            1
+          ],
+          [
+            "blanditiiis",
+            1
+          ]
+        ],
+        "broken_joins": [
+          [
+            "no",
+            "554775"
+          ],
+          [
+            "r1",
+            "date"
+          ],
+          [
+            "date",
+            "01"
+          ],
+          [
+            "consectetur",
+            "adipisicing"
+          ],
+          [
+            "adipisicing",
+            "elit"
+          ],
+          [
+            "facere",
+            "blanditiis"
+          ],
+          [
+            "blanditiis",
+            "quasi"
+          ]
+        ],
+        "figures_lost": 0,
+        "hard_breaks": 0,
+        "source_hard_breaks": 3,
+        "short_lines": 0,
+        "source_short_lines": 3
+      },
+      "order": {
+        "tau": 1.0,
+        "matched": 41,
+        "of": 42
+      },
+      "layout": {
+        "beside_agreement": 0.5087719298245614,
+        "beside_pairs": 57,
+        "column_error": 0.04150080819266498,
+        "columns_within_tolerance": 0.9411764705882353,
+        "height_ratio": 1.0236768802228413,
+        "matched_blocks": 41,
+        "of_blocks": 42,
+        "split_regions": 0,
+        "merged_regions": 0,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 1.1428571428571428,
+        "output_scale": 1.2,
+        "scale_error": 0.05000000000000002,
+        "heading_levels_source": 3,
+        "heading_levels_output": 6,
+        "alignment_agreement": 0.8780487804878049,
+        "aligned_blocks": 41
+      },
+      "palette": {
+        "source_background": [
+          248,
+          248,
+          248
+        ],
+        "output_background": [
+          248,
+          248,
+          248
+        ],
+        "source_ink": [
+          128,
+          128,
+          128
+        ],
+        "output_ink": [
+          136,
+          136,
+          136
+        ],
+        "source_accent": null,
+        "output_accent": null,
+        "background_delta": 0.0,
+        "ink_delta": 0.03137254901960784,
+        "accent_delta": 0.0,
+        "source_texture": 0.04236036036036036,
+        "output_texture": 0.03743183817062445
+      },
+      "inline": {
+        "found": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "of": {
+          "link": 0,
+          "code": 3,
+          "mark": 0,
+          "strong": 3,
+          "em": 1
+        },
+        "missing": [
+          "strong: Acme Corporation",
+          "strong: Acme Corporation",
+          "em: Comments / Notes",
+          "code: MO123456789456123",
+          "code: MO123456789456123",
+          "code: MO123456789456123",
+          "strong: ~ACME~"
+        ]
+      },
+      "notes": [],
+      "error": null
+    },
+    {
+      "name": "sample_table_0003",
+      "split": "iterate",
+      "width": 960,
+      "source_height": 690,
+      "output_height": 705,
+      "completeness": {
+        "recall": 1.0,
+        "precision": 1.0,
+        "join_recall": 1.0,
+        "vocabulary_recall": 1.0,
+        "vanished": [],
+        "source_tokens": 155,
+        "output_tokens": 155,
+        "lost": [],
+        "duplicated": [],
+        "invented": [],
+        "broken_joins": [],
+        "figures_lost": 0,
+        "hard_breaks": 0,
+        "source_hard_breaks": 0,
+        "short_lines": 0,
+        "source_short_lines": 0
+      },
+      "order": {
+        "tau": 1.0,
+        "matched": 82,
+        "of": 82
+      },
+      "layout": {
+        "beside_agreement": 1.0,
+        "beside_pairs": 160,
+        "column_error": 0.00027961341810418106,
+        "columns_within_tolerance": 1.0,
+        "height_ratio": 1.0217391304347827,
+        "matched_blocks": 82,
+        "of_blocks": 82,
+        "split_regions": 0,
+        "merged_regions": 0,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 2.0,
+        "output_scale": 1.869,
+        "scale_error": 0.0655,
+        "heading_levels_source": 1,
+        "heading_levels_output": 2,
+        "alignment_agreement": 0.975609756097561,
+        "aligned_blocks": 82
+      },
+      "palette": {
+        "source_background": [
+          248,
+          248,
+          248
+        ],
+        "output_background": [
+          248,
+          248,
+          248
+        ],
+        "source_ink": [
+          0,
+          0,
+          0
+        ],
+        "output_ink": [
+          56,
+          56,
+          56
+        ],
+        "source_accent": null,
+        "output_accent": null,
+        "background_delta": 0.0,
+        "ink_delta": 0.2196078431372549,
+        "accent_delta": 0.0,
+        "source_texture": 0.06021268368136118,
+        "output_texture": 0.04142101284958428
+      },
+      "inline": {
+        "found": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "of": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "missing": []
+      },
+      "notes": [],
+      "error": null
+    },
+    {
+      "name": "sample_css_0004",
+      "split": "iterate",
+      "width": 789,
+      "source_height": 534,
+      "output_height": 507,
+      "completeness": {
+        "recall": 1.0,
+        "precision": 1.0,
+        "join_recall": 1.0,
+        "vocabulary_recall": 1.0,
+        "vanished": [],
+        "source_tokens": 44,
+        "output_tokens": 44,
+        "lost": [],
+        "duplicated": [],
+        "invented": [],
+        "broken_joins": [],
+        "figures_lost": 0,
+        "hard_breaks": 0,
+        "source_hard_breaks": 0,
+        "short_lines": 0,
+        "source_short_lines": 0
+      },
+      "order": {
+        "tau": 1.0,
+        "matched": 6,
+        "of": 6
+      },
+      "layout": {
+        "beside_agreement": 1.0,
+        "beside_pairs": 0,
+        "column_error": 0.0,
+        "columns_within_tolerance": 1.0,
+        "height_ratio": 0.949438202247191,
+        "matched_blocks": 6,
+        "of_blocks": 6,
+        "split_regions": 0,
+        "merged_regions": 0,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 1.5,
+        "output_scale": 1.5,
+        "scale_error": 0.0,
+        "heading_levels_source": 2,
+        "heading_levels_output": 2,
+        "alignment_agreement": 1.0,
+        "aligned_blocks": 6
+      },
+      "palette": {
+        "source_background": [
+          240,
+          248,
+          248
+        ],
+        "output_background": [
+          248,
+          248,
+          248
+        ],
+        "source_ink": [
+          56,
+          128,
+          200
+        ],
+        "output_ink": [
+          56,
+          128,
+          200
+        ],
+        "source_accent": [
+          56,
+          128,
+          200
+        ],
+        "output_accent": [
+          56,
+          128,
+          200
+        ],
+        "background_delta": 0.01811294962163532,
+        "ink_delta": 0.0,
+        "accent_delta": 0.0,
+        "source_texture": 0.043534482758620686,
+        "output_texture": 0.043117443868739204
+      },
+      "inline": {
+        "found": {
+          "link": 1,
+          "code": 2,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "of": {
+          "link": 1,
+          "code": 2,
+          "mark": 1,
+          "strong": 0,
+          "em": 0
+        },
+        "missing": [
+          "mark: CSS"
+        ]
+      },
+      "notes": [],
+      "error": null
+    },
+    {
+      "name": "sample_semantic_0005",
+      "split": "iterate",
+      "width": 915,
+      "source_height": 1122,
+      "output_height": 1152,
+      "completeness": {
+        "recall": 0.9902912621359223,
+        "precision": 1.0,
+        "join_recall": 1.0,
+        "vocabulary_recall": 1.0,
+        "vanished": [],
+        "source_tokens": 103,
+        "output_tokens": 102,
+        "lost": [
+          [
+            "tags",
+            1
+          ]
+        ],
+        "duplicated": [],
+        "invented": [],
+        "broken_joins": [],
+        "figures_lost": 0,
+        "hard_breaks": 0,
+        "source_hard_breaks": 0,
+        "short_lines": 0,
+        "source_short_lines": 2
+      },
+      "order": {
+        "tau": 0.9532163742690059,
+        "matched": 19,
+        "of": 20
+      },
+      "layout": {
+        "beside_agreement": 1.0,
+        "beside_pairs": 7,
+        "column_error": 0.07671025549581856,
+        "columns_within_tolerance": 0.6666666666666666,
+        "height_ratio": 1.0267379679144386,
+        "matched_blocks": 19,
+        "of_blocks": 20,
+        "split_regions": 0,
+        "merged_regions": 0,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 1.17,
+        "output_scale": 1.12,
+        "scale_error": 0.04273504273504258,
+        "heading_levels_source": 3,
+        "heading_levels_output": 4,
+        "alignment_agreement": 0.9473684210526315,
+        "aligned_blocks": 19
+      },
+      "palette": {
+        "source_background": [
+          248,
+          248,
+          248
+        ],
+        "output_background": [
+          248,
+          248,
+          248
+        ],
+        "source_ink": [
+          200,
+          200,
+          200
+        ],
+        "output_ink": [
+          200,
+          200,
+          200
+        ],
+        "source_accent": [
+          56,
+          128,
+          200
+        ],
+        "output_accent": [
+          72,
+          136,
+          208
+        ],
+        "background_delta": 0.0,
+        "ink_delta": 0.0,
+        "accent_delta": 0.04436748430974415,
+        "source_texture": 0.024789402173913042,
+        "output_texture": 0.02386092715231788
+      },
+      "inline": {
+        "found": {
+          "link": 2,
+          "code": 3,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "of": {
+          "link": 9,
+          "code": 3,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "missing": [
+          "link: Home",
+          "link: Archive",
+          "link: About",
+          "link: Contact",
+          "link: html",
+          "link: web",
+          "link: standards"
+        ]
+      },
+      "notes": [],
+      "error": null
+    },
+    {
+      "name": "statement_0006",
+      "split": "sweep",
+      "width": 900,
+      "source_height": 1401,
+      "output_height": 1342,
+      "completeness": {
+        "recall": 0.9883495145631068,
+        "precision": 0.9845261121856866,
+        "join_recall": 0.9688581314878892,
+        "vocabulary_recall": 0.9787234042553191,
+        "vanished": [
+          "144",
+          "216",
+          "castleton",
+          "lindow",
+          "quillon"
+        ],
+        "source_tokens": 515,
+        "output_tokens": 517,
+        "lost": [
+          [
+            "quillon",
+            2
+          ],
+          [
+            "144",
+            1
+          ],
+          [
+            "216",
+            1
+          ],
+          [
+            "castleton",
+            1
+          ],
+          [
+            "lindow",
+            1
+          ]
+        ],
+        "duplicated": [
+          [
+            "9.20",
+            1,
+            2
+          ]
+        ],
+        "invented": [
+          [
+            "quillton",
+            2
+          ],
+          [
+            "141",
+            1
+          ],
+          [
+            "20",
+            1
+          ],
+          [
+            "210",
+            1
+          ],
+          [
+            "9",
+            1
+          ],
+          [
+            "castletown",
+            1
+          ],
+          [
+            "lindwood",
+            1
+          ]
+        ],
+        "broken_joins": [
+          [
+            "no",
+            "142"
+          ],
+          [
+            "1",
+            "144"
+          ],
+          [
+            "144",
+            "30"
+          ],
+          [
+            "quillon",
+            "books"
+          ],
+          [
+            "216",
+            "08"
+          ],
+          [
+            "refund",
+            "quillon"
+          ],
+          [
+            "lindow",
+            "pharmacy"
+          ],
+          [
+            "castleton",
+            "council"
+          ]
+        ],
+        "figures_lost": 0,
+        "hard_breaks": 0,
+        "source_hard_breaks": 2,
+        "short_lines": 0,
+        "source_short_lines": 0
+      },
+      "order": {
+        "tau": 0.9990612732548216,
+        "matched": 217,
+        "of": 221
+      },
+      "layout": {
+        "beside_agreement": 0.9647058823529412,
+        "beside_pairs": 425,
+        "column_error": 0.039660441291523546,
+        "columns_within_tolerance": 1.0,
+        "height_ratio": 0.9578872234118487,
+        "matched_blocks": 217,
+        "of_blocks": 221,
+        "split_regions": 0,
+        "merged_regions": 0,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 1.6666666666666667,
+        "output_scale": 1.638,
+        "scale_error": 0.017200000000000104,
+        "heading_levels_source": 1,
+        "heading_levels_output": 2,
+        "alignment_agreement": 0.9769585253456221,
+        "aligned_blocks": 217
+      },
+      "palette": {
+        "source_background": [
+          248,
+          248,
+          248
+        ],
+        "output_background": [
+          248,
+          248,
+          248
+        ],
+        "source_ink": [
+          16,
+          32,
+          40
+        ],
+        "output_ink": [
+          16,
+          32,
+          40
+        ],
+        "source_accent": [
+          192,
+          120,
+          120
+        ],
+        "output_accent": [
+          184,
+          96,
+          96
+        ],
+        "background_delta": 0.0,
+        "ink_delta": 0.0,
+        "accent_delta": 0.07895251697015164,
+        "source_texture": 0.06857244825124911,
+        "output_texture": 0.07142085661080075
+      },
+      "inline": {
+        "found": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 2,
+          "em": 0
+        },
+        "of": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 7,
+          "em": 0
+        },
+        "missing": [
+          "strong: No. 142",
+          "strong: 2,418.50",
+          "strong: 6,940.00",
+          "strong: 5,772.36",
+          "strong: 3,586.14"
+        ]
+      },
+      "notes": [],
+      "error": null
+    },
+    {
+      "name": "form_0007",
+      "split": "sweep",
+      "width": 820,
+      "source_height": 1085,
+      "output_height": 1034,
+      "completeness": {
+        "recall": 0.9294117647058824,
+        "precision": 0.9693251533742331,
+        "join_recall": 0.875,
+        "vocabulary_recall": 0.9461538461538461,
+        "vanished": [
+          "allocation",
+          "availability",
+          "fernpost",
+          "is",
+          "one",
+          "subject",
+          "tick"
+        ],
+        "source_tokens": 170,
+        "output_tokens": 163,
+        "lost": [
+          [
+            "castleton",
+            2
+          ],
+          [
+            "allocation",
+            1
+          ],
+          [
+            "availability",
+            1
+          ],
+          [
+            "category",
+            1
+          ],
+          [
+            "fernpost",
+            1
+          ],
+          [
+            "is",
+            1
+          ],
+          [
+            "locker",
+            1
+          ],
+          [
+            "one",
+            1
+          ],
+          [
+            "subject",
+            1
+          ],
+          [
+            "tick",
+            1
+          ],
+          [
+            "to",
+            1
+          ]
+        ],
+        "duplicated": [],
+        "invented": [
+          [
+            "castletown",
+            2
+          ],
+          [
+            "x",
+            2
+          ],
+          [
+            "fempost",
+            1
+          ]
+        ],
+        "broken_joins": [
+          [
+            "castleton",
+            "rowing"
+          ],
+          [
+            "whitlock",
+            "fernpost"
+          ],
+          [
+            "fernpost",
+            "example"
+          ],
+          [
+            "tick",
+            "one"
+          ],
+          [
+            "one",
+            "category"
+          ],
+          [
+            "category",
+            "locker"
+          ],
+          [
+            "locker",
+            "allocation"
+          ],
+          [
+            "allocation",
+            "is"
+          ],
+          [
+            "is",
+            "subject"
+          ],
+          [
+            "subject",
+            "to"
+          ],
+          [
+            "to",
+            "availability"
+          ],
+          [
+            "secretary",
+            "castleton"
+          ],
+          [
+            "reach",
+            "castleton"
+          ],
+          [
+            "castleton",
+            "ct9"
+          ]
+        ],
+        "figures_lost": 0,
+        "hard_breaks": 0,
+        "source_hard_breaks": 2,
+        "short_lines": 0,
+        "source_short_lines": 1
+      },
+      "order": {
+        "tau": 0.9948051948051948,
+        "matched": 56,
+        "of": 57
+      },
+      "layout": {
+        "beside_agreement": 0.9818181818181818,
+        "beside_pairs": 55,
+        "column_error": 0.05040438674442555,
+        "columns_within_tolerance": 0.9024390243902439,
+        "height_ratio": 0.9529953917050691,
+        "matched_blocks": 56,
+        "of_blocks": 57,
+        "split_regions": 0,
+        "merged_regions": 0,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 1.0,
+        "output_scale": 0.9,
+        "scale_error": 0.09999999999999998,
+        "heading_levels_source": 2,
+        "heading_levels_output": 2,
+        "alignment_agreement": 0.8214285714285714,
+        "aligned_blocks": 56
+      },
+      "palette": {
+        "source_background": [
+          248,
+          248,
+          248
+        ],
+        "output_background": [
+          248,
+          248,
+          248
+        ],
+        "source_ink": [
+          152,
+          152,
+          152
+        ],
+        "output_ink": [
+          152,
+          152,
+          152
+        ],
+        "source_accent": null,
+        "output_accent": null,
+        "background_delta": 0.0,
+        "ink_delta": 0.0,
+        "accent_delta": 0.0,
+        "source_texture": 0.031087321578505456,
+        "output_texture": 0.043194627917217086
+      },
+      "inline": {
+        "found": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "of": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "missing": []
+      },
+      "notes": [],
+      "error": null
+    },
+    {
+      "name": "newsletter_0008",
+      "split": "sweep",
+      "width": 960,
+      "source_height": 665,
+      "output_height": 733,
+      "completeness": {
+        "recall": 0.9973958333333334,
+        "precision": 0.9973958333333334,
+        "join_recall": 0.9917127071823204,
+        "vocabulary_recall": 0.9957805907172996,
+        "vanished": [
+          "councillor"
+        ],
+        "source_tokens": 384,
+        "output_tokens": 384,
+        "lost": [
+          [
+            "councillor",
+            1
+          ]
+        ],
+        "duplicated": [],
+        "invented": [
+          [
+            "councilor",
+            1
+          ]
+        ],
+        "broken_joins": [
+          [
+            "street",
+            "and"
+          ],
+          [
+            "000",
+            "councillor"
+          ],
+          [
+            "councillor",
+            "ruth"
+          ]
+        ],
+        "figures_lost": 0,
+        "hard_breaks": 0,
+        "source_hard_breaks": 0,
+        "short_lines": 0,
+        "source_short_lines": 0
+      },
+      "order": {
+        "tau": 1.0,
+        "matched": 22,
+        "of": 22
+      },
+      "layout": {
+        "beside_agreement": 0.8,
+        "beside_pairs": 20,
+        "column_error": 0.04084487850866583,
+        "columns_within_tolerance": 0.9411764705882353,
+        "height_ratio": 1.1022556390977443,
+        "matched_blocks": 22,
+        "of_blocks": 22,
+        "split_regions": 0,
+        "merged_regions": 0,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 2.6,
+        "output_scale": 0.7799999999999999,
+        "scale_error": 0.7000000000000001,
+        "heading_levels_source": 3,
+        "heading_levels_output": 7,
+        "alignment_agreement": 0.8181818181818182,
+        "aligned_blocks": 22
+      },
+      "palette": {
+        "source_background": [
+          248,
+          248,
+          240
+        ],
+        "output_background": [
+          248,
+          248,
+          240
+        ],
+        "source_ink": [
+          112,
+          112,
+          112
+        ],
+        "output_ink": [
+          176,
+          176,
+          176
+        ],
+        "source_accent": null,
+        "output_accent": null,
+        "background_delta": 0.0,
+        "ink_delta": 0.25098039215686274,
+        "accent_delta": 0.0,
+        "source_texture": 0.08436298076923077,
+        "output_texture": 0.07238719068413392
+      },
+      "inline": {
+        "found": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "of": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "missing": []
+      },
+      "notes": [],
+      "error": null
+    },
+    {
+      "name": "darkdeck_0009",
+      "split": "sweep",
+      "width": 1000,
+      "source_height": 949,
+      "output_height": 934,
+      "completeness": {
+        "recall": 1.0,
+        "precision": 1.0,
+        "join_recall": 0.9803921568627451,
+        "vocabulary_recall": 1.0,
+        "vanished": [],
+        "source_tokens": 269,
+        "output_tokens": 269,
+        "lost": [],
+        "duplicated": [
+          [
+            "p95",
+            1,
+            2
+          ]
+        ],
+        "invented": [],
+        "broken_joins": [
+          [
+            "in",
+            "the"
+          ],
+          [
+            "p95",
+            "latency"
+          ],
+          [
+            "184",
+            "ms"
+          ],
+          [
+            "31",
+            "ms"
+          ]
+        ],
+        "figures_lost": 0,
+        "hard_breaks": 1,
+        "source_hard_breaks": 0,
+        "short_lines": 0,
+        "source_short_lines": 0
+      },
+      "order": {
+        "tau": 0.9192307692307692,
+        "matched": 65,
+        "of": 65
+      },
+      "layout": {
+        "beside_agreement": 0.6379310344827587,
+        "beside_pairs": 116,
+        "column_error": 0.0692079826902605,
+        "columns_within_tolerance": 0.8545454545454545,
+        "height_ratio": 0.9841938883034773,
+        "matched_blocks": 65,
+        "of_blocks": 65,
+        "split_regions": 0,
+        "merged_regions": 0,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 1.8461538461538463,
+        "output_scale": 0.9450000000000001,
+        "scale_error": 0.488125,
+        "heading_levels_source": 4,
+        "heading_levels_output": 6,
+        "alignment_agreement": 0.8769230769230769,
+        "aligned_blocks": 65
+      },
+      "palette": {
+        "source_background": [
+          16,
+          16,
+          24
+        ],
+        "output_background": [
+          16,
+          16,
+          24
+        ],
+        "source_ink": [
+          64,
+          72,
+          80
+        ],
+        "output_ink": [
+          56,
+          64,
+          72
+        ],
+        "source_accent": [
+          64,
+          192,
+          136
+        ],
+        "output_accent": [
+          64,
+          184,
+          128
+        ],
+        "background_delta": 0.0,
+        "ink_delta": 0.03137254901960784,
+        "accent_delta": 0.025615579009497288,
+        "source_texture": 0.04176918570591681,
+        "output_texture": 0.04198809523809524
+      },
+      "inline": {
+        "found": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "of": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 6,
+          "em": 0
+        },
+        "missing": [
+          "strong: Healthy",
+          "strong: Healthy",
+          "strong: Healthy",
+          "strong: Healthy",
+          "strong: At risk",
+          "strong: Healthy"
+        ]
+      },
+      "notes": [],
+      "error": null
+    },
+    {
+      "name": "receipt_0010",
+      "split": "sweep",
+      "width": 500,
+      "source_height": 649,
+      "output_height": 664,
+      "completeness": {
+        "recall": 0.8349514563106796,
+        "precision": 0.9885057471264368,
+        "join_recall": 0.8333333333333334,
+        "vocabulary_recall": 0.9135802469135802,
+        "vanished": [
+          "30",
+          "40",
+          "5",
+          "50",
+          "75",
+          "80",
+          "a0000000031010"
+        ],
+        "source_tokens": 103,
+        "output_tokens": 87,
+        "lost": [
+          [
+            "0",
+            2
+          ],
+          [
+            "3",
+            2
+          ],
+          [
+            "40",
+            2
+          ],
+          [
+            "10",
+            1
+          ],
+          [
+            "2",
+            1
+          ],
+          [
+            "20",
+            1
+          ],
+          [
+            "30",
+            1
+          ],
+          [
+            "4",
+            1
+          ],
+          [
+            "5",
+            1
+          ],
+          [
+            "50",
+            1
+          ],
+          [
+            "6",
+            1
+          ],
+          [
+            "75",
+            1
+          ],
+          [
+            "80",
+            1
+          ],
+          [
+            "a0000000031010",
+            1
+          ]
+        ],
+        "duplicated": [],
+        "invented": [
+          [
+            "a000000031010",
+            1
+          ]
+        ],
+        "broken_joins": [
+          [
+            "3",
+            "40"
+          ],
+          [
+            "0",
+            "40"
+          ],
+          [
+            "6",
+            "20"
+          ],
+          [
+            "3",
+            "10"
+          ],
+          [
+            "0",
+            "30"
+          ],
+          [
+            "5",
+            "75"
+          ],
+          [
+            "4",
+            "50"
+          ],
+          [
+            "2",
+            "80"
+          ],
+          [
+            "aid",
+            "a0000000031010"
+          ]
+        ],
+        "figures_lost": 0,
+        "hard_breaks": 1,
+        "source_hard_breaks": 9,
+        "short_lines": 0,
+        "source_short_lines": 0
+      },
+      "order": {
+        "tau": 1.0,
+        "matched": 37,
+        "of": 46
+      },
+      "layout": {
+        "beside_agreement": 1.0,
+        "beside_pairs": 15,
+        "column_error": 0.009834211256672339,
+        "columns_within_tolerance": 1.0,
+        "height_ratio": 1.0231124807395995,
+        "matched_blocks": 37,
+        "of_blocks": 46,
+        "split_regions": 0,
+        "merged_regions": 0,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 1.3636363636363635,
+        "output_scale": 1.2915036045314108,
+        "scale_error": 0.05289735667696536,
+        "heading_levels_source": 1,
+        "heading_levels_output": 1,
+        "alignment_agreement": 0.7567567567567568,
+        "aligned_blocks": 37
+      },
+      "palette": {
+        "source_background": [
+          248,
+          248,
+          248
+        ],
+        "output_background": [
+          248,
+          248,
+          248
+        ],
+        "source_ink": [
+          200,
+          200,
+          192
+        ],
+        "output_ink": [
+          200,
+          200,
+          192
+        ],
+        "source_accent": null,
+        "output_accent": null,
+        "background_delta": 0.0,
+        "ink_delta": 0.0,
+        "accent_delta": 0.0,
+        "source_texture": 0.025029275808936827,
+        "output_texture": 0.029617469879518073
+      },
+      "inline": {
+        "found": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "of": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "missing": []
+      },
+      "notes": [],
+      "error": null
+    },
+    {
+      "name": "report_0011",
+      "split": "sweep",
+      "width": 820,
+      "source_height": 1195,
+      "output_height": 1172,
+      "completeness": {
+        "recall": 1.0,
+        "precision": 0.9663157894736842,
+        "join_recall": 1.0,
+        "vocabulary_recall": 1.0,
+        "vanished": [],
+        "source_tokens": 459,
+        "output_tokens": 475,
+        "lost": [],
+        "duplicated": [],
+        "invented": [
+          [
+            "1",
+            9
+          ],
+          [
+            "3",
+            3
+          ],
+          [
+            "2",
+            2
+          ],
+          [
+            "4",
+            2
+          ]
+        ],
+        "broken_joins": [],
+        "figures_lost": 0,
+        "hard_breaks": 0,
+        "source_hard_breaks": 0,
+        "short_lines": 0,
+        "source_short_lines": 0
+      },
+      "order": {
+        "tau": 1.0,
+        "matched": 44,
+        "of": 45
+      },
+      "layout": {
+        "beside_agreement": 1.0,
+        "beside_pairs": 30,
+        "column_error": 0.03368430429737498,
+        "columns_within_tolerance": 0.95,
+        "height_ratio": 0.9807531380753138,
+        "matched_blocks": 44,
+        "of_blocks": 45,
+        "split_regions": 0,
+        "merged_regions": 0,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 1.3043478260869565,
+        "output_scale": 1.0,
+        "scale_error": 0.23333333333333334,
+        "heading_levels_source": 4,
+        "heading_levels_output": 7,
+        "alignment_agreement": 1.0,
+        "aligned_blocks": 44
+      },
+      "palette": {
+        "source_background": [
+          248,
+          248,
+          248
+        ],
+        "output_background": [
+          248,
+          248,
+          248
+        ],
+        "source_ink": [
+          176,
+          176,
+          176
+        ],
+        "output_ink": [
+          200,
+          200,
+          200
+        ],
+        "source_accent": null,
+        "output_accent": null,
+        "background_delta": 0.0,
+        "ink_delta": 0.09411764705882353,
+        "accent_delta": 0.0,
+        "source_texture": 0.03999046529366895,
+        "output_texture": 0.048350815850815854
+      },
+      "inline": {
+        "found": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "of": {
+          "link": 3,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "missing": [
+          "link: 1",
+          "link: 2",
+          "link: 3"
+        ]
+      },
+      "notes": [],
+      "error": null
+    },
+    {
+      "name": "menu_0012",
+      "split": "sweep",
+      "width": 760,
+      "source_height": 539,
+      "output_height": 553,
+      "completeness": {
+        "recall": 0.9876543209876543,
+        "precision": 0.9876543209876543,
+        "join_recall": 0.9824561403508771,
+        "vocabulary_recall": 0.984375,
+        "vanished": [
+          "b\u00e9arnaise",
+          "chervil"
+        ],
+        "source_tokens": 162,
+        "output_tokens": 162,
+        "lost": [
+          [
+            "b\u00e9arnaise",
+            1
+          ],
+          [
+            "chervil",
+            1
+          ]
+        ],
+        "duplicated": [],
+        "invented": [
+          [
+            "bearnaise",
+            1
+          ],
+          [
+            "chorvil",
+            1
+          ]
+        ],
+        "broken_joins": [
+          [
+            "oil",
+            "chervil"
+          ],
+          [
+            "watercress",
+            "b\u00e9arnaise"
+          ]
+        ],
+        "figures_lost": 0,
+        "hard_breaks": 0,
+        "source_hard_breaks": 2,
+        "short_lines": 0,
+        "source_short_lines": 1
+      },
+      "order": {
+        "tau": 0.9939393939393939,
+        "matched": 45,
+        "of": 45
+      },
+      "layout": {
+        "beside_agreement": 1.0,
+        "beside_pairs": 45,
+        "column_error": 0.03920880457953035,
+        "columns_within_tolerance": 1.0,
+        "height_ratio": 1.025974025974026,
+        "matched_blocks": 45,
+        "of_blocks": 45,
+        "split_regions": 0,
+        "merged_regions": 0,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 1.1538461538461537,
+        "output_scale": 1.11,
+        "scale_error": 0.03799999999999983,
+        "heading_levels_source": 2,
+        "heading_levels_output": 2,
+        "alignment_agreement": 0.3111111111111111,
+        "aligned_blocks": 45
+      },
+      "palette": {
+        "source_background": [
+          248,
+          248,
+          240
+        ],
+        "output_background": [
+          248,
+          248,
+          240
+        ],
+        "source_ink": [
+          200,
+          192,
+          184
+        ],
+        "output_ink": [
+          200,
+          192,
+          184
+        ],
+        "source_accent": null,
+        "output_accent": null,
+        "background_delta": 0.0,
+        "ink_delta": 0.0,
+        "accent_delta": 0.0,
+        "source_texture": 0.01803599374021909,
+        "output_texture": 0.022166285278413425
+      },
+      "inline": {
+        "found": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "of": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "missing": []
+      },
+      "notes": [],
+      "error": null
+    },
+    {
+      "name": "cv_0013",
+      "split": "sweep",
+      "width": 900,
+      "source_height": 739,
+      "output_height": 865,
+      "completeness": {
+        "recall": 0.981042654028436,
+        "precision": 0.9951923076923077,
+        "join_recall": 0.98125,
+        "vocabulary_recall": 0.9741935483870968,
+        "vanished": [
+          "2022",
+          "fernpost",
+          "python",
+          "revit"
+        ],
+        "source_tokens": 211,
+        "output_tokens": 208,
+        "lost": [
+          [
+            "2022",
+            1
+          ],
+          [
+            "fernpost",
+            1
+          ],
+          [
+            "python",
+            1
+          ],
+          [
+            "revit",
+            1
+          ]
+        ],
+        "duplicated": [],
+        "invented": [
+          [
+            "fempost",
+            1
+          ]
+        ],
+        "broken_joins": [
+          [
+            "halloran",
+            "fernpost"
+          ],
+          [
+            "fernpost",
+            "example"
+          ],
+          [
+            "fatigue",
+            "life"
+          ]
+        ],
+        "figures_lost": 0,
+        "hard_breaks": 1,
+        "source_hard_breaks": 0,
+        "short_lines": 1,
+        "source_short_lines": 0
+      },
+      "order": {
+        "tau": 0.9873150105708245,
+        "matched": 44,
+        "of": 48
+      },
+      "layout": {
+        "beside_agreement": 0.30303030303030304,
+        "beside_pairs": 33,
+        "column_error": 0.07557931082249819,
+        "columns_within_tolerance": 0.8064516129032258,
+        "height_ratio": 1.1705006765899866,
+        "matched_blocks": 44,
+        "of_blocks": 48,
+        "split_regions": 0,
+        "merged_regions": 0,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 1.0,
+        "output_scale": 0.9450000000000001,
+        "scale_error": 0.05499999999999994,
+        "heading_levels_source": 4,
+        "heading_levels_output": 8,
+        "alignment_agreement": 0.8636363636363636,
+        "aligned_blocks": 44
+      },
+      "palette": {
+        "source_background": [
+          248,
+          248,
+          248
+        ],
+        "output_background": [
+          248,
+          248,
+          248
+        ],
+        "source_ink": [
+          32,
+          48,
+          56
+        ],
+        "output_ink": [
+          32,
+          48,
+          56
+        ],
+        "source_accent": [
+          112,
+          176,
+          232
+        ],
+        "output_accent": [
+          112,
+          176,
+          232
+        ],
+        "background_delta": 0.0,
+        "ink_delta": 0.0,
+        "accent_delta": 0.0,
+        "source_texture": 0.0887660581473969,
+        "output_texture": 0.07989601386481802
+      },
+      "inline": {
+        "found": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "of": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 2
+        },
+        "missing": [
+          "em: The Structural Engineer",
+          "em: Proceedings of the ICE"
+        ]
+      },
+      "notes": [],
+      "error": null
+    },
+    {
+      "name": "nonlatin_0014",
+      "split": "sweep",
+      "width": 940,
+      "source_height": 772,
+      "output_height": 813,
+      "completeness": {
+        "recall": 0.9651741293532339,
+        "precision": 0.9651741293532339,
+        "join_recall": 0.8832116788321168,
+        "vocabulary_recall": 0.9748427672955975,
+        "vanished": [
+          "aigaio",
+          "\u03ad\u03bb\u03b5\u03b3\u03c7\u03bf\u03c3",
+          "\u03b5\u03c0\u03ad\u03c7\u03b5\u03b9",
+          "\u03b5\u03c0\u03af\u03b2\u03bb\u03b5\u03c8\u03b7\u03c3"
+        ],
+        "source_tokens": 201,
+        "output_tokens": 201,
+        "lost": [
+          [
+            "aigaio",
+            1
+          ],
+          [
+            "\u03ad\u03bb\u03b5\u03b3\u03c7\u03bf\u03c3",
+            1
+          ],
+          [
+            "\u03b1\u03b9\u03b3\u03b1\u03af\u03bf",
+            1
+          ],
+          [
+            "\u03b5\u03c0\u03ad\u03c7\u03b5\u03b9",
+            1
+          ],
+          [
+            "\u03b5\u03c0\u03af\u03b2\u03bb\u03b5\u03c8\u03b7\u03c3",
+            1
+          ],
+          [
+            "\u03bc\u03b7\u03c7\u03b1\u03bd\u03b9\u03ba\u03ae",
+            1
+          ],
+          [
+            "\u03c4\u03b9\u03bc\u03bf\u03bb\u03cc\u03b3\u03b9\u03bf",
+            1
+          ]
+        ],
+        "duplicated": [],
+        "invented": [
+          [
+            "aigaiio",
+            1
+          ],
+          [
+            "\u03ad\u03bb\u03b5\u03c5\u03b8\u03bf\u03c3",
+            1
+          ],
+          [
+            "\u03b1\u03b3\u03b3\u03b5\u03bb\u03af\u03b4\u03b7\u03c3",
+            1
+          ],
+          [
+            "\u03b5\u03c0\u03b9\u03b2\u03bb\u03ad\u03c8\u03b5\u03b9\u03c3",
+            1
+          ],
+          [
+            "\u03b5\u03c0\u03b9\u03c4\u03b5\u03cd\u03b3\u03b5\u03b9",
+            1
+          ],
+          [
+            "\u03bc\u03c0\u03c1\u03b1\u03b3\u03ba\u03b1\u03bd\u03c4\u03ae\u03c3",
+            1
+          ],
+          [
+            "\u03c4\u03c5\u03bc\u03bf\u03bb\u03cc\u03b3\u03b9\u03bf",
+            1
+          ]
+        ],
+        "broken_joins": [
+          [
+            "\u03c4\u03b9\u03bc\u03bf\u03bb\u03cc\u03b3\u03b9\u03bf",
+            "\u03c0\u03b1\u03c1\u03bf\u03c7\u03ae\u03c3"
+          ],
+          [
+            "\u03b1\u03b9\u03b3\u03b1\u03af\u03bf",
+            "\u03bc\u03b7\u03c7\u03b1\u03bd\u03b9\u03ba\u03ae"
+          ],
+          [
+            "\u03bc\u03b7\u03c7\u03b1\u03bd\u03b9\u03ba\u03ae",
+            "\u03b1"
+          ],
+          [
+            "\u03c4\u03c0\u03c5",
+            "2026"
+          ],
+          [
+            "\u03b7\u03bc\u03b5\u03c1\u03bf\u03bc\u03b7\u03bd\u03af\u03b1",
+            "04"
+          ],
+          [
+            "\u03bb\u03ae\u03be\u03b7",
+            "04"
+          ],
+          [
+            "\u03c3\u03b5\u03b9\u03c1\u03ac",
+            "\u03b1"
+          ],
+          [
+            "logistirio",
+            "aigaio"
+          ],
+          [
+            "aigaio",
+            "example"
+          ],
+          [
+            "\u03ad\u03bb\u03b5\u03b3\u03c7\u03bf\u03c3",
+            "\u03b1\u03bd\u03c4\u03bf\u03c7\u03ae\u03c3"
+          ],
+          [
+            "\u03ce\u03c1\u03b5\u03c3",
+            "\u03b5\u03c0\u03af\u03b2\u03bb\u03b5\u03c8\u03b7\u03c3"
+          ],
+          [
+            "\u03b5\u03c0\u03af\u03b2\u03bb\u03b5\u03c8\u03b7\u03c3",
+            "\u03b1\u03c6\u03bf\u03c1\u03bf\u03cd\u03bd"
+          ],
+          [
+            "\u03b5",
+            "\u03b3\u03b5\u03bc\u03b7"
+          ],
+          [
+            "004512701000",
+            "\u03c4\u03bf"
+          ],
+          [
+            "\u03c0\u03b1\u03c1\u03cc\u03bd",
+            "\u03b5\u03c0\u03ad\u03c7\u03b5\u03b9"
+          ],
+          [
+            "\u03b5\u03c0\u03ad\u03c7\u03b5\u03b9",
+            "\u03b8\u03ad\u03c3\u03b7"
+          ]
+        ],
+        "figures_lost": 0,
+        "hard_breaks": 2,
+        "source_hard_breaks": 4,
+        "short_lines": 2,
+        "source_short_lines": 3
+      },
+      "order": {
+        "tau": 1.0,
+        "matched": 60,
+        "of": 62
+      },
+      "layout": {
+        "beside_agreement": 0.9855072463768116,
+        "beside_pairs": 69,
+        "column_error": 0.022178520264914823,
+        "columns_within_tolerance": 1.0,
+        "height_ratio": 1.0531088082901554,
+        "matched_blocks": 60,
+        "of_blocks": 62,
+        "split_regions": 0,
+        "merged_regions": 1,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 0.9166666666666666,
+        "output_scale": 0.89,
+        "scale_error": 0.02909090909090904,
+        "heading_levels_source": 3,
+        "heading_levels_output": 3,
+        "alignment_agreement": 0.9833333333333333,
+        "aligned_blocks": 60
+      },
+      "palette": {
+        "source_background": [
+          248,
+          248,
+          248
+        ],
+        "output_background": [
+          248,
+          248,
+          248
+        ],
+        "source_ink": [
+          24,
+          72,
+          120
+        ],
+        "output_ink": [
+          24,
+          72,
+          120
+        ],
+        "source_accent": [
+          24,
+          72,
+          120
+        ],
+        "output_accent": [
+          24,
+          72,
+          120
+        ],
+        "background_delta": 0.0,
+        "ink_delta": 0.0,
+        "accent_delta": 0.0,
+        "source_texture": 0.06863759296822178,
+        "output_texture": 0.07096339113680154
+      },
+      "inline": {
+        "found": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "of": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 1,
+          "em": 0
+        },
+        "missing": [
+          "strong: \u0391\u03b9\u03b3\u03b1\u03af\u03bf \u039c\u03b7\u03c7\u03b1\u03bd\u03b9\u03ba\u03ae \u0391.\u0395."
+        ]
+      },
+      "notes": [],
+      "error": null
+    },
+    {
+      "name": "catalogue_0015",
+      "split": "sweep",
+      "width": 900,
+      "source_height": 789,
+      "output_height": 893,
+      "completeness": {
+        "recall": 0.9880952380952381,
+        "precision": 0.9940119760479041,
+        "join_recall": 0.9722222222222222,
+        "vocabulary_recall": 0.991304347826087,
+        "vanished": [
+          "402"
+        ],
+        "source_tokens": 168,
+        "output_tokens": 167,
+        "lost": [
+          [
+            "402",
+            1
+          ],
+          [
+            "cp",
+            1
+          ]
+        ],
+        "duplicated": [],
+        "invented": [
+          [
+            "x",
+            1
+          ]
+        ],
+        "broken_joins": [
+          [
+            "220",
+            "180"
+          ],
+          [
+            "cp",
+            "402"
+          ],
+          [
+            "orders",
+            "trade"
+          ]
+        ],
+        "figures_lost": 0,
+        "hard_breaks": 0,
+        "source_hard_breaks": 0,
+        "short_lines": 3,
+        "source_short_lines": 0
+      },
+      "order": {
+        "tau": 1.0,
+        "matched": 59,
+        "of": 60
+      },
+      "layout": {
+        "beside_agreement": 0.46357615894039733,
+        "beside_pairs": 151,
+        "column_error": 0.0736675537196209,
+        "columns_within_tolerance": 0.8813559322033898,
+        "height_ratio": 1.131812420785805,
+        "matched_blocks": 59,
+        "of_blocks": 60,
+        "split_regions": 1,
+        "merged_regions": 0,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 1.6,
+        "output_scale": 1.5,
+        "scale_error": 0.06250000000000006,
+        "heading_levels_source": 3,
+        "heading_levels_output": 4,
+        "alignment_agreement": 0.4067796610169492,
+        "aligned_blocks": 59
+      },
+      "palette": {
+        "source_background": [
+          248,
+          248,
+          248
+        ],
+        "output_background": [
+          240,
+          240,
+          240
+        ],
+        "source_ink": [
+          32,
+          32,
+          24
+        ],
+        "output_ink": [
+          32,
+          32,
+          24
+        ],
+        "source_accent": null,
+        "output_accent": null,
+        "background_delta": 0.03137254901960784,
+        "ink_delta": 0.0,
+        "accent_delta": 0.0,
+        "source_texture": 0.22706273764258555,
+        "output_texture": 0.14656302521008405
+      },
+      "inline": {
+        "found": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "of": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "missing": []
+      },
+      "notes": [],
+      "error": null
+    },
+    {
+      "name": "letter_0016",
+      "split": "sweep",
+      "width": 820,
+      "source_height": 839,
+      "output_height": 913,
+      "completeness": {
+        "recall": 0.9967320261437909,
+        "precision": 0.993485342019544,
+        "join_recall": 0.982078853046595,
+        "vocabulary_recall": 0.9947916666666666,
+        "vanished": [
+          "haldenpryce"
+        ],
+        "source_tokens": 306,
+        "output_tokens": 307,
+        "lost": [
+          [
+            "haldenpryce",
+            1
+          ]
+        ],
+        "duplicated": [],
+        "invented": [
+          [
+            "denpryce",
+            1
+          ],
+          [
+            "hal",
+            1
+          ]
+        ],
+        "broken_joins": [
+          [
+            "0218",
+            "office"
+          ],
+          [
+            "office",
+            "haldenpryce"
+          ],
+          [
+            "haldenpryce",
+            "example"
+          ],
+          [
+            "ref",
+            "hp"
+          ],
+          [
+            "ref",
+            "bht"
+          ]
+        ],
+        "figures_lost": 0,
+        "hard_breaks": 3,
+        "source_hard_breaks": 9,
+        "short_lines": 3,
+        "source_short_lines": 4
+      },
+      "order": {
+        "tau": 1.0,
+        "matched": 16,
+        "of": 18
+      },
+      "layout": {
+        "beside_agreement": 1.0,
+        "beside_pairs": 1,
+        "column_error": 0.029877277941187504,
+        "columns_within_tolerance": 1.0,
+        "height_ratio": 1.0882002383790226,
+        "matched_blocks": 16,
+        "of_blocks": 18,
+        "split_regions": 0,
+        "merged_regions": 0,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 1.6923076923076923,
+        "output_scale": 1.0,
+        "scale_error": 0.40909090909090906,
+        "heading_levels_source": 1,
+        "heading_levels_output": 3,
+        "alignment_agreement": 0.6875,
+        "aligned_blocks": 16
+      },
+      "palette": {
+        "source_background": [
+          248,
+          248,
+          248
+        ],
+        "output_background": [
+          248,
+          248,
+          248
+        ],
+        "source_ink": [
+          96,
+          96,
+          96
+        ],
+        "output_ink": [
+          88,
+          88,
+          88
+        ],
+        "source_accent": [
+          0,
+          80,
+          64
+        ],
+        "output_accent": [
+          0,
+          72,
+          56
+        ],
+        "background_delta": 0.0,
+        "ink_delta": 0.03137254901960784,
+        "accent_delta": 0.025615579009497288,
+        "source_texture": 0.05834961997828447,
+        "output_texture": 0.05794660678642714
+      },
+      "inline": {
+        "found": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "of": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "missing": []
+      },
+      "notes": [],
+      "error": null
+    },
+    {
+      "name": "pricing_0017",
+      "split": "sweep",
+      "width": 1000,
+      "source_height": 695,
+      "output_height": 936,
+      "completeness": {
+        "recall": 1.0,
+        "precision": 0.9880239520958084,
+        "join_recall": 0.944,
+        "vocabulary_recall": 1.0,
+        "vanished": [],
+        "source_tokens": 165,
+        "output_tokens": 167,
+        "lost": [],
+        "duplicated": [],
+        "invented": [
+          [
+            "sav",
+            1
+          ],
+          [
+            "x",
+            1
+          ]
+        ],
+        "broken_joins": [
+          [
+            "side",
+            "project"
+          ],
+          [
+            "at",
+            "144"
+          ],
+          [
+            "144",
+            "per"
+          ],
+          [
+            "ship",
+            "together"
+          ],
+          [
+            "at",
+            "348"
+          ],
+          [
+            "348",
+            "per"
+          ],
+          [
+            "and",
+            "compliance"
+          ]
+        ],
+        "figures_lost": 0,
+        "hard_breaks": 3,
+        "source_hard_breaks": 3,
+        "short_lines": 2,
+        "source_short_lines": 0
+      },
+      "order": {
+        "tau": 0.6216216216216216,
+        "matched": 37,
+        "of": 37
+      },
+      "layout": {
+        "beside_agreement": 0.24390243902439024,
+        "beside_pairs": 41,
+        "column_error": 0.05268986149919944,
+        "columns_within_tolerance": 0.90625,
+        "height_ratio": 1.3467625899280575,
+        "matched_blocks": 37,
+        "of_blocks": 37,
+        "split_regions": 0,
+        "merged_regions": 0,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 2.3076923076923075,
+        "output_scale": 1.0,
+        "scale_error": 0.5666666666666667,
+        "heading_levels_source": 1,
+        "heading_levels_output": 5,
+        "alignment_agreement": 0.4864864864864865,
+        "aligned_blocks": 37
+      },
+      "palette": {
+        "source_background": [
+          248,
+          248,
+          248
+        ],
+        "output_background": [
+          240,
+          240,
+          248
+        ],
+        "source_ink": [
+          72,
+          88,
+          216
+        ],
+        "output_ink": [
+          72,
+          88,
+          216
+        ],
+        "source_accent": [
+          72,
+          88,
+          216
+        ],
+        "output_accent": [
+          72,
+          88,
+          216
+        ],
+        "background_delta": 0.025615579009497288,
+        "ink_delta": 0.0,
+        "accent_delta": 0.0,
+        "source_texture": 0.06603517186251,
+        "output_texture": 0.0451423487544484
+      },
+      "inline": {
+        "found": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "of": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 1,
+          "em": 0
+        },
+        "missing": [
+          "strong: Save 20% with annual billing"
+        ]
+      },
+      "notes": [],
+      "error": null
+    },
+    {
+      "name": "paper_0018",
+      "split": "sweep",
+      "width": 900,
+      "source_height": 659,
+      "output_height": 700,
+      "completeness": {
+        "recall": 0.9697802197802198,
+        "precision": 0.9751381215469613,
+        "join_recall": 0.9738562091503268,
+        "vocabulary_recall": 0.9846153846153847,
+        "vanished": [
+          "achterberg",
+          "delta",
+          "department"
+        ],
+        "source_tokens": 364,
+        "output_tokens": 362,
+        "lost": [
+          [
+            "1",
+            4
+          ],
+          [
+            "2",
+            2
+          ],
+          [
+            "achterberg",
+            1
+          ],
+          [
+            "delta",
+            1
+          ],
+          [
+            "department",
+            1
+          ],
+          [
+            "ferrante",
+            1
+          ],
+          [
+            "solberg",
+            1
+          ]
+        ],
+        "duplicated": [
+          [
+            "table i. site summary",
+            1,
+            2
+          ]
+        ],
+        "invented": [
+          [
+            "1department",
+            1
+          ],
+          [
+            "2delta",
+            1
+          ],
+          [
+            "achterberg2",
+            1
+          ],
+          [
+            "ferrante1",
+            1
+          ],
+          [
+            "i",
+            1
+          ],
+          [
+            "site",
+            1
+          ],
+          [
+            "solberg1",
+            1
+          ],
+          [
+            "summary",
+            1
+          ],
+          [
+            "table",
+            1
+          ]
+        ],
+        "broken_joins": [
+          [
+            "maren",
+            "solberg"
+          ],
+          [
+            "pieter",
+            "achterberg"
+          ],
+          [
+            "lucia",
+            "ferrante"
+          ],
+          [
+            "department",
+            "of"
+          ],
+          [
+            "delta",
+            "structural"
+          ],
+          [
+            "where",
+            "the"
+          ],
+          [
+            "and",
+            "proposes"
+          ],
+          [
+            "not",
+            "continuous"
+          ]
+        ],
+        "figures_lost": 0,
+        "hard_breaks": 4,
+        "source_hard_breaks": 1,
+        "short_lines": 4,
+        "source_short_lines": 1
+      },
+      "order": {
+        "tau": 1.0,
+        "matched": 31,
+        "of": 36
+      },
+      "layout": {
+        "beside_agreement": 0.5471698113207547,
+        "beside_pairs": 53,
+        "column_error": 0.051050890523887865,
+        "columns_within_tolerance": 0.9615384615384616,
+        "height_ratio": 1.062215477996965,
+        "matched_blocks": 31,
+        "of_blocks": 36,
+        "split_regions": 2,
+        "merged_regions": 1,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 1.1428571428571428,
+        "output_scale": 1.1904761904761905,
+        "scale_error": 0.04166666666666671,
+        "heading_levels_source": 2,
+        "heading_levels_output": 4,
+        "alignment_agreement": 0.9032258064516129,
+        "aligned_blocks": 31
+      },
+      "palette": {
+        "source_background": [
+          248,
+          248,
+          248
+        ],
+        "output_background": [
+          248,
+          248,
+          248
+        ],
+        "source_ink": [
+          120,
+          136,
+          176
+        ],
+        "output_ink": [
+          120,
+          136,
+          176
+        ],
+        "source_accent": null,
+        "output_accent": null,
+        "background_delta": 0.0,
+        "ink_delta": 0.0,
+        "accent_delta": 0.0,
+        "source_texture": 0.05360668185269552,
+        "output_texture": 0.05913633119200571
+      },
+      "inline": {
+        "found": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "of": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 1,
+          "em": 7
+        },
+        "missing": [
+          "strong: Abstract",
+          "em: F",
+          "em: \u0394h",
+          "em: \u03b1",
+          "em: F",
+          "em: \u0394h",
+          "em: \u03b1",
+          "em: \u03b1"
+        ]
+      },
+      "notes": [],
+      "error": null
+    },
+    {
+      "name": "timetable_0019",
+      "split": "sweep",
+      "width": 960,
+      "source_height": 435,
+      "output_height": 439,
+      "completeness": {
+        "recall": 0.9558823529411765,
+        "precision": 1.0,
+        "join_recall": 0.971830985915493,
+        "vocabulary_recall": 0.9818181818181818,
+        "vanished": [
+          "lunch"
+        ],
+        "source_tokens": 136,
+        "output_tokens": 130,
+        "lost": [
+          [
+            "art",
+            1
+          ],
+          [
+            "english",
+            1
+          ],
+          [
+            "lunch",
+            1
+          ],
+          [
+            "mathematics",
+            1
+          ],
+          [
+            "pe",
+            1
+          ],
+          [
+            "science",
+            1
+          ]
+        ],
+        "duplicated": [],
+        "invented": [],
+        "broken_joins": [
+          [
+            "tutor",
+            "mr"
+          ],
+          [
+            "achebe",
+            "room"
+          ]
+        ],
+        "figures_lost": 0,
+        "hard_breaks": 0,
+        "source_hard_breaks": 0,
+        "short_lines": 0,
+        "source_short_lines": 0
+      },
+      "order": {
+        "tau": 0.9567504383401519,
+        "matched": 59,
+        "of": 65
+      },
+      "layout": {
+        "beside_agreement": 0.9910714285714286,
+        "beside_pairs": 112,
+        "column_error": 0.03087409066536137,
+        "columns_within_tolerance": 0.9824561403508771,
+        "height_ratio": 1.0091954022988505,
+        "matched_blocks": 59,
+        "of_blocks": 65,
+        "split_regions": 0,
+        "merged_regions": 0,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 1.8181818181818181,
+        "output_scale": 1.7418604651162788,
+        "scale_error": 0.04197674418604663,
+        "heading_levels_source": 1,
+        "heading_levels_output": 1,
+        "alignment_agreement": 0.7457627118644068,
+        "aligned_blocks": 59
+      },
+      "palette": {
+        "source_background": [
+          248,
+          248,
+          248
+        ],
+        "output_background": [
+          248,
+          248,
+          248
+        ],
+        "source_ink": [
+          32,
+          32,
+          40
+        ],
+        "output_ink": [
+          32,
+          32,
+          40
+        ],
+        "source_accent": [
+          32,
+          136,
+          72
+        ],
+        "output_accent": [
+          32,
+          136,
+          72
+        ],
+        "background_delta": 0.0,
+        "ink_delta": 0.0,
+        "accent_delta": 0.0,
+        "source_texture": 0.09701593137254902,
+        "output_texture": 0.08024939172749392
+      },
+      "inline": {
+        "found": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "of": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "missing": []
+      },
+      "notes": [],
+      "error": null
+    },
+    {
+      "name": "ticket_0020",
+      "split": "sweep",
+      "width": 900,
+      "source_height": 403,
+      "output_height": 502,
+      "completeness": {
+        "recall": 0.9454545454545454,
+        "precision": 0.9811320754716981,
+        "join_recall": 0.8421052631578947,
+        "vocabulary_recall": 0.975,
+        "vanished": [
+          "pass"
+        ],
+        "source_tokens": 55,
+        "output_tokens": 53,
+        "lost": [
+          [
+            "air",
+            1
+          ],
+          [
+            "nordlys",
+            1
+          ],
+          [
+            "pass",
+            1
+          ]
+        ],
+        "duplicated": [
+          [
+            "boarding",
+            1,
+            2
+          ]
+        ],
+        "invented": [
+          [
+            "four",
+            1
+          ]
+        ],
+        "broken_joins": [
+          [
+            "nordlys",
+            "air"
+          ],
+          [
+            "boarding",
+            "pass"
+          ],
+          [
+            "before",
+            "departure"
+          ]
+        ],
+        "figures_lost": 0,
+        "hard_breaks": 0,
+        "source_hard_breaks": 0,
+        "short_lines": 2,
+        "source_short_lines": 1
+      },
+      "order": {
+        "tau": 0.892436974789916,
+        "matched": 35,
+        "of": 37
+      },
+      "layout": {
+        "beside_agreement": 0.41818181818181815,
+        "beside_pairs": 55,
+        "column_error": 0.18636189752869559,
+        "columns_within_tolerance": 0.6129032258064516,
+        "height_ratio": 1.2456575682382134,
+        "matched_blocks": 35,
+        "of_blocks": 37,
+        "split_regions": 0,
+        "merged_regions": 0,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 4.181818181818182,
+        "output_scale": 1.05,
+        "scale_error": 0.7489130434782609,
+        "heading_levels_source": 1,
+        "heading_levels_output": 5,
+        "alignment_agreement": 0.7428571428571429,
+        "aligned_blocks": 35
+      },
+      "palette": {
+        "source_background": [
+          248,
+          248,
+          248
+        ],
+        "output_background": [
+          248,
+          248,
+          248
+        ],
+        "source_ink": [
+          56,
+          64,
+          72
+        ],
+        "output_ink": [
+          56,
+          64,
+          72
+        ],
+        "source_accent": [
+          8,
+          104,
+          136
+        ],
+        "output_accent": [
+          8,
+          104,
+          136
+        ],
+        "background_delta": 0.0,
+        "ink_delta": 0.0,
+        "accent_delta": 0.0,
+        "source_texture": 0.13008054522924412,
+        "output_texture": 0.07940298507462687
+      },
+      "inline": {
+        "found": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "of": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "missing": []
+      },
+      "notes": [],
+      "error": null
+    },
+    {
+      "name": "certificate_0021",
+      "split": "sweep",
+      "width": 1000,
+      "source_height": 612,
+      "output_height": 1166,
+      "completeness": {
+        "recall": 1.0,
+        "precision": 1.0,
+        "join_recall": 0.9814814814814815,
+        "vocabulary_recall": 1.0,
+        "vanished": [],
+        "source_tokens": 72,
+        "output_tokens": 72,
+        "lost": [],
+        "duplicated": [],
+        "invented": [],
+        "broken_joins": [
+          [
+            "to",
+            "eurocode"
+          ]
+        ],
+        "figures_lost": 0,
+        "hard_breaks": 0,
+        "source_hard_breaks": 0,
+        "short_lines": 2,
+        "source_short_lines": 0
+      },
+      "order": {
+        "tau": 1.0,
+        "matched": 6,
+        "of": 17
+      },
+      "layout": {
+        "beside_agreement": 1.0,
+        "beside_pairs": 0,
+        "column_error": 0.0,
+        "columns_within_tolerance": 1.0,
+        "height_ratio": 1.9052287581699345,
+        "matched_blocks": 6,
+        "of_blocks": 17,
+        "split_regions": 0,
+        "merged_regions": 0,
+        "clipped": 0,
+        "source_clipped": 0
+      },
+      "typography": {
+        "source_scale": 2.6153846153846154,
+        "output_scale": 1.42,
+        "scale_error": 0.4570588235294118,
+        "heading_levels_source": 2,
+        "heading_levels_output": 3,
+        "alignment_agreement": 0.6666666666666666,
+        "aligned_blocks": 6
+      },
+      "palette": {
+        "source_background": [
+          248,
+          248,
+          240
+        ],
+        "output_background": [
+          248,
+          248,
+          240
+        ],
+        "source_ink": [
+          136,
+          104,
+          40
+        ],
+        "output_ink": [
+          152,
+          128,
+          72
+        ],
+        "source_accent": [
+          136,
+          104,
+          40
+        ],
+        "output_accent": [
+          152,
+          128,
+          72
+        ],
+        "background_delta": 0.0,
+        "ink_delta": 0.09754121885583074,
+        "accent_delta": 0.09754121885583074,
+        "source_texture": 0.07110808356039963,
+        "output_texture": 0.049057142857142855
+      },
+      "inline": {
+        "found": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 0,
+          "em": 0
+        },
+        "of": {
+          "link": 0,
+          "code": 0,
+          "mark": 0,
+          "strong": 1,
+          "em": 0
+        },
+        "missing": [
+          "strong: Design of Timber Footbridges to Eurocode 5"
+        ]
+      },
+      "notes": [],
+      "error": null
+    }
+  ]
+}

@@ -1,27 +1,28 @@
-# Status — 2026-10-14 (**spec 0012 implemented, `S8-sweep` taken: eighteen pages better, three worse; the baseline is still `tests/frozen/s7-result/` — whether `S8-sweep` replaces it is Alessandro's decision**)
+# Status — 2026-10-14 (**the baseline is `tests/frozen/s8-result/`; spec 0013 planned, not started — the only open work**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-14,
-after spec 0012's sweep.
+after Alessandro took `S8-sweep` as the baseline and cleared every other
+open item.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file, then
-[`specs/0012-draw-what-the-page-draws.md`](specs/0012-draw-what-the-page-draws.md),
-whose last outcome — the sweep — holds the open decision and the
-directions after it. If you are going to look at output — and you should —
+[`specs/0013-five-repairs-after-s8.md`](specs/0013-five-repairs-after-s8.md),
+the only open work. If you are going to look at output — and you should —
 use the **`visual-review` skill**.
 
-Branch `scaffold`. **1114 tests pass (1 skipped), `mypy src/` clean** — at `ba0c110`, 2026-10-14.
+Branch `scaffold`. **1114 tests pass (1 skipped), `mypy src/` clean** — at
+`ba0c110`'s code, 2026-10-14.
 
 **How work is judged — Alessandro, 2026-10-12, for spec 0011; carried
-over by spec 0012.** By eye: every step's sheets are opened against the
-previous step's and each page judged better / same / worse. Scores are
-produced and recorded, and **never gate a step or carry an argument**. The
-ratchet below is reported, not a gate. The one number still read is the
-report's `vanished` list, as a pointer to a page to look at. The six
-held-out pages are reported in their own lines. He checks every run
-himself too.
+over by specs 0012 and 0013.** By eye: every step's sheets are opened
+against the previous step's and each page judged better / same / worse.
+Scores are produced and recorded, and **never gate a step or carry an
+argument**. The ratchet below is reported, not a gate. The one number still
+read is the report's `vanished` list, as a pointer to a page to look at.
+The six held-out pages are reported in their own lines. He checks every
+run himself too.
 
 ---
 
@@ -37,33 +38,24 @@ Phase A2    Geometry — re-scoped                DONE 2026-09-25, gate MET
 Phase A3    Figure pixels                       DONE 2026-09-26, gate MET
 Queue       Open issues 1-3, Q1-Q5, N1-N4       DONE 2026-09-26 to 2026-10-10
 Reset       2026-10-10, Alessandro: every open task and idea cleared.
-              Fresh sweep F1-sweep, commit 12fa2d1, shipped defaults.
 Spec 0008   Page structure — issue #31          DONE; S3-sweep the floor 2026-10-11
 Spec 0009   Four repairs, one sweep — issue #32 DONE; folded into 0010's decision
 Spec 0010   Five repairs, type at the page's size — issue #33
               DONE; S5-sweep the baseline 2026-10-12
 Spec 0011   Place every entry where the page puts it — issue #34
-              0 freeze S5-sweep   1 rhythm   2 locate   3 fields
-              4 lines: 4a size, weight, italic  4b colour  4c rules
-                       4d leaders  4e spacing  4f typeface
-              5 sweep S6-sweep, prediction held, 14 pages better
-              DECIDED 2026-10-13: S6-sweep the baseline, frozen as s6-result/
-Corpus      Six held-out documents added 2026-10-13 — letter, pricing,
-              paper, timetable, ticket, certificate — fifteen kept
-            Sweep S7-sweep over all 21, prediction held on the fifteen;
-              pricing's crash fixed downstream, 9cd4ae2
-              DECIDED 2026-10-13: S7-sweep the baseline, frozen as s7-result/
-Spec 0012   Draw what the page draws — issue #35, planned 2026-10-13
-              0 the loop: ASKED DIFFERENTLY, the six's answers in the guards
-              G1 findings off the page   G2 highlights from pixels
-              G3a furniture   G4 boxes and lanes   G5 width, photographed page
-              G6 entries by their boxes   G7 small caps, script, face
-              G8 a Title starting its heading   G9 unclaimed lines reported
-              U  the grid with the drawing known, a frame not a sheet,
-                 dashed lanes, emphasised copies — §6 registered
-              S  S8-sweep on ba0c110, 2026-10-14: prediction held,
-                 18 pages better, 3 worse (receipt, statement, certificate)
-              OPEN: S8-sweep as the baseline — Alessandro's decision
+              DONE; S6-sweep the baseline 2026-10-13
+Corpus      Six held-out documents added 2026-10-13, fifteen kept
+              DONE; S7-sweep over all 21 the baseline 2026-10-13
+Spec 0012   Draw what the page draws — issue #35
+              G1-G9, step U, sweep S8-sweep on ba0c110: 18 pages better, 3 worse
+              DECIDED 2026-10-14: S8-sweep the baseline, frozen as s8-result/
+Reset       2026-10-14, Alessandro: everything not in spec 0013 cleared —
+              spec 0012 §7's list, the faults on S8-sweep's sheets 0013
+              does not name, every earlier queue and idea.
+Spec 0013   Five repairs after S8 — issue #36, planned 2026-10-14
+              1 column count only where ruled   2 the caption row at the wire
+              3 type on a drawn fill keeps its colour   4 certificate's groups
+              5 pricing's cards — then ONE sweep, S9-sweep. NOT STARTED
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -71,32 +63,25 @@ in [`specs/0007-handover.md`](specs/0007-handover.md).
 
 ---
 
-## The baseline — `tests/frozen/s7-result/`, DECIDED 2026-10-13
+## The baseline — `tests/frozen/s8-result/`, DECIDED 2026-10-14
 
-**Twenty-one documents, 751 answers.** Sweep `S7-sweep`, commit `639d882`,
-2026-10-13 09:04–11:20 (**2h16m**), shipped defaults.
+**Twenty-one documents, 725 answers.** Sweep `S8-sweep`, commit `ba0c110`
+(spec 0012 step U), 2026-10-14 00:49–03:00 (**2h12m**), shipped defaults.
+Taken by Alessandro after review: against `s7-result/`, eighteen pages
+better and three worse — receipt, statement, certificate — each traced in
+spec 0012's "Outcome — the sweep" and repaired by spec 0013.
 
-- **The fifteen are `s6-result/`'s**, byte for byte: every one of their 518
-  answers and every page. Nothing in the pipeline changed between the two
-  sweeps; only the corpus did.
-- **`pricing_0017` raised** after its 88 calls, in `looks.read` — a Cell
-  box a pixel past its Zone's crop cut two arrays to different shapes, a
-  bug from spec 0011 step 4a that no page of the fifteen reached. Commit
-  `9cd4ae2` fixed it, and the frozen documents are the replay of the
-  sweep's answers at that commit: pricing converts with no call beyond its
-  88, and the other twenty are the sweep's own, byte for byte.
-
-Proved the day it was frozen, at `9cd4ae2`:
-- `tools/replay_run.py` from its answers: **21 of 21 byte-identical**.
-- `tools/rederive.py` over it: **21 of 21 identical pages, 20 of 21
-  byte-identical files** — `form_0007` differs in Zone 5's `align` inside
-  its IR, the step-order effect its README names.
-- the rederive scored against `s6-result/`: **21 documents, 0 differing
+Proved the day it was frozen, at `ba0c110`'s code:
+- `tools/replay_run.py tests/frozen/s8-result`: **21 of 21 byte-identical,
+  0 asked differently**.
+- `tools/rederive.py` over it: **21 of 21 byte-identical files** — the
+  `form_0007` field that differed at `s7-result/` no longer does.
+- the rederive scored against `s7-result/`: **21 documents, 0 differing
   fields**.
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s7-result/scores.json
+    --documents sweep --previous tests/frozen/s8-result/scores.json
 ```
 
 `--documents sweep` is not optional: without a `fixtures.txt` the report
@@ -104,13 +89,12 @@ scores the iterate five.
 
 ### The baselines before it
 
-- **`s6-result/`** — spec 0011's sweep `S6-sweep`, commit `7c12935`, the
-  fifteen. The baseline for one day; `s7-result/` holds its fifteen byte
-  for byte. Four beside legs below `s5-result/`, accepted.
-- **`s5-result/`** — spec 0010's `S5-sweep`, commit `4a5fe3f`. Five legs
-  below `s3-result/`, accepted 2026-10-12.
-- **`s3-result/`**, **`q5-result/`**, **`reshot/`** and the A-phase
-  directories — each README says what it is and why its floor moved.
+- **`s7-result/`** — the first sweep over twenty-one, `S7-sweep`. The
+  baseline 2026-10-13 to 2026-10-14. Four of its table answers are spec
+  0013 step 1's target.
+- **`s6-result/`**, **`s5-result/`**, **`s3-result/`**, **`q5-result/`**,
+  **`reshot/`** and the A-phase directories — each README says what it is
+  and why its floor moved.
 
 ### What the ratchet reports, per document
 
@@ -129,31 +113,7 @@ scores the iterate five.
 
 ## Where the corpus is — at the baseline, recorded, not a target
 
-Means over `s7-result/`:
-
-| | all 21 | the fifteen | the six new |
-|---|---|---|---|
-| vocabulary recall | 0.968 | 0.988 | 0.920 |
-| precision | 0.981 | 0.988 | 0.964 |
-| join recall | 0.922 | 0.960 | 0.827 |
-| tau | 0.942 | 0.990 | 0.822 |
-| beside agreement | 0.786 | 0.831 | 0.672 |
-| height ratio | 1.129 | 1.107 | 1.183 |
-| alignment agreement | 0.735 | 0.785 | 0.608 |
-| scale error | 0.242 | 0.189 | 0.373 |
-
-**`vanished`: 55 words.** The fifteen's 26, unchanged since `S5-sweep`;
-the timetable's **24** — five of its seven lesson rows lost to a wrong grid
-count; 3 on the paper that are not lost (Unicode superscripts scored as one
-token with their word); the letter's split email and the ticket's `PASS`.
-
-**The six held-out pages, by eye, at the baseline:** paper and letter
-close; certificate and ticket keep their words and lose their look;
-pricing's three cards are drawn as two lanes with the middle one halved;
-the timetable loses most of its table and says nothing. Spec 0012 §1b has
-each traced.
-
-**`S8-sweep`, the same means — recorded, not argued from, not a floor:**
+Means over `s8-result/`:
 
 | | all 21 | the fifteen | the six new |
 |---|---|---|---|
@@ -166,9 +126,9 @@ each traced.
 | alignment agreement | 0.796 | 0.833 | 0.705 |
 | scale error | 0.200 | 0.129 | 0.378 |
 
-`vanished` 55 → 40: the timetable's 23 back, `Lunch` still missing; the
-receipt's eight item prices, the statement's `castleton` and cv's `2022`
-lost — each traced to step U's column count, below.
+**`vanished`: 40 words.** Spec 0013 names the ones it repairs: the
+receipt's eight prices, the statement's `castleton` and cv's `2022`, all
+from step U's column count.
 
 ---
 
@@ -176,7 +136,7 @@ lost — each traced to step U's column count, below.
 
 ### Spec 0012 — draw what the page draws, `S8-sweep`, 2026-10-14
 
-**The pages, against the baseline: eighteen better, three worse.**
+**The pages, against `s7-result/`: eighteen better, three worse.**
 
 - **Better, the six:** the timetable's lesson rows and every room line
   back; pricing's three cards as three lanes, the middle one whole; the
@@ -192,97 +152,55 @@ lost — each traced to step U's column count, below.
   - `receipt_0010` lost its price column;
   - `statement_0006`'s header row is drawn in its band's own colour;
   - `certificate_0021`'s signature row is one boxed paragraph and its name
-    a three-line heading. It gained its frames and its serif.
+    a three-line heading.
 
-What shipped, by step:
-
+What shipped:
 - G1–G9 are downstream of the model, each measured offline and judged by
   eye in its turn.
 - Step U is upstream:
   - the grid and the printed lines counted with the page's drawing known;
-  - a frame is not a sheet, so the certificate is no longer warped;
+  - a frame is not a sheet;
   - a dashed vertical rule makes a lane;
   - an emphasised copy is still a copy, and no grid split crosses a drawn
     box.
 
 §6's prediction held:
 - 636 calls asked the same, every answer byte-identical;
-- the calls asked differently, exactly the registered ones;
-- the twelve unmarked pages byte-identical to the replay.
-
-The spec's "Outcome — the sweep" has the error analysis.
-
-### The corpus widened, and the first sweep over it — 2026-10-13
-
-Six documents authored to carry what the fifteen lack, each an HTML file
-and its screenshot, the fifteen kept as they are (`corpus.NEW`):
-
-| document | what it carries |
-|---|---|
-| `letter_0016` | a coloured letterhead rule, address and date blocks, a script signature |
-| `pricing_0017` | three cards stretched to one height, the middle one emphasised with a ribbon; ticks and crosses |
-| `paper_0018` | two justified columns with a rule between them, small-capital heads, a numbered equation, a bar chart, a three-rule table, superscripts |
-| `timetable_0019` | a grid with merged cells, tinted lessons with colour bars, a hatched lunch row, a legend |
-| `ticket_0020` | a boarding pass photographed at a slant on a desk, a dashed perforation, a block code |
-| `certificate_0021` | a double frame, small capitals, a script name, signature lines, a round seal |
-
-`S7-sweep` converted all twenty-one. Three corpus guards walked every
-document over a fifteen-document floor or a written-down answer; each now
-names the six as held out, and writing their answers is spec 0012's step 0.
-
-### Spec 0011 — place every entry where the page puts it, `S6-sweep`, 2026-10-12
-
-**The pages, against `S5-sweep`: fourteen better, `sample_css_0004` the
-same, none worse.** `form_0007` is drawn as its fields; `newsletter_0008`
-as three serif columns; `receipt_0010` in mono with its dashed rules;
-`menu_0012` with leaders and italic notes; `darkdeck_0009` with its tiles
-and pills; `catalogue_0015` with its chips and badges.
-
-What shipped, by step: the page's gaps, groups and alignment (rhythm);
-every entry's box, from tesseract as a locator only (locate); the form's
-boxes, ticks and digit boxes (fields); and per entry its size, weight,
-slant, colour, chips, table rules and fills, leader dots, spacing and the
-page's typeface class (looks, 4a–4f). All downstream of the model: the
-sweep's 518 answers came back byte-identical to `S5-sweep`'s, as
-registered. The spec's "Outcome — step 5" has the error analysis.
+- the calls asked differently, exactly the registered ones.
 
 ### Earlier
 
-Specs 0008–0010 and everything before them: each spec's "Outcome"
-sections, and `specs/0007-handover.md` for the A phases and the queue.
+Specs 0008–0011 and the corpus widening: each spec's "Outcome" sections,
+and `specs/0007-handover.md` for the A phases and the queue.
 
 ---
 
-## Next — Alessandro's decision on `S8-sweep`, then the column count
+## Next — spec 0013, the only open work
 
-**Open: is `S8-sweep` the baseline?** Three pages are worse than
-`s7-result/`, and each is traced in spec 0012's "Outcome — the sweep":
+[`specs/0013-five-repairs-after-s8.md`](specs/0013-five-repairs-after-s8.md),
+issue #36, planned 2026-10-14. Five repairs, each traced to its cause at
+`s8-result/` with its prediction written down, then one sweep:
 
-- **receipt and statement: step U's column count.** Of the seven tables
-  whose count moved, only the timetable's columns come from vertical rules
-  the page draws. The other five moved because the rules and the dark fill
-  were cleared before the projection. Four of those five then undercount
-  the page — receipt 2 of 3, statement 5 of 6, cv 3 of 4, paper 3 of 4 —
-  and the model obeyed each count by dropping or merging a column. At 1
-  column, the old count, the model ignored the hint and read every column.
-- **certificate: the layout front on the unwarped page.** Its signature
-  row is one figure Zone, and its name is the Title of the body's Zone.
+1. **The column count only where the table draws its columns.** Of the
+   seven tables step U re-counted, only the timetable's columns come from
+   drawn rules. The four that undercount the page were obeyed by dropping
+   or merging a column.
+   - Measurable with no model for receipt, statement, cv and nonlatin:
+     their prompts return to `s7-result/`'s, and its answers are swapped
+     in.
+   - Paper's new count is answered at the sweep.
+2. **A table row spelling its Zone's Title goes**, at the wire: paper's
+   caption printed twice.
+3. **Type on a drawn fill keeps its colour** (`looks._drawn_ground`): the
+   statement's header.
+4. **The certificate's groups on the unwarped page**: the layout front,
+   traced stage by stage.
+5. **Pricing's cards as cards**: lanes as framed stacks, Team's frame, a
+   price line in two sizes.
 
-**Recommended (spec 0012's directions 1–3).**
-
-1. State the column count from the drawing only where the table draws two
-   vertical rules or more, and as before step U elsewhere.
-   - Receipt, statement, cv and nonlatin kept their row counts, so their
-     table prompts become `s7-result/`'s byte for byte: the replay serves
-     the baseline's answers, with no model.
-   - Only paper is asked something new (5 × 1).
-2. A table row spelling the Zone's Title goes, at the wire.
-3. Never draw a row's text in its own fill's colour.
-
-Then judge by eye and freeze. **`debug/runs/S8-sweep/` holds the only copy
-of the sweep's 725 answers** — the certificate's, pricing's, the
-timetable's and the ticket's new ones among them — so do not clear it
-before the decision.
+Then `S9-sweep` over all 21. Its handover prompt is the one to start from.
+**Nothing else is open:** Alessandro cleared every other item on
+2026-10-14.
 
 ---
 
@@ -333,8 +251,8 @@ the last two entries.
   **The exceptions are committed files:** `tests/frozen/run84/`,
   `a1-checkpoint/`, `a0-checkpoint/`, `a0-result/`, `a1-result/`,
   `a2-result/`, `a3-result/`, `reshot/`, `q5-result/`, `s3-result/`,
-  `s5-result/`, `s6-result/` — all kept as record — and
-  **`s7-result/`, the baseline** since 2026-10-13, twenty-one documents. `a3-result/` was scored on pictures missing their last lines;
+  `s5-result/`, `s6-result/`, `s7-result/` — all kept as record — and
+  **`s8-result/`, the baseline** since 2026-10-14, twenty-one documents. `a3-result/` was scored on pictures missing their last lines;
   quote it only as that.
 - **The committed corpus picture is a screenshot of its own HTML.**
   `TestTheCorpusPictureIsItsOwnHTML` re-shoots the ten authored pages and
@@ -343,6 +261,8 @@ the last two entries.
   scores of a picture that changed are not comparable with anything before it.
 - **Leave `debug/runs/84-rule-not-a-line/` intact.**
 - **Never score against `tests/documents/SAMPLE_DOCUMENTS`.**
+- **Never edit a script a running sweep reads** — `tools/iterate.sh` above
+  all. Bash reads a script as it goes; `S8-sweep`'s died after its bake-off.
 - **Do not delete the four shipped defaults or the five wire-level row nets** —
   `_without_empty_rows`, `_join_split_header_row`, `_without_repeated_header`,
   and since spec 0009 `_trimmed_to_header` and `_without_repeated_total`.
@@ -375,7 +295,7 @@ the last two entries.
 FIXTURE=sweep tools/iterate.sh <label>        # all twenty-one, ~2¼ h — anything reviewed
 FIXTURE=iterate tools/iterate.sh <label>      # the five, ~20 min — throwaway checks only
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s7-result/scores.json
+    --documents sweep --previous tests/frozen/s8-result/scores.json
 python tools/visual_review.py debug/runs/<label> --previous debug/runs/<older>
 python tools/visual_review.py debug/runs/<label> --check
 ```
@@ -394,8 +314,8 @@ converts it once the bug is fixed, with no model call.
 
 **Three offline loops, each proved before it was used, and a sweep. Say which
 produced any number you report.** Start them from the baseline,
-`tests/frozen/s7-result/`. On 2026-10-13 `tools/replay_run.py` over it
-reproduced it byte for byte, 21 of 21, and `tools/rederive.py` every page. Both tools take a
+`tests/frozen/s8-result/`. On 2026-10-14 `tools/replay_run.py` and
+`tools/rederive.py` over it each reproduced it byte for byte, 21 of 21. Both tools take a
 run directory as well as a frozen one.
 
 - **Downstream of the model** — renderer, style, probes. `tools/rederive.py
@@ -408,7 +328,9 @@ run directory as well as a frozen one.
   <run> --label <label>`, committed in Q5 after the loop had
   lived in scratch scripts since 2026-09-22. Everything between an answer and
   the page — wire, mapper, every pass — on the control's own answers, in under
-  a minute; `--swap <doc>:<NN>=<answer.json>` serves one new answer. A
+  a minute; `--swap <doc>:<NN>=<answer file>` serves one new answer — a
+  measurement when the call's new question was already asked somewhere,
+  as spec 0013 step 1 uses `s7-result/`'s answers. A
   document marked ASKED MORE THAN THE RUN is not a measurement. It serves
   by pass and order, and **since spec 0012's step 0 it hashes every call's
   prompt, picture and schema**: a document whose calls moved is marked

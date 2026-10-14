@@ -1,0 +1,180 @@
+{
+ "calls": [
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "3aa4a4118ff7",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "5a3c65ffed79",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"PASSENGER\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "255c45b480e1",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "88c1627e1d14",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"PASSENGER\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "b63089c1c8b1",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "baa8c428ae99",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"OSL\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "b478a69c61bf",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "3845aec7d7b3",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"NORDLYS AIR\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "3aa4a4118ff7",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"NORDLYS\",\n      \"kind\": \"mark\"\n    },\n    {\n      \"text\": \"AIR\",\n      \"kind\": \"mark\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "3aa4a4118ff7",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"BOARDING\"\n      ]\n    },\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"FOUR\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "5a3c65ffed79",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "5a3c65ffed79",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "table",
+   "answer": "{\n  \"rows\": [\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"PASSENGER\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"HALVORSEN / A\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"FLIGHT\",\n        \"SEAT\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"NL 0482\",\n        \"12A\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"GATE\",\n        \"GROUP\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"C14\",\n        \"2\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"Gate closes 20 minutes before\",\n        \"departure\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6b98027d3f44",
+    "picture": "255c45b480e1",
+    "schema": "32d195a8c340"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"PASSENGER\"\n      ]\n    },\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"HALVORSEN / ASTRID MS\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "b63089c1c8b1",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"HALVORSEN / ASTRID MS\",\n      \"kind\": \"mark\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "b63089c1c8b1",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "table",
+   "answer": "{\n  \"rows\": [\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"OSL\",\n        \"\",\n        \"\",\n        \"TRD\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"OSLO GARDERMOEN\",\n        \"\",\n        \"\",\n        \"TRONDHEIM VÆRNES\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"FLIGHT\",\n        \"DATE\",\n        \"BOARDING\",\n        \"DEPARTS\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"NL 0482\",\n        \"14 OCT 2026\",\n        \"07:35\",\n        \"08:05\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"GATE\",\n        \"SEAT\",\n        \"GROUP\",\n        \"CLASS\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"C14\",\n        \"12A\",\n        \"2\",\n        \"Economy\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "61917ee6fd72",
+    "picture": "b478a69c61bf",
+    "schema": "32d195a8c340"
+   }
+  }
+ ]
+}

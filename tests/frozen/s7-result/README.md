@@ -1,4 +1,9 @@
-# `s7-result/` — the first sweep of twenty-one documents, and **the baseline** since 2026-10-13
+# `s7-result/` — the first sweep of twenty-one documents; the baseline 2026-10-13 to 2026-10-14, superseded by `s8-result/`
+
+> **Record since 2026-10-14.** Spec 0012's sweep, `s8-result/`, is the
+> baseline by Alessandro's decision. Four of this directory's table
+> answers are spec 0013's target for step 1: receipt, statement, cv and
+> nonlatin, served with `--swap`.
 
 > **Taken as the baseline by Alessandro on 2026-10-13**, after the sweep
 > that added six held-out documents to the corpus. Nothing in the pipeline
