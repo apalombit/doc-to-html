@@ -12,7 +12,7 @@ import cv2
 import numpy as np
 
 from doc_to_html import looks
-from doc_to_html.ir import (BBox, Block, Cell, Document, Kind, Look, Reading, Row,
+from doc_to_html.ir import (BBox, Block, Cell, Document, Furniture, Kind, Look, Reading, Row,
                             RowRole, Run, Source, Stroke, Style, Zone, cell)
 from doc_to_html.preprocess import PAD_X
 from doc_to_html.render import SIZE_STEP, render
@@ -173,6 +173,22 @@ class TestRead:
         row = page.put("Shaded row of the table", ground=(200, 200, 200), across=True)
         looks.read(page.image, page.document())
         assert row.look is not None and row.look.fill is None and row.look.color is None
+
+    def test_type_on_a_drawn_fill_keeps_its_colour(self) -> None:
+        # Spec 0013 step 7, `statement_0006`'s transaction header: white on
+        # a dark band the page draws and `furniture` finds. Measured and
+        # dropped against the Zone's white, it took the page's ink — the
+        # band's own colour.
+        page = body_page()
+        head = page.put("Date Description Balance", ink=(255, 255, 255),
+                        ground=(43, 32, 22), across=True)
+        document = page.document()
+        assert head.bbox is not None
+        document.furniture = [Furniture(kind="fill", color=(22, 32, 43), bbox=BBox(
+            0.0, head.bbox.top - 3 / HEIGHT, 1.0, head.bbox.bottom + 2 / HEIGHT))]
+        looks.read(page.image, document)
+        assert head.look is not None and head.look.fill is None
+        assert head.look.color is not None and min(head.look.color) >= 200
 
     def test_a_photographed_page_reads_no_colour(self) -> None:
         page = body_page()

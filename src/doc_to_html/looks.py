@@ -105,7 +105,8 @@ from typing import Any, Sequence
 
 import numpy as np
 
-from .ir import BBox, Cell, Document, Kind, Look, RowRole, Run, Stroke, Style, Zone
+from .ir import (BBox, Cell, Document, Furniture, Kind, Look, RowRole, Run, Stroke,
+                 Style, Zone)
 from .locate import cells_of
 from .preprocess import ImageArray, _cv2, crop_origin
 from .style import SAME_COLOUR, body_glyph, dominant, type_lines, type_mask
@@ -894,11 +895,28 @@ def _titles(rgb: ImageArray, document: Document, style: Style) -> None:
             zone.title_color = _ink(line, ground)
 
 
-def _drawn_ground(zone: Zone, row: int | None, style: Style) -> tuple[int, int, int]:
-    """The ground the render draws under one of the Zone's Cells."""
+def _drawn_ground(zone: Zone, row: int | None, style: Style, box: BBox,
+                  fills: list[Furniture]) -> tuple[int, int, int]:
+    """The ground the render draws under one of the Zone's Cells.
+
+    **A drawn fill under the Cell too** — spec 0013, step 7.
+    `statement_0006`'s transaction header is printed white on a dark band,
+    `(22, 32, 43)`, which `furniture` finds and the render draws; the Zone
+    had no `header_fill`. Asked only the Zone's ground, white, the six
+    header Cells' white was measured and dropped, and they took the page's
+    ink — the band's own colour. A header's `header_fill` is asked first.
+
+    **Not a row's measured fill.** That reaches every table row on a tint
+    and was measured to: on `timetable_0019` it kept `B04 · Ms Ilves` teal
+    beside the blue bar of its lesson, where the page prints it grey."""
     if (row is not None and zone.header_fill is not None
             and zone.rows[row].role is RowRole.HEADER):
         return zone.header_fill
+    middle_x, middle_y = (box.left + box.right) / 2, (box.top + box.bottom) / 2
+    for fill in fills:
+        if (fill.bbox.left <= middle_x <= fill.bbox.right
+                and fill.bbox.top <= middle_y <= fill.bbox.bottom):
+            return fill.color
     return zone.fill or style.page_bg
 
 
@@ -1006,6 +1024,8 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
     feet: list[float] = []
     colours: dict[int, tuple[tuple[int, int, int], tuple[int, int, int] | None,
                              tuple[BBox, float] | None]] = {}
+    fills = [item for item in document.furniture
+             if item.kind == "fill" and item.style == "solid"]
     for zone in document.zones:
         if zone.bbox is None or zone.kind is Kind.FIGURE:
             continue
@@ -1030,7 +1050,8 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
                     chip = _chip(rgb, spot, ground, body)
                     if chip is not None:
                         colours[id(cell)] = (_ink(pixels, ground), ground, chip)
-                    elif _apart(ground, _drawn_ground(zone, row, style)) <= GROUND_SAME:
+                    elif _apart(ground, _drawn_ground(zone, row, style, box,
+                                                      fills)) <= GROUND_SAME:
                         colours[id(cell)] = (_ink(pixels, ground), None, None)
             left = max(0, int(box.left * width) - x0 - 1)
             top = max(0, int(box.top * height) - y0 - 1)

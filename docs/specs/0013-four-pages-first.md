@@ -702,6 +702,40 @@ draws under the Cell, so a colour measured on that fill is kept.
 **Done when:** at `s8-result/`'s answers, the statement's header is
 readable, light on its band.
 
+### Outcome — step 7, 2026-10-14
+
+`looks._drawn_ground` also returns a solid furniture fill holding the
+Cell's middle, after a header's `header_fill`; `looks.read` passes it
+the page's solid fills.
+
+**Tried first and rejected, measured:** the row's own measured fill
+(`Row.fill`), which is how the band reaches the render. It reaches every
+table row on a tint: on `timetable_0019` it kept `B04 · Ms Ilves` teal
+beside its lesson's blue bar, where the page prints it grey — worse, by
+eye.
+
+**Measured:**
+- Rederive of `s8-result/` directly (`S9-6-s8` → `S9-7-s8`):
+  `statement_0006` and `timetable_0019` move, not the statement alone as
+  predicted. The statement's six header Cells take white. On the
+  timetable, the Cells on its peach and green lesson fills — which
+  `furniture` finds as fills — keep the colour measured on them: subjects
+  their ink as before, eleven room-and-teacher lines grey, `(102, 112,
+  124)`, where they were drawn in the body ink.
+- The chain (`S9-6` → `S9-7`): the timetable alone; the statement's
+  header is right there already, by step 1's answer. `vanished`
+  unchanged, 32.
+
+**By eye:**
+- **statement (at `s8-result/`'s answers) — better:** `Date`,
+  `Description`, `Type`, `Paid out`, `Paid in`, `Balance` readable, white
+  on the dark band, where the band was blank.
+- **timetable — better, slightly:** the room lines on the English and
+  Science lessons are grey, as the page prints them and as the other
+  lessons' already were; nothing else moves.
+
+`debug/runs/S9-7/report.html`.
+
 ---
 
 ## 8. Work plan
