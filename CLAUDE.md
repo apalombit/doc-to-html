@@ -37,7 +37,9 @@ trial axis is kept rather than rejected.
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
 measured numbers and what has already been tried and rejected. **0012 is the
-one open spec** — issue #35, planned 2026-10-13, not started. 0008 to 0011
+one open spec** — issue #35, implemented 2026-10-14 and swept as
+`S8-sweep`; whether that sweep becomes the baseline is Alessandro's
+decision, open. 0008 to 0011
 (issues #31–#34) are done and decided. 0007 still defines the target.
 
 ---
@@ -63,7 +65,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-13: the corpus is twenty-one; the baseline is `tests/frozen/s7-result/`; spec 0012 planned, not started. Work is judged by eye.**
+**Where the project is — 2026-10-14: spec 0012 implemented and swept (`S8-sweep`, eighteen pages better, three worse); the baseline is still `tests/frozen/s7-result/` until Alessandro decides. Work is judged by eye.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -114,13 +116,20 @@ Corpus      six held-out documents added 2026-10-13, the fifteen kept;
 Spec 0012   Draw what the page draws — planned 2026-10-13, issue #35:
               the report notebook from S7-sweep, faults grouped G1-G9,
               workflow changes; groups G1-G9 in order, the upstream halves
-              in step U, then ONE sweep S8-sweep over all 21. NOT STARTED
+              in step U, then ONE sweep S8-sweep over all 21
+              0 ASKED DIFFERENTLY  G1-G9 DONE, each judged by eye
+              U  DONE, the sweep's prediction registered
+              S  S8-sweep on ba0c110, 2026-10-14: prediction held,
+                 18 pages better, 3 worse — receipt and statement from
+                 step U's column count, certificate from its unwarped layout
+              OPEN: S8-sweep as the baseline — Alessandro's decision
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
 outcome sections; spec 0007 keeps the design record and what was rejected.
 
-**How work is judged now — Alessandro, 2026-10-12, for spec 0011: by eye.**
+**How work is judged now — Alessandro, 2026-10-12, for spec 0011, carried
+over by 0012: by eye.**
 Every step's sheets are opened against the previous step's, and each page is
 judged better / same / worse with a sentence naming the element. Scores and
 `report.html` are still produced and recorded. They **never gate a step and
@@ -139,11 +148,14 @@ two commits it comes from: the sweep on `639d882`, and `9cd4ae2`'s fix for
 the one document that raised. Each earlier floor, and why it moved, is in
 its README and in `docs/status.md`.
 
-**The only open work is `docs/specs/0012-draw-what-the-page-draws.md`** —
-the report notebook from `S7-sweep`: Alessandro's notes and the six new
-pages, each traced to its cause; the faults grouped G1–G9; what to add to
-the Conversion and to the loop; a work plan. Its last section is the prompt
-to start a session with. `docs/specs/0007-handover.md` holds spec 0007's
+**The only open work is `docs/specs/0012-draw-what-the-page-draws.md`'s
+last outcome, "the sweep"** — `S8-sweep`'s pages, the six in their own
+lines, each worse page traced to its cause, and the directions after it,
+ranked. The first is measured: of the seven tables step U re-counted, only
+the timetable's columns come from rules the page draws, and the four that
+undercount the page were obeyed by dropping or merging a column. The
+decision on the baseline is Alessandro's. The spec's handover prompt
+marked *current* is the one to start a session with. `docs/specs/0007-handover.md` holds spec 0007's
 prompts, as record.
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
@@ -345,11 +357,12 @@ prompt change probed on one crop is measured on its whole document, ratchet
 included, with no sweep. It reproduces `s7-result/` **21 of 21 byte for byte** from its answers. A
 document it marks **ASKED MORE THAN THE RUN** is not a measurement: the
 change moved a crop, and a crop costs a sweep. **It serves by pass and
-order and never reads the prompt or the picture**, so a change that asks the
-same number of calls *differently* — a grid hint of 8 rows where it was 4 —
-replays the old answers and looks like a change that did nothing. Spec 0012
-§4b proposes the guard; until it exists, a change upstream of the model is
-not measured by replay.
+order**, so a change that asks the same number of calls *differently* — a
+grid hint of 9 rows where it was 4 — is served the old answers. **Since spec
+0012's step 0 it says so:** every call's prompt, picture and schema are
+hashed beside its answer, and a document whose calls moved is marked
+**ASKED DIFFERENTLY — not a measurement**, naming each call. That list is
+what a sweep's prediction is registered from (spec 0012 §6).
 
 **A floor is not a result to quote in an argument** — the distinction the rest
 of this section is about.
@@ -545,7 +558,8 @@ each other — `CellState.DISPUTED` and the Ladder are already the vocabulary fo
 it, and `_climb_ladders` already records that it waits on a second Engine. That
 is model time and Alessandro's decision, not a detector.
 
-**Tracker state, 2026-10-13: one open issue — #35, spec 0012.** #31–#34 (specs 0008–0011) are closed, each done and decided. #30 (spec 0007) closed when its
+**Tracker state, 2026-10-14: one open issue — #35, spec 0012, implemented
+and swept, its baseline decision open.** #31–#34 (specs 0008–0011) are closed, each done and decided. #30 (spec 0007) closed when its
 work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
 #17 (the vision layout prompt) were closed by Thread 0. Every spec is closed
 history; 0007 still defines the target.
@@ -821,7 +835,7 @@ every document, and it carries the delta against the previous run's
 after reviewing the five found four real faults in one pass and the five turned
 out to be the least representative sample in the corpus — all light-grounded,
 all similar, none of the ten documents authored after the target changed. The
-~1¾ hours is budgeted for. `iterate` is for a throwaway check nobody will draw
+~2¼ hours is budgeted for. `iterate` is for a throwaway check nobody will draw
 a conclusion from. **A renderer-only change needs no new run at all:** every
 pixel-derived field can be re-measured and the IRs re-rendered offline, so one
 sweep serves many render iterations.
@@ -830,10 +844,13 @@ sweep serves many render iterations.
 all twenty-one, run at phase gates. *new* = the six added 2026-10-13, held
 out. `doc_to_html.corpus` is the one place that says which is which. **A
 sweep takes about 2¼ hours** — `S7-sweep`, 2026-10-13: 2h16m wall clock,
-751 model calls, the model 54%/46% CPU/GPU. Budget for it before starting
-one. **It outlasts a two-hour background task**, so start it detached
-(`nohup … & disown`) and wait on its log; `docs/status.md`'s loop has the
-line. `pricing_0017` alone took about 15 minutes; the iterate five take
+751 model calls, the model 54%/46% CPU/GPU; `S8-sweep`, 2026-10-14: 2h12m,
+725 calls, 40%/60%. Budget for it before starting one. **It outlasts a
+two-hour background task**, so start it detached (`nohup … & disown`) and
+wait on its log; `docs/status.md`'s loop has the line. **Never edit
+`tools/iterate.sh` while a sweep runs it**: bash reads a script as it
+goes, and `S8-sweep`'s died after its bake-off on a line the edit had
+shifted — the dump was whole, and the rest was run by hand. `pricing_0017` alone took about 15 minutes; the iterate five take
 about 20 minutes together.
 
 **The five original documents are the ones every prompt was tuned on.** That is

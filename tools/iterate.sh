@@ -4,7 +4,7 @@
 #
 #     tools/iterate.sh 03-some-label                 # one document
 #     FIXTURE=iterate tools/iterate.sh 11-baseline    # the five, ~20 min
-#     FIXTURE=sweep tools/iterate.sh 12-gate          # all fifteen, ~1¾ hours
+#     FIXTURE=sweep tools/iterate.sh 12-gate          # all twenty-one, ~2¼ hours
 #     FIXTURE=invoice_0001,cv_0013 tools/iterate.sh 13-two
 #
 # Runs the whole document against a real model — every pass, no shortcuts, about

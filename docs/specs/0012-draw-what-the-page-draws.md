@@ -1,11 +1,16 @@
 # Draw what the page draws — its marks, lanes, width and type
 
-**Status: planned 2026-10-13, not started. Issue #35.** This is the report
+**Status: implemented 2026-10-14 — G1–G9 and step U, then `S8-sweep`
+over all twenty-one, §6's prediction held. Eighteen pages better, three
+worse (receipt, statement, certificate), each traced in "Outcome — the
+sweep". Whether `S8-sweep` becomes the baseline is Alessandro's decision,
+open. Issue #35.** This is the report
 notebook Alessandro asked for after the sweep over the widened corpus: every
 fault found, traced to its cause, grouped into what should be solved
 together, and the pipeline and workflow changes the run argues for. It is
 the handover material for implementing it from a cleared chat: §5 is the
-plan, group by group, and the last section is the prompt to start with.
+plan, group by group, and the handover prompt marked *current*, near the
+end, is the one to start with.
 
 **Reading order for the implementing session:** decisions and "How to work"
 below → §1 (what each page shows, and why) → §3 (the groups) → §4 (the
@@ -1043,6 +1048,122 @@ Then report the sweep in §5 of spec 0011's format: where it gained, the
 faults left by stage, the directions ranked, a recommendation. Lead with
 the pages, the six in their own lines.
 
+### Outcome — the sweep, `S8-sweep`, 2026-10-14
+
+Commit `ba0c110`, 00:49–03:00 (**2h12m**), **725 calls**, the model
+40%/60% CPU/GPU. All twenty-one converted. The script stopped after the
+bake-off, with `ue: command not found` and exit 127, because
+`tools/iterate.sh` was edited while bash was still reading it. `ollama ps`,
+`inspect_run.py` and the report were then run by hand over the finished
+dump. **Never edit a script a sweep is running.**
+
+**§6's prediction held.**
+
+- **636 calls were asked the same as `s7-result/` and every one answered
+  byte for byte the same.** No call missed.
+- **The calls asked differently are exactly the registered ones:**
+  - the certificate: 21 of its 22 calls, plus one extra, and 9 of the
+    baseline's 30 not asked;
+  - pricing: 60 of 70, and 18 of 88 not asked;
+  - one table call each in cv, nonlatin, paper, receipt, statement, ticket
+    and the timetable.
+- **The twelve unmarked documents render byte-identical to
+  `S8-U-replay`.** So does `nonlatin_0014`: its table answer moved, its
+  page did not.
+- **The timetable returned its lesson rows.** 23 of its 24 vanished words
+  are back; `Lunch` is still missing. Its unclaimed lines fell to one line
+  of three words, and no Shortfall remains.
+
+`vanished` went 55 → 40 words: the timetable −23; the receipt +6, which are
+eight item prices; the statement +`castleton`; cv +`2022`. The visual
+review is `debug/runs/S8-sweep/_review/`, 168 axes answered.
+
+**The pages, by eye, against `S8-0-replay` (the baseline): eighteen
+better, three worse.**
+
+The six held out:
+
+| page | verdict | what the page shows |
+|---|---|---|
+| `timetable_0019` | **better** | every lesson and room line is back, with colour bars, tints, the hatched lunch row and the dark header; `Lunch` and the legend are missing, and Tuesday 10:00's room line sits under Monday |
+| `pricing_0017` | **better** | three cards as three lanes; the middle card is whole and Starter's text is in its own card; Business's price is drawn at twice the others' size, and each card's parts sit in separate bands |
+| `ticket_0020` | **better** | the stub beside the pass behind its perforation, on its slate surround; `BOARDING FOUR` and the small airport codes remain |
+| `paper_0018` | better, with a loss | title once, small capitals, justification and the equation; `Table I. Site summary` is printed twice, the second time as a bold row under the table (told 5 rows and 3 columns, where the page has 4 rows under a caption and 4 columns) |
+| `letter_0016` | **better** | green rule, script signature, `Enc.` and `cc` on their own lines (steps 1–9; its page is byte-identical to the replay) |
+| `certificate_0021` | **worse** | gained the gold double frame, serif and dark ink; lost the signature row, now one orange-boxed paragraph, and the name, now a bold serif twice its size on three lines; the page is drawn tall and narrow |
+
+The fifteen:
+
+| page | verdict | what the page shows |
+|---|---|---|
+| `receipt_0010` | **worse** | all eight item prices are gone: told 18 × 2, the model returned two columns and dropped the third; the column-sum Probe fails |
+| `statement_0006` | **worse** | the transactions' header row cannot be read, its words in the dark band's own colour; the caption has gone and `Castleton` reads `Castletown` |
+| `cv_0013` | better, with a loss | no findings card, the sidebar edge to edge; `2022` lost (told 3 columns of 4) |
+| `nonlatin_0014` | better | no highlight on myDATA; header block and totals as printed |
+| `catalogue_0015`, `darkdeck_0009`, `form_0007`, `invoice_0001`, `invoice_0002`, `menu_0012`, `newsletter_0008`, `report_0011`, `sample_css_0004`, `sample_semantic_0005`, `sample_table_0003` | better | steps 1–9's changes, each judged at its step; every one of these pages is byte-identical to `S8-U-replay` |
+
+**Where each worse page came from — traced, not inferred.**
+
+- **receipt and statement: step U's column count.** Measured on every
+  table Zone of the sweep (old grid, new grid, drawn column rules):
+
+  | table | before | after | vertical rules drawn | the page | the answer |
+  |---|---|---|---|---|---|
+  | `timetable_0019` | 4 × 1 | 9 × 6 | **7** | 6 columns | every row back |
+  | `nonlatin_0014` | 10 × 1 | 10 × 4 | 0 | 4 | page unchanged |
+  | `statement_0006` | 43 × 1 | 43 × 5 | 0 | 6 | header unreadable |
+  | `receipt_0010` | 18 × 1 | 18 × 2 | 0 | 3 | price column dropped |
+  | `cv_0013` | 5 × 1 | 5 × 3 | 0 | 4 | `2022` dropped |
+  | `paper_0018` | 1 × 1 | 5 × 3 | 1 | 4, under a caption | caption doubled |
+  | `ticket_0020` | 9 × 2 | 8 × 2 | 1 | — | same as the replay |
+
+  **Only the timetable's columns come from the rules it draws.** The other
+  five moved because the rules and the dark fill were cleared before the
+  projection. Four of those five then undercount the page, and the model
+  obeyed each count by dropping or merging a column. At 1 column, the old
+  count was so wrong that the model ignored it and read every column. This
+  is the Q5 finding from the other side: **a count near the truth is
+  obeyed, an absurd one is not.**
+- **The statement's colour.** At 43 × 5 the model returned a seven-cell
+  header with the caption first. `_title_is_its_header_cell` then dropped
+  the Title. Looks measured the header row's colour from a box holding the
+  caption's dark ink, so the row was drawn in the band's own colour.
+- **The certificate: the layout front, on the unwarped page.** Zones 9 → 7:
+  - the two signatures, the seal and the certificate number are one figure
+    Zone, drawn as a boxed caption;
+  - the name is no longer its own Zone. It is the Title of the body's Zone,
+    so it is drawn at Title size.
+
+  The warp had kept them apart. The frames and the serif are the unwarping's
+  gains.
+
+**Directions, ranked by gain for cost.**
+
+| # | stage | change | why | cost / how measured |
+|---|---|---|---|---|
+| 1 | Extract (the hint) | state the column count from the drawing **only where the table draws two vertical rules or more**; elsewhere state the count as before step U; keep the ruled rows | five of five unruled column moves came from the cleared projection, and four undercount the page | **no model for four of the five:** receipt, statement, cv and nonlatin kept their row counts, so their prompts are `s7-result/`'s byte for byte and the replay serves the baseline's answers; paper is asked 5 × 1, a new prompt |
+| 2 | wire | a table row spelling the Zone's Title goes, like `_without_title_echo` for Blocks | paper's caption is printed twice; the Title still prints the words, so no word can vanish | offline, by rederive |
+| 3 | Style (looks) | never draw a row's text in its own fill's colour; measure a row's colour on its own box | the statement's header, and any page where a caption shares a row box | offline; after 1 its trigger is gone, so it is a guard |
+| 4 | Layout | keep the certificate's signature row as three Zones and the name as its own Zone on the unwarped page | the certificate's three worst faults | the layout front measures the Zones offline; the answers cost a sweep |
+| 5 | Style (looks) | pricing's Business price size; card parts drawn as one card | pricing's two remaining faults | offline |
+
+**Open decisions, Alessandro's.**
+
+- **Is `S8-sweep` the baseline?** Three pages are worse than the baseline,
+  and each worse page is named above with its cause. If direction 1 is
+  built first, receipt, statement and cv come back to their step-9 pages
+  by replay. The baseline would then be that replay, as `s7-result/` was
+  the replay of `S7-sweep` at `9cd4ae2`, and paper's one new call would be
+  taken in a sweep.
+- **The certificate's unwarping** is a gain in its frames and face and a
+  loss in its grouping. Direction 4 is the layout work it needs; reverting
+  the unwarping would give back the frames.
+
+**Recommendation.** Do not freeze `S8-sweep` as it stands. Build
+direction 1, measure it by replay, and judge the receipt, the statement
+and cv by eye against their step-9 pages. Then freeze, with directions 2
+and 3 in the same block, offline.
+
 ---
 
 ## 7. Not in this spec — later, and Alessandro's call
@@ -1100,7 +1221,61 @@ Zone's index, kind, band and column, box, Title and contents. Every trace in
 
 ---
 
-## Handover prompt — implement spec 0012 group by group, then one sweep (current)
+## Handover prompt — after `S8-sweep`: the decision, then the column count (current)
+
+```
+Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then
+docs/specs/0012-draw-what-the-page-draws.md — its status line, "How to
+work", §9, and its last outcome, "the sweep, S8-sweep". Spec 0012 is
+implemented (step 0, G1-G9 and step U, commits e236153..ba0c110) and
+swept once over all 21 on ba0c110: §6's prediction held, 18 pages better
+than the baseline, 3 worse. Issue #35 stays open on one decision.
+
+Alessandro's decision, to ask first if he has not given it: is S8-sweep
+the baseline? The outcome recommends not as it stands. Its three worse
+pages are traced there:
+- receipt_0010 and statement_0006: step U's column count;
+- certificate_0021: its layout once it is no longer warped.
+
+Directions 1-3, ranked there:
+1. State the table's column count from the drawing only where the table
+   draws two vertical rules or more; elsewhere state the count as before
+   step U, and keep the ruled rows (preprocess.table_grid,
+   _columns_as_ruled).
+   - Measured at the sweep: of the seven tables step U re-counted, only
+     the timetable's columns come from drawn rules.
+   - Receipt, statement, cv and nonlatin kept their row counts, so their
+     table prompts return to tests/frozen/s7-result/'s byte for byte.
+   - tools/replay_run.py, which marks ASKED DIFFERENTLY since step 0,
+     must then mark only paper_0018 (5 x 1) against s7-result. Against
+     debug/runs/S8-sweep it must mark only those four and paper.
+2. At the wire, a table row spelling its Zone's Title goes: paper's
+   caption is printed twice.
+3. Never draw a row's text in its own fill's colour: the statement's
+   header.
+
+Before any change, prove where you stand:
+- the suite: 1114 passed, 1 skipped, mypy src clean, at ba0c110;
+- the replay of tests/frozen/s7-result/ at HEAD marks nine documents
+  ASKED DIFFERENTLY (the certificate, pricing, and one table call each in
+  cv, nonlatin, paper, receipt, statement, ticket and timetable), and
+  renders the other twelve as debug/runs/S8-U-replay does;
+- debug/runs/S8-sweep/ is the only copy of the sweep's 725 answers. If it
+  is gone, the four documents with new answers (certificate, pricing,
+  timetable, ticket) cost a sweep; say so before building.
+
+Judge by eye, as spec 0012 did: sheets for all 21 against the step
+before, each moved page better / same / worse with a sentence; the six
+held-out pages in their own lines; scores recorded, never argued from;
+vanished read as a pointer. Each change its own commit. Continue unless a
+page got worse; then stop, show it, ask. Freezing a new baseline is
+Alessandro's decision. The standing rules are CLAUDE.md's and the spec's
+§9.
+```
+
+---
+
+## Handover prompt — implement spec 0012 group by group, then one sweep (record, superseded 2026-10-14)
 
 ```
 Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then
