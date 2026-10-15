@@ -1,19 +1,18 @@
-# Status — 2026-10-14 (**the baseline is `tests/frozen/s9-result/`; spec 0014 planned, not started**)
+# Status — 2026-10-15 (**the baseline is `tests/frozen/s9-result/`; spec 0014 done, `S10-sweep` awaiting Alessandro's decision**)
 
 **Live document.** This is where the project actually is. When it goes stale,
-rewrite it; do not add a banner and leave it. Last rewritten 2026-10-14,
-after Alessandro took `S9-sweep` as the baseline; spec 0014 planned the
-same day.
+rewrite it; do not add a banner and leave it. Last rewritten 2026-10-15,
+after spec 0014's sweep, `S10-sweep`.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file, then
 [`specs/0014-every-line-a-place.md`](specs/0014-every-line-a-place.md) —
-end to end, and its handover prompt marked *current*. If you are going to
+its "Outcome — the sweep" and its handover prompt marked *current*. If you are going to
 look at output — and you should — use the **`visual-review` skill**.
 
-Branch `scaffold`. **1142 tests pass (1 skipped), `mypy src/` clean** — at
-`a84404c`'s code (`a3969f3` adds the spec only), 2026-10-14.
+Branch `scaffold`. **1166 tests pass (1 skipped), `mypy src/` clean** — at
+`b493477`'s code (`a53f11b` adds the spec only), 2026-10-15.
 
 **How work is judged — Alessandro, 2026-10-12, for spec 0011; carried
 over by specs 0012 and 0013.** By eye: every step's sheets are opened
@@ -56,9 +55,12 @@ Spec 0013   Four pages first — issue #36
                  byte; 7 pages better, 13 same, 1 worse (ticket)
               DECIDED 2026-10-14: S9-sweep the baseline, frozen as s9-result/
 Spec 0014   Every printed line has a place — issue #37
-              1 Zone.extra  2 read what nobody read  3 copies alike by
-              the Kind that keeps most — then ONE sweep S10-sweep.
-              NOT STARTED
+              1 Zone.extra DONE  2 read what nobody read DONE
+              3 copies alike by the Kind that keeps most — built,
+                the catalogue worse: DROPPED, Alessandro 2026-10-14
+              S  S10-sweep on a53f11b, 2026-10-15: prediction held to
+                 the byte; 3 pages better, 18 same, none worse
+              DECISION PENDING: is S10-sweep the baseline
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -143,38 +145,37 @@ certificate's signature row (beside 1.000 → 0.000).
 
 ## What the last work shipped
 
-### Spec 0013 — four pages first, `S9-sweep`, 2026-10-14
+### Spec 0014 — every printed line has a place, `S10-sweep`, 2026-10-15
 
-**Against `S9-0-replay` (`s8-result/` at the code it began on): seven
-pages better, thirteen the same, one worse.**
+**Against `S10-0-replay` (`s9-result/` at the code it began on): three
+pages better, eighteen the same, none worse.** Commit `a53f11b`, 735
+calls, 2h21m. §7's prediction held to the byte: all 732 calls
+`s9-result/` asked answered alike, three re-reads beyond them, every
+page as predicted. The unclaimed list is empty on all 21.
 
-- **Better:** the receipt's eight prices at the right; the certificate
-  landscape, its name one line, its signature row no longer one
-  interleaved paragraph; pricing's three framed cards; the statement's
-  header readable on its band; cv's `2022`; paper's caption once;
-  sample_semantic's tags on one line.
-- **Worse:** `ticket_0020`. Its warp now holds the whole card and
-  `BOARDING PASS` is read whole, but the new crops' answers lose `OSL`,
-  `OSLO GARDERMOEN`, both `NORDLYS AIR` and the gate note, and an 8 px
-  `equalise` halo recovered as a Zone is read as `The` / `The`.
+- **Better:** the form's note under its tick boxes; the ticket's `OSLO
+  GARDERMOEN` (at the foot of its Zone, not under the name); the
+  timetable's legend on one line under its grid.
+- **Ratchet, reported:** the ticket's tau 0.282 → 0.238, from that
+  line's place. `vanished` 41 → 33, nothing gone.
 
 What shipped, one commit a step:
-- 1 `preprocess.table_grid`: the column count from the page's rules only
-  where it rules two or more;
-- 2 `render`: a frame round the page and the frames inside it padded once;
-- 3 cards as framed stacks (`rhythm`, `render._cards`), a frame bridged
-  through a ribbon (`furniture._bridged`), a line in two sizes
-  (`Look.sizes`), a cut copy dropped (`locate.without_cut_copies`), a list
-  printed on one line drawn so;
-- 4 `detector`: a text container round a surer picture opened,
-  `HEADING_GAP_RATIO` 1.9 → 1.77, inside to a pixel;
-- 5 `preprocess.rectify`: an edge with the sheet beyond it is not the
-  paper's, the outline read off the sheet's colour; `RECTIFIER_VERSION` 6;
-- 6 `wire.without_title_rows`, the sixth wire-level row net;
-- 7 `looks._drawn_ground`: a drawn fill under the Cell.
+- 1 `ir.Zone.extra`: lines a Zone's Kind has no place for; `cells_of`
+  yields them last; `render._zone_body` draws them before or after the
+  body;
+- 2 `Conversion._read_unclaimed`: each line `locate.unclaimed` flags is
+  read on its own crop with the prose prompt, kept unless the Zone
+  already prints the line (`locate.holds`); `tools/replay_run` counts a
+  pass's calls, so a swallowed new call is marked ASKED MORE;
+- 3 copies alike by the Kind that keeps most — **built and dropped**:
+  prose lost five of the catalogue's code badges and its price rows'
+  spread, and darkdeck's tiles are four `pairs` when copies are read
+  alike, so it never reached them.
 
-§9's prediction held to the byte: 0 of the calls asked the same
-answered differently; the four step-1 table answers equal `s7-result/`'s.
+### Spec 0013 — four pages first, `S9-sweep`, 2026-10-14
+
+Seven pages better, thirteen the same, the ticket worse; taken as the
+baseline, `s9-result/`. Its "Outcome — the sweep" has the detail.
 
 ### Earlier
 
@@ -183,27 +184,14 @@ and `specs/0007-handover.md` for the A phases and the queue.
 
 ---
 
-## Next — spec 0014, issue #37, not started
+## Next — Alessandro's decision on `S10-sweep`
 
-**[`specs/0014-every-line-a-place.md`](specs/0014-every-line-a-place.md)
-is the only open work.** Alessandro asked, after `S9-sweep`, for general
-repairs rather than per-page ones. Its fault, measured at `s9-result/` on
-seven pages: a printed line the Zone's reading has no place for is
-dropped, or forced into the Kind's shape. Examples are the form's note
-under its tick boxes, the timetable's legend, the ticket's `OSLO
-GARDERMOEN`, darkdeck's `P95` → `LATENCY`, and the catalogue's cards.
-
-The spec's three steps, then one sweep, `S10-sweep`:
-1. `Zone.extra`: a Zone can hold, and draw, lines its Kind has no place
-   for.
-2. Each line `locate.unclaimed` flags is read on its own crop, as a
-   separate pass.
-3. A grid's copies take the Kind that keeps the most of a line, not the
-   majority.
-
-**Not in it: type read as a figure.** That waits on his call whether a
-wordmark is text. Spec 0013's directions stay record. Do not pick up
-anything else unless he names it.
+**Nothing is open but that decision.** If he takes it, it is frozen as
+`tests/frozen/s10-result/` — spec 0014's handover prompt marked
+*current* says how, and the proof to take. The four directions in spec
+0014's "Outcome — the sweep" are record, not a queue. **Not in it: type
+read as a figure** — it waits on his call whether a wordmark is text.
+Do not pick anything up unless he names it.
 
 ---
 
@@ -298,6 +286,14 @@ the last two entries.
 - **Opening any container less sure than its parts** — spec 0013 step 4.
   Also opened `invoice_0002`'s pairs, `nonlatin_0014`'s totals line and
   two pictures; it ships only round a picture.
+- **A grid's copies take the Kind that keeps most of a line** — spec
+  0014 step 3, `S10-3-check`. All nine catalogue cards read as prose
+  lost five code badges and their price rows' spread; darkdeck's tiles
+  are four `pairs` when copies are read alike, out of its reach. Its
+  diff is beside the check run.
+- **The re-read's guard judged one Block at a time** — spec 0014 step 2.
+  It refused the timetable's legend, five items each a word its grid
+  prints; the guard judges the line read together instead.
 
 ---
 
@@ -316,7 +312,7 @@ python tools/visual_review.py debug/runs/<label> --check
 `git diff HEAD > debug/runs/<label>/uncommitted.diff` beside it**, as A3 did.
 
 **A sweep outlasts a two-hour background task** — `S7-sweep` took 2h16m,
-`S8-sweep` 2h12m, `S9-sweep` 2h16m. Start it detached and wait on its log, and **never edit
+`S8-sweep` 2h12m, `S9-sweep` 2h16m, `S10-sweep` 2h21m. Start it detached and wait on its log, and **never edit
 `tools/iterate.sh` while a sweep is running**: bash reads the script as
 it goes, and `S8-sweep`'s script died after its bake-off on a line the
 edit had shifted:

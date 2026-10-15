@@ -1,10 +1,11 @@
 # Every printed line has a place — read what nobody read, read copies alike, then one sweep
 
-**Status: steps 1 and 2 done, step 3 built and dropped, §7's prediction
-registered; `S10-sweep` running — 2026-10-14. Issue #37.** Three steps,
-each traced to its cause at the baseline with its prediction written down,
-then one full sweep, `S10-sweep`, over all twenty-one documents. The
-handover prompt at the end is the one to start a session with.
+**Status: done 2026-10-15 — steps 1 and 2 shipped, step 3 built and
+dropped, `S10-sweep` taken; whether it becomes the baseline is
+Alessandro's decision. Issue #37.** Three steps, each traced to its cause
+at the baseline with its prediction written down, then one full sweep,
+`S10-sweep`, over all twenty-one documents. The handover prompt marked
+*current* at the end is the one to start a session with.
 
 Alessandro's decisions, 2026-10-14:
 
@@ -376,7 +377,7 @@ darkdeck: 61 of 61 calls alike, the page byte-identical.
 | 2 | read what nobody read — DONE | replay, a targeted run | §3's three calls marked, no other; the three lines printed |
 | 3 | copies take the Kind that keeps most | replay, a targeted run | **DROPPED** 2026-10-14: the catalogue worse, darkdeck out of its reach — see its outcome |
 | P | register §7's prediction in this spec — DONE | replay at the last commit | the marked calls written down before the sweep |
-| S | **`S10-sweep`**: all 21, shipped defaults, started detached | the model | §7 checked; all 21 sheets opened against `S10-0-replay`; the outcome written |
+| S | **`S10-sweep`**: all 21, shipped defaults, started detached — DONE 2026-10-15 | the model | §7 checked; all 21 sheets opened against `S10-0-replay`; the outcome written |
 
 ---
 
@@ -442,6 +443,104 @@ Then report the sweep in the error-analysis format:
 
 Whether `S10-sweep` becomes the baseline is Alessandro's decision.
 
+### Outcome — the sweep, `S10-sweep`, 2026-10-15
+
+Commit `a53f11b`, 07:35–09:56 (**2h21m**), shipped defaults, **735
+calls**, the model 40%/60% CPU/GPU. All twenty-one converted.
+
+**The prediction held to the byte, every clause:**
+- all 732 calls `s9-result/` asked were asked alike and answered byte for
+  byte the same;
+- the only calls beyond them are the three re-reads, one prose call each
+  on form, ticket and timetable;
+- the eighteen unmarked documents render byte-identical to
+  `S10-P-replay`; form, ticket and timetable byte-identical to `S10-2`;
+- no further re-read: the unclaimed list is empty on all 21.
+
+`tools/replay_run.py debug/runs/S10-sweep` reproduces 21 of 21
+byte-identical, 0 asked differently; `tools/rederive.py` over it 21 of 21
+byte-identical files.
+
+**By eye, all 21 sheets against `S10-0-replay`
+(`debug/runs/S10-sweep/_review/`): three pages better, eighteen the
+same, none worse.** The eighteen differ from `S10-0-replay` by the empty
+`"extra"` key alone.
+
+**1. The five pages, against their lines in §1**
+
+| page | §1's line | now |
+|---|---|---|
+| form | the note under the tick boxes, dropped | **better** — `Tick one category. Locker allocation is subject to availability.` under the tick boxes, small and grey, as printed |
+| ticket | `OSLO GARDERMOEN`, `OSL` and the gate note, dropped | **better, in part** — `OSLO GARDERMOEN` printed, at the foot of Zone 3 after `GROUP 2` rather than under the passenger's name; `OSL` and the gate note still gone, as §3 said the detector cannot reach them |
+| timetable | the legend, dropped | **better** — `Mathematics Science English Art PE` on one grey line under the grid. `Science` drawn bold, the page sets all five regular; the swatches are not drawn |
+| catalogue | `CP-402` dropped; the cards forced into pairs | **same** — step 3 dropped; `CP-402` still missing, the cards drawn three ways |
+| darkdeck | `P95` → `LATENCY`, `184` → `ms` | **same** — step 3 never reached it: its tiles are four `pairs` when copies are read alike |
+
+**2. The six held-out pages** — recorded, not argued from:
+
+| page | by eye | vocabulary recall | tau | beside |
+|---|---|---|---|---|
+| certificate | same | 1.000 → 1.000 | 1.000 → 1.000 | 0.000 → 0.000 |
+| letter | same | 0.995 → 0.995 | 1.000 → 1.000 | 1.000 → 1.000 |
+| paper | same | 0.985 → 0.985 | 1.000 → 1.000 | 0.547 → 0.547 |
+| pricing | same | 1.000 → 1.000 | 0.880 → 0.880 | 0.629 → 0.629 |
+| ticket | better, in part | 0.750 → 0.800 | 0.282 → 0.238 | 0.000 → 0.000 |
+| timetable | better | 0.982 → 0.982 | 0.957 → 0.963 | 0.991 → 0.992 |
+
+The ticket's tau is the one ratchet leg that fell: `OSLO GARDERMOEN`
+drawn at its Zone's foot is out of the page's order. Reported, not a
+gate.
+
+`vanished` 41 → 33: back — the form's `tick`, `one`, `allocation`,
+`is`, `subject`, `availability`; the ticket's `oslo`, `gardermoen`.
+Nothing gone. Means against `s9-result/` (all 21 / the fifteen / the
+six): vocabulary recall 0.977 → 0.982 / 0.988 → 0.991 / 0.952 → 0.960;
+join recall 0.945 → 0.951 / 0.960 → 0.965 / 0.905 → 0.914; tau 0.951 →
+0.949 / 0.990 → 0.990 / 0.853 → 0.847; precision and beside unmoved.
+
+**3. Where it gained**
+
+| page | gain |
+|---|---|
+| form | **its note** — six words out of `vanished`, 7 → 1 |
+| ticket | **the route** — `OSLO GARDERMOEN` printed, 10 → 8 |
+| timetable | **its legend** — on one line, under the grid |
+
+**4. The faults left, by stage** — this spec's class first
+
+| page | what the page shows | stage | evidence |
+|---|---|---|---|
+| ticket | `OSLO GARDERMOEN` at the foot of its Zone, not under the name | Render | `_extra` draws before or after the body only (§6); placed at 0.495, the Zone's first Cell at 0.230 |
+| ticket | `OSL` gone | Locate | 46 px type tesseract does not read, so no line is flagged |
+| ticket | the gate note gone | Locate | its `Gate` lies in a `GATE` Cell's box, so the line counts as claimed |
+| ticket | both `NORDLYS AIR` drawn as pictures | Classify | type read as a figure — §6, his call |
+| catalogue | `CP-402` gone; 31 of 43 pairs one-sided | Classify → Extract | pairs answers; step 3's prose lost five badges and the price spread (step 3's outcome) |
+| darkdeck | `P95` → `LATENCY`; tiles drawn two ways | Extract | four `pairs` answers; two overturned to prose by `_reread_as_prose` after extraction |
+| sample_semantic | `Tags:` and the commas gone | Extract | one word, under `UNCLAIMED_WORDS`; a list has no lead-in |
+| timetable | `Science` in the legend drawn bold | Style | `Look.bold` set on that Cell alone; cause not traced |
+| certificate | signatures stacked, the seal a text chip | Structure → Render | unmoved since `s9-result/` |
+
+**5. Directions, ranked by gain for cost**
+
+| # | stage | change | why | cost |
+|---|---|---|---|---|
+| 1 | Render | an `extra` line placed between a Zone's pairs or rows is drawn there | the ticket's route under its name; tau back | rederive offline — no model |
+| 2 | Extract | when `_reread_as_prose` overturns one copy of a drawn grid, its copies are read as prose too | darkdeck's four tiles alike, `P95 LATENCY` one line — the two tiles prose already reads well | a model question per copy; a sweep |
+| 3 | Style | find why one legend word measures bold | the timetable's legend | offline, on `S10-sweep`'s IR |
+| 4 | Locate | a line partly inside one Cell's box is not claimed by that Cell's word alone | the ticket's gate note | layout front offline; the re-read at a sweep |
+
+Not worth more effort: **copies taking the Kind that keeps most** — built
+and measured (step 3's outcome); prose drops the catalogue's badges and
+cannot reach darkdeck. The catalogue's cards need a Kind that keeps both
+a white-on-dark badge and a spread price row, and none of the five
+does.
+
+**6. Recommendation.** Three pages better, eighteen the same, none worse
+by eye, and the prediction held to the byte: the re-read is a general
+pass that asked three calls and moved no other answer. **Whether
+`S10-sweep` becomes the baseline is Alessandro's decision**; if taken,
+the ticket's tau is its one leg named, and direction 1 is its repair.
+
 ---
 
 ## 8. Where things are
@@ -480,7 +579,44 @@ print each Zone's index, kind, box and title, then every Cell from
 
 ---
 
-## Handover prompt — implement spec 0014, then one sweep (current)
+## Handover prompt — after `S10-sweep`: Alessandro's decision, then the freeze (current)
+
+```
+Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then
+docs/specs/0014-every-line-a-place.md's "Outcome — the sweep" and step
+3's outcome. Spec 0014's work plan is done; nothing is open except
+Alessandro's decision on S10-sweep. Do not pick anything up unless he
+names it — the four directions in the outcome are record, not a queue.
+
+State, re-measured 2026-10-15 at a53f11b (code as b493477):
+- the suite: 1166 passed, 1 skipped; mypy src clean;
+- debug/runs/S10-sweep/: 21 documents, 735 calls, 2h21m;
+  tools/replay_run.py debug/runs/S10-sweep reproduces 21 of 21
+  byte-identical, 0 asked differently; tools/rederive.py over it gives
+  21 of 21 byte-identical files;
+- by eye against S10-0-replay: 3 pages better (form, ticket, timetable),
+  18 same, none worse; the ticket's tau the one ratchet leg that fell.
+
+If debug/runs/S10-sweep/ is gone, say so and stop: it cannot be remade
+without a sweep.
+
+If Alessandro takes S10-sweep as the baseline: freeze it as
+tests/frozen/s10-result/ in the shape of s9-result/ — documents/,
+scores.json, answers/ (tools/replay_run.py debug/runs/S10-sweep
+--save-answers <dir>, with hashes), dth_env.txt, and a README giving its
+provenance, the prediction it held, and the ticket's tau leg named as
+s9-result/'s README names its one. Prove the freeze: replay and rederive
+of tests/frozen/s10-result each 21 of 21 byte-identical, and the report
+scored straight out of it against s9-result/. Then update CLAUDE.md's
+baseline lines and docs/status.md, close #37, one commit.
+
+If he does not, ask what he wants done first. Whatever comes next is
+his to name.
+```
+
+---
+
+## Handover prompt — implement spec 0014, then one sweep (record — done 2026-10-15)
 
 ```
 Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then
