@@ -16,7 +16,7 @@ from pathlib import Path
 
 import numpy as np
 
-from doc_to_html.ir import (BBox, Block, Document, Kind, Pair, Reading, Row, RowRole,
+from doc_to_html.ir import (BBox, Block, Document, Kind, Look, Pair, Reading, Row, RowRole,
                             Source, Style, Unclaimed, Zone, cell)
 from doc_to_html.locate import cells_of, holds
 from doc_to_html.orchestrator import Conversion, EngineSet
@@ -85,6 +85,24 @@ class TestAZoneHoldsTheLinesItsKindHasNoPlaceFor:
     def test_the_body_is_drawn_as_it_was(self) -> None:
         html = drawn(ticks(note("Tick one category.", 0.33)))
         assert re.sub(r"<p[^>]*>Tick one category\.</p>", "", html) == drawn(ticks())
+
+
+class TestALineReadAgainIsDrawnAsThePageSetsIt:
+    """Spec 0015, step 1: the prose reader answers `heading` on one isolated
+    word — `sample_semantic_0005`'s `Tags:`, set smaller than the body."""
+
+    def tags(self, size: float, bold: bool) -> Zone:
+        line = cell("Tags:", bbox=BBox(0.1, 0.33, 0.13, 0.342))
+        line.look = Look(size=size, bold=bold)
+        return ticks(Block(kind="heading", lines=[line]))
+
+    def test_a_heading_set_as_body_type_is_a_line(self) -> None:
+        html = drawn(self.tags(0.83, False))
+        assert "<h1" not in html and ">Tags:</p>" in html
+
+    def test_a_heading_set_large_or_bold_stays_one(self) -> None:
+        assert "<h1" in drawn(self.tags(1.4, False))
+        assert "<h1" in drawn(self.tags(0.9, True))
 
 
 class TestItemsTheZoneHasNoPlaceFor:

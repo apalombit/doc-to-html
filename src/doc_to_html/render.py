@@ -17,7 +17,7 @@ import json
 import math
 import re
 from collections import Counter
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from enum import Enum
 from functools import lru_cache
 from itertools import groupby
@@ -1733,8 +1733,23 @@ def _extra(zone: Zone, document: Document, extra: list[Block]) -> tuple[str, str
                  and (line.top + line.bottom) / 2 < first.top)
         (before if above else after).append(
             _items(blocks, zone, document) if is_item
-            else "".join(_block(block, document) for block in blocks))
+            else "".join(_block(_as_set(block), document) for block in blocks))
     return "".join(before), "".join(after)
+
+
+def _as_set(block: Block) -> Block:
+    """A line read again on its own crop, drawn as the page sets it — spec
+    0015, step 1. On one isolated word the prose reader answers `heading`,
+    and a heading is drawn at the stylesheet's `h1` size and weight,
+    because `style.heading_sizes` sizes a Zone's Blocks and not its extra
+    lines: `sample_semantic_0005`'s `Tags:`, set at 0.83 of the body and
+    not bold, came out the page's largest type. A heading whose every line
+    is measured neither bold nor larger than the body is a line."""
+    if block.kind != "heading" or not all(
+            line.look is not None and not line.look.bold
+            and (line.look.size or 1.0) <= 1.0 for line in block.lines):
+        return block
+    return replace(block, kind="paragraph")
 
 
 def _items(listed: list[Block], zone: Zone, document: Document) -> str:

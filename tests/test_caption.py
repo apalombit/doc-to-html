@@ -807,7 +807,8 @@ class TestATitleIsNeverPrintedTwice:
         html = render(Document(source=Source(path="x", sha256="0" * 64,
                                              width=100, height=100),
                                zones=[zone]))
-        assert '<dt class="alone">$2.14</dt>' in html
+        # Spec 0015, 2c: a value with no label is a line, in its own look.
+        assert '<dd class="line">$2.14</dd>' in html
         assert html.count("COST PER MILLION") == 2  # the h2, and the embedded IR
 
     def test_a_pair_that_is_the_title_split_in_two_is_dropped(self) -> None:
