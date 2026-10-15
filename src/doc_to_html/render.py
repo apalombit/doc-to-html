@@ -967,6 +967,8 @@ def _style_css(document: Document) -> str:
     if any(zone.kind is Kind.PAIRS and zone.align not in TEXT_ALIGN
            and _printed_lines(zone) is not None for zone in document.zones):
         rules.extend(PLACED_CSS)
+    if _alone(document):
+        rules.extend(LINE_CSS)
     if any(_rows_read(zone) for zone in document.zones if zone.kind is Kind.TABLE):
         rules.extend(ROWS_CSS)
     if any(row.gap is not None for zone in document.zones for row in zone.rows):
@@ -1625,35 +1627,41 @@ def _zone_body(zone: Zone, document: Document) -> str:
         return '<div class="skeleton"></div>'
     renderers = {
         Kind.TABLE: _table,
-        Kind.PAIRS: _pairs,
         Kind.PROSE: _prose,
         Kind.LIST: _list,
         Kind.FIGURE: _figure,
     }
-    body = renderers[zone.kind](zone, document)
-    if not zone.extra:
+    # Spec 0015, 2d: a pairs Zone drawn by its printed lines draws its extra
+    # lines among them, and they are not drawn again before or after it.
+    body, among = (_pairs(zone, document) if zone.kind is Kind.PAIRS
+                   else (renderers[zone.kind](zone, document), set()))
+    extra = [block for block in zone.extra
+             if not all(id(cell) in among for cell in block.lines)]
+    if not extra:
         return body
-    before, after = _extra(zone, document)
+    before, after = _extra(zone, document, extra)
     return before + body + after
 
 
-def _extra(zone: Zone, document: Document) -> tuple[str, str]:
+def _extra(zone: Zone, document: Document, extra: list[Block]) -> tuple[str, str]:
     """The lines the Zone's Kind has no place for, `Zone.extra`, each drawn
     as a prose Block inside the Zone's own container — spec 0014, step 1.
 
-    **Before the body or after it, never between its rows or pairs.** A
+    **Before the body or after it, never between its rows or pairs** —
+    except in a pairs Zone drawn by its printed lines, which draws them
+    among its lines (spec 0015, 2d) and leaves only the rest here. A
     Block goes before when its first placed line lies above the body's
     first placed Cell — its middle over that Cell's top — and after it
     otherwise, which is also where a Block nothing placed goes:
     `form_0007`'s note under its tick boxes, `timetable_0019`'s legend
     under its grid. Consecutive items go together, as `_prose` gathers
     them (`_items`)."""
-    extra = {id(cell) for block in zone.extra for cell in block.lines}
+    lines = {id(cell) for block in zone.extra for cell in block.lines}
     first = next((cell.bbox for cell, _ in cells_of(zone)
-                  if cell.bbox is not None and id(cell) not in extra), None)
+                  if cell.bbox is not None and id(cell) not in lines), None)
     before: list[str] = []
     after: list[str] = []
-    for is_item, run in groupby(zone.extra, key=lambda b: b.kind == "item"):
+    for is_item, run in groupby(extra, key=lambda b: b.kind == "item"):
         blocks = list(run)
         line = next((cell.bbox for block in blocks for cell in block.lines
                      if cell.bbox is not None), None)
@@ -2457,11 +2465,15 @@ def _fields(zone: Zone, document: Document) -> str | None:
             + "".join(parts) + "</div>")
 
 
-def _pairs(zone: Zone, document: Document) -> str:
-    """One `dt` and one `dd` per pair; a pair with no value marks its label
-    `alone`, which the stylesheet draws across both columns, and a value
-    whose label was its Zone's Title is drawn the same way — see
-    `wire._without_title_echo`.
+def _pairs(zone: Zone, document: Document) -> tuple[str, set[int]]:
+    """One `dt` and one `dd` per pair — and the extra lines it drew among
+    them, by `id`. A value whose label was its Zone's Title is drawn
+    alone, as a line — see `wire._without_title_echo`.
+
+    **A label with no value and no mark is a line** — spec 0015, 2c: drawn
+    in its own look across both columns, `dd class="line"`, and not as a
+    label, which the stylesheet draws muted: `invoice_0002`'s bank lines,
+    `cv_0013`'s `REGISTRATION`, `darkdeck_0009`'s `+9%`.
 
     **A pairs Zone the page sets centred or flush right is drawn as lines**
     — spec 0011, step 1c: each pair a line, its label beside its value, so
@@ -2471,10 +2483,11 @@ def _pairs(zone: Zone, document: Document) -> str:
     if any(pair.marks for pair in zone.pairs) and zone.bbox is not None:
         drawn = _fields(zone, document)
         if drawn is not None:
-            return drawn
+            return drawn, set()
     lines = zone.align in TEXT_ALIGN
     if not lines and (printed := _printed_lines(zone)) is not None:
-        return _placed(zone, document, printed)
+        return _placed(zone, document, printed), {id(c) for line in printed
+                                                   for c, _, _ in line}
     summary = zone.role is Role.SUMMARY
     anchors = furnish.anchor(document) if document.furniture else None
     index, page = _index(document, zone), _page(document)
@@ -2490,12 +2503,13 @@ def _pairs(zone: Zone, document: Document) -> str:
         if not label.strip() and value.strip():
             label, value = value, ""
             named, held = pair.value, None
+        alone = not value.strip() and not pair.marks
 
         def styled(cell: Cell | None, bold: bool = False, muted: bool = False) -> str:
             looked = _look(cell, bold=bold, house=_house(document, muted=muted))
             return f' style="{looked}"' if looked else ""
 
-        dt, dd = styled(named, muted=True), styled(held, bold=summary)
+        dt, dd = styled(named, muted=not alone), styled(held, bold=summary)
         if flush and not lines:
             dt = _merged(dt, "text-align:right")
         rule = anchors.pairs.get((index, position)) if anchors else None
@@ -2507,6 +2521,10 @@ def _pairs(zone: Zone, document: Document) -> str:
             dd = _merged(dd, drawn)
         if pushed is not None and pushed[0] == position:
             dt, dd = _merged(dt, pushed[1]), _merged(dd, pushed[1])
+        if alone:
+            line = f'<dd class="line"{dt}>{label}</dd>'
+            parts.append(f"<div>{line}</div>" if lines else line)
+            continue
         if lines:
             parts.append(f"<div><dt{dt}>{label}</dt>"
                          + (f" <dd{dd}>{value}</dd>" if value.strip() else "")
@@ -2515,7 +2533,7 @@ def _pairs(zone: Zone, document: Document) -> str:
         tag = f"<dt{dt}>" if value.strip() else f'<dt class="alone"{dt}>'
         parts.append(f"{tag}{label}</dt><dd{dd}>{value}</dd>")
     css = "pairs lines" if lines else "pairs"
-    return f'<dl class="{css}">' + "".join(parts) + "</dl>"
+    return f'<dl class="{css}">' + "".join(parts) + "</dl>", set()
 
 
 def _labels_flush(zone: Zone, page: _Page) -> bool:
@@ -2532,61 +2550,173 @@ def _labels_flush(zone: Zone, page: _Page) -> bool:
             < _spread([box.left for box in located], page))
 
 
-def _printed_lines(zone: Zone) -> list[list[tuple[Cell, bool]]] | None:
+def _printed_lines(zone: Zone) -> list[list[tuple[Cell, bool, BBox]]] | None:
     """A pairs Zone's entries by the lines the page prints them on, each
-    with whether it is a label — or None where a label and its value per
-    line is what the page prints, and the `dl` draws it.
+    with whether it is drawn as a label and its box — or None where a
+    label and its value per line is what the page prints, and the `dl`
+    draws it.
 
     Spec 0012, G4: `catalogue_0015`'s card prints price, unit and stock on
     one line, two pairs; its last card, and `cv_0013`'s registration, print
-    a value under its label. Only where every entry is placed."""
-    entries = [(c, c is pair.label, number) for number, pair in enumerate(zone.pairs)
+    a value under its label. Spec 0015, step 2, four amendments:
+    - **2a, lines by position.** An entry joins whichever line it shares
+      with, not only the last, and the lines go down the page: the model
+      listed `ticket_0020`'s stub column by column, `FLIGHT`, `GATE`,
+      then `SEAT`, `GROUP`, which by the model's order were four lines.
+    - **2b, an entry nothing placed takes the place its neighbours
+      imply** (`_inferred`), where before one such entry sent the whole
+      Zone back to the `dl`.
+    - **2c, a label with no value and no mark is not drawn as a label.**
+    - **2d, the Zone's extra lines** that are placed join the printed
+      lines where they are printed — the ticket's `OSLO GARDERMOEN`
+      under the name — once the pairs alone have decided the Zone is
+      drawn this way."""
+    entries = [(c, c is pair.label and (bool(pair.value.text.strip()) or bool(pair.marks)),
+                number)
+               for number, pair in enumerate(zone.pairs)
                for c in (pair.label, pair.value) if c.text.strip()]
-    if not entries or any(c.bbox is None for c, _, _ in entries):
+    if not entries:
         return None
-    printed: list[list[tuple[Cell, bool, int]]] = []
-    for entry in entries:
-        box = entry[0].bbox
-        assert box is not None
-        if printed:
-            band = printed[-1][0][0].bbox
-            assert band is not None
-            shared = min(box.bottom, band.bottom) - max(box.top, band.top)
-            if shared >= 0.5 * min(box.bottom - box.top, band.bottom - band.top):
-                printed[-1].append(entry)
-                continue
-        printed.append([entry])
+    boxes = _inferred(zone, entries)
+    printed = _by_line(entries, boxes)
+    if printed is None:
+        return None
     lines_of = {number: {index for index, line in enumerate(printed)
                          for _, _, n in line if n == number}
                 for _, _, number in entries}
     if not (any(len({n for _, _, n in line}) > 1 for line in printed)
             or any(len(found) > 1 for found in lines_of.values())):
         return None
-    return [[(c, label) for c, label, _ in line] for line in printed]
+    extra = [(c, False, -1 - k) for k, c in enumerate(
+        c for block in zone.extra for c in block.lines
+        if c.text.strip() and c.bbox is not None)]
+    boxes.update({id(c): c.bbox for c, _, _ in extra})
+    printed = _by_line(entries + extra, boxes)
+    assert printed is not None
+    return [[(c, label, box) for c, label, _ in line
+             if (box := boxes[id(c)]) is not None] for line in printed]
+
+
+def _same_line(box: BBox, other: BBox) -> bool:
+    """Whether two boxes share at least half the shorter one's height —
+    on one printed line."""
+    shared = min(box.bottom, other.bottom) - max(box.top, other.top)
+    return shared >= 0.5 * min(box.bottom - box.top, other.bottom - other.top)
+
+
+def _by_line(entries: list[tuple[Cell, bool, int]],
+             boxes: dict[int, BBox | None]) -> list[list[tuple[Cell, bool, int]]] | None:
+    """Entries gathered by printed line, down the page — or None where one
+    has no box."""
+    printed: list[list[tuple[Cell, bool, int]]] = []
+    for entry in entries:
+        box = boxes[id(entry[0])]
+        if box is None:
+            return None
+        line = next((line for line in printed
+                     if _same_line(box, boxes[id(line[0][0])])), None)  # type: ignore[arg-type]
+        if line is None:
+            printed.append([entry])
+        else:
+            line.append(entry)
+    return sorted(printed, key=lambda line: min(
+        boxes[id(c)].top for c, _, _ in line))  # type: ignore[union-attr]
+
+
+def _inferred(zone: Zone, entries: list[tuple[Cell, bool, int]]) -> dict[int, BBox | None]:
+    """Each entry's box by `id`: its own, or for one `locate` placed
+    nowhere, the place its neighbours imply — spec 0015, 2b. Two rules,
+    in order, each from placed entries only:
+
+    1. **Its partner's column**, on the line where the entries of its own
+       role sit for the pairs whose other entry shares its partner's line
+       — where those sit on a line of their own, as in a grid.
+       `ticket_0020`'s `NL 0482`, which tesseract reads as `nl 0429`, goes
+       under `FLIGHT`, on the line of `14 OCT 2026` and `07:35`.
+    2. **Otherwise on the line of the next placed entry**, in reading
+       order and not its own partner — where its partner, if placed, is on
+       that line too, and the line has room before the entries it precedes
+       — before every entry there that it precedes. `catalogue_0015`'s
+       `£9.80` and `£28.00` go on the line of `each` and `In stock`;
+       `OK-330` on the line of `NEW`. The ticket's `DEPARTS` is left
+       unplaced: its value `08:05` is not on the line of the next entry,
+       `Economy`, and nothing says whether the page sets it over its value
+       or beside it. So is `darkdeck_0009`'s `$2.14`: the next entry,
+       `+9%`, starts where the tile's type starts, and the page prints the
+       figure over it.
+
+    A box implied is no wider than a point: it says where the entry
+    starts and on which line. It is the render's, never the IR's."""
+    boxes: dict[int, BBox | None] = {id(c): c.bbox for c, _, _ in entries}
+    placed = [c.bbox for c, _, _ in entries if c.bbox is not None]
+    for index, (mine, _, number) in enumerate(entries):
+        if mine.bbox is not None or not placed:
+            continue
+        pair = zone.pairs[number]
+        partner = pair.value if mine is pair.label else pair.label
+        there = partner.bbox if partner.text.strip() else None
+        boxes[id(mine)] = (_in_column(zone, pair, mine is pair.label, there)
+                           or _before_next(entries, index, partner, there, placed))
+    return boxes
+
+
+def _in_column(zone: Zone, pair: Pair, label: bool, there: BBox | None) -> BBox | None:
+    if there is None:
+        return None
+    own = [(p.label if label else p.value).bbox for p in zone.pairs
+           if p is not pair and (p.value if label else p.label).bbox is not None
+           and (p.label if label else p.value).bbox is not None
+           and _same_line((p.value if label else p.label).bbox, there)]  # type: ignore[arg-type]
+    shown = [box for box in own if box is not None]
+    if not shown or any(_same_line(box, there) for box in shown):
+        return None
+    return BBox(there.left, median(b.top for b in shown), there.left,
+                median(b.bottom for b in shown))
+
+
+def _before_next(entries: list[tuple[Cell, bool, int]], index: int, partner: Cell,
+                 there: BBox | None, placed: list[BBox]) -> BBox | None:
+    after = next((c.bbox for c, _, _ in entries[index + 1:]
+                  if c.bbox is not None and c is not partner), None)
+    if after is None or (there is not None and not _same_line(there, after)):
+        return None
+    line = [c.bbox for c, _, _ in entries if c.bbox is not None and _same_line(c.bbox, after)]
+    ahead = [b for c, _, _ in entries[:index]
+             if (b := c.bbox) is not None and _same_line(b, after)]
+    left = (max(b.right for b in ahead) if ahead
+            else min(b.left for b in placed))
+    # Only where the line has room before the entries it precedes — at least
+    # a glyph: `darkdeck_0009`'s `+9%` starts where its tile's type starts,
+    # and the page prints `$2.14` over it, not beside it.
+    following = [b.left for b in line if b.left >= left]
+    if not following or min(following) - left <= after.bottom - after.top:
+        return None
+    return BBox(left, after.top, left, after.bottom)
 
 
 def _placed(zone: Zone, document: Document,
-            printed: list[list[tuple[Cell, bool]]]) -> str:
+            printed: list[list[tuple[Cell, bool, BBox]]]) -> str:
     """A pairs Zone drawn line by line as the page prints it — spec 0012,
     G4: each entry starting where its box starts across the Zone's type,
     the last flush right where the page sets it there, and each line as
-    far below the one before as the page sets it."""
+    far below the one before as the page sets it. The boxes are
+    `_printed_lines`', which include those it implied (spec 0015, 2b)."""
     page = _page(document)
-    boxes = [c.bbox for line in printed for c, _ in line if c.bbox is not None]
+    boxes = [box for line in printed for _, _, box in line]
     left, right = min(b.left for b in boxes), max(b.right for b in boxes)
     wide = max(right - left, 1e-6)
     reach = page.body / page.x
     parts = []
     above: tuple[float, float] | None = None
     for line in printed:
-        line = sorted(line, key=lambda entry: entry[0].bbox.left if entry[0].bbox else 0.0)
-        shown = [c.bbox for c, _ in line if c.bbox is not None]
+        line = sorted(line, key=lambda entry: entry[2].left)
+        shown = [box for _, _, box in line]
         starts = [b.left for b in shown]
         # Each entry's share of the line up to the next one's start; the
         # last as wide as it prints, so a face wider than the page's
         # squeezes the shares rather than breaking `In stock` in two.
         tracks = [f"{(b - a) / wide * 100:.2f}fr" for a, b in zip(starts, starts[1:])] + ["auto"]
-        size = max((c.look.size or 1.0) if c.look else 1.0 for c, _ in line)
+        size = max((c.look.size or 1.0) if c.look else 1.0 for c, _, _ in line)
         style = [f"grid-template-columns:{' '.join(tracks)}"]
         if starts[0] - left > reach:
             style.append(f"margin-left:{(starts[0] - left) / wide * 100:.2f}%")
@@ -2596,10 +2726,8 @@ def _placed(zone: Zone, document: Document,
                    - (ROW_BELOW * above[1] + ROW_ABOVE * size) * page.body)
             style.append(f"margin-top:{_px(gap)}")
         spans = []
-        for position, (c, label) in enumerate(line):
+        for position, (c, label, box) in enumerate(line):
             looked = _look(c, house=_house(document, muted=label))
-            box = c.bbox
-            assert box is not None
             if position and position == len(line) - 1 and box.right >= right - reach:
                 looked = ";".join(part for part in (looked, "justify-self:end") if part)
             css = ' class="label"' if label else ""
@@ -2615,6 +2743,23 @@ PLACED_CSS = (
 )
 """A pairs Zone drawn by its printed lines — spec 0012, G4. Emitted only
 for a page that has one."""
+
+
+LINE_CSS = (
+    "dl.pairs dd.line { grid-column:1 / -1; }",
+    ".zone-summary dl.pairs dd.line { font-weight:inherit; text-align:inherit; }",
+)
+"""A pairs entry with no partner and no mark drawn as a line — spec 0015,
+2c. Emitted only for a page that has one."""
+
+
+def _alone(document: Document) -> bool:
+    """Whether a pairs Zone holds an entry with no partner and no mark —
+    a line, `LINE_CSS`."""
+    return any(bool(pair.label.text.strip()) != bool(pair.value.text.strip())
+               and not pair.marks
+               for zone in document.zones if zone.kind is Kind.PAIRS
+               for pair in zone.pairs)
 
 
 def _merged(attribute: str, css: str) -> str:

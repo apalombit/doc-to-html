@@ -45,7 +45,7 @@ class TestAPairsZoneByItsPrintedLines:
         zone = pairs(CARD, STOCK, box=BBox(0.03, 0.3, 0.33, 0.35))
         printed = _printed_lines(zone)
         assert printed is not None
-        assert [[c.text for c, _ in line] for line in printed] == [["£4.20", "each", "In stock"]]
+        assert [[c.text for c, _, _ in line] for line in printed] == [["£4.20", "each", "In stock"]]
 
     def test_a_value_under_its_label_is_its_own_line(self) -> None:
         zone = pairs((("Chartered Engineer", BBox(0.02, 0.30, 0.29, 0.32)),
@@ -69,6 +69,121 @@ class TestAPairsZoneByItsPrintedLines:
         assert line[0].startswith("grid-template-columns:46.52fr 39.56fr auto")
         assert 'justify-self:end">In stock' in line[1]
         assert '<span class="label">£4.20</span>' in line[1]
+
+
+def texts(printed: list[list[tuple[object, bool, BBox]]] | None) -> list[list[str]]:
+    assert printed is not None
+    return [[c.text for c, _, _ in sorted(line, key=lambda e: e[2].left)]  # type: ignore[attr-defined]
+            for line in printed]
+
+
+def at(left: float, top: float, wide: float = 0.04, tall: float = 0.02) -> BBox:
+    return BBox(left, top, left + wide, top + tall)
+
+
+def stub() -> Zone:
+    """`ticket_0020`'s stub, its pairs as the model listed them: column by
+    column, label over value."""
+    return pairs((("FLIGHT", at(0.76, 0.30)), ("NL 0482", at(0.76, 0.34))),
+                 (("GATE", at(0.76, 0.42)), ("C14", at(0.76, 0.47))),
+                 (("SEAT", at(0.94, 0.30)), ("12A", at(0.94, 0.34))),
+                 (("GROUP", at(0.93, 0.42)), ("2", at(0.93, 0.47))),
+                 box=BBox(0.74, 0.28, 1.0, 0.5))
+
+
+def grid_of_three(flight: BBox | None) -> Zone:
+    """`ticket_0020`'s passenger grid, three across, label over value, with
+    `NL 0482` placed nowhere when `flight` is None."""
+    zone = pairs((("FLIGHT", at(0.03, 0.59)), ("NL 0482", flight or at(0.03, 0.65))),
+                 (("DATE", at(0.20, 0.59)), ("14 OCT 2026", at(0.20, 0.65, 0.12))),
+                 (("BOARDING", at(0.38, 0.59)), ("07:35", at(0.38, 0.65))),
+                 box=BBox(0.02, 0.58, 0.45, 0.7))
+    if flight is None:
+        zone.pairs[0].value.bbox = None
+    return zone
+
+
+class TestStepTwoPairsAsThePagePrintsThem:
+    """Spec 0015, step 2."""
+
+    def test_2a_lines_are_formed_by_position_not_the_models_order(self) -> None:
+        assert texts(_printed_lines(stub())) == [
+            ["FLIGHT", "SEAT"], ["NL 0482", "12A"], ["GATE", "GROUP"], ["C14", "2"]]
+
+    def test_2b_an_unplaced_value_goes_under_its_label_in_a_grid(self) -> None:
+        printed = _printed_lines(grid_of_three(None))
+        assert texts(printed) == [["FLIGHT", "DATE", "BOARDING"],
+                                  ["NL 0482", "14 OCT 2026", "07:35"]]
+        assert printed is not None
+        [(_, _, box)] = [e for e in printed[1] if e[0].text == "NL 0482"]
+        assert box.left == 0.03 and (box.top, box.bottom) == (0.65, 0.67)
+
+    def test_2b_an_implied_box_is_the_renders_and_never_the_irs(self) -> None:
+        zone = grid_of_three(None)
+        render(page([zone]))
+        assert zone.pairs[0].value.bbox is None
+
+    def test_2b_an_unplaced_entry_goes_before_the_next_on_its_line(self) -> None:
+        """`catalogue_0015`'s `£9.80`, a label with no value."""
+        zone = pairs((("Brass cup handle", at(0.36, 0.25, 0.1)), None),
+                     (("£9.80", at(0.36, 0.32)), None),
+                     (("each", at(0.49, 0.33, 0.03, 0.008)), None),
+                     (("In stock", at(0.60, 0.33, 0.04, 0.008)), None),
+                     box=BBox(0.35, 0.24, 0.65, 0.35))
+        zone.pairs[1].label.bbox = None
+        assert texts(_printed_lines(zone)) == [["Brass cup handle"],
+                                               ["£9.80", "each", "In stock"]]
+
+    def test_2b_not_where_its_value_is_on_another_line(self) -> None:
+        """The ticket's `DEPARTS`: nothing says whether the page sets it
+        over `08:05` or beside it."""
+        zone = pairs((("DEPARTS", at(0.55, 0.60)), ("08:05", at(0.55, 0.65))),
+                     (("CLASS", at(0.55, 0.75)), ("Economy", at(0.55, 0.80))),
+                     box=BBox(0.54, 0.58, 0.7, 0.85))
+        zone.pairs[0].label.bbox = None
+        assert _printed_lines(zone) is None
+
+    def test_2b_not_where_the_line_has_no_room_before_the_next(self) -> None:
+        """`darkdeck_0009`'s `$2.14`, printed over `+9%`, which starts
+        where the tile's type starts."""
+        zone = pairs((("", at(0.78, 0.15)), ("$2.14", at(0.78, 0.15))),
+                     (("+9%", at(0.78, 0.18, 0.02, 0.01)), None),
+                     box=BBox(0.77, 0.13, 0.98, 0.2))
+        zone.pairs[0].value.bbox = None
+        assert _printed_lines(zone) is None
+
+    def test_2c_a_label_with_no_value_and_no_mark_is_drawn_as_a_line(self) -> None:
+        zone = pairs((("Name", at(0.13, 0.25)), ("Acme Corporation", at(0.18, 0.25, 0.1))),
+                     (("Alpha Bank - M0123", at(0.13, 0.33, 0.15)), None),
+                     box=BBox(0.1, 0.24, 0.3, 0.35))
+        html = body_of(render(page([zone])))
+        assert '<dd class="line">Alpha Bank - M0123</dd>' in html
+        assert "dl.pairs dd.line { grid-column:1 / -1; }" in render(page([zone]))
+        assert "<dt>Name</dt>" in html
+
+    def test_2c_in_the_lines_drawn_it_is_not_a_label(self) -> None:
+        zone = pairs(CARD, STOCK, box=BBox(0.03, 0.3, 0.33, 0.35))
+        html = body_of(render(page([zone])))
+        assert '<span class="label">£4.20</span>' in html
+        stock = re.search(r"<span([^>]*)>In stock</span>", html)
+        assert stock is not None and "label" not in stock.group(1)
+
+    def test_2d_an_extra_line_is_drawn_among_the_printed_lines(self) -> None:
+        """The ticket's `OSLO GARDERMOEN`, under the name, over the grid."""
+        zone = grid_of_three(at(0.03, 0.65))
+        zone.extra = [Block(kind="paragraph", lines=[cell("OSLO GARDERMOEN",
+                                                          bbox=at(0.03, 0.50, 0.16))])]
+        printed = _printed_lines(zone)
+        assert texts(printed)[0] == ["OSLO GARDERMOEN"]
+        html = body_of(render(page([zone])))
+        assert html.count("OSLO GARDERMOEN") == 1
+        assert html.index("OSLO GARDERMOEN") < html.index("FLIGHT")
+
+    def test_2d_an_extra_line_nothing_placed_is_drawn_after(self) -> None:
+        zone = grid_of_three(at(0.03, 0.65))
+        zone.extra = [Block(kind="paragraph", lines=[cell("OSL")])]
+        html = body_of(render(page([zone])))
+        assert html.count(">OSL<") == 1 and html.index("07:35") < html.index(">OSL<")
 
 
 def tile(left: float, height: float) -> Zone:
