@@ -671,6 +671,38 @@ def _from_ink(image: ImageArray, zone: Zone,
     return out
 
 
+def _from_lines(zone: Zone, found: Sequence[Word],
+                placed: list[BBox | None]) -> list[BBox | None]:
+    """An unplaced line of the Zone's `extra` on the printed line it claims
+    — spec 0015, 2d. A line in `extra` was read again from a printed line
+    no Cell claimed (`unclaimed`), and it claims that line back by the same
+    test, `_claims`: of the line's confident words no placed Cell covers,
+    half the words and half their letters are its own. Its words may still
+    not match it run for run: tesseract reads the ticket's `Gate closes 20
+    minutes before` as `gate user minutes before`, and its digits do not
+    agree; and `OSL` is read only by `display_words`. Each line is
+    claimed once, in reading order."""
+    body = len(_body_of(zone))
+    if None not in placed[body:]:
+        return placed
+    taken = [box for box in placed if box is not None]
+    lines: dict[tuple[int, int, int], list[Word]] = {}
+    for word in found:
+        if (word.confidence >= CONFIDENT and len(word.text) >= 2
+                and not _covered(word, taken)):
+            lines.setdefault(word.line, []).append(word)
+    out = list(placed)
+    for index, (cell, _) in enumerate(cells_of(zone)):
+        if index < body or out[index] is not None or not cell.text.strip():
+            continue
+        mine = set(whole_words(cell.text))
+        key = next((key for key, words_ in lines.items() if _claims(mine, words_)), None)
+        if key is not None:
+            words_ = lines.pop(key)
+            out[index] = _union(words_, 0, len(words_) - 1)
+    return out
+
+
 CONFIDENT = 60.0
 """tesseract's confidence, 0 to 100, at or above which an unclaimed word
 counts. Measured 2026-10-13 over all twenty-one at `S8-8-echo`, as the mean
@@ -842,17 +874,19 @@ def locate(image: ImageArray, document: Document) -> tuple[int, int]:
         read[i] = first + [extra for extra in more if not any(
             extra.text == seen.text and extra.box.overlap_ratio(seen.box) > 0.5
             for seen in first)]
-    # Display type the first read erased as rules: for the unclaimed lines
-    # only, never to place a Cell.
+    # Display type the first read erased as rules: for the unclaimed lines,
+    # and for the extra lines read from them (`_from_lines`) — never to place
+    # a Cell of the body.
     with ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as pool:
         display = list(pool.map(
             lambda pair: display_words(image, pair[0], pair[1],
                                        languages=language(pair[0])), zip(zones, read)))
     placed = total = 0
-    for zone, found in zip(zones, read):
+    for zone, found, more in zip(zones, read, display):
         boxes = place(zone, found)
         for fallback in (_from_grid, _from_pairs, _from_ink):
             boxes = fallback(image, zone, boxes)
+        boxes = _from_lines(zone, list(found) + more, boxes)
         for (cell, _), box in zip(cells_of(zone), boxes):
             cell.bbox = box
             placed += box is not None

@@ -356,6 +356,34 @@ class TestUnclaimedLines:
                 "20 words between 40% and 48% down the page, 3% of the page") in html
 
 
+class TestAnExtraLineTakesTheLineItClaims:
+    """Spec 0015, 2d: a line read again goes back on the printed line it was
+    read from, by `unclaimed`'s own test, where its words do not match run
+    for run — the ticket's gate note, read by tesseract as `gate user
+    minutes before`."""
+
+    def stub(self) -> Zone:
+        zone = Zone(kind=Kind.PAIRS, bbox=at(0, 0, SIDE, SIDE), complete=True,
+                    pairs=[Pair(cell("GATE", bbox=at(0, 20, 32, 30)),
+                                cell("C14", bbox=at(0, 40, 24, 50)))],
+                    extra=[Block(kind="paragraph",
+                                 lines=[cell("Gate closes 20 minutes before")])])
+        return zone
+
+    def test_it_is_placed_on_the_line_it_claims(self) -> None:
+        zone = self.stub()
+        found = [sure("Gate", 0, 200, 9), sure("user", 40, 200, 9, 45.0),
+                 sure("minutes", 80, 200, 9, 40.0), sure("before", 150, 200, 9)]
+        boxes = locate._from_lines(zone, found, [at(0, 20, 32, 30), at(0, 40, 24, 50), None])
+        assert boxes[2] == BBox(0.0, 0.5, 198 / SIDE, 210 / SIDE)
+
+    def test_not_on_a_line_it_does_not_claim(self) -> None:
+        zone = self.stub()
+        found = [sure("Boarding", 0, 200, 9), sure("closes", 80, 200, 9)]
+        boxes = locate._from_lines(zone, found, [at(0, 20, 32, 30), at(0, 40, 24, 50), None])
+        assert boxes[2] is None
+
+
 class TestTheDisplayRead:
     """Spec 0015, step 1: the Zone read again for type the first read erased
     as rules, kept only where the first read was sure of nothing."""
