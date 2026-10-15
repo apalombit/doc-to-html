@@ -36,9 +36,9 @@ trial axis is kept rather than rejected.
 
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
-measured numbers and what has already been tried and rejected. **0015 is the
-one open spec** — issue #38, planned 2026-10-15, not started. 0008 to 0014
-(issues #31–#37) are done and decided. 0007 still defines the target.
+measured numbers and what has already been tried and rejected. **0015 is done**
+— issue #38; its sweep `S11-sweep` waits on Alessandro's baseline
+decision. 0008 to 0014 (issues #31–#37) are done and decided. 0007 still defines the target.
 
 ---
 
@@ -63,7 +63,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-15: the baseline is `tests/frozen/s10-result/`, spec 0014's sweep; spec 0015 planned, not started, and nothing else is open. Work is judged by eye.**
+**Where the project is — 2026-10-16: the baseline is `tests/frozen/s10-result/`, spec 0014's sweep; spec 0015 is done and its sweep `S11-sweep` waits on Alessandro's baseline decision; nothing else is open. Work is judged by eye.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -154,7 +154,10 @@ Spec 0015   Every line read, and drawn where the page puts it — planned
               1 read the lines nobody reads (locate.unclaimed widened)
               2 pairs drawn as the page prints them
               3 side by side where the page puts it: band lanes, dividers
-              then ONE sweep S11-sweep over all 21. NOT STARTED
+              1-3 DONE, each judged by eye
+              S  S11-sweep on 6b1caf4, 2026-10-16: prediction held to
+                 the byte, 6 pages better, 15 same, none worse
+              DECISION PENDING: S11-sweep as the baseline (Alessandro)
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
@@ -180,14 +183,15 @@ ticket's tau is the one ratchet leg that fell, named in its README. The six adde
 and reported in their own lines. Each earlier floor, and why it moved, is
 in its README and in `docs/status.md`.
 
-**The only open work is `docs/specs/0015-drawn-where-the-page-puts-it.md`**
-— issue #38: groups 1–3 of the recap after `S10-sweep`, with
-`ticket_0020` and `certificate_0021` the focus. Its §1 lists every fault
-on those two pages, its cause, and whether the spec touches it. There
-are three steps, then one sweep, `S11-sweep`. **Everything else was
-cleared by Alessandro on 2026-10-15**, the wordmark question included;
-do not pick anything up unless he names it. The spec's handover prompt
-marked *current* is the one to start a session with.
+**Spec 0015, `docs/specs/0015-drawn-where-the-page-puts-it.md`, is
+done** — issue #38, `ticket_0020` and `certificate_0021` the focus. Its
+"Outcome — the sweep" checks §1's tables row by row, lists the faults
+left by stage and ranks the directions. **The only open item is
+Alessandro's decision on `S11-sweep`**; if he takes it, it is frozen as
+`tests/frozen/s11-result/`. **Everything else was cleared by Alessandro
+on 2026-10-15**, the wordmark question included; do not pick anything
+up unless he names it. The spec's handover prompt marked *current* is
+the one to start a session with.
 `docs/specs/0007-handover.md` holds spec 0007's prompts, as record.
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
@@ -599,8 +603,8 @@ each other — `CellState.DISPUTED` and the Ladder are already the vocabulary fo
 it, and `_climb_ladders` already records that it waits on a second Engine. That
 is model time and Alessandro's decision, not a detector.
 
-**Tracker state, 2026-10-15: one open issue — #38, spec 0015, not
-started.** #31–#37 (specs 0008–0014) are closed, each done and decided. #30 (spec 0007) closed when its
+**Tracker state, 2026-10-16: one open issue — #38, spec 0015, done,
+left open until the baseline decision.** #31–#37 (specs 0008–0014) are closed, each done and decided. #30 (spec 0007) closed when its
 work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
 #17 (the vision layout prompt) were closed by Thread 0. Every other spec is closed
 history; 0007 still defines the target.

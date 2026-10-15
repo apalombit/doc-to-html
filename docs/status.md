@@ -1,19 +1,21 @@
-# Status — 2026-10-15 (**the baseline is `tests/frozen/s10-result/`; spec 0015 planned, not started**)
+# Status — 2026-10-16 (**spec 0015 done; `S11-sweep` waits on the baseline decision; the baseline is still `tests/frozen/s10-result/`**)
 
 **Live document.** This is where the project actually is. When it goes stale,
-rewrite it; do not add a banner and leave it. Last rewritten 2026-10-15,
-after Alessandro took spec 0014's sweep, `S10-sweep`, as the baseline and
-planned spec 0015, clearing everything else.
+rewrite it; do not add a banner and leave it. Last rewritten 2026-10-16,
+after spec 0015's sweep, `S11-sweep`, held its prediction to the byte and
+was reviewed by eye. Whether it becomes the baseline is Alessandro's
+decision.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file, then
 [`specs/0015-drawn-where-the-page-puts-it.md`](specs/0015-drawn-where-the-page-puts-it.md)
-end to end, starting from its handover prompt marked *current*. If you are going to
+end to end, starting from its handover prompt marked *current* (the
+baseline decision, then freezing `s11-result/` if he takes it). If you are going to
 look at output — and you should — use the **`visual-review` skill**.
 
-Branch `scaffold`. **1166 tests pass (1 skipped), `mypy src/` clean** — at
-`b493477`'s code (`a53f11b` adds the spec only), 2026-10-15.
+Branch `scaffold`. **1201 tests pass (1 skipped), `mypy src/` clean** — at
+`3c5e365`'s code (`6b1caf4` and later add docs only), 2026-10-15.
 
 **How work is judged — Alessandro, 2026-10-12, for spec 0011; carried
 over by specs 0012 and 0013.** By eye: every step's sheets are opened
@@ -66,8 +68,11 @@ Reset       2026-10-15, Alessandro: everything not in spec 0015 cleared.
 Spec 0015   Every line read, and drawn where the page puts it — issue #38
               ticket and certificate the focus
               1 read the lines nobody reads  2 pairs as the page prints
-              them  3 side by side where the page puts it
-              then ONE sweep S11-sweep. NOT STARTED
+              them  3 side by side where the page puts it — each DONE,
+              judged by eye
+              S  S11-sweep on 6b1caf4, 2026-10-16: prediction held to
+                 the byte; 6 pages better, 15 same, none worse
+              DECISION PENDING: S11-sweep as the baseline (Alessandro)
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -129,30 +134,74 @@ scores the iterate five.
 
 ## Where the corpus is — recorded, not a target
 
-Means over `s10-result/`, against `s9-result/`:
+Means over `S11-sweep`, against `s10-result/`:
 
 | | all 21 | the fifteen | the six new |
 |---|---|---|---|
-| vocabulary recall | 0.977 → 0.982 | 0.988 → 0.991 | 0.952 → 0.960 |
-| precision | 0.988 → 0.988 | 0.988 → 0.988 | 0.988 → 0.988 |
-| join recall | 0.945 → 0.951 | 0.960 → 0.965 | 0.905 → 0.914 |
-| tau | 0.951 → 0.949 | 0.990 → 0.990 | 0.853 → 0.847 |
-| beside agreement | 0.757 → 0.757 | 0.849 → 0.849 | 0.528 → 0.528 |
-| height ratio | 1.069 → 1.074 | 1.028 → 1.029 | 1.171 → 1.186 |
-| alignment agreement | 0.805 → 0.802 | 0.840 → 0.840 | 0.718 → 0.705 |
-| scale error | 0.220 → 0.220 | 0.154 → 0.154 | 0.383 → 0.383 |
+| vocabulary recall | 0.982 → 0.990 | 0.991 → 0.991 | 0.960 → 0.988 |
+| precision | 0.988 → 0.989 | 0.988 → 0.988 | 0.988 → 0.989 |
+| join recall | 0.951 → 0.961 | 0.965 → 0.965 | 0.914 → 0.949 |
+| tau | 0.949 → 0.977 | 0.990 → 0.990 | 0.847 → 0.946 |
+| beside agreement | 0.757 → 0.837 | 0.849 → 0.877 | 0.528 → 0.737 |
+| height ratio | 1.074 → 1.045 | 1.029 → 1.028 | 1.186 → 1.089 |
+| alignment agreement | 0.802 → 0.799 | 0.840 → 0.844 | 0.705 → 0.686 |
+| scale error | 0.220 → 0.227 | 0.154 → 0.165 | 0.383 → 0.383 |
 
-Only form, ticket and timetable moved. The six's tau is the ticket's.
+Moved: ticket, certificate, catalogue, timetable, sample_semantic,
+invoice_0002, cv. The fifteen's scale error is the catalogue's: its
+three prices placed by inference are drawn small.
 
-**`vanished`: 41 → 33 words.** Back: six of the form's note's words, the
-ticket's `oslo` and `gardermoen`. Nothing gone.
+**`vanished`: 33 → 26 words.** Back: the ticket's gate note (`gate` was
+already printed elsewhere, so five words) and `osl`, and the timetable's
+`lunch`. No word is newly vanished.
 
 ---
 
 ## What the last work shipped
 
+### Spec 0015 — every line read, and drawn where the page puts it, `S11-sweep`, 2026-10-16
+
+**Against `S11-0-replay` (`s10-result/` replayed at the code the spec
+began on): six pages better, fifteen the same, none worse.** Commit
+`6b1caf4`, 749 calls, 2h22m. §6's prediction held to the byte: all
+735 calls `s10-result/` asked were answered alike, fourteen re-reads
+fell where registered, and every page was byte-identical to its
+predicted render.
+
+- **Better:** the ticket (the stub a pane of its own, the field grids
+  as grids, `OSL` and the gate note printed, `OSLO GARDERMOEN` under the
+  name); the certificate (its signature row one line, three lanes); the
+  catalogue (nine cards alike); invoice_0002 (the panels at the page's
+  widths); sample_semantic (TL;DR at the page's width, `Tags:`
+  printed); the timetable (`Lunch` printed).
+- **Left on the two focus pages:** the ticket has no display type for
+  `OSL` and `TRD`, its header bar is in pieces with the `The` strip,
+  and its stub header and barcode are missing. The certificate has its
+  seal as a text chip, its names flush left under centred rules, and
+  black stars. The spec's "Outcome — the sweep" has §1's tables row by
+  row, the faults by stage and the directions ranked.
+- **Ratchet, reported:** the timetable's tau 0.963 → 0.954 and beside
+  0.992 → 0.984, both from `Lunch` drawn under the grid instead of in
+  its row.
+
+What shipped, one commit a step:
+- 1 `3e35c27` `locate.unclaimed` widened: one-word lines, claims by
+  half the words and half their letters, a display read at the page's
+  scale, a crop that stops short of claimed words (`Unclaimed.reach`),
+  and the guard `locate.holds` after the call. `tools/replay_run`
+  compares calls by hash wherever they fall;
+- 2 `b48b7b2` `render._printed_lines` by position, entries with no box
+  placed from their mates' column or before the next entry, a lone label
+  drawn as a line, extra lines among the printed lines; `3c5e365`
+  `locate._from_lines` places an extra line on the line it claims;
+  `357b183` an extra heading set like the body is drawn as a line;
+- 3 `a8bc381` a band's units take the page's lanes (`render._lanes`,
+  extent = box, frame and anchored rules), and a drawn divider reaches
+  what it parts (`structure._columns`).
+
 ### Spec 0014 — every printed line has a place, `S10-sweep`, 2026-10-15
 
+Taken as the baseline, `s10-result/`.
 **Against `S10-0-replay` (`s9-result/` at the code it began on): three
 pages better, eighteen the same, none worse.** Commit `a53f11b`, 735
 calls, 2h21m. §7's prediction held to the byte: all 732 calls
@@ -190,33 +239,26 @@ and `specs/0007-handover.md` for the A phases and the queue.
 
 ---
 
-## Next — spec 0015, the only open work
+## Next — Alessandro's decision on `S11-sweep`
 
-[`specs/0015-drawn-where-the-page-puts-it.md`](specs/0015-drawn-where-the-page-puts-it.md),
-issue #38, planned 2026-10-15, not started. These are groups 1–3 of the
-fault recap after `S10-sweep`, in order. **`ticket_0020` and
-`certificate_0021` are the focus.** The spec's §1 takes each fault on those
-two pages to its cause and says whether the spec touches it:
+Nothing is open but the decision. Spec 0015's handover prompt marked
+*current* is the one to start from.
 
-- **Ticket.** Rotation is not the cause. The perforation is never a
-  divider, the field grids are drawn as lists, and `OSL` and the gate
-  note are never read.
-- **Certificate.** The signature row wraps: 640px asked for in a 636px box.
+- **If `S11-sweep` is taken as the baseline**, freeze it as
+  `tests/frozen/s11-result/` while `debug/runs/S11-sweep/` still exists,
+  prove it by replay and rederive, point CLAUDE.md and this file at it,
+  and close issue #38.
+- **If he names next work**, spec 0015's "Directions, ranked" is the
+  starting point. Its first three directions are offline: a look for
+  entries placed by inference (`OSL` at display size, the catalogue's
+  prices, `NL 0482`), `align` measured against a unit's extent (the
+  certificate's names), and extra lines placed on their row in table and
+  list Zones (`Lunch`, `Tags:`). The fourth and fifth are the ticket's
+  `BOARDING PASS` heading and its header bar.
 
-1. **Read the lines nobody reads.** `locate.unclaimed` is widened; only new
-   re-read calls.
-2. **Pairs drawn as the page prints them.** Offline.
-3. **Side by side where the page puts it.** Band lanes from the page, and a
-   divider that reaches what it parts. Offline; 3b proved by replay.
-
-Then one sweep, `S11-sweep`. Steps 2 and 3 were prototyped offline before
-the spec was written: the ticket in two panes with its grids as grids,
-and the certificate's row in one line.
-
-**Everything else was cleared by Alessandro on 2026-10-15**: the recap's
-other groups (marks and badges, misreads, emphasis), spec 0014's
-directions, and the wordmark question. Spec 0015's §7 names them so they
-are not mistaken for misses; none is queued.
+Everything spec 0015 did not do stays cleared, as it was on 2026-10-15.
+That covers marks and badges, misreads, emphasis and the wordmark
+question. None of it is queued.
 
 ---
 
@@ -316,6 +358,12 @@ the last two entries.
   lost five code badges and their price rows' spread; darkdeck's tiles
   are four `pairs` when copies are read alike, out of its reach. Its
   diff is beside the check run.
+- **Spec 0015 step 1's first forms** — a claim by letters alone (it let
+  `Mathematics` claim the timetable's legend), a guard alike to *any*
+  Cell (it refused `OSL`, 0.86 to `OSLO`), a guard on tesseract's own
+  text (it cannot separate `99` and `914`). Step 3b's reach for a
+  container's edge as well as a drawn rule moved 24 of the catalogue's
+  crops. The spec's step outcomes have each.
 - **The re-read's guard judged one Block at a time** — spec 0014 step 2.
   It refused the timetable's legend, five items each a word its grid
   prints; the guard judges the line read together instead.
@@ -337,7 +385,7 @@ python tools/visual_review.py debug/runs/<label> --check
 `git diff HEAD > debug/runs/<label>/uncommitted.diff` beside it**, as A3 did.
 
 **A sweep outlasts a two-hour background task** — `S7-sweep` took 2h16m,
-`S8-sweep` 2h12m, `S9-sweep` 2h16m, `S10-sweep` 2h21m. Start it detached and wait on its log, and **never edit
+`S8-sweep` 2h12m, `S9-sweep` 2h16m, `S10-sweep` 2h21m, `S11-sweep` 2h22m. Start it detached and wait on its log, and **never edit
 `tools/iterate.sh` while a sweep is running**: bash reads the script as
 it goes, and `S8-sweep`'s script died after its bake-off on a line the
 edit had shifted:

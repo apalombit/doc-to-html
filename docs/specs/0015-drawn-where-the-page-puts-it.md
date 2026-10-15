@@ -1,7 +1,9 @@
 # Every line read, and drawn where the page puts it — the ticket and the certificate first
 
-**Status: steps 1–3 done and judged by eye, 2026-10-15; §6's prediction
-registered; `S11-sweep` running. Issue #38.** Three steps, in order,
+**Status: done 2026-10-16. Steps 1–3 were judged by eye; `S11-sweep` held
+§6's prediction to the byte, with six pages better, fifteen the same and
+none worse. Whether it becomes the baseline is Alessandro's decision.
+Issue #38.** Three steps, in order,
 each judged by eye, then one full sweep, `S11-sweep`, over all twenty-one
 documents. The handover prompt at the end, marked *current*, is the one to
 start a session with.
@@ -431,6 +433,124 @@ Whether `S11-sweep` becomes the baseline is Alessandro's decision.
 
 ---
 
+## Outcome — the sweep, `S11-sweep`, 2026-10-16
+
+`S11-sweep` on `6b1caf4` (the code of `3c5e365`), 2026-10-15 23:13 to
+2026-10-16 01:35 (**2h22m**), shipped defaults, the model 40%/60%
+CPU/GPU. Report: `debug/runs/S11-sweep/report.html`. Sheets against
+`S11-0-replay`: `debug/runs/S11-sweep/_review/`.
+
+**§6's prediction held to the byte.** 749 calls. All 735 calls
+`s10-result/` asked were asked alike and answered byte for byte the
+same, and the fourteen re-reads fell where registered, with no errors.
+All twenty-one pages are byte-identical to the predicted ones: fourteen
+to `S11-P2-replay`, seven to `S11-P2-check`.
+
+**By eye, against `S11-0-replay`: six pages better, fifteen the same,
+none worse.**
+
+### The ticket, row by row against §1
+
+| §1 row | at `S11-sweep` |
+|---|---|
+| stub in the header row, pass under a teal strip (3b) | **fixed**: the stub is its own pane beside the pass; height 1.439 → 1.052 |
+| passenger grid drawn as one list (2b) | **fixed**: three across, label over value; `NL 0482` placed by inference, drawn small |
+| stub's `SEAT`, `GROUP` below `GATE` (2a) | **fixed**: `FLIGHT  SEAT`, `GATE  GROUP` on their lines |
+| `OSLO GARDERMOEN` at the foot (2d) | **fixed**: under `OSL`, under the name |
+| `OSL` missing (1c) | **fixed at body size**: read and placed, but `look` is empty, so it is not drawn at display size |
+| gate note missing (1b) | **fixed**: at the stub's foot, three lines where the page has two |
+| `TRD` a small title | unchanged (§7) |
+| barcode, plane | unchanged (§7) |
+| stub's teal header, its `NORDLYS AIR` | unchanged (§7); `nordlys air` is one of the two words still vanished, since the main bar is drawn as a picture |
+| teal strip `The` / `The` | unchanged (§7): z5, a prose Zone under the header bar |
+| `DEPARTS`, `CLASS` label beside value | unchanged |
+
+New: `BOARDING PASS` wraps in its lane. It is a `heading` block, drawn
+bold at heading size, where the page sets it in small spaced capitals.
+The header bar is three teal pieces (wordmark picture, `BOARDING PASS`,
+the `The` strip), not one bar.
+
+### The certificate, row by row against §1
+
+| §1 row | at `S11-sweep` |
+|---|---|
+| signature row drawn as two rows (3a) | **fixed**: one row, `S. Okonkwo` left, the seal centred, `H. Brandt` right; height 1.377 → 1.126 |
+| the seal a text chip | unchanged, and the chip now wraps to two lines in the centre lane |
+| names flush left under their rules | unchanged: `Zone.align` is `left` on z5 and z6, measured against the name's ink box |
+| `S. Okonkwo` a bold heading, small `S.` | unchanged |
+| black stars, capitals for small caps, course name not bold | unchanged |
+
+### The other pages
+
+| page | by eye |
+|---|---|
+| catalogue | **better**: nine cards alike, each price on its card's line. Three prices (`£9.80`, `£28.00`, `£22.40`) are placed by inference and have no look, so they are drawn small; scale error 0.063 → 0.219 is that |
+| invoice_0002 | **better**: Comments and Payment panels at the page's widths; the `NO` line compact |
+| sample_semantic | **better**: TL;DR at the page's width. `Tags:` is printed, but on its own line after the links |
+| timetable | **better**: `Lunch` printed, but under the grid instead of in its 13:20 row; tau 0.963 → 0.954 and beside 0.992 → 0.984 come from that position |
+| darkdeck | same: `$2.14` a shade brighter, still small |
+| the other fourteen | same. Paper, report, sample_css and sample_table are byte-identical to the replay's render. The rest differ only in band lane shares (3a), the `dd.line` rule (2c) or the embedded IR |
+
+**The six held out:** ticket better, certificate better, timetable
+better; letter, paper and pricing the same.
+
+**Recorded, not argued from.** `vanished` 33 → 26: back are the gate
+note's five words, `osl` and `lunch`; no word is newly vanished.
+Ratchet legs that fell: the timetable's tau and beside, both from
+`Lunch`'s place. Means against `s10-result/`, for the six held out:
+tau 0.847 → 0.946, beside 0.528 → 0.737, height ratio 1.186 → 1.089.
+
+### Did the two pages improve?
+
+**Yes, in arrangement. Both now have the page's layout.** The ticket has
+its two panes, its grids and its reading order. The certificate has its
+signature row on one line. Both are about as tall as the source.
+
+**The ticket still does not read as a boarding pass at a glance.** Four
+things cause that, and spec 0015 fixed none of them:
+
+- no display type: `OSL` and `TRD` are the page's visual anchor;
+- the header bar is broken into pieces, with the `The` strip under it;
+- the stub has no teal header;
+- the barcode is missing.
+
+The certificate's layout is now consistent. What is left is emphasis
+and marks: the seal as a figure, the names centred under their rules,
+gold stars, small caps.
+
+### Faults left, by stage
+
+| page | what the page shows | stage | evidence |
+|---|---|---|---|
+| ticket, catalogue | entries placed by inference drawn small and plain (`NL 0482`, three prices) | Style | no `bbox`, so `look` is empty; catalogue scale error 0.219 |
+| ticket | `OSL` at body size; the page prints it at display size | Style | the display read places it, but `look.size` is `None` |
+| ticket | header bar in three teal pieces, plus the `The` strip | Layout | z1 picture, z2 prose with a fill, z5 a halo-strip prose Zone |
+| ticket | `BOARDING PASS` bold, too large, wrapping | Classify → Render | z2's block is `heading`, size 1.06 |
+| certificate | names flush left under centred rules | Style | `align` is measured against the ink box, not the unit's extent |
+| timetable, sample_semantic | extra lines drawn after a table or list (`Lunch`, `Tags:`) | Render | 2d places extras on their line in `pairs` Zones only |
+| certificate, ticket | seal as a text chip; barcode and plane missing | Render (marks) | §7, cleared |
+| ticket | stub header unread | Extract | other polarity rejected, 17 flags of which 16 junk |
+
+### Directions, ranked by gain for cost
+
+| # | stage | change | why | cost |
+|---|---|---|---|---|
+| 1 | Style | an entry with no measured look takes one: from its own box where it has one (`OSL`), else from the mates it lines up with | finishes steps 1–2 on the ticket and catalogue | rederive |
+| 2 | Style | measure `align` against the unit's extent (box, frame, anchored rules), not its ink | certificate names centred; 3a's extent already exists | rederive |
+| 3 | Render | extras placed on their row in table and list Zones too | `Lunch` in its row, `Tags:` before its links | rederive |
+| 4 | Classify → Render | a `heading` block set no larger than the body, in caps, drawn as a line | `BOARDING PASS`; measure over all 21 | rederive |
+| 5 | Layout | a drawn bar's fill as one container; a halo strip with no ink dropped | the ticket's header bar; removing the `The` Zone removes a call, which can be predicted | replay, then a sweep |
+
+Marks (the seal, barcode, plane, stars, ticks) and the wordmark stay
+cleared. They return only if Alessandro names them.
+
+**Recommendation.** Take `S11-sweep` as the baseline: the prediction
+held to the byte, six pages are better, none worse, and no word is
+newly vanished. If the ticket and certificate stay the focus,
+directions 1–3 are one offline spec.
+
+---
+
 ## 7. Not in this spec
 
 Named so they are not mistaken for misses. None is queued.
@@ -466,7 +586,7 @@ Named so they are not mistaken for misses. None is queued.
 
 ---
 
-## Handover prompt — implement spec 0015, then one sweep (current)
+## Handover prompt — implement spec 0015, then one sweep (record)
 
 ```
 Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then
@@ -524,4 +644,43 @@ the prediction, open all 21 sheets against S11-0-replay, and report in
 the error-analysis format — ticket and certificate first, each against
 its table in §1, row by row. Whether S11-sweep becomes the baseline is
 Alessandro's decision.
+```
+
+---
+
+## Handover prompt — after `S11-sweep`: the baseline decision (current)
+
+```
+Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then
+docs/specs/0015-drawn-where-the-page-puts-it.md's "Outcome — the
+sweep". Spec 0015 is done. Its sweep, S11-sweep (commit 6b1caf4,
+2026-10-16), is waiting for Alessandro's baseline decision. Do not pick
+anything up unless he names it.
+
+If he takes S11-sweep, freeze it as tests/frozen/s11-result/ the way
+s10-result/ was made, before debug/runs/ is cleared:
+- documents/<name>.html: the sweep's 21 document.html files;
+- scores.json: debug/runs/S11-sweep/scores.json;
+- answers/: tools/replay_run.py debug/runs/S11-sweep --save-answers
+  tests/frozen/s11-result (it writes answers/ inside), 749 calls, every answer and hash checked against the sweep's
+  trace.json, 0 differ;
+- dth_env.txt, and a README with the provenance, the by-eye judgement
+  (6 better, 15 same, none worse, against S11-0-replay) and the
+  ratchet legs that fell: timetable tau 0.963 -> 0.954 and beside
+  0.992 -> 0.984, both from where Lunch is drawn.
+Prove it at HEAD before writing a word about it:
+- tools/replay_run.py tests/frozen/s11-result: 21 of 21 byte-identical,
+  0 marked;
+- tools/rederive.py tests/frozen/s11-result: 21 of 21 byte-identical;
+- the suite: 1201 passed, 1 skipped; mypy src clean.
+Then point CLAUDE.md (the table of frozen directories, the report
+command), docs/status.md and the loops at s11-result/, and close issue
+#38 with a comment naming the outcome.
+
+If he names next work, the outcome's "Directions, ranked" table is the
+starting point. Directions 1–3 are offline (rederive): a look for
+entries placed by inference, align measured against a unit's extent,
+and extras placed on their row in table and list Zones. Write the spec
+first, one file in docs/specs/ tracked as an issue. Judge by eye, with
+ticket and certificate first if they stay the focus.
 ```
