@@ -1,0 +1,202 @@
+{
+ "calls": [
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"NORDLYS AIR\",\n  \"line_is\": \"header\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "8de966bb502c",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "8de966bb502c",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"figure\",\n  \"graphic\": \"logo\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "ced58c73133b",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "d348f86f4fda",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"PASSENGER\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "0d3e982c64cb",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "c07052ee4449",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"TRD\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "f20adda300d5",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "727caa0473aa",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "566ecc7b1611",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n    \"pairs\": [\n        {\n            \"label\": \"PASSENGER\",\n            \"value\": \"HALVORSEN / A\"\n        },\n        {\n            \"label\": \"FLIGHT\",\n            \"value\": \"NL 0482\"\n        },\n        {\n            \"label\": \"GATE\",\n            \"value\": \"C14\"\n        },\n        {\n            \"label\": \"SEAT\",\n            \"value\": \"12A\"\n        },\n        {\n            \"label\": \"GROUP\",\n            \"value\": \"2\"\n        }\n    ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "8de966bb502c",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "figure",
+   "answer": "{\n  \"graphic\": \"logo\",\n  \"text\": [\n    \"NORDLYS AIR\"\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "2bd08d0c016f",
+    "picture": "ced58c73133b",
+    "schema": "076cd0b9aaab"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"BOARDING PASS\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "d348f86f4fda",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"BOARDING PASS\",\n      \"kind\": \"mark\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "d348f86f4fda",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"PASSENGER\",\n      \"value\": \"HALVORSEN / ASTRID MS\"\n    },\n    {\n      \"label\": \"FLIGHT\",\n      \"value\": \"NL 0482\"\n    },\n    {\n      \"label\": \"DATE\",\n      \"value\": \"14 OCT 2026\"\n    },\n    {\n      \"label\": \"GATE\",\n      \"value\": \"C14\"\n    },\n    {\n      \"label\": \"SEAT\",\n      \"value\": \"12A\"\n    },\n    {\n      \"label\": \"BOARDING\",\n      \"value\": \"07:35\"\n    },\n    {\n      \"label\": \"GROUP\",\n      \"value\": \"2\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "0d3e982c64cb",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"TRD\",\n      \"value\": \"TRONDHEIM VÆRNES\"\n    },\n    {\n      \"label\": \"DEPARTS\",\n      \"value\": \"08:05\"\n    },\n    {\n      \"label\": \"CLASS\",\n      \"value\": \"Economy\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "f20adda300d5",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"The\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"The\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "566ecc7b1611",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "566ecc7b1611",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"OSLO GARDERMOEN\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "db450e346365",
+    "schema": "2a31e0885054"
+   }
+  }
+ ]
+}

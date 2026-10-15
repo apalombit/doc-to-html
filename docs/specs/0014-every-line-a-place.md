@@ -1,11 +1,11 @@
 # Every printed line has a place — read what nobody read, read copies alike, then one sweep
 
-**Status: done 2026-10-15 — steps 1 and 2 shipped, step 3 built and
-dropped, `S10-sweep` taken; whether it becomes the baseline is
-Alessandro's decision. Issue #37.** Three steps, each traced to its cause
+**Status: done and decided 2026-10-15 — steps 1 and 2 shipped, step 3
+built and dropped; `S10-sweep` taken as the baseline by Alessandro,
+frozen as `tests/frozen/s10-result/`. Issue #37, closed.** Three steps, each traced to its cause
 at the baseline with its prediction written down, then one full sweep,
-`S10-sweep`, over all twenty-one documents. The handover prompt marked
-*current* at the end is the one to start a session with.
+`S10-sweep`, over all twenty-one documents. Both handover prompts at the
+end are record.
 
 Alessandro's decisions, 2026-10-14:
 
@@ -579,7 +579,7 @@ print each Zone's index, kind, box and title, then every Cell from
 
 ---
 
-## Handover prompt — after `S10-sweep`: Alessandro's decision, then the freeze (current)
+## Handover prompt — after `S10-sweep`: Alessandro's decision, then the freeze (record — done 2026-10-15)
 
 ```
 Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then

@@ -1,8 +1,8 @@
-# Status — 2026-10-15 (**the baseline is `tests/frozen/s9-result/`; spec 0014 done, `S10-sweep` awaiting Alessandro's decision**)
+# Status — 2026-10-15 (**the baseline is `tests/frozen/s10-result/`; nothing is open**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-15,
-after spec 0014's sweep, `S10-sweep`.
+after Alessandro took spec 0014's sweep, `S10-sweep`, as the baseline.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
@@ -60,7 +60,7 @@ Spec 0014   Every printed line has a place — issue #37
                 the catalogue worse: DROPPED, Alessandro 2026-10-14
               S  S10-sweep on a53f11b, 2026-10-15: prediction held to
                  the byte; 3 pages better, 18 same, none worse
-              DECISION PENDING: is S10-sweep the baseline
+              DECIDED 2026-10-15: S10-sweep the baseline, frozen as s10-result/
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -68,25 +68,25 @@ in [`specs/0007-handover.md`](specs/0007-handover.md).
 
 ---
 
-## The baseline — `tests/frozen/s9-result/`, DECIDED 2026-10-14
+## The baseline — `tests/frozen/s10-result/`, DECIDED 2026-10-15
 
-**Twenty-one documents, 732 answers.** Sweep `S9-sweep`, commit `a3969f3`
-(spec 0013 step P), 2026-10-14 11:13–13:29 (**2h16m**), shipped defaults.
-Taken by Alessandro after review: against `s8-result/`, seven pages better,
-thirteen the same, one worse — the ticket, traced in spec 0013's
-"Outcome — the sweep" and named in the README.
+**Twenty-one documents, 735 answers.** Sweep `S10-sweep`, commit
+`a53f11b` (spec 0014 step P), 2026-10-15 07:35–09:56 (**2h21m**),
+shipped defaults. Taken by Alessandro after review: against
+`s9-result/`, three pages better, eighteen the same, none worse; the
+ticket's tau the one ratchet leg that fell, named in the README.
 
-Proved the day it was frozen, at `a3969f3`'s code:
-- `tools/replay_run.py tests/frozen/s9-result`: **21 of 21 byte-identical,
-  0 asked differently**;
+Proved the day it was frozen, at `b493477`'s code:
+- `tools/replay_run.py tests/frozen/s10-result`: **21 of 21
+  byte-identical, 0 asked differently**;
 - `tools/rederive.py` over it: **21 of 21 byte-identical files**;
-- the rederive scored against `s8-result/`: **21 documents, 0 differing
+- the rederive scored against `s9-result/`: **21 documents, 0 differing
   fields**;
-- its 732 answers against the sweep's `trace.json`: 0 differ.
+- its 735 answers against the sweep's `trace.json`: 0 differ.
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s9-result/scores.json
+    --documents sweep --previous tests/frozen/s10-result/scores.json
 ```
 
 `--documents sweep` is not optional: without a `fixtures.txt` the report
@@ -94,12 +94,13 @@ scores the iterate five.
 
 ### The baselines before it
 
+- **`s9-result/`** — spec 0013's sweep, `S9-sweep`. The baseline
+  2026-10-14 to 2026-10-15; `S10-sweep` answered its 732 calls byte for
+  byte and asked three more.
 - **`s8-result/`** — spec 0012's sweep, `S8-sweep`. The baseline for
-  2026-10-14 until spec 0013's sweep; three pages worse than `s7-result/`,
-  each repaired by spec 0013.
+  2026-10-14 until spec 0013's sweep.
 - **`s7-result/`** — the first sweep over twenty-one, `S7-sweep`. The
-  baseline 2026-10-13 to 2026-10-14. Four of its table answers were spec
-  0013 step 1's target, and `S9-sweep` returned them byte for byte.
+  baseline 2026-10-13 to 2026-10-14.
 - **`s6-result/`**, **`s5-result/`**, **`s3-result/`**, **`q5-result/`**,
   **`reshot/`** and the A-phase directories — each README says what it is
   and why its floor moved.
@@ -121,25 +122,23 @@ scores the iterate five.
 
 ## Where the corpus is — recorded, not a target
 
-Means over `s9-result/`, against `s8-result/`:
+Means over `s10-result/`, against `s9-result/`:
 
 | | all 21 | the fifteen | the six new |
 |---|---|---|---|
-| vocabulary recall | 0.984 → 0.977 | 0.982 → 0.988 | 0.989 → 0.952 |
-| precision | 0.988 → 0.988 | 0.988 → 0.988 | 0.990 → 0.988 |
-| join recall | 0.950 → 0.945 | 0.950 → 0.960 | 0.949 → 0.905 |
-| tau | 0.968 → 0.951 | 0.990 → 0.990 | 0.912 → 0.853 |
-| beside agreement | 0.802 → 0.757 | 0.843 → 0.849 | 0.700 → 0.528 |
-| height ratio | 1.100 → 1.069 | 1.029 → 1.028 | 1.276 → 1.171 |
-| alignment agreement | 0.796 → 0.805 | 0.833 → 0.840 | 0.705 → 0.718 |
-| scale error | 0.200 → 0.220 | 0.129 → 0.154 | 0.378 → 0.383 |
+| vocabulary recall | 0.977 → 0.982 | 0.988 → 0.991 | 0.952 → 0.960 |
+| precision | 0.988 → 0.988 | 0.988 → 0.988 | 0.988 → 0.988 |
+| join recall | 0.945 → 0.951 | 0.960 → 0.965 | 0.905 → 0.914 |
+| tau | 0.951 → 0.949 | 0.990 → 0.990 | 0.853 → 0.847 |
+| beside agreement | 0.757 → 0.757 | 0.849 → 0.849 | 0.528 → 0.528 |
+| height ratio | 1.069 → 1.074 | 1.028 → 1.029 | 1.171 → 1.186 |
+| alignment agreement | 0.805 → 0.802 | 0.840 → 0.840 | 0.718 → 0.705 |
+| scale error | 0.220 → 0.220 | 0.154 → 0.154 | 0.383 → 0.383 |
 
-The six's falls are the ticket's (vocabulary 0.975 → 0.750) and the
-certificate's signature row (beside 1.000 → 0.000).
+Only form, ticket and timetable moved. The six's tau is the ticket's.
 
-**`vanished`: 40 → 41 words.** Back: the receipt's six price tokens,
-`castleton`, `2022`, the ticket's `pass`. Gone: ten of the ticket's —
-`nordlys`, `air`, `osl`, `oslo`, `gardermoen` and its gate note.
+**`vanished`: 41 → 33 words.** Back: six of the form's note's words, the
+ticket's `oslo` and `gardermoen`. Nothing gone.
 
 ---
 
@@ -184,14 +183,11 @@ and `specs/0007-handover.md` for the A phases and the queue.
 
 ---
 
-## Next — Alessandro's decision on `S10-sweep`
+## Next — nothing is open
 
-**Nothing is open but that decision.** If he takes it, it is frozen as
-`tests/frozen/s10-result/` — spec 0014's handover prompt marked
-*current* says how, and the proof to take. The four directions in spec
-0014's "Outcome — the sweep" are record, not a queue. **Not in it: type
-read as a figure** — it waits on his call whether a wordmark is text.
-Do not pick anything up unless he names it.
+**Whatever comes next is Alessandro's to name.** The four directions in
+spec 0014's "Outcome — the sweep" are record, not a queue. **Type read
+as a figure** still waits on his call whether a wordmark is text.
 
 ---
 
@@ -243,7 +239,7 @@ the last two entries.
   `a1-checkpoint/`, `a0-checkpoint/`, `a0-result/`, `a1-result/`,
   `a2-result/`, `a3-result/`, `reshot/`, `q5-result/`, `s3-result/`,
   `s5-result/`, `s6-result/`, `s7-result/`,
-  `s8-result/` — all kept as record — and **`s9-result/`, the baseline**
+  `s8-result/`, `s9-result/` — all kept as record — and **`s10-result/`, the baseline**
   since 2026-10-14, twenty-one documents.
   `a3-result/` was scored on pictures missing their last lines;
   quote it only as that.
@@ -303,7 +299,7 @@ the last two entries.
 FIXTURE=sweep tools/iterate.sh <label>        # all twenty-one, ~2¼ h — anything reviewed
 FIXTURE=iterate tools/iterate.sh <label>      # the five, ~20 min — throwaway checks only
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s9-result/scores.json
+    --documents sweep --previous tests/frozen/s10-result/scores.json
 python tools/visual_review.py debug/runs/<label> --previous debug/runs/<older>
 python tools/visual_review.py debug/runs/<label> --check
 ```
@@ -322,7 +318,7 @@ converts it once the bug is fixed, with no model call.
 
 **Three offline loops, each proved before it was used, and a sweep. Say which
 produced any number you report.** Start them from the baseline,
-`tests/frozen/s9-result/`. On 2026-10-14 `tools/replay_run.py` and
+`tests/frozen/s10-result/`. On 2026-10-15 `tools/replay_run.py` and
 `tools/rederive.py` over it each reproduced it byte for byte, 21 of 21. Both
 tools take a run directory as well as a frozen one.
 
