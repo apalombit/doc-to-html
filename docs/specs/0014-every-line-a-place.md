@@ -1,9 +1,10 @@
 # Every printed line has a place — read what nobody read, read copies alike, then one sweep
 
-**Status: planned 2026-10-14, not started. Issue #37.** Three steps, each
-traced to its cause at the baseline with its prediction written down, then
-one full sweep, `S10-sweep`, over all twenty-one documents. The handover
-prompt at the end is the one to start a session with.
+**Status: steps 1 and 2 done, step 3 built and dropped, §7's prediction
+registered; `S10-sweep` running — 2026-10-14. Issue #37.** Three steps,
+each traced to its cause at the baseline with its prediction written down,
+then one full sweep, `S10-sweep`, over all twenty-one documents. The
+handover prompt at the end is the one to start a session with.
 
 Alessandro's decisions, 2026-10-14:
 
@@ -341,17 +342,40 @@ tools/iterate.sh S10-3-check`, then sheets against `S10-1`.
 - **darkdeck:** the four tiles are drawn alike, and `P95 LATENCY` is one
   line.
 
+### Outcome — step 3, 2026-10-14: built, measured, dropped
+
+**Alessandro's decision, 2026-10-14: drop step 3 and sweep steps 1-2.**
+Its diff is kept beside the check run, `debug/runs/S10-3-check/
+uncommitted.diff`; nothing of it was committed.
+
+**The catalogue got worse.** `S10-3-check` against `S10-1`
+(`debug/runs/S10-3-check/_review/00-catalogue_0015.png`): all nine cards
+read as prose, and prose drops the white-on-dark code badges that pairs
+read — `BR-114`, `IR-207`, `IR-212`, `CP-418` and `SC-501` gone, `CP-402`
+still missing; the price rows come back as stacked lines or bulleted
+items, their spread across the card lost; `OK-330` lost `NEW`. `vanished`
+on the page 1 → 9 tokens. Every call asked as `s9-result/` asked it was
+answered alike, 29 of 29: the loss is the 18 new prose calls' own.
+**`KEEPS`' premise, that prose keeps every printed line, is refuted on
+the one page it moved.**
+
+**Darkdeck: §4's premise was wrong.** `structure.alike` runs after
+classify, and classify answered `pairs` for all four tiles. Two became
+prose only later, by `_reread_as_prose` after extraction; the "2 prose,
+2 pairs" of §4's table was read off the final IR. So step 3 never reaches
+darkdeck: 61 of 61 calls alike, the page byte-identical.
+
 ---
 
 ## 5. Work plan
 
 | step | what | runs on | done when |
 |---|---|---|---|
-| 0 | prove the baseline | replay, rederive, suite | replay `S10-0-replay` 21 of 21 byte-identical, 0 marked; rederive `S10-0-base` 21 of 21; 1142 passed, 1 skipped; mypy clean |
-| 1 | `Zone.extra`: IR, `cells_of`, render | rederive | 21 of 21 identical but `"extra": []` |
-| 2 | read what nobody read | replay, a targeted run | §3's three calls marked, no other; the three lines printed |
-| 3 | copies take the Kind that keeps most | replay, a targeted run | catalogue and darkdeck only marked; cards and tiles drawn alike |
-| P | register §7's prediction in this spec | replay at the last commit | the marked calls written down before the sweep |
+| 0 | prove the baseline — DONE | replay, rederive, suite | replay `S10-0-replay` 21 of 21 byte-identical, 0 marked; rederive `S10-0-base` 21 of 21; 1142 passed, 1 skipped; mypy clean |
+| 1 | `Zone.extra`: IR, `cells_of`, render — DONE | rederive | 21 of 21 identical but `"extra": []` |
+| 2 | read what nobody read — DONE | replay, a targeted run | §3's three calls marked, no other; the three lines printed |
+| 3 | copies take the Kind that keeps most | replay, a targeted run | **DROPPED** 2026-10-14: the catalogue worse, darkdeck out of its reach — see its outcome |
+| P | register §7's prediction in this spec — DONE | replay at the last commit | the marked calls written down before the sweep |
 | S | **`S10-sweep`**: all 21, shipped defaults, started detached | the model | §7 checked; all 21 sheets opened against `S10-0-replay`; the outcome written |
 
 ---
@@ -382,29 +406,34 @@ tools/iterate.sh S10-3-check`, then sheets against `S10-1`.
 
 ---
 
-## 7. The sweep's prediction — to register at step P
+## 7. The sweep's prediction — registered at step P, 2026-10-14
 
-Write it from the replay at the last commit. It will have this form:
+**From the replay at `b493477`'s code, `S10-P-replay`** (steps 1 and 2;
+step 3 dropped): exactly form, ticket and timetable marked **ASKED MORE
+THAN THE RUN**, `1 prose` each; 0 calls asked differently; all 21 pages
+byte-identical to `S10-1`.
 
-- **Every call the replay does not mark comes back byte-identical** to
-  `s9-result/answers/`.
-- **The calls it marks are only:**
-  - step 2's re-reads, ASKED MORE: one each on form, ticket and timetable;
-  - step 3's copies, ASKED DIFFERENTLY: catalogue and darkdeck.
-- **Every unmarked document renders byte-identical** to the replay at the
-  last commit, its embedded IR included.
-- **New answers, expected:**
-  - form prints its note;
-  - ticket prints `OSLO GARDERMOEN`;
-  - timetable prints its legend;
-  - catalogue's cards and darkdeck's tiles are each drawn alike.
-- **Further re-reads, not predicted:** catalogue's or darkdeck's new prose
-  readings may leave an unclaimed line, which step 2 then re-reads at the
-  sweep.
+- **Every call `s9-result/` asked is asked alike and answered byte for
+  byte as `s9-result/answers/` holds it** — all 732.
+- **The calls beyond it are only the three re-reads**, one prose call
+  each on form, ticket and timetable: 735 calls in all. Nothing is
+  asked differently.
+- **The eighteen unmarked documents render byte-identical to
+  `S10-P-replay`**, embedded IR included — catalogue and darkdeck among
+  them.
+- **The three re-reads answer as `S10-2-check`'s did** — same prompt,
+  picture and schema at `temperature: 0` — so **form, ticket and
+  timetable render byte-identical to `S10-2`**: the form's note under its
+  tick boxes, `OSLO GARDERMOEN` at the foot of the ticket's Zone 3, the
+  timetable's legend on one line under its grid.
+- **No further re-read**: with no Kind moved, no new unclaimed line.
+
+So all 21 pages are predicted to the byte.
 
 Then report the sweep in the error-analysis format:
 1. the five pages first (form, ticket, timetable, catalogue, darkdeck),
-   each against its line in §1;
+   each against its line in §1 — catalogue and darkdeck as left by step
+   3's drop;
 2. the six held-out pages in their own lines;
 3. where it gained;
 4. the faults left, by stage;
