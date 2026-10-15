@@ -1,14 +1,15 @@
-# Status — 2026-10-15 (**the baseline is `tests/frozen/s10-result/`; nothing is open**)
+# Status — 2026-10-15 (**the baseline is `tests/frozen/s10-result/`; spec 0015 planned, not started**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-15,
-after Alessandro took spec 0014's sweep, `S10-sweep`, as the baseline.
+after Alessandro took spec 0014's sweep, `S10-sweep`, as the baseline and
+planned spec 0015, clearing everything else.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file, then
-[`specs/0014-every-line-a-place.md`](specs/0014-every-line-a-place.md) —
-its "Outcome — the sweep" and its handover prompt marked *current*. If you are going to
+[`specs/0015-drawn-where-the-page-puts-it.md`](specs/0015-drawn-where-the-page-puts-it.md)
+end to end, starting from its handover prompt marked *current*. If you are going to
 look at output — and you should — use the **`visual-review` skill**.
 
 Branch `scaffold`. **1166 tests pass (1 skipped), `mypy src/` clean** — at
@@ -61,6 +62,12 @@ Spec 0014   Every printed line has a place — issue #37
               S  S10-sweep on a53f11b, 2026-10-15: prediction held to
                  the byte; 3 pages better, 18 same, none worse
               DECIDED 2026-10-15: S10-sweep the baseline, frozen as s10-result/
+Reset       2026-10-15, Alessandro: everything not in spec 0015 cleared.
+Spec 0015   Every line read, and drawn where the page puts it — issue #38
+              ticket and certificate the focus
+              1 read the lines nobody reads  2 pairs as the page prints
+              them  3 side by side where the page puts it
+              then ONE sweep S11-sweep. NOT STARTED
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -183,11 +190,33 @@ and `specs/0007-handover.md` for the A phases and the queue.
 
 ---
 
-## Next — nothing is open
+## Next — spec 0015, the only open work
 
-**Whatever comes next is Alessandro's to name.** The four directions in
-spec 0014's "Outcome — the sweep" are record, not a queue. **Type read
-as a figure** still waits on his call whether a wordmark is text.
+[`specs/0015-drawn-where-the-page-puts-it.md`](specs/0015-drawn-where-the-page-puts-it.md),
+issue #38, planned 2026-10-15, not started. These are groups 1–3 of the
+fault recap after `S10-sweep`, in order. **`ticket_0020` and
+`certificate_0021` are the focus.** The spec's §1 takes each fault on those
+two pages to its cause and says whether the spec touches it:
+
+- **Ticket.** Rotation is not the cause. The perforation is never a
+  divider, the field grids are drawn as lists, and `OSL` and the gate
+  note are never read.
+- **Certificate.** The signature row wraps: 640px asked for in a 636px box.
+
+1. **Read the lines nobody reads.** `locate.unclaimed` is widened; only new
+   re-read calls.
+2. **Pairs drawn as the page prints them.** Offline.
+3. **Side by side where the page puts it.** Band lanes from the page, and a
+   divider that reaches what it parts. Offline; 3b proved by replay.
+
+Then one sweep, `S11-sweep`. Steps 2 and 3 were prototyped offline before
+the spec was written: the ticket in two panes with its grids as grids,
+and the certificate's row in one line.
+
+**Everything else was cleared by Alessandro on 2026-10-15**: the recap's
+other groups (marks and badges, misreads, emphasis), spec 0014's
+directions, and the wordmark question. Spec 0015's §7 names them so they
+are not mistaken for misses; none is queued.
 
 ---
 

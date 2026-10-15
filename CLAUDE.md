@@ -36,9 +36,9 @@ trial axis is kept rather than rejected.
 
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
-measured numbers and what has already been tried and rejected. **No spec is
-open.** 0008 to 0014 (issues #31–#37) are done and decided; 0014's sweep
-became the baseline on 2026-10-15. 0007 still defines the target.
+measured numbers and what has already been tried and rejected. **0015 is the
+one open spec** — issue #38, planned 2026-10-15, not started. 0008 to 0014
+(issues #31–#37) are done and decided. 0007 still defines the target.
 
 ---
 
@@ -63,7 +63,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-15: the baseline is `tests/frozen/s10-result/`, spec 0014's sweep, and nothing is open. Work is judged by eye.**
+**Where the project is — 2026-10-15: the baseline is `tests/frozen/s10-result/`, spec 0014's sweep; spec 0015 planned, not started, and nothing else is open. Work is judged by eye.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -146,6 +146,15 @@ Spec 0014   Every printed line has a place — planned 2026-10-14 from his
               S  S10-sweep on a53f11b, 2026-10-15: prediction held to
                  the byte, 3 pages better, 18 same, none worse
               DECIDED 2026-10-15: S10-sweep is the baseline, frozen as s10-result/
+RESET       2026-10-15, Alessandro: everything not in spec 0015 cleared —
+              the recap's other groups, spec 0014's directions, the
+              wordmark question
+Spec 0015   Every line read, and drawn where the page puts it — planned
+              2026-10-15, issue #38; ticket and certificate the focus:
+              1 read the lines nobody reads (locate.unclaimed widened)
+              2 pairs drawn as the page prints them
+              3 side by side where the page puts it: band lanes, dividers
+              then ONE sweep S11-sweep over all 21. NOT STARTED
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
@@ -171,14 +180,15 @@ ticket's tau is the one ratchet leg that fell, named in its README. The six adde
 and reported in their own lines. Each earlier floor, and why it moved, is
 in its README and in `docs/status.md`.
 
-**Nothing is open.** Spec 0014 (`docs/specs/0014-every-line-a-place.md`)
-is done: a printed line no Cell claims is read on its own crop and kept
-in `Zone.extra`, and its step 3 was built and dropped. The four
-directions in its "Outcome — the sweep" are record, not a queue. Type
-read as a figure still waits on his call whether a wordmark is text.
-**Everything else was cleared by Alessandro on 2026-10-14**; do not pick
-anything up unless he names it. `docs/specs/0007-handover.md` holds spec 0007's
-prompts, as record.
+**The only open work is `docs/specs/0015-drawn-where-the-page-puts-it.md`**
+— issue #38: groups 1–3 of the recap after `S10-sweep`, with
+`ticket_0020` and `certificate_0021` the focus. Its §1 lists every fault
+on those two pages, its cause, and whether the spec touches it. There
+are three steps, then one sweep, `S11-sweep`. **Everything else was
+cleared by Alessandro on 2026-10-15**, the wordmark question included;
+do not pick anything up unless he names it. The spec's handover prompt
+marked *current* is the one to start a session with.
+`docs/specs/0007-handover.md` holds spec 0007's prompts, as record.
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
 this section.** It says what is done, where the floor is, what is closed with
@@ -589,9 +599,10 @@ each other — `CellState.DISPUTED` and the Ladder are already the vocabulary fo
 it, and `_climb_ladders` already records that it waits on a second Engine. That
 is model time and Alessandro's decision, not a detector.
 
-**Tracker state, 2026-10-15: no open issue.** #31–#37 (specs 0008–0014) are closed, each done and decided. #30 (spec 0007) closed when its
+**Tracker state, 2026-10-15: one open issue — #38, spec 0015, not
+started.** #31–#37 (specs 0008–0014) are closed, each done and decided. #30 (spec 0007) closed when its
 work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
-#17 (the vision layout prompt) were closed by Thread 0. Every spec is closed
+#17 (the vision layout prompt) were closed by Thread 0. Every other spec is closed
 history; 0007 still defines the target.
 
 ---
