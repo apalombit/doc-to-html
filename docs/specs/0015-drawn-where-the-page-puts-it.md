@@ -1,6 +1,7 @@
 # Every line read, and drawn where the page puts it — the ticket and the certificate first
 
-**Status: planned 2026-10-15, not started. Issue #38.** Three steps, in order,
+**Status: steps 1–3 done and judged by eye, 2026-10-15; §6's prediction
+registered; `S11-sweep` running. Issue #38.** Three steps, in order,
 each judged by eye, then one full sweep, `S11-sweep`, over all twenty-one
 documents. The handover prompt at the end, marked *current*, is the one to
 start a session with.
@@ -306,12 +307,115 @@ copy); `structure._columns`, `_broken`, `_independent`, `_extended`;
 
 ---
 
-## 6. The sweep's prediction — to be registered at step P
+## Outcome — steps 1 to 3, 2026-10-15
 
-Registered from the replay at the last commit, as spec 0014 §7 was: the
-pages marked ASKED MORE (step 1 only) and nothing asked differently; every
-unmarked page byte-identical to the replay at step P; each marked page's
-new calls answered as its targeted run's were.
+Step 0 proved the baseline at `b912ee5`: `S11-0-replay` 21 of 21
+byte-identical, 0 asked differently; `S11-0-base` 21 of 21 files; 1166
+passed, 1 skipped; `mypy src` clean.
+
+### Step 1 — `3e35c27`, read the lines nobody reads
+
+Built as §2 has it, with four changes the measurements forced:
+
+- **A Cell claims a line with half its words *and* half their letters.**
+  Letters alone let the Cell `Mathematics` claim the timetable's legend,
+  `Mathematics Science PE` (11 letters of 20), and the legend was never
+  read again; the replay caught it as its crop moving. Words alone let
+  `GATE` claim `gate before`.
+- **The turned-over read keeps two words.** Its one-word lines over the
+  twenty-one were `bae`, `ον`, `bb`, `ag`, all junk — the other polarity's
+  16-of-17 again.
+- **1c is rule erasure, not scale.** The first read erases every straight
+  stroke over two body glyphs (16px on the ticket); `OSL`'s stems are
+  longer. `display_words` erases only strokes over 60px.
+- **The guard is the model's reading, after the call** (`locate.holds`):
+  word for word against any entry, or alike (`MIN_SIMILARITY`) to a text
+  with no place — an unplaced Cell or the Title. Alike to *any* Cell
+  refuses `OSL` (0.86 to the placed `OSLO`); tesseract's own text cannot
+  separate `99` and `914`, display prices it misreads. So the pages
+  flagged only by misreads are ASKED MORE too, and print nothing.
+- **1d** (`Unclaimed.reach`): the crop stops halfway to a claimed word of
+  its line, and is byte-identical where none is near.
+- `tools/replay_run.py` also says whether every call the run asked was
+  asked again alike, by hash, wherever it falls: new re-reads sort among
+  spec 0014's, and pairing by order called the old ones moved.
+
+**Targeted run `S11-1-check`**, seven pages: all 193 calls `s10-result/`
+asked on them answered byte for byte the same, 14 re-reads beyond.
+Kept: `Tags:`, `Lunch`, `Gate closes 20 minutes before` and `departure`,
+`OSL`. Refused: `£28.00`, `£22.40`, `$2.14`, `Puddings`, `The Copper Pot`,
+`AID A00000000031010`, `NL 0482`, `m 9C — weekly`, `Science English`.
+**By eye**: ticket, timetable better; sample_semantic's `Tags:` printed
+as an `h1` — fixed in `357b183` (`render._as_set`: an extra heading set
+neither bold nor larger than the body is a line); catalogue, darkdeck,
+menu, receipt the same (IR only).
+
+### Step 2 — `b48b7b2`, pairs drawn as the page prints them
+
+- **2b's second rule needed two conditions.** As written it put
+  `darkdeck_0009`'s `$2.14` on the line of `+9%`, which the page prints
+  under it. Now: only where the entry's partner, if placed, is on that
+  line, and the line has room before the entries it precedes — a glyph.
+  The catalogue's four prices and `OK-330` keep their lines.
+- **2d needed its lines placed** — `3c5e365`, `locate._from_lines`: an
+  extra line no word run places goes on the uncovered line it claims by
+  `unclaimed`'s own test, the display read included. The gate note
+  (read by tesseract `gate user minutes before`) and `OSL` were drawn
+  after the lines without it.
+- **2c is visible on one page.** cv, form, invoice_0002, letter: the line
+  already carried its ink inline; darkdeck's `$2.14` turns from muted to
+  ink.
+
+**By eye** (rederive `S11-2` against `S11-0-base`): ticket better (stub
+on its lines, the passenger grid three across, `OSLO GARDERMOEN` under
+the name); catalogue better (all nine cards alike; the four inferred
+prices still small — no measured look); darkdeck slightly better; cv,
+form, invoice_0002, letter the same. No word changed.
+
+### Step 3 — `a8bc381`, side by side where the page puts it
+
+- **3b's reach for drawn rules only.** On the layout stage's boxes a
+  container's edge reaching further turned the catalogue's card frames
+  into column regions and moved 24 of its crops — the prototype, run on
+  final boxes by rederive, could not see it. Restricted, the replay
+  asks nothing differently and only the ticket's region moves.
+- **3a as written, plus a cap on `_placed`.** Given its page lane,
+  `invoice_0002`'s `NO 554775/R1  Date 01/01/2015` spread its tracks over
+  two thirds of the row; a pairs Zone drawn by its lines is now no wider
+  than its type on the page.
+
+**By eye** (rederive `S11-3b` against `S11-2`): certificate better (the
+signature row one line — `S. Okonkwo`, the seal, `H. Brandt`); ticket
+better (two panes) with one element worse, `BOARDING PASS` wrapping in
+its lane because it is drawn larger than the page prints it (type, out
+of scope); sample_semantic better (TL;DR at the page's start);
+invoice_0002 better (panels, ACME mark, the `NO` line compact); twelve
+pages the same, none worse.
+
+Reports, scores recorded: `debug/runs/S11-1-check/report.html`,
+`S11-2/report.html`, `S11-3b/report.html`.
+
+---
+
+## 6. The sweep's prediction — registered 2026-10-15 at step P
+
+From the replays at `3c5e365` (the code `S11-sweep` runs; 1201 passed,
+1 skipped, `mypy src` clean): `S11-P2-replay`
+(`s10-result/`'s answers) and `S11-P2-check` (`S11-1-check`'s answers).
+
+1. **749 calls**: all 735 `s10-result/` asked, asked alike (prompt,
+   picture, schema) and answered byte for byte the same, and **14
+   re-reads** beyond them — catalogue 2, darkdeck 1, menu 2, receipt 1,
+   sample_semantic 1, ticket 4, timetable 3. Nothing else asked
+   differently or more.
+2. **The fourteen unmarked pages** render byte-identical to
+   `S11-P2-replay`: certificate, cv, form, invoice_0001, invoice_0002,
+   letter, newsletter, nonlatin, paper, pricing, report, sample_css,
+   sample_table, statement.
+3. **The seven marked pages** render byte-identical to `S11-P2-check`,
+   each re-read answered as `S11-1-check`'s was: kept `Tags:`, `Lunch`,
+   `Gate closes 20 minutes before`, `departure`, `OSL`; the other nine
+   refused.
 
 Then report the sweep in the error-analysis format:
 1. **ticket and certificate first**, each against its table in §1, row by
