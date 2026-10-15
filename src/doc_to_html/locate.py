@@ -57,7 +57,7 @@ import subprocess
 import tempfile
 import unicodedata
 from concurrent.futures import ThreadPoolExecutor
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Iterator, Sequence
@@ -65,7 +65,7 @@ from typing import Iterator, Sequence
 import numpy as np
 
 from .ir import BBox, Cell, Document, Kind, Unclaimed, Zone
-from .preprocess import ImageArray, _cv2, content_ink, crop_origin, zone_pixels
+from .preprocess import PAD_X, ImageArray, _cv2, content_ink, crop_origin, zone_pixels
 from .style import body_glyph, type_lines, type_mask
 
 TESSERACT = "tesseract"
@@ -246,12 +246,53 @@ def cells_of(zone: Zone) -> list[tuple[Cell, int | None]]:
                              for cell in block.lines]
 
 
+WORD_BREAK = re.compile(r"[\s/·,]+")
+"""Where a Cell's text parts into the words tesseract would read apart:
+spaces, and the separators the corpus sets between words without them."""
+
+
+def whole_words(text: str) -> list[str]:
+    """A text's words, each folded — spec 0015, step 1. Whole words, because
+    by letters alone `OSL` is inside `OSLO GARDERMOEN`."""
+    return [word for part in WORD_BREAK.split(text) if (word := fold(part))]
+
+
+def _run_of(wanted: list[str], words_: list[str]) -> bool:
+    return any(words_[start:start + len(wanted)] == wanted
+               for start in range(len(words_) - len(wanted) + 1))
+
+
+def _alike(wanted: str, text: str) -> bool:
+    """Whether `wanted` is, at `MIN_SIMILARITY`, the whole of `text` or a
+    stretch of it as long as itself — folded, character by character."""
+    if len(wanted) >= len(text):
+        return SequenceMatcher(None, wanted, text, autojunk=False).ratio() >= MIN_SIMILARITY
+    return any(SequenceMatcher(None, wanted, text[start:start + len(wanted)],
+                               autojunk=False).ratio() >= MIN_SIMILARITY
+               for start in range(len(text) - len(wanted) + 1))
+
+
 def holds(zone: Zone, text: str) -> bool:
-    """Whether the Zone already prints `text`, folded — spec 0014, step 2:
-    inside its Title, inside any one of its Cells, or inside one Block, row
-    or pair read together. The guard that keeps a line read again from
-    printing a word twice. An empty text is held."""
-    wanted = fold(text)
+    """Whether the Zone already prints `text` — the guard that keeps a line
+    read again from printing a word twice. An empty text is held.
+
+    **Word for word** inside its Title, inside any one of its Cells, or
+    inside one Block, row or pair read together — spec 0014, step 2, by
+    whole words since spec 0015, step 1.
+
+    **Or alike to a text that has no place on the page** — an unplaced
+    Cell, or the Title, which is never placed — spec 0015, step 1. A line
+    nobody claims in a Zone that holds such a text may be that text,
+    misread: tesseract reads `catalogue_0015`'s display-size `£22.40` as
+    `99` and `darkdeck_0009`'s `$2.14` as `914`, flags them, and the line is
+    read again. Measured over the twenty-one at `s10-result/`: each of the
+    seven misread lines sits in a Zone with one unplaced Cell or a Title,
+    and none of the five lines the reading lost does, but for the ticket's
+    `OSL`, whose Zone's unplaced `NL 0482` is nothing like it. Alike to
+    *any* Cell would refuse `OSL` itself: it reads 0.86 alike to the `OSLO`
+    of `OSLO GARDERMOEN`, which is placed — printed elsewhere, so not
+    this line."""
+    wanted = whole_words(text)
     if not wanted:
         return True
     entries = [zone.title or ""] + [cell.text for cell, _ in cells_of(zone)]
@@ -259,7 +300,12 @@ def holds(zone: Zone, text: str) -> bool:
                 for block in zone.blocks + zone.extra]
     entries += [" ".join(cell.text for cell in row.cells) for row in zone.rows]
     entries += [f"{pair.label.text} {pair.value.text}" for pair in zone.pairs]
-    return any(wanted in fold(entry) for entry in entries)
+    if any(_run_of(wanted, whole_words(entry)) for entry in entries):
+        return True
+    placeless = [zone.title or ""] + [cell.text for cell, _ in cells_of(zone)
+                                      if cell.bbox is None]
+    folded = "".join(wanted)
+    return any(_alike(folded, fold(entry)) for entry in placeless if fold(entry))
 
 
 def _body_of(zone: Zone) -> list[tuple[Cell, int | None]]:
@@ -632,10 +678,21 @@ over a line's letters: the lines nothing reads — `timetable_0019`'s lost
 rows and the form's `Tick one` — stand at 65-97; what tesseract makes of a
 QR code, a hatch or letter-spaced capitals, at 0-48."""
 
-UNCLAIMED_WORDS = 2
-"""How many confident words of two letters or more make a line. One word
-alone is how a misread Title (`puppincs` for `Puddings`) or a stray fragment
-looks; every line the reading lost holds two or more."""
+UNCLAIMED_WORDS = 1
+"""How many confident words of two letters or more make a line. Two until
+spec 0015, step 1, because one word alone is how a misread Title
+(`puppincs` for `Puddings`) looks. But a line the reading lost can be one
+word: `sample_semantic_0005`'s `Tags:`, `timetable_0019`'s `Lunch`, the
+second line of the ticket's gate note. Measured over the twenty-one at
+`s10-result/`: seven one-word lines, those three and four misreads of Cells
+with no place, which `holds` refuses once they are read."""
+
+TURNED_WORDS = 2
+"""The same, for a line of the turned-over read (`Word.line[0]` 1), which
+keeps two. Turned over, a light Zone's paper reads as junk: replayed over
+the twenty-one at `s10-result/`, it raised four one-word lines, `bae`, `ον`,
+`bb` and `ag`, and nothing else — as reading the other polarity on every
+Zone raised seventeen lines, sixteen of them junk (spec 0015, §2)."""
 
 
 def _covered(word: Word, boxes: Sequence[BBox]) -> bool:
@@ -652,43 +709,100 @@ SLACK = 0.003
 it, for a box placed from the ink rather than from the words."""
 
 
-def _claims(text: str, words_: Sequence[Word]) -> bool:
-    """Whether one Cell's or Title's text holds at least half of a line's
-    distinct words. Word by word, because a word tesseract is unsure of is
-    left out of the line: `nonlatin_0014`'s `Ανάλυση παρεχόμενων υπηρεσιών`
-    keeps its first and last word and is still its table's Title. Distinct,
-    because the timetable's lost `12:20 Art English PE English` is not the
-    Cell `English` twice over."""
+def _claims(text: set[str], words_: Sequence[Word]) -> bool:
+    """Whether one Cell's or Title's words, `text`, spell at least half of a
+    line's distinct words **and** half their letters — whole words (spec
+    0015, step 1).
+
+    Word by word, because a word tesseract is unsure of is left out of the
+    line: `nonlatin_0014`'s `Ανάλυση παρεχόμενων υπηρεσιών` keeps its first
+    and last word and is still its table's Title. Distinct, because the
+    timetable's lost `12:20 Art English PE English` is not the Cell
+    `English` twice over. **Whole words**, because by letters `osl` is
+    inside `oslogardermoen`, and the ticket's `OSL` was claimed by the line
+    under it. **Half the letters**, because a short word is a small claim:
+    the ticket's `gate before` was claimed by the Cell `GATE`, one word of
+    two and four letters of ten. **And half the words**, because one long
+    word is not a line either: by letters alone `timetable_0019`'s legend,
+    `Mathematics Science PE`, is claimed by the Cell `Mathematics`, eleven
+    letters of twenty, and is never read."""
     distinct = {word.text for word in words_}
-    return 2 * sum(word in text for word in distinct) >= len(distinct)
+    spelt = {word for word in distinct if word in text}
+    return (2 * len(spelt) >= len(distinct)
+            and 2 * sum(len(word) for word in spelt) >= sum(len(word) for word in distinct))
 
 
 def unclaimed(zone: Zone, found: Sequence[Word],
-              boxes: Sequence[BBox]) -> list[tuple[BBox, int]]:
-    """The lines of a Zone's words no Cell claims: each line's box and how
-    many words it holds — spec 0012, G9.
+              boxes: Sequence[BBox]) -> list[tuple[BBox, int, BBox]]:
+    """The lines of a Zone's words no Cell claims: each line's box, how many
+    words it holds, and the box it is read again from — spec 0012, G9.
 
     A word counts when tesseract is `CONFIDENT` of it and it has two letters
     or more, and it is claimed when it lies in any placed Cell's box on the
     page. A line of `UNCLAIMED_WORDS` or more unclaimed words is still
-    claimed when one of the Zone's Cells, or its Title, holds half its words
-    (`_claims`): a Cell placed on the wrong ink (`ticket_0020`'s `Gate
-    closes`), or one placed nowhere, still has its line read. One text at a
-    time and never the Zone's words pooled, because the rows the timetable
-    lost hold `Science` and `English` too, each a Cell of a row it read."""
-    texts = [text for text in [fold(zone.title or "")]
-             + [fold(cell.text) for cell, _ in cells_of(zone)] if text]
+    claimed when one of the Zone's Cells, or its Title, spells half its
+    words and half their letters (`_claims`): a Cell placed on the wrong ink, or one placed
+    nowhere, still has its line read. One text at a time and never the
+    Zone's words pooled, because the rows the timetable lost hold `Science`
+    and `English` too, each a Cell of a row it read.
+
+    **The box it is read from** is the line's padded as every crop is
+    (`preprocess.PAD_X`, `PAD_Y`), but stopping halfway into the gap before
+    any word of the same line a Cell claims — spec 0015, step 1. Padded
+    whole, a line partly claimed brings its claimed words into the crop and
+    the reading repeats them: `Tags:` beside its list's `HTML`, the
+    timetable's `Lunch` beside `13:20`. A line with no claimed word near it
+    is read from exactly the crop it was before."""
+    texts = [words_ for words_ in [set(whole_words(zone.title or ""))]
+             + [set(whole_words(cell.text)) for cell, _ in cells_of(zone)] if words_]
     lines: dict[tuple[int, int, int], list[Word]] = {}
     for word in found:
         if (word.confidence >= CONFIDENT and len(word.text) >= 2
                 and not _covered(word, boxes)):
             lines.setdefault(word.line, []).append(word)
     out = []
-    for words_ in lines.values():
-        if len(words_) < UNCLAIMED_WORDS or any(_claims(text, words_) for text in texts):
+    for key, words_ in lines.items():
+        least = TURNED_WORDS if key[0] == 1 else UNCLAIMED_WORDS
+        if len(words_) < least or any(_claims(text, words_) for text in texts):
             continue
-        out.append((_union(words_, 0, len(words_) - 1), len(words_)))
+        box = _union(words_, 0, len(words_) - 1)
+        claimed = [word.box for word in found
+                   if word.line == key and _covered(word, boxes)]
+        left = max([box.left - PAD_X] + [(other.right + box.left) / 2
+                                         for other in claimed if other.right <= box.left])
+        right = min([box.right + PAD_X] + [(other.left + box.right) / 2
+                                           for other in claimed if other.left >= box.right])
+        out.append((box, len(words_), BBox(left, box.top, right, box.bottom)))
     return out
+
+
+DISPLAY_GLYPH = TARGET_GLYPH
+"""The glyph height, in page pixels, `display_words` reads a Zone as if its
+body type were: shown at the page's own scale, and with only straight
+strokes longer than `RULE_GLYPHS` of these erased."""
+
+
+def display_words(image: ImageArray, zone: Zone, first: Sequence[Word], *,
+                  languages: str = "eng") -> list[Word]:
+    """The Zone's words read a second time, for type the first read erased —
+    only where the first read found no word it was `CONFIDENT` of. Spec
+    0015, step 1.
+
+    The first read erases every straight stroke longer than `RULE_GLYPHS`
+    body glyphs as a rule, and a display letter's stem is longer than that:
+    on `ticket_0020`, whose body glyph is 8px, `OSL` is erased down to
+    scraps tesseract reads as `ry` and `it` at confidence 0-38. Read at
+    the page's own scale with only strokes over 2 × `DISPLAY_GLYPH` pixels
+    erased, it is `osl` at 96 — and erasing less on the upscaled crop finds
+    it too, so it is the erasing and not the scale. Unrestricted, the second
+    read also raises eleven fragments of headings the first read had; kept
+    only where the first found nothing confident, it raises `OSL` alone over
+    the twenty-one at `s10-result/`. Its words sit on lines of their own
+    (`Word.line[0]` 2), so no line joins the two reads."""
+    sure = [word.box for word in first if word.confidence >= CONFIDENT]
+    return [replace(word, line=(2,) + word.line[1:])
+            for word in words(image, zone, glyph=DISPLAY_GLYPH, languages=languages)
+            if not any(word.box.overlap_ratio(box) > 0 for box in sure)]
 
 
 def locate(image: ImageArray, document: Document) -> tuple[int, int]:
@@ -728,6 +842,12 @@ def locate(image: ImageArray, document: Document) -> tuple[int, int]:
         read[i] = first + [extra for extra in more if not any(
             extra.text == seen.text and extra.box.overlap_ratio(seen.box) > 0.5
             for seen in first)]
+    # Display type the first read erased as rules: for the unclaimed lines
+    # only, never to place a Cell.
+    with ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as pool:
+        display = list(pool.map(
+            lambda pair: display_words(image, pair[0], pair[1],
+                                       languages=language(pair[0])), zip(zones, read)))
     placed = total = 0
     for zone, found in zip(zones, read):
         boxes = place(zone, found)
@@ -743,12 +863,12 @@ def locate(image: ImageArray, document: Document) -> tuple[int, int]:
     height, width = ink.shape[:2]
     index_of = {id(zone): index for index, zone in enumerate(document.zones)}
     whole = float(ink.sum()) or 1.0
-    for zone, found in zip(zones, read):
-        for box, count in unclaimed(zone, found, located):
+    for zone, found, more in zip(zones, read, display):
+        for box, count, reach in unclaimed(zone, list(found) + more, located):
             inside = ink[int(box.top * height):int(np.ceil(box.bottom * height)),
                          int(box.left * width):int(np.ceil(box.right * width))]
             document.unclaimed.append(Unclaimed(
                 zone_index=index_of[id(zone)], bbox=box, words=count,
-                ink_share=round(float(inside.sum()) / whole, 4)))
+                ink_share=round(float(inside.sum()) / whole, 4), reach=reach))
     document.unclaimed.sort(key=lambda u: (u.zone_index, u.bbox.top))
     return placed, total

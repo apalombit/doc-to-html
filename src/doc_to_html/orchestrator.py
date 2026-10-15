@@ -46,6 +46,7 @@ from .preprocess import (
     TableGrid,
     caption_band,
     content_ink,
+    crop,
     crop_row_as_fraction,
     figure_pixels,
     header_band,
@@ -1365,7 +1366,9 @@ class Conversion:
         boxes, a ticket's `OSLO GARDERMOEN`, a timetable's legend — and
         until this pass only reported them. Each is read with the prose
         prompt and schema every prose Zone is read with, on a crop cut as
-        every Zone's is. **A separate pass, after extraction**: no Extractor
+        every Zone's is — since spec 0015, step 1, stopping short of the
+        words of its line a Cell claims, so the reading does not repeat
+        them (`Unclaimed.reach`). **A separate pass, after extraction**: no Extractor
         prompt or schema changes, so at `temperature: 0` every answer given
         before is given again — CLAUDE.md, "where you ask is a bigger lever
         than how you ask". One call per line, and no inline runs asked.
@@ -1386,11 +1389,13 @@ class Conversion:
         for line in list(document.unclaimed):
             zone = document.zones[line.zone_index]
             transient = Zone(kind=Kind.PROSE, bbox=line.bbox)
+            # Spec 0015, step 1: cut short of the words of its line a Cell
+            # claims (`Unclaimed.reach`), and otherwise exactly as before.
+            pixels = (crop(rectified.image, line.reach, pad_x=0.0) if line.reach
+                      else zone_pixels(rectified.image, transient))
             mark, started = self.trace.next_call, time.perf_counter()
             try:
-                for_kind(Kind.PROSE).extract(
-                    rectified.image, transient, self.engines.extract, document.hint
-                )
+                self.engines.extract.extract_zone(pixels, transient, document.hint)
             except Exception as error:
                 call, made = self.trace.calls_since(mark)
                 self.trace.record(

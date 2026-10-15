@@ -174,6 +174,33 @@ def asked_differently(recorded_calls: list[dict[str, Any]],
     return moved, unhashed
 
 
+def not_asked_alike(recorded_calls: list[dict[str, Any]],
+                    today: list[Any]) -> list[str]:
+    """Each call the run asked that today's code asked nowhere alike — the
+    same pass, prompt, picture and schema, wherever it falls in the order.
+    Spec 0015, step 1.
+
+    `asked_differently` pairs calls the way answers are served, by pass and
+    order, so a new call asked *before* an old one of the same pass shifts
+    every old one after it: spec 0015's new re-reads of unclaimed lines sort
+    among spec 0014's, and the ticket's `OSLO GARDERMOEN` crop, asked again
+    byte for byte, was named as moved because a new crop took its turn. A
+    call named there and not here was only asked in another turn. Matched
+    as a multiset, each of today's calls standing for one of the run's."""
+    left = [(call.pass_name, call.asked.get("prompt"), call.asked.get("picture"),
+             call.asked.get("schema")) for call in today]
+    missing: list[str] = []
+    for index, call in enumerate(recorded_calls):
+        then = call.get("asked") or {}
+        key = (call["pass_name"], then.get("prompt"), then.get("picture"),
+               then.get("schema"))
+        if then and key in left:
+            left.remove(key)
+        elif then:
+            missing.append(f"{index:02d}_{call['pass_name']}")
+    return missing
+
+
 def asked_more(recorded_calls: list[dict[str, Any]],
                today: list[Any]) -> dict[str, int]:
     """How many calls more than the run today's code made, by pass.
@@ -317,6 +344,13 @@ def main() -> int:
                   + ", ".join(f"{count} {pass_name}" for pass_name, count in more.items()))
         if moved:
             print(f"{'':<28}asked differently: {', '.join(moved)}")
+        if moved or more:
+            missing = not_asked_alike(
+                source.calls(name),
+                attempt.trace.calls if attempt.trace is not None else [])
+            print(f"{'':<28}" + (f"not asked alike anywhere: {', '.join(missing)}"
+                                 if missing else
+                                 "every call the run asked was asked again alike"))
     print(f"\n{identical} of {len(attempts)} byte-identical to "
           f"{source.root.name}; {differently} asked differently"
           + (f"; {unhashed} calls recorded no hash, so whether they were "

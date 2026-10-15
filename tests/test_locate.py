@@ -17,6 +17,7 @@ from doc_to_html.ir import (BBox, Block, Document, Kind, Pair, Row, RowRole,
                             Source, Unclaimed, Zone, cell)
 from doc_to_html.locate import (Word, _between, _from_grid, _from_pairs, fold, leaders,
                                 place, unclaimed)
+from doc_to_html.preprocess import PAD_X
 from doc_to_html.render import render
 from doc_to_html.report import flagged
 
@@ -268,15 +269,38 @@ class TestUnclaimedLines:
                  sure("English", 200, 60, 2)]
         boxes = [c.bbox for row in zone.rows for c in row.cells if c.bbox]
         lines = unclaimed(zone, found, boxes)
-        assert [(round(box.top * SIDE), count) for box, count in lines] == [(60, 3)]
+        assert [(round(box.top * SIDE), count) for box, count, _ in lines] == [(60, 3)]
 
     def test_a_word_tesseract_is_unsure_of_does_not_count(self) -> None:
         zone = self.timetable()
         found = [sure("Studio", 0, 60, 2, 20.0), sure("Varga", 60, 60, 2, 30.0)]
         assert unclaimed(zone, found, []) == []
 
-    def test_one_word_alone_is_not_a_line(self) -> None:
-        assert unclaimed(self.timetable(), [sure("Puddings", 0, 60, 2)], []) == []
+    def test_one_word_alone_is_a_line(self) -> None:
+        """Spec 0015, step 1: `Tags:`, `Lunch`, a note's last word."""
+        lines = unclaimed(self.timetable(), [sure("Lunch", 60, 60, 2)], [])
+        assert [count for _, count, _ in lines] == [1]
+
+    def test_a_cell_claims_a_line_by_whole_words_only(self) -> None:
+        """By letters, `osl` is inside `oslogardermoen`."""
+        zone = prose("OSLO GARDERMOEN")
+        assert len(unclaimed(zone, [sure("OSL", 0, 60, 2)], [])) == 1
+        assert unclaimed(zone, [sure("Gardermoen", 0, 60, 2)], []) == []
+
+    def test_a_cell_claims_a_line_by_half_its_letters_not_half_its_words(self) -> None:
+        """`ticket_0020`'s gate note, `gate` and `before` left unclaimed:
+        the Cell `GATE` spells one word of two, four letters of ten."""
+        zone = prose("GATE", "C14")
+        found = [sure("Gate", 0, 60, 2), sure("before", 120, 60, 2)]
+        assert [count for _, count, _ in unclaimed(zone, found, [])] == [2]
+
+    def test_one_long_word_does_not_claim_a_line_of_three(self) -> None:
+        """`timetable_0019`'s legend: `Mathematics` is eleven letters of
+        twenty, and one word of three."""
+        zone = table((RowRole.DATA, ["Mathematics", "Science"]))
+        found = [sure("Mathematics", 0, 60, 2), sure("Science", 100, 60, 2),
+                 sure("PE", 170, 60, 2)]
+        assert len(unclaimed(zone, found, [])) == 1
 
     def test_a_cell_placed_on_the_wrong_ink_still_claims_its_line(self) -> None:
         zone = prose("Gate closes 20 minutes before departure")
@@ -295,14 +319,34 @@ class TestUnclaimedLines:
         found = [sure("12:20", 0, 60, 2), sure("Art", 50, 60, 2),
                  sure("English", 100, 60, 2), sure("PE", 180, 60, 2),
                  sure("English", 220, 60, 2)]
-        assert [count for _, count in unclaimed(zone, found, [])] == [5]
+        assert [count for _, count, _ in unclaimed(zone, found, [])] == [5]
+
+    def test_it_is_read_from_its_box_padded_as_a_crop_is(self) -> None:
+        zone = self.timetable()
+        [(box, _, reach)] = unclaimed(zone, [sure("Lunch", 60, 60, 2)], [])
+        assert reach == BBox(box.left - PAD_X, box.top,
+                             box.right + PAD_X, box.bottom)
+
+    def test_its_crop_stops_halfway_to_a_claimed_word_of_its_line(self) -> None:
+        """Padded whole, `13:20 Lunch` brings `13:20` into the crop and the
+        reading repeats it."""
+        zone = self.timetable()
+        found = [sure("13:20", 30, 60, 2), sure("Lunch", 80, 60, 2),
+                 sure("Hall", 130, 60, 2)]
+        claimed = [at(30, 60, 70, 70), at(130, 60, 162, 70)]
+        [(box, count, reach)] = unclaimed(zone, found, claimed)
+        assert count == 1
+        assert reach.left == pytest.approx((70 / SIDE + box.left) / 2)
+        assert reach.right == pytest.approx((130 / SIDE + box.right) / 2)
+        assert (reach.top, reach.bottom) == (box.top, box.bottom)
 
     def test_they_are_reported_with_their_share_and_survive_the_json(self) -> None:
         document = Document(source=Source(path="x", sha256="0" * 64, width=100,
                                           height=100),
                             zones=[self.timetable()],
                             unclaimed=[Unclaimed(zone_index=0, bbox=at(0, 160, 300, 172),
-                                                 words=14, ink_share=0.023),
+                                                 words=14, ink_share=0.023,
+                                                 reach=at(0, 160, 310, 172)),
                                        Unclaimed(zone_index=0, bbox=at(0, 180, 300, 192),
                                                  words=6, ink_share=0.009)])
         back = Document.from_json(document.to_json())
@@ -310,6 +354,36 @@ class TestUnclaimedLines:
         html = flagged(back)
         assert ("Zone 0 (<code>table</code>) has 2 printed lines no Cell claims, "
                 "20 words between 40% and 48% down the page, 3% of the page") in html
+
+
+class TestTheDisplayRead:
+    """Spec 0015, step 1: the Zone read again for type the first read erased
+    as rules, kept only where the first read was sure of nothing."""
+
+    def read(self, monkeypatch: pytest.MonkeyPatch, first: list[Word],
+             second: list[Word]) -> list[Word]:
+        asked: list[float] = []
+
+        def fake(image: object, zone: Zone, *, glyph: float, languages: str = "eng",
+                 inverted: bool = False) -> list[Word]:
+            asked.append(glyph)
+            return second
+
+        monkeypatch.setattr(locate, "words", fake)
+        out = locate.display_words(np.zeros((SIDE, SIDE), np.uint8), prose("x"), first)
+        assert asked == [locate.DISPLAY_GLYPH]
+        return out
+
+    def test_a_word_where_the_first_read_was_sure_of_nothing_is_kept(
+            self, monkeypatch: pytest.MonkeyPatch) -> None:
+        first = [sure("ry", 0, 60, 2, 38.0), sure("it", 30, 60, 2, 12.0)]
+        [kept] = self.read(monkeypatch, first, [sure("OSL", 0, 58, 1, 96.0)])
+        assert kept.text == "osl" and kept.line == (2, 1001, 1)
+
+    def test_a_word_the_first_read_was_sure_of_is_not_read_twice(
+            self, monkeypatch: pytest.MonkeyPatch) -> None:
+        first = [sure("Halvorsen", 0, 20, 1)]
+        assert self.read(monkeypatch, first, [sure("Halvorsen", 2, 21, 1)]) == []
 
 
 class TestOnAPicture:

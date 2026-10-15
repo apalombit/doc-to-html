@@ -266,3 +266,61 @@ class TestTheZoneAlreadyPrintsIt:
 
     def test_an_empty_text_is_held(self) -> None:
         assert holds(ticks(), " · ")
+
+    def test_word_for_word_not_letter_for_letter(self) -> None:
+        """Spec 0015, step 1: `OSL` is not inside `OSLO GARDERMOEN`."""
+        zone = ticks(note("OSLO GARDERMOEN", 0.33))
+        assert holds(zone, "Oslo")
+        assert not holds(zone, "OSL")
+
+    def test_alike_to_an_unplaced_cell_is_held(self) -> None:
+        """`catalogue_0015`'s `£22.40`, which tesseract reads as `99` and
+        places nowhere: read again as `£22.4`, it is that Cell."""
+        zone = ticks()
+        zone.pairs[1].value = cell("£22.40")
+        assert holds(zone, "£22.4")
+
+    def test_alike_to_the_title_is_held(self) -> None:
+        zone = ticks()
+        zone.title = "Form 9C — weekly timetable"
+        assert holds(zone, "9C weekiy")
+
+    def test_alike_to_a_placed_cell_is_not(self) -> None:
+        """Placed, the Cell is printed elsewhere: `OSL` beside `OSLO`."""
+        zone = ticks(note("OSLO GARDERMOEN", 0.33))
+        zone.pairs[1].value = cell("£22.40", bbox=BBox(0.1, 0.26, 0.2, 0.272))
+        assert not holds(zone, "OSL") and not holds(zone, "£22.4")
+
+
+class TestTheLineIsReadFromItsReach:
+    """Spec 0015, step 1: the crop stops short of the claimed words of the
+    line (`Unclaimed.reach`); a line with none is cut as before."""
+
+    def shapes(self, reach: BBox | None) -> list[tuple[int, ...]]:
+        shapes: list[tuple[int, ...]] = []
+        engine = LineReader(NOTE)
+        original = engine.extract_zone
+
+        def recording(image: object, zone: Zone, hint: str | None = None,
+                      grid: object = None) -> Zone:
+            shapes.append(np.asarray(image).shape)
+            return original(image, zone, hint, grid)
+
+        engine.extract_zone = recording  # type: ignore[method-assign]
+        document = page([ticks()])
+        document.unclaimed = [Unclaimed(zone_index=0, bbox=LINE, words=3, reach=reach)]
+        conversion = Conversion(
+            source=Path("unused.png"),
+            engines=EngineSet(layout=engine, classify=engine,  # type: ignore[arg-type]
+                              extract=engine, audit=engine))
+        image = np.full((400, 400, 3), 255, dtype=np.uint8)
+        conversion._read_unclaimed(Rectified(image=image, source=document.source), document)
+        return shapes
+
+    def test_the_crop_is_its_reach(self) -> None:
+        # Its width; its height keeps `PAD_Y`, as every crop does.
+        assert self.shapes(BBox(0.1, 0.44, 0.2, 0.45)) == [(12, 40, 3)]
+
+    def test_a_reach_padded_as_a_crop_is_cuts_the_crop_as_before(self) -> None:
+        padded = BBox(LINE.left - 0.03, LINE.top, LINE.right + 0.03, LINE.bottom)
+        assert self.shapes(padded) == self.shapes(None)

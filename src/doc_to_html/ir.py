@@ -680,6 +680,11 @@ class Unclaimed:
     words: int
     ink_share: float = 0.0
     """How much of the page's printed ink is in the line. See `Gap.ink_share`."""
+    reach: BBox | None = None
+    """The box the line is read again from — the line's, padded as every
+    crop is, stopping short of the words of its line a Cell claims. Spec
+    0015, step 1; see `locate.unclaimed`. None on a line listed before it,
+    which is read from its own box padded."""
 
 
 @dataclass
@@ -1036,7 +1041,8 @@ def _decode_document(data: dict[str, Any]) -> Document:
         caveats=[Caveat(**c) for c in data.get("caveats", [])],
         shortfalls=[Shortfall(**s) for s in data.get("shortfalls", [])],
         unclaimed=[Unclaimed(zone_index=u["zone_index"], bbox=BBox(**u["bbox"]),
-                             words=u["words"], ink_share=u.get("ink_share", 0.0))
+                             words=u["words"], ink_share=u.get("ink_share", 0.0),
+                             reach=BBox(**u["reach"]) if u.get("reach") else None)
                    for u in data.get("unclaimed", [])],
         regions=[
             Region(top=r["top"], bottom=r["bottom"], flow=Flow(r["flow"]),
