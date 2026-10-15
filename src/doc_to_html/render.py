@@ -494,17 +494,20 @@ def _unit_box(unit: list[Zone]) -> BBox | None:
 
 
 def _band(units: list[list[Zone]], document: Document, page: _Page,
-          plain: set[int]) -> _Row:
+          plain: set[int], span: tuple[float, float] | None = None) -> _Row:
     """One row of side-by-side units. **A unit set flush right with others
     beside it** shrinks to its content and is pushed to the row's end, so the
     unit before it takes the room the page gives it — `Q3 2026 · INTERNAL`
     beside `Platform review`, `Account` beside the statement's title. **Each
     unit starts as far below the row's top as the page starts it**, so
     `Q3 2026 · INTERNAL` stands level with the Title beside it and `2021 —
-    present` with its job, not with the heading above it."""
+    present` with its job, not with the heading above it. **Each unit takes
+    the lane the page gives it** across `span`, the row's reach on the page
+    (`_lanes`, spec 0015, 3a)."""
     starts = [_top(unit[0], page) for unit in units]
     known = [t for t in starts if t is not None]
     first = min(known) if known else None
+    lanes = _lanes(units, document, span)
     parts = []
     for position, (unit, start) in enumerate(zip(units, starts)):
         extra = []
@@ -513,6 +516,8 @@ def _band(units: list[list[Zone]], document: Document, page: _Page,
         if (len(units) > 1 and position == len(units) - 1
                 and len(unit) == 1 and unit[0].align == "right"):
             extra.append("flex:0 1 auto;margin-left:auto")
+        elif (lane := lanes[position]) is not None:
+            extra.append(f"flex:{lane * 100:.1f} 1 0")
         parts.append(_unit(unit, document, page,
                            plain=id(unit[0]) in plain, extra=";".join(extra)))
     zones = [zone for unit in units for zone in unit]
@@ -522,6 +527,65 @@ def _band(units: list[list[Zone]], document: Document, page: _Page,
                is not None]
     return _Row("band", "".join(parts), zones,
                 min(tops) if tops else None, max(bottoms) if bottoms else None)
+
+
+def _lanes(units: list[list[Zone]], document: Document,
+           span: tuple[float, float] | None) -> list[float | None]:
+    """Each unit's share of its row, as the page lays the row out — spec
+    0015, 3a: from where the page starts the unit to where it starts the
+    next, the first from the row's left and the last to its right, across
+    the row's reach on the page (`span`, as `_stack` measures its rules
+    against) and anything a unit draws past it. None for every unit of a
+    row of one, or of one a unit of which has no box.
+
+    **Where the page starts a unit is its extent** (`_extent`): its box,
+    with its frame and what the render draws for it. Its box alone is its
+    type, and `certificate_0021` centres each name under a signature rule
+    a quarter of the page wide: `H. Brandt`'s lane from its type came out
+    16% of the row, one word to a line.
+
+    Before this every unit asked the stylesheet's `flex:1 1 12rem`, and the
+    certificate's three — 3 × 192px and two 32px gaps, 640px in a 636px
+    box — wrapped: measured in Chrome, the one band in the corpus that did.
+    A table's reservation (`COLUMN_REM`) is a `min-width` beside it, so a
+    row whose table wants more room than its lane still wraps."""
+    if len(units) < 2 or span is None:
+        return [None] * len(units)
+    extents = [_extent(unit, document) for unit in units]
+    shown = [box for box in extents if box is not None]
+    if len(shown) < len(extents):
+        return [None] * len(units)
+    left = min([span[0]] + [box.left for box in shown])
+    right = max([span[1]] + [box.right for box in shown])
+    edges = [left] + [box.left for box in shown[1:]] + [right]
+    if any(b <= a for a, b in zip(edges, edges[1:])):
+        return [None] * len(units)
+    return [(b - a) / (right - left) for a, b in zip(edges, edges[1:])]
+
+
+def _extent(unit: list[Zone], document: Document) -> BBox | None:
+    """A unit's box together with a frame only it sits in and what the
+    render draws for its Zones (`furnish.anchor`): `invoice_0002`'s panels
+    from their frames, `sample_semantic_0005`'s TL;DR from the bar down its
+    left side, the certificate's names from their signature rules."""
+    box = _unit_box(unit)
+    if box is None:
+        return None
+    members = {id(zone) for zone in unit}
+    indices = {index for index, zone in enumerate(document.zones) if id(zone) in members}
+    parts = [box] + [zone.frame for zone in unit if zone.frame is not None
+                     and all(id(other) in members for other in document.zones
+                             if other.frame == zone.frame)]
+    if document.furniture:
+        anchors = furnish.anchor(document)
+        for by_zone in (anchors.boxes, anchors.sides, anchors.title_sides,
+                        anchors.under_title, anchors.tops, anchors.bottoms,
+                        anchors.hatches):
+            parts += [item.bbox for index, item in by_zone.items() if index in indices]
+        for by_part in (anchors.blocks, anchors.pairs, anchors.rows,
+                        anchors.cell_lefts, anchors.cell_tops):
+            parts += [item.bbox for key, item in by_part.items() if key[0] in indices]
+    return BBox(min(p.left for p in parts), box.top, max(p.right for p in parts), box.bottom)
 
 
 def _gap(above: _Row, below: _Row) -> float | None:
@@ -683,7 +747,7 @@ def _body(document: Document) -> list[str]:
         outside = [heads[id(zone)] for zone in band
                    if id(zone) not in home and id(zone) not in later]
         if outside:
-            rows.append(_band(outside, document, page, plain))
+            rows.append(_band(outside, document, page, plain, _span(document.zones)))
         for zone in band:
             held = home.get(id(zone))
             if held is None or id(held) in drawn:
@@ -763,7 +827,7 @@ def _columns(region: Region, zones: list[Zone], document: Document,
             rows.setdefault(band, []).append((column, unit))
         stacks.append(_framed(
             [_band([u for _, u in sorted(rows[b], key=lambda r: r[0])],
-                   document, page, plain) for b in sorted(rows)],
+                   document, page, plain, _span(lane)) for b in sorted(rows)],
             document, page, shared))
 
     # Spec 0012, G3a: each lane's own rules, and the rule down its left edge.
@@ -2700,7 +2764,15 @@ def _placed(zone: Zone, document: Document,
     G4: each entry starting where its box starts across the Zone's type,
     the last flush right where the page sets it there, and each line as
     far below the one before as the page sets it. The boxes are
-    `_printed_lines`', which include those it implied (spec 0015, 2b)."""
+    `_printed_lines`', which include those it implied (spec 0015, 2b).
+
+    **No wider than its type on the page** — spec 0015, step 3: the lines'
+    tracks are shares of the width they are drawn across, and given a lane
+    as wide as the page gives its unit (`_lanes`), `invoice_0002`'s `NO
+    554775/R1  Date 01/01/2015` spread across the two thirds of the row
+    that run to the ACME mark, where the page prints it in its first
+    quarter. A line wider than that in the render's type overflows the
+    cap rather than wrapping or overlapping."""
     page = _page(document)
     boxes = [box for line in printed for _, _, box in line]
     left, right = min(b.left for b in boxes), max(b.right for b in boxes)
@@ -2734,7 +2806,8 @@ def _placed(zone: Zone, document: Document,
             spans.append(f"<span{css}{_styled(looked)}>{_cell(c, document)}</span>")
         parts.append(f'<div class="line" style="{";".join(style)}">{"".join(spans)}</div>')
         above = (bottom, size)
-    return f'<div class="placed">{"".join(parts)}</div>'
+    return (f'<div class="placed" style="max-width:{_px(wide * page.x)}">'
+            f'{"".join(parts)}</div>')
 
 
 PLACED_CSS = (

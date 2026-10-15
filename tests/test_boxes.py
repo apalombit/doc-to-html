@@ -10,7 +10,7 @@ import re
 
 from doc_to_html.ir import (BBox, Block, Document, Flow, Furniture, Kind, Pair,
                             Region, Role, Source, Style, Zone, cell)
-from doc_to_html.render import _copies, _printed_lines, render
+from doc_to_html.render import _copies, _extent, _lanes, _printed_lines, render
 
 
 def pairs(*rows: tuple[tuple[str, BBox], tuple[str, BBox] | None], box: BBox,
@@ -184,6 +184,62 @@ class TestStepTwoPairsAsThePagePrintsThem:
         zone.extra = [Block(kind="paragraph", lines=[cell("OSL")])]
         html = body_of(render(page([zone])))
         assert html.count(">OSL<") == 1 and html.index("07:35") < html.index(">OSL<")
+
+
+def signature(name: str, left: float, rule: tuple[float, float]) -> Zone:
+    """One of `certificate_0021`'s signatures: a name centred over a rule
+    a quarter of the page wide, which `furnish.anchor` draws under it."""
+    return Zone(kind=Kind.PROSE, role=Role.BODY, complete=True, band=4,
+                bbox=BBox(left, 0.72, left + 0.11, 0.85),
+                blocks=[Block(kind="paragraph", lines=[
+                            cell(name, bbox=BBox(left + 0.01, 0.72, left + 0.10, 0.755))]),
+                        Block(kind="paragraph", lines=[
+                            cell("Course leader", bbox=BBox(left, 0.775, left + 0.11, 0.79))])])
+
+
+def certificate() -> Document:
+    zones = [signature("S. Okonkwo", 0.18, (0.122, 0.372)),
+             Zone(kind=Kind.PROSE, role=Role.BODY, complete=True, band=4,
+                  bbox=BBox(0.444, 0.67, 0.556, 0.83),
+                  blocks=[Block(kind="paragraph", lines=[cell("GUILD GTE 2026")])]),
+             signature("H. Brandt", 0.70, (0.628, 0.878))]
+    rules = [Furniture(kind="rule", bbox=BBox(0.122, 0.765, 0.372, 0.766), zone=0),
+             Furniture(kind="rule", bbox=BBox(0.628, 0.765, 0.878, 0.766), zone=2)]
+    return page(zones, furniture=rules)
+
+
+class TestStepThreeUnitsInThePagesLanes:
+    """Spec 0015, 3a."""
+
+    def test_each_unit_takes_the_lane_the_page_gives_it(self) -> None:
+        document = certificate()
+        units = [[zone] for zone in document.zones]
+        lanes = _lanes(units, document, (0.122, 0.878))
+        assert [round(lane or 0, 3) for lane in lanes] == [0.426, 0.243, 0.331]
+
+    def test_a_unit_starts_where_its_rule_starts_not_its_type(self) -> None:
+        document = certificate()
+        extent = _extent([document.zones[2]], document)
+        assert extent is not None and extent.left == 0.628 and extent.right == 0.878
+
+    def test_the_lane_is_drawn_as_the_units_flex(self) -> None:
+        html = body_of(render(certificate()))
+        assert html.count("flex:") >= 3 and "flex:42.6 1 0" in html
+
+    def test_a_row_of_one_asks_nothing(self) -> None:
+        document = certificate()
+        assert _lanes([[document.zones[0]]], document, (0.1, 0.9)) == [None]
+
+
+class TestAPairsZoneIsNoWiderThanItsType:
+    """Spec 0015, step 3: `invoice_0002`'s `NO … Date …` line, given the
+    page's lane, spread across it."""
+
+    def test_the_lines_are_capped_at_the_types_width(self) -> None:
+        zone = pairs(CARD, STOCK, box=BBox(0.03, 0.3, 0.33, 0.35))
+        html = body_of(render(page([zone])))
+        # 0.045 to 0.318 of a 1000px page.
+        assert '<div class="placed" style="max-width:273px">' in html
 
 
 def tile(left: float, height: float) -> Zone:

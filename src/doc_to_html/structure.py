@@ -347,22 +347,49 @@ def _columns(boxes: Sequence[BBox], containers: Sequence[BBox],
     The blocks are the Zones' boxes, except that a box inside a drawn container
     is the container: `darkdeck_0009`'s aside holds six list Zones and stands
     beside the main column as one thing.
+
+    **Spec 0015, 3b — a drawn divider parts what it stands between.** A
+    block crosses it only past both edges of its stroke, so one that only
+    reaches into the stroke stands beside it: `ticket_0020`'s stub starts
+    at 0.736, on the perforation's own stroke, whose centre is 0.737, and
+    counted as crossing it. And **the divider reaches as far as the blocks
+    beside it**, the stretch growing to every block it touches until it
+    stops changing: the perforation starts under the header bar, so beside
+    it stood only the passenger block and the route block, side by side
+    and not stacked, and `_independent` found nothing to part. Either
+    alone changes no page; together they make the ticket two panes. **A
+    drawn rule only**: a container's edge reaching further turned the
+    catalogue's card frames into column regions on the layout stage's
+    boxes, and moved 24 of its crops (replayed over `s10-result/`).
     """
     blocks = [box for box in boxes
               if not any(box.overlap_ratio(c) >= CONTAINED for c in containers)]
     blocks += list(containers)
 
-    dividers = [(c.left, c.top, c.bottom) for c in containers]
-    dividers += [(c.right, c.top, c.bottom) for c in containers]
-    dividers += [(r.x, r.top, r.bottom) for r in rules if r.vertical]
+    # Each divider with the two edges of its stroke, and whether it is drawn
+    # as a rule; a container's edge has no stroke and reaches no further.
+    dividers = [(c.left, c.top, c.bottom, c.left, c.left, False) for c in containers]
+    dividers += [(c.right, c.top, c.bottom, c.right, c.right, False) for c in containers]
+    dividers += [(r.x, r.top, r.bottom, min(r.left, r.x), max(r.right, r.x), True)
+                 for r in rules if r.vertical]
 
     found: list[tuple[float, float, set[float]]] = []
-    for x, top, bottom in dividers:
+    for x, top, bottom, x0, x1, drawn in dividers:
+        def crosses(block: BBox) -> bool:
+            return block.left < x0 and block.right > x1
+
         near = [b for b in blocks if b.top < bottom and b.bottom > top]
-        if not near or any(b.left < x < b.right for b in near):
+        if not near or any(crosses(b) for b in near):
             continue
-        left = [b for b in near if b.right <= x]
-        right = [b for b in near if b.left >= x]
+        while drawn:
+            low = min([top] + [b.top for b in near])
+            high = max([bottom] + [b.bottom for b in near])
+            grown = [b for b in blocks if b.top < high and b.bottom > low]
+            if len(grown) == len(near) or any(crosses(b) for b in grown):
+                break
+            near = grown
+        left = [b for b in near if b.right <= x1]
+        right = [b for b in near if b.left >= x0]
         if _independent(left, right) or _independent(right, left):
             found.append((min(top, *(b.top for b in near)),
                           max(bottom, *(b.bottom for b in near)), {x}))

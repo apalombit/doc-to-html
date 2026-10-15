@@ -31,8 +31,8 @@ from doc_to_html.ir import (BBox, Block, Document, Furniture, Kind, Role, Source
                              cell)
 from doc_to_html.preprocess import rectify
 from doc_to_html.render import render
-from doc_to_html.structure import (Flow, Region, alike, cut_at_edges, separators,
-                                   structure)
+from doc_to_html.structure import (Flow, Region, _columns, _Rule, alike, cut_at_edges,
+                                   separators, structure)
 from doc_to_html.style import measure
 
 REPO = Path(__file__).resolve().parent.parent
@@ -235,6 +235,34 @@ def sidebar_page(regions: list[Region]) -> Document:
             prose("Education", BBox(0.38, 0.50, 0.97, 0.90), 1, 1),
         ],
         regions=regions)
+
+
+class TestADrawnDividerPartsWhatItStandsBetween:
+    """Spec 0015, 3b: `ticket_0020`'s perforation, a dashed rule at 0.737
+    that starts under the header bar, with the stub starting on its stroke."""
+
+    RULE = _Rule(x=0.737, top=0.167, bottom=1.0, left=0.735, right=0.739, vertical=True)
+    BAR = BBox(0.0, 0.0, 0.73, 0.13)
+    STUB = BBox(0.736, 0.0, 1.0, 1.0)
+    PASSENGER = BBox(0.028, 0.18, 0.452, 0.836)
+    ROUTE = BBox(0.538, 0.354, 0.706, 0.849)
+
+    def test_the_ticket_is_two_panes(self) -> None:
+        [region] = _columns([self.BAR, self.STUB, self.PASSENGER, self.ROUTE], [],
+                            [self.RULE])
+        assert region.flow is Flow.COLUMNS and region.splits == (0.737,)
+        assert (region.top, region.bottom) == (0.0, 1.0)
+
+    def test_a_block_only_on_the_stroke_does_not_cross_it(self) -> None:
+        crossing = BBox(0.73, 0.0, 1.0, 1.0)
+        assert _columns([self.BAR, crossing, self.PASSENGER, self.ROUTE], [],
+                        [self.RULE]) == []
+
+    def test_a_container_edge_reaches_no_further_than_itself(self) -> None:
+        """The catalogue's card frames, on the layout stage's boxes."""
+        frame = BBox(0.736, 0.167, 1.0, 1.0)
+        found = _columns([self.BAR, self.PASSENGER, self.ROUTE], [frame], [])
+        assert found == []
 
 
 class TestTheIRCarriesTheStructure:
