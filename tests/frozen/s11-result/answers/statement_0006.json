@@ -1,0 +1,191 @@
+{
+ "calls": [
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"NORTHGATE MUTUAL\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "d62ef5894267",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "740c23c9fca0",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\"first_line\": \"Account 40-21-88 / 60114427\", \"line_is\": \"content\"}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "b4465a6fba19",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "b4465a6fba19",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"OPENING BALANCE\",\n  \"line_is\": \"header\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "1cfa63112aa0",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "1cfa63112aa0",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\"first_line\": \"Transactions in date order\", \"line_is\": \"caption\"}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "a6f86410dccf",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "beec6ba6b5a3",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Northgate Mutual is a trading name of Northgate Mutual Banking plc. Interest is calculated daily and paid monthly. Please check this statement and tell us within 60 days if anything\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "7cd4116f59ab",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "7cd4116f59ab",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"NORTHGATE MUTUAL\"\n      ]\n    },\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Current account statement\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "d62ef5894267",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"NORTHGATE MUTUAL\",\n      \"kind\": \"link\"\n    },\n    {\n      \"text\": \"Current account statement\",\n      \"kind\": \"strong\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "d62ef5894267",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"Account\",\n      \"value\": \"40-21-88 / 60114427\"\n    },\n    {\n      \"label\": \"Period\",\n      \"value\": \"1 – 31 August 2026\"\n    },\n    {\n      \"label\": \"Statement No.\",\n      \"value\": \"142\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "b4465a6fba19",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "table",
+   "answer": "{\n  \"rows\": [\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"OPENING BALANCE\",\n        \"PAID IN\",\n        \"PAID OUT\",\n        \"CLOSING BALANCE\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"2,418.50\",\n        \"6,940.00\",\n        \"5,772.36\",\n        \"3,586.14\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "5bc41722a575",
+    "picture": "1cfa63112aa0",
+    "schema": "32d195a8c340"
+   }
+  },
+  {
+   "pass_name": "table",
+   "answer": "{\n  \"rows\": [\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"Transactions in date order\",\n        \"\",\n        \"\",\n        \"\",\n        \"\",\n        \"\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"Date\",\n        \"Description\",\n        \"Type\",\n        \"Paid out\",\n        \"Paid in\",\n        \"Balance\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"01 Aug\",\n        \"Opening balance\",\n        \"\",\n        \"\",\n        \"\",\n        \"2,418.50\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"01 Aug\",\n        \"Fernway Properties\",\n        \"DD\",\n        \"1,180.00\",\n        \"\",\n        \"1,238.50\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"02 Aug\",\n        \"Cordell Energy\",\n        \"DD\",\n        \"94.20\",\n        \"\",\n        \"1,141.30\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"02 Aug\",\n        \"Hale & Prentice Ltd\",\n        \"BAC\",\n        \"\",\n        \"3,470.00\",\n        \"4,614.30\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"03 Aug\",\n        \"Marchmont Grocers\",\n        \"CRD\",\n        \"62.41\",\n        \"\",\n        \"4,551.89\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"04 Aug\",\n        \"Transit Authority\",\n        \"CRD\",\n        \"28.00\",\n        \"\",\n        \"4,523.89\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"05 Aug\",\n        \"Elder Street Cafe\",\n        \"CRD\",\n        \"11.75\",\n        \"\",\n        \"4,512.14\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"06 Aug\",\n        \"Quillton Books\",\n        \"CRD\",\n        \"43.90\",\n        \"\",\n        \"4,468.24\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"07 Aug\",\n        \"Wexford Insurance\",\n        \"DD\",\n        \"210.08\",\n        \"\",\n        \"4,252.16\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"08 Aug\",\n        \"Cash withdrawal, Bridge St\",\n        \"ATM\",\n        \"120.00\",\n        \"\",\n        \"4,132.16\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"09 Aug\",\n        \"Marchmont Grocers\",\n        \"CRD\",\n        \"78.33\",\n        \"\",\n        \"4,053.83\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"10 Aug\",\n        \"Ridley Telecom\",\n        \"DD\",\n        \"39.99\",\n        \"\",\n        \"4,013.84\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"11 Aug\",\n        \"Saltmarsh Design\",\n        \"FPO\",\n        \"450.00\",\n        \"\",\n        \"3,563.84\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"12 Aug\",\n        \"Refund, Quillton Books\",\n        \"CRD\",\n        \"\",\n        \"43.90\",\n        \"3,607.74\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"13 Aug\",\n        \"Elder Street Cafe\",\n        \"CRD\",\n        \"9.20\",\n        \"\",\n        \"3,598.54\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"14 Aug\",\n        \"Ferry & Dock Co\",\n        \"CRD\",\n        \"31.50\",\n        \"\",\n        \"3,567.04\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"15 Aug\",\n        \"Hale & Prentice Ltd\",\n        \"BAC\",\n        \"\",\n        \"1,940.00\",\n        \"5,507.04\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"15 Aug\",\n        \"Northgate Mutual, fee\",\n        \"CHG\",\n        \"5.00\",\n        \"\",\n        \"5,502.04\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"16 Aug\",\n        \"Marchmont Grocers\",\n        \"CRD\",\n        \"104.66\",\n        \"\",\n        \"5,397.38\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"17 Aug\",\n        \"Ashgrove Dental\",\n        \"CRD\",\n        \"185.00\",\n        \"\",\n        \"5,212.38\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"18 Aug\",\n        \"Transit Authority\",\n        \"CRD\",\n        \"28.00\",\n        \"\",\n        \"5,184.38\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"19 Aug\",\n        \"Pemberton Hardware\",\n        \"CRD\",\n        \"77.12\",\n        \"\",\n        \"5,107.26\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"20 Aug\",\n        \"Cash withdrawal, Bridge St\",\n        \"ATM\",\n        \"80.00\",\n        \"\",\n        \"5,027.26\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"21 Aug\",\n        \"Lindward Pharmacy\",\n        \"CRD\",\n        \"18.45\",\n        \"\",\n        \"5,008.81\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"22 Aug\",\n        \"Fernway Properties\",\n        \"DD\",\n        \"1,180.00\",\n        \"\",\n        \"3,828.81\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"23 Aug\",\n        \"Elder Street Cafe\",\n        \"CRD\",\n        \"14.60\",\n        \"\",\n        \"3,814.21\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"23 Aug\",\n        \"Marchmont Grocers\",\n        \"CRD\",\n        \"55.08\",\n        \"\",\n        \"3,759.13\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"24 Aug\",\n        \"Halcyon Streaming\",\n        \"DD\",\n        \"12.99\",\n        \"\",\n        \"3,746.14\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"25 Aug\",\n        \"Castleton Council, tax\",\n        \"DD\",\n        \"198.00\",\n        \"\",\n        \"3,548.14\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"26 Aug\",\n        \"Wrenfield Garage\",\n        \"CRD\",\n        \"262.40\",\n        \"\",\n        \"3,285.74\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"27 Aug\",\n        \"Interest paid\",\n        \"INT\",\n        \"\",\n        \"1.24\",\n        \"3,286.98\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"27 Aug\",\n        \"Transit Authority\",\n        \"CRD\",\n        \"28.00\",\n        \"\",\n        \"3,258.98\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"28 Aug\",\n        \"Barrowden Wines\",\n        \"CRD\",\n        \"46.80\",\n        \"\",\n        \"3,212.18\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"28 Aug\",\n        \"Hale & Prentice Ltd\",\n        \"BAC\",\n        \"\",\n        \"1,484.86\",\n        \"4,697.04\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"29 Aug\",\n        \"Marchmont Grocers\",\n        \"CRD\",\n        \"91.27\",\n        \"\",\n        \"4,605.77\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"29 Aug\",\n        \"Saltmarsh Design\",\n        \"FPO\",\n        \"450.00\",\n        \"\",\n        \"4,155.77\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"30 Aug\",\n        \"Kestrel Mobile\",\n        \"DD\",\n        \"22.50\",\n        \"\",\n        \"4,133.27\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"30 Aug\",\n        \"Elder Street Cafe\",\n        \"CRD\",\n        \"10.85\",\n        \"\",\n        \"4,122.42\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"31 Aug\",\n        \"Pemberton Hardware\",\n        \"CRD\",\n        \"134.19\",\n        \"\",\n        \"3,988.23\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"31 Aug\",\n        \"Vantage Pension Plan\",\n        \"SO\",\n        \"402.09\",\n        \"\",\n        \"3,586.14\"\n      ]\n    },\n    {\n      \"role\": \"summary\",\n      \"cells\": [\n        \"Totals for the period\",\n        \"\",\n        \"\",\n        \"5,772.36\",\n        \"6,940.00\",\n        \"3,586.14\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "a7c79c4b1bcf",
+    "picture": "a6f86410dccf",
+    "schema": "32d195a8c340"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Northgate Mutual is a trading name of Northgate Mutual Banking plc. Interest is calculated daily and paid monthly. Please check this statement and tell us within 60 days if anything appears to be wrong.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "7cd4116f59ab",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "7cd4116f59ab",
+    "schema": "334959f8ecb0"
+   }
+  }
+ ]
+}

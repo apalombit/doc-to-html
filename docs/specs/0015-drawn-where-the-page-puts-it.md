@@ -1,9 +1,9 @@
 # Every line read, and drawn where the page puts it — the ticket and the certificate first
 
-**Status: done 2026-10-16. Steps 1–3 were judged by eye; `S11-sweep` held
+**Status: done and decided. Steps 1–3 were judged by eye; `S11-sweep` held
 §6's prediction to the byte, with six pages better, fifteen the same and
-none worse. Whether it becomes the baseline is Alessandro's decision.
-Issue #38.** Three steps, in order,
+none worse. Alessandro took it as the baseline on 2026-10-17, frozen as
+`tests/frozen/s11-result/`. Issue #38, closed.** Three steps, in order,
 each judged by eye, then one full sweep, `S11-sweep`, over all twenty-one
 documents. The handover prompt at the end, marked *current*, is the one to
 start a session with.
@@ -648,7 +648,7 @@ Alessandro's decision.
 
 ---
 
-## Handover prompt — after `S11-sweep`: the baseline decision (current)
+## Handover prompt — after `S11-sweep`: the baseline decision (record — done 2026-10-17)
 
 ```
 Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then

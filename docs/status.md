@@ -1,17 +1,14 @@
-# Status — 2026-10-16 (**spec 0015 done; `S11-sweep` waits on the baseline decision; the baseline is still `tests/frozen/s10-result/`**)
+# Status — 2026-10-17 (**the baseline is `tests/frozen/s11-result/`; nothing open**)
 
 **Live document.** This is where the project actually is. When it goes stale,
-rewrite it; do not add a banner and leave it. Last rewritten 2026-10-16,
-after spec 0015's sweep, `S11-sweep`, held its prediction to the byte and
-was reviewed by eye. Whether it becomes the baseline is Alessandro's
-decision.
+rewrite it; do not add a banner and leave it. Last rewritten 2026-10-17,
+after Alessandro took spec 0015's sweep, `S11-sweep`, as the baseline.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file, then
 [`specs/0015-drawn-where-the-page-puts-it.md`](specs/0015-drawn-where-the-page-puts-it.md)
-end to end, starting from its handover prompt marked *current* (the
-baseline decision, then freezing `s11-result/` if he takes it). If you are going to
+end to end. If you are going to
 look at output — and you should — use the **`visual-review` skill**.
 
 Branch `scaffold`. **1201 tests pass (1 skipped), `mypy src/` clean** — at
@@ -72,7 +69,7 @@ Spec 0015   Every line read, and drawn where the page puts it — issue #38
               judged by eye
               S  S11-sweep on 6b1caf4, 2026-10-16: prediction held to
                  the byte; 6 pages better, 15 same, none worse
-              DECISION PENDING: S11-sweep as the baseline (Alessandro)
+              DECIDED 2026-10-17: S11-sweep the baseline, frozen as s11-result/
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -80,25 +77,26 @@ in [`specs/0007-handover.md`](specs/0007-handover.md).
 
 ---
 
-## The baseline — `tests/frozen/s10-result/`, DECIDED 2026-10-15
+## The baseline — `tests/frozen/s11-result/`, DECIDED 2026-10-17
 
-**Twenty-one documents, 735 answers.** Sweep `S10-sweep`, commit
-`a53f11b` (spec 0014 step P), 2026-10-15 07:35–09:56 (**2h21m**),
-shipped defaults. Taken by Alessandro after review: against
-`s9-result/`, three pages better, eighteen the same, none worse; the
-ticket's tau the one ratchet leg that fell, named in the README.
+**Twenty-one documents, 749 answers.** Sweep `S11-sweep`, commit
+`6b1caf4` (spec 0015 step P), 2026-10-15 23:13 to 2026-10-16 01:35
+(**2h22m**), shipped defaults. Alessandro took it after review: against
+`s10-result/`, six pages better, fifteen the same, none worse. The
+timetable's tau and beside are the ratchet legs that fell, named in the
+README.
 
-Proved the day it was frozen, at `b493477`'s code:
-- `tools/replay_run.py tests/frozen/s10-result`: **21 of 21
+Proved on 2026-10-17, at `3c5e365`'s code:
+- `tools/replay_run.py tests/frozen/s11-result`: **21 of 21
   byte-identical, 0 asked differently**;
 - `tools/rederive.py` over it: **21 of 21 byte-identical files**;
-- the rederive scored against `s9-result/`: **21 documents, 0 differing
-  fields**;
-- its 735 answers against the sweep's `trace.json`: 0 differ.
+- the rederive scored: **21 documents, 0 differing fields** against its
+  `scores.json`;
+- its 749 answers against the sweep's `trace.json`: 0 differ.
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s10-result/scores.json
+    --documents sweep --previous tests/frozen/s11-result/scores.json
 ```
 
 `--documents sweep` is not optional: without a `fixtures.txt` the report
@@ -106,6 +104,9 @@ scores the iterate five.
 
 ### The baselines before it
 
+- **`s10-result/`** — spec 0014's sweep, `S10-sweep`. The baseline
+  2026-10-15 to 2026-10-17. `S11-sweep` answered its 735 calls byte for
+  byte and asked fourteen more.
 - **`s9-result/`** — spec 0013's sweep, `S9-sweep`. The baseline
   2026-10-14 to 2026-10-15; `S10-sweep` answered its 732 calls byte for
   byte and asked three more.
@@ -134,7 +135,7 @@ scores the iterate five.
 
 ## Where the corpus is — recorded, not a target
 
-Means over `S11-sweep`, against `s10-result/`:
+Means over `s11-result/`, against `s10-result/`:
 
 | | all 21 | the fifteen | the six new |
 |---|---|---|---|
@@ -160,6 +161,8 @@ already printed elsewhere, so five words) and `osl`, and the timetable's
 ## What the last work shipped
 
 ### Spec 0015 — every line read, and drawn where the page puts it, `S11-sweep`, 2026-10-16
+
+Taken as the baseline, `s11-result/`, 2026-10-17. Issue #38 closed.
 
 **Against `S11-0-replay` (`s10-result/` replayed at the code the spec
 began on): six pages better, fifteen the same, none worse.** Commit
@@ -201,7 +204,7 @@ What shipped, one commit a step:
 
 ### Spec 0014 — every printed line has a place, `S10-sweep`, 2026-10-15
 
-Taken as the baseline, `s10-result/`.
+Taken as the baseline, `s10-result/`, until 2026-10-17.
 **Against `S10-0-replay` (`s9-result/` at the code it began on): three
 pages better, eighteen the same, none worse.** Commit `a53f11b`, 735
 calls, 2h21m. §7's prediction held to the byte: all 732 calls
@@ -239,26 +242,13 @@ and `specs/0007-handover.md` for the A phases and the queue.
 
 ---
 
-## Next — Alessandro's decision on `S11-sweep`
+## Next — nothing is open
 
-Nothing is open but the decision. Spec 0015's handover prompt marked
-*current* is the one to start from.
-
-- **If `S11-sweep` is taken as the baseline**, freeze it as
-  `tests/frozen/s11-result/` while `debug/runs/S11-sweep/` still exists,
-  prove it by replay and rederive, point CLAUDE.md and this file at it,
-  and close issue #38.
-- **If he names next work**, spec 0015's "Directions, ranked" is the
-  starting point. Its first three directions are offline: a look for
-  entries placed by inference (`OSL` at display size, the catalogue's
-  prices, `NL 0482`), `align` measured against a unit's extent (the
-  certificate's names), and extra lines placed on their row in table and
-  list Zones (`Lunch`, `Tags:`). The fourth and fifth are the ticket's
-  `BOARDING PASS` heading and its header bar.
-
+Spec 0015's "Directions, ranked" lists the faults left on the ticket and
+certificate, by stage. None is queued until Alessandro names it.
 Everything spec 0015 did not do stays cleared, as it was on 2026-10-15.
 That covers marks and badges, misreads, emphasis and the wordmark
-question. None of it is queued.
+question.
 
 ---
 
@@ -310,8 +300,8 @@ the last two entries.
   `a1-checkpoint/`, `a0-checkpoint/`, `a0-result/`, `a1-result/`,
   `a2-result/`, `a3-result/`, `reshot/`, `q5-result/`, `s3-result/`,
   `s5-result/`, `s6-result/`, `s7-result/`,
-  `s8-result/`, `s9-result/` — all kept as record — and **`s10-result/`, the baseline**
-  since 2026-10-14, twenty-one documents.
+  `s8-result/`, `s9-result/`, `s10-result/` — all kept as record — and **`s11-result/`, the baseline**
+  since 2026-10-17, twenty-one documents.
   `a3-result/` was scored on pictures missing their last lines;
   quote it only as that.
 - **The committed corpus picture is a screenshot of its own HTML.**
@@ -376,7 +366,7 @@ the last two entries.
 FIXTURE=sweep tools/iterate.sh <label>        # all twenty-one, ~2¼ h — anything reviewed
 FIXTURE=iterate tools/iterate.sh <label>      # the five, ~20 min — throwaway checks only
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s10-result/scores.json
+    --documents sweep --previous tests/frozen/s11-result/scores.json
 python tools/visual_review.py debug/runs/<label> --previous debug/runs/<older>
 python tools/visual_review.py debug/runs/<label> --check
 ```
@@ -395,7 +385,7 @@ converts it once the bug is fixed, with no model call.
 
 **Three offline loops, each proved before it was used, and a sweep. Say which
 produced any number you report.** Start them from the baseline,
-`tests/frozen/s10-result/`. On 2026-10-15 `tools/replay_run.py` and
+`tests/frozen/s11-result/`. On 2026-10-17 `tools/replay_run.py` and
 `tools/rederive.py` over it each reproduced it byte for byte, 21 of 21. Both
 tools take a run directory as well as a frozen one.
 
