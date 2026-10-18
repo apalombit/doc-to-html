@@ -271,6 +271,10 @@ all four together. The prototype is
 rule by rule how far each one is proven beyond the ticket. Its handover
 prompt, marked *current*, is the one to start a session with.
 
+Ideas for a next generation of the tool, **not queued and not open
+work**: [`future-ideas.md`](future-ideas.md), a judge-led loop with a case
+memory, discussed 2026-10-18.
+
 **Everything else was cleared by Alessandro on 2026-10-18**: spec 0015's "Directions, ranked"; the faults
 left on `S11-sweep`'s other pages (the certificate's seal, names and
 stars, the timetable's `Lunch` under its grid, sample_semantic's `Tags:`
