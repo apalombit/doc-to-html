@@ -1,0 +1,400 @@
+{
+ "calls": [
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"The Weekly Digest\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "c8a139d2d14a",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "a03cf49e0fd0",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Why semantic HTML matters\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "6bc51a65c270",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "74ab461c0da8",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"TL;DR\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "d2da743eb583",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "414d6b05a645",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Introduction\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "0a580f757134",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "ddff3de8111d",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Benefits\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "21e5c28cbeec",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "ef77a95c4f52",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\"first_line\": \"Search engines understand content hierarchy\", \"line_is\": \"content\"}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "ff0bfcb042d5",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "ff0bfcb042d5",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"HTML provides for a number of elements that allow for finer-grained semantics in HTML documents.\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "0b2fc582b8ed",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "0b2fc582b8ed",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "d4df3c7acf82",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"© 2026 The Weekly Digest. All rights reserved.\",\n  \"line_is\": \"header\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "d3258728d1c5",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "d3258728d1c5",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "list",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Home\"\n      ]\n    },\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Archive\"\n      ]\n    },\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"About\"\n      ]\n    },\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Contact\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "049705fbe02f",
+    "picture": "c8a139d2d14a",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"Home\",\n      \"kind\": \"link\"\n    },\n    {\n      \"text\": \"Archive\",\n      \"kind\": \"link\"\n    },\n    {\n      \"text\": \"About\",\n      \"kind\": \"link\"\n    },\n    {\n      \"text\": \"Contact\",\n      \"kind\": \"link\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "c8a139d2d14a",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Why semantic HTML matters\"\n      ]\n    },\n    {\n      \"kind\": \"attribution\",\n      \"lines\": [\n        \"May 9, 2026 · by Jane Author\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "6bc51a65c270",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"Jane Author\",\n      \"kind\": \"link\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "6bc51a65c270",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"TL;DR\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Semantic tags improve accessibility,\",\n        \"SEO, and code clarity.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "d2da743eb583",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "d2da743eb583",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Introduction\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Modern HTML5 introduced semantic elements like <article>,\",\n        \"<section>, and <nav> that describe the meaning of content\",\n        \"rather than its appearance.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "0a580f757134",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"<article>\",\n      \"kind\": \"code\"\n    },\n    {\n      \"text\": \"<section>\",\n      \"kind\": \"code\"\n    },\n    {\n      \"text\": \"<nav>\",\n      \"kind\": \"code\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "0a580f757134",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "list",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Screen readers can navigate the document structure\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "049705fbe02f",
+    "picture": "21e5c28cbeec",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "21e5c28cbeec",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "list",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Search engines understand content hierarchy\"\n      ]\n    },\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"CSS and JavaScript can target meaningful regions\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "049705fbe02f",
+    "picture": "ff0bfcb042d5",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "ff0bfcb042d5",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"quote\",\n      \"lines\": [\n        \"HTML provides for a number of elements that allow for finer-grained semantics in HTML\",\n        \"documents.\"\n      ]\n    },\n    {\n      \"kind\": \"attribution\",\n      \"lines\": [\n        \"— W3C HTML5.2 specification\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "0b2fc582b8ed",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "0b2fc582b8ed",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "list",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"html\"\n      ]\n    },\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"web\"\n      ]\n    },\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"standards\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "049705fbe02f",
+    "picture": "d4df3c7acf82",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"html\",\n      \"kind\": \"link\"\n    },\n    {\n      \"text\": \"web\",\n      \"kind\": \"link\"\n    },\n    {\n      \"text\": \"standards\",\n      \"kind\": \"link\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "d4df3c7acf82",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"© 2026 The Weekly Digest. All rights reserved.\"\n      ]\n    },\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"Contact: editor@example.com\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "d3258728d1c5",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"editor@example.com\",\n      \"kind\": \"link\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "d3258728d1c5",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Tags:\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "854b25abd73a",
+    "schema": "2a31e0885054"
+   }
+  }
+ ]
+}

@@ -1,0 +1,345 @@
+{
+ "calls": [
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"figure\",\n  \"graphic\": \"logo\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "8496125e45c8",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "a91fa0ae5618",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Invoice With Credit\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "a9c9523018ed",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "c533a75fd42f",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Company Details\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "b581f41c70dc",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "5c61b81f6053",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Customer Details\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "b5e0b3a3a1e1",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "ee3959603206",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "a58c8a890c08",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Payment Method\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "39664c72d7d0",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "995fd5478228",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\"first_line\": \"Comments / Notes\", \"line_is\": \"caption\"}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "79020f512959",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "785dd63fc7a6",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\"first_line\": \"Thank you for choosing our services.\", \"line_is\": \"content\"}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "2168967c9672",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "2168967c9672",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "87869c0ffde0",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "figure",
+   "answer": "{\n  \"graphic\": \"logo\",\n  \"text\": [\n    \"ACME\"\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "2bd08d0c016f",
+    "picture": "8496125e45c8",
+    "schema": "076cd0b9aaab"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Acme Corporation\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Software Development\"\n      ]\n    },\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"Field 3, Moon\"\n      ]\n    },\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"info@acme.com\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "a91fa0ae5618",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"info@acme.com\",\n      \"kind\": \"link\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "a91fa0ae5618",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"Invoice\",\n      \"value\": \"With Credit\"\n    },\n    {\n      \"label\": \"NO\",\n      \"value\": \"554775/R1\"\n    },\n    {\n      \"label\": \"Date\",\n      \"value\": \"01/01/2015\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "a9c9523018ed",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"Name\",\n      \"value\": \"Acme Corporation\"\n    },\n    {\n      \"label\": \"Industry\",\n      \"value\": \"Software Development\"\n    },\n    {\n      \"label\": \"Address\",\n      \"value\": \"Field 3, Moon\"\n    },\n    {\n      \"label\": \"Phone\",\n      \"value\": \"123.4456.4567\"\n    },\n    {\n      \"label\": \"Email\",\n      \"value\": \"mainl@acme.com\"\n    },\n    {\n      \"label\": \"Tax NO\",\n      \"value\": \"123456789\"\n    },\n    {\n      \"label\": \"Tax Office\",\n      \"value\": \"A' Moon\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "b581f41c70dc",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n    \"pairs\": [\n        {\n            \"label\": \"Name\",\n            \"value\": \"Microsoft Corporation\"\n        },\n        {\n            \"label\": \"Industry\",\n            \"value\": \"Software Development\"\n        },\n        {\n            \"label\": \"Address\",\n            \"value\": \"One Microsoft Way Redmond, WA 98052-7329, USA\"\n        },\n        {\n            \"label\": \"Phone\",\n            \"value\": \"(425) 882-8080\"\n        },\n        {\n            \"label\": \"Email\",\n            \"value\": \"contact@microsoft.com\"\n        },\n        {\n            \"label\": \"Tax NO\",\n            \"value\": \"123456789\"\n        }\n    ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "b5e0b3a3a1e1",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Services / Products\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "a58c8a890c08",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"Services / Products\",\n      \"kind\": \"mark\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "a58c8a890c08",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n    \"pairs\": [\n        {\n            \"label\": \"Payment Method\",\n            \"value\": \"\"\n        },\n        {\n            \"label\": \"For your convenience, you may deposit the final amount at one of our banks\",\n            \"value\": \"\"\n        },\n        {\n            \"label\": \"Alpha Bank - M0123456789456123\",\n            \"value\": \"\"\n        },\n        {\n            \"label\": \"Beta Bank - M0123456789456123\",\n            \"value\": \"\"\n        },\n        {\n            \"label\": \"Gamma Bank - M0123456789456123\",\n            \"value\": \"\"\n        }\n    ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "39664c72d7d0",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Comments / Notes\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Odit repudiandae numquam sit facere blanditiiis, quasi distinctio ipsam? Libero odit ex expedita, facere sunt, possimus consectetur dolore, nobis iure amet vero.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "79020f512959",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "79020f512959",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Thank you for choosing our services.\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"We hope to see you again soon\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "2168967c9672",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "2168967c9672",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"~ACME~\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "87869c0ffde0",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"~ACME~\",\n      \"kind\": \"mark\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "87869c0ffde0",
+    "schema": "334959f8ecb0"
+   }
+  }
+ ]
+}

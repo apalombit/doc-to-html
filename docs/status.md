@@ -1,10 +1,9 @@
-# Status — 2026-10-18 (**the baseline is `tests/frozen/s11-result/`; spec 0016 done, `S12-sweep` taken — the baseline decision pending**)
+# Status — 2026-10-18 (**the baseline is `tests/frozen/s12-result/`; spec 0016 done and decided, nothing open**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-18,
-after spec 0016's sweep, `S12-sweep` (issue #39). Alessandro took spec
-0015's sweep, `S11-sweep`, as the baseline on 2026-10-17; whether
-`S12-sweep` replaces it is his decision.
+after spec 0016's sweep, `S12-sweep` (issue #39), which Alessandro took
+as the baseline the same day.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
@@ -84,7 +83,7 @@ Spec 0016   Structure first — one grid, one strip — issue #39
                 called for (the timetable's legend twice)
               S  S12-sweep on 3abb55d, 2026-10-18: prediction held to
                  the byte; 1 page better (ticket), 20 same, none worse
-              baseline decision PENDING
+              DECIDED 2026-10-18: S12-sweep the baseline, frozen as s12-result/
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -92,17 +91,16 @@ in [`specs/0007-handover.md`](specs/0007-handover.md).
 
 ---
 
-## The baseline — `tests/frozen/s11-result/`, DECIDED 2026-10-17
+## The baseline — `tests/frozen/s12-result/`, DECIDED 2026-10-18
 
-**Twenty-one documents, 749 answers.** Sweep `S11-sweep`, commit
-`6b1caf4` (spec 0015 step P), 2026-10-15 23:13 to 2026-10-16 01:35
-(**2h22m**), shipped defaults. Alessandro took it after review: against
-`s10-result/`, six pages better, fifteen the same, none worse. The
-timetable's tau and beside are the ratchet legs that fell, named in the
-README.
+**Twenty-one documents, 749 answers**, byte-identical to `s11-result/`'s.
+Sweep `S12-sweep`, commit `3abb55d` (spec 0016 step P; code `c98f2db`),
+2026-10-18 16:07 to 18:30 (**2h22m**), shipped defaults. Alessandro took
+it after review: against `s11-result/`, the ticket better, twenty the
+same, none worse; no ratchet leg fell.
 
-Proved on 2026-10-17, at `3c5e365`'s code:
-- `tools/replay_run.py tests/frozen/s11-result`: **21 of 21
+Proved on 2026-10-18, at `c98f2db`'s code:
+- `tools/replay_run.py tests/frozen/s12-result`: **21 of 21
   byte-identical, 0 asked differently**;
 - `tools/rederive.py` over it: **21 of 21 byte-identical files**;
 - the rederive scored: **21 documents, 0 differing fields** against its
@@ -111,7 +109,7 @@ Proved on 2026-10-17, at `3c5e365`'s code:
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s11-result/scores.json
+    --documents sweep --previous tests/frozen/s12-result/scores.json
 ```
 
 `--documents sweep` is not optional: without a `fixtures.txt` the report
@@ -119,6 +117,9 @@ scores the iterate five.
 
 ### The baselines before it
 
+- **`s11-result/`** — spec 0015's sweep, `S11-sweep`. The baseline
+  2026-10-17 to 2026-10-18. `S12-sweep` answered its 749 calls byte for
+  byte and asked nothing else.
 - **`s10-result/`** — spec 0014's sweep, `S10-sweep`. The baseline
   2026-10-15 to 2026-10-17. `S11-sweep` answered its 735 calls byte for
   byte and asked fourteen more.
@@ -180,8 +181,8 @@ already printed elsewhere, so five words) and `osl`, and the timetable's
 **Against `S12-0-replay`: one page better, twenty the same, none
 worse.** Commit `3abb55d`, 749 calls, 2h22m. §7's prediction held to the
 byte: every call asked and answered as `s11-result/`, sixteen pages
-byte-identical to it, the other five as steps 1–3 draw them. Baseline
-decision pending.
+byte-identical to it, the other five as steps 1–3 draw them. Taken as
+the baseline, `s12-result/`, 2026-10-18. Issue #39 closed.
 
 - **Better: the ticket.** Its grid columns keep one edge; `TRD` flush
   right on `OSL`'s line and a four-column grid with `DEPARTS` / `CLASS`
@@ -293,13 +294,10 @@ and `specs/0007-handover.md` for the A phases and the queue.
 
 ---
 
-## Next — Alessandro's decision on `S12-sweep`
+## Next — nothing open
 
-Spec 0016 is done; `S12-sweep` is the run to take or not. If he takes
-it, freeze it as `tests/frozen/s12-result/` with its answers, as
-`s11-result/` was (its README's provenance, the proofs re-taken). Every
-other open item was cleared on 2026-10-18 and none is queued until he
-names it.
+Spec 0016 is done and `S12-sweep` is the baseline. Every other item was
+cleared on 2026-10-18 and none is queued until Alessandro names it.
 
 ---
 
@@ -351,8 +349,8 @@ the last two entries.
   `a1-checkpoint/`, `a0-checkpoint/`, `a0-result/`, `a1-result/`,
   `a2-result/`, `a3-result/`, `reshot/`, `q5-result/`, `s3-result/`,
   `s5-result/`, `s6-result/`, `s7-result/`,
-  `s8-result/`, `s9-result/`, `s10-result/` — all kept as record — and **`s11-result/`, the baseline**
-  since 2026-10-17, twenty-one documents.
+  `s8-result/`, `s9-result/`, `s10-result/`, `s11-result/` — all kept as record — and
+  **`s12-result/`, the baseline** since 2026-10-18, twenty-one documents.
   `a3-result/` was scored on pictures missing their last lines;
   quote it only as that.
 - **The committed corpus picture is a screenshot of its own HTML.**
@@ -429,7 +427,7 @@ the last two entries.
 FIXTURE=sweep tools/iterate.sh <label>        # all twenty-one, ~2¼ h — anything reviewed
 FIXTURE=iterate tools/iterate.sh <label>      # the five, ~20 min — throwaway checks only
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s11-result/scores.json
+    --documents sweep --previous tests/frozen/s12-result/scores.json
 python tools/visual_review.py debug/runs/<label> --previous debug/runs/<older>
 python tools/visual_review.py debug/runs/<label> --check
 ```
@@ -448,7 +446,7 @@ converts it once the bug is fixed, with no model call.
 
 **Three offline loops, each proved before it was used, and a sweep. Say which
 produced any number you report.** Start them from the baseline,
-`tests/frozen/s11-result/`. On 2026-10-17 `tools/replay_run.py` and
+`tests/frozen/s12-result/`. On 2026-10-18 `tools/replay_run.py` and
 `tools/rederive.py` over it each reproduced it byte for byte, 21 of 21. Both
 tools take a run directory as well as a frozen one.
 
