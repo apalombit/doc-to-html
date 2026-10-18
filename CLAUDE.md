@@ -158,6 +158,9 @@ Spec 0015   Every line read, and drawn where the page puts it — planned
               S  S11-sweep on 6b1caf4, 2026-10-16: prediction held to
                  the byte, 6 pages better, 15 same, none worse
               DECIDED 2026-10-17: S11-sweep is the baseline, frozen as s11-result/
+RESET       2026-10-18, Alessandro: everything not in spec 0016 cleared —
+              spec 0015's ranked directions, the other pages' left
+              faults, display type, borrowed looks, marks, bold
 Spec 0016   Structure first — one grid where the page sets one, one strip
               where it draws one — planned 2026-10-18, issue #39; the
               ticket's layout the focus, structure not words:
@@ -195,16 +198,19 @@ in its README and in `docs/status.md`.
 **Spec 0015, `docs/specs/0015-drawn-where-the-page-puts-it.md`, is
 done and decided** — issue #38, `ticket_0020` and `certificate_0021` the
 focus. Its "Outcome — the sweep" checks §1's tables row by row, lists
-the faults left by stage and ranks the directions.
+the faults left by stage and ranks the directions — record only; the
+directions were cleared on 2026-10-18.
 
 **The only open work is `docs/specs/0016-one-grid-one-strip.md`** —
 issue #39, planned 2026-10-18 from Alessandro's ask: the ticket's layout,
 structure and layout first, not text or words. Its §1 lists every
 structural fault on the ticket, its cause and the step that repairs it,
 and says rule by rule how far each is proven beyond the ticket. Four
-steps, then one sweep, `S12-sweep`. Everything else stays cleared,
-the wordmark question included; do not pick anything up unless he
-names it. The spec's handover prompt marked *current* is the one to
+steps, then one sweep, `S12-sweep`. **Everything else was cleared by
+Alessandro on 2026-10-18** — spec 0015's ranked directions, the faults
+left on `S11-sweep`'s other pages, display type, borrowed looks, marks,
+the stub strip's text, bold, the wordmark question and every earlier
+queue; do not pick anything up unless he names it. The spec's handover prompt marked *current* is the one to
 start a session with.
 `docs/specs/0007-handover.md` holds spec 0007's prompts, as record.
 

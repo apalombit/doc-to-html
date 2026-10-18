@@ -71,6 +71,7 @@ Spec 0015   Every line read, and drawn where the page puts it — issue #38
               S  S11-sweep on 6b1caf4, 2026-10-16: prediction held to
                  the byte; 6 pages better, 15 same, none worse
               DECIDED 2026-10-17: S11-sweep the baseline, frozen as s11-result/
+Reset       2026-10-18, Alessandro: everything not in spec 0016 cleared.
 Spec 0016   Structure first — one grid, one strip — issue #39
               the ticket's layout the focus, structure not words:
               1 one column grid per line-drawn Zone
@@ -191,7 +192,8 @@ predicted render.
   and its stub header and barcode are missing. The certificate has its
   seal as a text chip, its names flush left under centred rules, and
   black stars. The spec's "Outcome — the sweep" has §1's tables row by
-  row, the faults by stage and the directions ranked.
+  row, the faults by stage and the directions ranked — record only,
+  cleared on 2026-10-18.
 - **Ratchet, reported:** the timetable's tau 0.963 → 0.954 and beside
   0.992 → 0.984, both from `Lunch` drawn under the grid instead of in
   its row.
@@ -269,9 +271,13 @@ all four together. The prototype is
 rule by rule how far each one is proven beyond the ticket. Its handover
 prompt, marked *current*, is the one to start a session with.
 
-Everything else stays cleared: type at display size (`OSL`), borrowed
-looks, marks, the stub strip's text, bold, and everything spec 0015 §7
-lists. None is queued until Alessandro names it.
+**Everything else was cleared by Alessandro on 2026-10-18**: spec 0015's "Directions, ranked"; the faults
+left on `S11-sweep`'s other pages (the certificate's seal, names and
+stars, the timetable's `Lunch` under its grid, sample_semantic's `Tags:`
+after its links); type at display size (`OSL`); borrowed looks
+(`NL 0482`, the catalogue's three prices); marks (the barcode, the
+plane); the stub strip's own text; bold; and every earlier queue and
+idea. None is queued until he names it.
 
 ---
 

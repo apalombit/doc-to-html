@@ -18,9 +18,16 @@ Alessandro's decisions, 2026-10-17 and 2026-10-18:
    the ticket. §1's last table answers that rule by rule. Most are
    general in form but proven only on the ticket, because no other page
    in the corpus has the fault.
-5. **Everything else is not queued:** type at display size (`OSL`),
-   borrowed looks (`NL 0482`, the catalogue's three prices), marks (the
-   barcode, the plane), the stub strip's own text, and bold.
+5. **Reset, 2026-10-18: everything not in this spec is cleared.** That
+   covers spec 0015's "Directions, ranked"; the faults
+   left on `S11-sweep`'s other pages (the certificate's seal, names and
+   stars, the timetable's `Lunch` under its grid, sample_semantic's `Tags:`
+   after its links); type at display size (`OSL`); borrowed looks
+   (`NL 0482`, the catalogue's three prices); marks (the barcode, the
+   plane); the stub strip's own text; bold; and every earlier queue and
+   idea. None of it
+   returns unless he names it. **Implement this spec's four steps and its
+   sweep, and nothing else.**
 
 ---
 
@@ -469,7 +476,11 @@ Named so they are not mistaken for misses. None is queued.
 ```
 Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then
 docs/specs/0016-one-grid-one-strip.md end to end — the only open work,
-issue #39. Do not pick anything else up unless Alessandro names it.
+issue #39. Alessandro cleared everything else on 2026-10-18 (spec 0015's
+ranked directions, the other pages' left faults, display type, borrowed
+looks, marks, the stub strip's text, bold). Implement only this spec's
+four steps and its one sweep; do not pick anything else up unless he
+names it, and if a step tempts you past its scope, stop and ask.
 
 Focus: ticket_0020's layout — structure and layout, not text or words.
 §1 of the spec lists every structural fault on the ticket, its cause and
