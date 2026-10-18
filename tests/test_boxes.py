@@ -10,9 +10,11 @@ import re
 
 from doc_to_html.ir import (BBox, Block, Document, Flow, Furniture, Kind, Pair,
                             Region, Role, Source, Style, Zone, cell)
+from doc_to_html import furnish
+from doc_to_html.ir import Look
 from doc_to_html.render import (HABIT, PLACED_CSS, WRAPS, _aligned, _copies, _edges, _extent,
-                                _habit, _lanes, _one_grid, _printed_lines, _title_line,
-                                render)
+                                _habit, _heading_size, _lanes, _one_grid, _printed_lines,
+                                _title_line, render)
 
 
 def pairs(*rows: tuple[tuple[str, BBox], tuple[str, BBox] | None], box: BBox,
@@ -384,6 +386,99 @@ class TestStepTwoOneGridAcrossSideBySideZones:
         zones = main_pane()
         zones[0].pairs = zones[0].pairs[:HABIT - 1]
         assert _habit(page(zones), at(0.55, 0.65), True) is None
+
+
+TEAL = (11, 110, 138)
+STRIP = Furniture(kind="fill", bbox=BBox(0.0, 0.0, 1.0, 0.15), color=TEAL)
+"""`ticket_0020`'s teal strip: one solid fill across both panes, no Zone's."""
+
+
+def on_strip(text: str, box: BBox, band: int = 0, **fields: object) -> Zone:
+    return Zone(kind=Kind.PROSE, role=Role.HEADER, bbox=box, band=band, complete=True,
+                fill=TEAL, blocks=[Block(kind="heading" if "PASS" in text else "paragraph",
+                                         lines=[cell(text, bbox=box)])],
+                **fields)  # type: ignore[arg-type]
+
+
+def stub_under_strip() -> Zone:
+    return pairs((("FLIGHT", at(0.76, 0.30, tall=0.015)), ("NL 0482", at(0.76, 0.34, tall=0.015))),
+                 (("SEAT", at(0.94, 0.30, tall=0.015)), ("12A", at(0.94, 0.34, tall=0.015))),
+                 box=BBox(0.74, 0.0, 1.0, 1.0))
+
+
+class TestStepThreeADrawnStripIsOneContainer:
+    """Spec 0016, step 3."""
+
+    def test_3a_rows_on_one_plain_fill_are_drawn_once_on_it(self) -> None:
+        zones = [on_strip("NORDLYS AIR", BBox(0.02, 0.03, 0.2, 0.12), band=0),
+                 on_strip("BOARDING PASS", BBox(0.56, 0.03, 0.71, 0.10), band=0),
+                 on_strip("The", BBox(0.21, 0.11, 0.73, 0.14), band=1),
+                 pairs(CARD, STOCK, box=BBox(0.03, 0.3, 0.33, 0.35), band=2)]
+        html = body_of(render(page(zones, furniture=[STRIP])))
+        filled = re.findall(r'<div class="filled" style="([^"]*)">', html)
+        assert len(filled) == 1 and filled[0].startswith("background:rgb(11,110,138)")
+        inside = html[html.index('<div class="filled"'):html.index("£4.20")]
+        assert "NORDLYS AIR" in inside and "BOARDING PASS" in inside and ">The<" in inside
+
+    def test_3a_its_last_row_keeps_no_margin_of_its_own(self) -> None:
+        zones = [on_strip("NORDLYS AIR", BBox(0.02, 0.03, 0.2, 0.12)),
+                 pairs(CARD, STOCK, box=BBox(0.03, 0.3, 0.33, 0.35), band=1)]
+        html = body_of(render(page(zones, furniture=[STRIP])))
+        start = html.index('<div class="filled"')
+        assert re.search(r'<div class="band" style="[^"]*margin-bottom:0"', html[start:])
+
+    def test_3a_not_a_fill_a_zone_holds_or_one_of_another_colour(self) -> None:
+        zones = [on_strip("NORDLYS AIR", BBox(0.02, 0.03, 0.2, 0.12))]
+        owned = Furniture(kind="fill", bbox=STRIP.bbox, color=TEAL, zone=0)
+        assert 'class="filled"' not in body_of(render(page(zones, furniture=[owned])))
+        zones[0].fill = (250, 250, 250)
+        assert 'class="filled"' not in body_of(render(page(zones, furniture=[STRIP])))
+
+    def test_3b_a_fill_across_a_zones_top_is_its_band(self) -> None:
+        document = page([stub_under_strip()], furniture=[STRIP])
+        band = furnish.anchor(document).bands[0]
+        assert band.bbox == BBox(0.74, 0.0, 1.0, 0.15) and band.color == TEAL
+        assert not furnish.anchor(document).hatches
+
+    def test_3b_it_is_drawn_across_the_zones_top_and_its_lines_start_under_it(self) -> None:
+        html = body_of(render(page([stub_under_strip()], furniture=[STRIP])))
+        assert ("background-image:linear-gradient(rgb(11,110,138),rgb(11,110,138));"
+                "background-size:100% 150px;background-repeat:no-repeat") in html
+        first = re.findall(r'<div class="line" style="([^"]*)">', html)[0]
+        assert "margin-top:" in first
+
+    def test_3b_not_for_a_zone_with_its_own_fill_or_bar(self) -> None:
+        for change in ({"fill": TEAL}, {"title_fill": TEAL}, {"header_fill": TEAL}):
+            zone = stub_under_strip()
+            for name, value in change.items():
+                setattr(zone, name, value)
+            assert not furnish.anchor(page([zone], furniture=[STRIP])).bands, change
+
+    def test_3b_not_where_the_fill_does_not_open_the_zone(self) -> None:
+        zone = stub_under_strip()
+        zone.bbox = BBox(0.74, 0.05, 1.0, 1.0)
+        assert not furnish.anchor(page([zone], furniture=[STRIP])).bands
+
+    def test_3c_a_heading_with_no_measured_size_takes_its_lines(self) -> None:
+        """`BOARDING PASS`, white on teal, which `style.heading_sizes` does
+        not measure."""
+        heading = Block(kind="heading", lines=[cell("BOARDING PASS")])
+        assert _heading_size(heading) is None
+        heading.lines[0].look = Look(size=1.06)
+        assert _heading_size(heading) == 1.06
+        heading.size = 1.4
+        assert _heading_size(heading) == 1.4
+
+    def test_3c_not_where_a_line_is_unmeasured(self) -> None:
+        heading = Block(kind="heading", lines=[cell("BOARDING"), cell("PASS")])
+        heading.lines[0].look = Look(size=1.06)
+        assert _heading_size(heading) is None
+
+    def test_3c_it_is_drawn_at_that_size(self) -> None:
+        zone = on_strip("BOARDING PASS", BBox(0.56, 0.03, 0.71, 0.10))
+        zone.fill = None
+        zone.blocks[0].lines[0].look = Look(size=1.06)
+        assert '<h1 style="font-size:1.06em">BOARDING PASS</h1>' in body_of(render(page([zone])))
 
 
 def signature(name: str, left: float, rule: tuple[float, float]) -> Zone:

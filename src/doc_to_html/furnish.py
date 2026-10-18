@@ -30,17 +30,21 @@ in the flow with the thing it belongs to and never placed by coordinates
   the signature lines.
 - **A hatched fill** over the top of a Zone is drawn there — `catalogue_0015`'s
   pictures — and behind a table's rows, the rows it covers.
+- **A solid fill across the top of a Zone it is not the fill of** is drawn
+  as that Zone's band, as a hatched one is — spec 0016, 3b: `ticket_0020`'s
+  teal strip over its stub (`Anchors.bands`). A solid fill holding whole
+  rows is drawn behind them by `render._filled`.
 
 **Never drawn, because something else already draws it:** anything inside a
 figure, which is drawn from its pixels; a rule along a drawn box's edge; a
 field's box or line (`fields`); a table's lines between rows and its row
-fills (`looks`); a plain fill, which `style.chrome` measured as a Zone's
-fill, Title bar or header bar.
+fills (`looks`); a plain fill a Zone's own box holds, which `style.chrome`
+measured as its fill, Title bar or header bar.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from .ir import BBox, Document, Flow, Furniture, Kind, Region, Zone
 
@@ -103,6 +107,9 @@ class Anchors:
     cell_lefts: dict[tuple[int, int, int], Furniture] = field(default_factory=dict)
     cell_tops: dict[tuple[int, int, int], Furniture] = field(default_factory=dict)
     hatches: dict[int, Furniture] = field(default_factory=dict)
+    bands: dict[int, Furniture] = field(default_factory=dict)
+    """A solid fill across the top of a Zone it is not the fill of, cut to
+    the Zone's width — spec 0016, 3b (`_over_top`)."""
     rows: dict[tuple[int, int], Furniture] = field(default_factory=dict)
     lanes: list[tuple[Region, int, Furniture]] = field(default_factory=list)
     between: list[Furniture] = field(default_factory=list)
@@ -142,6 +149,8 @@ def anchor(document: Document) -> Anchors:
         elif item.kind == "fill":
             if item.style == "hatched":
                 _hatch(item, document, out)
+            else:
+                _over_top(item, document, out)
         elif any(_on_edge(item, frame, scale) for frame in drawn):
             continue
         elif item.vertical:
@@ -240,6 +249,31 @@ def _hatch(item: Furniture, document: Document, out: Anchors) -> None:
                 and abs(box.top - holder.top) <= 0.01 and box.bottom < holder.bottom):
             out.hatches[index] = item
             return
+
+
+def _over_top(item: Furniture, document: Document, out: Anchors) -> None:
+    """A solid fill lying across the top of a Zone it is not the fill of,
+    drawn as that Zone's band — spec 0016, 3b, the way `_hatch` draws a
+    hatched one. `ticket_0020`'s teal strip runs on over its stub, whose
+    own text on it is never read, and the stub opened on its passenger
+    field with no strip.
+
+    It is the Zone's band where the fill starts at the Zone's top (its frame
+    where it has one) within 0.01, spans its width within 0.005, and ends
+    above its bottom; cut to the Zone's width. A Zone with a fill, Title
+    bar or header bar of its own already draws what the page fills behind
+    it, and a table's or a figure's fills are `looks`' and its pixels'."""
+    box = item.bbox
+    for index, zone in enumerate(document.zones):
+        if (zone.bbox is None or index in out.hatches
+                or zone.kind in (Kind.TABLE, Kind.FIGURE)
+                or zone.fill is not None or zone.title_fill or zone.header_fill):
+            continue
+        holder = zone.frame or zone.bbox
+        if (box.left <= holder.left + 0.005 and holder.right - 0.005 <= box.right
+                and abs(box.top - holder.top) <= 0.01 and box.bottom < holder.bottom):
+            out.bands[index] = replace(item, bbox=BBox(left=holder.left, top=box.top,
+                                                       right=holder.right, bottom=box.bottom))
 
 
 def _entries(zone: Zone) -> list[BBox]:

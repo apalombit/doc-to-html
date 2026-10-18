@@ -642,7 +642,7 @@ def _grid_unit(zones: list[Zone], document: Document, extra: str) -> str:
     printed.sort(key=lambda line: min(b.top for _, _, b in line))
     style = f' style="{extra}"' if extra else ""
     return (f'<section class="zone zone-{zones[0].role.value}"{style}>'
-            f'{_placed(zones[0], document, printed)}</section>')
+            f'{_placed(zones[0], document, printed, banded=False)}</section>')
 
 
 TITLE_LINE = 0.85
@@ -726,7 +726,7 @@ def _extent(unit: list[Zone], document: Document) -> BBox | None:
         anchors = furnish.anchor(document)
         for by_zone in (anchors.boxes, anchors.sides, anchors.title_sides,
                         anchors.under_title, anchors.tops, anchors.bottoms,
-                        anchors.hatches):
+                        anchors.hatches, anchors.bands):
             parts += [item.bbox for index, item in by_zone.items() if index in indices]
         for by_part in (anchors.blocks, anchors.pairs, anchors.rows,
                         anchors.cell_lefts, anchors.cell_tops):
@@ -854,6 +854,72 @@ def _framed(rows: list[_Row], document: Document, page: _Page,
     return out
 
 
+def _filled(rows: list[_Row], document: Document, page: _Page) -> list[_Row]:
+    """Consecutive rows whose every Zone lies inside one solid fill the page
+    draws and no Zone holds, gathered onto that fill and drawn once behind
+    them — spec 0016, 3a, as `_lane_fill` paints a lane (`cv_0013`'s
+    sidebar) but for a fill that holds rows.
+
+    `ticket_0020`'s teal strip holds its wordmark and `BOARDING PASS`. The
+    render drew no free solid fill, so each Zone on it painted a teal box
+    of its own and the page's ground showed between them: the strip came
+    back in pieces. A Zone on it qualifies when it paints no fill or the
+    fill's own colour (within `COLOUR_APART`); within `SLACK` of its edge.
+    Its padding is the page's, from the fill's top to the first row and
+    from the last row to its bottom, and its ink is readable on it."""
+    fills = [item for item in document.furniture
+             if item.kind == "fill" and item.style == "solid" and item.zone is None]
+    if not fills:
+        return rows
+
+    def fill_of(row: _Row) -> Furniture | None:
+        boxes = [zone.bbox for zone in row.zones if zone.bbox is not None]
+        if not boxes or len(boxes) < len(row.zones):
+            return None
+        for item in fills:
+            edge = item.bbox
+            if (all(edge.left - SLACK <= b.left and b.right <= edge.right + SLACK
+                    and edge.top - SLACK <= b.top and b.bottom <= edge.bottom + SLACK
+                    for b in boxes)
+                    and all(zone.fill is None or _apart(zone.fill, item.color) <= COLOUR_APART
+                            for zone in row.zones)):
+                return item
+        return None
+
+    out: list[_Row] = []
+    index = 0
+    while index < len(rows):
+        item = fill_of(rows[index])
+        if item is None:
+            out.append(rows[index])
+            index += 1
+            continue
+        run = [rows[index]]
+        while index + len(run) < len(rows) and fill_of(rows[index + len(run)]) is item:
+            run.append(rows[index + len(run)])
+        index += len(run)
+        zones = [zone for row in run for zone in row.zones]
+        top, bottom = item.bbox.top * page.y, item.bbox.bottom * page.y
+        head = max(0.0, run[0].top - top) if run[0].top is not None else 0.0
+        foot = max(0.0, bottom - run[-1].bottom) if run[-1].bottom is not None else 0.0
+        style = [f"background:{_rgb(item.color)}", f"padding:{_px(head)} 0 {_px(foot)}"]
+        ink = _readable_on(item.color, document.style.ink if document.style else None)
+        if ink is not None:
+            style.append(f"color:{_rgb(ink)}")
+        # The last row's own margin would fall through the fill's foot: the
+        # page's distance from it to the fill's edge is the padding alone.
+        run[-1] = replace(run[-1], style=run[-1].style + ["margin-bottom:0"])
+        out.append(_Row("filled", "".join(_stack(run, page, (), _span(zones))),
+                        zones, top, bottom, style))
+    return out
+
+
+SLACK = 0.01
+"""How far past a fill's edge, in shares of the page, a Zone on it may
+reach (`_filled`): a snapped box stops on its ink, and the fill's edge is
+anti-aliased."""
+
+
 def _within(box: BBox, outer: BBox) -> bool:
     middle_x, middle_y = (box.left + box.right) / 2, (box.top + box.bottom) / 2
     return outer.left <= middle_x <= outer.right and outer.top <= middle_y <= outer.bottom
@@ -911,8 +977,8 @@ def _body(document: Document) -> list[str]:
     rules = [rule for rule in furnish.anchor(document).between
              if not any(r.top <= _middle(rule) <= r.bottom for r in inner)
              and not any(_within(rule.bbox, frame) for frame in shared)]
-    return _stack(_framed(rows, document, page, shared), page, rules,
-                  _span(document.zones))
+    return _stack(_filled(_framed(rows, document, page, shared), document, page),
+                  page, rules, _span(document.zones))
 
 
 def _cards(region: Region, zones: list[Zone]) -> bool:
@@ -971,10 +1037,13 @@ def _columns(region: Region, zones: list[Zone], document: Document,
         for unit, (band, column) in zip([u for u, b in zip(units, boxes) if b],
                                         placed):
             rows.setdefault(band, []).append((column, unit))
-        stacks.append(_framed(
+        framed = _framed(
             [_band([u for _, u in sorted(rows[b], key=lambda r: r[0])],
                    document, page, plain, _span(lane)) for b in sorted(rows)],
-            document, page, shared))
+            document, page, shared)
+        # Spec 0016, 3a: a lane its fill paints whole is not painted again.
+        stacks.append(framed if _lane_fill(lane, document) is not None
+                      else _filled(framed, document, page))
 
     # Spec 0012, G3a: each lane's own rules, and the rule down its left edge.
     anchors = furnish.anchor(document)
@@ -1785,6 +1854,16 @@ def _furnished(zone: Zone, document: Document, *,
         own.append(_hatching(hatch, page, "background-image"))
         own.append(f"background-size:100% {_px((hatch.bbox.bottom - holder.top) * page.y)};"
                    "background-repeat:no-repeat")
+    band = anchors.bands.get(index)
+    if band is not None:
+        # Spec 0016, 3b: a solid fill across the Zone's top, drawn as a
+        # hatch is; the entries below it are pushed under it.
+        holder = zone.frame or box
+        assert holder is not None
+        colour = _rgb(band.color)
+        own.append(f"background-image:linear-gradient({colour},{colour});"
+                   f"background-size:100% {_px((band.bbox.bottom - holder.top) * page.y)};"
+                   "background-repeat:no-repeat")
     return ";".join(own), ";".join(titled), lead
 
 
@@ -1814,7 +1893,8 @@ def _below_hatch(zone: Zone, document: Document,
     0012, G3a. The entries above it are printed over the hatch."""
     if not document.furniture:
         return None
-    hatch = furnish.anchor(document).hatches.get(_index(document, zone))
+    anchors, index = furnish.anchor(document), _index(document, zone)
+    hatch = anchors.hatches.get(index) or anchors.bands.get(index)
     if hatch is None:
         return None
     page = _page(document)
@@ -2391,11 +2471,27 @@ def _between(upper: Row, lower: Row, page: _Page) -> float | None:
     return max(0.0, lower.gap * page.y - ink * page.body)
 
 
+def _heading_size(block: Block) -> float | None:
+    """A heading's size, in ems of the body: its own, or else the median
+    of its lines' measured sizes where every line has one — spec 0016, 3c.
+    `style.heading_sizes` measures a Zone's leading heading on the page's
+    ground, so `ticket_0020`'s `BOARDING PASS`, white on its teal strip,
+    was left unsized and drawn at the house 1.6em, wrapping in its lane,
+    where its line measures 1.06."""
+    if block.size:
+        return block.size
+    sizes = [cell.look.size for cell in block.lines
+             if cell.look is not None and cell.look.size is not None]
+    if sizes and len(sizes) == len(block.lines):
+        return round(float(median(sizes)), 2)
+    return None
+
+
 def _drawn_size(block: Block) -> float:
     """The size a Block is drawn at, in ems of the body: a heading's own,
     an attribution's, or the one most of its lines are measured at (4a)."""
     if block.kind == "heading":
-        return block.size or 1.6
+        return _heading_size(block) or 1.6
     sizes = Counter(round(cell.look.size, 2) for cell in block.lines
                     if cell.look is not None and cell.look.size is not None
                     and abs(cell.look.size - 1.0) >= SIZE_STEP)
@@ -2965,7 +3061,7 @@ def _before_next(entries: list[tuple[Cell, bool, int]], index: int, partner: Cel
 
 
 def _placed(zone: Zone, document: Document,
-            printed: list[list[tuple[Cell, bool, BBox]]]) -> str:
+            printed: list[list[tuple[Cell, bool, BBox]]], banded: bool = True) -> str:
     """A pairs Zone drawn line by line as the page prints it — spec 0012,
     G4: each entry starting where its box starts across the Zone's type,
     the last flush right where the page sets it there, and each line as
@@ -2987,9 +3083,15 @@ def _placed(zone: Zone, document: Document,
     third column pushed flush right. Now an entry in a column of the Zone
     (`_aligned`) starts its track at the column's edge, or ends it there
     where only the right edges agree, and every track is a share of the
-    Zone's width (`_edges`). An entry that
-    shares its line does not wrap; one printed on more than one line
-    (`WRAPS`) wraps as the page wraps it."""
+    Zone's width (`_edges`). An entry that shares its line does not
+    wrap; one printed on more than one line (`WRAPS`) wraps as the page
+    wraps it.
+
+    **Under a solid band across its top** (`furnish.Anchors.bands`, spec
+    0016, 3b) the first line is set as far below the Zone's top as the page
+    sets it. A hatched band keeps spec 0011's placement: pushing it too
+    doubled the catalogue `CP-402` card's offset. `banded` False is a grid
+    of several Zones (`_grid_unit`), which no one Zone's band opens."""
     page = _page(document)
     boxes = [box for line in printed for _, _, box in line]
     left, right = min(b.left for b in boxes), max(b.right for b in boxes)
@@ -2998,6 +3100,12 @@ def _placed(zone: Zone, document: Document,
     aligned = _aligned(printed, reach)
     parts = []
     above: tuple[float, float] | None = None
+    band = (furnish.anchor(document).bands.get(_index(document, zone))
+            if banded and document.furniture else None)
+    holder = zone.frame or zone.bbox
+    if (band is not None and holder is not None
+            and min(box.top for _, _, box in printed[0]) >= band.bbox.bottom):
+        above = (holder.top, 0.0)
     for line in printed:
         line = sorted(line, key=lambda entry: entry[2].left)
         shown = [box for _, _, box in line]
@@ -3439,7 +3547,8 @@ def _block(block: Block, document: Document, spacing: str = "",
         # `style.heading_sizes` — so the stylesheet keeps the heading's weight
         # and margins and this changes only how large it is.
         looked = _common_look(block.lines, sized=False, house=_house(document))
-        size = f"font-size:{block.size:.2f}em" if block.size else ""
+        measured = _heading_size(block)
+        size = f"font-size:{measured:.2f}em" if measured else ""
         both = ";".join(part for part in (size, looked, spacing) if part)
         return f"<h1{_styled(both)}>{_lines(block, document, lane)}</h1>"
     looked = _common_look(block.lines, house=_house(

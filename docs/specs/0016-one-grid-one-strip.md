@@ -366,6 +366,27 @@ z5. The prototype drew exactly this (`P16-5b`, steps 1–3 over
 `_stack`, `_Row`, `_readable_on`, `_drawn_size`, `_block`;
 `furnish.anchor`, `_hatch`, `Anchors`; `style.heading_sizes`.
 
+### Outcome — step 3, 2026-10-18
+
+`S12-3b`, rederived from `s11-result/`, against `S12-2`. **The prediction
+held: only the ticket moved.** Sheet: `debug/runs/S12-3b/_review/`.
+
+- **Ticket, better.** One teal strip runs behind `NORDLYS AIR` and
+  `BOARDING PASS`, where three teal pieces stood with the page's ground
+  between them; `BOARDING PASS` is one line at 1.06em, flush right on
+  the strip; the stub opens on its own strip. As predicted, z5's
+  `The` / `The` is drawn on the strip at the right and the strip stands
+  about twice the page's height.
+
+The band is `furnish.Anchors.bands`, drawn as a solid gradient band the
+way a hatch is, and it pushes a dl or prose body under it as a hatch does
+(`_below_hatch`). **One amendment to the prototype:** the strip's last row
+kept the stylesheet's `.band` margin, which fell through the strip's
+zero foot and opened 28px of ground under it; it is now 0, so the
+padding is the page's distance alone, as this section says. Scores,
+recorded: the ticket's beside 0.333 → 0.393, height ratio 1.017 → 1.112;
+`vanished` 26 → 26. Suite 1229 passed, 1 skipped.
+
 ---
 
 ## 5. Step 4 — no Zone from a drawn fill's edge (layout; the ticket's calls move)
