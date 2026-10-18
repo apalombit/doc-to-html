@@ -1,9 +1,10 @@
 # Structure first — one grid where the page sets one, one strip where it draws one
 
-**Status: planned 2026-10-18, issue #39, not started.** Four steps, in
-order, each judged by eye, then one full sweep, `S12-sweep`, over all
-twenty-one documents. The handover prompt at the end, marked *current*, is
-the one to start a session with.
+**Status: done 2026-10-18, issue #39; `S12-sweep` taken, the baseline
+decision Alessandro's.** Steps 1–3 and step 4's two `locate` guards
+shipped; step 4's recovery change (4a) and the crop fix it called for
+were measured and dropped (§5). The sweep's prediction held to the byte;
+its outcome is after §7. The handover prompt at the end is record.
 
 Alessandro's decisions, 2026-10-17 and 2026-10-18:
 
@@ -584,6 +585,51 @@ Then report the sweep in the error-analysis format:
 
 Whether `S12-sweep` becomes the baseline is Alessandro's decision.
 
+### Outcome — the sweep, `S12-sweep`, 2026-10-18
+
+Commit `3abb55d` (step P; code `c98f2db`), 16:07 to 18:30, **2h22m**,
+749 calls, the model 40%/60% CPU/GPU. Sheets against `S12-0-replay`:
+`debug/runs/S12-sweep/_review/`; report `debug/runs/S12-sweep/report.html`.
+
+**§7's prediction held to the byte.** All 749 calls asked as
+`s11-result/` asked them and answered byte for byte the same, on all
+twenty-one pages. Sixteen pages byte-identical to `s11-result/`;
+catalogue, cv, form, invoice_0002 and the ticket byte-identical to
+`S12-P-replay`. **By eye: one page better, twenty the same, none worse.**
+
+**The ticket, against §1's table:**
+
+| §1's fault | at `S12-sweep` |
+|---|---|
+| route row and field grid split in two; `TRD` a Title over its own box | **repaired**: `TRD` flush right on `OSL`'s line, `TRONDHEIM VÆRNES` level with `OSLO GARDERMOEN`, one four-column grid |
+| `DEPARTS`, `CLASS` beside their values | **repaired**: each over its value, on its row's label line |
+| a column keeps no edge; an entry pushed flush right | **repaired**: `14 OCT 2026`, `12A`, `07:35`, `2` start under their labels; the stub's `GROUP` / `2` share a left edge |
+| the strip in three pieces; `BOARDING PASS` wraps | **repaired**: one strip; `BOARDING PASS` one line, flush right |
+| the stub's strip missing | **repaired**: the stub opens on its strip |
+| a second teal strip printed `The` / `The` | **left** — 4a dropped. `The` / `The` now stand at the strip's right inside the one strip, which is twice the page's height |
+| `TRD` at Title size, `PASSENGER` measured 0.88 | **left** — 4a dropped |
+
+**The other pages step 1 moved:** catalogue (`each`, `In stock`, `NEW`
+3–7px sideways), invoice_0002 (`Date` about 5px nearer its value), cv and
+form (pixel-identical) — the same.
+
+**The six held out:** ticket better; letter, pricing, paper, timetable,
+certificate byte-identical.
+
+**Scores, recorded:** the ticket's tau 0.843 → 0.947, beside 0.262 →
+0.393, alignment 0.618 → 0.765, height ratio 1.052 → 1.112; the
+catalogue's alignment 0.492 → 0.475. `vanished` 26 → 26 words, none new.
+No ratchet leg fell on any page.
+
+**Left on the ticket, by stage:** Layout — the halo Zone z5 (`The`),
+which also holds the body measure at 8.0px and so refuses `TRD`'s
+display size. Not in this spec (§8): `OSL` and `NL 0482` small, the
+barcode and plane, the stub strip's text, bold. **What 4a would need**,
+measured: removing z5 moves the stub's first read, so the gate note's
+re-read crop holds one confident word (`autos before`) and a word of the
+stub strip's text is re-read (`NORDLYS`); widening every re-read crop to
+its whole line repairs the note and prints the timetable's legend twice.
+
 ---
 
 ## 8. Not in this spec
@@ -627,7 +673,7 @@ Named so they are not mistaken for misses. None is queued.
 
 ---
 
-## Handover prompt — implement spec 0016, then one sweep (current)
+## Handover prompt — implement spec 0016, then one sweep (record)
 
 ```
 Read CLAUDE.md's READ THIS FIRST, then docs/status.md, then

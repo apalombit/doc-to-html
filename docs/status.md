@@ -1,19 +1,20 @@
-# Status — 2026-10-18 (**the baseline is `tests/frozen/s11-result/`; spec 0016 planned, not started**)
+# Status — 2026-10-18 (**the baseline is `tests/frozen/s11-result/`; spec 0016 done, `S12-sweep` taken — the baseline decision pending**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-18,
-when spec 0016 was planned (issue #39). Alessandro took spec 0015's sweep,
-`S11-sweep`, as the baseline on 2026-10-17.
+after spec 0016's sweep, `S12-sweep` (issue #39). Alessandro took spec
+0015's sweep, `S11-sweep`, as the baseline on 2026-10-17; whether
+`S12-sweep` replaces it is his decision.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file, then
 [`specs/0016-one-grid-one-strip.md`](specs/0016-one-grid-one-strip.md)
-end to end, the one open spec. If you are going to
+end to end, the last spec, done. If you are going to
 look at output — and you should — use the **`visual-review` skill**.
 
-Branch `scaffold`. **1201 tests pass (1 skipped), `mypy src/` clean** — at
-`3c5e365`'s code (`6b1caf4` and later add docs only), 2026-10-15.
+Branch `scaffold`. **1231 tests pass (1 skipped), `mypy src/` clean** — at
+`c98f2db`'s code (`3abb55d` and later add docs only), 2026-10-18.
 
 **How work is judged — Alessandro, 2026-10-12, for spec 0011; carried
 over by specs 0012 and 0013.** By eye: every step's sheets are opened
@@ -74,12 +75,16 @@ Spec 0015   Every line read, and drawn where the page puts it — issue #38
 Reset       2026-10-18, Alessandro: everything not in spec 0016 cleared.
 Spec 0016   Structure first — one grid, one strip — issue #39
               the ticket's layout the focus, structure not words:
-              1 one column grid per line-drawn Zone
-              2 one grid across side-by-side Zones
-              3 a drawn strip is one container
-              4 no Zone from a drawn fill's edge (the ticket's calls move)
-              then ONE sweep S12-sweep over all 21. PLANNED 2026-10-18,
-              NOT STARTED
+              1 one column grid per line-drawn Zone      DONE
+              2 one grid across side-by-side Zones       DONE
+              3 a drawn strip is one container           DONE
+              4 4b/4c, two locate guards                 DONE
+                4a no Zone from a fill's edge — the ticket's re-reads
+                lost words; DROPPED, Alessandro, with the crop fix it
+                called for (the timetable's legend twice)
+              S  S12-sweep on 3abb55d, 2026-10-18: prediction held to
+                 the byte; 1 page better (ticket), 20 same, none worse
+              baseline decision PENDING
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -170,6 +175,41 @@ already printed elsewhere, so five words) and `osl`, and the timetable's
 
 ## What the last work shipped
 
+### Spec 0016 — structure first, `S12-sweep`, 2026-10-18
+
+**Against `S12-0-replay`: one page better, twenty the same, none
+worse.** Commit `3abb55d`, 749 calls, 2h22m. §7's prediction held to the
+byte: every call asked and answered as `s11-result/`, sixteen pages
+byte-identical to it, the other five as steps 1–3 draw them. Baseline
+decision pending.
+
+- **Better: the ticket.** Its grid columns keep one edge; `TRD` flush
+  right on `OSL`'s line and a four-column grid with `DEPARTS` / `CLASS`
+  over their values; one teal strip with `BOARDING PASS` on one line;
+  the stub opens on its strip.
+- **Left on it:** the halo Zone `The` / `The` on the strip, now inside
+  the one strip at twice the page's height, and `TRD` at Title size —
+  both step 4a's, dropped.
+- **Same:** catalogue and invoice_0002 move a few pixels (step 1's
+  shared column edges); cv and form pixel-identical.
+- **Scores, recorded:** the ticket's tau 0.843 → 0.947, beside 0.262 →
+  0.393. `vanished` 26 → 26.
+
+What shipped, one commit a step:
+- 1 `34b0d97` `render._placed`: one set of column edges per Zone
+  (`_aligned`, `_edges`), minmax tracks, no `auto` track, a lone entry
+  wraps;
+- 2 `c8fe221` `render._one_grid` / `_grid_unit` / `_title_line`: unframed
+  side-by-side pairs Zones sharing two printed lines drawn as one grid,
+  Titles as lines; `_habit`, an unplaced label over its value where the
+  page's every placed pair is so;
+- 3 `dba3591` `render._filled`: a solid fill holding rows drawn once
+  behind them; `furnish.Anchors.bands`, a fill across a Zone's top as its
+  band; `render._heading_size`;
+- 4 `b03555e`, `c98f2db` `locate.display_words` (a one-character word
+  blocks nothing) and `locate._from_lines` (a claimed line boxed by all
+  its words). 4a and the crop fix: measured, dropped — below.
+
 ### Spec 0015 — every line read, and drawn where the page puts it, `S11-sweep`, 2026-10-16
 
 Taken as the baseline, `s11-result/`, 2026-10-17. Issue #38 closed.
@@ -253,35 +293,13 @@ and `specs/0007-handover.md` for the A phases and the queue.
 
 ---
 
-## Next — spec 0016, planned 2026-10-18, not started
+## Next — Alessandro's decision on `S12-sweep`
 
-[`specs/0016-one-grid-one-strip.md`](specs/0016-one-grid-one-strip.md),
-issue #39. Alessandro asked for the ticket's layout again: still
-inconsistent, and structure and layout first, not text or words. What is
-left on the ticket is wrong *between* Zones:
-- the detector cut its field grid at a gutter into two Zones;
-- the render never draws a plain fill, so the teal strip comes back in
-  pieces;
-- the strip's `equalise` halo became a Zone that prints `The` twice.
-
-Four steps, three offline and one that moves the ticket's calls (22 to
-19), then one sweep, `S12-sweep`. Every step was prototyped offline,
-all four together. The prototype is
-`debug/runs/_prototypes-0016/structure-first.diff`, gitignored. §1 says
-rule by rule how far each one is proven beyond the ticket. Its handover
-prompt, marked *current*, is the one to start a session with.
-
-Ideas for a next generation of the tool, **not queued and not open
-work**: [`future-ideas.md`](future-ideas.md), a judge-led loop with a case
-memory, discussed 2026-10-18.
-
-**Everything else was cleared by Alessandro on 2026-10-18**: spec 0015's "Directions, ranked"; the faults
-left on `S11-sweep`'s other pages (the certificate's seal, names and
-stars, the timetable's `Lunch` under its grid, sample_semantic's `Tags:`
-after its links); type at display size (`OSL`); borrowed looks
-(`NL 0482`, the catalogue's three prices); marks (the barcode, the
-plane); the stub strip's own text; bold; and every earlier queue and
-idea. None is queued until he names it.
+Spec 0016 is done; `S12-sweep` is the run to take or not. If he takes
+it, freeze it as `tests/frozen/s12-result/` with its answers, as
+`s11-result/` was (its README's provenance, the proofs re-taken). Every
+other open item was cleared on 2026-10-18 and none is queued until he
+names it.
 
 ---
 
@@ -361,6 +379,18 @@ the last two entries.
   `sparksuite` and `logo` were invented.
 
 ## Measured and not shipped — record, not a queue
+
+- **No Zone from a drawn fill's edge** — spec 0016, 4a. Recovery
+  ignoring the solid fills `_measure_style` finds removes the ticket's
+  halo Zone and nothing else (layout front, all 21), but the body glyph
+  then measures 9.0px and tesseract's first read of the stub changes:
+  the gate note's re-read crop held its one confident word and was read
+  `autos before`, and a word of the stub strip's text was re-read as
+  `NORDLYS` (`S12-4-ticket`).
+- **A re-read crop boxed by every unclaimed word of its line** — spec
+  0016, the fix 4a called for. It repairs the gate note's crop, and
+  `timetable_0019`'s legend, two overlapping lines, was read whole twice
+  and printed twice (`S12-5-check`).
 
 - **T3 `beside` by row groups** — spec 0010 step C, 2026-10-11. The
   half-overlap relation's connected components, meant to forgive vertical
