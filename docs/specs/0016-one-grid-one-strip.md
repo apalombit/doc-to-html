@@ -510,6 +510,25 @@ its crop, and also moves one re-read crop on the catalogue and two on
 the timetable (`S12-4x-replay`), so it cannot be proven without the
 model. **The sweep waits on Alessandro's call.**
 
+### Decided — 4a dropped, then the crop fix dropped, 2026-10-18
+
+Alessandro chose to drop 4a and keep the fix for what it exposed, a
+re-read crop boxed by every unclaimed word on its line (`f53674d`). Its
+check run, `S12-5-check` (ticket, catalogue, timetable):
+- the ticket asked and answered all 22 calls as `s11-result/`: with z5
+  kept its body glyph stays 8.0px and the gate note is read whole anyway;
+- the catalogue's one moved crop read `£22.40` and was refused as
+  printed, as before; the page byte-identical to its replay;
+- **the timetable worse**: its legend is two overlapping lines, and the
+  second's crop, `Science English` before and refused, now held the
+  whole legend and was kept, so the legend was printed twice as a list
+  of ten.
+
+He then dropped the crop fix too (`c98f2db`). **What ships is steps 1–3
+and the two `locate` guards, 4b and 4c**, which change nothing on the
+twenty-one at `s11-result/`'s IRs. The ticket keeps z5: the `The` strip,
+the double-height strip and `TRD` at Title size stay.
+
 **Where to look.** `orchestrator.recovered_zones`, `Conversion._cover_the_page`,
 `preprocess.uncovered_regions`, `MAX_RECOVERED_SHARE`,
 `MIN_RECOVERED_INK`, `MIN_RECOVERED_PX`; `furniture.find`;
@@ -532,23 +551,28 @@ model. **The sweep waits on Alessandro's call.**
 
 ---
 
-## 7. The sweep's prediction — to be registered at step P
+## 7. The sweep's prediction — registered at step P, 2026-10-18
 
-What step P is expected to confirm, from the prototype's replay
-(§5). **Re-take every number at the last commit before writing it here.**
+Taken at `c98f2db`, the sweep's commit: `S12-P-replay` (replay of
+`s11-result/`) and `S12-P-rederive`. The plan's version assumed step 4's
+recovery change (the ticket 22 → 19 calls, 746 in all); with 4a dropped
+(§5) no call moves.
 
-1. **Twenty pages**: every call `s11-result/` asked, asked alike and
-   answered byte for byte the same. Nothing else asked.
-2. **The ticket**: 19 calls. z5's three are gone, and its five re-reads
-   are answered as the targeted run answered them.
+1. **All twenty-one pages**: every call `s11-result/` asked, asked alike
+   and answered byte for byte the same — the replay marks **0 asked
+   differently**. Nothing else asked.
+2. **Calls in all: 749**, as `s11-result/`.
 3. **Renders**:
-   - the sixteen pages no step moves render byte-identical to
-     `s11-result/`;
-   - catalogue, cv, form and invoice_0002 render byte-identical to the
-     step-P replay;
-   - the ticket renders byte-identical to the targeted run, replayed at
-     step P.
-4. **Calls in all: 746** if nothing else moves (749 − 3).
+   - **sixteen** byte-identical to `s11-result/`: certificate, darkdeck,
+     invoice_0001, letter, menu, newsletter, nonlatin, paper, pricing,
+     receipt, report, sample_css, sample_semantic, sample_table,
+     statement, timetable;
+   - **five** byte-identical to `S12-P-replay`, which is byte-identical
+     to `S12-P-rederive` (steps 1–3): catalogue, cv, form, invoice_0002
+     and the ticket.
+
+So the sweep is a check that the model answers as it did, and the pages
+are judged on what steps 1–3 drew.
 
 Then report the sweep in the error-analysis format:
 1. **the ticket first**, against §1's table, row by row;
