@@ -794,12 +794,11 @@ def unclaimed(zone: Zone, found: Sequence[Word],
     timetable's `Lunch` beside `13:20`. A line with no claimed word near it
     is read from exactly the crop it was before.
 
-    **The line is all of its unclaimed words** — spec 0016, the targeted
-    run of step 4: the confident words decide that a line is unclaimed,
-    and every word of the line no Cell claims, sure or not, is its box, as
-    `_from_lines` places it. With the ticket's halo Zone taken out,
-    tesseract was sure of `before` alone on the gate note's first line,
-    the crop held `…utes before`, and the model read `autos before`."""
+    **Its box is its confident words, not all of its line's** — spec 0016,
+    step 4, measured and dropped. Boxed by every unclaimed word on it, the
+    ticket's gate note was read whole where tesseract was sure of one word,
+    but `timetable_0019`'s legend, two overlapping lines, was read whole
+    twice, and printed twice."""
     texts = [words_ for words_ in [set(whole_words(zone.title or ""))]
              + [set(whole_words(cell.text)) for cell, _ in cells_of(zone)] if words_]
     lines: dict[tuple[int, int, int], list[Word]] = {}
@@ -812,8 +811,7 @@ def unclaimed(zone: Zone, found: Sequence[Word],
         least = TURNED_WORDS if key[0] == 1 else UNCLAIMED_WORDS
         if len(words_) < least or any(_claims(text, words_) for text in texts):
             continue
-        whole = [word for word in found if word.line == key and not _covered(word, boxes)]
-        box = _union(whole, 0, len(whole) - 1)
+        box = _union(words_, 0, len(words_) - 1)
         claimed = [word.box for word in found
                    if word.line == key and _covered(word, boxes)]
         left = max([box.left - PAD_X] + [(other.right + box.left) / 2
