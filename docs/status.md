@@ -1,14 +1,15 @@
-# Status — 2026-10-17 (**the baseline is `tests/frozen/s11-result/`; nothing open**)
+# Status — 2026-10-18 (**the baseline is `tests/frozen/s11-result/`; spec 0016 planned, not started**)
 
 **Live document.** This is where the project actually is. When it goes stale,
-rewrite it; do not add a banner and leave it. Last rewritten 2026-10-17,
-after Alessandro took spec 0015's sweep, `S11-sweep`, as the baseline.
+rewrite it; do not add a banner and leave it. Last rewritten 2026-10-18,
+when spec 0016 was planned (issue #39). Alessandro took spec 0015's sweep,
+`S11-sweep`, as the baseline on 2026-10-17.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file, then
-[`specs/0015-drawn-where-the-page-puts-it.md`](specs/0015-drawn-where-the-page-puts-it.md)
-end to end. If you are going to
+[`specs/0016-one-grid-one-strip.md`](specs/0016-one-grid-one-strip.md)
+end to end, the one open spec. If you are going to
 look at output — and you should — use the **`visual-review` skill**.
 
 Branch `scaffold`. **1201 tests pass (1 skipped), `mypy src/` clean** — at
@@ -70,6 +71,14 @@ Spec 0015   Every line read, and drawn where the page puts it — issue #38
               S  S11-sweep on 6b1caf4, 2026-10-16: prediction held to
                  the byte; 6 pages better, 15 same, none worse
               DECIDED 2026-10-17: S11-sweep the baseline, frozen as s11-result/
+Spec 0016   Structure first — one grid, one strip — issue #39
+              the ticket's layout the focus, structure not words:
+              1 one column grid per line-drawn Zone
+              2 one grid across side-by-side Zones
+              3 a drawn strip is one container
+              4 no Zone from a drawn fill's edge (the ticket's calls move)
+              then ONE sweep S12-sweep over all 21. PLANNED 2026-10-18,
+              NOT STARTED
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -242,13 +251,27 @@ and `specs/0007-handover.md` for the A phases and the queue.
 
 ---
 
-## Next — nothing is open
+## Next — spec 0016, planned 2026-10-18, not started
 
-Spec 0015's "Directions, ranked" lists the faults left on the ticket and
-certificate, by stage. None is queued until Alessandro names it.
-Everything spec 0015 did not do stays cleared, as it was on 2026-10-15.
-That covers marks and badges, misreads, emphasis and the wordmark
-question.
+[`specs/0016-one-grid-one-strip.md`](specs/0016-one-grid-one-strip.md),
+issue #39. Alessandro asked for the ticket's layout again: still
+inconsistent, and structure and layout first, not text or words. What is
+left on the ticket is wrong *between* Zones:
+- the detector cut its field grid at a gutter into two Zones;
+- the render never draws a plain fill, so the teal strip comes back in
+  pieces;
+- the strip's `equalise` halo became a Zone that prints `The` twice.
+
+Four steps, three offline and one that moves the ticket's calls (22 to
+19), then one sweep, `S12-sweep`. Every step was prototyped offline,
+all four together. The prototype is
+`debug/runs/_prototypes-0016/structure-first.diff`, gitignored. §1 says
+rule by rule how far each one is proven beyond the ticket. Its handover
+prompt, marked *current*, is the one to start a session with.
+
+Everything else stays cleared: type at display size (`OSL`), borrowed
+looks, marks, the stub strip's text, bold, and everything spec 0015 §7
+lists. None is queued until Alessandro names it.
 
 ---
 

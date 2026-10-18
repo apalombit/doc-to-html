@@ -36,8 +36,9 @@ trial axis is kept rather than rejected.
 
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
-measured numbers and what has already been tried and rejected. **No spec is
-open.** 0008 to 0015 (issues #31–#38) are done and decided. 0007 still defines the target.
+measured numbers and what has already been tried and rejected. **0016 is the
+one open spec** — issue #39, planned 2026-10-18, not started. 0008 to 0015
+(issues #31–#38) are done and decided. 0007 still defines the target.
 
 ---
 
@@ -62,7 +63,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-17: the baseline is `tests/frozen/s11-result/`, spec 0015's sweep; nothing is open. Work is judged by eye.**
+**Where the project is — 2026-10-18: the baseline is `tests/frozen/s11-result/`, spec 0015's sweep; spec 0016 planned, not started, and nothing else is open. Work is judged by eye.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -157,6 +158,14 @@ Spec 0015   Every line read, and drawn where the page puts it — planned
               S  S11-sweep on 6b1caf4, 2026-10-16: prediction held to
                  the byte, 6 pages better, 15 same, none worse
               DECIDED 2026-10-17: S11-sweep is the baseline, frozen as s11-result/
+Spec 0016   Structure first — one grid where the page sets one, one strip
+              where it draws one — planned 2026-10-18, issue #39; the
+              ticket's layout the focus, structure not words:
+              1 one column grid per line-drawn Zone (render._placed)
+              2 one grid across side-by-side Zones (render._band)
+              3 a drawn strip is one container (fills, top bands)
+              4 no Zone from a drawn fill's edge, two locate guards
+              then ONE sweep S12-sweep over all 21. NOT STARTED
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
@@ -186,10 +195,17 @@ in its README and in `docs/status.md`.
 **Spec 0015, `docs/specs/0015-drawn-where-the-page-puts-it.md`, is
 done and decided** — issue #38, `ticket_0020` and `certificate_0021` the
 focus. Its "Outcome — the sweep" checks §1's tables row by row, lists
-the faults left by stage and ranks the directions. **Nothing is open.**
-Everything spec 0015 did not do stays cleared, as Alessandro cleared it on
-2026-10-15, the wordmark question included; do not pick anything up
-unless he names it.
+the faults left by stage and ranks the directions.
+
+**The only open work is `docs/specs/0016-one-grid-one-strip.md`** —
+issue #39, planned 2026-10-18 from Alessandro's ask: the ticket's layout,
+structure and layout first, not text or words. Its §1 lists every
+structural fault on the ticket, its cause and the step that repairs it,
+and says rule by rule how far each is proven beyond the ticket. Four
+steps, then one sweep, `S12-sweep`. Everything else stays cleared,
+the wordmark question included; do not pick anything up unless he
+names it. The spec's handover prompt marked *current* is the one to
+start a session with.
 `docs/specs/0007-handover.md` holds spec 0007's prompts, as record.
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
@@ -604,8 +620,8 @@ each other — `CellState.DISPUTED` and the Ladder are already the vocabulary fo
 it, and `_climb_ladders` already records that it waits on a second Engine. That
 is model time and Alessandro's decision, not a detector.
 
-**Tracker state, 2026-10-17: no open issue.** #31–#38 (specs 0008–0015)
-are closed, each done and decided. #30 (spec 0007) closed when its
+**Tracker state, 2026-10-18: one open issue — #39, spec 0016, not
+started.** #31–#38 (specs 0008–0015) are closed, each done and decided. #30 (spec 0007) closed when its
 work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
 #17 (the vision layout prompt) were closed by Thread 0. Every other spec is closed
 history; 0007 still defines the target.
