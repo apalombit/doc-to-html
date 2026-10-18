@@ -681,7 +681,14 @@ def _from_lines(zone: Zone, found: Sequence[Word],
     not match it run for run: tesseract reads the ticket's `Gate closes 20
     minutes before` as `gate user minutes before`, and its digits do not
     agree; and `OSL` is read only by `display_words`. Each line is
-    claimed once, in reading order."""
+    claimed once, in reading order.
+
+    **The box is the whole printed line** — spec 0016, 4c: the confident
+    words decide which line a Cell claims, and every word of that line not
+    already taken is its box. With the ticket's halo Zone gone and its body
+    measured at 9.0px, tesseract reads the gate note's first line as `gre`
+    5, `90` 39, `141` 0, `4` 0, `before` 95; boxed by `before` alone, the
+    note was drawn one word to a line."""
     body = len(_body_of(zone))
     if None not in placed[body:]:
         return placed
@@ -698,8 +705,9 @@ def _from_lines(zone: Zone, found: Sequence[Word],
         mine = set(whole_words(cell.text))
         key = next((key for key, words_ in lines.items() if _claims(mine, words_)), None)
         if key is not None:
-            words_ = lines.pop(key)
-            out[index] = _union(words_, 0, len(words_) - 1)
+            lines.pop(key)
+            whole = [word for word in found if word.line == key and not _covered(word, taken)]
+            out[index] = _union(whole, 0, len(whole) - 1)
     return out
 
 
@@ -830,8 +838,13 @@ def display_words(image: ImageArray, zone: Zone, first: Sequence[Word], *,
     read also raises eleven fragments of headings the first read had; kept
     only where the first found nothing confident, it raises `OSL` alone over
     the twenty-one at `s10-result/`. Its words sit on lines of their own
-    (`Word.line[0]` 2), so no line joins the two reads."""
-    sure = [word.box for word in first if word.confidence >= CONFIDENT]
+    (`Word.line[0]` 2), so no line joins the two reads.
+
+    **A one-character word blocks nothing** — spec 0016, 4b. With the
+    ticket's halo Zone gone the first read finds a `5` at 93 over `OSL`,
+    and `OSL` was lost; a confident first-read word blocks the display
+    read only if it is two characters or more."""
+    sure = [word.box for word in first if word.confidence >= CONFIDENT and len(word.text) >= 2]
     return [replace(word, line=(2,) + word.line[1:])
             for word in words(image, zone, glyph=DISPLAY_GLYPH, languages=languages)
             if not any(word.box.overlap_ratio(box) > 0 for box in sure)]

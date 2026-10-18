@@ -190,6 +190,46 @@ class TestRecoveringInkNoBoxCovers:
         assert recovered_zones(image, detected) == detected
 
 
+class TestNoZoneFromADrawnFill:
+    """Spec 0016, 4a: `ticket_0020`'s teal strip left an `equalise` halo
+    along its edge that came back as a Zone, read as `The` twice."""
+
+    def setup(self) -> tuple[np.ndarray, list[Zone]]:
+        image = page(245, [(10, 10, 190, 40), (10, 120, 190, 180)], 10)
+        return image, [Zone(kind=Kind.PROSE, bbox=BBox(0.05, 0.05, 0.95, 0.2))]
+
+    def test_ink_inside_a_box_to_ignore_is_not_recovered(self) -> None:
+        image, detected = self.setup()
+        assert recovered_zones(image, detected, [BBox(0.0, 0.55, 1.0, 0.95)]) == detected
+
+    def test_ink_outside_it_still_is(self) -> None:
+        image, detected = self.setup()
+        assert len(recovered_zones(image, detected, [BBox(0.0, 0.0, 1.0, 0.3)])) == 2
+
+    def test_the_conversion_ignores_the_solid_fills_the_page_draws(self) -> None:
+        from types import SimpleNamespace
+
+        from doc_to_html.ir import Furniture
+        from doc_to_html.orchestrator import Conversion
+
+        class Trace:
+            def record(self, *args: object, **data: object) -> None:
+                self.data = data
+
+        image, detected = self.setup()
+        fill = BBox(0.0, 0.55, 1.0, 0.95)
+
+        def cover(*items: Furniture) -> list[Zone]:
+            owner = SimpleNamespace(cover_the_page=True, trace=Trace())
+            return Conversion._cover_the_page(  # type: ignore[arg-type]
+                owner, SimpleNamespace(image=image), detected, list(items))
+
+        assert cover(Furniture(kind="fill", bbox=fill, style="solid")) == detected
+        assert len(cover(Furniture(kind="fill", bbox=fill, style="hatched"))) == 2
+        assert len(cover(Furniture(kind="rule", bbox=fill))) == 2
+        assert len(cover()) == 2
+
+
 def sheet(marks: list[tuple[int, int, int, int]], ink: int,
           size: int = 800) -> np.ndarray:
     """`page` at a corpus page's size, where a panel is wider than a stroke.

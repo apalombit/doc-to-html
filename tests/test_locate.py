@@ -377,6 +377,17 @@ class TestAnExtraLineTakesTheLineItClaims:
         boxes = locate._from_lines(zone, found, [at(0, 20, 32, 30), at(0, 40, 24, 50), None])
         assert boxes[2] == BBox(0.0, 0.5, 198 / SIDE, 210 / SIDE)
 
+    def test_its_box_is_all_of_the_line_it_claims(self) -> None:
+        """Spec 0016, 4c: at a body of 9.0px tesseract reads the note's
+        first line as `gre` 5, `90` 39, `141` 0, `4` 0, `before` 95. The
+        confident `before` claims the line; the box is every word on it."""
+        zone = self.stub()
+        found = [sure("gre", 0, 200, 9, 5.0), sure("90", 40, 200, 9, 39.0),
+                 sure("141", 70, 200, 9, 0.0), sure("4", 100, 200, 9, 0.0),
+                 sure("before", 150, 200, 9)]
+        boxes = locate._from_lines(zone, found, [at(0, 20, 32, 30), at(0, 40, 24, 50), None])
+        assert boxes[2] == BBox(0.0, 0.5, 198 / SIDE, 210 / SIDE)
+
     def test_not_on_a_line_it_does_not_claim(self) -> None:
         zone = self.stub()
         found = [sure("Boarding", 0, 200, 9), sure("closes", 80, 200, 9)]
@@ -412,6 +423,13 @@ class TestTheDisplayRead:
             self, monkeypatch: pytest.MonkeyPatch) -> None:
         first = [sure("Halvorsen", 0, 20, 1)]
         assert self.read(monkeypatch, first, [sure("Halvorsen", 2, 21, 1)]) == []
+
+    def test_a_single_character_the_first_read_was_sure_of_blocks_nothing(
+            self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Spec 0016, 4b: the ticket's `5` at 93 over `OSL`."""
+        first = [sure("5", 0, 60, 2, 93.0)]
+        [kept] = self.read(monkeypatch, first, [sure("OSL", 0, 58, 1, 96.0)])
+        assert kept.text == "osl"
 
 
 class TestOnAPicture:

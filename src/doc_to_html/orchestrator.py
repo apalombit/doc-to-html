@@ -32,7 +32,7 @@ from .engines.base import LayoutEngine, VisionEngine
 from .engines.ollama import OllamaEngine
 from .extractors import for_kind, resolution_caveat
 from .ir import (
-    Caveat, Document, Failure, Furniture, Gap, Kind, Role, RowRole, Shortfall, Zone,
+    BBox, Caveat, Document, Failure, Furniture, Gap, Kind, Role, RowRole, Shortfall, Zone,
 )
 from .preprocess import (
     MIN_ZONE_INK,
@@ -432,7 +432,8 @@ silent whole-page failure `darkdeck_0009` already showed.
 """
 
 
-def recovered_zones(image: ImageArray, zones: list[Zone]) -> list[Zone]:
+def recovered_zones(image: ImageArray, zones: list[Zone],
+                    ignore: Sequence[BBox] = ()) -> list[Zone]:
     """The Zones, plus one for each substantial patch of ink none of them covers.
 
     **What this fixes.** `uncovered_ink` has always been able to see content the
@@ -466,7 +467,14 @@ def recovered_zones(image: ImageArray, zones: list[Zone]) -> list[Zone]:
 
     Returns the Zones unchanged when nothing qualifies, which is the normal
     answer on a page the detector covered — all five original documents.
-    """
+
+    **`ignore` is ink the page draws that is not type** — spec 0016, 4a: the
+    solid fills `furniture.find` found. `equalise` leaves a halo along a
+    fill's edge, and `ticket_0020`'s teal strip left one 8px tall under it
+    that came back as a Zone: three calls spent on an empty crop read as
+    `The` twice, and the page's body measure 12.0px where it is 13.5, at
+    which `TRD`'s display size was refused. Over the twenty-one, that Zone
+    is the only one this takes away (`tools/layout_front.py`)."""
     boxes = [zone.bbox for zone in zones if zone.bbox is not None]
     if len(boxes) != len(zones) or not zones:
         # Nothing to subtract from, so nothing here can be called uncovered.
@@ -474,7 +482,7 @@ def recovered_zones(image: ImageArray, zones: list[Zone]) -> list[Zone]:
 
     height = image.shape[0]
     found = [
-        (box, share) for box, share in uncovered_regions(image, boxes)
+        (box, share) for box, share in uncovered_regions(image, boxes + list(ignore))
         if (box.right - box.left) * (box.bottom - box.top) <= MAX_RECOVERED_SHARE
         and share >= MIN_RECOVERED_INK
         and (box.bottom - box.top) * height >= MIN_RECOVERED_PX
@@ -1191,7 +1199,7 @@ class Conversion:
         if failure is not None:
             raise failure
 
-        zones = self._cover_the_page(rectified, zones)
+        zones = self._cover_the_page(rectified, zones, document.furniture)
 
         if self.snap_zones:
             log.info("DTH_SNAP_ZONES is on: moving %d boxes onto their ink", len(zones))
@@ -1499,9 +1507,13 @@ class Conversion:
         document.zones = cut
         return True
 
-    def _cover_the_page(self, rectified: Rectified,
-                        zones: list[Zone]) -> list[Zone]:
+    def _cover_the_page(self, rectified: Rectified, zones: list[Zone],
+                        furniture: Sequence[Furniture] = ()) -> list[Zone]:
         """Give ink no detected box covers a Zone of its own. See `recovered_zones`.
+
+        **A solid fill the page draws is not ink nobody covered** — spec 0016,
+        4a. `furniture` is what `_measure_style` found on the plain image,
+        before the layout, so no second pass is made for it.
 
         Runs before the snap rather than after it, so a recovered box is snapped
         onto its own ink by the same pass that snaps every other box — one place
@@ -1522,7 +1534,9 @@ class Conversion:
 
         before = [_box_data(zone) for zone in zones]
         started = time.perf_counter()
-        covered = recovered_zones(rectified.image, zones)
+        fills = [item.bbox for item in furniture
+                 if item.kind == "fill" and item.style == "solid"]
+        covered = recovered_zones(rectified.image, zones, fills)
         gained = len(covered) - len(zones)
         if gained:
             log.info("DTH_COVER_THE_PAGE is on: %d region(s) of ink no detected "
@@ -1531,7 +1545,7 @@ class Conversion:
             Stage.LAYOUT, "cover_the_page",
             Disposition.OVERRIDDEN if gained else Disposition.KEPT,
             seconds=time.perf_counter() - started,
-            enabled=True, recovered=gained,
+            enabled=True, recovered=gained, fills=len(fills),
             before=before, after=[_box_data(zone) for zone in covered],
             reason=None if gained else (
                 "every patch of ink is inside a detected box, or none that is "

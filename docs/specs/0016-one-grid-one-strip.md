@@ -449,6 +449,33 @@ tools/iterate.sh <L>`, a few minutes). Expected:
 If a moved crop is answered differently, that is the finding. Stop, show
 it, and ask before the sweep.
 
+### Outcome — step 4, offline, 2026-10-18
+
+At the step-4 commit, each loop taken against the step before:
+- **Layout front, all 21** (`S12-4-lf-before` against `S12-4-lf-after`):
+  only the ticket's Zones change, 6 → 5, z5 [0.209–0.733, 0.108–0.141]
+  gone and no other box moved; twenty pages' `document.html`
+  byte-identical. **The fills come from `_measure_style`'s
+  `document.furniture`**, found before the layout on the same plain
+  image, so there is no second `furniture.find`: `cover_the_page` took
+  0.188s over the twenty-one against 0.194s before, 23 solid fills
+  passed.
+- **Rederive, all 21** (`S12-4-rederive` against `S12-3b`): 21 of 21
+  byte-identical — 4b and 4c change nothing on the IRs the baseline holds.
+  `tools/rederive.py` already re-runs `locate.locate`; step 4 writes no
+  new IR field, so it needs no new step there.
+- **Replay, all 21** (`S12-4-replay`): sixteen byte-identical to
+  `s11-result/`; catalogue, cv, form and invoice_0002 byte-identical to
+  the rederive; the ticket **ASKED DIFFERENTLY**, 22 → 19 calls. In the
+  baseline's numbering, the calls not asked alike anywhere are z5's
+  `08_classify`, `15_prose` (`The`) and `16_runs`, and three re-read
+  crops: `17_prose` (the gate note), `20_prose` (`OSLO GARDERMOEN`) and
+  `21_prose` (`NL 0482`). `departure` and `OSL` are asked alike. With z5
+  gone the body measure is 13.5px where it was 12.0 (the IR's units;
+  §1's 9.0 against 8.0), and `TRD` measures 3.76, `PASSENGER` 0.78.
+
+Suite 1234 passed, 1 skipped; `mypy src` clean.
+
 **Where to look.** `orchestrator.recovered_zones`, `Conversion._cover_the_page`,
 `preprocess.uncovered_regions`, `MAX_RECOVERED_SHARE`,
 `MIN_RECOVERED_INK`, `MIN_RECOVERED_PX`; `furniture.find`;
