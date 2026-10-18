@@ -1,19 +1,21 @@
-# Status — 2026-10-18 (**the baseline is `tests/frozen/s12-result/`; spec 0016 done and decided, nothing open**)
+# Status — 2026-10-18 (**the baseline is `tests/frozen/s12-result/`; spec 0017 built, render only, Alessandro's decision pending**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-18,
-after spec 0016's sweep, `S12-sweep` (issue #39), which Alessandro took
-as the baseline the same day.
+after spec 0017's two render steps (issue #40), built on spec 0016's
+sweep `S12-sweep`, which Alessandro took as the baseline the same day.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file, then
+[`specs/0017-margins-and-roles.md`](specs/0017-margins-and-roles.md),
+the open spec, built and awaiting his decision, and
 [`specs/0016-one-grid-one-strip.md`](specs/0016-one-grid-one-strip.md)
-end to end, the last spec, done. If you are going to
+for the ticket's history. If you are going to
 look at output — and you should — use the **`visual-review` skill**.
 
-Branch `scaffold`. **1231 tests pass (1 skipped), `mypy src/` clean** — at
-`c98f2db`'s code (`3abb55d` and later add docs only), 2026-10-18.
+Branch `scaffold`. **1247 tests pass (1 skipped), `mypy src/` clean** — at
+`24b635c`, 2026-10-18.
 
 **How work is judged — Alessandro, 2026-10-12, for spec 0011; carried
 over by specs 0012 and 0013.** By eye: every step's sheets are opened
@@ -84,6 +86,14 @@ Spec 0016   Structure first — one grid, one strip — issue #39
               S  S12-sweep on 3abb55d, 2026-10-18: prediction held to
                  the byte; 1 page better (ticket), 20 same, none worse
               DECIDED 2026-10-18: S12-sweep the baseline, frozen as s12-result/
+Spec 0017   Margins from the type, one size per role — planned 2026-10-18
+              from his review of S12-sweep's ticket, issue #40; render
+              only, measured by rederive over s12-result/:
+              1 margins from the type (1a row inset, 1b box to type)  DONE
+              2 one size per role (2a groups, 2b Title as a label)    DONE
+              ticket better, catalogue same (1px), nineteen identical
+              DECISION PENDING; directions 3 and 4 (photographed pages,
+              Zones from drawn containers) a spec of their own after it
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -175,6 +185,22 @@ already printed elsewhere, so five words) and `osl`, and the timetable's
 ---
 
 ## What the last work shipped
+
+### Spec 0017 — margins from the type, one size per role, 2026-10-18
+
+**Render only, no sweep.** `tools/rederive.py` over `s12-result/`
+(`S13-1`, `S13-2`), against `S12-sweep`'s renders, by eye. Every IR is
+byte-identical to the baseline's.
+
+- **Better: the ticket.** The field grid sits 22px in from the card's
+  edge and the stub's text 20px off the perforation (step 1);
+  `PASSENGER` is a muted label as in the stub, `NL 0482` is drawn at its
+  row's 1.50, and the stub's values are one size (step 2).
+- **Same: the catalogue**, one line 1px lower. **Nineteen byte-identical.**
+- Step 1's first version moved five more pages, three for the worse —
+  `paper_0018`'s centred title, `sample_semantic_0005`'s bullets,
+  `cv_0013`'s `REGISTRATION` — each closed off by an exclusion (spec 0017).
+- Commits: 1 `1c869fd`, 2 `24b635c`.
 
 ### Spec 0016 — structure first, `S12-sweep`, 2026-10-18
 
