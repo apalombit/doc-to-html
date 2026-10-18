@@ -10,7 +10,8 @@ import re
 
 from doc_to_html.ir import (BBox, Block, Document, Flow, Furniture, Kind, Pair,
                             Region, Role, Source, Style, Zone, cell)
-from doc_to_html.render import _copies, _extent, _lanes, _printed_lines, render
+from doc_to_html.render import (PLACED_CSS, WRAPS, _aligned, _copies, _edges, _extent, _lanes,
+                                _printed_lines, render)
 
 
 def pairs(*rows: tuple[tuple[str, BBox], tuple[str, BBox] | None], box: BBox,
@@ -66,7 +67,11 @@ class TestAPairsZoneByItsPrintedLines:
         zone = pairs(CARD, STOCK, box=BBox(0.03, 0.3, 0.33, 0.35))
         html = body_of(render(page([zone])))
         (line,) = re.findall(r'<div class="line" style="([^"]*)">(.*?)</div>', html)
-        assert line[0].startswith("grid-template-columns:46.52fr 39.56fr auto")
+        # Spec 0016, step 1: shares of the Zone's width, no `auto` track;
+        # `In stock`, flush right, takes its track from halfway across the
+        # gap after `each`.
+        assert line[0] == ("grid-template-columns:minmax(0,46.52fr) minmax(0,23.99fr) "
+                           "minmax(0,29.49fr)")
         assert 'justify-self:end">In stock' in line[1]
         assert '<span class="label">£4.20</span>' in line[1]
 
@@ -184,6 +189,90 @@ class TestStepTwoPairsAsThePagePrintsThem:
         zone.extra = [Block(kind="paragraph", lines=[cell("OSL")])]
         html = body_of(render(page([zone])))
         assert html.count(">OSL<") == 1 and html.index("07:35") < html.index(">OSL<")
+
+
+def lines_of(zone: Zone) -> list[tuple[str, list[tuple[str, str]]]]:
+    """Each drawn line's tracks, and each span's text and style."""
+    html = body_of(render(page([zone])))
+    return [(style, re.findall(r'<span[^>]*?(?: style="([^"]*)")?>([^<]*)</span>', spans))
+            for style, spans in re.findall(r'<div class="line" style="([^"]*)">(.*?)</div>', html)]
+
+
+def styled(drawn: list[tuple[str, list[tuple[str, str]]]], text: str) -> str:
+    return next(style for _, spans in drawn for style, said in spans if said == text)
+
+
+class TestStepOneOneColumnGridPerZone:
+    """Spec 0016, step 1: a Zone drawn by its printed lines keeps one set
+    of column edges across all of them."""
+
+    def test_a_column_keeps_its_left_edge_from_row_to_row(self) -> None:
+        """`ticket_0020`'s third column: `BOARDING` / `07:35` and `GROUP` /
+        `2` start where the page starts them, not flush right."""
+        zone = grid_of_three(at(0.03, 0.65))
+        printed = _printed_lines(zone)
+        assert printed is not None
+        columns = _aligned(printed, 0.01)
+        assert {at for _, at in columns.values()} == {0.03, 0.20, 0.38}
+        assert not any(right for right, _ in columns.values())
+        assert "justify-self:end" not in styled(lines_of(zone), "07:35")
+
+    def test_no_track_is_auto(self) -> None:
+        zone = grid_of_three(at(0.03, 0.65))
+        tracks = [style for style, _ in lines_of(zone)]
+        assert tracks and not any("auto" in style for style in tracks)
+        assert all(style.startswith("grid-template-columns:minmax(0,") for style in tracks)
+
+    def test_a_column_whose_right_edges_agree_is_set_flush_right(self) -> None:
+        """`SEAT` over `12A` with their right edges agreeing and their left
+        edges more than a body glyph apart."""
+        zone = pairs((("FLIGHT", at(0.76, 0.30, tall=0.015)),
+                      ("NL 0482", at(0.76, 0.34, tall=0.015))),
+                     (("SEAT", BBox(0.943, 0.30, 0.974, 0.315)),
+                      ("12A", BBox(0.955, 0.34, 0.973, 0.355))),
+                     box=BBox(0.74, 0.28, 1.0, 0.4))
+        printed = _printed_lines(zone)
+        assert printed is not None
+        columns = _aligned(printed, 0.01)
+        seat = next(id(c) for line in printed for c, _, _ in line if c.text == "SEAT")
+        assert columns[seat] == (True, 0.974)
+        drawn = lines_of(zone)
+        assert "justify-self:end" in styled(drawn, "12A")
+        assert "justify-self:end" in styled(drawn, "SEAT")
+
+    def test_flush_right_short_of_the_zones_right_ends_at_its_column(self) -> None:
+        """A line set flush right to a column edge left of the Zone's right
+        keeps the rest of the line as white space: its one track would
+        otherwise take the whole line."""
+        zone = pairs((("PASSENGER", BBox(0.76, 0.16, 0.85, 0.175)),
+                      ("HALVORSEN / A", BBox(0.76, 0.20, 0.897, 0.215))),
+                     (("SEAT", BBox(0.943, 0.30, 0.974, 0.315)),
+                      ("12A", BBox(0.955, 0.34, 0.973, 0.355))),
+                     (("departure", BBox(0.841, 0.92, 0.894, 0.935)), None),
+                     box=BBox(0.74, 0.1, 1.0, 1.0))
+        drawn = lines_of(zone)
+        (tracks,) = [style for style, spans in drawn if any(t == "departure" for _, t in spans)]
+        assert tracks.count("minmax(") == 2
+
+    def test_edges_that_do_not_increase_give_no_grid(self) -> None:
+        shown = [BBox(0.1, 0.0, 0.3, 0.1), BBox(0.2, 0.0, 0.4, 0.1)]
+        assert _edges(shown, [(False, 0.1), (False, 0.05)], 0.4) is None
+
+    def test_entries_sharing_a_line_do_not_wrap_and_a_lone_one_does(self) -> None:
+        assert ".placed .line > span { white-space:nowrap; padding-right:.3em; }" in PLACED_CSS
+        assert ".placed .line > span:only-child { white-space:normal; }" in PLACED_CSS
+        assert not any("column-gap" in rule for rule in PLACED_CSS)
+
+    def test_an_entry_printed_on_more_than_one_line_wraps(self) -> None:
+        """Taller than `WRAPS` of its glyphs (a 10px body on a 1000px page)."""
+        tall = 0.01 * WRAPS + 0.005
+        zone = pairs((("Gate closes 20 minutes before departure", BBox(0.40, 0.5, 0.6, 0.5 + tall)),
+                      None),
+                     (("C14", BBox(0.70, 0.5, 0.73, 0.51)), None),
+                     box=BBox(0.3, 0.45, 0.8, 0.6))
+        drawn = lines_of(zone)
+        assert "white-space:normal" in styled(drawn, "Gate closes 20 minutes before departure")
+        assert "white-space:normal" not in styled(drawn, "C14")
 
 
 def signature(name: str, left: float, rule: tuple[float, float]) -> Zone:

@@ -22,7 +22,7 @@ from enum import Enum
 from functools import lru_cache
 from itertools import groupby
 from statistics import median
-from typing import Any, Sequence
+from typing import Any, Callable, Sequence
 
 from . import furnish
 from .locate import cells_of
@@ -2787,36 +2787,58 @@ def _placed(zone: Zone, document: Document,
     554775/R1  Date 01/01/2015` spread across the two thirds of the row
     that run to the ACME mark, where the page prints it in its first
     quarter. A line wider than that in the render's type overflows the
-    cap rather than wrapping or overlapping."""
+    cap rather than wrapping or overlapping.
+
+    **One column grid for the whole Zone** — spec 0016, step 1. Each line's
+    tracks were built from that line's starts alone, its last track `auto`,
+    so a column kept no edge from row to row and a line's last entry slid
+    to wherever the leftover width put it: `ticket_0020`'s grid had its
+    third column pushed flush right. Now an entry in a column of the Zone
+    (`_aligned`) starts its track at the column's edge, or ends it there
+    where only the right edges agree, and every track is a share of the
+    Zone's width (`_edges`). An entry that
+    shares its line does not wrap; one printed on more than one line
+    (`WRAPS`) wraps as the page wraps it."""
     page = _page(document)
     boxes = [box for line in printed for _, _, box in line]
     left, right = min(b.left for b in boxes), max(b.right for b in boxes)
     wide = max(right - left, 1e-6)
     reach = page.body / page.x
+    aligned = _aligned(printed, reach)
     parts = []
     above: tuple[float, float] | None = None
     for line in printed:
         line = sorted(line, key=lambda entry: entry[2].left)
         shown = [box for _, _, box in line]
-        starts = [b.left for b in shown]
-        # Each entry's share of the line up to the next one's start; the
-        # last as wide as it prints, so a face wider than the page's
-        # squeezes the shares rather than breaking `In stock` in two.
-        tracks = [f"{(b - a) / wide * 100:.2f}fr" for a, b in zip(starts, starts[1:])] + ["auto"]
+        ends = [_flush(box, position, len(line), right, reach, aligned.get(id(c)))
+                for position, (c, _, box) in enumerate(line)]
+        edges = _edges(shown, ends, right)
+        if edges is None:
+            # Overlapping entries: each its share up to the next one's start.
+            edges = [b.left for b in shown] + [right]
+        tracks = [f"minmax(0,{(b - a) / wide * 100:.2f}fr)" for a, b in zip(edges, edges[1:])]
+        if ends[-1][0] and right - edges[-1] > reach:
+            # Set flush right short of the Zone's right: its track ends at
+            # its column's edge, and the rest of the line is white space.
+            tracks.append(f"minmax(0,{(right - edges[-1]) / wide * 100:.2f}fr)")
         size = max((c.look.size or 1.0) if c.look else 1.0 for c, _, _ in line)
         style = [f"grid-template-columns:{' '.join(tracks)}"]
-        if starts[0] - left > reach:
-            style.append(f"margin-left:{(starts[0] - left) / wide * 100:.2f}%")
+        if edges[0] - left > reach:
+            style.append(f"margin-left:{(edges[0] - left) / wide * 100:.2f}%")
         top, bottom = min(b.top for b in shown), max(b.bottom for b in shown)
         if above is not None:
             gap = ((top - above[0]) * page.y
                    - (ROW_BELOW * above[1] + ROW_ABOVE * size) * page.body)
             style.append(f"margin-top:{_px(gap)}")
         spans = []
-        for position, (c, label, box) in enumerate(line):
+        for (c, label, box), (end, _) in zip(line, ends):
             looked = _look(c, house=_house(document, muted=label))
-            if position and position == len(line) - 1 and box.right >= right - reach:
+            if end:
                 looked = ";".join(part for part in (looked, "justify-self:end") if part)
+            glyph = (c.look.size if c.look and c.look.size else 1.0) * page.body
+            if (box.bottom - box.top) * page.y > WRAPS * glyph:
+                # Printed on more than one line: it wraps as the page wraps it.
+                looked = ";".join(part for part in (looked, "white-space:normal") if part)
             css = ' class="label"' if label else ""
             spans.append(f"<span{css}{_styled(looked)}>{_cell(c, document)}</span>")
         parts.append(f'<div class="line" style="{";".join(style)}">{"".join(spans)}</div>')
@@ -2825,8 +2847,88 @@ def _placed(zone: Zone, document: Document,
             f'{"".join(parts)}</div>')
 
 
+WRAPS = 2.0
+"""How many of its own glyph heights tall an entry's box is, to be printed on
+more than one line (`_placed`): every other entry drawn by its lines is
+drawn on one."""
+
+
+def _aligned(printed: list[list[tuple[Cell, bool, BBox]]],
+             reach: float) -> dict[int, tuple[bool, float]]:
+    """Each entry, by `id`, that the page sets in one column with entries of
+    other lines: `(False, x)` where their left edges agree at `x`, `(True,
+    x)` where only their right edges do. Edges agree within `reach`, a body
+    glyph. An entry in no such column is absent.
+
+    Measured over the twenty-one at `s11-result/`: the right-edge rule
+    fires on three lone lines whose right edge meets another line's —
+    `form_0007`'s `CT9 4RD`, one `catalogue_0015` card's `each`,
+    `ticket_0020`'s `departure` — and draws each ending where the page
+    ends it. The stub's `SEAT` and `12A` agree on both edges, so they are
+    a left column."""
+    entries = [(id(c), index, box) for index, line in enumerate(printed) for c, _, box in line]
+
+    def columns(edge: Callable[[BBox], float], first: bool) -> dict[int, float]:
+        found: dict[int, float] = {}
+        group: list[tuple[int, int, BBox]] = []
+
+        def close() -> None:
+            if len({index for _, index, _ in group}) > 1:
+                at = edge(group[0][2]) if first else edge(group[-1][2])
+                found.update({key: at for key, _, _ in group})
+
+        for entry in sorted(entries, key=lambda e: edge(e[2])):
+            if group and edge(entry[2]) - edge(group[-1][2]) > reach:
+                close()
+                group = []
+            group.append(entry)
+        close()
+        return found
+
+    starts, ends = columns(lambda box: box.left, True), columns(lambda box: box.right, False)
+    out = {key: (False, at) for key, at in starts.items()}
+    out.update({key: (True, at) for key, at in ends.items() if key not in out})
+    return out
+
+
+def _flush(box: BBox, position: int, count: int, right: float, reach: float,
+           column: tuple[bool, float] | None) -> tuple[bool, float]:
+    """Whether an entry is set flush right, and the edge it is set to: its
+    column's (`_aligned`), or else the last entry of a line flush right
+    where the page sets it at the Zone's right — `In stock`."""
+    if column is not None:
+        return column
+    if position and position == count - 1 and box.right >= right - reach:
+        return True, box.right
+    return False, box.left
+
+
+def _edges(shown: list[BBox], ends: list[tuple[bool, float]],
+           right: float) -> list[float] | None:
+    """Where each entry's track of a line starts, and the last one ends —
+    spec 0016, step 1: an entry set from the left starts its track at its
+    column's edge, one set flush right ends it there, and between two
+    entries otherwise the track changes halfway across the gap. None where
+    the edges do not increase."""
+    edges = [ends[0][1] if not ends[0][0] else shown[0].left]
+    for position in range(1, len(shown)):
+        (before_end, before_at), (end, at) = ends[position - 1], ends[position]
+        if not end:
+            edges.append(at)
+        elif before_end:
+            edges.append(before_at)
+        else:
+            edges.append((shown[position - 1].right + shown[position].left) / 2)
+    edges.append(max(right, ends[-1][1]) if not ends[-1][0] else ends[-1][1])
+    if any(b <= a for a, b in zip(edges, edges[1:])):
+        return None
+    return edges
+
+
 PLACED_CSS = (
-    ".placed .line { display:grid; align-items:baseline; column-gap:.3em; }",
+    ".placed .line { display:grid; align-items:baseline; }",
+    ".placed .line > span { white-space:nowrap; padding-right:.3em; }",
+    ".placed .line > span:only-child { white-space:normal; }",
     ".placed .label { color:var(--muted); }",
 )
 """A pairs Zone drawn by its printed lines — spec 0012, G4. Emitted only

@@ -198,6 +198,37 @@ the full prototype, so every later step moves the ticket alone.
 **Where to look.** `render._placed`, `_printed_lines`, `_by_line`,
 `_same_line`, `PLACED_CSS`, `_style_css`.
 
+### Outcome — step 1, 2026-10-18
+
+`S12-1b`, rederived from `s11-result/`, against `S12-0-base`. **The
+prediction held: exactly the five pages moved.** Sheets:
+`debug/runs/S12-1b/_review/`.
+
+| page | by eye |
+|---|---|
+| ticket | **better**: every grid column keeps one edge — `DATE` / `14 OCT 2026`, `SEAT` / `12A`, `BOARDING` / `07:35`, `GROUP` / `2` each start together, where `07:35` and `2` stood flush right; the stub's `GROUP` / `2` share a left edge as printed |
+| catalogue | same: `each`, `In stock` and `NEW` shift 3–7px sideways, no line moves |
+| invoice_0002 | same: `Date` stands about 5px nearer `01/01/2015` |
+| cv, form | same: pixel-identical |
+
+**One amendment to the prototype.** A line set flush right to a column
+edge short of the Zone's right kept its one `fr` track, which takes the
+whole line: the ticket's `departure` went to the stub's right edge. The
+remainder of the line is now an empty track, so it ends at its column's
+edge as this section says, and `departure` is drawn where `S12-0-base`
+drew it.
+
+**One correction to the plan.** The stub's `SEAT` / `12A` agree on both
+edges (0.943 / 0.943 left), so they are a left column, not a flush-right
+one. Over the twenty-one the right-edge rule fires on three lone lines
+whose right edge meets another line's — the form's `CT9 4RD`, one
+catalogue card's `each`, the ticket's `departure` — each drawn ending
+where the page ends it.
+
+Scores, recorded: `vanished` 26 → 26 words; the ticket's alignment
+agreement 0.618 → 0.735, the catalogue's 0.492 → 0.475. Suite 1208
+passed, 1 skipped.
+
 ---
 
 ## 3. Step 2 — one grid where the page sets one, across side-by-side Zones (offline)
