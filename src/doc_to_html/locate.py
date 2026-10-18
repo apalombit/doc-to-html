@@ -685,10 +685,10 @@ def _from_lines(zone: Zone, found: Sequence[Word],
 
     **The box is the whole printed line** — spec 0016, 4c: the confident
     words decide which line a Cell claims, and every word of that line not
-    already taken is its box. With the ticket's halo Zone gone and its body
-    measured at 9.0px, tesseract reads the gate note's first line as `gre`
-    5, `90` 39, `141` 0, `4` 0, `before` 95; boxed by `before` alone, the
-    note was drawn one word to a line."""
+    already taken is its box. With the ticket's halo Zone taken out and its
+    body measured at 9.0px, tesseract reads the gate note's first line as
+    `gre` 5, `90` 39, `141` 0, `4` 0, `before` 95; boxed by `before` alone,
+    the note was drawn one word to a line."""
     body = len(_body_of(zone))
     if None not in placed[body:]:
         return placed
@@ -792,7 +792,14 @@ def unclaimed(zone: Zone, found: Sequence[Word],
     whole, a line partly claimed brings its claimed words into the crop and
     the reading repeats them: `Tags:` beside its list's `HTML`, the
     timetable's `Lunch` beside `13:20`. A line with no claimed word near it
-    is read from exactly the crop it was before."""
+    is read from exactly the crop it was before.
+
+    **The line is all of its unclaimed words** — spec 0016, the targeted
+    run of step 4: the confident words decide that a line is unclaimed,
+    and every word of the line no Cell claims, sure or not, is its box, as
+    `_from_lines` places it. With the ticket's halo Zone taken out,
+    tesseract was sure of `before` alone on the gate note's first line,
+    the crop held `…utes before`, and the model read `autos before`."""
     texts = [words_ for words_ in [set(whole_words(zone.title or ""))]
              + [set(whole_words(cell.text)) for cell, _ in cells_of(zone)] if words_]
     lines: dict[tuple[int, int, int], list[Word]] = {}
@@ -805,7 +812,8 @@ def unclaimed(zone: Zone, found: Sequence[Word],
         least = TURNED_WORDS if key[0] == 1 else UNCLAIMED_WORDS
         if len(words_) < least or any(_claims(text, words_) for text in texts):
             continue
-        box = _union(words_, 0, len(words_) - 1)
+        whole = [word for word in found if word.line == key and not _covered(word, boxes)]
+        box = _union(whole, 0, len(whole) - 1)
         claimed = [word.box for word in found
                    if word.line == key and _covered(word, boxes)]
         left = max([box.left - PAD_X] + [(other.right + box.left) / 2
@@ -841,9 +849,9 @@ def display_words(image: ImageArray, zone: Zone, first: Sequence[Word], *,
     (`Word.line[0]` 2), so no line joins the two reads.
 
     **A one-character word blocks nothing** — spec 0016, 4b. With the
-    ticket's halo Zone gone the first read finds a `5` at 93 over `OSL`,
-    and `OSL` was lost; a confident first-read word blocks the display
-    read only if it is two characters or more."""
+    ticket's halo Zone taken out the first read finds a `5` at 93 over
+    `OSL`, and `OSL` was lost; a confident first-read word blocks the
+    display read only if it is two characters or more."""
     sure = [word.box for word in first if word.confidence >= CONFIDENT and len(word.text) >= 2]
     return [replace(word, line=(2,) + word.line[1:])
             for word in words(image, zone, glyph=DISPLAY_GLYPH, languages=languages)

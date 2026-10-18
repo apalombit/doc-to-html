@@ -340,6 +340,18 @@ class TestUnclaimedLines:
         assert reach.right == pytest.approx((130 / SIDE + box.right) / 2)
         assert (reach.top, reach.bottom) == (box.top, box.bottom)
 
+    def test_its_box_is_all_of_its_unclaimed_words_sure_or_not(self) -> None:
+        """Spec 0016: the ticket's gate note at a body of 9.0px, of which
+        tesseract is sure of `before` alone, is read from the whole line —
+        but not from a word of it a Cell claims."""
+        zone = prose("GATE", "C14")
+        found = [sure("gre", 0, 60, 2, 5.0), sure("90", 40, 60, 2, 39.0),
+                 sure("141", 70, 60, 2, 0.0), sure("before", 150, 60, 2),
+                 sure("C14", 250, 60, 2, 10.0)]
+        [(box, count, _)] = unclaimed(zone, found, [at(250, 60, 274, 70)])
+        assert count == 1
+        assert box == at(0, 60, 198, 70)
+
     def test_they_are_reported_with_their_share_and_survive_the_json(self) -> None:
         document = Document(source=Source(path="x", sha256="0" * 64, width=100,
                                           height=100),
