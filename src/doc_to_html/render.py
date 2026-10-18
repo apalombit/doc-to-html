@@ -660,7 +660,7 @@ def _grid_unit(zones: list[Zone], document: Document, extra: str) -> str:
     for zone in zones:
         own = [entry for line in _printed_lines(zone, document) or [] for entry in line]
         entries += own
-        if zone.title and zone.bbox is not None and own:
+        if zone.title and zone.bbox is not None and own and not _title_as_label(zone):
             entries.append(_title_line(zone, min(box.top for _, _, box in own)))
     printed: list[list[tuple[Cell, bool, BBox]]] = []
     for entry in sorted(entries, key=lambda e: (e[0].bbox is None, e[2].top)):
@@ -1822,11 +1822,15 @@ def _section(zone: Zone, body: str, document: Document, *, plain: bool,
     style_of = _inline_style(
         zone, document.style.ink if document.style else None,
         plain=plain, extra=";".join(part for part in (extra, own) if part))
+    # Spec 0017, 2b: a Title drawn as its first value's label is a line of
+    # the Zone's grid, not a heading over it.
+    labelled = (_title_as_label(zone) and zone.align not in TEXT_ALIGN
+                and _printed_lines(zone, document) is not None)
     title = (
         f"<h2{bar}{_inline_title_style(zone, titled)}>{html.escape(zone.title)}</h2>"
-        if zone.title else ""
+        if zone.title and not labelled else ""
     )
-    if zone.title:
+    if title:
         body = f'<div class="zone-body">{body}</div>'
     return f'<section class="{classes}"{style_of}>{lead}{title}{body}</section>'
 
@@ -2963,8 +2967,14 @@ def _printed_lines(zone: Zone, document: Document | None = None
     boxes.update({id(c): c.bbox for c, _, _ in extra})
     printed = _by_line(entries + extra, boxes)
     assert printed is not None
-    return [[(c, label, box) for c, label, _ in line
-             if (box := boxes[id(c)]) is not None] for line in printed]
+    lines = [[(c, label, box) for c, label, _ in line
+              if (box := boxes[id(c)]) is not None] for line in printed]
+    if _title_as_label(zone) and zone.bbox is not None:
+        # Spec 0017, 2b: a Title set as the Zone's labels are is the first
+        # value's label, a line of its own over it.
+        lines.insert(0, [_title_label(zone, min(box.top for line in lines
+                                                for _, _, box in line))])
+    return lines
 
 
 def _same_line(box: BBox, other: BBox) -> bool:
@@ -3143,6 +3153,7 @@ def _placed(zone: Zone, document: Document,
     wide = max(right - left, 1e-6)
     reach = page.body / page.x
     aligned = _aligned(printed, reach)
+    sized = _role_sizes(printed, aligned, document)
     parts = []
     above: tuple[float, float] | None = None
     band = (furnish.anchor(document).bands.get(_index(document, zone))
@@ -3165,6 +3176,7 @@ def _placed(zone: Zone, document: Document,
             # Set flush right short of the Zone's right: its track ends at
             # its column's edge, and the rest of the line is white space.
             tracks.append(f"minmax(0,{(right - edges[-1]) / wide * 100:.2f}fr)")
+        line = [(sized.get(id(c), c), label, box) for c, label, box in line]
         size = max((c.look.size or 1.0) if c.look else 1.0 for c, _, _ in line)
         style = [f"grid-template-columns:{' '.join(tracks)}"]
         if edges[0] - left > reach:
@@ -3276,6 +3288,114 @@ def _edges(shown: list[BBox], ends: list[tuple[bool, float]],
     if any(b <= a for a, b in zip(edges, edges[1:])):
         return None
     return edges
+
+
+PEERS = 3
+"""How many measured entries a role's group holds, for its size to be the
+one the page sets the group in (`_role_sizes`)."""
+
+
+def _role_sizes(printed: list[list[tuple[Cell, bool, BBox]]],
+                aligned: dict[int, tuple[bool, float]],
+                document: Document) -> dict[int, Cell]:
+    """Each pair entry, by `id`, drawn at the size its role's group shares
+    — spec 0017, 2a. A group is the entries of one role, label or value,
+    joined by sharing a printed line or a column (`_aligned`): a grid's
+    values are one group, its labels another. Where at least `PEERS` of a
+    group are measured, every entry with no size, or one within
+    `SIZE_STEP` of the group's median — the measure's noise — takes the
+    median. A page sets a grid's values in one style, as `_common_look`
+    takes a paragraph to be set in one face; a size further from the
+    median than the noise is the page's own, and stays.
+
+    `ticket_0020`'s `NL 0482`, which `locate` never placed, was drawn at the
+    body's size among values at 1.50, and the stub's five values came out
+    at 1.25 and 1.38. Each entry taking its own line's and column's median
+    instead only traded the stub's sizes between them: `C14` went to 1.25
+    as `HALVORSEN / A` went to 1.38. Entries a Title or a Zone's extra
+    lines placed are in no group."""
+    pairs = {id(c) for zone in document.zones for pair in zone.pairs
+             for c in (pair.label, pair.value)}
+    entries = [(c, label, index) for index, line in enumerate(printed)
+               for c, label, _ in line if id(c) in pairs]
+    group = list(range(len(entries)))
+
+    def root(at: int) -> int:
+        while group[at] != at:
+            group[at] = group[group[at]]
+            at = group[at]
+        return at
+
+    for one, (cell, label, line) in enumerate(entries):
+        column = aligned.get(id(cell))
+        for other in range(one + 1, len(entries)):
+            peer, role, at = entries[other]
+            if role == label and (at == line or (column is not None
+                                                 and aligned.get(id(peer)) == column)):
+                group[root(other)] = root(one)
+
+    def measured(cell: Cell) -> float | None:
+        return cell.look.size if cell.look is not None else None
+
+    members: dict[int, list[Cell]] = {}
+    for position, (cell, _, _) in enumerate(entries):
+        members.setdefault(root(position), []).append(cell)
+    out: dict[int, Cell] = {}
+    for cells in members.values():
+        known = [size for cell in cells if (size := measured(cell)) is not None]
+        if len(known) < PEERS:
+            continue
+        common = round(float(median(known)), 2)
+        for cell in cells:
+            own = measured(cell)
+            if own is not None and (own == common or abs(own - common) >= SIZE_STEP):
+                continue
+            look = replace(cell.look, size=common) if cell.look is not None else Look(size=common)
+            out[id(cell)] = replace(cell, look=look)
+    return out
+
+
+def _title_as_label(zone: Zone) -> bool:
+    """Whether a pairs Zone's Title is its first value's label — spec 0017,
+    2b: the first pair has a value and no label, the Title is set at the
+    Zone's left, and it is measured as the Zone's other labels are, its
+    size within `SIZE_STEP` of their median and its ink within
+    `COLOUR_APART` of theirs. A heading over the fields is set apart from
+    them, larger or in another ink: `darkdeck_0009`'s `COST PER MILLION`,
+    0.7 over labels of 0.9 in red, stays a Title.
+
+    `ticket_0020`'s `PASSENGER`, 0.88 among labels of 0.88 and 1.0, was
+    lifted into its Zone's Title by the caption pass and drawn bold in the
+    page's ink, the one label of the grid not muted; the stub prints the
+    same word as a label."""
+    if (zone.kind is not Kind.PAIRS or not zone.title or not zone.pairs
+            or zone.title_align not in (None, "left") or zone.title_size is None
+            or any(pair.marks for pair in zone.pairs)):
+        return False
+    first = zone.pairs[0]
+    if first.label.text.strip() or not first.value.text.strip():
+        return False
+    looks = [pair.label.look for pair in zone.pairs[1:]
+             if pair.label.text.strip() and pair.label.look is not None]
+    sizes = [look.size for look in looks if look.size is not None]
+    if len(sizes) < PEERS or abs(float(median(sizes)) - zone.title_size) >= SIZE_STEP:
+        return False
+    inks = [look.color for look in looks if look.color is not None]
+    if zone.title_color is not None and inks:
+        middle = (int(median(i[0] for i in inks)), int(median(i[1] for i in inks)),
+                  int(median(i[2] for i in inks)))
+        if _apart(zone.title_color, middle) > COLOUR_APART:
+            return False
+    return True
+
+
+def _title_label(zone: Zone, below: float) -> tuple[Cell, bool, BBox]:
+    """A Zone's Title drawn as its first value's label (`_title_as_label`):
+    at the place `_title_line` gives it, in its own measured look, not bold."""
+    cell, _, box = _title_line(zone, below)
+    look = Look(size=zone.title_size, color=zone.title_color,
+                caps=zone.title_caps or None)
+    return replace(cell, look=look), True, box
 
 
 PLACED_CSS = (

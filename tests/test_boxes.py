@@ -12,9 +12,9 @@ from doc_to_html.ir import (BBox, Block, Document, Flow, Furniture, Kind, Pair,
                             Region, Role, Source, Style, Zone, cell)
 from doc_to_html import furnish
 from doc_to_html.ir import Look
-from doc_to_html.render import (HABIT, PLACED_CSS, WRAPS, _aligned, _copies, _edges, _extent,
+from doc_to_html.render import (HABIT, PEERS, PLACED_CSS, WRAPS, _aligned, _copies, _edges, _extent,
                                 _habit, _heading_size, _indent_in_row, _lanes, _one_grid, _page,
-                                _printed_lines,
+                                _printed_lines, _title_as_label,
                                 _title_line, render)
 
 
@@ -654,3 +654,102 @@ class TestSpec0017StepOneTheTypeKeepsItsInset:
         placed = re.search(r'<div class="placed" style="([^"]*)">', html)
         assert placed is not None and "margin-left" not in placed.group(1)
 
+
+def sized(text: str, box: BBox, size: float | None) -> object:
+    made = cell(text, bbox=box)
+    made.look = None if size is None else Look(size=size)
+    return made
+
+
+def fields_grid(nl: float | None = None, two: float = 1.38) -> Zone:
+    """`ticket_0020`'s main grid, two rows of three, label over value:
+    `NL 0482` placed nowhere and unmeasured unless `nl` is given, and
+    `2` measured `two` among values of 1.50."""
+    rows = [("FLIGHT", 0.03, 0.59, "NL 0482", nl), ("DATE", 0.20, 0.59, "14 OCT 2026", 1.5),
+            ("BOARDING", 0.38, 0.59, "07:35", 1.5), ("GATE", 0.03, 0.74, "C14", 1.5),
+            ("SEAT", 0.20, 0.74, "12A", 1.5), ("GROUP", 0.38, 0.74, "2", two)]
+    made = []
+    for label, left, top, value, size in rows:
+        made.append(Pair(label=sized(label, at(left, top, tall=0.015), 1.0),  # type: ignore[arg-type]
+                         value=sized(value, at(left, top + 0.05, tall=0.03), size)))  # type: ignore[arg-type]
+    zone = Zone(kind=Kind.PAIRS, role=Role.BODY, bbox=BBox(0.03, 0.59, 0.45, 0.8), pairs=made,
+                complete=True)
+    if nl is None:
+        zone.pairs[0].value.bbox = None
+    return zone
+
+
+def size_of(html: str, text: str) -> str | None:
+    found = re.search(r'<span(?: class="label")?(?: style="([^"]*)")?>' + re.escape(text)
+                      + "</span>", html)
+    assert found is not None, text
+    size = re.search(r"font-size:calc\(([\d.]+) ", found.group(1) or "")
+    return size.group(1) if size else None
+
+
+class TestSpec0017StepTwoOneSizePerRole:
+    """Spec 0017, step 2: one style per role in a grid."""
+
+    def test_2a_an_entry_with_no_size_takes_its_groups(self) -> None:
+        html = body_of(render(page([fields_grid()])))
+        assert size_of(html, "NL 0482") == "1.50"
+
+    def test_2a_a_size_within_the_noise_takes_the_groups(self) -> None:
+        html = body_of(render(page([fields_grid(nl=1.5, two=1.38)])))
+        assert size_of(html, "2") == "1.50"
+
+    def test_2a_a_size_beyond_the_noise_is_the_pages_own(self) -> None:
+        html = body_of(render(page([fields_grid(nl=1.5, two=2.0)])))
+        assert size_of(html, "2") == "2.00"
+
+    def test_2a_labels_are_a_group_of_their_own(self) -> None:
+        html = body_of(render(page([fields_grid()])))
+        assert size_of(html, "FLIGHT") is None
+
+    def test_2a_not_from_fewer_than_peers_measured(self) -> None:
+        zone = fields_grid()
+        for pair in zone.pairs[1:]:
+            pair.value.look = None
+        zone.pairs[1].value.look = Look(size=1.5)
+        zone.pairs[2].value.look = Look(size=1.5)
+        assert PEERS == 3
+        html = body_of(render(page([zone])))
+        assert size_of(html, "NL 0482") is None
+
+    def test_2a_the_ir_keeps_what_was_measured(self) -> None:
+        zone = fields_grid()
+        render(page([zone]))
+        two = zone.pairs[5].value.look
+        assert zone.pairs[0].value.look is None and two is not None and two.size == 1.38
+
+    def test_2b_a_title_set_as_the_labels_are_is_the_first_values_label(self) -> None:
+        zone = fields_grid(nl=1.5)
+        zone.pairs.insert(0, Pair(label=cell(""), value=sized(  # type: ignore[arg-type]
+            "HALVORSEN / ASTRID MS", at(0.03, 0.50, 0.25, 0.03), 1.5)))
+        zone.bbox = BBox(0.03, 0.45, 0.45, 0.8)
+        zone.title, zone.title_size = "PASSENGER", 0.88
+        assert _title_as_label(zone)
+        html = body_of(render(page([zone])))
+        assert "<h2" not in html
+        assert re.search(r'<span class="label"(?: style="[^"]*")?>PASSENGER</span>', html)
+        assert "font-weight:700" not in html[:html.index("PASSENGER")]
+        assert html.index("PASSENGER") < html.index("HALVORSEN")
+
+    def test_2b_not_a_heading_set_apart_from_the_labels(self) -> None:
+        zone = fields_grid(nl=1.5)
+        zone.pairs.insert(0, Pair(label=cell(""), value=cell("$0.42")))
+        zone.title = "COST PER MILLION"
+        for change in ({"title_size": 0.7}, {"title_size": None},
+                       {"title_size": 0.95, "title_align": "right"},
+                       {"title_size": 0.95, "title_color": (255, 122, 122)}):
+            zone.title_size, zone.title_align, zone.title_color = None, None, None
+            for pair in zone.pairs[1:]:
+                pair.label.look = Look(size=1.0, color=(90, 102, 118))
+            for name, value in change.items():
+                setattr(zone, name, value)
+            assert not _title_as_label(zone), change
+
+    def test_2b_not_where_the_first_pair_has_its_label(self) -> None:
+        zone = fields_grid(nl=1.5)
+        zone.title, zone.title_size = "FIELDS", 1.0
+        assert not _title_as_label(zone)
