@@ -13,7 +13,8 @@ from doc_to_html.ir import (BBox, Block, Document, Flow, Furniture, Kind, Pair,
 from doc_to_html import furnish
 from doc_to_html.ir import Look
 from doc_to_html.render import (HABIT, PLACED_CSS, WRAPS, _aligned, _copies, _edges, _extent,
-                                _habit, _heading_size, _lanes, _one_grid, _printed_lines,
+                                _habit, _heading_size, _indent_in_row, _lanes, _one_grid, _page,
+                                _printed_lines,
                                 _title_line, render)
 
 
@@ -533,8 +534,9 @@ class TestAPairsZoneIsNoWiderThanItsType:
     def test_the_lines_are_capped_at_the_types_width(self) -> None:
         zone = pairs(CARD, STOCK, box=BBox(0.03, 0.3, 0.33, 0.35))
         html = body_of(render(page([zone])))
-        # 0.045 to 0.318 of a 1000px page.
-        assert '<div class="placed" style="max-width:273px">' in html
+        # 0.045 to 0.318 of a 1000px page; the box starts 15px short of
+        # its type, an inset kept since spec 0017, 1b.
+        assert '<div class="placed" style="max-width:273px;margin-left:15px">' in html
 
 
 def tile(left: float, height: float) -> Zone:
@@ -583,3 +585,72 @@ class TestTheInsetIsThePages:
         first = re.findall(r'class="lane" style="([^"]*)"', html)[0]
         assert "background:rgb(38,51,63)" in first
         assert re.search(r"padding:\d+px 30px \d+px 30px", first)
+
+
+def strip_and_grid(left: float, **fields: object) -> list[Zone]:
+    """A strip whose type runs to the paper's edge, and under it a Zone
+    set `left` in — `ticket_0020`'s main pane, the strip's wordmark at the
+    edge and the field grid 22px in."""
+    strip = Zone(kind=Kind.PROSE, role=Role.HEADER, bbox=BBox(0.0, 0.0, 0.2, 0.1), band=0,
+                 complete=True, blocks=[Block(kind="paragraph",
+                                              lines=[cell("NORDLYS AIR", bbox=BBox(0.0, 0.0, 0.2, 0.1))])])
+    grid = Zone(kind=Kind.PROSE, role=Role.BODY, bbox=BBox(left, 0.2, 0.6, 0.3), band=1,
+                complete=True, blocks=[Block(kind="paragraph",
+                                             lines=[cell("HALVORSEN", bbox=BBox(left, 0.2, 0.6, 0.3))])],
+                **fields)  # type: ignore[arg-type]
+    return [strip, grid]
+
+
+def section_style(html: str, text: str) -> str:
+    """The style of the section that holds `text`."""
+    head = html[:html.index(text)]
+    found = re.findall(r'<section class="zone[^"]*"(?: style="([^"]*)")?>', head)
+    return found[-1] if found else ""
+
+
+class TestSpec0017StepOneTheTypeKeepsItsInset:
+    """Spec 0017, step 1: margins from the type."""
+
+    def test_1a_a_row_set_in_from_the_rows_edge_keeps_it(self) -> None:
+        html = body_of(render(page(strip_and_grid(0.05))))
+        assert "margin-left:50px" in section_style(html, "HALVORSEN")
+
+    def test_1a_not_within_a_body_glyph(self) -> None:
+        html = body_of(render(page(strip_and_grid(0.008))))
+        assert "margin-left" not in section_style(html, "HALVORSEN")
+
+    def test_1a_not_for_a_zone_set_centred_or_flush_right(self) -> None:
+        for align in ("centre", "right"):
+            html = body_of(render(page(strip_and_grid(0.05, align=align))))
+            assert "margin-left" not in section_style(html, "HALVORSEN"), align
+
+    def test_1a_not_for_a_list_whose_box_may_start_at_its_text(self) -> None:
+        zones = strip_and_grid(0.05)
+        zones[1].kind = Kind.LIST
+        zones[1].blocks[0].kind = "item"
+        document = page(zones)
+        assert _indent_in_row([zones[1]], document, _page(document), (0.0, 0.6)) == 0.0
+
+    def test_1a_not_inside_a_frame_other_zones_share(self) -> None:
+        zones = strip_and_grid(0.05)
+        card = BBox(0.0, 0.15, 0.7, 0.4)
+        third = Zone(kind=Kind.PROSE, role=Role.BODY, bbox=BBox(0.05, 0.32, 0.6, 0.38), band=2,
+                     complete=True, frame=card,
+                     blocks=[Block(kind="paragraph", lines=[cell("more")])])
+        zones[1].frame = card
+        document = page(zones + [third])
+        assert _indent_in_row([zones[1]], document, _page(document), (0.0, 0.6)) == 0.0
+
+    def test_1b_a_box_short_of_its_type_keeps_the_inset(self) -> None:
+        """The stub, whose box starts at the perforation."""
+        html = body_of(render(page([stub_under_strip()])))
+        placed = re.search(r'<div class="placed" style="([^"]*)">', html)
+        assert placed is not None and "margin-left:20px" in placed.group(1)
+
+    def test_1b_not_on_a_fill_whose_lane_pads_to_the_type(self) -> None:
+        zone = stub_under_strip()
+        zone.fill = (38, 51, 63)
+        html = body_of(render(page([zone])))
+        placed = re.search(r'<div class="placed" style="([^"]*)">', html)
+        assert placed is not None and "margin-left" not in placed.group(1)
+

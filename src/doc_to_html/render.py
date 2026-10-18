@@ -510,6 +510,7 @@ def _band(units: list[list[Zone]], document: Document, page: _Page,
     first = min(known) if known else None
     lanes = _lanes(units, document, span)
     runs = dict(_one_grid(units, document))
+    indent = _indent_in_row(units[0], document, page, span) if units else 0.0
     parts = []
     position = 0
     while position < len(units):
@@ -518,6 +519,8 @@ def _band(units: list[list[Zone]], document: Document, page: _Page,
         extra = []
         if first is not None and begun and min(begun) - first >= 1:
             extra.append(f"margin-top:{_px(min(begun) - first)}")
+        if position == 0 and indent:
+            extra.append(_indented(indent, lanes, end, span, page))
         if end - position > 1:
             shares = [share for share in lanes[position:end] if share is not None]
             if len(shares) == end - position:
@@ -542,6 +545,48 @@ def _band(units: list[list[Zone]], document: Document, page: _Page,
                is not None]
     return _Row("band", "".join(parts), zones,
                 min(tops) if tops else None, max(bottoms) if bottoms else None)
+
+
+def _indent_in_row(unit: list[Zone], document: Document, page: _Page,
+                   span: tuple[float, float] | None) -> float:
+    """How far, as a share of the page, a row's first unit stands in from
+    the row's left edge where the page sets it in — spec 0017, 1a. Zero
+    where it starts within `ALIGN_SLACK` of the edge, and for a unit set
+    centred or flush right, whole or by its Blocks (`_block_aligns`),
+    which `text-align` places — `paper_0018`'s centred title, pushed in
+    by its own centring, wrapped a word early — or inside a frame other
+    Zones share, which `_framed` pads to it. **Not for a list**: its box
+    starts at its marker or at its text as the detector drew it, and the
+    stylesheet draws the marker — `sample_semantic_0005`'s second and
+    third bullets, a Zone of their own boxed from their text, stood in
+    from the first.
+
+    `ticket_0020`'s teal strip and its wordmark run to the paper's edge,
+    so the main pane's row starts there; the field grid under them was
+    drawn against the card's edge, where the page sets it 22px in."""
+    box = _extent(unit, document)
+    if span is None or box is None or any(
+            zone.kind is Kind.LIST or zone.align in TEXT_ALIGN
+            or any(set_to != "left" for set_to in _block_aligns(zone, document).values())
+            for zone in unit):
+        return 0.0
+    shared = _shared(document)
+    if any(zone.frame in shared for zone in unit):
+        return 0.0
+    inset = box.left - span[0]
+    return inset if inset * page.x > ALIGN_SLACK * page.body else 0.0
+
+
+def _indented(indent: float, lanes: list[float | None], end: int,
+              span: tuple[float, float] | None, page: _Page) -> str:
+    """The margin that sets a row's first part `indent` in (`_indent_in_row`):
+    in pixels where it is the row's only part, else as a share of the row,
+    which its lane gives up (`_lanes`)."""
+    if end >= len(lanes) or lanes[0] is None or span is None:
+        return f"margin-left:{_px(indent * page.x)}"
+    share = indent / max(span[1] - span[0], 1e-6)
+    lanes[0] = max(lanes[0] - share, 0.0)
+    return f"margin-left:{share * 100:.2f}%"
 
 
 LEVEL = 2
@@ -3142,7 +3187,16 @@ def _placed(zone: Zone, document: Document,
             spans.append(f"<span{css}{_styled(looked)}>{_cell(c, document)}</span>")
         parts.append(f'<div class="line" style="{";".join(style)}">{"".join(spans)}</div>')
         above = (bottom, size)
-    return (f'<div class="placed" style="max-width:{_px(wide * page.x)}">'
+    inset = ""
+    if (zone.bbox is not None and zone.frame is None and not zone.boxed
+            and zone.fill is None
+            and (left - zone.bbox.left) * page.x > ALIGN_SLACK * page.body):
+        # Spec 0017, 1b: a box that starts short of its type — the stub's,
+        # from the perforation — keeps the page's inset to it. Not on a
+        # fill: a painted lane pads to the type already (`_columns`), and
+        # `cv_0013`'s REGISTRATION stood in twice.
+        inset = f";margin-left:{_px((left - zone.bbox.left) * page.x)}"
+    return (f'<div class="placed" style="max-width:{_px(wide * page.x)}{inset}">'
             f'{"".join(parts)}</div>')
 
 
