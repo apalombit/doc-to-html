@@ -10,8 +10,9 @@ import re
 
 from doc_to_html.ir import (BBox, Block, Document, Flow, Furniture, Kind, Pair,
                             Region, Role, Source, Style, Zone, cell)
-from doc_to_html.render import (PLACED_CSS, WRAPS, _aligned, _copies, _edges, _extent, _lanes,
-                                _printed_lines, render)
+from doc_to_html.render import (HABIT, PLACED_CSS, WRAPS, _aligned, _copies, _edges, _extent,
+                                _habit, _lanes, _one_grid, _printed_lines, _title_line,
+                                render)
 
 
 def pairs(*rows: tuple[tuple[str, BBox], tuple[str, BBox] | None], box: BBox,
@@ -273,6 +274,116 @@ class TestStepOneOneColumnGridPerZone:
         drawn = lines_of(zone)
         assert "white-space:normal" in styled(drawn, "Gate closes 20 minutes before departure")
         assert "white-space:normal" not in styled(drawn, "C14")
+
+
+def main_pane() -> list[Zone]:
+    """`ticket_0020`'s main pane as the detector cut it at its widest
+    gutter: the grid's first three columns and `OSL` in one Zone, `TRD`
+    and the `DEPARTS` / `CLASS` column in another, `DEPARTS` and `CLASS`
+    placed nowhere."""
+    left = pairs((("FLIGHT", at(0.03, 0.59, tall=0.015)), ("NL 0482", at(0.03, 0.65, tall=0.03))),
+                 (("DATE", at(0.20, 0.59, tall=0.015)), ("14 OCT 2026", at(0.20, 0.65, 0.12, 0.03))),
+                 (("BOARDING", at(0.38, 0.59, 0.07, 0.015)), ("07:35", at(0.38, 0.65, tall=0.03))),
+                 (("GATE", at(0.03, 0.74, tall=0.015)), ("C14", at(0.03, 0.79, tall=0.03))),
+                 box=BBox(0.03, 0.30, 0.45, 0.84), band=1, title="PASSENGER")
+    left.extra = [Block(kind="paragraph", lines=[cell("OSL", bbox=BBox(0.03, 0.40, 0.15, 0.46))])]
+    right = pairs((("", at(0.54, 0.50)), ("TRONDHEIM VÆRNES", at(0.54, 0.50, 0.17, 0.03))),
+                  (("DEPARTS", at(0.55, 0.59)), ("08:05", at(0.55, 0.65, 0.05, 0.03))),
+                  (("CLASS", at(0.55, 0.74)), ("Economy", at(0.55, 0.79, 0.09, 0.03))),
+                  box=BBox(0.54, 0.40, 0.71, 0.85), band=1, title="TRD", title_align="right")
+    right.pairs[0].label.bbox = None
+    right.pairs[1].label.bbox = None
+    right.pairs[2].label.bbox = None
+    return [left, right]
+
+
+def line_texts(html: str) -> list[list[str]]:
+    return [re.findall(r">([^<>]+)</span>", spans)
+            for spans in re.findall(r'<div class="line" style="[^"]*">(.*?)</div>', html)]
+
+
+class TestStepTwoOneGridAcrossSideBySideZones:
+    """Spec 0016, step 2."""
+
+    def test_2a_two_pairs_zones_sharing_printed_lines_are_one_grid(self) -> None:
+        document = page(main_pane())
+        assert _one_grid([[zone] for zone in document.zones], document) == [(0, 1 + 1)]
+
+    def test_2a_they_are_drawn_as_one_unit(self) -> None:
+        html = body_of(render(page(main_pane())))
+        assert html.count('class="placed"') == 1
+        lines = line_texts(html)
+        assert ["FLIGHT", "DATE", "BOARDING", "DEPARTS"] in lines
+        assert ["NL 0482", "14 OCT 2026", "07:35", "08:05"] in lines
+        assert ["GATE", "CLASS"] in lines and ["C14", "Economy"] in lines
+
+    def test_2a_not_where_one_is_framed_or_filled(self) -> None:
+        for change in ({"frame": BBox(0.53, 0.39, 0.72, 0.86)}, {"fill": (11, 110, 138)},
+                       {"boxed": True}, {"title_fill": (11, 110, 138)}):
+            zones = main_pane()
+            for name, value in change.items():
+                setattr(zones[1], name, value)
+            document = page(zones)
+            assert _one_grid([[zone] for zone in document.zones], document) == [], change
+
+    def test_2a_not_where_they_share_one_line(self) -> None:
+        zones = main_pane()
+        zones[1].pairs = zones[1].pairs[:2]
+        zones[1].pairs[1].value.bbox = at(0.55, 0.62, 0.05, 0.03)
+        document = page(zones)
+        assert _one_grid([[zone] for zone in document.zones], document) == []
+
+    def test_2b_a_title_is_a_line_at_its_printed_place(self) -> None:
+        zone = main_pane()[1]
+        title, label, box = _title_line(zone, 0.50)
+        assert title.text == "TRD" and not label
+        assert box.left == box.right == 0.71 and box.top == 0.40
+        assert abs(box.bottom - (0.40 + 0.85 * 0.10)) < 1e-9
+        assert title.look is not None and title.look.bold
+        zone.title_align = "centre"
+        assert _title_line(zone, 0.50)[2].left == (0.54 + 0.71) / 2
+        zone.title_align = None
+        assert _title_line(zone, 0.50)[2].left == 0.54
+
+    def test_2b_the_title_is_drawn_on_the_line_it_shares(self) -> None:
+        """`TRD` on the line of `OSL`, flush right over `TRONDHEIM VÆRNES`."""
+        html = body_of(render(page(main_pane())))
+        assert ["OSL", "TRD"] in line_texts(html)
+        trd = re.search(r'<span style="([^"]*)">TRD</span>', html)
+        assert trd is not None and "justify-self:end" in trd.group(1)
+
+    def test_2c_an_implied_entry_joins_its_roles_line(self) -> None:
+        """`CLASS`, set over `Economy` by the page's habit, takes the line
+        of `GATE`; the IR keeps no box for it."""
+        zones = main_pane()
+        render(page(zones))
+        assert zones[1].pairs[2].label.bbox is None
+
+    def test_2d_a_label_goes_over_its_value_by_the_pages_habit(self) -> None:
+        document = page(main_pane())
+        printed = _printed_lines(document.zones[1], document)
+        assert texts(printed) == [["TRONDHEIM VÆRNES"], ["DEPARTS"], ["08:05"],
+                                  ["CLASS"], ["Economy"]]
+        assert _printed_lines(document.zones[1]) is None
+
+    def test_2d_the_habit_is_the_pages_medians(self) -> None:
+        document = page(main_pane())
+        over = _habit(document, at(0.55, 0.65, 0.05, 0.03), True)
+        # Labels 0.015 tall; the median gap to their values 0.045.
+        assert over is not None and over.left == over.right == 0.55
+        assert abs(over.top - 0.59) < 1e-9 and abs(over.bottom - 0.605) < 1e-9
+        under = _habit(document, at(0.55, 0.59, tall=0.015), False)
+        assert under is not None and abs(under.top - 0.65) < 1e-9
+
+    def test_2d_no_habit_where_the_page_sets_one_pair_beside(self) -> None:
+        zones = main_pane()
+        zones[0].pairs[3].value.bbox = at(0.10, 0.74, tall=0.015)
+        assert _habit(page(zones), at(0.55, 0.65), True) is None
+
+    def test_2d_no_habit_from_fewer_than_habit_pairs(self) -> None:
+        zones = main_pane()
+        zones[0].pairs = zones[0].pairs[:HABIT - 1]
+        assert _habit(page(zones), at(0.55, 0.65), True) is None
 
 
 def signature(name: str, left: float, rule: tuple[float, float]) -> Zone:

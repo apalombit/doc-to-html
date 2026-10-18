@@ -295,6 +295,25 @@ ticket alone. **Do not ship the switch.**
 `_printed_lines`, `_inferred`, `_in_column`, `_before_next`;
 `Zone.title`, `title_size`, `title_align`, `title_color`, `title_caps`.
 
+### Outcome — step 2, 2026-10-18
+
+`S12-2`, rederived from `s11-result/`, against `S12-1b`. **The prediction
+held: only the ticket moved.** Sheet: `debug/runs/S12-2/_review/`.
+
+- **Ticket, better.** `TRD` stands flush right on the line of `OSL`, and
+  `TRONDHEIM VÆRNES` level with `OSLO GARDERMOEN`. The grid is four
+  columns: `DEPARTS` over `08:05` on the `FLIGHT DATE BOARDING` line,
+  `CLASS` over `Economy` on the `GATE SEAT GROUP` line, where both stood
+  beside their values a line out of step. `TRD` is drawn at Title size,
+  as predicted until step 4.
+
+Built as the prototype, without its switch: the wrapper is the first
+Zone's `section` with no inner `zone-body` (whose padding is 0 outside a
+card). Scores, recorded: the ticket's tau 0.843 → 0.947, beside 0.262 →
+0.333; heading levels 3 → 1, because `PASSENGER` and `TRD` are drawn as
+lines of the grid, not as `h2`s; `vanished` 26 → 26. Suite 1219 passed,
+1 skipped.
+
 ---
 
 ## 4. Step 3 — a drawn strip is one container (offline)

@@ -28,7 +28,7 @@ from . import furnish
 from .locate import cells_of
 from .looks import TWO_SIZES
 from .ir import (BBox, Block, Cell, CellState, Document, Flow, Furniture, Kind,
-                 Pair, Region, Role, Row, RowRole, Run, Style, Zone)
+                 Look, Pair, Reading, Region, Role, Row, RowRole, Run, Style, Zone)
 from .probes import is_numeric
 from .wire import MARKS, bands_from_boxes
 
@@ -503,16 +503,30 @@ def _band(units: list[list[Zone]], document: Document, page: _Page,
     `Q3 2026 · INTERNAL` stands level with the Title beside it and `2021 —
     present` with its job, not with the heading above it. **Each unit takes
     the lane the page gives it** across `span`, the row's reach on the page
-    (`_lanes`, spec 0015, 3a)."""
+    (`_lanes`, spec 0015, 3a). **Side-by-side units the page sets as one
+    grid are drawn as one** (`_one_grid`, spec 0016, step 2)."""
     starts = [_top(unit[0], page) for unit in units]
     known = [t for t in starts if t is not None]
     first = min(known) if known else None
     lanes = _lanes(units, document, span)
+    runs = dict(_one_grid(units, document))
     parts = []
-    for position, (unit, start) in enumerate(zip(units, starts)):
+    position = 0
+    while position < len(units):
+        end = runs.get(position, position + 1)
+        begun = [t for t in starts[position:end] if t is not None]
         extra = []
-        if first is not None and start is not None and start - first >= 1:
-            extra.append(f"margin-top:{_px(start - first)}")
+        if first is not None and begun and min(begun) - first >= 1:
+            extra.append(f"margin-top:{_px(min(begun) - first)}")
+        if end - position > 1:
+            shares = [share for share in lanes[position:end] if share is not None]
+            if len(shares) == end - position:
+                extra.append(f"flex:{sum(shares) * 100:.1f} 1 0")
+            parts.append(_grid_unit([unit[0] for unit in units[position:end]], document,
+                                    ";".join(extra)))
+            position = end
+            continue
+        unit = units[position]
         if (len(units) > 1 and position == len(units) - 1
                 and len(unit) == 1 and unit[0].align == "right"):
             extra.append("flex:0 1 auto;margin-left:auto")
@@ -520,6 +534,7 @@ def _band(units: list[list[Zone]], document: Document, page: _Page,
             extra.append(f"flex:{lane * 100:.1f} 1 0")
         parts.append(_unit(unit, document, page,
                            plain=id(unit[0]) in plain, extra=";".join(extra)))
+        position = end
     zones = [zone for unit in units for zone in unit]
     tops = known
     bottoms = [b for unit in units
@@ -527,6 +542,137 @@ def _band(units: list[list[Zone]], document: Document, page: _Page,
                is not None]
     return _Row("band", "".join(parts), zones,
                 min(tops) if tops else None, max(bottoms) if bottoms else None)
+
+
+LEVEL = 2
+"""How many printed lines two side-by-side Zones share, to be one grid on
+the page (`_one_grid`)."""
+
+
+def _one_grid(units: list[list[Zone]], document: Document) -> list[tuple[int, int]]:
+    """Runs of side-by-side units, `(start, end)`, that the page sets as one
+    grid — spec 0016, step 2a. Each unit of a run is one PAIRS Zone drawn by
+    its printed lines (`_printed_lines`), with nothing drawn round or behind
+    it — no frame, card, fill or Title bar — and not set centred or flush
+    right; and each shares at least `LEVEL` printed lines with the one
+    before it.
+
+    `ticket_0020`'s main pane is one grid of fields that the detector cut
+    at its widest gutter, between the grid's third and fourth columns, into
+    two Zones — the second holding `TRD` and the `DEPARTS` / `CLASS`
+    column. Drawn as two units, each spacing its lines from its own top,
+    `DEPARTS` stood a line below `BOARDING` and `TRD` below `OSL`, where
+    every line of the second sits level with one of the first.
+
+    **The gates are what keeps it to the ticket.** With the frame and fill
+    gates dropped, `LEVEL` at 1 and every pairs Zone's lines taken,
+    `invoice_0002`'s framed `Company Details` and `Customer Details` panels
+    merge into one grid, which the page does not draw."""
+
+    def lines(unit: list[Zone]) -> list[BBox] | None:
+        zone = unit[0]
+        if (len(unit) != 1 or zone.kind is not Kind.PAIRS or zone.align in TEXT_ALIGN
+                or zone.frame is not None or zone.boxed or zone.fill is not None
+                or zone.title_fill is not None):
+            return None
+        printed = _printed_lines(zone, document)
+        if printed is None:
+            return None
+        return [_union([box for _, _, box in line]) for line in printed]
+
+    found = [lines(unit) for unit in units]
+    runs: list[tuple[int, int]] = []
+    start = 0
+    while start < len(units):
+        end = start + 1
+        while end < len(units):
+            mine, before = found[end], found[end - 1]
+            if mine is None or before is None or sum(
+                    1 for box in mine if any(_same_line(box, other) for other in before)) < LEVEL:
+                break
+            end += 1
+        if end - start > 1:
+            runs.append((start, end))
+        start = end
+    return runs
+
+
+def _grid_unit(zones: list[Zone], document: Document, extra: str) -> str:
+    """Zones the page sets as one grid (`_one_grid`) drawn as one unit:
+    their printed lines gathered by the line they share, and one column
+    grid over them (`_placed`) — spec 0016, step 2.
+
+    - **2b. Each Zone's Title is a line of the grid** (`_title_line`), at
+      its printed place: `TRD`, flush right over `TRONDHEIM VÆRNES`, on the
+      line of `OSL`.
+    - **2c. An entry placed by inference joins its role's line.** The
+      placed entries are gathered first; an entry with no box of its own
+      (`_inferred`) then joins the nearest line holding a placed entry of
+      its own role, label or value, within its own height — so `CLASS`,
+      set over `Economy` by the page's habit, takes the line of `GATE`,
+      `SEAT` and `GROUP`."""
+    entries: list[tuple[Cell, bool, BBox]] = []
+    for zone in zones:
+        own = [entry for line in _printed_lines(zone, document) or [] for entry in line]
+        entries += own
+        if zone.title and zone.bbox is not None and own:
+            entries.append(_title_line(zone, min(box.top for _, _, box in own)))
+    printed: list[list[tuple[Cell, bool, BBox]]] = []
+    for entry in sorted(entries, key=lambda e: (e[0].bbox is None, e[2].top)):
+        cell, label, box = entry
+        if cell.bbox is None:
+            middle = (box.top + box.bottom) / 2
+
+            def off(line: list[tuple[Cell, bool, BBox]]) -> float:
+                return abs((line[0][2].top + line[0][2].bottom) / 2 - middle)
+
+            near = [line for line in printed
+                    if any(other.bbox is not None and role == label for other, role, _ in line)
+                    and off(line) <= box.bottom - box.top]
+            if near:
+                home = min(near, key=off)
+                at = home[0][2]
+                home.append((cell, label, BBox(box.left, at.top, box.right, at.bottom)))
+                continue
+        line = next((line for line in printed if _same_line(box, line[0][2])), None)
+        if line is None:
+            printed.append([entry])
+        else:
+            line.append(entry)
+    printed.sort(key=lambda line: min(b.top for _, _, b in line))
+    style = f' style="{extra}"' if extra else ""
+    return (f'<section class="zone zone-{zones[0].role.value}"{style}>'
+            f'{_placed(zones[0], document, printed)}</section>')
+
+
+TITLE_LINE = 0.85
+"""How far down from a Zone's top to its first entry a Title drawn as a
+line reaches (`_title_line`): the Title holds no box of its own, and the
+rest is the gap the page leaves under it."""
+
+
+def _title_line(zone: Zone, below: float) -> tuple[Cell, bool, BBox]:
+    """A Zone's Title as a printed line of a grid (`_grid_unit`): a box from
+    the Zone's top to just above its first entry, at `below`, starting at
+    the Zone's left, at its right edge for a Title set flush right, or its
+    middle for one centred (`Zone.title_align`). Its look is the Title's:
+    its size, else the house Title's, bold, in its colour and capitals."""
+    assert zone.bbox is not None
+    box = zone.bbox
+    bottom = box.top + TITLE_LINE * max(below - box.top, 0.0)
+    at = {"right": box.right, "centre": (box.left + box.right) / 2}.get(
+        zone.title_align or "", box.left)
+    look = Look(size=zone.title_size or TITLE_EM, bold=True, color=zone.title_color,
+                caps=zone.title_caps or None)
+    drawn = BBox(at, box.top, at, bottom)
+    title = Cell(bbox=drawn, readings=[Reading(engine="title", text=zone.title or "")],
+                 look=look)
+    return title, False, drawn
+
+
+TITLE_EM = 0.95
+"""The house Title's size in ems of the body, as `STYLESHEET` draws
+`.zone-title`, for a Title drawn as a line with no measured size."""
 
 
 def _lanes(units: list[list[Zone]], document: Document,
@@ -1029,7 +1175,7 @@ def _style_css(document: Document) -> str:
     if _has_fields(document):
         rules.extend(FIELD_CSS)
     if any(zone.kind is Kind.PAIRS and zone.align not in TEXT_ALIGN
-           and _printed_lines(zone) is not None for zone in document.zones):
+           and _printed_lines(zone, document) is not None for zone in document.zones):
         rules.extend(PLACED_CSS)
     if _alone(document):
         rules.extend(LINE_CSS)
@@ -2564,7 +2710,7 @@ def _pairs(zone: Zone, document: Document) -> tuple[str, set[int]]:
         if drawn is not None:
             return drawn, set()
     lines = zone.align in TEXT_ALIGN
-    if not lines and (printed := _printed_lines(zone)) is not None:
+    if not lines and (printed := _printed_lines(zone, document)) is not None:
         return _placed(zone, document, printed), {id(c) for line in printed
                                                    for c, _, _ in line}
     summary = zone.role is Role.SUMMARY
@@ -2629,7 +2775,8 @@ def _labels_flush(zone: Zone, page: _Page) -> bool:
             < _spread([box.left for box in located], page))
 
 
-def _printed_lines(zone: Zone) -> list[list[tuple[Cell, bool, BBox]]] | None:
+def _printed_lines(zone: Zone, document: Document | None = None
+                   ) -> list[list[tuple[Cell, bool, BBox]]] | None:
     """A pairs Zone's entries by the lines the page prints them on, each
     with whether it is drawn as a label and its box — or None where a
     label and its value per line is what the page prints, and the `dl`
@@ -2649,14 +2796,17 @@ def _printed_lines(zone: Zone) -> list[list[tuple[Cell, bool, BBox]]] | None:
     - **2d, the Zone's extra lines** that are placed join the printed
       lines where they are printed — the ticket's `OSLO GARDERMOEN`
       under the name — once the pairs alone have decided the Zone is
-      drawn this way."""
+      drawn this way.
+
+    `document`, where given, is the page whose habit places an entry
+    nothing else does (`_inferred`'s third rule, spec 0016, 2d)."""
     entries = [(c, c is pair.label and (bool(pair.value.text.strip()) or bool(pair.marks)),
                 number)
                for number, pair in enumerate(zone.pairs)
                for c in (pair.label, pair.value) if c.text.strip()]
     if not entries:
         return None
-    boxes = _inferred(zone, entries)
+    boxes = _inferred(zone, entries, document)
     printed = _by_line(entries, boxes)
     if printed is None:
         return None
@@ -2702,9 +2852,10 @@ def _by_line(entries: list[tuple[Cell, bool, int]],
         boxes[id(c)].top for c, _, _ in line))  # type: ignore[union-attr]
 
 
-def _inferred(zone: Zone, entries: list[tuple[Cell, bool, int]]) -> dict[int, BBox | None]:
+def _inferred(zone: Zone, entries: list[tuple[Cell, bool, int]],
+              document: Document | None = None) -> dict[int, BBox | None]:
     """Each entry's box by `id`: its own, or for one `locate` placed
-    nowhere, the place its neighbours imply — spec 0015, 2b. Two rules,
+    nowhere, the place its neighbours imply — spec 0015, 2b. Three rules,
     in order, each from placed entries only:
 
     1. **Its partner's column**, on the line where the entries of its own
@@ -2723,6 +2874,12 @@ def _inferred(zone: Zone, entries: list[tuple[Cell, bool, int]]) -> dict[int, BB
        or beside it. So is `darkdeck_0009`'s `$2.14`: the next entry,
        `+9%`, starts where the tile's type starts, and the page prints the
        figure over it.
+    3. **Otherwise as the page sets every pair it placed** (`_habit`, spec
+       0016, 2d): where every pair of the page with both entries placed
+       sets its label over its value at its left edge, a label goes over
+       its placed value and a value under its placed label, as far from it
+       as the page sets them. `ticket_0020`'s `DEPARTS` and `CLASS`, which
+       tesseract never placed, go over `08:05` and `Economy`.
 
     A box implied is no wider than a point: it says where the entry
     starts and on which line. It is the render's, never the IR's."""
@@ -2735,8 +2892,42 @@ def _inferred(zone: Zone, entries: list[tuple[Cell, bool, int]]) -> dict[int, BB
         partner = pair.value if mine is pair.label else pair.label
         there = partner.bbox if partner.text.strip() else None
         boxes[id(mine)] = (_in_column(zone, pair, mine is pair.label, there)
-                           or _before_next(entries, index, partner, there, placed))
+                           or _before_next(entries, index, partner, there, placed)
+                           or _habit(document, there, mine is pair.label))
     return boxes
+
+
+HABIT = 3
+"""How many pairs a page sets with both entries placed, for how it sets them
+to say where it sets one with an entry placed nowhere (`_habit`)."""
+
+
+def _habit(document: Document | None, there: BBox | None, label: bool) -> BBox | None:
+    """Where an entry goes beside its placed partner `there`, by the page's
+    habit: where every pair of the page with both entries placed — at least
+    `HABIT` of them — sets its label over its value with their left edges
+    within a body glyph, a label goes over `there` and a value under it, as
+    far from it and as tall as the page's medians.
+
+    The habit has to be unanimous. `form_0007` sets most labels over their
+    values and some beside them, so nothing is placed there by it."""
+    if document is None or there is None:
+        return None
+    page = _page(document)
+    both = [(p.label.bbox, p.value.bbox) for zone in document.zones if zone.kind is Kind.PAIRS
+            for p in zone.pairs if p.label.bbox is not None and p.value.bbox is not None
+            and p.label.text.strip() and p.value.text.strip()]
+    placed = [(lab, val) for lab, val in both if lab is not None and val is not None]
+    if len(placed) < HABIT or not all(
+            lab.bottom <= val.top and abs(lab.left - val.left) * page.x <= page.body
+            for lab, val in placed):
+        return None
+    gap = float(median(val.top - lab.bottom for lab, val in placed))
+    if label:
+        high = float(median(lab.bottom - lab.top for lab, _ in placed))
+        return BBox(there.left, there.top - gap - high, there.left, there.top - gap)
+    high = float(median(val.bottom - val.top for _, val in placed))
+    return BBox(there.left, there.bottom + gap, there.left, there.bottom + gap + high)
 
 
 def _in_column(zone: Zone, pair: Pair, label: bool, there: BBox | None) -> BBox | None:
