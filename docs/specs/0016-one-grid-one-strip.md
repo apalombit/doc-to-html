@@ -476,6 +476,40 @@ At the step-4 commit, each loop taken against the step before:
 
 Suite 1234 passed, 1 skipped; `mypy src` clean.
 
+### Outcome — step 4, the targeted run: STOPPED, a moved crop answered differently
+
+`S12-4-ticket`, `FIXTURE=ticket_0020 tools/iterate.sh` at `b03555e`,
+4m26s. Sheet: `debug/runs/S12-4-ticket/_review/`. **19 calls, as
+predicted, and the fourteen before the re-reads answered byte for byte
+as `s11-result/`.** The re-reads are not the five §5 expected:
+
+| re-read | crop | answer |
+|---|---|---|
+| **new**: one word of the stub strip's white `NORDLYS AIR` [0.826–0.857, 0.052] | `NORDLYS` | `NORDLYS` — drawn at the stub's foot, unplaced |
+| the gate note's first line | **only `…utes before`** [0.918–0.952], where `s11-result/` cut the whole line [0.784–0.952] | **`autos before`** |
+| `departure`, `OSL` | as before | as before |
+| `OSLO GARDERMOEN` | moved by a pixel | as before |
+| `NL 0482` | not asked: tesseract now places it itself | — |
+
+**Why.** With z5 gone the body glyph measures 9.0px, not 8.0, and
+tesseract's first read of the stub changes. Of the note's first line
+only `before` is read with confidence, and `locate.unclaimed` cuts the
+re-read crop round the confident words, so the model is shown
+`…utes before`. 4c boxes the line by all its words where it is *placed*,
+not where it is *read*. And one word of the stub strip's own text is
+now read confidently, so it is flagged unclaimed and read again.
+`vanished` on the ticket: `air nordlys` → `20 air closes minutes`;
+`autos` invented.
+
+The main pane is as §1 says: one strip at the page's height with no
+`The`, `TRD` at display size, the four-column grid.
+
+**Tried offline, not kept:** boxing an *unclaimed* line by all its words
+(4c's rule applied to the crop) brings the note's whole line back into
+its crop, and also moves one re-read crop on the catalogue and two on
+the timetable (`S12-4x-replay`), so it cannot be proven without the
+model. **The sweep waits on Alessandro's call.**
+
 **Where to look.** `orchestrator.recovered_zones`, `Conversion._cover_the_page`,
 `preprocess.uncovered_regions`, `MAX_RECOVERED_SHARE`,
 `MIN_RECOVERED_INK`, `MIN_RECOVERED_PX`; `furniture.find`;
