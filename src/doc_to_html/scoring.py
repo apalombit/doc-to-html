@@ -812,6 +812,10 @@ def score_document(source: Source, output_html: Path, *, work: Path,
     disk rather than from re-rendering its HTML: the PNG is what the model was
     actually shown, and four of the five original documents no longer re-render
     to their screenshot byte for byte.
+
+    The source is measured in its paper's frame (`project(flat=True)`, spec
+    0018, 0b): `ticket_0020` sets `rotate(-1.5deg)` on its card, and about a
+    third of its `beside` disagreement was that tilt.
     """
     from PIL import Image
 
@@ -820,7 +824,7 @@ def score_document(source: Source, output_html: Path, *, work: Path,
     source_text = source.html_path(root).read_text(encoding="utf-8")
     output_text = output_html.read_text(encoding="utf-8")
 
-    mine = project(source_text, width=width, label=f"{source.name}/source")
+    mine = project(source_text, width=width, label=f"{source.name}/source", flat=True)
     theirs = project(output_text, width=width, label=f"{source.name}/output")
 
     work.mkdir(parents=True, exist_ok=True)

@@ -370,3 +370,48 @@ class TestALabelWithNoValueDoesNotSizeTheLabelColumn:
         assert page.clipped == 0
         assert sum(block.text == "Suffolk pattern, 265 mm, beeswax"
                    for block in page.blocks) == 3
+
+
+class TestTheSourceInItsPapersFrame:
+    """Spec 0018, 0b — `project(flat=True)` clears a turn the page sets on
+    itself before measuring. `getClientRects` returns upright boxes round
+    tilted lines, which stood `ticket_0020`'s `TRD` 15px above `OSL`."""
+
+    PAGE = ("<!doctype html><html><body style='margin:0'>"
+            "<div style='width:600px; transform:{transform}'>"
+            "<span style='float:left'>LEFT</span>"
+            "<span style='float:right'>RIGHT</span></div></body></html>")
+
+    def tops(self, transform: str, *, flat: bool) -> dict[str, float]:
+        page = project(self.PAGE.format(transform=transform), width=700, flat=flat)
+        return {run.text: run.rect[1] for run in page.runs}
+
+    def lefts(self, transform: str, *, flat: bool) -> dict[str, float]:
+        page = project(self.PAGE.format(transform=transform), width=700, flat=flat)
+        return {run.text: run.rect[0] for run in page.runs}
+
+    @needs_chrome
+    def test_a_turned_page_is_measured_level(self) -> None:
+        turned = self.tops("rotate(-3deg)", flat=False)
+        assert abs(turned["LEFT"] - turned["RIGHT"]) > 10
+        level = self.tops("rotate(-3deg)", flat=True)
+        assert level["LEFT"] == level["RIGHT"]
+
+    @needs_chrome
+    def test_a_translation_stays(self) -> None:
+        moved = self.lefts("translateX(40px)", flat=True)
+        assert moved == self.lefts("translateX(40px)", flat=False)
+        assert moved["LEFT"] == 40
+
+    @needs_chrome
+    def test_the_corpus_ticket_is_the_only_turned_source(self) -> None:
+        """Every other source measures alike flat or not: `menu_0012` and
+        `pricing_0017` set only `translateX`."""
+        for name in ("ticket_0020", "menu_0012", "pricing_0017"):
+            source = corpus.SOURCES[name]
+            text = source.html_path().read_text(encoding="utf-8")
+            from PIL import Image
+            width = Image.open(source.png_path()).width
+            moved = project(text, width=width).runs != project(
+                text, width=width, flat=True).runs
+            assert moved == (name == "ticket_0020"), name

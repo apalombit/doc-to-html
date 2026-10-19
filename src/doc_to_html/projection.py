@@ -426,6 +426,38 @@ MEASURE = r"""
 """
 
 
+FLATTEN = r"""
+(() => {
+  // Spec 0018, 0b: the source measured in its paper's frame. A transform
+  // moves no layout, so a page turned, skewed or set in perspective by its
+  // own CSS is measured as it lies before the turn; a pure translation (and a
+  // scale) stays. `getClientRects` returns upright boxes round tilted lines,
+  // which stood `ticket_0020`'s `TRD` 15px above `OSL`.
+  const turned = (value) => {
+    if (!value || value === 'none') return false;
+    const numbers = value.slice(value.indexOf('(') + 1, -1).split(',').map(parseFloat);
+    const at = value.startsWith('matrix3d') ? [1, 2, 3, 4, 6, 7, 8, 9, 11] : [1, 2];
+    return at.some((index) => Math.abs(numbers[index] || 0) > 1e-9);
+  };
+  for (const element of document.querySelectorAll('*')) {
+    const style = getComputedStyle(element);
+    if (turned(style.transform)) element.style.setProperty('transform', 'none', 'important');
+    if (style.rotate && style.rotate !== 'none') element.style.setProperty('rotate', 'none', 'important');
+    if (style.perspective && style.perspective !== 'none') {
+      element.style.setProperty('perspective', 'none', 'important');
+    }
+  }
+})();
+"""
+"""Run before `MEASURE` on a source page — `project(..., flat=True)`.
+
+Which matrix entries turn a page: in `matrix(a, b, c, d, e, f)` the
+off-diagonal `b` and `c`; in `matrix3d`, column-major, every off-diagonal
+entry of the linear part and the three perspective terms. `rotate` and
+`perspective` are their own properties and are cleared outright.
+"""
+
+
 @dataclass(frozen=True)
 class Run:
     """One text node as it was actually drawn: what it says and where it landed."""
@@ -552,8 +584,9 @@ class ProjectionError(RuntimeError):
     """The browser did not answer, so there is nothing to compare."""
 
 
-def _run_chrome(html: str, width: int, height: int) -> dict[str, Any]:
-    injected = _inject(html)
+def _run_chrome(html: str, width: int, height: int, *, flat: bool = False
+                ) -> dict[str, Any]:
+    injected = _inject(html, flat=flat)
     with tempfile.TemporaryDirectory() as work:
         target = Path(work) / "measured.html"
         target.write_text(injected, encoding="utf-8")
@@ -576,14 +609,16 @@ def _run_chrome(html: str, width: int, height: int) -> dict[str, Any]:
     return payload
 
 
-def _inject(html: str) -> str:
+def _inject(html: str, *, flat: bool = False) -> str:
     """Put the measuring script in, wherever the document lets us.
 
     Appended to `</body>` when there is one and to the end otherwise, because
-    `render.py` always writes one and a hand-authored page might not.
+    `render.py` always writes one and a hand-authored page might not. With
+    `flat`, `FLATTEN` runs first.
     """
     script = (
-        "<script>window.addEventListener('load', () => {" + MEASURE + "});</script>"
+        "<script>window.addEventListener('load', () => {"
+        + (FLATTEN if flat else "") + MEASURE + "});</script>"
     )
     if "</body>" in html:
         return html.replace("</body>", script + "</body>", 1)
@@ -591,7 +626,7 @@ def _inject(html: str) -> str:
 
 
 def project(html: Path | str, *, width: int, height: int = 3000,
-            label: str = "") -> Projection:
+            label: str = "", flat: bool = False) -> Projection:
     """Read one page the way a reader sees it, at a stated width.
 
     `width` is always the **source document's** width, on both sides. A page
@@ -602,6 +637,12 @@ def project(html: Path | str, *, width: int, height: int = 3000,
     `height` is the viewport the browser is given, not a constraint on the page —
     it is returned to 3000 so nothing short is clipped mid-measurement, and the
     page's own `scrollHeight` is what comes back as `Projection.height`.
+
+    `flat` measures the page in its paper's frame, every turning transform
+    cleared first (`FLATTEN`) — spec 0018, 0b. The scorer sets it on the
+    source side only: the corpus's ground truth is its HTML, and a render is
+    drawn level, so a turn the source sets on itself would otherwise be
+    scored as the conversion's fault.
     """
     if not available():
         raise ProjectionError(f"no headless Chrome at {CHROME}")
@@ -613,7 +654,7 @@ def project(html: Path | str, *, width: int, height: int = 3000,
             f"{MIN_WIDTH}px; measured at {MIN_WIDTH}px"
         )
         width = MIN_WIDTH
-    payload = _run_chrome(text, width, height)
+    payload = _run_chrome(text, width, height, flat=flat)
 
     def rect(values: Any) -> tuple[float, float, float, float]:
         left, top, right, bottom = (float(value) for value in values)

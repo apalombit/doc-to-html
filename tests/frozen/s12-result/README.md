@@ -23,6 +23,15 @@ It has the same shape as `s11-result/`:
   0016 changed no question the model was asked.
 - **`dth_env.txt`**: the `DTH_*` variables the sweep ran under. There are
   none, so these are the shipped defaults.
+- **`scores-paper-frame.json`**: the same twenty-one documents re-scored on
+  2026-10-19 by spec 0018's 0b scorer, which measures the source in its
+  paper's frame (`project(flat=True)`). **Against `scores.json`, 4 fields
+  differ, all the ticket's**: `beside_agreement` 0.393 → 0.588,
+  `beside_pairs` 56 → 51, `column_error` 0.156 → 0.195,
+  `columns_within_tolerance` 0.581 → 0.700. Every other document is
+  identical. **Score later runs against this file**, so their deltas
+  measure the conversion and not the scorer:
+  `--previous tests/frozen/s12-result/scores-paper-frame.json`.
 
 ## Provenance
 
