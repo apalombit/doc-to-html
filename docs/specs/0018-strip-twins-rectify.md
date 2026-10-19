@@ -609,7 +609,7 @@ The code was removed; `RECTIFIER_VERSION` stays 7.
 
 ## The sweep
 
-**One sweep, `S13-sweep`, all 21 pages, after C4.**
+**One sweep, `S13-sweep`, all 21 pages, after C4** (dropped: the sweep measures Part 0, A1, B1 and C1).
 - **Register the prediction first**, from the replay's ASKED DIFFERENTLY
   list, as specs 0012–0016 did. C4 changes every picture, so expect every
   page to be asked differently.
@@ -622,6 +622,29 @@ The code was removed; `RECTIFIER_VERSION` stays 7.
   directions ranked, recommendation. The ticket first, then each page
   better / same / worse, in one sentence each.
 - **The baseline decision is Alessandro's.**
+
+### The sweep's prediction — registered 2026-10-19
+
+C4 was dropped, so the sweep measures Part 0, A1, B1 and C1. No other
+picture moves. Taken at `ce5fd6e`, the sweep's code, with two replays:
+- `S13-P-replay`, a replay of `s12-result/`;
+- `S13-P-a1replay`, a replay of `S13-A1-run`'s answers. That is A1's
+  targeted run, the last run whose crops these three pages share.
+
+1. **Eighteen pages are asked as `s12-result/` asked them.** Every call is
+   asked alike — the replay marks 0 asked differently — and answered byte
+   for byte the same. Their renders are byte-identical to `S13-P-replay`:
+   catalogue, certificate, darkdeck, form, invoice_0001, invoice_0002,
+   letter, menu, newsletter, nonlatin, paper, receipt, report, sample_css,
+   sample_semantic, sample_table, statement and timetable.
+2. **cv, pricing and the ticket are asked as `S13-A1-run` asked them.** A1
+   moved their crops. The replay of that run marks 0 asked differently.
+   Their renders are byte-identical to `S13-P-a1replay`.
+3. **755 calls in all**, where `s12-result/` asked 749: cv 97 → 105,
+   ticket 22 → 20, pricing 70 as before.
+
+So the sweep checks that the model answers as it did. The pages are judged
+on what A1, B1 and C1 drew, and against `S12-sweep`'s sheets.
 
 ---
 
