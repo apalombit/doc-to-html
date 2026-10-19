@@ -1,0 +1,191 @@
+{
+ "calls": [
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"ELDER STREET CAFE\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "577cb770162d",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "07faef1ef1d8",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Till 02 Op. NADIA\",\n  \"line_is\": \"header\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "362e8bdd2ba4",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "362e8bdd2ba4",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "fd94471978dc",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"figure\",\n  \"graphic\": \"logo\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "8cea30ec5cb0",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"0 04418 29102 6\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "6f3f301bb708",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "6f3f301bb708",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"ELDER STREET CAFE\"\n      ]\n    },\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"12 Elder Street\",\n        \"Castleton CT9 2BN\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"01632 960 118\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "577cb770162d",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"Elder Street Cafe\",\n      \"kind\": \"strong\"\n    },\n    {\n      \"text\": \"12 Elder Street\",\n      \"kind\": \"em\"\n    },\n    {\n      \"text\": \"Castleton CT9 2BN\",\n      \"kind\": \"em\"\n    },\n    {\n      \"text\": \"01632 960 118\",\n      \"kind\": \"em\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "577cb770162d",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "table",
+   "answer": "{\n  \"rows\": [\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"Till 02 Op. NADIA\",\n        \"\",\n        \"29/08/2026\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"Order 00418\",\n        \"\",\n        \"13:47\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"1\",\n        \"Flat white\",\n        \"3.40\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"\",\n        \"oat milk\",\n        \"0.40\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"2\",\n        \"Cortado\",\n        \"6.20\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"1\",\n        \"Toast, sourdough\",\n        \"3.10\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"\",\n        \"extra butter\",\n        \"0.30\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"1\",\n        \"Bacon roll\",\n        \"5.75\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"3\",\n        \"Shortbread\",\n        \"4.50\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"1\",\n        \"Elderflower press\",\n        \"2.80\"\n      ]\n    },\n    {\n      \"role\": \"summary\",\n      \"cells\": [\n        \"Subtotal\",\n        \"\",\n        \"26.45\"\n      ]\n    },\n    {\n      \"role\": \"summary\",\n      \"cells\": [\n        \"Service 10%\",\n        \"\",\n        \"2.65\"\n      ]\n    },\n    {\n      \"role\": \"summary\",\n      \"cells\": [\n        \"VAT @ 20%\",\n        \"\",\n        \"4.85\"\n      ]\n    },\n    {\n      \"role\": \"summary\",\n      \"cells\": [\n        \"TOTAL\",\n        \"\",\n        \"29.10\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Card ***4417\",\n        \"\",\n        \"29.10\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Change\",\n        \"\",\n        \"0.00\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"AID A000000031010\",\n        \"\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"Auth 084417\",\n        \"\",\n        \"CONTACTLESS\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "8164cb2f78c9",
+    "picture": "362e8bdd2ba4",
+    "schema": "32d195a8c340"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"THANK YOU – PLEASE CALL AGAIN\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "fd94471978dc",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "fd94471978dc",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "figure",
+   "answer": "{\n  \"graphic\": \"logo\",\n  \"text\": []\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "2bd08d0c016f",
+    "picture": "8cea30ec5cb0",
+    "schema": "076cd0b9aaab"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"0 04418 29102 6\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"VAT reg. 442 7719 03\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Retain for your records\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "6f3f301bb708",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"0 04418 29102 6\",\n      \"kind\": \"code\"\n    },\n    {\n      \"text\": \"VAT reg. 442 7719 03\",\n      \"kind\": \"code\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "6f3f301bb708",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"AID A00000000031010\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "8453bdf502e0",
+    "schema": "2a31e0885054"
+   }
+  }
+ ]
+}

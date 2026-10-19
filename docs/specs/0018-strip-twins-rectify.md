@@ -1,7 +1,6 @@
 # The strip as the page draws it, photographed pages, and the straightening step
 
-**Status: done 2026-10-19, issue #41; the baseline decision is
-Alessandro's.**
+**Status: done and decided 2026-10-19, issue #41 closed.**
 - **Shipped:** Part 0 (0a, 0b, 0c), A1, B0, B1 and C1.
 - **Measured and dropped, each on his decision:** A2, C2 and C4. C3 was
   skipped.
@@ -9,7 +8,8 @@ Alessandro's.**
   Against `S12-sweep`, by eye: three pages better (the ticket, pricing, cv),
   eighteen the same, none worse. "Outcome — the sweep" is at the end.
 
-The baseline is still `tests/frozen/s12-result/` until he decides.
+**Alessandro took `S13-sweep` as the baseline**, frozen as
+`tests/frozen/s13-result/`.
 
 ## Alessandro's decisions, 2026-10-18 and 2026-10-19
 
@@ -778,11 +778,17 @@ it as `tests/frozen/s13-result/` with its 755 answers. Then open direction
 1 as the next spec if Part C's aim is still wanted, or direction 2 if
 reading matters more.
 
-**The decision is Alessandro's.**
+**Decided 2026-10-19: Alessandro agreed.** `S13-sweep` was frozen as
+`tests/frozen/s13-result/` with its 755 answers, and proved at `e33d246`'s
+code:
+- the answers against the sweep's traces: 0 differ;
+- replay: 21 of 21 byte-identical, 0 asked differently;
+- rederive: 21 of 21;
+- the rederive scored: 0 differing fields.
 
 ---
 
-## Handover — after the sweep
+## Handover — after the sweep (carried out 2026-10-19)
 
 > Spec 0018 (`docs/specs/0018-strip-twins-rectify.md`, issue #41) is done,
 > and its sweep `S13-sweep` waits on Alessandro's baseline decision. Read
