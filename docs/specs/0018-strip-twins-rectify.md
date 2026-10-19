@@ -537,6 +537,74 @@ true corners: MAD about 8% lower on every page.
   run of the pages §2a names (cv, ticket, timetable, catalogue) before the
   sweep.
 
+**C4 was measured and dropped — Alessandro, 2026-10-19.** Built as written:
+- **The light, read off the paper alone** (`illumination`): the pixels of
+  the paper's own chroma, in 8px blocks, each block's level the brighter
+  tenth of its paper. Neighbours within 2 levels are joined, and the largest
+  such stretch is the paper. Where its level ranges more than 10, a
+  quadratic fitted to it is divided out; otherwise nothing is.
+- **CLAHE stays**, measured on its own: it lifts no ink on any page. The
+  catalogue's invented ink (1.23%) was the old division's, not CLAHE's
+  (0.16%).
+
+**The measure was right.**
+- **Light ranges:** every corpus page 0–2 levels, every unshaded twin 0–7,
+  every shaded twin 14–21. The exception is the dark deck's shaded twin, at
+  4.7, where a twelfth of a dark page's light is a few levels.
+- **No corpus page is divided.** §2a's table under it: lifted 0.00% on every
+  page (the ticket 0.01%), invented 0.05–0.85% (the receipt's paper edge,
+  as before). The halos are gone at their source.
+- **At 16px blocks,** `TestPhotometry`'s shadow (65% of the light across
+  the invoice) stepped 3 levels a block and fell apart into strips judged
+  even. 8px blocks hold it.
+
+**It moved 15 of 21 pages' crops.** The replay `S13-C4-replay` marks 15
+pages ASKED DIFFERENTLY. On the layout front the Zones move on 11:
+- each catalogue card's Zone snaps inside its card;
+- invoice_0002's logo joins the company name;
+- pricing, sample_semantic, paper and cv regroup.
+
+**The targeted run `S13-C4-run`** (ticket, cv, timetable, catalogue,
+invoice_0002, pricing, sample_semantic, paper), by eye against the step
+before (`S13-A1-run` rederived at `e33d246` for the ticket, cv and pricing;
+`S13-C1-head-replay` for the rest):
+- **ticket, worse.** The gate note is lost: `auts before` where it read
+  "Gate closes 20 minutes before departure". The stub's Zone is now tighter
+  (left 0.735 → 0.761, foot 1.0 → 0.957). On that crop tesseract is sure of
+  one word of the note, and the re-read is a sliver. `departure` sits 1px
+  above the Zone's foot and is no longer found.
+- **catalogue, worse.** Five SKU chips vanish (BR-114, IR-207, OK-341,
+  CP-418, SC-501), and two drop into their card's body. The price rows
+  break into bullets. The cards' Zones had stood on the borders and hatching
+  the old division made ink; now each sits inside its card, with the chips
+  on its edge.
+- **timetable, worse.** The Zones are the same, but with its cell fills no
+  longer lifted the model reads the grid wrongly. Rows merge, and the rooms
+  and the legend go under the table as a list.
+- **invoice_0002, worse.** The logo is no longer drawn.
+- **cv, worse on balance.** "Registration" is split into a two-column table,
+  the e-mail domain is a faint link on the navy, and `Python` is drawn
+  larger than its peers. Revit and Python do line up with the others.
+- **paper and sample_semantic, slightly worse.** The display equation runs
+  into its line; the quote becomes a bullet.
+- **pricing, the same.**
+
+**On the twins,** against C1:
+- cv, certificate and sample_semantic better on every twin;
+- darkdeck (12/17 → 7/17 on three twins) and menu worse;
+- the shaded twins lose 10 Zones where they lost 17.
+
+MAD is read on the unequalised picture, so C4 cannot move it (B1's list,
+fault 8).
+
+**Why it fails.** §2a said it: the cover step, the snap, `INK_LEVEL` and the
+model's crops are tuned to the divided picture, and lean on the ink it
+invents — card borders, hatching, cells lifted to white. Equalising only
+uneven light is right about the light. It needs those stages re-tuned to
+the picture as printed first, and that is a spec of its own.
+
+The code was removed; `RECTIFIER_VERSION` stays 7.
+
 ---
 
 ## The sweep
