@@ -1,15 +1,17 @@
-# Status — 2026-10-18 (**the baseline is `tests/frozen/s12-result/`; spec 0017 built, render only, Alessandro's decision pending**)
+# Status — 2026-10-19 (**the baseline is `tests/frozen/s12-result/`; spec 0017 kept; spec 0018 planned, not started**)
 
 **Live document.** This is where the project actually is. When it goes stale,
-rewrite it; do not add a banner and leave it. Last rewritten 2026-10-18,
-after spec 0017's two render steps (issue #40), built on spec 0016's
-sweep `S12-sweep`, which Alessandro took as the baseline the same day.
+rewrite it; do not add a banner and leave it. Last rewritten 2026-10-19,
+when spec 0017 was kept (issue #40 closed) and spec 0018 planned (issue
+#41). The baseline is spec 0016's sweep `S12-sweep`.
 
 Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file, then
-[`specs/0017-margins-and-roles.md`](specs/0017-margins-and-roles.md),
-the open spec, built and awaiting his decision, and
+[`specs/0018-strip-twins-rectify.md`](specs/0018-strip-twins-rectify.md),
+the open spec, not started (its handover prompt marked *current* starts
+a session), then
+[`specs/0017-margins-and-roles.md`](specs/0017-margins-and-roles.md) and
 [`specs/0016-one-grid-one-strip.md`](specs/0016-one-grid-one-strip.md)
 for the ticket's history. If you are going to
 look at output — and you should — use the **`visual-review` skill**.
@@ -92,8 +94,15 @@ Spec 0017   Margins from the type, one size per role — planned 2026-10-18
               1 margins from the type (1a row inset, 1b box to type)  DONE
               2 one size per role (2a groups, 2b Title as a label)    DONE
               ticket better, catalogue same (1px), nineteen identical
-              DECISION PENDING; directions 3 and 4 (photographed pages,
-              Zones from drawn containers) a spec of their own after it
+              DECIDED 2026-10-19: kept, "useful per se but minor"
+Spec 0018   The strip as the page draws it, photographed pages, the
+              straightening step — planned 2026-10-19, issue #41:
+              A1 ink against its local ground   A2 a strip one container
+                 then S13-sweep
+              B0 the twins, model-free   B1 repair what they find
+              C1 outline  C2 corners  C3 cubic  C4 equalise only uneven
+                 light, never a fill; then S14-sweep
+              NOT STARTED
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are

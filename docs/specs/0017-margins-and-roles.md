@@ -1,6 +1,6 @@
 # Margins from the type, one size per role
 
-**Status: built 2026-10-18, issue #40; the decision is Alessandro's.**
+**Status: done and kept, 2026-10-19, issue #40 closed** — Alessandro: "useful per se but minor improvements". Next: spec 0018.
 Both steps are render-only: no model call, no IR change, no sweep. They are
 measured with `tools/rederive.py` over `tests/frozen/s12-result/`, and every
 one of the 21 rederived IRs is byte-identical to the baseline's.

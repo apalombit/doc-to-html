@@ -36,11 +36,12 @@ trial axis is kept rather than rejected.
 
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
-measured numbers and what has already been tried and rejected. **0017 is
-open** — issue #40, two render steps built 2026-10-18, Alessandro's
-decision pending. 0016 (issue #39) is done and decided, swept as
-`S12-sweep`, the baseline. 0008 to 0015 (issues #31–#38) are done and
-decided. 0007 still defines the target.
+measured numbers and what has already been tried and rejected. **0018 is
+the open spec** — issue #41, planned 2026-10-19, not started; its handover
+prompt marked *current* starts a session. 0017 (issue #40) is done and
+kept; 0016 (issue #39) is done and decided, swept as `S12-sweep`, the
+baseline. 0008 to 0015 (issues #31–#38) are done and decided. 0007 still
+defines the target.
 
 ---
 
@@ -65,7 +66,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-18: the baseline is `tests/frozen/s12-result/`, spec 0016's sweep; spec 0017's two render steps are built, his decision pending. Work is judged by eye.**
+**Where the project is — 2026-10-19: the baseline is `tests/frozen/s12-result/`, spec 0016's sweep, drawn by today's code with spec 0017's render steps; spec 0018 planned, not started. Work is judged by eye.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -179,8 +180,15 @@ Spec 0017   Margins from the type, one size per role — planned 2026-10-18
               from his review of S12-sweep's ticket, issue #40; render only:
               1 margins from the type    2 one size per role    each DONE
               rederived over s12-result/: ticket better, catalogue same,
-              nineteen byte-identical. DECISION PENDING; directions 3 and
-              4 (photographed pages, Zones from drawn containers) next
+              nineteen byte-identical. KEPT 2026-10-19, issue #40 closed
+Spec 0018   The strip as the page draws it, photographed pages, and the
+              straightening step — planned 2026-10-19, issue #41:
+              A the ticket's banner: A1 ink against its local ground,
+                A2 a drawn strip one container; then S13-sweep
+              B photographed pages: B0 the twins (model-free), B1 repairs
+              C rectify: C1 outline, C2 corners, C3 cubic warp, C4 equalise
+                only uneven light, never a fill; then S14-sweep
+              NOT STARTED
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
@@ -639,7 +647,7 @@ each other — `CellState.DISPUTED` and the Ladder are already the vocabulary fo
 it, and `_climb_ladders` already records that it waits on a second Engine. That
 is model time and Alessandro's decision, not a detector.
 
-**Tracker state, 2026-10-18: one open issue — #40, spec 0017, built, his decision pending.** #31–#39 (specs 0008–0016) are closed, each done and decided. #30 (spec 0007) closed when its
+**Tracker state, 2026-10-19: one open issue — #41, spec 0018, not started.** #31–#40 (specs 0008–0017) are closed, each done and decided. #30 (spec 0007) closed when its
 work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
 #17 (the vision layout prompt) were closed by Thread 0. Every other spec is closed
 history; 0007 still defines the target.
