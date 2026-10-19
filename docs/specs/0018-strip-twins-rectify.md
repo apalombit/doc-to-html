@@ -287,6 +287,29 @@ Review and scoring tools only. No model call, and no change to a conversion.
 - **Not expected:** `NORDLYS AIR` read as text (§1).
 - It moves crops, so it is proved on a targeted run.
 
+**A2 was measured and dropped — Alessandro, 2026-10-19.** Built as written:
+`furniture.strips` found each piece of a solid fill, by its own colour, that
+carries one printed line; `structure.one_per_strip`, after the snap, cut a
+Zone at a strip's top and bottom edges and merged the Zones whose middles lay
+in one strip.
+- **First, it fired beyond the ticket.** It cut `form_0007`'s section bars
+  and `nonlatin_0014`'s panel heads from the content under them, one cut
+  leaving a 1px Zone. Restricted to fills that two Zones at least stand on, it
+  moved the ticket alone on the layout front.
+- **Targeted run `S13-A2-run`: worse.** On the merged crop, the caption pass
+  read `NORDLYS AIR` as the Zone's Title and `BOARDING PASS` as a heading
+  block, and the two were drawn stacked: the strip was two rows tall again.
+  The stub's strip did read `NORDLYS AIR`. The stub's body was read as a table
+  titled `PASSENGER`, and the perforation's two panes were lost. With the stub
+  cut, the two strips sit in one row and the two bodies in another, so
+  `_columns` finds no independent lanes.
+- **The cut alone, `S13-A2c-run`: mixed.** The strip stayed one row and the
+  stub's `NORDLYS AIR` was drawn. The panes were still lost, the gate note
+  rose under the fields, and `BOARDING PASS` stood mid-strip, not flush right.
+- **A1 alone already meets the banner's aim:** one strip row, no `The`. The
+  stub's `NORDLYS AIR` stays unread, and since the main strip prints the same
+  word, nothing vanishes. The code was removed.
+
 ---
 
 ## Part B — photographed pages laid out like shot ones (direction 3)
