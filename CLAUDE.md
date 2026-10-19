@@ -38,7 +38,7 @@ Each piece of work gets a spec in `docs/specs/`, one file per piece of work, eac
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
 measured numbers and what has already been tried and rejected. **0018 is
 the open spec** — issue #41, planned 2026-10-19, not started; its handover
-prompt marked *current* starts a session. 0017 (issue #40) is done and
+prompt starts a session. 0017 (issue #40) is done and
 kept; 0016 (issue #39) is done and decided, swept as `S12-sweep`, the
 baseline. 0008 to 0015 (issues #31–#38) are done and decided. 0007 still
 defines the target.
@@ -183,12 +183,15 @@ Spec 0017   Margins from the type, one size per role — planned 2026-10-18
               nineteen byte-identical. KEPT 2026-10-19, issue #40 closed
 Spec 0018   The strip as the page draws it, photographed pages, and the
               straightening step — planned 2026-10-19, issue #41:
+              0 compare in the photograph's frame: the render
+                re-photographed and overlaid, the scorer in the paper's
+                frame, the box pictures on the rectified page
               A the ticket's banner: A1 ink against its local ground,
                 A2 a drawn strip one container
               B photographed pages: B0 the twins (model-free), B1 repairs
               C rectify: C1 outline, C2 corners, C3 cubic warp, C4 equalise
                 only uneven light, never a fill
-              one sweep, S13-sweep, at the end of all three
+              one sweep, S13-sweep, at the very end
               NOT STARTED
 ```
 

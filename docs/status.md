@@ -9,8 +9,7 @@ Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
 [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
 (authoritative), then this file, then
 [`specs/0018-strip-twins-rectify.md`](specs/0018-strip-twins-rectify.md),
-the open spec, not started (its handover prompt marked *current* starts
-a session), then
+the open spec, not started (its handover prompt starts a session), then
 [`specs/0017-margins-and-roles.md`](specs/0017-margins-and-roles.md) and
 [`specs/0016-one-grid-one-strip.md`](specs/0016-one-grid-one-strip.md)
 for the ticket's history. If you are going to
@@ -97,11 +96,14 @@ Spec 0017   Margins from the type, one size per role — planned 2026-10-18
               DECIDED 2026-10-19: kept, "useful per se but minor"
 Spec 0018   The strip as the page draws it, photographed pages, the
               straightening step — planned 2026-10-19, issue #41:
+              0 compare in the photograph's frame: 0a the render
+                re-photographed + overlay, 0b scorer in the paper's frame,
+                0c the box pictures on the rectified page
               A1 ink against its local ground   A2 a strip one container
               B0 the twins, model-free   B1 repair what they find
               C1 outline  C2 corners  C3 cubic  C4 equalise only uneven
                  light, never a fill
-              one sweep, S13-sweep, at the end of all three
+              one sweep, S13-sweep, at the very end
               NOT STARTED
 ```
 
