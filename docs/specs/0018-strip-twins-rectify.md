@@ -762,6 +762,9 @@ type, marks, borrowed looks, bold:
 
 #### 5. Directions, ranked
 
+**All four were taken up together by spec 0019** (issue #42), on
+Alessandro's decision of 2026-10-19.
+
 | # | direction | why first | evidence |
 |---|---|---|---|
 | 1 | **The detector's grouping, steady under a changed picture** | It blocked the whole of Part C. C1's loose read, C2 and C4 each had their geometry or light right, and each made pages worse only through the detector regrouping the page. No change to `rectify` can ship until a re-sampled page is grouped as the shot one | B0's fault 5: 16 of 21 pages regroup on resampling alone; `S13-C1-run`, `S13-C2-run`, `S13-C4-run` |

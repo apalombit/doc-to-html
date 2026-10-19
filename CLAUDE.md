@@ -36,10 +36,11 @@ trial axis is kept rather than rejected.
 
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
-measured numbers and what has already been tried and rejected. **0018 is
-done and decided** — issue #41, swept 2026-10-19 as `S13-sweep`, the
-baseline since. No spec is open. 0017 (issue #40) is done and kept; 0008
-to 0016 (issues #31–#39) are done and decided. 0007 still
+measured numbers and what has already been tried and rejected. **0019 is
+the open spec** — issue #42, planned 2026-10-19, not started; its handover
+prompt starts a session. 0018 (issue #41) is done and decided, swept
+2026-10-19 as `S13-sweep`, the baseline. 0017 (issue #40) is done and
+kept; 0008 to 0016 (issues #31–#39) are done and decided. 0007 still
 defines the target.
 
 ---
@@ -65,7 +66,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-19: the baseline is `tests/frozen/s13-result/`, spec 0018's sweep; nothing is open. Work is judged by eye.**
+**Where the project is — 2026-10-19: the baseline is `tests/frozen/s13-result/`, spec 0018's sweep; spec 0019 planned, not started, and nothing else open. Work is judged by eye.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -198,6 +199,21 @@ Spec 0018   The strip as the page draws it, photographed pages, and the
                  the byte, 3 pages better (ticket, pricing, cv), 18 same,
                  none worse
               DECIDED 2026-10-19: S13-sweep is the baseline, frozen as s13-result/
+RESET       2026-10-19, Alessandro: everything not in spec 0019 cleared
+Spec 0019   One grouping however the page is pictured, the structure the
+              IR lacks, the page's looks, readings checked — planned
+              2026-10-19, issue #42; spec 0018's four ranked directions,
+              together:
+              A grouping: A0 the jitter check, A1 container or parts on
+                what the page draws (checkpoint), A2 a targeted run
+              B structure: B1 spanning cells, B2 raised marks, B3 display
+                lines, B4 a pair's separator
+              C looks: C1 every entry placed and measured, C2 weight as
+                measured, C3 chips and discs, C4 drop caps, C5 faces
+              D readings: D1 tesseract's reading kept, D2 a third reading
+                where the two are near, D3 recorded
+              one sweep, S14-sweep, at the very end
+              NOT STARTED
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
@@ -241,13 +257,14 @@ table row by row. **Alessandro took `S12-sweep` as the baseline** on
 decided** — issue #41. Part 0, A1, B0, B1 and C1 shipped; A2, C2 and C4
 were measured and dropped, and C3 skipped. **Alessandro took `S13-sweep`
 as the baseline** on 2026-10-19, frozen as `tests/frozen/s13-result/`. Its
-"Outcome — the sweep" ranks four directions — record, not a queue.
+"Outcome — the sweep" ranked four directions, and spec 0019 takes up all
+four.
 
-**Everything else was cleared by
-Alessandro on 2026-10-18** — spec 0015's ranked directions, the faults
-left on `S11-sweep`'s other pages, display type, borrowed looks, marks,
-the stub strip's text, bold, the wordmark question and every earlier
-queue; do not pick anything up unless he names it.
+**Spec 0019, `docs/specs/0019-steady-checked-structured-styled.md`, is the
+open spec** — issue #42, not started. **Everything not in it was cleared by
+Alessandro on 2026-10-19**: every earlier queue, list and direction. The
+looks cleared on 2026-10-18 (display type, marks, bold) return only as
+its Part C names them. Do not pick anything up unless he names it.
 `docs/specs/0007-handover.md` holds spec 0007's prompts, as record.
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
@@ -667,7 +684,7 @@ each other — `CellState.DISPUTED` and the Ladder are already the vocabulary fo
 it, and `_climb_ladders` already records that it waits on a second Engine. That
 is model time and Alessandro's decision, not a detector.
 
-**Tracker state, 2026-10-19: no open issue.** #31–#41 (specs 0008–0018) are closed, each done and decided. #30 (spec 0007) closed when its
+**Tracker state, 2026-10-19: one open issue — #42, spec 0019, not started.** #31–#41 (specs 0008–0018) are closed, each done and decided. #30 (spec 0007) closed when its
 work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
 #17 (the vision layout prompt) were closed by Thread 0. Every other spec is closed
 history; 0007 still defines the target.

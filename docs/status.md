@@ -1,18 +1,20 @@
-# Status — 2026-10-19 (**the baseline is `tests/frozen/s13-result/`; spec 0018 done and decided; nothing open**)
+# Status — 2026-10-19 (**the baseline is `tests/frozen/s13-result/`; spec 0019 planned, not started; nothing else open**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-19,
-when Alessandro took spec 0018's sweep `S13-sweep` as the baseline,
-frozen as `s13-result/` (issue #41 closed).
+when spec 0019 was planned (issue #42). The day before it, Alessandro
+took spec 0018's sweep `S13-sweep` as the baseline, frozen as
+`s13-result/` (issue #41 closed).
 
 Reading order for a fresh session:
 1. `CLAUDE.md`'s **READ THIS FIRST**;
 2. [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md),
    which is authoritative;
 3. this file;
-4. [`specs/0018-strip-twins-rectify.md`](specs/0018-strip-twins-rectify.md):
-   its "Outcome — the sweep", which lists the faults left against the
-   originals and ranks four directions.
+4. [`specs/0019-steady-checked-structured-styled.md`](specs/0019-steady-checked-structured-styled.md),
+   the open spec, not started. Its handover prompt starts a session;
+5. [`specs/0018-strip-twins-rectify.md`](specs/0018-strip-twins-rectify.md)'s
+   "Outcome — the sweep", where spec 0019's four parts were ranked.
 
 If you are going to look at output — and you should — use the
 **`visual-review` skill**.
@@ -84,6 +86,19 @@ Spec 0018   The strip as the page draws it, photographed pages, the
               S  S13-sweep on 91a72e1: prediction held to the byte;
                  3 pages better (ticket, pricing, cv), 18 same, none worse
               DECIDED 2026-10-19: S13-sweep the baseline, frozen as s13-result/
+Reset       2026-10-19, Alessandro: everything not in spec 0019 cleared.
+Spec 0019   One grouping however the page is pictured, the structure the
+              IR lacks, the page's looks, readings checked — issue #42:
+              A grouping: A0 the jitter check, A1 container or parts on
+                what the page draws, A2 a targeted run
+              B structure: B1 spanning cells, B2 raised marks, B3 display
+                lines, B4 a pair's separator
+              C looks: C1 every entry placed and measured, C2 weight as
+                measured, C3 chips and discs, C4 drop caps, C5 faces
+              D readings: D1 tesseract's reading kept, D2 a third reading
+                where the two are near, D3 recorded
+              one sweep, S14-sweep, at the very end
+              NOT STARTED
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -255,17 +270,28 @@ and `specs/0007-handover.md` for the A phases and the queue.
 
 ---
 
-## Next — nothing open
+## Next — spec 0019, not started
 
-- **`S13-sweep` is the baseline**, frozen as `tests/frozen/s13-result/`,
-  2026-10-19. Issue #41 is closed.
-- **Spec 0018 ranks four directions:**
-  1. the detector's grouping, steady under a changed picture;
-  2. readings inside a line;
-  3. structure the IR does not carry;
-  4. looks.
+- **Spec 0019** is issue #42:
+  [`specs/0019-steady-checked-structured-styled.md`](specs/0019-steady-checked-structured-styled.md).
+  It takes up all four of spec 0018's ranked directions together, before
+  one sweep:
+  - **A:** one grouping however the page is pictured;
+  - **B:** the structure the IR lacks;
+  - **C:** the page's looks;
+  - **D:** readings checked by a second and third reader.
 
-  **None is queued** until he names one.
+  Its handover prompt starts the session.
+- **Its evidence was measured on 2026-10-19** over the corpus and
+  `s13-result/`:
+  - the page's own picture perturbed invisibly keeps 0.744 of its Zones,
+    and 16 of 21 pages regroup;
+  - tesseract's reading disagrees with the model's on 94 of 1,070 placed
+    Cells, 14 of them the model's misreads;
+  - a third reading repairs 6 of 12 and changes none of the model's 41
+    right ones.
+- **Nothing else is open** — Alessandro, 2026-10-19. Every other queue,
+  list and direction is cleared.
 
 ---
 
