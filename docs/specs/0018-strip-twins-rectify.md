@@ -485,6 +485,37 @@ paper.**
   (darkdeck). On a page with an outline, it must not rotate a page C2 left
   level.
 
+**C2 was measured and dropped — Alessandro, 2026-10-19.** Built as written:
+- each side read again at full resolution, along its normal, to a fraction
+  of a pixel: where the profile stands half as far from the ground just
+  outside as the paper does, so a shadow there moves nothing;
+- a line fitted to those points, the corner pixels' centres half a pixel
+  inside it;
+- the flattened page sized to hold its corner pixels (B0's fault 2);
+- no deskew on a page with an outline.
+
+**The geometry was right.**
+- Every outlined twin's corners came within 0.01–0.23px of the truth,
+  against 3.0–5.7px before.
+- The ticket came within 0.08–0.30px of its CSS corners.
+- MAD through the found corners fell from 11.0 to 3.4.
+- The receipt's outline had taken its 2px shadow ring for paper, and C2
+  read the paper's edge.
+
+**The two pages it moves came out worse** (targeted run `S13-C2-run`):
+- **The receipt.** The detector's box round the items moved 0.145 → 0.160.
+  On that crop the caption pass took `Till 02 Op. NADIA` as its Title, and
+  the table came back with no rows: every item and price drawn on a line of
+  its own.
+- **The ticket.** On its true picture the detector splits the main pane
+  into five Zones, `OSL` a figure and the grid a table. The perforation's
+  panes are lost, and the page is drawn far too tall, as on `S13-C1-run`.
+- On the twins, the Zones kept moved both ways, 0.775 → 0.766 of the shot's:
+  exact geometry does not steady the detector (fault 5).
+
+The code was removed. **C3 was skipped** on the same decision: cubic
+interpolation in the warp moves only these two pages, by the same route.
+
 **C3. Cubic interpolation in the warp**, as deskew already uses. Measured at
 true corners: MAD about 8% lower on every page.
 
