@@ -85,6 +85,13 @@ class Rectified:
     photograph of a page shot at an angle explains a great deal.
     """
 
+    ink: ImageArray | None = None
+    """The picture the ink measures take: `image` with every solid fill the
+    page draws read against its own ground — spec 0018, A1,
+    `furniture.grounded`. Set by the Conversion once the fills are found;
+    None means `image`. The cover step, the snap and the printed-line counts
+    read it; the model and the reading passes are shown `image`."""
+
     inverted: bool = False
     """Whether the page was printed light on dark and has been turned over.
 

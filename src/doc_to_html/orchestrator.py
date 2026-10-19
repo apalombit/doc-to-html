@@ -432,6 +432,25 @@ silent whole-page failure `darkdeck_0009` already showed.
 """
 
 
+def _ink(rectified: Rectified) -> ImageArray:
+    """The picture the ink measures take — `Rectified.ink`, spec 0018, A1:
+    each fill the page draws read against its own ground."""
+    return rectified.ink if rectified.ink is not None else rectified.image
+
+
+def _ground(rectified: Rectified, document: Document, zones: Sequence[Zone]) -> None:
+    """Set `Rectified.ink` for these Zones: every fill none of them holds
+    read as ground (`furniture.grounded`). Without the page's furniture —
+    no Style Record — the ink measures read `image`, as before."""
+    if not document.furniture:
+        rectified.ink = None
+        return
+    plain = rectified.plain if rectified.plain is not None else rectified.image
+    rectified.ink = furniture_module.grounded(
+        rectified.image, plain, document.furniture, inverted=rectified.inverted,
+        held=[zone.bbox for zone in zones if zone.bbox is not None])
+
+
 def recovered_zones(image: ImageArray, zones: list[Zone]) -> list[Zone]:
     """The Zones, plus one for each substantial patch of ink none of them covers.
 
@@ -1057,9 +1076,9 @@ class Conversion:
             zone.frame = framed[index]
             if zone.bbox is None:
                 continue
-            # The bands are measured on the read image and the colour on the
+            # The bands are measured on the ink picture and the colour on the
             # plain one — the same geometry, so the same crop twice.
-            read = zone_pixels(rectified.image, zone)
+            read = zone_pixels(_ink(rectified), zone)
             band = caption_band(read)
             names_a_header = (zone.kind is Kind.TABLE and bool(zone.rows)
                               and zone.rows[0].role is RowRole.HEADER)
@@ -1191,13 +1210,16 @@ class Conversion:
         if failure is not None:
             raise failure
 
+        # Spec 0018, A1: the ink measures read each fill the Zones stand on
+        # as ground — the cover step, the snap and the cut below.
+        _ground(rectified, document, zones)
         zones = self._cover_the_page(rectified, zones)
 
         if self.snap_zones:
             log.info("DTH_SNAP_ZONES is on: moving %d boxes onto their ink", len(zones))
             before = [_box_data(zone) for zone in zones]
             started = time.perf_counter()
-            snapped = snapped_or_original(rectified.image, zones)
+            snapped = snapped_or_original(_ink(rectified), zones)
             kept = snapped is zones
             self.trace.record(
                 Stage.SNAP, "snap_to_ink",
@@ -1226,6 +1248,8 @@ class Conversion:
         self._read_structure(rectified, document)
         if self._cut_at_regions(rectified, document):
             self._read_structure(rectified, document)
+        # Every later ink measure reads the fills the final boxes stand on.
+        _ground(rectified, document, document.zones)
 
     def _read_structure(self, rectified: Rectified, document: Document) -> None:
         """The page's regions, read off the final boxes — spec 0008. See
@@ -1485,7 +1509,7 @@ class Conversion:
         """Cut a Zone that crosses the edge of a grid or a column region — spec
         0008, step 3. See `structure.cut_at_edges`. Returns whether it cut."""
         try:
-            cut = cut_at_edges(rectified.image, document.zones, document.regions)
+            cut = cut_at_edges(_ink(rectified), document.zones, document.regions)
         except MappingError as error:
             self.trace.record(Stage.LAYOUT, "cut_at_regions", Disposition.REJECTED,
                               reason=f"{type(error).__name__}: {error}")
@@ -1522,7 +1546,7 @@ class Conversion:
 
         before = [_box_data(zone) for zone in zones]
         started = time.perf_counter()
-        covered = recovered_zones(rectified.image, zones)
+        covered = recovered_zones(_ink(rectified), zones)
         gained = len(covered) - len(zones)
         if gained:
             log.info("DTH_COVER_THE_PAGE is on: %d region(s) of ink no detected "
@@ -1572,7 +1596,7 @@ class Conversion:
         if not self.caption_pass or zone.bbox is None:
             return 0
 
-        band = caption_band(zone_pixels(rectified.image, zone))
+        band = caption_band(zone_pixels(_ink(rectified), zone))
         if band is None:
             self.trace.record(
                 Stage.CLASSIFY, "read_caption", Disposition.SKIPPED,
@@ -1676,12 +1700,12 @@ class Conversion:
             zone = document.zones[index]
             mark, started = self.trace.next_call, time.perf_counter()
             try:
-                empty = empty_zone(rectified.image, zone)
+                empty = empty_zone(_ink(rectified), zone)
                 if empty is not None:
                     self.trace.record(
                         Stage.CLASSIFY, "empty_zone", Disposition.SKIPPED,
                         zone_index=index,
-                        ink_fraction=ink_fraction(zone_pixels(rectified.image, zone)),
+                        ink_fraction=ink_fraction(zone_pixels(_ink(rectified), zone)),
                         threshold=MIN_ZONE_INK, kind=was, reason=str(empty),
                     )
                     raise empty
@@ -1847,7 +1871,7 @@ class Conversion:
             try:
                 # Spec 0012, G3b: a table's grid is measured here, where the
                 # page's drawing is known, and stated to the model as it is.
-                grid = (_grid(rectified.image, zone, document.furniture)
+                grid = (_grid(_ink(rectified), zone, document.furniture)
                         if zone.kind is Kind.TABLE else None)
                 extractor.extract(
                     rectified.image, zone, self.engines.extract, document.hint,
@@ -1960,7 +1984,7 @@ class Conversion:
         """
         document.shortfalls = []
         for index, zone in enumerate(document.zones):
-            short = shortfall(rectified.image, zone, index, document.furniture)
+            short = shortfall(_ink(rectified), zone, index, document.furniture)
             if short is None:
                 continue
             document.shortfalls.append(short)
@@ -2004,7 +2028,7 @@ class Conversion:
             call=call, calls=made,
             kind_asked=asked, extractor=type(extractor).__name__,
             crop=_crop_data(rectified.image, zone),
-            grid=_grid_data(rectified.image, zone, furniture),
+            grid=_grid_data(_ink(rectified), zone, furniture),
             rows=len(zone.rows), pairs=len(zone.pairs), blocks=len(zone.blocks),
             complete=zone.complete, error=error,
             changed=[Change(path=f"zones[{index}].complete",
@@ -2106,7 +2130,10 @@ class Conversion:
         second family before that method is written. Nothing here discharges that
         debt; it narrows the window in which the debt is invisible.
         """
-        document.gaps = gaps(rectified.image, document.zones)
+        # `_read_fields` can widen a Zone's box to its marks, and so change
+        # which fills the Zones hold — spec 0018, A1.
+        _ground(rectified, document, document.zones)
+        document.gaps = gaps(_ink(rectified), document.zones)
 
     def _climb_ladders(self, rectified: Rectified, document: Document) -> None:
         """Advance every unresolved item one Rung.

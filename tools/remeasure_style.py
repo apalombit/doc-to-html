@@ -78,12 +78,17 @@ def remeasure(document: Document, png: Path) -> tuple[int, int]:
         plain, ground=document.style.page_bg, inverted=rectified.inverted)
     own = style_module.boxes_for([z.bbox for z in document.zones], drawn)
     framed = rhythm.frames(document.zones, drawn, document.regions)
+    # Spec 0018, A1: the bands are measured on the ink picture, each fill
+    # no Zone holds read as ground — as `Conversion._measure_chrome` takes it.
+    ink = furniture.grounded(rectified.image, plain, document.furniture,
+                             inverted=rectified.inverted,
+                             held=[z.bbox for z in document.zones if z.bbox is not None])
     boxed = 0
     for index, zone in enumerate(document.zones):
         zone.frame = framed[index]
         if zone.bbox is None:
             continue
-        read = zone_pixels(rectified.image, zone)
+        read = zone_pixels(ink, zone)
         band = caption_band(read)
         names_a_header = (zone.kind is Kind.TABLE and bool(zone.rows)
                           and zone.rows[0].role is RowRole.HEADER)

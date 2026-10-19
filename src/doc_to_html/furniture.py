@@ -185,6 +185,11 @@ FRAME_SLACK = 1.5
 """How far, in glyphs, a frame's sides may stop short of its corners — a
 rounded corner's radius."""
 
+EDGE = 0.25
+"""How far past a fill's outline, in glyphs, its blended edge is looked for
+— `grounded`. A resampled page blends a fill into its ground over a pixel
+or two: `ticket_0020`'s strip over rows 40-42, at a glyph of 8."""
+
 
 @dataclass
 class _Line:
@@ -900,3 +905,112 @@ def place(furniture: Sequence[Furniture], zones: Sequence[Zone]) -> None:
 
 def _overlap(a0: float, a1: float, b0: float, b1: float) -> float:
     return max(0.0, min(a1, b1) - max(a0, b0))
+
+
+HELD = 0.9
+"""How much of a fill must lie inside one Zone's box for the Zone to hold
+it — `grounded`. A logo's square, a badge or a table's header bar lies
+wholly in its Zone; a strip or a sidebar several Zones stand on lies in
+none."""
+
+
+def grounded(read: ImageArray, plain: ImageArray, furniture: Sequence[Furniture], *,
+             inverted: bool = False, held: Sequence[BBox] = ()) -> ImageArray:
+    """`read` — `Rectified.image` — with every solid fill the page draws read
+    against its own ground: the picture the ink measures take. Spec 0018, A1.
+
+    **Ink is measured against its local ground.** A fill is ground: on the
+    plain picture its outline is re-read — its own colour, within
+    `GROUND_SAME`, holes filled, so type printed on it is inside — and every
+    pixel of it is made paper. **Type on the fill is ink by its contrast with
+    the fill**: a pixel inside the outline whose grey stands `255 -
+    INK_LEVEL` off the fill's, as type stands off paper, is made ink. **Its
+    edge, as far as it is blended, is not ink**: within `EDGE` glyphs past
+    the outline, a pixel that is a blend of the fill and the page's ground
+    (`BLEND`) is made paper.
+
+    Why: `equalise` takes a fill wider than its kernel for a shadow and
+    lifts it, leaving a dark fringe round its letters and along its foot.
+    On `ticket_0020` that fringe was ink no box covered, and became a Zone
+    read as `The`, twice (§1). Measured on the plain picture, the strip is
+    teal from its top to its foot and the fringe is not there.
+
+    **A fill is ground only for the Zones that stand on it.** One lying
+    wholly — `HELD` — inside one of the `held` boxes is a thing that Zone
+    holds, its extent the Zone's: `invoice_0002`'s logo, a black square
+    round three letters, was snapped to the letters as ground, and the
+    statement's, nonlatin's and timetable's header bars pulled their tables'
+    boxes in to the type. Those are left as `read` has them, and so is a
+    fill that holds no type, which is a mark — `paper_0018`'s chart bars.
+    Only solid fills: a hatch is two colours, and left as it was."""
+    out = np.array(read, copy=True)
+    fills = [item for item in furniture if item.kind == "fill" and item.style != "hatched"
+             and not any(_holds(box, item.bbox) for box in held)]
+    if not fills:
+        return out
+    cv2 = _cv2()
+    pixels = np.asarray(plain)
+    rgb = np.asarray(255 - pixels if inverted else pixels, dtype=np.int64)[:, :, ::-1]
+    height, width = rgb.shape[:2]
+    unit = glyph(_type(read))
+    ground = np.array(dominant(rgb.astype(np.uint8)), dtype=float)
+    edge = max(2, int(round(EDGE * unit)))
+    for item in fills:
+        box = item.bbox
+        left, top = max(0, int(box.left * width) - edge), max(0, int(box.top * height) - edge)
+        right = min(width, int(np.ceil(box.right * width)) + edge)
+        bottom = min(height, int(np.ceil(box.bottom * height)) + edge)
+        window = rgb[top:bottom, left:right]
+        colour = np.array(item.color, dtype=np.int64)
+        near = (np.abs(window - colour).sum(axis=2) <= GROUND_SAME).astype(np.uint8)
+        outline, _ = cv2.findContours(near, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        whole = np.zeros_like(near)
+        cv2.drawContours(whole, [shape for shape in outline
+                                 if cv2.contourArea(shape) >= (FILL * unit) ** 2],
+                         -1, 1, thickness=-1)
+        inside = whole > 0
+        typed = inside & (np.abs(_grey(window) - _grey(colour)) >= 255 - INK_LEVEL)
+        if not _holds_type(typed, unit):
+            continue
+        reach = np.ones((2 * edge + 1, 2 * edge + 1), np.uint8)
+        rim = (cv2.dilate(whole, reach) > 0) & ~inside
+        patch = out[top:bottom, left:right]
+        patch[inside] = 255
+        patch[typed] = 0
+        patch[rim & _blends(window, colour, ground)] = 255
+    return out
+
+
+def _holds(box: BBox, fill: BBox) -> bool:
+    """Whether `HELD` of the fill's area lies inside `box`."""
+    across = max(0.0, min(box.right, fill.right) - max(box.left, fill.left))
+    down = max(0.0, min(box.bottom, fill.bottom) - max(box.top, fill.top))
+    area = (fill.right - fill.left) * (fill.bottom - fill.top)
+    return area > 0 and across * down >= HELD * area
+
+
+def _grey(rgb: Any) -> Any:
+    rgb = np.asarray(rgb, dtype=float)
+    return 0.299 * rgb[..., 0] + 0.587 * rgb[..., 1] + 0.114 * rgb[..., 2]
+
+
+def _holds_type(typed: Any, unit: float) -> bool:
+    """Whether a fill's contrasting pixels hold one mark at least half a
+    glyph tall: a letter, not a speck of resampling."""
+    cv2 = _cv2()
+    count, _, stats, _ = cv2.connectedComponentsWithStats(typed.astype(np.uint8),
+                                                          connectivity=8)
+    return bool((stats[1:, 3] >= 0.5 * unit).any()) if count > 1 else False
+
+
+def _blends(window: Any, one: Any, other: Any) -> Any:
+    """`_between` over every pixel of `window` at once."""
+    a, b = np.asarray(one, dtype=float), np.asarray(other, dtype=float)
+    path = b - a
+    length = float(path @ path)
+    offset = np.asarray(window, dtype=float) - a
+    if length == 0.0:
+        return np.linalg.norm(offset, axis=2) <= BLEND
+    share = (offset @ path) / length
+    away = np.linalg.norm(offset - share[..., None] * path, axis=2)
+    return (share >= 0.0) & (share <= 1.0) & (away <= BLEND)

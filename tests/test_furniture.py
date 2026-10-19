@@ -308,3 +308,66 @@ class TestTheConversionPlacesThemOnTheFinalZones:
         furniture.place(document_.furniture, document_.zones)
         assert placed == [item.zone for item in document_.furniture]
         assert any(zone is not None for zone in placed)
+
+
+class TestInkAgainstItsLocalGround:
+    """Spec 0018, A1 — `grounded`: a fill the page draws is ground, its type
+    ink by its contrast with the fill, its blended edge not ink. `equalise`
+    lifts a fill wider than its kernel and leaves a dark fringe round its
+    letters and along its foot; on `ticket_0020` that fringe was recovered
+    as a Zone and read `The`, twice."""
+
+    TEAL = (11, 110, 138)
+
+    def strip(self) -> tuple[np.ndarray, np.ndarray, list[Furniture]]:
+        """A teal strip with a white letter on it, over white paper, a
+        blended row at its foot; and an equalised copy with a dark fringe."""
+        plain = np.full((120, 200, 3), 255, np.uint8)
+        plain[:40, :] = self.TEAL[::-1]
+        plain[40, :] = (180, 165, 100)  # a blend of teal and white, BGR
+        plain[12:28, 30:38] = 255  # a white letter's stem
+        read = np.full_like(plain, 255)
+        read[34:41, :] = 120  # the fringe along its foot
+        read[10:30, 28:40] = 150  # a halo round the letter
+        read[12:28, 30:38] = 255
+        plain[70:80, 30:120] = 0  # a line of type on the paper
+        read[70:80, 30:120] = 0
+        fill = Furniture(kind="fill", bbox=BBox(0.0, 0.0, 1.0, 40 / 120), color=self.TEAL)
+        return plain, read, [fill]
+
+    def test_the_fringe_is_not_ink_and_the_letter_is(self) -> None:
+        plain, read, found = self.strip()
+        out = furniture.grounded(read, plain, found)
+        assert (out[34:42, :] == 255).all(), "the fringe and the blended foot"
+        assert (out[12:28, 30:38] == 0).all(), "the white letter, by its contrast"
+        assert (out[10:12, 28:40] == 255).all(), "the halo round it"
+        assert (out[70:80, 30:120] == 0).all(), "type on the paper is untouched"
+
+    def test_a_fill_a_zone_holds_whole_is_left_alone(self) -> None:
+        """A logo's square, a table's header bar: the Zone's extent."""
+        plain, read, found = self.strip()
+        out = furniture.grounded(read, plain, found, held=[BBox(0.0, 0.0, 1.0, 0.5)])
+        assert (out == read).all()
+
+    def test_a_fill_with_no_type_is_a_mark(self) -> None:
+        """`paper_0018`'s chart bars are content, not ground."""
+        plain, read, found = self.strip()
+        plain[12:28, 30:38] = self.TEAL[::-1]
+        assert (furniture.grounded(read, plain, found) == read).all()
+
+    def test_the_tickets_halo_is_no_longer_uncovered_ink(self) -> None:
+        """With the baseline's five other Zones, the halo under the strip is
+        the one patch of ink no box covers — until it is read against the
+        strip."""
+        from doc_to_html.orchestrator import recovered_zones
+        result = rectify(REPO / "example" / "ticket.png")
+        found = furniture.find(result.plain, inverted=result.inverted, read=result.image)
+        boxes = [BBox(0.736, 0.0, 1.0, 1.0), BBox(0.0, 0.0, 0.18, 0.131),
+                 BBox(0.561, 0.03, 0.711, 0.102), BBox(0.03, 0.151, 0.47, 0.937),
+                 BBox(0.53, 0.32, 0.71, 0.937)]
+        zones = [Zone(kind=Kind.PROSE, role=Role.BODY, bbox=box, band=0, column=i)
+                 for i, box in enumerate(boxes)]
+        assert len(recovered_zones(result.image, zones)) > len(zones)
+        ink = furniture.grounded(result.image, result.plain, found,
+                                 inverted=result.inverted, held=boxes)
+        assert len(recovered_zones(ink, zones)) == len(zones)

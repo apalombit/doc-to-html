@@ -32,7 +32,10 @@ and can be recomputed from it, in the order a Conversion runs them:
        and each leading heading's size      (_measure_type)
     4. a photographed page's paper and its surround — spec 0012, G5
                                     preprocess.rectify   (Source.paper)
-       and Shortfalls re-measured, since step 1 changes a read-line count
+       and Shortfalls re-measured, since step 1 changes a read-line count,
+       on the ink picture — each fill no Zone holds read as its type's
+       ground, spec 0018, A1, as the chrome's bands are in 3
+                                    furniture.grounded  (_ground, in _layout)
                                     orchestrator.shortfall  (_measure_shortfalls)
     5. Probes re-run over the tables as they now stand
                                     probes.run         (after _measure_type)
@@ -157,7 +160,12 @@ def rederive(document: Document, png: Path) -> None:
     # Spec 0012, G5: a photographed page's paper and what surrounds it.
     document.source.paper = rectified.source.paper
     document.source.surround = rectified.source.surround
-    image = rectified.image
+    # Spec 0018, A1: the shortfalls and gaps are measured on the ink picture,
+    # each fill no Zone holds read as ground.
+    image = furniture.grounded(
+        rectified.image, rectified.plain if rectified.plain is not None else rectified.image,
+        document.furniture, inverted=rectified.inverted,
+        held=[zone.bbox for zone in document.zones if zone.bbox is not None])
     document.shortfalls = [
         found for index, zone in enumerate(document.zones)
         if (found := shortfall(image, zone, index, document.furniture)) is not None
