@@ -77,7 +77,9 @@ import numpy as np
 from .ir import BBox, Kind, Style, Zone
 from .preprocess import (
     MIN_BAND,
+    MIN_GAP_THICKNESS,
     MIN_ROW_GAP,
+    SEPARATOR_ASPECT,
     ImageArray,
     _cv2,
     _without_vertical_rules,
@@ -442,20 +444,36 @@ def _filled_with(pixels: Any, ground: tuple[int, int, int]) -> tuple[int, int, i
     return colour if _flat_share(flat, colour) >= MIN_FILL_COVERAGE else None
 
 
+EDGE_DEPTH = 2
+"""How many lines in from a region's outside an edge is read — spec 0018, B1.
+
+A 1px rule, resampled, falls across two lines, and so does one turned by a
+tenth of a degree along its length. Read on its outermost line alone, a
+photographed page's card edge is the blur's fringe: on `catalogue_0015`'s
+twins (`tools/twins.py`) the first card's bottom and left edges were inked on
+75% and 66% of their length, under `BORDER_RUN`, against 98% as shot. Two
+lines deep they are 98-99% on both, and every corpus page as shot keeps
+exactly the rectangles it had."""
+
+
 def _bordered(pixels: Any, fill: tuple[int, int, int]) -> bool:
     """Whether at least `BORDER_EDGES` of the region's four edges are inked.
 
     Measured against the region's *own* fill rather than the page's ground, so a
     filled card with no rule round it is not called bordered because its fill
-    differs from the page.
+    differs from the page. Each point of an edge is the more inked of its outer
+    `EDGE_DEPTH` lines.
     """
     block = np.asarray(pixels, dtype=np.int64)
     if block.ndim != 3 or min(block.shape[:2]) < 4:
         return False
-    edges = [block[0, :], block[-1, :], block[:, 0], block[:, -1]]
+    depth = EDGE_DEPTH
+    edges = [block[:depth, :], block[-depth:, :],
+             block[:, :depth].transpose(1, 0, 2), block[:, -depth:].transpose(1, 0, 2)]
     drawn = sum(
         1 for edge in edges
-        if (np.abs(edge - np.array(fill)).sum(axis=1) > SAME_COLOUR).mean() >= BORDER_RUN
+        if (np.abs(edge - np.array(fill)).sum(axis=2).max(axis=0) > SAME_COLOUR).mean()
+        >= BORDER_RUN
     )
     return drawn >= BORDER_EDGES
 
@@ -517,6 +535,12 @@ def rectangles(image: ImageArray, *, ground: tuple[int, int, int],
             continue
         block = rgb[y:y + h, x:x + w]
         if min(block.shape[:2]) < 4:
+            continue
+        if (min(w, h) < MIN_GAP_THICKNESS * min(width, height)
+                and max(w, h) >= SEPARATOR_ASPECT * min(w, h)):
+            # A rule, by `content_ink`'s own test, is never a box — spec
+            # 0018, B1: resampled, `catalogue_0015`'s page-wide rule thickens
+            # past `MIN_RECT_SHARE`, and read `EDGE_DEPTH` deep it is all edge.
             continue
         if _bordered(block, _filled_with(block, ground) or ground):
             found.append(BBox(x / width, y / height,

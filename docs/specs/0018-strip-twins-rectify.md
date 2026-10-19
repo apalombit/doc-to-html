@@ -371,7 +371,7 @@ use one homography. Their ratios hold:
 | 3 | **cv's outline cuts its sidebar**: 307px in, 87% of the page's ink outside it; Zones 10 of 31 kept (17 lost), columns → single. Through the true corners 23–25 of 31 | `rectify` 1, the navy sidebar taken for desk | 5 of 5 | C1 |
 | 4 | **darkdeck has no outline**: a dark page on a dark desk, so the page is laid out on its desk. deskew finds the exact turn on all five. Grid and columns → single; Zones 12–13 of 17, 4–5 merged | `rectify` 1 | 5 of 5 | C1 |
 | 5 | **The detector regroups a page that is only resampled.** Through the true corners as well as the found ones: form's five sections become one Zone (kept 2–8 of 8), sample_css 2 of 4, sample_semantic 5 of 9 (2 lost), statement 4 of 5, report 10–12 of 14, menu 1–4 of 4, invoice_0001 4–6 of 6, certificate 3–8 of 8, ticket 0–4 of 5. The cover step, the snap and the cut move none of it: the detector's own count already differs | the detector, on `Rectified.image` | 16 of 21 pages, on 1 to 5 of their twins | B1 |
-| 6 | **Card grids lost once resampled**: catalogue's 3×3 → single, columns or 2 lanes; nonlatin's 2 → single; pricing's 3 once; newsletter's columns once | `structure`, `SAME_SIZE` 0.01 on resampled rectangles | catalogue 5, nonlatin 3, pricing 1, newsletter 1 | B1 |
+| 6 | **Card grids lost once resampled**: catalogue's 3×3 → single, columns or 2 lanes; nonlatin's 2 → single; pricing's 3 once; newsletter's columns once | `style.rectangles`, `_bordered` — not `SAME_SIZE`, see B1 | catalogue 5, nonlatin 3, pricing 1, newsletter 1 | B1 |
 | 7 | **pricing's feature lines read inside their cards**: 4 of 21 kept, the other 17 inside the card's one Zone, no line lost. A coarser grain, arguably the page's | the detector | 5 of 5 | — |
 | 8 | **Uneven light**: the shaded twin's MAD is 12–15 above its unshaded twin's, and menu keeps 1 of 4 on it | `equalise` | 17 of 17 measured | C4 |
 
@@ -384,6 +384,9 @@ and 6:
   as form's drawn section bars do. That is A2's cut, which was dropped for
   the ticket.
 
+**Alessandro's decision, 2026-10-19:** B1 repairs fault 6 alone. The twins
+stay a model-free check and do not join the corpus.
+
 **B1. Repair what B0 found**, stage by stage. Each repair is measured by
 B0, then by the layout front on the corpus, then on a targeted run. Already
 known, for that list:
@@ -391,6 +394,29 @@ known, for that list:
 - cv cut by its outline (C1's);
 - catalogue's and nonlatin's grids lost once their card rectangles are
   resampled (`structure.SAME_SIZE`, 0.01).
+
+**B1 — done, 2026-10-19: fault 6.** Its premise was wrong. On the twins
+the cards that `style.rectangles` found agree in size to 0.002, well inside
+`SAME_SIZE`. What failed was finding them: 6, 2, 4, 0 and 4 of catalogue's
+9 cards on its five twins.
+- **The cause.** Each card's component was there at its size, and
+  `_bordered` refused it. It read each edge on the component's outermost
+  line, and resampling spreads a 1px rule over two lines, the outer one the
+  blur's fringe: the first card's bottom and left edges were inked on 75% and
+  66% of their length, under `BORDER_RUN`.
+- **The repair.** `EDGE_DEPTH` 2: each point of an edge is the more inked of
+  its outer two lines. One knock-on, guarded in the same step: catalogue's
+  page-wide rule, thickened by resampling past `MIN_RECT_SHARE`, became a
+  rectangle that was all edge. A component that `content_ink`'s own
+  separator test calls a rule is never a box.
+- **Measured.**
+  - Every corpus page as shot keeps exactly its rectangles, and the layout
+    front is byte-identical on all 21, so no crop moves.
+  - On the twins, catalogue's 3×3 grid, nonlatin's 2 lanes and pricing's 3
+    are now found on every unshaded twin, and catalogue keeps 13 of 13 Zones.
+  - The four grids still lost are all on the shaded twin. One measured
+    ground colour cannot hold a page under a light gradient: fault 8, on
+    the plain picture, which C4's `equalise` does not reach.
 
 ---
 

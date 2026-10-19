@@ -498,6 +498,20 @@ class TestFindingTheDrawnBoxes:
 
         assert len(rectangles(image, ground=(255, 255, 255))) == 2
 
+    def test_a_rule_resampled_across_two_lines_is_still_a_rule(self) -> None:
+        """Spec 0018, B1: on a photographed page a 1px rule falls across two
+        lines, and where the outer one is the blur's fringe, too faint to
+        tell from the page, the edge is read on the line inside it."""
+        image = sheet()
+        draw_box(image, (40, 40, 360, 200), rule=(200, 200, 200))
+        fringe = (246, 246, 246)[::-1]
+        image[40, 40:220] = fringe       # the top edge's first half, faint
+        image[41, 40:220] = (200, 200, 200)
+        image[40:120, 40] = fringe       # the left edge's first half
+        image[40:120, 41] = (200, 200, 200)
+
+        assert len(rectangles(image, ground=(255, 255, 255))) == 1
+
     def test_a_dark_page_is_measured_on_its_own_polarity(self) -> None:
         """`darkdeck_0009` and `cv_0013` are printed light on dark, and
         `rectify` turns them over before anything downstream sees them."""
@@ -575,6 +589,28 @@ class TestFindingBoxesInTheCorpus:
             found = rectangles(plain, ground=ground,
                                inverted=rectified.inverted)
             assert len(found) == expected, f"{name}: {len(found)} rectangles"
+
+    def test_a_photographed_catalogue_keeps_its_nine_cards(self, tmp_path: Path) -> None:
+        """Spec 0018, B1: on its 1.5° twin, `tools/twins.py`, the catalogue's
+        cards were two of nine before an edge was read two lines deep, and
+        its 3×3 grid was lost on all five twins."""
+        import importlib.util
+        import sys
+
+        import cv2
+
+        spec = importlib.util.spec_from_file_location("twins", REPO / "tools" / "twins.py")
+        assert spec is not None and spec.loader is not None
+        twins = importlib.util.module_from_spec(spec)
+        sys.modules["twins"] = twins
+        spec.loader.exec_module(twins)
+        page = cv2.imread(str(REPO / SOURCES["catalogue_0015"].png), cv2.IMREAD_COLOR)
+        picture, _ = twins.draw(page, twins.TWINS["t1.5"])
+        cv2.imwrite(str(tmp_path / "twin.png"), picture)
+        rectified = rectify(tmp_path / "twin.png")
+        plain = rectified.plain if rectified.plain is not None else rectified.image
+        ground = measure(plain, inverted=rectified.inverted).page_bg
+        assert len(rectangles(plain, ground=ground, inverted=rectified.inverted)) == 9
 
     def test_documents_that_draw_no_box_get_none(self) -> None:
         """The failure mode this replaces went the other way — the old
