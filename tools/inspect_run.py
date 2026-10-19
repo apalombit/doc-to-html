@@ -4,9 +4,10 @@
         --source example/invoice.png
 
 Writes a folder of PNGs and an `index.html` contact sheet. Open that one file
-and you see, in order: the page as the layout pass saw it, the boxes it
-returned drawn on the page, **the output HTML rasterised**, and the actual crop
-each extraction pass was given beside the text it returned from that crop.
+and you see, in order: the Source Image, the page as the layout pass saw it
+(`Rectified.image`, warped and equalised), the boxes it returned drawn on that
+page, **the output HTML rasterised**, and the actual crop each extraction pass
+was given beside the text it returned from that crop.
 
 **This is the per-document view, and it answers one question: how was *this*
 document converted, step by step.** The comparative question — how does every
@@ -1297,17 +1298,30 @@ def main(argv: list[str] | None = None) -> int:
     out = args.out or Path("debug") / args.dump.name
     out.mkdir(parents=True, exist_ok=True)
 
-    page = Image.open(args.source)
+    # Spec 0018, 0c: the layout pass is given `Rectified.image` — warped,
+    # turned over, deskewed and equalised — and every box and crop is taken in
+    # its frame. Drawing them on the Source Image stood the ticket's boxes on
+    # its desk. The Source Image keeps a panel of its own.
+    source = Image.open(args.source)
+    rectified = rectify(args.source)
+    page = Image.fromarray(rectified.image[:, :, ::-1].copy())
     model = boxes_from_layout(args.dump)
     expected = boxes_from_expected(args.expected) if args.expected else []
 
     seen = layout_input(page, args.long_edge)
+    made = ", ".join(step for step, done in (("warped", rectified.warped),
+                                             ("turned over", rectified.inverted)) if done)
     panels = [
+        ("00_source", "The Source Image", f"{source.width}x{source.height}, as given.",
+         source.convert("RGB")),
         ("01_layout_input", "The page as the layout pass saw it",
-         f"{page.width}x{page.height} source, sent at {seen.width}x{seen.height} "
-         f"(budget {args.long_edge or 'none'}).", seen),
+         f"Rectified.image, {page.width}x{page.height}: "
+         f"{made + ', ' if made else ''}deskewed and equalised; "
+         f"sent at {seen.width}x{seen.height} (budget {args.long_edge or 'none'}).",
+         seen),
         ("02_model_boxes", "Boxes the model returned",
-         f"{len(model)} Zones.", draw(page, model, MODEL_COLOUR, prefix="got ")),
+         f"{len(model)} Zones, on the rectified page.",
+         draw(page, model, MODEL_COLOUR, prefix="got ")),
     ]
     if expected:
         panels.append(("03_expected_boxes", "Boxes the fixture says are right",
@@ -1319,7 +1333,7 @@ def main(argv: list[str] | None = None) -> int:
 
     document = args.dump / "document.html"
     if document.exists():
-        rendered = rasterise(document, out, width=page.width)
+        rendered = rasterise(document, out, width=source.width)
         if rendered is not None:
             panels.append((
                 "05_rendered", "What we actually produced",
@@ -1343,11 +1357,10 @@ def main(argv: list[str] | None = None) -> int:
         crop.save(out / f"zone_{index:02d}_{box.kind}.png")
 
     # The ruler measures the Rectified Image, because that is the page the
-    # Orchestrator put the boxes on. The panels above draw on the Source Image,
-    # which is the page a reader recognises; on a photograph the two differ by a
-    # deskew and a warp, and scoring the wrong one would quietly measure the
-    # rectifier instead of the layout pass.
-    report = geometry_report(model, expected, rectify(args.source).image,
+    # Orchestrator put the boxes on — and so, since spec 0018's 0c, do the
+    # panels above; on a photograph the Source Image differs from it by a
+    # deskew and a warp.
+    report = geometry_report(model, expected, rectified.image,
                              bands_validate(args.dump))
     print(report)
 
