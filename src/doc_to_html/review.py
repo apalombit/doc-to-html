@@ -12,6 +12,10 @@ evidence and the rationale; this module is the instrument.
 
     00-invoice_0001.png       source | (previous render) | render, matched width
     00-invoice_0001-p2.png    ...part 2 of a tall document
+
+On a photographed page — one whose picture `rectify` warps — the sheet has a
+second row: each render re-photographed into the picture's frame, and its
+overlay on the source (spec 0018, 0a; `rephotograph`).
     findings.json             the machine-readable form, filled in by looking
     review.md                 the same form for a person; regenerated on --check
     numbers.md                the scored axes, to quote in a note
@@ -288,41 +292,160 @@ def _font() -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
         return ImageFont.load_default()
 
 
+def _plan_rows(rows: Sequence[Sequence[Image.Image]], cap: int
+               ) -> list[list[list[tuple[int, int]]]]:
+    """`plan` over a sheet of one row or more: every panel of every row cut
+    into the same number of parts, the rows of a part together no taller
+    than `cap`. One row is `plan` exactly."""
+    if len(rows) == 1:
+        return [plan(rows[0], cap)]
+    profiles = [[ink_profile(image) for image in row] for row in rows]
+    heights = [[image.height for image in row] for row in rows]
+    start = parts_for(sum(max(row) for row in heights), cap)
+    cut: list[list[list[tuple[int, int]]]] = []
+    for parts in range(start, MAX_PARTS + 1):
+        cut = [[_slices(profile, height, parts)
+                for profile, height in zip(row_profiles, row_heights)]
+               for row_profiles, row_heights in zip(profiles, heights)]
+        tallest = max(sum(max(slices[part][1] - slices[part][0] for slices in row)
+                          for row in cut)
+                      for part in range(parts))
+        if tallest <= cap * OVERRUN:
+            break
+    return cut
+
+
 def contact_sheet(panels: Sequence[Panel], stem: Path, *,
-                  stamp: str, cap: int = MAX_SHEET_PX) -> list[Path]:
+                  stamp: str, cap: int = MAX_SHEET_PX,
+                  below: Sequence[Panel] = ()) -> list[Path]:
     """Write one sheet per part, panels side by side, each labelled.
 
     Returns the files written, in reading order. A short document is one file
     at `stem.png`; a tall one is `stem-p1.png`, `stem-p2.png`, ...
+
+    `below` is a second row under the first — spec 0018, 0a: on a
+    photographed page, each render re-photographed and its overlay. Every
+    panel of both rows is cut into the same parts, and only the first row's
+    labels carry the stamp, which the second's would run into on a narrow
+    page.
     """
     if not panels:
         raise ValueError("a sheet needs at least one panel")
-    images = [Image.open(panel.image).convert("RGB") for panel in panels]
-    cut = plan(images, cap)
-    parts = len(cut[0])
+    panels_row = list(panels)
+    rows = [panels_row, *([list(below)] if below else [])]
+    images = [[Image.open(panel.image).convert("RGB") for panel in row] for row in rows]
+    cut = _plan_rows(images, cap)
+    parts = len(cut[0][0])
 
-    width = sum(image.width for image in images) + GUTTER * (len(images) + 1)
+    width = max(sum(image.width for image in row) + GUTTER * (len(row) + 1)
+                for row in images)
     font = _font()
     written: list[Path] = []
     for part in range(parts):
-        boxes = [slices[part] for slices in cut]
-        tall = max(bottom - top for top, bottom in boxes)
-        sheet = Image.new("RGB", (width, tall + LABEL_BAR + GUTTER), SHEET_GROUND)
+        talls = [max(slices[part][1] - slices[part][0] for slices in row) for row in cut]
+        height = sum(talls) + (LABEL_BAR + GUTTER) * len(rows)
+        sheet = Image.new("RGB", (width, height), SHEET_GROUND)
         draw = ImageDraw.Draw(sheet)
-        x = GUTTER
-        for image, (top, bottom), panel in zip(images, boxes, panels):
-            name = panel.label
-            if parts > 1:
-                name = f"{name} · part {part + 1} of {parts}"
-            draw.text((x, 6), f"{name}   ·   {stamp}", fill=LABEL_INK, font=font)
-            sheet.paste(image.crop((0, top, image.width, bottom)), (x, LABEL_BAR))
-            x += image.width + GUTTER
+        y = 0
+        for row_images, row_cut, row_panels, tall in zip(images, cut, rows, talls):
+            x = GUTTER
+            for image, slices, panel in zip(row_images, row_cut, row_panels):
+                top, bottom = slices[part]
+                name = panel.label
+                if parts > 1:
+                    name = f"{name} · part {part + 1} of {parts}"
+                if row_panels is panels_row:
+                    name = f"{name}   ·   {stamp}"
+                draw.text((x, y + 6), name, fill=LABEL_INK, font=font)
+                sheet.paste(image.crop((0, top, image.width, bottom)), (x, y + LABEL_BAR))
+                x += image.width + GUTTER
+            y += tall + LABEL_BAR + GUTTER
         target = stem.with_name(f"{stem.name}-p{part + 1}.png") if parts > 1 \
             else stem.with_suffix(".png")
         target.parent.mkdir(parents=True, exist_ok=True)
         sheet.save(target)
         written.append(target)
     return written
+
+
+# --- the render re-photographed, spec 0018, 0a -----------------------------
+
+
+def rephotograph(render: Image.Image, outline: Any, size: tuple[int, int]
+                 ) -> tuple[Image.Image, tuple[int, int]]:
+    """The render as the photograph would hold it, and where the picture
+    sits on the result.
+
+    **Rotate the render, not the original** — Alessandro, 2026-10-19. The
+    render draws the paper at `Source.paper` × the picture's size (spec
+    0012, G5), so that rectangle is mapped onto the outline `rectify`
+    warped by (`preprocess.page_outline`), by the homography of their four
+    corners, cubic, onto the surround. A wrong outline then shows as
+    misregistration instead of being hidden by straightening both sides
+    alike. A render taller than its paper overhangs the picture, and the
+    result grows to hold it: that overhang is information.
+    """
+    import cv2
+
+    from doc_to_html.preprocess import paper_box
+
+    across, down = size
+    paper = paper_box(outline.quad, across, down)
+    rectangle = np.array([[paper.left * across, paper.top * down],
+                          [paper.right * across, paper.top * down],
+                          [paper.right * across, paper.bottom * down],
+                          [paper.left * across, paper.bottom * down]], dtype=np.float32)
+    matrix = cv2.getPerspectiveTransform(rectangle, np.asarray(outline.quad, dtype=np.float32))
+    corners = np.array([[[0, 0], [render.width, 0], [render.width, render.height],
+                         [0, render.height]]], dtype=np.float32)
+    landed = np.round(cv2.perspectiveTransform(corners, matrix)[0], 3)
+    left = int(math.floor(min(0.0, float(landed[:, 0].min()))))
+    top = int(math.floor(min(0.0, float(landed[:, 1].min()))))
+    right = int(math.ceil(max(float(across), float(landed[:, 0].max()))))
+    bottom = int(math.ceil(max(float(down), float(landed[:, 1].max()))))
+    shift = np.array([[1, 0, -left], [0, 1, -top], [0, 0, 1]], dtype=np.float64)
+    pixels = cv2.warpPerspective(np.asarray(render.convert("RGB")), shift @ matrix,
+                                 (right - left, bottom - top), flags=cv2.INTER_CUBIC,
+                                 borderMode=cv2.BORDER_CONSTANT,
+                                 borderValue=tuple(int(v) for v in outline.surround))
+    return Image.fromarray(pixels), (-left, -top)
+
+
+def overlay(source: Image.Image, photographed: Image.Image,
+            offset: tuple[int, int], surround: tuple[int, int, int]) -> Image.Image:
+    """The source's grey in the red channel, the re-photographed render's in
+    green and blue: **cyan is the source's alone, red the render's alone,
+    dark both.** The source stands on the surround where the render
+    overhangs it."""
+    ground = Image.new("RGB", photographed.size, tuple(surround))
+    ground.paste(source.convert("RGB"), offset)
+    red = np.asarray(ground.convert("L"))
+    cyan = np.asarray(photographed.convert("L"))
+    return Image.fromarray(np.dstack([red, cyan, cyan]))
+
+
+def photographed_panels(source: Path, render: Path, label: str, scratch: Path
+                        ) -> list[Panel]:
+    """The second row's pair for one render on a photographed page: the
+    render re-photographed, and the overlay. Empty for a picture that is
+    the paper, whose sheet stays as it was."""
+    import cv2
+
+    from doc_to_html.preprocess import page_outline
+
+    pixels = cv2.imread(str(source), cv2.IMREAD_COLOR)
+    outline = None if pixels is None else page_outline(pixels)
+    if outline is None:
+        return []
+    picture = Image.open(source).convert("RGB")
+    photo, offset = rephotograph(Image.open(render), outline, picture.size)
+    shot = scratch.with_name(f"{scratch.name}-photographed.png")
+    laid = scratch.with_name(f"{scratch.name}-overlay.png")
+    photo.save(shot)
+    overlay(picture, photo, offset, outline.surround).save(laid)
+    return [Panel(f"{label} re-photographed", shot),
+            Panel(f"OVERLAY {label.removeprefix('RENDER ')} · cyan source, red render",
+                  laid)]
 
 
 # --- findings ---------------------------------------------------------------
@@ -548,6 +671,7 @@ def build(run: Path, *, model: str = "qwen3-vl:4b",
             continue
 
         panels = [Panel("SOURCE (the page)", source)]
+        below: list[Panel] = []
         scratch: list[Path] = []
         if previous:
             older = _dump(previous, model) / name / "document.html"
@@ -556,6 +680,8 @@ def build(run: Path, *, model: str = "qwen3-vl:4b",
                 render(older, shot, width=width)
                 scratch.append(shot)
                 panels.append(Panel(f"RENDER {previous.name}", shot))
+                below += photographed_panels(source, shot, f"RENDER {previous.name}",
+                                             shot.with_suffix(""))
             else:
                 skipped.append(f"{name}: no document.html in {previous.name}, "
                                "compared against the source only")
@@ -563,9 +689,12 @@ def build(run: Path, *, model: str = "qwen3-vl:4b",
         render(html, shot, width=width)
         scratch.append(shot)
         panels.append(Panel(f"RENDER {run.name}", shot))
+        below += photographed_panels(source, shot, f"RENDER {run.name}",
+                                     shot.with_suffix(""))
+        scratch += [panel.image for panel in below]
 
         parts = contact_sheet(panels, out / f"{index:02d}-{name}", stamp=stamp,
-                              cap=cap)
+                              cap=cap, below=below)
         for path in scratch:
             path.unlink()
         sheets.append(Sheet(name, width, tuple(parts)))

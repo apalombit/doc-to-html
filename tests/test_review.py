@@ -376,3 +376,80 @@ def test_no_scores_is_not_reported_as_the_numbers_having_noticed() -> None:
     checked = review.summarise(record, scores=a_scores(recall=0.5))
     assert checked.cross_checked == ("invoice_0001",)
     assert "Not checked" not in review.report_md(record, checked)
+
+
+# --- the render re-photographed, spec 0018, 0a ------------------------------
+
+
+class Outline:
+    """What `preprocess.page_outline` hands over, built by hand."""
+
+    def __init__(self, quad: list[list[float]], surround: tuple[int, int, int]) -> None:
+        self.quad = np.array(quad, dtype=np.float32)
+        self.surround = surround
+
+
+def test_the_render_lands_on_the_outline() -> None:
+    """The render draws its paper at `paper_box` of the outline, and that
+    rectangle is carried onto the outline: a mark in each of the paper's
+    corners lands in the turned outline's corner."""
+    from doc_to_html.preprocess import paper_box
+
+    centre, turn = np.array([200.0, 150.0]), np.radians(4.0)
+    spin = np.array([[np.cos(turn), -np.sin(turn)], [np.sin(turn), np.cos(turn)]])
+    corners = [centre + spin @ np.array(corner) for corner in
+               ((-150, -100), (150, -100), (150, 100), (-150, 100))]
+    outline = Outline([list(corner) for corner in corners], (60, 65, 72))
+    paper = paper_box(outline.quad, 400, 300)
+    render = np.full((300, 400, 3), 255, dtype=np.uint8)
+    left, top = round(paper.left * 400), round(paper.top * 300)
+    right, bottom = round(paper.right * 400), round(paper.bottom * 300)
+    for x, y in ((left, top), (right - 6, top), (right - 6, bottom - 6), (left, bottom - 6)):
+        render[y:y + 6, x:x + 6] = 0
+    photo, offset = review.rephotograph(Image.fromarray(render), outline, (400, 300))
+    dark = np.asarray(photo.convert("L")) < 128
+    for corner in corners:
+        x, y = (int(v) for v in corner + np.array(offset))
+        near = dark[max(0, y - 8):y + 8, max(0, x - 8):x + 8]
+        assert near.sum() > 10, f"no mark near {corner}"
+
+
+def test_a_render_taller_than_its_paper_overhangs() -> None:
+    """The overhang is information, so the picture grows to hold it."""
+    outline = Outline([[20, 10], [180, 10], [180, 110], [20, 110]], (60, 65, 72))
+    render = Image.new("RGB", (200, 300), (255, 255, 255))
+    photo, offset = review.rephotograph(render, outline, (200, 120))
+    assert photo.width == 200 and photo.height >= 300 - 1
+    assert offset == (0, 0)
+
+
+def test_the_overlay_shows_each_sides_ink_in_its_own_colour() -> None:
+    """Cyan is the source's alone, red the render's alone, dark both."""
+    source = np.full((10, 30, 3), 255, dtype=np.uint8)
+    render = np.full((10, 30, 3), 255, dtype=np.uint8)
+    source[:, 0:10] = 0
+    source[:, 20:30] = 0
+    render[:, 10:30] = 0
+    laid = np.asarray(review.overlay(Image.fromarray(source), Image.fromarray(render),
+                                     (0, 0), (60, 65, 72)))
+    assert tuple(laid[5, 5]) == (0, 255, 255)
+    assert tuple(laid[5, 15]) == (255, 0, 0)
+    assert tuple(laid[5, 25]) == (0, 0, 0)
+
+
+def test_a_photographed_page_gains_a_second_row(tmp_path: Path) -> None:
+    """`ticket_0020` is warped by `rectify`, so its sheet carries each
+    render re-photographed and its overlay under the first row."""
+    older = a_run(tmp_path, "98-older", {"ticket_0020": "<p>old</p>"})
+    run = a_run(tmp_path, "99-test", {"ticket_0020": "<p>new</p>",
+                                      "invoice_0001": "<p>hi</p>"})
+    sheets, out = review.build(run, previous=older, render=FakeChrome(height=400))
+    by_name = {sheet.document: sheet for sheet in sheets}
+
+    ticket = Image.open(by_name["ticket_0020"].parts[0])
+    assert ticket.width >= 900 * 4 + review.GUTTER * 5
+    assert ticket.height > 2 * (400 + review.LABEL_BAR)
+    invoice = Image.open(by_name["invoice_0001"].parts[0])
+    assert invoice.height == 563 + review.LABEL_BAR + review.GUTTER, "one row"
+    assert sorted(p.name for p in out.iterdir() if p.suffix == ".png") == [
+        "00-invoice_0001.png", "01-ticket_0020.png"], "scratch panels are removed"

@@ -1734,6 +1734,43 @@ def sheet_outline(image: ImageArray,
     return found
 
 
+@dataclass(frozen=True)
+class Outline:
+    """Where the paper lies in a photograph, and the colour round it."""
+
+    quad: ImageArray
+    """The paper's four corners, top-left, top-right, bottom-right,
+    bottom-left, in the picture's own full-resolution pixels."""
+
+    surround: tuple[int, int, int]
+    """The colour round the paper, RGB — `surround_of`."""
+
+
+def page_outline(image: ImageArray) -> Outline | None:
+    """The paper's outline in a picture, or None where the picture is the
+    paper — `rectify`'s steps 1 and 2 choose what to warp to with this.
+
+    One function for every reader of the outline, spec 0018, 0a: the review
+    re-photographs the render through the outline `rectify` warped by, so a
+    wrong outline shows as misregistration rather than vanishing from the
+    comparison.
+    """
+    quad = find_page_quad(image)
+    surround = None if quad is None else surround_of(image, quad)
+    if quad is None or surround is None:
+        # Spec 0012, G3b: the same colour on both sides of the quadrilateral
+        # is a frame the page draws, not a sheet's edge — `SHEET_APART`.
+        return None
+    if sheet_beyond(image, quad, surround) > SHEET_BEYOND:
+        # Spec 0013, step 5: an edge with the sheet beyond it is not the
+        # paper's edge, so the paper is read off its colour — `SHEET_BEYOND`.
+        outline = sheet_outline(image, surround)
+        if outline is not None and sheet_beyond(image, outline, surround) <= SHEET_BEYOND:
+            quad = outline
+            surround = surround_of(image, quad) or surround
+    return Outline(quad, surround)
+
+
 def warp_to_quad(image: ImageArray, quad: ImageArray) -> ImageArray:
     """Flatten the page, sizing the output from the quadrilateral's own edges."""
     cv2 = _cv2()
@@ -1953,19 +1990,9 @@ def rectify(path: Path) -> Rectified:
 
     height, width = image.shape[:2]
 
-    quad = find_page_quad(image)
-    surround = None if quad is None else surround_of(image, quad)
-    if surround is None:
-        # Spec 0012, G3b: the same colour on both sides of the quadrilateral
-        # is a frame the page draws, not a sheet's edge — `SHEET_APART`.
-        quad = None
-    elif quad is not None and sheet_beyond(image, quad, surround) > SHEET_BEYOND:
-        # Spec 0013, step 5: an edge with the sheet beyond it is not the
-        # paper's edge, so the paper is read off its colour — `SHEET_BEYOND`.
-        outline = sheet_outline(image, surround)
-        if outline is not None and sheet_beyond(image, outline, surround) <= SHEET_BEYOND:
-            quad = outline
-            surround = surround_of(image, quad) or surround
+    outline = page_outline(image)
+    quad = None if outline is None else outline.quad
+    surround = None if outline is None else outline.surround
     flattened = image if quad is None else warp_to_quad(image, quad)
     inverted = ground_is_dark(flattened)
     if inverted:

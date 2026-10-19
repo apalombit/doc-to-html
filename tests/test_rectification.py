@@ -31,6 +31,7 @@ from doc_to_html.preprocess import (
     deskew,
     equalise,
     find_page_quad,
+    page_outline,
     paper_box,
     rectify,
     sheet_beyond,
@@ -298,6 +299,30 @@ class TestThePapersWholeOutline:
         height, width = image.shape[:2]
         assert rectify(EXAMPLES / "receipt.png").source.paper == paper_box(
             found, width, height)
+
+
+class TestOneOutline:
+    """Spec 0018, 0a — `rectify` and the review read the paper's outline off
+    one function, so the review re-photographs the render through exactly
+    the outline the page was warped by."""
+
+    @pytest.mark.parametrize("name", ["ticket.png", "receipt.png", "invoice.png",
+                                      "certificate.png"])
+    def test_rectify_warps_exactly_where_there_is_an_outline(self, name: str) -> None:
+        image = cv2.imread(str(EXAMPLES / name), cv2.IMREAD_COLOR)
+        outline = page_outline(image)
+        result = rectify(EXAMPLES / name)
+        assert result.warped == (outline is not None)
+        if outline is not None:
+            height, width = image.shape[:2]
+            assert result.source.paper == paper_box(outline.quad, width, height)
+            assert result.source.surround == outline.surround
+
+    def test_the_banded_card_is_outlined_off_its_colour(self) -> None:
+        image, true = banded_card()
+        outline = page_outline(image)
+        assert outline is not None
+        assert float(np.abs(outline.quad - true).max()) < 1.5
 
 
 class TestDeskewCorrectsATiltAndNotAnOrientation:
