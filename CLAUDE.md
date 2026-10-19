@@ -37,9 +37,9 @@ trial axis is kept rather than rejected.
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
 measured numbers and what has already been tried and rejected. **0018 is
-the open spec** — issue #41, planned 2026-10-19, not started; its handover
-prompt starts a session. 0017 (issue #40) is done and
-kept; 0016 (issue #39) is done and decided, swept as `S12-sweep`, the
+done** — issue #41; its sweep `S13-sweep` waits on Alessandro's baseline
+decision, and its "Handover — after the sweep" starts the next session.
+0017 (issue #40) is done and kept; 0016 (issue #39) is done and decided, swept as `S12-sweep`, the
 baseline. 0008 to 0015 (issues #31–#38) are done and decided. 0007 still
 defines the target.
 
@@ -66,7 +66,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-19: the baseline is `tests/frozen/s12-result/`, spec 0016's sweep, drawn by today's code with spec 0017's render steps; spec 0018 planned, not started. Work is judged by eye.**
+**Where the project is — 2026-10-19: the baseline is `tests/frozen/s12-result/`, spec 0016's sweep; spec 0018 is done and its sweep `S13-sweep` (three pages better, none worse) waits on Alessandro's decision. Work is judged by eye.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -191,8 +191,13 @@ Spec 0018   The strip as the page draws it, photographed pages, and the
               B photographed pages: B0 the twins (model-free), B1 repairs
               C rectify: C1 outline, C2 corners, C3 cubic warp, C4 equalise
                 only uneven light, never a fill
-              one sweep, S13-sweep, at the very end
-              NOT STARTED
+              0a-0c, A1, B0, B1, C1 DONE, each judged by eye; A2, C2, C4
+                each worse on its targeted run — DROPPED, Alessandro;
+                C3 skipped. Every drop lost pages through the detector
+                regrouping a changed picture (B0's fault 5)
+              S  S13-sweep on 91a72e1, 2026-10-19: prediction held to
+                 the byte, 3 pages better (ticket, pricing, cv), 18 same,
+                 none worse. DECISION PENDING
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
@@ -400,7 +405,7 @@ without a `fixtures.txt` the report silently scores the iterate five:
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s12-result/scores.json
+    --documents sweep --previous tests/frozen/s12-result/scores-paper-frame.json
 ```
 
 **Each floor move was measured, not argued:** the new floor was no lower than
@@ -651,7 +656,7 @@ each other — `CellState.DISPUTED` and the Ladder are already the vocabulary fo
 it, and `_climb_ladders` already records that it waits on a second Engine. That
 is model time and Alessandro's decision, not a detector.
 
-**Tracker state, 2026-10-19: one open issue — #41, spec 0018, not started.** #31–#40 (specs 0008–0017) are closed, each done and decided. #30 (spec 0007) closed when its
+**Tracker state, 2026-10-19: one open issue — #41, spec 0018, done, its baseline decision pending.** #31–#40 (specs 0008–0017) are closed, each done and decided. #30 (spec 0007) closed when its
 work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
 #17 (the vision layout prompt) were closed by Thread 0. Every other spec is closed
 history; 0007 still defines the target.

@@ -1,31 +1,35 @@
-# Status — 2026-10-19 (**the baseline is `tests/frozen/s12-result/`; spec 0017 kept; spec 0018 planned, not started**)
+# Status — 2026-10-19 (**spec 0018 done; `S13-sweep` waits on the baseline decision; the baseline is still `tests/frozen/s12-result/`**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-19,
-when spec 0017 was kept (issue #40 closed) and spec 0018 planned (issue
-#41). The baseline is spec 0016's sweep `S12-sweep`.
+after spec 0018's sweep `S13-sweep` (issue #41). Alessandro decides whether
+it becomes the baseline.
 
-Reading order for a fresh session: `CLAUDE.md`'s **READ THIS FIRST**, then
-[`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md)
-(authoritative), then this file, then
-[`specs/0018-strip-twins-rectify.md`](specs/0018-strip-twins-rectify.md),
-the open spec, not started (its handover prompt starts a session), then
-[`specs/0017-margins-and-roles.md`](specs/0017-margins-and-roles.md) and
-[`specs/0016-one-grid-one-strip.md`](specs/0016-one-grid-one-strip.md)
-for the ticket's history. If you are going to
-look at output — and you should — use the **`visual-review` skill**.
+Reading order for a fresh session:
+1. `CLAUDE.md`'s **READ THIS FIRST**;
+2. [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md),
+   which is authoritative;
+3. this file;
+4. [`specs/0018-strip-twins-rectify.md`](specs/0018-strip-twins-rectify.md):
+   its "Outcome — the sweep", then "Handover — after the sweep", which
+   starts the next session.
 
-Branch `scaffold`. **1247 tests pass (1 skipped), `mypy src/` clean** — at
-`24b635c`, 2026-10-18.
+If you are going to look at output — and you should — use the
+**`visual-review` skill**.
+
+Branch `scaffold`. **1287 tests pass (1 skipped), `mypy src/` clean** — at `91a72e1`, the sweep's commit, 2026-10-19.
 
 **How work is judged — Alessandro, 2026-10-12, for spec 0011; carried
-over by specs 0012 and 0013.** By eye: every step's sheets are opened
-against the previous step's and each page judged better / same / worse.
-Scores are produced and recorded, and **never gate a step or carry an
-argument**. The ratchet below is reported, not a gate. The one number still
-read is the report's `vanished` list, as a pointer to a page to look at.
-The six held-out pages are reported in their own lines. He checks every
-run himself too.
+over by specs 0012 to 0018.**
+- **By eye.** Every step's sheets are opened against the previous step's,
+  and each page is judged better / same / worse.
+- **Scores** are produced and recorded, and **never gate a step or carry an
+  argument**. The ratchet below is reported, not a gate.
+- **The one number still read** is the report's `vanished` list, as a
+  pointer to a page to look at.
+- **The six held-out pages** are reported in their own lines.
+
+He checks every run himself too.
 
 ---
 
@@ -50,61 +54,36 @@ Spec 0011   Place every entry where the page puts it — issue #34
 Corpus      Six held-out documents added 2026-10-13, fifteen kept
               DONE; S7-sweep over all 21 the baseline 2026-10-13
 Spec 0012   Draw what the page draws — issue #35
-              DONE; S8-sweep the baseline 2026-10-14, frozen as s8-result/
+              DONE; S8-sweep the baseline 2026-10-14
 Reset       2026-10-14, Alessandro: everything not in spec 0013 cleared.
 Spec 0013   Four pages first — issue #36
-              1 receipt 2 certificate 3 pricing 4 certificate 5 ticket
-              6 paper 7 statement — each DONE, judged by eye
-              S  S9-sweep on a3969f3, 2026-10-14: prediction held to the
-                 byte; 7 pages better, 13 same, 1 worse (ticket)
-              DECIDED 2026-10-14: S9-sweep the baseline, frozen as s9-result/
+              DONE; S9-sweep the baseline 2026-10-14
 Spec 0014   Every printed line has a place — issue #37
-              1 Zone.extra DONE  2 read what nobody read DONE
-              3 copies alike by the Kind that keeps most — built,
-                the catalogue worse: DROPPED, Alessandro 2026-10-14
-              S  S10-sweep on a53f11b, 2026-10-15: prediction held to
-                 the byte; 3 pages better, 18 same, none worse
-              DECIDED 2026-10-15: S10-sweep the baseline, frozen as s10-result/
+              DONE; S10-sweep the baseline 2026-10-15
 Reset       2026-10-15, Alessandro: everything not in spec 0015 cleared.
 Spec 0015   Every line read, and drawn where the page puts it — issue #38
-              ticket and certificate the focus
-              1 read the lines nobody reads  2 pairs as the page prints
-              them  3 side by side where the page puts it — each DONE,
-              judged by eye
-              S  S11-sweep on 6b1caf4, 2026-10-16: prediction held to
-                 the byte; 6 pages better, 15 same, none worse
-              DECIDED 2026-10-17: S11-sweep the baseline, frozen as s11-result/
+              DONE; S11-sweep the baseline 2026-10-17
 Reset       2026-10-18, Alessandro: everything not in spec 0016 cleared.
 Spec 0016   Structure first — one grid, one strip — issue #39
-              the ticket's layout the focus, structure not words:
-              1 one column grid per line-drawn Zone      DONE
-              2 one grid across side-by-side Zones       DONE
-              3 a drawn strip is one container           DONE
-              4 4b/4c, two locate guards                 DONE
-                4a no Zone from a fill's edge — the ticket's re-reads
-                lost words; DROPPED, Alessandro, with the crop fix it
-                called for (the timetable's legend twice)
-              S  S12-sweep on 3abb55d, 2026-10-18: prediction held to
-                 the byte; 1 page better (ticket), 20 same, none worse
-              DECIDED 2026-10-18: S12-sweep the baseline, frozen as s12-result/
-Spec 0017   Margins from the type, one size per role — planned 2026-10-18
-              from his review of S12-sweep's ticket, issue #40; render
-              only, measured by rederive over s12-result/:
-              1 margins from the type (1a row inset, 1b box to type)  DONE
-              2 one size per role (2a groups, 2b Title as a label)    DONE
-              ticket better, catalogue same (1px), nineteen identical
-              DECIDED 2026-10-19: kept, "useful per se but minor"
+              DONE; S12-sweep the baseline 2026-10-18, frozen as s12-result/
+Spec 0017   Margins from the type, one size per role — issue #40
+              render only; DECIDED 2026-10-19: kept
 Spec 0018   The strip as the page draws it, photographed pages, the
-              straightening step — planned 2026-10-19, issue #41:
-              0 compare in the photograph's frame: 0a the render
-                re-photographed + overlay, 0b scorer in the paper's frame,
-                0c the box pictures on the rectified page
-              A1 ink against its local ground   A2 a strip one container
-              B0 the twins, model-free   B1 repair what they find
-              C1 outline  C2 corners  C3 cubic  C4 equalise only uneven
-                 light, never a fill
-              one sweep, S13-sweep, at the very end
-              NOT STARTED
+              straightening step — issue #41, 2026-10-19:
+              0a the render re-photographed + overlay   DONE
+              0b the scorer in the paper's frame        DONE
+              0c the box pictures on the rectified page DONE
+              A1 ink against its local ground           DONE
+              A2 a strip one container                  DROPPED
+              B0 the twins, model-free                  DONE
+              B1 a card's edge read two lines deep      DONE
+              C1 an outline holds the page              DONE
+              C2 corners at full resolution             DROPPED
+              C3 cubic warp                             SKIPPED
+              C4 equalise only uneven light             DROPPED
+              S  S13-sweep on 91a72e1: prediction held to the byte;
+                 3 pages better (ticket, pricing, cv), 18 same, none worse
+              DECISION PENDING: S13-sweep as the baseline
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -116,42 +95,45 @@ in [`specs/0007-handover.md`](specs/0007-handover.md).
 
 **Twenty-one documents, 749 answers**, byte-identical to `s11-result/`'s.
 Sweep `S12-sweep`, commit `3abb55d` (spec 0016 step P; code `c98f2db`),
-2026-10-18 16:07 to 18:30 (**2h22m**), shipped defaults. Alessandro took
-it after review: against `s11-result/`, the ticket better, twenty the
-same, none worse; no ratchet leg fell.
+2026-10-18 16:07 to 18:30 (**2h22m**), shipped defaults.
 
-Proved on 2026-10-18, at `c98f2db`'s code:
-- `tools/replay_run.py tests/frozen/s12-result`: **21 of 21
-  byte-identical, 0 asked differently**;
-- `tools/rederive.py` over it: **21 of 21 byte-identical files**;
-- the rederive scored: **21 documents, 0 differing fields** against its
-  `scores.json`;
-- its 749 answers against the sweep's `trace.json`: 0 differ.
+**Score against `scores-paper-frame.json`, not `scores.json`, since
+2026-10-19.** Spec 0018's 0b scorer measures the source in its paper's
+frame. It re-scored `s12-result/`, and only the ticket moved (4 fields).
+The README has them.
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s12-result/scores.json
+    --documents sweep --previous tests/frozen/s12-result/scores-paper-frame.json
 ```
 
 `--documents sweep` is not optional: without a `fixtures.txt` the report
 scores the iterate five.
 
+### The candidate — `S13-sweep`, 2026-10-19, not yet frozen
+
+- **The run.** Commit `91a72e1` (code `e33d246`'s), 18:42 to 21:02,
+  **2h20m**, 755 calls, 40%/60% CPU/GPU. It lives in `debug/runs/S13-sweep`;
+  **do not clear it before Alessandro decides.**
+- **The prediction held to the byte.** All 755 calls were asked and
+  answered as registered: 749 of `s12-result/`'s and `S13-A1-run`'s for cv,
+  pricing and the ticket. All 21 pages are byte-identical to their
+  predicted render. The sweep's own replay is 21 of 21, 0 asked
+  differently.
+- **By eye against `S12-sweep`:** the ticket, pricing and cv better,
+  eighteen the same, none worse.
+- **Ratchet, reported:** one leg below, pricing's beside 0.629 → 0.600.
+- **`vanished`:** 26 → 24.
+
+The spec's "Handover — after the sweep" says how to freeze it if he takes
+it.
+
 ### The baselines before it
 
-- **`s11-result/`** — spec 0015's sweep, `S11-sweep`. The baseline
-  2026-10-17 to 2026-10-18. `S12-sweep` answered its 749 calls byte for
-  byte and asked nothing else.
-- **`s10-result/`** — spec 0014's sweep, `S10-sweep`. The baseline
-  2026-10-15 to 2026-10-17. `S11-sweep` answered its 735 calls byte for
-  byte and asked fourteen more.
-- **`s9-result/`** — spec 0013's sweep, `S9-sweep`. The baseline
-  2026-10-14 to 2026-10-15; `S10-sweep` answered its 732 calls byte for
-  byte and asked three more.
-- **`s8-result/`** — spec 0012's sweep, `S8-sweep`. The baseline for
-  2026-10-14 until spec 0013's sweep.
-- **`s7-result/`** — the first sweep over twenty-one, `S7-sweep`. The
-  baseline 2026-10-13 to 2026-10-14.
-- **`s6-result/`**, **`s5-result/`**, **`s3-result/`**, **`q5-result/`**,
+- **`s11-result/`** — spec 0015's sweep. The baseline 2026-10-17 to
+  2026-10-18.
+- **`s10-result/`**, **`s9-result/`**, **`s8-result/`**, **`s7-result/`**,
+  **`s6-result/`**, **`s5-result/`**, **`s3-result/`**, **`q5-result/`**,
   **`reshot/`** and the A-phase directories — each README says what it is
   and why its floor moved.
 
@@ -172,169 +154,123 @@ scores the iterate five.
 
 ## Where the corpus is — recorded, not a target
 
-Means over `s11-result/`, against `s10-result/`:
+Means over `S13-sweep`, against `s12-result/scores-paper-frame.json`:
 
 | | all 21 | the fifteen | the six new |
 |---|---|---|---|
-| vocabulary recall | 0.982 → 0.990 | 0.991 → 0.991 | 0.960 → 0.988 |
-| precision | 0.988 → 0.989 | 0.988 → 0.988 | 0.988 → 0.989 |
-| join recall | 0.951 → 0.961 | 0.965 → 0.965 | 0.914 → 0.949 |
-| tau | 0.949 → 0.977 | 0.990 → 0.990 | 0.847 → 0.946 |
-| beside agreement | 0.757 → 0.837 | 0.849 → 0.877 | 0.528 → 0.737 |
-| height ratio | 1.074 → 1.045 | 1.029 → 1.028 | 1.186 → 1.089 |
-| alignment agreement | 0.802 → 0.799 | 0.840 → 0.844 | 0.705 → 0.686 |
-| scale error | 0.220 → 0.227 | 0.154 → 0.165 | 0.383 → 0.383 |
+| vocabulary recall | 0.990 → 0.992 | 0.991 → 0.991 | 0.988 → 0.997 |
+| precision | 0.989 → 0.990 | 0.988 → 0.988 | 0.989 → 0.996 |
+| join recall | 0.961 → 0.963 | 0.965 → 0.965 | 0.949 → 0.958 |
+| tau | 0.982 → 0.982 | 0.990 → 0.990 | 0.963 → 0.964 |
+| beside agreement | 0.853 → 0.874 | 0.877 → 0.894 | 0.791 → 0.825 |
+| height ratio | 1.048 → 1.050 | 1.028 → 1.027 | 1.099 → 1.107 |
+| alignment agreement | 0.805 → 0.804 | 0.843 → 0.841 | 0.711 → 0.712 |
+| scale error | 0.226 → 0.223 | 0.165 → 0.168 | 0.377 → 0.359 |
 
-Moved: ticket, certificate, catalogue, timetable, sample_semantic,
-invoice_0002, cv. The fifteen's scale error is the catalogue's: its
-three prices placed by inference are drawn small.
-
-**`vanished`: 33 → 26 words.** Back: the ticket's gate note (`gate` was
-already printed elsewhere, so five words) and `osl`, and the timetable's
-`lunch`. No word is newly vanished.
+- **Moved:** the ticket, cv, pricing and the catalogue.
+- **`vanished`: 26 → 24 words.** The ticket's `nordlys` and `air` are back,
+  and no word is newly vanished.
+- **The spec's §4 lists the misreads** the `invented` lists show: the
+  statement's 216.08 read 210.08, nonlatin's footer naming another
+  company, and others.
 
 ---
 
 ## What the last work shipped
 
+### Spec 0018 — the strip, photographed pages, the straightening step, 2026-10-19
+
+One commit a step.
+
+**Part 0, the tools:**
+- **0a** `592175b`: `doc_to_html.review` re-photographs the render of a
+  warped page onto its outline and adds an overlay. An unwarped page's
+  sheet is byte-identical.
+- **0b** `69e6390`: `project(flat=True)` measures the source in its paper's
+  frame, and `s12-result/scores-paper-frame.json` is the re-scored baseline.
+- **0c** `038b99c`: the per-page index shows `Rectified.image` and the boxes
+  on it, as the detector saw them.
+
+**A1** `7aadacc`, `45604de`: `furniture.grounded` — ink measured against
+its local ground.
+- A solid fill is paper, and type on it is ink by its contrast with the
+  fill. Its blended edge is paper.
+- A fill one Zone holds whole is that Zone's. A fill with no type is a
+  mark.
+- The ticket's halo Zone and its `The` / `The` are gone, the strip is one
+  row, and `TRD` is display size.
+- **The knock-ons, repaired:**
+  - `structure._columns`: a divider is crossed only past its stroke's
+    width;
+  - `render._on_its_ground`: cv's sidebar;
+  - `locate`: a re-read line's `read_from`;
+  - `Document.to_data`: the IR without the null `read_from`.
+
+**B0** `0961c70`: `tools/twins.py`, five photographed twins of every
+corpus page with exact truth.
+- `--check` is model-free and takes about 13 minutes. It reports
+  `rectify` against the truth, and Zones kept against the page as shot,
+  carried into one frame.
+- **Not corpus** — Alessandro, 2026-10-19.
+
+**B1** `aa6d252`: `style._bordered` reads each card edge two lines deep
+(`EDGE_DEPTH`), so a resampled card is still a card. A rule is never a box.
+
+**C1** `8aed639`: an outline holds the page.
+- Paper is told from desk against the desk read at the picture's edge, and
+  a shadow is desk.
+- An outline that leaves paper outside is grown to it, or refused. The
+  strict reading comes first.
+- cv's twins: 307px out → 1.2–1.35px. No corpus outline moves.
+  `RECTIFIER_VERSION` is 7.
+
+**Dropped, each on Alessandro's decision after a targeted run:**
+- **A2** — the merged strip read stacked again;
+- **C2** — corners exact, the receipt and the ticket worse;
+- **C4** — six of eight pages worse, words vanished.
+
+**C3** was skipped. "Measured and not shipped" below has each.
+
+**The lesson the three drops share:** the detector regroups a page whose
+picture changes (B0's fault 5). Every step that changed the picture had
+its own aim right and lost pages through grouping. That is direction 1 in
+the spec's outcome.
+
 ### Spec 0017 — margins from the type, one size per role, 2026-10-18
 
-**Render only, no sweep.** `tools/rederive.py` over `s12-result/`
-(`S13-1`, `S13-2`), against `S12-sweep`'s renders, by eye. Every IR is
-byte-identical to the baseline's.
-
-- **Better: the ticket.** The field grid sits 22px in from the card's
-  edge and the stub's text 20px off the perforation (step 1);
-  `PASSENGER` is a muted label as in the stub, `NL 0482` is drawn at its
-  row's 1.50, and the stub's values are one size (step 2).
-- **Same: the catalogue**, one line 1px lower. **Nineteen byte-identical.**
-- Step 1's first version moved five more pages, three for the worse —
-  `paper_0018`'s centred title, `sample_semantic_0005`'s bullets,
-  `cv_0013`'s `REGISTRATION` — each closed off by an exclusion (spec 0017).
+**Render only, no sweep.**
+- The ticket's field grid sits 22px in from the card's edge, and the
+  stub's text 20px off the perforation.
+- `PASSENGER` is a muted label, and the stub's values are one size.
+- Kept 2026-10-19, issue #40 closed.
 - Commits: 1 `1c869fd`, 2 `24b635c`.
 
 ### Spec 0016 — structure first, `S12-sweep`, 2026-10-18
 
-**Against `S12-0-replay`: one page better, twenty the same, none
-worse.** Commit `3abb55d`, 749 calls, 2h22m. §7's prediction held to the
-byte: every call asked and answered as `s11-result/`, sixteen pages
-byte-identical to it, the other five as steps 1–3 draw them. Taken as
-the baseline, `s12-result/`, 2026-10-18. Issue #39 closed.
-
-- **Better: the ticket.** Its grid columns keep one edge; `TRD` flush
-  right on `OSL`'s line and a four-column grid with `DEPARTS` / `CLASS`
-  over their values; one teal strip with `BOARDING PASS` on one line;
-  the stub opens on its strip.
-- **Left on it:** the halo Zone `The` / `The` on the strip, now inside
-  the one strip at twice the page's height, and `TRD` at Title size —
-  both step 4a's, dropped.
-- **Same:** catalogue and invoice_0002 move a few pixels (step 1's
-  shared column edges); cv and form pixel-identical.
-- **Scores, recorded:** the ticket's tau 0.843 → 0.947, beside 0.262 →
-  0.393. `vanished` 26 → 26.
-
-What shipped, one commit a step:
-- 1 `34b0d97` `render._placed`: one set of column edges per Zone
-  (`_aligned`, `_edges`), minmax tracks, no `auto` track, a lone entry
-  wraps;
-- 2 `c8fe221` `render._one_grid` / `_grid_unit` / `_title_line`: unframed
-  side-by-side pairs Zones sharing two printed lines drawn as one grid,
-  Titles as lines; `_habit`, an unplaced label over its value where the
-  page's every placed pair is so;
-- 3 `dba3591` `render._filled`: a solid fill holding rows drawn once
-  behind them; `furnish.Anchors.bands`, a fill across a Zone's top as its
-  band; `render._heading_size`;
-- 4 `b03555e`, `c98f2db` `locate.display_words` (a one-character word
-  blocks nothing) and `locate._from_lines` (a claimed line boxed by all
-  its words). 4a and the crop fix: measured, dropped — below.
-
-### Spec 0015 — every line read, and drawn where the page puts it, `S11-sweep`, 2026-10-16
-
-Taken as the baseline, `s11-result/`, 2026-10-17. Issue #38 closed.
-
-**Against `S11-0-replay` (`s10-result/` replayed at the code the spec
-began on): six pages better, fifteen the same, none worse.** Commit
-`6b1caf4`, 749 calls, 2h22m. §6's prediction held to the byte: all
-735 calls `s10-result/` asked were answered alike, fourteen re-reads
-fell where registered, and every page was byte-identical to its
-predicted render.
-
-- **Better:** the ticket (the stub a pane of its own, the field grids
-  as grids, `OSL` and the gate note printed, `OSLO GARDERMOEN` under the
-  name); the certificate (its signature row one line, three lanes); the
-  catalogue (nine cards alike); invoice_0002 (the panels at the page's
-  widths); sample_semantic (TL;DR at the page's width, `Tags:`
-  printed); the timetable (`Lunch` printed).
-- **Left on the two focus pages:** the ticket has no display type for
-  `OSL` and `TRD`, its header bar is in pieces with the `The` strip,
-  and its stub header and barcode are missing. The certificate has its
-  seal as a text chip, its names flush left under centred rules, and
-  black stars. The spec's "Outcome — the sweep" has §1's tables row by
-  row, the faults by stage and the directions ranked — record only,
-  cleared on 2026-10-18.
-- **Ratchet, reported:** the timetable's tau 0.963 → 0.954 and beside
-  0.992 → 0.984, both from `Lunch` drawn under the grid instead of in
-  its row.
-
-What shipped, one commit a step:
-- 1 `3e35c27` `locate.unclaimed` widened: one-word lines, claims by
-  half the words and half their letters, a display read at the page's
-  scale, a crop that stops short of claimed words (`Unclaimed.reach`),
-  and the guard `locate.holds` after the call. `tools/replay_run`
-  compares calls by hash wherever they fall;
-- 2 `b48b7b2` `render._printed_lines` by position, entries with no box
-  placed from their mates' column or before the next entry, a lone label
-  drawn as a line, extra lines among the printed lines; `3c5e365`
-  `locate._from_lines` places an extra line on the line it claims;
-  `357b183` an extra heading set like the body is drawn as a line;
-- 3 `a8bc381` a band's units take the page's lanes (`render._lanes`,
-  extent = box, frame and anchored rules), and a drawn divider reaches
-  what it parts (`structure._columns`).
-
-### Spec 0014 — every printed line has a place, `S10-sweep`, 2026-10-15
-
-Taken as the baseline, `s10-result/`, until 2026-10-17.
-**Against `S10-0-replay` (`s9-result/` at the code it began on): three
-pages better, eighteen the same, none worse.** Commit `a53f11b`, 735
-calls, 2h21m. §7's prediction held to the byte: all 732 calls
-`s9-result/` asked answered alike, three re-reads beyond them, every
-page as predicted. The unclaimed list is empty on all 21.
-
-- **Better:** the form's note under its tick boxes; the ticket's `OSLO
-  GARDERMOEN` (at the foot of its Zone, not under the name); the
-  timetable's legend on one line under its grid.
-- **Ratchet, reported:** the ticket's tau 0.282 → 0.238, from that
-  line's place. `vanished` 41 → 33, nothing gone.
-
-What shipped, one commit a step:
-- 1 `ir.Zone.extra`: lines a Zone's Kind has no place for; `cells_of`
-  yields them last; `render._zone_body` draws them before or after the
-  body;
-- 2 `Conversion._read_unclaimed`: each line `locate.unclaimed` flags is
-  read on its own crop with the prose prompt, kept unless the Zone
-  already prints the line (`locate.holds`); `tools/replay_run` counts a
-  pass's calls, so a swallowed new call is marked ASKED MORE;
-- 3 copies alike by the Kind that keeps most — **built and dropped**:
-  prose lost five of the catalogue's code badges and its price rows'
-  spread, and darkdeck's tiles are four `pairs` when copies are read
-  alike, so it never reached them.
-
-### Spec 0013 — four pages first, `S9-sweep`, 2026-10-14
-
-Seven pages better, thirteen the same, the ticket worse; taken as the
-baseline, `s9-result/`. Its "Outcome — the sweep" has the detail.
+One grid per line-drawn Zone, one grid across side-by-side Zones, a drawn
+strip one container, and two `locate` guards. One page better (the
+ticket), twenty the same. Taken as the baseline, `s12-result/`. Issue #39
+closed.
 
 ### Earlier
 
-Specs 0008–0012 and the corpus widening: each spec's "Outcome" sections,
+Specs 0008–0015 and the corpus widening: each spec's "Outcome" sections,
 and `specs/0007-handover.md` for the A phases and the queue.
 
 ---
 
-## Next — nothing open
+## Next — the baseline decision, then nothing open
 
-Spec 0016 is done and `S12-sweep` is the baseline. Every other item was
-cleared on 2026-10-18 and none is queued until Alessandro names it.
+- **Alessandro decides whether `S13-sweep` becomes the baseline.** If he
+  takes it, it is frozen as `tests/frozen/s13-result/`. The spec's
+  "Handover — after the sweep" is the prompt for that session.
+- **The spec ranks four directions:**
+  1. the detector's grouping, steady under a changed picture;
+  2. readings inside a line;
+  3. structure the IR does not carry;
+  4. looks.
+
+  **None is queued** until he names one.
 
 ---
 
@@ -396,6 +332,9 @@ the last two entries.
   with `tools/shoot_corpus.py --force` and re-cut the floor on a sweep — the
   scores of a picture that changed are not comparable with anything before it.
 - **Leave `debug/runs/84-rule-not-a-line/` intact.**
+- **The twins are a model-free check, not corpus** — Alessandro,
+  2026-10-19. `tools/twins.py --check` measures `rectify` and the layout
+  front on photographed copies; nothing scores against them.
 - **Never score against `tests/documents/SAMPLE_DOCUMENTS`.**
 - **Never edit a script a running sweep reads** — `tools/iterate.sh` above
   all. Bash reads a script as it goes; `S8-sweep`'s died after its bake-off.
@@ -414,6 +353,26 @@ the last two entries.
   `sparksuite` and `logo` were invented.
 
 ## Measured and not shipped — record, not a queue
+
+Spec 0018's three drops each moved the picture or the boxes and lost pages
+through the detector's grouping (the spec has each in full):
+- **A drawn strip one container** — A2. `furniture.strips` and
+  `structure.one_per_strip` merged the ticket's strip into one Zone. On
+  that crop the caption pass took `NORDLYS AIR` for its Title, and the two
+  were drawn stacked; the stub's panes were lost (`S13-A2-run`). The cut
+  alone was mixed (`S13-A2c-run`).
+- **Corners at full resolution** — C2. Every outlined twin came within
+  0.01–0.23px, and the ticket within 0.08–0.30px of its CSS corners. But
+  the receipt's crop moved and its table lost its rows, and the ticket's
+  main pane split into five Zones (`S13-C2-run`). **C3**, cubic warp, was
+  skipped on the same decision.
+- **Equalise only uneven light** — C4. The light read off the paper alone
+  judges every corpus page even and every shaded twin uneven, and lifts no
+  ink anywhere. But with nothing divided, 15 pages' crops moved. On
+  `S13-C4-run` six of eight pages were worse: the catalogue lost five SKU
+  chips, the ticket its gate note, and the timetable its grid. The
+  detector, the snap and the crops lean on ink the old division invents.
+  The diff is not kept; the spec describes the rule exactly.
 
 - **No Zone from a drawn fill's edge** — spec 0016, 4a. Recovery
   ignoring the solid fills `_measure_style` finds removes the ticket's
@@ -464,16 +423,18 @@ the last two entries.
 FIXTURE=sweep tools/iterate.sh <label>        # all twenty-one, ~2¼ h — anything reviewed
 FIXTURE=iterate tools/iterate.sh <label>      # the five, ~20 min — throwaway checks only
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s12-result/scores.json
+    --documents sweep --previous tests/frozen/s12-result/scores-paper-frame.json
 python tools/visual_review.py debug/runs/<label> --previous debug/runs/<older>
 python tools/visual_review.py debug/runs/<label> --check
+python tools/twins.py debug/twins --check     # rectify + layout front on the twins, ~13 min, no model
 ```
 
 `iterate.sh` records `HEAD` only. **When a sweep runs on uncommitted code, save
 `git diff HEAD > debug/runs/<label>/uncommitted.diff` beside it**, as A3 did.
 
 **A sweep outlasts a two-hour background task** — `S7-sweep` took 2h16m,
-`S8-sweep` 2h12m, `S9-sweep` 2h16m, `S10-sweep` 2h21m, `S11-sweep` 2h22m. Start it detached and wait on its log, and **never edit
+`S8-sweep` 2h12m, `S9-sweep` 2h16m, `S10-sweep` 2h21m, `S11-sweep` 2h22m,
+`S12-sweep` 2h22m, `S13-sweep` 2h20m. Start it detached and wait on its log, and **never edit
 `tools/iterate.sh` while a sweep is running**: bash reads the script as
 it goes, and `S8-sweep`'s script died after its bake-off on a line the
 edit had shifted:

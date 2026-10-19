@@ -1,8 +1,15 @@
 # The strip as the page draws it, photographed pages, and the straightening step
 
-**Status: planned 2026-10-19, issue #41; not started.** The baseline is
-`tests/frozen/s12-result/`; today's code draws it with spec 0017's two render
-steps. One sweep, at the very end.
+**Status: done 2026-10-19, issue #41; the baseline decision is
+Alessandro's.**
+- **Shipped:** Part 0 (0a, 0b, 0c), A1, B0, B1 and C1.
+- **Measured and dropped, each on his decision:** A2, C2 and C4. C3 was
+  skipped.
+- **The sweep:** `S13-sweep` on `91a72e1`. Its prediction held to the byte.
+  Against `S12-sweep`, by eye: three pages better (the ticket, pricing, cv),
+  eighteen the same, none worse. "Outcome — the sweep" is at the end.
+
+The baseline is still `tests/frozen/s12-result/` until he decides.
 
 ## Alessandro's decisions, 2026-10-18 and 2026-10-19
 
@@ -645,6 +652,167 @@ picture moves. Taken at `ce5fd6e`, the sweep's code, with two replays:
 
 So the sweep checks that the model answers as it did. The pages are judged
 on what A1, B1 and C1 drew, and against `S12-sweep`'s sheets.
+
+### Outcome — the sweep, `S13-sweep`, 2026-10-19
+
+The run:
+- commit `91a72e1` (code as at `e33d246`), 18:42 to 21:02, **2h20m**;
+- 755 calls, the model 40%/60% CPU/GPU;
+- report `debug/runs/S13-sweep/report.html`, scored against
+  `s12-result/scores-paper-frame.json`;
+- sheets against `S12-sweep` in `debug/runs/S13-sweep/_review/`.
+
+**The prediction held to the byte.**
+- All 755 calls were asked and answered as registered: 749 of
+  `s12-result/`'s and `S13-A1-run`'s for cv, pricing and the ticket.
+- Every page is byte-identical to its predicted render, 21 of 21.
+- The sweep's own replay is 21 of 21 byte-identical, with 0 asked
+  differently.
+
+**By eye: three pages better, eighteen the same, none worse.** Markup moved
+on four pages, the ticket, cv, pricing and the catalogue. On all 21 the
+stylesheet gained rules for a grounded strip, which only cv and the ticket
+draw.
+
+#### 1. The ticket, against §1
+
+| §1's fault | at `S13-sweep` |
+|---|---|
+| 1–3 the strip lifted, its fringe ink, a halo Zone recovered | **repaired** by A1: the fringe is read against the strip, and no Zone is recovered |
+| 4 `The`, twice | **gone**, and the strip's `NORDLYS AIR` is printed again (`vanished` loses `nordlys`, `air`) |
+| 5 the strip drawn two rows, 80px tall | **repaired**: one row at the page's height, `NORDLYS AIR` left and `BOARDING PASS` right |
+| 6 the body measure 8.0px, `TRD` refused | **repaired**: `TRD` is drawn at display size |
+| the stub strip's text unread | **left**: the stub's strip is drawn empty (A2's aim, dropped) |
+| the photograph compared out of its frame | **repaired** by Part 0: the render is re-photographed onto the outline, and the overlay registers the card |
+
+Left on it against the original:
+- `OSL` is body size, and the plane is missing;
+- no barcode;
+- the gate note wraps into three left-set lines where the page centres two;
+- `BOARDING PASS` sits a line below `NORDLYS AIR`;
+- the values are not bold.
+
+#### 2. Every page against `S12-sweep`
+
+| page | verdict | what |
+|---|---|---|
+| ticket | **better** | as §1 above |
+| pricing | **better** | the TEAM card's "Start a 14-day trial" is drawn bold, white and at its size on the blue fill, where it was a tiny dark line (A1) |
+| cv | **better**, slightly | each sidebar section is a grounded Zone on the navy, with a rule under its label as the page draws it; the sidebar's type and spacing are closer to the page's |
+| catalogue | same | one line 1px lower (spec 0017) |
+| the other seventeen | same | markup unchanged |
+
+#### 3. Scores, recorded
+
+| page | moved |
+|---|---|
+| ticket | vocabulary 0.950 → 1.000, precision 0.962 → 1.000, join 0.842 → 0.895, tau 0.947 → 0.950, beside 0.588 → 0.818, scale error 0.747 → 0.639, height 1.112 → 1.144 |
+| cv | beside 0.361 → 0.586, height 1.171 → 1.154, alignment 0.889 → 0.867, scale error 0.055 → 0.100 |
+| pricing | beside 0.629 → **0.600**, height 1.122 → 1.141: the card's foot grows with its button drawn at size |
+| catalogue | beside 0.872 → 0.901 |
+
+- **The ratchet, reported:** one leg below the baseline, pricing's beside.
+- **`vanished`: 26 → 24 words.** No word is newly vanished.
+- **The six held out**, means: vocabulary 0.988 → 0.997, beside 0.791 →
+  0.825.
+
+#### 4. Faults left against the originals, by stage
+
+Read off all 21 sheets on 2026-10-19, and from the report's `vanished` and
+`invented` lists.
+
+**Reading inside a line**, the model's:
+
+| page | what the page prints | what the render prints |
+|---|---|---|
+| statement | 216.08, 1,144.30, `Lindow`, `Quillon` | 210.08, 1,141.30, `Lindward`, `Quillton` twice |
+| nonlatin | its own company name in the footer | another: `Αγγελίδης Μπραγκαντής`; also `Έλεγχος` → `Έλευθος`, `aigaio` → `aigaiio` |
+| invoice_0002 | `adipisicing`, `M0123…` | `adipiscing`, `blanditiiis`, `M0123` read with an O |
+| menu | `béarnaise`, `chervil` | `bearnaise`, `chorvil` |
+| form | `Castleton` | `Castletown` twice |
+| form, cv | `fernpost` | `fempost` |
+| newsletter | `Councillor` | `Councilor` |
+| receipt | the AID | one zero short |
+
+**Structure the render draws differently:**
+
+| page | fault |
+|---|---|
+| timetable | its spanning cells: Monday's 09:00 `Mathematics` clipped under a white box, Tuesday's 10:00 `Science` across two columns, PE's second hour lost; `Lunch` under the grid; the legend without its swatches |
+| sample_semantic | the tag links above `Tags:`, their commas gone |
+| paper | the display equation set inline, `(1)` on a line of its own; the authors' and affiliations' superscripts run into their words (`solberg1`, `1department`) |
+| report | footnote markers printed as plain digits (`2027. 3`); the table at full width where the page sets it narrower |
+| letter | the sign-off's lines spread apart; the e-mail split, `office@hal denpryce.example` |
+| invoice_0001, invoice_0002 | the colons and the bar dropped from `Created:`, `Due:`, `NO: … \| Date:` |
+| darkdeck | the P95 LATENCY tile split in two columns, `184` apart from `ms`; COST PER MILLION's value small |
+| catalogue | the CP-402 chip missing; three cards' prices small |
+| cv | Software: two entries bold and two indented smaller, where the page sets four alike |
+
+**Looks.** These are classes Alessandro cleared on 2026-10-18 — display
+type, marks, borrowed looks, bold:
+- **certificate:** its seal is an orange text chip; the stars are black;
+  the signature is bold serif, not script; the names are flush left under
+  centred rules;
+- **sample_css:** the `CSS` badge is plain `css` on its own line;
+- **newsletter:** the drop cap is lost, and the opening words are set as a
+  bold heading;
+- **menu:** the small caps are bold caps, `PUDDINGS` is a ruled heading,
+  and the leaders stop short of the prices;
+- **receipt:** bold where the page is regular.
+
+#### 5. Directions, ranked
+
+| # | direction | why first | evidence |
+|---|---|---|---|
+| 1 | **The detector's grouping, steady under a changed picture** | It blocked the whole of Part C. C1's loose read, C2 and C4 each had their geometry or light right, and each made pages worse only through the detector regrouping the page. No change to `rectify` can ship until a re-sampled page is grouped as the shot one | B0's fault 5: 16 of 21 pages regroup on resampling alone; `S13-C1-run`, `S13-C2-run`, `S13-C4-run` |
+| 2 | **Readings inside a line** | Misread amounts on a bank statement and an invented company name are the gravest faults in the corpus. CV cannot see them (Phase A-1); two readings of one crop compared could | §4's first table |
+| 3 | **Structure the IR does not carry** | spanning cells, superscripts, a display equation; each is one page | §4's second table |
+| 4 | **Looks** | the classes cleared on 2026-10-18 | §4's third list |
+
+#### 6. Recommendation
+
+Take `S13-sweep` as the baseline. It draws three pages better and none
+worse, and its prediction held to the byte. Its one ratchet leg below the
+baseline is pricing's beside, from a card drawn closer to the page. Freeze
+it as `tests/frozen/s13-result/` with its 755 answers. Then open direction
+1 as the next spec if Part C's aim is still wanted, or direction 2 if
+reading matters more.
+
+**The decision is Alessandro's.**
+
+---
+
+## Handover — after the sweep
+
+> Spec 0018 (`docs/specs/0018-strip-twins-rectify.md`, issue #41) is done,
+> and its sweep `S13-sweep` waits on Alessandro's baseline decision. Read
+> `CLAUDE.md`'s READ THIS FIRST, `docs/status.md`, then the spec's
+> "Outcome — the sweep".
+>
+> **If he takes `S13-sweep`**, freeze it as `tests/frozen/s13-result/` the
+> way `s12-result/` was frozen. Do it from `debug/runs/S13-sweep`, which
+> must not be cleared first:
+> - `documents/`;
+> - `answers/`, 755 calls, via `tools/replay_run.py debug/runs/S13-sweep
+>   --save-answers tests/frozen/s13-result`;
+> - `scores.json`, scored against `s12-result/scores-paper-frame.json`;
+> - `dth_env.txt`;
+> - a README stating its provenance.
+>
+> Then prove it:
+> - `tools/replay_run.py tests/frozen/s13-result` — 21 of 21
+>   byte-identical, 0 asked differently;
+> - `tools/rederive.py` over it — 21 of 21;
+> - scored, 0 differing fields.
+>
+> Point `CLAUDE.md`, `docs/status.md` and the report command's `--previous`
+> at it, and close issue #41.
+>
+> **If he does not,** `s12-result/` stays the baseline. Record his reason in
+> the spec.
+>
+> Nothing else is open. The spec's directions are ranked, not queued: pick
+> up none unless he names it.
 
 ---
 
