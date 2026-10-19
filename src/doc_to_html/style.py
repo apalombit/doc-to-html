@@ -548,6 +548,46 @@ def rectangles(image: ImageArray, *, ground: tuple[int, int, int],
     return tuple(sorted(found, key=lambda b: (round(b.top, 3), b.left)))
 
 
+def outlined(image: ImageArray, box: BBox, *, ground: tuple[int, int, int]) -> bool:
+    """Whether a drawn rectangle is **outlined** — a line round it further
+    from the page's `ground` than its own inside — rather than a fill whose
+    edge is a step from the paper to the fill. Spec 0019, A1.
+
+    `_bordered` measures an edge against the region's fill, so a fill's
+    edge passes it whenever the step is blended: resampled or softened, the
+    paper fades into the fill across the outer `EDGE_DEPTH` lines, and those
+    lines differ from the fill. **A line is darker than both its sides; a
+    blend lies between them.** So an edge counts here only where it stands
+    further from the ground than the fill does, by `SAME_COLOUR`.
+
+    `form_0007` is why: each section heading sits on a grey bar, and the
+    address field is a grey box with a rule round it. As shot,
+    `rectangles` finds the field and one bar; with the page resampled to 98%
+    or blurred at σ 0.6 it finds all five bars, and `cut_at_sections` took
+    every heading for a field's value and cut nothing (`tools/layout_front.py
+    --jitter`). Outlined, the field passes on every copy and no bar does.
+    """
+    pixels = np.asarray(image)
+    height, width = pixels.shape[:2]
+    left, top = int(round(box.left * width)), int(round(box.top * height))
+    right, bottom = int(round(box.right * width)), int(round(box.bottom * height))
+    block = np.asarray(pixels[top:bottom, left:right, ::-1], dtype=np.int64)
+    depth = EDGE_DEPTH
+    if block.ndim != 3 or min(block.shape[:2]) < 2 * depth + 3:
+        return False
+    paper = np.array(ground)
+    fill = np.median(block[depth + 1:-depth - 1, depth + 1:-depth - 1].reshape(-1, 3), axis=0)
+    inside = float(np.abs(fill - paper).sum())
+    edges = [block[:depth, :], block[-depth:, :],
+             block[:, :depth].transpose(1, 0, 2), block[:, -depth:].transpose(1, 0, 2)]
+    drawn = sum(
+        1 for edge in edges
+        if (np.abs(edge - paper).sum(axis=2).max(axis=0) > inside + SAME_COLOUR).mean()
+        >= BORDER_RUN
+    )
+    return drawn >= BORDER_EDGES
+
+
 def _area(box: BBox) -> float:
     return max(0.0, box.right - box.left) * max(0.0, box.bottom - box.top)
 

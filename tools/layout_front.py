@@ -28,7 +28,8 @@ when the page's own picture changes by what no reader would see. Each page's
 and back, to 102% and back, shifted 1px right and down, and blurred at σ 0.6.
 `LayoutEngine.detect_zones` — the forward pass and every rule — runs on each,
 and its Zones are counted against the unperturbed page's (`counted`): kept at
-IoU 0.5 or more, merged when read inside one larger Zone, or lost. It writes
+IoU 0.5 or more, merged when read inside one larger Zone, split when the
+perturbed Zones cover it between them, or lost. It writes
 `jitter.md` and `jitter.json` under `<out>`, and run twice it writes the same
 bytes. About a minute and a half for all twenty-one.
 
@@ -109,7 +110,9 @@ PERTURBATIONS: dict[str, Callable[[np.ndarray], np.ndarray]] = {
 KEPT_IOU = 0.5
 MERGED = 0.9
 """As `tools/twins.py` counts: a Zone is kept where one perturbed Zone meets
-it at IoU 0.5 or more, merged where it lies 0.9 inside a larger one."""
+it at IoU 0.5 or more, merged where it lies 0.9 inside a larger one. Split
+— spec 0019, A1 — where the perturbed Zones cover 0.9 of it between them,
+so its ink is read, in more than one crop."""
 
 
 def _iou(a: BBox, b: BBox) -> float:
@@ -128,16 +131,30 @@ def _inside(box: BBox, other: BBox) -> float:
     return across * down / area if area > 0 else 0.0
 
 
+def _covered(box: BBox, others: list[BBox]) -> float:
+    """The share of `box` that `others` cover between them, on a 1000-step grid."""
+    steps = 1000
+    left, top = int(box.left * steps), int(box.top * steps)
+    right, bottom = max(left + 1, int(box.right * steps)), max(top + 1, int(box.bottom * steps))
+    grid = np.zeros((bottom - top, right - left), dtype=bool)
+    for other in others:
+        grid[max(0, int(other.top * steps) - top):max(0, int(other.bottom * steps) - top),
+             max(0, int(other.left * steps) - left):max(0, int(other.right * steps) - left)] = True
+    return float(grid.mean())
+
+
 def counted(page: list[BBox], perturbed: list[BBox]) -> dict[str, int]:
-    """The page's Zones against the perturbed page's: kept, merged, lost."""
-    kept = merged = 0
+    """The page's Zones against the perturbed page's: kept, merged, split, lost."""
+    kept = merged = split = 0
     for box in page:
         if any(_iou(box, other) >= KEPT_IOU for other in perturbed):
             kept += 1
         elif any(_inside(box, other) >= MERGED for other in perturbed):
             merged += 1
-    return {"zones": len(page), "kept": kept, "merged": merged,
-            "lost": len(page) - kept - merged}
+        elif _covered(box, perturbed) >= MERGED:
+            split += 1
+    return {"zones": len(page), "kept": kept, "merged": merged, "split": split,
+            "lost": len(page) - kept - merged - split}
 
 
 def jitter(documents: list[str]) -> dict[str, dict[str, dict[str, int]]]:
@@ -159,9 +176,10 @@ def jitter(documents: list[str]) -> dict[str, dict[str, dict[str, int]]]:
 
 def jitter_table(report: dict[str, dict[str, dict[str, int]]]) -> str:
     """The check as a table: per page and perturbation `kept/zones +merged
-    -lost`, then the total kept and the pages that regroup."""
+    ÷split -lost`, then the total kept and the pages that regroup."""
     def cell(row: dict[str, int]) -> str:
         return (f"{row['kept']}/{row['zones']}" + (f" +{row['merged']}" if row["merged"] else "")
+                + (f" ÷{row['split']}" if row.get("split") else "")
                 + (f" -{row['lost']}" if row["lost"] else ""))
 
     lines = ["| page | " + " | ".join(PERTURBATIONS) + " |",
@@ -172,10 +190,11 @@ def jitter_table(report: dict[str, dict[str, dict[str, int]]]) -> str:
     kept = sum(row["kept"] for rows in report.values() for row in rows.values())
     total = sum(row["zones"] for rows in report.values() for row in rows.values())
     lost = sum(row["lost"] for rows in report.values() for row in rows.values())
+    split = sum(row.get("split", 0) for rows in report.values() for row in rows.values())
     moved = sum(1 for rows in report.values()
                 if any(row["kept"] < row["zones"] for row in rows.values()))
     share = kept / total if total else 1.0
-    lines += ["", f"**Zones kept: {kept} of {total}, {share:.3f}**; lost {lost}; "
+    lines += ["", f"**Zones kept: {kept} of {total}, {share:.3f}**; split {split}; lost {lost}; "
               f"pages that regroup on at least one perturbation: {moved} of {len(report)}."]
     return "\n".join(lines) + "\n"
 

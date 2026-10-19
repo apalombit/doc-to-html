@@ -139,6 +139,141 @@ def outermost(found: list[Detection]) -> list[Detection]:
     return [found[index] for index in sorted(kept)]
 
 
+SHEET = 0.95
+"""A detection this wide and this tall, as a share of the page, is the sheet
+of paper and not a region on it — spec 0019, A1.
+
+`PAGE_LEVEL`'s reason, for any class: a box round everything says nothing
+about grouping. `ticket_0020` holds a `picture` over the whole page at
+0.52, and `without_overreaching_pictures` drops it because the stub's
+picture inside scores 0.55. Resampled to 98% the page's box keeps 0.41
+and the stub falls under it; blurred at σ 0.6 they are 0.63 and 0.62. So
+the page's five Zones became one on two of the jitter check's four copies
+(`tools/layout_front.py --jitter`), on which side of a score difference of
+a hundredth they fell.
+
+Measured over every confident detection on all twenty-one pages and their
+four copies: each whole-page box spans 0.997 or more both ways. The widest
+region that is not the page is `certificate_0021`'s frame on the 98% copy,
+0.953 by 0.908, then `form_0007`'s form, 0.94 by 0.87. 0.95 sits between.
+"""
+
+
+def _sheet(box: Detection) -> bool:
+    return box.right - box.left >= SHEET and box.bottom - box.top >= SHEET
+
+
+def _parts(box: Detection, found: list[Detection]) -> list[Detection]:
+    """The outermost of `found` lying inside `box`, `box` itself aside."""
+    return outermost([other for other in found if other is not box
+                      and _covered_by(other, box) >= CONTAINED
+                      and _area(other) < 0.9 * _area(box)])
+
+
+def without_unsure_tall_containers(confident: list[Detection]) -> list[Detection]:
+    """Drop a tall container the detector is less sure of than of a part it
+    holds — spec 0019, A1. Its parts then stand.
+
+    **`CONTAINER_HEIGHT`'s rule, at the threshold's other side.** There, a
+    sub-threshold container spanning a quarter of the page is "not evidence
+    enough to overrule boxes it was sure about". Here the same container has
+    crossed the threshold — and softness is what carries it across. On
+    `cv_0013` a `picture` covers the navy sidebar at 0.38, under 0.40, and
+    its nineteen sections stand at 0.60-0.90. Resampled to 98% or 102%,
+    shifted a pixel, or blurred at σ 0.6, the picture scores 0.42-0.44,
+    `outermost` keeps it, and sixteen Zones become one — on all four of the
+    jitter check's copies. `pricing_0017`'s cards and their whole row cross
+    the same way, 0.33 to 0.52 (`tools/layout_front.py --jitter`).
+
+    **Three conditions, each load-bearing**, measured over all twenty-one
+    pages as shot and on the jitter check's four copies of each:
+    - *Taller than `CONTAINER_HEIGHT`*. A short container less sure than its
+      parts is a paragraph over its printed lines — `pricing_0017`'s `text`
+      at 0.53 over lines at 0.66 and 0.57 — which `outermost` exists to keep
+      whole. Without the bound the rule moves eight pages as shot, splitting
+      paragraphs and pairs into their lines: `invoice_0002` 10 Zones to 37,
+      `nonlatin_0014` 8 to 24.
+    - *Less sure than its surest part*, so a container the detector is
+      surer of stands: `catalogue_0015`'s nine cards, 0.83-0.87 over parts
+      at 0.79 or less.
+    - *No part a graphic* — a `picture` with no parts of its own. A
+      container holding a graphic is a region with a picture in it:
+      `ticket_0020`'s stub, 0.55 over its heading at 0.57 and its barcode,
+      and its main pane, 0.43 over a heading at 0.55 and an icon. Without
+      this the page as shot goes from five Zones to ten.
+
+    Over the twenty-one pages as shot it drops nothing: every Zone the
+    layout front draws is the one it drew before. On the copies, the
+    jitter check's Zones kept go 635 to 722 of 848; cv 15/31 to 27-29/31,
+    pricing 4/21 to 14/21.
+    """
+    unsure = set()
+    for index, box in enumerate(confident):
+        if box.bottom - box.top <= CONTAINER_HEIGHT:
+            continue
+        parts = _parts(box, confident)
+        if (len(parts) >= 2 and max(part.score for part in parts) > box.score
+                and not any(part.label == "picture" and len(_parts(part, confident)) < 2
+                            for part in parts)):
+            unsure.add(index)
+    return [box for index, box in enumerate(confident) if index not in unsure]
+
+
+TRIM = 0.75
+"""How much of a container a drawn rectangle inside it must cover to be the
+container's own outline — spec 0019, A1. See `trimmed_to_drawn`.
+
+Measured on the jitter check: 0.70 to 0.80 give the same answer on all
+twenty-one pages and every copy. At 0.85 `timetable_0019`'s grid, blurred,
+is no longer recognised (its drawn grid is 0.84 of the box the detector
+drew); at 0.60 a box on `receipt_0010`'s shifted copy is trimmed that should
+not be.
+"""
+
+
+def trimmed_to_drawn(found: list[Detection], confident: list[Detection],
+                     drawn: Sequence[BBox]) -> list[Detection]:
+    """A container the page draws is as large as the page draws it — spec
+    0019, A1.
+
+    Where a drawn rectangle inside a kept box covers `TRIM` of it, that
+    rectangle is the box's outline, and a confident part the box holds
+    outside the rectangle is not its inside: the box is cut back to the
+    rectangle and the parts outside stand.
+
+    `timetable_0019`'s grid is a `picture` at 0.98 with its outline drawn.
+    As shot the detector's box sits on the outline. Resampled or blurred it
+    is still 0.94, but its top climbs 0.20 to 0.13 or 0.07 and takes the
+    line printed above the grid — the week and the class — which
+    `outermost` then drops as the grid's inside, so two Zones became one on
+    three of the jitter check's four copies. Cut back to the drawn grid,
+    both lines stand on every copy. Over the twenty-one pages as shot no box
+    is cut.
+    """
+    out: list[Detection] = []
+    for box in found:
+        held = [rect for rect in drawn
+                if rect.left >= box.left - 0.005 and rect.top >= box.top - 0.005
+                and rect.right <= box.right + 0.005 and rect.bottom <= box.bottom + 0.005
+                and (rect.right - rect.left) * (rect.bottom - rect.top) >= TRIM * _area(box)]
+        if not held:
+            out.append(box)
+            continue
+        rect = max(held, key=lambda r: (r.right - r.left) * (r.bottom - r.top))
+        outline = Detection(rect.left, rect.top, rect.right, rect.bottom, box.label, box.score)
+        outside = [part for part in confident if part is not box
+                   and _covered_by(part, box) >= CONTAINED
+                   and _covered_by(part, outline) < CONTAINED]
+        if not outside:
+            out.append(box)
+            continue
+        out.append(replace(box, left=max(box.left, rect.left), top=max(box.top, rect.top),
+                           right=min(box.right, rect.right),
+                           bottom=min(box.bottom, rect.bottom)))
+        out.extend(outermost(outside))
+    return out
+
+
 def open_unsure_containers(kept: list[Detection], confident: list[Detection],
                            mask: ImageArray) -> list[Detection]:
     """A container of text holding a picture the detector is surer of than
@@ -1250,14 +1385,17 @@ class LayoutEngine:
         """
         pool = self.detector.detect(image)
         ink = content_ink(image)
-        confident = without_overreaching_pictures(
-            [d for d in pool if d.score >= self.confidence], ink)
-        found = open_unsure_containers(outermost(confident), confident, ink)
+        ground = _ground(image)
+        drawn = _drawn(image, ground)
+        confident = without_unsure_tall_containers(without_overreaching_pictures(
+            [d for d in pool if d.score >= self.confidence and not _sheet(d)], ink))
+        found = trimmed_to_drawn(outermost(confident), confident, drawn)
+        found = open_unsure_containers(found, confident, ink)
         found = split_containers(found, pool, ink)
         found = split_side_by_side(found, pool, ink, self.confidence)
         if any(box.label in SECTIONED for box in found):
             found = cut_at_sections(found, pool, self.confidence,
-                                    _drawn(image))
+                                    _outlines(image, drawn, ground))
         found = attach_trailing_rows(found)
         found = attach_headings(found, relative=self.heading_rule == "relative")
         if self.prefer_container:
@@ -1280,11 +1418,28 @@ class LayoutEngine:
         ]
 
 
-def _drawn(image: ImageArray) -> tuple[BBox, ...]:
-    """Every box the page draws — `style.rectangles`, on the page's ground."""
-    from ..style import measure, rectangles
+def _ground(image: ImageArray) -> tuple[int, int, int]:
+    """The page's ground, as `style.measure` reads it."""
+    from ..style import measure
 
-    return rectangles(image, ground=measure(image).page_bg)
+    return measure(image).page_bg
+
+
+def _drawn(image: ImageArray,
+           ground: tuple[int, int, int] | None = None) -> tuple[BBox, ...]:
+    """Every box the page draws — `style.rectangles`, on the page's ground."""
+    from ..style import rectangles
+
+    return rectangles(image, ground=_ground(image) if ground is None else ground)
+
+
+def _outlines(image: ImageArray, drawn: Sequence[BBox],
+              ground: tuple[int, int, int]) -> tuple[BBox, ...]:
+    """The drawn boxes a line is drawn round — `style.outlined` — and not a
+    fill's softened edge. What `cut_at_sections` reads a field from."""
+    from ..style import outlined
+
+    return tuple(box for box in drawn if outlined(image, box, ground=ground))
 
 
 def _role(label: str, band: int) -> Role:

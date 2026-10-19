@@ -830,13 +830,15 @@ class TestBoxesBecomeZones:
         44 across the corpus — and snapping takes every one to zero without
         moving coverage. Unconditional for the same reason `DTH_SNAP_ZONES` is
         on by default."""
-        engine = LayoutEngine(Fake([box(0.02, 0.02, 0.98, 0.98)]))
+        # Not the whole page: a box over the whole sheet is no region —
+        # `SHEET`, spec 0019 A1.
+        engine = LayoutEngine(Fake([box(0.05, 0.05, 0.95, 0.95)]))
         zones = engine.detect_zones(page([(120, 100, 480, 300)]))
 
         bbox = zones[0].bbox
         assert bbox is not None
-        assert bbox.left > 0.02 and bbox.right < 0.98, "should have tightened"
-        assert bbox.top > 0.02 and bbox.bottom < 0.98
+        assert bbox.left > 0.05 and bbox.right < 0.95, "should have tightened"
+        assert bbox.top > 0.05 and bbox.bottom < 0.95
 
     def test_low_confidence_detections_are_dropped(self) -> None:
         engine = LayoutEngine(Fake([box(0.05, 0.05, 0.95, 0.35, score=0.9),

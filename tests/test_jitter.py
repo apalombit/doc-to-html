@@ -58,18 +58,22 @@ def test_the_shift_moves_one_pixel_right_and_down() -> None:
 
 def test_a_zone_is_kept_merged_or_lost() -> None:
     module = front()
-    zones = [BBox(0.1, 0.1, 0.5, 0.2), BBox(0.1, 0.3, 0.5, 0.4), BBox(0.6, 0.6, 0.9, 0.9)]
+    zones = [BBox(0.1, 0.1, 0.5, 0.2), BBox(0.1, 0.3, 0.5, 0.4), BBox(0.6, 0.6, 0.9, 0.9),
+             BBox(0.1, 0.6, 0.5, 0.9)]
     perturbed = [BBox(0.1, 0.1, 0.5, 0.21),          # the first, kept
-                 BBox(0.05, 0.25, 0.55, 0.55)]       # a larger one round the second
-    assert module.counted(zones, perturbed) == {"zones": 3, "kept": 1, "merged": 1, "lost": 1}
+                 BBox(0.05, 0.25, 0.55, 0.55),       # a larger one round the second
+                 BBox(0.1, 0.6, 0.5, 0.75),          # the fourth, read in two halves
+                 BBox(0.1, 0.75, 0.5, 0.9)]
+    assert module.counted(zones, perturbed) == {"zones": 4, "kept": 1, "merged": 1, "split": 1,
+                                                "lost": 1}
 
 
 def test_the_table_totals_the_kept_and_names_the_pages_that_regroup() -> None:
     module = front()
     steady = {label: {"zones": 4, "kept": 4, "merged": 0, "lost": 0}
               for label in module.PERTURBATIONS}
-    moved = dict(steady, blur={"zones": 4, "kept": 1, "merged": 2, "lost": 1})
+    moved = dict(steady, blur={"zones": 4, "kept": 1, "merged": 1, "split": 1, "lost": 1})
     table = module.jitter_table({"a": steady, "b": moved})
-    assert "| b | 4/4 | 4/4 | 4/4 | 1/4 +2 -1 |" in table
-    assert "**Zones kept: 29 of 32, 0.906**; lost 1" in table
+    assert "| b | 4/4 | 4/4 | 4/4 | 1/4 +1 ÷1 -1 |" in table
+    assert "**Zones kept: 29 of 32, 0.906**; split 1; lost 1" in table
     assert "regroup on at least one perturbation: 1 of 2" in table
