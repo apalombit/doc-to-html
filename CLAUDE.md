@@ -184,10 +184,11 @@ Spec 0017   Margins from the type, one size per role — planned 2026-10-18
 Spec 0018   The strip as the page draws it, photographed pages, and the
               straightening step — planned 2026-10-19, issue #41:
               A the ticket's banner: A1 ink against its local ground,
-                A2 a drawn strip one container; then S13-sweep
+                A2 a drawn strip one container
               B photographed pages: B0 the twins (model-free), B1 repairs
               C rectify: C1 outline, C2 corners, C3 cubic warp, C4 equalise
-                only uneven light, never a fill; then S14-sweep
+                only uneven light, never a fill
+              one sweep, S13-sweep, at the end of all three
               NOT STARTED
 ```
 

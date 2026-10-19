@@ -183,8 +183,9 @@ strip from its body.
   on a wordmark (§1).
 - Moves crops, so a targeted run comes first.
 
-**Then one sweep, `S13-sweep`, all 21**, with its prediction registered from
-the replay's ASKED DIFFERENTLY list, as specs 0012–0016 did.
+**No sweep here** — Alessandro, 2026-10-19: one sweep at the end of all
+three parts. A1 and A2 are each proved on a targeted run of the pages they
+move, and judged by eye on it.
 
 ---
 
@@ -222,9 +223,9 @@ minutes a sweep. Not done unless he says so.
 ## Part C — the straightening step
 
 Each step is measured on the twins (B0) against the truth, and by the layout
-front on the corpus. **Each bumps `RECTIFIER_VERSION`**, moves every crop of
-every page it touches, and so is measured offline first and swept once at
-the end of Part C.
+front on the corpus. **Each bumps `RECTIFIER_VERSION`** and moves every crop of
+every page it touches, so it is measured offline first, then on a targeted
+run of the pages it moves.
 
 **C1. An outline that never cuts content and never takes a shadow for
 paper.**
@@ -267,8 +268,9 @@ true corners: MAD down about 8% on every page.
   run of the pages §2a names (cv, ticket, timetable, catalogue) before the
   sweep.
 
-**Then one sweep, `S14-sweep`**, after Part C, or after B and C together if
-Alessandro prefers one.
+**Then the one sweep, `S13-sweep`, all 21** — the spec's only sweep,
+Alessandro 2026-10-19 — with its prediction registered from the replay's
+ASKED DIFFERENTLY list, as specs 0012–0016 did.
 
 ---
 
@@ -280,8 +282,9 @@ Alessandro prefers one.
 > `tests/frozen/s12-result/`, drawn by today's code with spec 0017's render
 > steps. Start with Part A, step A1. Prove it on a targeted run of the
 > ticket before anything else, because spec 0016's 4a lost words the same
-> way. Then A2, then sweep `S13-sweep` and report it in the error-analysis
-> format. Stop and ask after the sweep, before Part B. Judge every step by
+> way. Then A2, B0, B1 and C1–C4, each proved offline and on a targeted
+> run; one sweep, `S13-sweep`, at the very end, reported in the
+> error-analysis format. Stop and ask at the end of each part. Judge every step by
 > eye, the ticket first; list and open every page whose markup moves; stop
 > and ask if a page gets worse or a moved crop is answered differently. Do
 > not pick up anything the spec does not name.

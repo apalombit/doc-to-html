@@ -98,10 +98,10 @@ Spec 0017   Margins from the type, one size per role — planned 2026-10-18
 Spec 0018   The strip as the page draws it, photographed pages, the
               straightening step — planned 2026-10-19, issue #41:
               A1 ink against its local ground   A2 a strip one container
-                 then S13-sweep
               B0 the twins, model-free   B1 repair what they find
               C1 outline  C2 corners  C3 cubic  C4 equalise only uneven
-                 light, never a fill; then S14-sweep
+                 light, never a fill
+              one sweep, S13-sweep, at the end of all three
               NOT STARTED
 ```
 
