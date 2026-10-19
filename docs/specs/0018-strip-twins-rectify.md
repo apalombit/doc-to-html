@@ -438,6 +438,44 @@ paper.**
 - **Target:** every twin's corners within 1px, and no content outside the
   outline.
 
+**C1 — done, 2026-10-19.**
+- **The rule.** Paper is told from desk against the desk read at the
+  picture's own edge (`DESK_BAND`).
+  - **Desk** is a pixel within `DESK_SPREAD` (12) of the desk, or the desk
+    darkened alike on every channel, to `SHADOW_TINT`: a shadow.
+  - **An outline must hold the page.** One that leaves more than `OUTSIDE`
+    (0.2%) of the picture as paper outside it is grown to the paper read that
+    way (`sheet_outline`, `loose`), or refused.
+  - The strict reading comes first. The loose reading is used only where the
+    strict outline leaves paper outside.
+- **cv's twins.** The navy sidebar stands 24 from the desk, under
+  `SHEET_APART`, and is darker on every channel but not alike, so it is
+  paper, not a shadow.
+  - corners: 307px out → 1.2–1.35px;
+  - paper outside the outline: 87% → under 0.06%;
+  - Zones kept: 10 of 31 → 21–30;
+  - columns kept on all five.
+- **No corpus page's outline moves.** The layout front differs only by
+  `RECTIFIER_VERSION`, now 7.
+- **First built loose everywhere: worse.** The ticket's colour outline was
+  read loose too, and its top-right corner moved 3px. On the targeted run
+  `S13-C1-run` the detector then split the main pane into five Zones: `OSL`
+  a figure, the plane a figure, the field grid a table. The page was drawn
+  about 1.5× too tall, with `OSL` out of the text. That is fault 5. Alessandro
+  chose strict first, loose only where the strict outline leaves paper out.
+- **The shadow, shown.**
+  - On the ticket, the shadow under the foot is 0.64–0.66 of the desk on
+    each channel. At 21–25 from the surround it was always under
+    `SHEET_APART` and never taken for paper.
+  - The ticket's worst corner is 1.89px from its true corners, computed from
+    its HTML. That is the 800px colour fit: at x = 800 its top side sits at
+    35.0 where the edge is at 36.8. It is C2's to repair.
+  - The receipt's outline took its soft shadow ring, 2px a side, for paper.
+- **Not met here:** 85 twins' corners are still 3.0–5.7px out (C2's).
+  darkdeck still has no outline. Deskew finds its exact turn on all five
+  twins, but it is laid out on its desk: deskew is its straightener, as the
+  spec has it.
+
 **C2. Corners at full resolution.**
 - **The change.** Refine each side at full resolution, to sub-pixel, along
   its normal. Today the outline is read on the 800px copy and scaled up.

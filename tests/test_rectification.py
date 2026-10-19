@@ -28,6 +28,8 @@ from doc_to_html.preprocess import (
     SHEET_BEYOND,
     RectifyError,
     crop,
+    desk,
+    desk_colour,
     deskew,
     equalise,
     find_page_quad,
@@ -246,6 +248,66 @@ def banded_card(tilt: float = 1.5) -> tuple[ImageArray, ImageArray]:
     canvas[shape > 127] = card[shape > 127]
     corners = np.array([[[60, 60], [840, 60], [840, 350], [60, 350]]], np.float32)
     return canvas, cv2.transform(corners, spin)[0]
+
+
+NAVY = (60, 48, 36)
+"""`cv_0013`'s sidebar, BGR: 24 from the slate desk on its most different
+channel, under `SHEET_APART`, and darker than it on every one."""
+
+
+def sidebar_card(tilt: float = 1.5) -> tuple[ImageArray, ImageArray]:
+    """A white card with a navy sidebar down its left, on a slate desk, a
+    shadow under it, tilted — and its four true corners."""
+    canvas = np.full((420, 900, 3), DESK, np.uint8)
+    shade = np.zeros(canvas.shape[:2], np.float32)
+    cv2.rectangle(shade, (66, 70), (846, 362), 1.0, -1)
+    shade = cv2.GaussianBlur(shade, (0, 0), 6)
+    canvas = (canvas * (1 - 0.4 * shade[:, :, None])).astype(np.uint8)
+    card = np.full_like(canvas, 255)
+    card[:, 60:260] = NAVY
+    for top in range(100, 330, 30):
+        card[top:top + 8, 300:700] = 30
+        card[top:top + 6, 80:200] = 230
+    shape = np.zeros(canvas.shape[:2], np.uint8)
+    cv2.rectangle(shape, (60, 60), (840, 350), 255, -1)
+    spin = cv2.getRotationMatrix2D((450, 210), tilt, 1.0)
+    shape = cv2.warpAffine(shape, spin, (900, 420))
+    card = cv2.warpAffine(card, spin, (900, 420))
+    canvas[shape > 127] = card[shape > 127]
+    corners = np.array([[[60, 60], [840, 60], [840, 350], [60, 350]]], np.float32)
+    return canvas, cv2.transform(corners, spin)[0]
+
+
+class TestAnOutlineHoldsThePage:
+    """Spec 0018, C1 — `cv_0013`'s twins: the navy sidebar stands 24 from a
+    slate desk, under `SHEET_APART`, and the outline cut it away, 307px in.
+    Paper is told from desk by the desk's own spread and a shadow's tint, and
+    an outline that leaves paper outside it is grown or refused."""
+
+    def test_a_shadow_is_desk_and_navy_is_paper(self) -> None:
+        surround = (60, 65, 72)
+        pixels = np.array([[[72, 65, 60], [46, 42, 38], [60, 48, 36], [255, 255, 255]]],
+                          np.uint8)
+        assert desk(pixels, surround).tolist() == [[True, True, False, False]]
+
+    def test_the_desk_is_read_at_the_pictures_edge(self) -> None:
+        image, _ = sidebar_card()
+        assert desk_colour(image) == (60, 65, 72)
+
+    def test_the_sidebar_is_inside_the_outline(self) -> None:
+        image, true = sidebar_card()
+        outline = page_outline(image)
+        assert outline is not None
+        assert float(np.linalg.norm(outline.quad - true, axis=1).max()) < 2.0
+
+    def test_an_outline_that_cannot_hold_the_page_is_refused(self) -> None:
+        """Two cards on one desk: the outline of either leaves the other
+        outside it, and no warp is better than a cut one."""
+        canvas = np.full((420, 900, 3), DESK, np.uint8)
+        canvas[40:380, 40:600] = 255
+        canvas[60:300, 640:860] = 255
+        canvas[100:110, 80:500] = 30
+        assert page_outline(canvas) is None
 
 
 class TestThePapersWholeOutline:

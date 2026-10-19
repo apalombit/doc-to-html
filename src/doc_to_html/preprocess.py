@@ -376,6 +376,39 @@ SHEET_STEP = 4
 """How far outside an edge, in pixels at `DETECT_LONG_EDGE`, `SHEET_BEYOND`
 looks: past the two 3 px dilations `find_page_quad` draws its edges with."""
 
+DESK_SPREAD = 12
+"""How far, on its most different channel, a pixel may stand from the surround
+and still be desk — spec 0018, C1, `desk`. `SHEET_APART`, 36, asked more of
+the paper than paper always has: `cv_0013`'s navy sidebar, (36, 48, 60), stands
+24 from a slate desk, and its twins' outlines (`tools/twins.py`) cut it away,
+307px in, with 87% of the page's ink outside. Measured beyond the outline on
+the two photographs and the twins, the desk stands at most 0 from its median
+on a twin's flat desk and the receipt's, and the ticket's and the shaded
+twins' up to 25 and 26, every one of those in a shadow (`SHADOW_TINT`)."""
+
+SHADOW_TINT = 0.05
+"""How far apart a shadow's three channels may sit, each as a share of the
+surround's — spec 0018, C1. **A shadow is the surround made darker on every
+channel; a sheet is not.** The ticket's shadow under its foot is (38, 42,
+46) on (59, 64, 71): 0.64, 0.66 and 0.65 of it. The navy sidebar is 0.60,
+0.74 and 0.83 of the slate desk — darker on every channel, and not a shadow."""
+
+DESK_BAND = 0.02
+"""How deep a band round the picture's own edge the desk is read from — spec
+0018, C1, `desk_colour`. The surround (`surround_of`) is everything outside
+an outline, and an outline that cuts the page counts the page in it:
+`cv_0013`'s 1.5° twin read (45, 58, 69), the slate desk and the navy sidebar
+together, against which the desk itself is paper. A photograph is framed
+round its paper, so its own edge is desk: the ticket's paper stands 35px
+from it, the receipt's 16px, a twin's 50px; 2% of the short side is 8, 13
+and 17px."""
+
+OUTSIDE = 0.002
+"""How much of the picture may be paper outside an outline before the outline
+does not hold the page — spec 0018, C1. A twin's straight edge leaves none
+beyond `SHEET_STEP`; `cv_0013`'s twins left its sidebar, 52% of the picture
+outside the outline."""
+
 MAX_DESKEW_DEGREES = 15.0
 """Beyond this, the estimate is not skew.
 
@@ -1678,12 +1711,55 @@ def sheet_beyond(image: ImageArray, quad: ImageArray,
     return worst
 
 
-def sheet_outline(image: ImageArray,
-                  surround: tuple[int, int, int]) -> ImageArray | None:
+def desk(pixels: ImageArray, surround: tuple[int, int, int]) -> ImageArray:
+    """Which of `pixels`, BGR, are desk round a sheet whose surround is
+    `surround`, RGB — spec 0018, C1. Within `DESK_SPREAD` of it, or the
+    surround darkened by a shadow, its channels darkened alike to
+    `SHADOW_TINT`. Everything else is paper, the paper's print included."""
+    around = np.array(surround[::-1], dtype=float)
+    values = np.asarray(pixels, dtype=float)
+    near = np.abs(values - around).max(axis=-1) <= DESK_SPREAD
+    share = values / np.maximum(around, 1.0)
+    shade = (share.max(axis=-1) <= 1.0) & (share.max(axis=-1) - share.min(axis=-1) <= SHADOW_TINT)
+    held: ImageArray = near | shade
+    return held
+
+
+def desk_colour(image: ImageArray) -> tuple[int, int, int]:
+    """The desk's colour, RGB: the median of a `DESK_BAND` round the
+    picture's own edge — spec 0018, C1. What `desk` measures paper against."""
+    pixels = np.asarray(image)
+    height, width = pixels.shape[:2]
+    band = max(2, int(round(DESK_BAND * min(height, width))))
+    ring = np.concatenate([pixels[:band].reshape(-1, 3), pixels[-band:].reshape(-1, 3),
+                           pixels[band:-band, :band].reshape(-1, 3),
+                           pixels[band:-band, -band:].reshape(-1, 3)])
+    blue, green, red = (int(v) for v in np.median(ring, axis=0))
+    return red, green, blue
+
+
+def paper_outside(image: ImageArray, quad: ImageArray,
+                  surround: tuple[int, int, int]) -> float:
+    """The share of the picture that is paper and lies outside the
+    quadrilateral, further than `SHEET_STEP` from it — spec 0018, C1. An
+    outline must hold the page: `OUTSIDE`."""
+    cv2 = _cv2()
+    small = resize_long_edge(image, DETECT_LONG_EDGE)
+    corners = np.asarray(quad, dtype=float) / (max(image.shape[:2]) / max(small.shape[:2]))
+    inside = np.zeros(small.shape[:2], np.uint8)
+    cv2.fillPoly(inside, [np.round(corners).astype(np.int32)], 1)
+    reach = 2 * SHEET_STEP + 1
+    beyond = cv2.dilate(inside, np.ones((reach, reach), np.uint8)) == 0
+    return float((beyond & ~desk(small, surround)).mean())
+
+
+def sheet_outline(image: ImageArray, surround: tuple[int, int, int], *,
+                  loose: bool = False) -> ImageArray | None:
     """The sheet's four corners read off its colour against the surround, in
     full-resolution coordinates, or None — spec 0013, step 5.
 
-    Everything `SHEET_APART` from the surround, closed, its largest outer
+    Everything `SHEET_APART` from the surround — or, `loose`, everything
+    that is not `desk` (spec 0018, C1) — closed, its largest outer
     contour, four corners off its hull. Each side is then fitted to the
     contour along its middle eight tenths and the corners are where the
     fitted sides meet: a hull's corners stand on a card's rounded corners,
@@ -1694,10 +1770,12 @@ def sheet_outline(image: ImageArray,
     cv2 = _cv2()
     small = resize_long_edge(image, DETECT_LONG_EDGE)
     scale = max(image.shape[:2]) / max(small.shape[:2])
-    apart = np.abs(small.astype(np.int16)
-                   - np.array(surround[::-1], dtype=np.int16)).max(axis=2)
-    sheet = cv2.morphologyEx((apart >= SHEET_APART).astype(np.uint8),
-                             cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8))
+    if loose:
+        paper = ~desk(small, surround)
+    else:
+        paper = np.abs(small.astype(np.int16)
+                       - np.array(surround[::-1], dtype=np.int16)).max(axis=2) >= SHEET_APART
+    sheet = cv2.morphologyEx(paper.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8))
     contours, _ = cv2.findContours(sheet, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     if not contours:
         return None
@@ -1775,6 +1853,19 @@ def page_outline(image: ImageArray) -> Outline | None:
         if outline is not None and sheet_beyond(image, outline, surround) <= SHEET_BEYOND:
             quad = outline
             surround = surround_of(image, quad) or surround
+    # Spec 0018, C1: an outline must hold the page — paper told from desk
+    # against the desk at the picture's own edge, by its spread and a
+    # shadow's tint. One that leaves paper outside is grown to the paper read
+    # that way, or refused: no warp is better than a cut one. Only then, so
+    # an outline that holds its page keeps every pixel it had: read loose,
+    # the ticket's moved 3px at a corner and its Zones were regrouped.
+    ground = desk_colour(image)
+    if paper_outside(image, quad, ground) > OUTSIDE:
+        outline = sheet_outline(image, ground, loose=True)
+        if outline is None or paper_outside(image, outline, ground) > OUTSIDE:
+            return None
+        quad = outline
+        surround = surround_of(image, quad) or surround
     return Outline(quad, surround)
 
 
