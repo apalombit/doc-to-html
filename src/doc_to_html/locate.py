@@ -688,7 +688,15 @@ def _from_lines(zone: Zone, found: Sequence[Word],
     already taken is its box. With the ticket's halo Zone taken out and its
     body measured at 9.0px, tesseract reads the gate note's first line as
     `gre` 5, `90` 39, `141` 0, `4` 0, `before` 95; boxed by `before` alone,
-    the note was drawn one word to a line."""
+    the note was drawn one word to a line.
+
+    **A line no words claim is printed where it was read from** — spec
+    0018, A1, `Block.read_from`: the model read it off that line's crop.
+    With the halo Zone gone, tesseract reads the gate note's first line as
+    `gre`, `sc`, `before`; `before` alone claims nothing, and the line was
+    drawn after `departure`, the line below it. One line to a Block only:
+    the lines of a Block read from one crop do not each stand where all of
+    them were read."""
     body = len(_body_of(zone))
     if None not in placed[body:]:
         return placed
@@ -708,6 +716,13 @@ def _from_lines(zone: Zone, found: Sequence[Word],
             lines.pop(key)
             whole = [word for word in found if word.line == key and not _covered(word, taken)]
             out[index] = _union(whole, 0, len(whole) - 1)
+    # Spec 0018, A1: a line no words claim is printed where it was read from.
+    at = len(out) - sum(len(block.lines) for block in zone.extra)
+    for block in zone.extra:
+        if (block.read_from is not None and len(block.lines) == 1
+                and out[at] is None and block.lines[0].text.strip()):
+            out[at] = block.read_from
+        at += len(block.lines)
     return out
 
 

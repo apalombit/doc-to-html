@@ -352,11 +352,13 @@ def _columns(boxes: Sequence[BBox], containers: Sequence[BBox],
     block crosses it only past both edges of its stroke, so one that only
     reaches into the stroke stands beside it: `ticket_0020`'s stub starts
     at 0.736, on the perforation's own stroke, whose centre is 0.737, and
-    counted as crossing it. And **the divider reaches as far as the blocks
-    beside it**, the stretch growing to every block it touches until it
-    stops changing: the perforation starts under the header bar, so beside
-    it stood only the passenger block and the route block, side by side
-    and not stacked, and `_independent` found nothing to part. Either
+    counted as crossing it. **Past each edge by more than the stroke's own
+    width** since spec 0018, A1, so a pixel of snap does not decide it.
+    And **the divider reaches as far as the blocks beside it**, the
+    stretch growing to every block it touches until it stops changing: the
+    perforation starts under the header bar, so beside it stood only the
+    passenger block and the route block, side by side and not stacked,
+    and `_independent` found nothing to part. Either
     alone changes no page; together they make the ticket two panes. **A
     drawn rule only**: a container's edge reaching further turned the
     catalogue's card frames into column regions on the layout stage's
@@ -375,8 +377,14 @@ def _columns(boxes: Sequence[BBox], containers: Sequence[BBox],
 
     found: list[tuple[float, float, set[float]]] = []
     for x, top, bottom, x0, x1, drawn in dividers:
+        # Past each edge by more than the stroke is wide — spec 0018, A1: a
+        # block one pixel past it is touching it. With `ticket_0020`'s halo
+        # Zone gone, the stub's snapped edge reached the perforation's dashes,
+        # 587 against a stroke of 588-590, and the two panes became one.
+        reach = x1 - x0
+
         def crosses(block: BBox) -> bool:
-            return block.left < x0 and block.right > x1
+            return block.left < x0 - reach and block.right > x1 + reach
 
         near = [b for b in blocks if b.top < bottom and b.bottom > top]
         if not near or any(crosses(b) for b in near):
@@ -388,8 +396,8 @@ def _columns(boxes: Sequence[BBox], containers: Sequence[BBox],
             if len(grown) == len(near) or any(crosses(b) for b in grown):
                 break
             near = grown
-        left = [b for b in near if b.right <= x1]
-        right = [b for b in near if b.left >= x0]
+        left = [b for b in near if b.right <= x1 + reach]
+        right = [b for b in near if b.left >= x0 - reach]
         if _independent(left, right) or _independent(right, left):
             found.append((min(top, *(b.top for b in near)),
                           max(bottom, *(b.bottom for b in near)), {x}))

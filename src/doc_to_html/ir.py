@@ -397,6 +397,13 @@ class Block:
     either is not placed, and where this one starts beside the one before
     rather than below it."""
 
+    read_from: BBox | None = None
+    """For a Block of `Zone.extra`, the printed line it was read from — the
+    unclaimed line's box, `locate.unclaimed` — or None. Spec 0018, A1: the
+    model read it off that crop, so that is where it is printed when
+    tesseract's words no longer claim it (`locate._from_lines`). Written to
+    JSON only when set."""
+
 
 @dataclass
 class Zone:
@@ -867,8 +874,19 @@ class Document:
                 best, best_ratio = correction, ratio
         return best
 
+    def to_data(self) -> dict[str, Any]:
+        """The IR as plain data — what `to_json` writes and the render embeds."""
+        data = asdict(self)
+        # `Block.read_from` only where it is set, so a page with no line read
+        # again is written as it was before the field existed.
+        for zone in data["zones"]:
+            for block in zone["blocks"] + zone["extra"]:
+                if block.get("read_from") is None:
+                    block.pop("read_from", None)
+        return data
+
     def to_json(self, indent: int | None = 2) -> str:
-        return json.dumps(asdict(self), indent=indent, default=_encode)
+        return json.dumps(self.to_data(), indent=indent, default=_encode)
 
     @classmethod
     def from_json(cls, raw: str) -> Document:
@@ -949,7 +967,8 @@ def _mark(data: dict[str, Any]) -> Mark:
 
 def _block(data: dict[str, Any]) -> Block:
     return Block(kind=data["kind"], lines=[_cell(c) for c in data.get("lines", [])],
-                 size=data.get("size"), gap=data.get("gap"))
+                 size=data.get("size"), gap=data.get("gap"),
+                 read_from=_bbox(data.get("read_from")))
 
 
 def _zone(data: dict[str, Any]) -> Zone:

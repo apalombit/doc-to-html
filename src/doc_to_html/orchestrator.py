@@ -1438,6 +1438,10 @@ class Conversion:
             held = locate_module.holds(zone, " ".join(read))
             texts, refused = ([], read) if held else (read, [])
             if not held:
+                # Spec 0018, A1: printed where it was read from, whatever
+                # tesseract's next read makes of the line.
+                for block in transient.blocks:
+                    block.read_from = line.bbox
                 zone.extra.extend(transient.blocks)
             kept += len(texts)
             call, made = self.trace.calls_since(mark)

@@ -371,3 +371,25 @@ class TestInkAgainstItsLocalGround:
         ink = furniture.grounded(result.image, result.plain, found,
                                  inverted=result.inverted, held=boxes)
         assert len(recovered_zones(ink, zones)) == len(zones)
+
+    def sidebar(self, box: BBox) -> Document:
+        """`cv_0013`'s sidebar: one drawn fill, a titled Zone standing on it."""
+        zone = Zone(kind=Kind.PROSE, role=Role.BODY, bbox=box, band=0, column=0,
+                    title="CONTACT", fill=(40, 52, 70),
+                    blocks=[Block(kind="paragraph", lines=[cell("ada@example.com")])])
+        return Document(source=Source(path="p.png", sha256="0", width=800, height=1000),
+                        zones=[zone],
+                        furniture=[Furniture(kind="fill", bbox=BBox(0.0, 0.0, 0.3, 1.0),
+                                             color=(41, 53, 70))])
+
+    def test_a_zone_on_its_ground_takes_no_card_padding(self) -> None:
+        """With its type read as type, the sidebar's `CONTACT` became its
+        Zone's Title, and the Zone was padded in from the lane as a card."""
+        html = render(self.sidebar(BBox(0.03, 0.05, 0.27, 0.2)))
+        assert re.search(r'<section class="[^"]*\bfilled grounded\b', html)
+
+    def test_a_card_is_still_a_card(self) -> None:
+        """A Zone that holds the whole fill is the fill's own: a card."""
+        html = render(self.sidebar(BBox(0.0, 0.0, 0.3, 1.0)))
+        assert re.search(r'<section class="[^"]*\bfilled\b', html)
+        assert "grounded" not in html[:html.index('id="doc-ir"')].split("<body")[1]

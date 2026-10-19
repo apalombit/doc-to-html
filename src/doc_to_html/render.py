@@ -17,7 +17,7 @@ import json
 import math
 import re
 from collections import Counter
-from dataclasses import asdict, dataclass, field, replace
+from dataclasses import dataclass, field, replace
 from enum import Enum
 from functools import lru_cache
 from itertools import groupby
@@ -87,6 +87,9 @@ section.boxed > h2.zone-title, section.filled > h2.zone-title { padding:.55em .9
 section.boxed > .zone-body, section.filled > .zone-body { padding:.9em; }
 section.boxed > .zone-body > .table-wrap,
 section.filled > .zone-body > .table-wrap { margin:-.9em; }
+section.filled.grounded > h2.zone-title { padding:.55em 0; }
+section.filled.grounded > .zone-body { padding:0; }
+section.filled.grounded > .zone-body > .table-wrap { margin:0; }
 blockquote { margin:.6em 0 .3em 1.5em; }
 p.attribution { color:var(--muted); font-size:.85em; margin:0 0 .4em; }
 ul { margin:0 0 .4em; padding-left:1.3em; }
@@ -541,7 +544,8 @@ def _band(units: list[list[Zone]], document: Document, page: _Page,
     zones = [zone for unit in units for zone in unit]
     tops = known
     bottoms = [b for unit in units
-               if (b := _bottom(unit[-1], page, plain=id(unit[0]) in plain))
+               if (b := _bottom(unit[-1], page, plain=id(unit[0]) in plain
+                                or _on_its_ground(unit[-1], document)))
                is not None]
     return _Row("band", "".join(parts), zones,
                 min(tops) if tops else None, max(bottoms) if bottoms else None)
@@ -965,6 +969,21 @@ reach (`_filled`): a snapped box stops on its ink, and the fill's edge is
 anti-aliased."""
 
 
+def _on_its_ground(zone: Zone, document: Document) -> bool:
+    """Whether the Zone's fill is the fill it stands on — a sidebar, a strip
+    no Zone holds — and not a card of its own: spec 0018, A1. Such a Zone
+    keeps its colours and takes no card's padding: once A1 read
+    `cv_0013`'s sidebar type as type, `CONTACT` and `REGISTRATION` were
+    read as their Zones' Titles, and each was padded in from the lane as a
+    card the page does not draw."""
+    if zone.fill is None or zone.bbox is None:
+        return False
+    return any(item.kind == "fill" and item.style == "solid"
+               and _apart(item.color, zone.fill) <= COLOUR_APART
+               and _within(zone.bbox, item.bbox) and not _within(item.bbox, zone.bbox)
+               for item in document.furniture)
+
+
 def _within(box: BBox, outer: BBox) -> bool:
     middle_x, middle_y = (box.left + box.right) / 2, (box.top + box.bottom) / 2
     return outer.left <= middle_x <= outer.right and outer.top <= middle_y <= outer.bottom
@@ -1198,7 +1217,7 @@ def _grid(region: Region, zones: list[Zone], document: Document,
     for zone, (band, _) in zip(zones, placed):
         if (top := _top(zone, page)) is not None:
             tops.setdefault(band, []).append(top)
-        if (bottom := _bottom(zone, page)) is not None:
+        if (bottom := _bottom(zone, page, plain=_on_its_ground(zone, document))) is not None:
             bottoms.setdefault(band, []).append(bottom)
     gaps = [min(tops[b]) - max(bottoms[a]) for a, b in zip(rows, rows[1:])
             if tops.get(b) and bottoms.get(a)]
@@ -1377,7 +1396,8 @@ def _measure(document: Document) -> list[str]:
     content = (_held(document) if frame is not None else _content(document)) \
         or _union(boxes)
     tops = [t for zone in document.zones if (t := _top(zone, page)) is not None]
-    bottoms = [b for zone in document.zones if (b := _bottom(zone, page)) is not None]
+    bottoms = [b for zone in document.zones
+               if (b := _bottom(zone, page, plain=_on_its_ground(zone, document))) is not None]
     if frame is not None:
         edges = (frame.bbox.top * page.y, page.x - frame.bbox.right * page.x,
                  page.y - frame.bbox.bottom * page.y, frame.bbox.left * page.x)
@@ -1807,7 +1827,7 @@ def _section(zone: Zone, body: str, document: Document, *, plain: bool,
     if zone.boxed and not plain:
         classes += " boxed"
     elif zone.fill is not None and not plain:
-        classes += " filled"
+        classes += " filled grounded" if _on_its_ground(zone, document) else " filled"
 
     own, titled, lead = _furnished(zone, document, plain=plain)
     # The Title's own ink, where it is not the one it would be drawn in.
@@ -4052,7 +4072,7 @@ def _embedded_ir(document: Document) -> str:
     `</` is escaped so a document containing the literal text `</script>` cannot
     terminate the block and break the page.
     """
-    payload = json.dumps(asdict(document), default=_encode, separators=(",", ":"))
+    payload = json.dumps(document.to_data(), default=_encode, separators=(",", ":"))
     payload = payload.replace("</", "<\\/")
     return f'<script type="application/json" id="doc-ir">{payload}</script>'
 

@@ -258,6 +258,14 @@ class TestADrawnDividerPartsWhatItStandsBetween:
         assert _columns([self.BAR, crossing, self.PASSENGER, self.ROUTE], [],
                         [self.RULE]) == []
 
+    def test_a_block_a_pixel_into_the_dashes_still_stands_beside_it(self) -> None:
+        """Spec 0018, A1: with the halo Zone gone, the stub's snapped edge
+        reached the dashes, a pixel left of the stroke."""
+        stub = BBox(0.733, 0.0, 1.0, 1.0)
+        [region] = _columns([self.BAR, stub, self.PASSENGER, self.ROUTE], [],
+                            [self.RULE])
+        assert region.flow is Flow.COLUMNS and region.splits == (0.737,)
+
     def test_a_container_edge_reaches_no_further_than_itself(self) -> None:
         """The catalogue's card frames, on the layout stage's boxes."""
         frame = BBox(0.736, 0.167, 1.0, 1.0)

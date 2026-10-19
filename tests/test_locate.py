@@ -394,6 +394,33 @@ class TestAnExtraLineTakesTheLineItClaims:
         boxes = locate._from_lines(zone, found, [at(0, 20, 32, 30), at(0, 40, 24, 50), None])
         assert boxes[2] is None
 
+    def test_unclaimed_it_stands_where_it_was_read_from(self) -> None:
+        """Spec 0018, A1: at glyph 9 tesseract reads the note's first line
+        as `gre`, `sc`, `before`; nothing claims it, and the model read it
+        off that line's crop."""
+        zone = self.stub()
+        zone.extra[0].read_from = at(0, 200, 198, 210)
+        found = [sure("gre", 0, 200, 9, 5.0), sure("before", 150, 200, 9, 40.0)]
+        boxes = locate._from_lines(zone, found, [at(0, 20, 32, 30), at(0, 40, 24, 50), None])
+        assert boxes[2] == at(0, 200, 198, 210)
+
+    def test_a_block_of_lines_is_not_put_on_one_crop(self) -> None:
+        zone = self.stub()
+        zone.extra[0] = Block(kind="paragraph", read_from=at(0, 200, 198, 230),
+                              lines=[cell("Gate closes"), cell("20 minutes before")])
+        boxes = locate._from_lines(zone, [], [at(0, 20, 32, 30), at(0, 40, 24, 50),
+                                              None, None])
+        assert boxes[2:] == [None, None]
+
+    def test_read_from_is_written_only_where_it_is_set(self) -> None:
+        page = Document(source=Source(path="p.png", sha256="0", width=SIDE, height=SIDE),
+                        zones=[self.stub()])
+        assert "read_from" not in page.to_json()
+        assert "read_from" not in render(page)
+        page.zones[0].extra[0].read_from = at(0, 200, 198, 210)
+        assert Document.from_json(page.to_json()).zones[0].extra[0].read_from \
+            == at(0, 200, 198, 210)
+
 
 class TestTheDisplayRead:
     """Spec 0015, step 1: the Zone read again for type the first read erased
