@@ -338,6 +338,52 @@ same time whether twins join the corpus: each is scored against its own
 HTML, and six held-out twins would add about 40 minutes to every sweep. Not
 done unless he says so.
 
+### B0's findings — B1's list, 2026-10-19
+
+**What B0 built.** `tools/twins.py` draws five twins of every corpus page,
+105 in all, under `debug/twins/`. Each twin is drawn by one homography with
+cubic interpolation, so its truth is exact (`tests/test_twins.py`). `--check`
+runs the layout front 231 times and takes about 13 minutes, not one. It
+writes `check.json` and `check.md`, and was proved byte-identical run to
+run. Two things were added to the description above, each because the first
+pass misled:
+- **Every Zone is carried back into the shot picture's frame** before it is
+  compared, through `rectify`'s own warp and turn and the twin's truth.
+  Compared in normalised coordinates, a page `rectify` leaves on its desk
+  lost every Zone for its coordinates alone: darkdeck read 4–7 of 17 that
+  way and receipt 1 of 5, against 12–13 and 4 carried back. §2b's receipt
+  figure was this artefact.
+- **A merge is counted apart from a loss**, and the layout front is also run
+  on the twin **straightened through its true corners**. What is still lost
+  there is lost to resampling, not to the outline.
+
+**Against §2b.** Corners 3.0–5.7px out on 85 twins (§2b: 3.1–5.4). Residual
+tilt −0.207° to +0.096°. cv is 307px out, and darkdeck has no outline; both
+agree with §2b. The MADs are not §2b's: §2b turned its twins with PIL, these
+use one homography. Their ratios hold:
+- through the found corners, 2.1–5.4× the MAD through the true ones;
+- cubic takes 12–35% off, against §2b's 8%.
+
+| # | fault | stage it starts in | twins | whose |
+|---|---|---|---|---|
+| 1 | **The outline is 3.0–5.7px out** at every corner, read on the 800px copy; up to 0.21° of tilt left; the MAD 2.1–5.4× the true corners' | `rectify` 1, `find_page_quad` | 85 of 85 with an outline | C2 |
+| 2 | **`warp_to_quad` flattens the page one pixel short**: its target puts the corner pixels at 0 and w − 1, w being the distance between their centres, so even true corners give a page W − 1 wide | `rectify` 2 | every warped page | C2 |
+| 3 | **cv's outline cuts its sidebar**: 307px in, 87% of the page's ink outside it; Zones 10 of 31 kept (17 lost), columns → single. Through the true corners 23–25 of 31 | `rectify` 1, the navy sidebar taken for desk | 5 of 5 | C1 |
+| 4 | **darkdeck has no outline**: a dark page on a dark desk, so the page is laid out on its desk. deskew finds the exact turn on all five. Grid and columns → single; Zones 12–13 of 17, 4–5 merged | `rectify` 1 | 5 of 5 | C1 |
+| 5 | **The detector regroups a page that is only resampled.** Through the true corners as well as the found ones: form's five sections become one Zone (kept 2–8 of 8), sample_css 2 of 4, sample_semantic 5 of 9 (2 lost), statement 4 of 5, report 10–12 of 14, menu 1–4 of 4, invoice_0001 4–6 of 6, certificate 3–8 of 8, ticket 0–4 of 5. The cover step, the snap and the cut move none of it: the detector's own count already differs | the detector, on `Rectified.image` | 16 of 21 pages, on 1 to 5 of their twins | B1 |
+| 6 | **Card grids lost once resampled**: catalogue's 3×3 → single, columns or 2 lanes; nonlatin's 2 → single; pricing's 3 once; newsletter's columns once | `structure`, `SAME_SIZE` 0.01 on resampled rectangles | catalogue 5, nonlatin 3, pricing 1, newsletter 1 | B1 |
+| 7 | **pricing's feature lines read inside their cards**: 4 of 21 kept, the other 17 inside the card's one Zone, no line lost. A coarser grain, arguably the page's | the detector | 5 of 5 | — |
+| 8 | **Uneven light**: the shaded twin's MAD is 12–15 above its unshaded twin's, and menu keeps 1 of 4 on it | `equalise` | 17 of 17 measured | C4 |
+
+**Read by stage.** Faults 1–4 and 8 are already Part C's. B1's own are 5
+and 6:
+- **6** has a general rule: a tolerance in pixels of resampling, not a share.
+- **5** is the largest and has no rule yet. The same page, resampled twice,
+  comes back from the detector grouped differently. A rule after the
+  detector would have to say what parts a Zone the page draws as several,
+  as form's drawn section bars do. That is A2's cut, which was dropped for
+  the ticket.
+
 **B1. Repair what B0 found**, stage by stage. Each repair is measured by
 B0, then by the layout front on the corpus, then on a targeted run. Already
 known, for that list:
