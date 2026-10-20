@@ -2760,6 +2760,7 @@ def _field(pair: Pair, document: Document, page: _Page) -> str:
     its option; or a signature line over its caption — as the page draws
     it. The value is the model's words; the mark is only drawn."""
     label, value = _cell(pair.label, document), _cell(pair.value, document)
+    label += html.escape(pair.separator or "")
     tone = _look(pair.label, sized=False, bold=True, house=_house(document, muted=True))
     if tone:
         label = f'<span style="{tone}">{label}</span>'
@@ -2936,9 +2937,11 @@ def _pairs(zone: Zone, document: Document) -> tuple[str, set[int]]:
         min((c.bbox.top for c in (pair.label, pair.value) if c.bbox is not None),
             default=None) for pair in zone.pairs])
     flush = _labels_flush(zone, page)
+    after = _printed_after(document)
     parts = []
     for position, pair in enumerate(zone.pairs):
-        label, value = _cell(pair.label, document), _cell(pair.value, document)
+        label = _cell(pair.label, document) + after.get(id(pair.label), "")
+        value = _cell(pair.value, document) + after.get(id(pair.value), "")
         named: Cell | None = pair.label
         held: Cell | None = pair.value
         if not label.strip() and value.strip():
@@ -2975,6 +2978,20 @@ def _pairs(zone: Zone, document: Document) -> tuple[str, set[int]]:
         parts.append(f"{tag}{label}</dt><dd{dd}>{value}</dd>")
     css = "pairs lines" if lines else "pairs"
     return f'<dl class="{css}">' + "".join(parts) + "</dl>", set()
+
+
+def _printed_after(document: Document) -> dict[int, str]:
+    """What the page prints after a pair's Cell, by `id` — spec 0019, B4:
+    the label's separator, `Created:`, and the divider after a value before
+    the next pair on its line, `554775/R1 |`."""
+    after: dict[int, str] = {}
+    for zone in document.zones:
+        for pair in zone.pairs:
+            if pair.separator:
+                after[id(pair.label)] = html.escape(pair.separator)
+            if pair.divider:
+                after[id(pair.value)] = " " + html.escape(pair.divider)
+    return after
 
 
 def _labels_flush(zone: Zone, page: _Page) -> bool:
@@ -3233,8 +3250,10 @@ def _placed(zone: Zone, document: Document,
     if (band is not None and holder is not None
             and min(box.top for _, _, box in printed[0]) >= band.bbox.bottom):
         above = (holder.top, 0.0)
+    after = _printed_after(document)
     for line in printed:
         line = sorted(line, key=lambda entry: entry[2].left)
+        tails = [after.get(id(c), "") for c, _, _ in line]
         shown = [box for _, _, box in line]
         ends = [_flush(box, position, len(line), right, reach, aligned.get(id(c)))
                 for position, (c, _, box) in enumerate(line)]
@@ -3258,7 +3277,7 @@ def _placed(zone: Zone, document: Document,
                    - (ROW_BELOW * above[1] + ROW_ABOVE * size) * page.body)
             style.append(f"margin-top:{_px(gap)}")
         spans = []
-        for (c, label, box), (end, _) in zip(line, ends):
+        for (c, label, box), (end, _), tail in zip(line, ends, tails):
             looked = _look(c, house=_house(document, muted=label))
             if end:
                 looked = ";".join(part for part in (looked, "justify-self:end") if part)
@@ -3267,7 +3286,7 @@ def _placed(zone: Zone, document: Document,
                 # Printed on more than one line: it wraps as the page wraps it.
                 looked = ";".join(part for part in (looked, "white-space:normal") if part)
             css = ' class="label"' if label else ""
-            spans.append(f"<span{css}{_styled(looked)}>{_cell(c, document)}</span>")
+            spans.append(f"<span{css}{_styled(looked)}>{_cell(c, document)}{tail}</span>")
         parts.append(f'<div class="line" style="{";".join(style)}">{"".join(spans)}</div>')
         above = (bottom, size)
     inset = ""

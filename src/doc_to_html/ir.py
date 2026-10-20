@@ -392,6 +392,15 @@ class Pair:
     for a pair the page prints as plain text, which is nearly all of them.
     Spec 0011, step 3; set by `fields.read`."""
 
+    separator: str | None = None
+    """The mark the page prints at the label's end, `:` in `Created:`, where
+    the label's reading does not hold it — spec 0019, B4; set by
+    `separator.read`. None where the page prints none."""
+
+    divider: str | None = None
+    """The mark the page prints after the value, before the next pair on
+    its line: `invoice_0002`'s `|`. Spec 0019, B4."""
+
 
 @dataclass
 class Block:
@@ -916,7 +925,8 @@ class Document:
 def _without_unset_spans(data: Any) -> None:
     """`Cell.span`, `Cell.below` and `Cell.display` only where they are set
     — spec 0019, B1 and B3 — so a page with none is written as it was before
-    they existed. A Cell is the dict that carries `readings` and `state`."""
+    they existed. A Cell is the dict that carries `readings` and `state`;
+    a Pair, `label`, `value` and `marks`."""
     if isinstance(data, dict):
         if "readings" in data and "state" in data:
             for name in ("span", "display"):
@@ -924,6 +934,11 @@ def _without_unset_spans(data: Any) -> None:
                     data.pop(name, None)
             if not data.get("below"):
                 data.pop("below", None)
+        if "label" in data and "value" in data and "marks" in data:
+            # A Pair's separator and divider, spec 0019, B4, likewise.
+            for name in ("separator", "divider"):
+                if data.get(name) is None:
+                    data.pop(name, None)
         for value in data.values():
             _without_unset_spans(value)
     elif isinstance(data, list):
@@ -1034,7 +1049,8 @@ def _zone(data: dict[str, Any]) -> Zone:
         ],
         pairs=[
             Pair(label=_cell(p["label"]), value=_cell(p["value"]),
-                 marks=[_mark(m) for m in p.get("marks", [])])
+                 marks=[_mark(m) for m in p.get("marks", [])],
+                 separator=p.get("separator"), divider=p.get("divider"))
             for p in data.get("pairs", [])
         ],
         blocks=[_block(b) for b in data.get("blocks", [])],

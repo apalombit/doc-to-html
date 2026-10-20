@@ -27,6 +27,7 @@ from . import probes as probe_module
 from . import rhythm as rhythm_module
 from . import display as display_module
 from . import raised as raised_module
+from . import separator as separator_module
 from . import spans as spans_module
 from . import style as style_module
 from .checkpoints import Answer, CheckpointHandler, NullHandler, Question
@@ -910,6 +911,7 @@ class Conversion:
             self._read_spans(rectified, document)
             self._read_marks(rectified, document)
             self._read_display(rectified, document)
+            self._read_separators(rectified, document)
 
             document.probes = probe_module.run(document)
             for probe in document.probes:
@@ -1554,6 +1556,17 @@ class Conversion:
         found = display_module.read(plain, document)
         self.trace.record(Stage.LAYOUT, "display", Disposition.ACCEPTED,
                           seconds=time.perf_counter() - started, lines=found)
+
+    def _read_separators(self, rectified: Rectified, document: Document) -> None:
+        """The separator the page prints at each pair's label, and the bar
+        between two pairs — spec 0019, B4. See `separator.read`. After
+        `_locate`, whose label boxes it reads inside."""
+        started = time.perf_counter()
+        plain = rectified.plain if rectified.plain is not None else rectified.image
+        separators, dividers = separator_module.read(plain, document)
+        self.trace.record(Stage.LAYOUT, "separators", Disposition.ACCEPTED,
+                          seconds=time.perf_counter() - started,
+                          separators=separators, dividers=dividers)
 
     def _cut_at_regions(self, rectified: Rectified, document: Document) -> bool:
         """Cut a Zone that crosses the edge of a grid or a column region — spec

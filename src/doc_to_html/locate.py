@@ -124,6 +124,9 @@ class Word:
     line: tuple[int, int, int]
     confidence: float = 100.0
     """tesseract's own, 0 to 100. Read only by `unclaimed`."""
+    raw: str = ""
+    """What tesseract printed, before folding — spec 0019, B4: `Created:`
+    where `text` is `created`. Read only by `separator.read`."""
 
 
 LEADER_DOT = 0.35
@@ -199,8 +202,11 @@ def _prepared(image: ImageArray, zone: Zone, glyph: float, *,
 
 
 def words(image: ImageArray, zone: Zone, *, glyph: float,
-          languages: str = "eng", inverted: bool = False) -> list[Word]:
-    """Every word tesseract finds in one Zone, boxes on the page, folded."""
+          languages: str = "eng", inverted: bool = False,
+          marks: bool = False) -> list[Word]:
+    """Every word tesseract finds in one Zone, boxes on the page, folded.
+    `marks` keeps the tokens that fold to nothing, a `|` or a lone `:`, with
+    an empty `text` — spec 0019, B4."""
     assert zone.bbox is not None
     cv2 = _cv2()
     prepared, scale = _prepared(image, zone, glyph, inverted=inverted)
@@ -218,7 +224,9 @@ def words(image: ImageArray, zone: Zone, *, glyph: float,
     found = []
     for row in out.splitlines()[1:]:
         cols = row.split("\t")
-        if len(cols) < 12 or not (text := fold(cols[11])):
+        if len(cols) < 12 or not cols[11].strip():
+            continue
+        if not (text := fold(cols[11])) and not marks:
             continue
         left, top, wide, tall = (int(v) for v in cols[6:10])
 
@@ -231,7 +239,7 @@ def words(image: ImageArray, zone: Zone, *, glyph: float,
         found.append(Word(text, BBox(page_x(left), page_y(top),
                                      page_x(left + wide), page_y(top + tall)),
                           (int(inverted), int(cols[2]) * 1000 + int(cols[3]),
-                           int(cols[4])), float(cols[10])))
+                           int(cols[4])), float(cols[10]), cols[11].strip()))
     return found
 
 

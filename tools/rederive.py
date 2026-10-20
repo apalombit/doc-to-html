@@ -83,6 +83,9 @@ and can be recomputed from it, in the order a Conversion runs them:
    15. A line the page sets apart and centred inside a paragraph, and the
        number flush right on it — spec 0019, B3
                                     display.read           (_read_display)
+   16. The separator the page prints at a pair's label, and the bar it
+       prints between two pairs — spec 0019, B4
+                                    separator.read         (_read_separators)
 
 then re-renders into a run-shaped directory that `doc_to_html.report` and
 `tools/visual_review.py` read without knowing the difference.
@@ -120,7 +123,7 @@ sys.path.insert(0, str(TOOLS.parent / "src"))
 sys.path.insert(0, str(TOOLS))
 
 from doc_to_html import (display, fields, furniture, locate, looks, probes,  # noqa: E402
-                         raised, rhythm, spans)
+                         raised, rhythm, separator, spans)
 from doc_to_html.corpus import SOURCES  # noqa: E402
 from doc_to_html.ir import Caveat, Document, Kind  # noqa: E402
 from doc_to_html.orchestrator import gaps, shortfall  # noqa: E402
@@ -202,6 +205,7 @@ def rederive(document: Document, png: Path) -> None:
     spans.read(document)
     raised.read(plain, document)
     display.read(plain, document)
+    separator.read(plain, document)
     # Last, as the audit is in a Conversion: step 9 can widen a Zone's box.
     document.gaps = gaps(image, document.zones)
 
