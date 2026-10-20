@@ -286,6 +286,17 @@ class Cell:
     """How the page prints it, measured from its own pixels — spec 0011,
     step 4; set by `looks.read`. None where the Cell is not placed."""
 
+    span: tuple[int, int] | None = None
+    """How many rows and columns of its table the Cell's drawn cell covers —
+    spec 0019, B1; set by `spans.read` where a ruled grid draws no line
+    between it and the empty slots it covers. None for a Cell in one slot,
+    which is every Cell outside such a grid."""
+
+    below: list[Cell] = field(default_factory=list)
+    """The lines printed under this one inside its drawn cell — spec 0019,
+    B1: `timetable_0019`'s `Lab 1 · Dr Mensah` under `Science`, which the
+    model returned as a row of its own. Empty for a Cell of one line."""
+
     @property
     def text(self) -> str:
         """The accepted reading. Corrections are applied by the renderer, not here."""
@@ -883,6 +894,7 @@ class Document:
             for block in zone["blocks"] + zone["extra"]:
                 if block.get("read_from") is None:
                     block.pop("read_from", None)
+        _without_unset_spans(data)
         return data
 
     def to_json(self, indent: int | None = 2) -> str:
@@ -891,6 +903,23 @@ class Document:
     @classmethod
     def from_json(cls, raw: str) -> Document:
         return _decode_document(json.loads(raw))
+
+
+def _without_unset_spans(data: Any) -> None:
+    """`Cell.span` and `Cell.below` only where they are set — spec 0019, B1 —
+    so a page with no spanning cell is written as it was before they
+    existed. A Cell is the dict that carries `readings` and `state`."""
+    if isinstance(data, dict):
+        if "readings" in data and "state" in data:
+            if data.get("span") is None:
+                data.pop("span", None)
+            if not data.get("below"):
+                data.pop("below", None)
+        for value in data.values():
+            _without_unset_spans(value)
+    elif isinstance(data, list):
+        for value in data:
+            _without_unset_spans(value)
 
 
 def _encode(value: Any) -> Any:
@@ -957,6 +986,9 @@ def _cell(data: dict[str, Any]) -> Cell:
             caps=look.get("caps"), face=look.get("face"),
             sizes=None if look.get("sizes") is None
             else tuple((int(at), float(size)) for at, size in look["sizes"])),
+        span=None if data.get("span") is None
+        else (int(data["span"][0]), int(data["span"][1])),
+        below=[_cell(line) for line in data.get("below", [])],
     )
 
 

@@ -25,6 +25,7 @@ from . import locate as locate_module
 from . import looks as looks_module
 from . import probes as probe_module
 from . import rhythm as rhythm_module
+from . import spans as spans_module
 from . import style as style_module
 from .checkpoints import Answer, CheckpointHandler, NullHandler, Question
 from .config import Settings, load
@@ -904,6 +905,7 @@ class Conversion:
             self._place_furniture(rectified, document)
             self._read_rhythm(rectified, document)
             self._read_looks(rectified, document)
+            self._read_spans(rectified, document)
 
             document.probes = probe_module.run(document)
             for probe in document.probes:
@@ -1508,6 +1510,21 @@ class Conversion:
             bold=sum(1 for cell in cells if cell.look and cell.look.bold),
             italic=sum(1 for cell in cells if cell.look and cell.look.italic),
             chips=sum(1 for cell in cells if cell.look and cell.look.fill))
+
+    def _read_spans(self, rectified: Rectified, document: Document) -> None:
+        """A ruled grid's cells as the page draws them: second lines joined,
+        lines read on their own put in their cells, and each cell over the
+        empty slots it covers — spec 0019, B1. See `spans.read`. After
+        `_read_looks`, so every line keeps the look measured on its ink."""
+        started = time.perf_counter()
+        rows = sum(len(zone.rows) for zone in document.zones)
+        spans_module.read(document)
+        self.trace.record(
+            Stage.LAYOUT, "spans", Disposition.ACCEPTED,
+            seconds=time.perf_counter() - started,
+            joined=rows - sum(len(zone.rows) for zone in document.zones),
+            spanning=sum(1 for zone in document.zones for row in zone.rows
+                         for cell in row.cells if cell.span is not None))
 
     def _cut_at_regions(self, rectified: Rectified, document: Document) -> bool:
         """Cut a Zone that crosses the edge of a grid or a column region — spec

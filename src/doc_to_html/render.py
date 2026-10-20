@@ -2222,6 +2222,32 @@ def _centred_in(cell: Cell, zone: Zone, page: _Page) -> bool:
             and abs(left - right) <= max(ALIGN_SLACK, 0.15 * max(left, right)))
 
 
+def _centred_across(cell: Cell, zone: Zone, column: int, span: int, page: _Page) -> bool:
+    """Whether an entry a ruled grid draws across columns sits centred in
+    them — spec 0019, B1: `timetable_0019`'s `Registration and tutor time`
+    and `Lunch` across the five days. Measured from where the first column's
+    entries start to where the next column's do, or the table's edge;
+    `_centred_in`'s test."""
+    if cell.bbox is None or zone.bbox is None:
+        return False
+
+    def start(at: int) -> float | None:
+        lefts = [row.cells[at].bbox.left for row in zone.rows  # type: ignore[union-attr]
+                 if at < len(row.cells) and row.cells[at].bbox is not None
+                 and row.cells[at].text.strip() and row.cells[at].span is None]
+        return min(lefts) if lefts else None
+
+    left = start(column)
+    right = start(column + span) if column + span < max(len(r.cells) for r in zone.rows) \
+        else zone.bbox.right
+    if left is None or right is None:
+        return False
+    before = (cell.bbox.left - left) * page.x / page.body
+    after = (right - cell.bbox.right) * page.x / page.body
+    return (min(before, after) > CENTRED_ROOM
+            and abs(before - after) <= max(ALIGN_SLACK, 0.15 * max(before, after)))
+
+
 def _column_aligns(zone: Zone, page: _Page, spans: dict[tuple[int, int], int],
                    numeric: set[int]) -> dict[int, str]:
     """Each column's `text-align`, where its entries' boxes set it otherwise
@@ -2349,6 +2375,17 @@ def _table(zone: Zone, document: Document) -> str:
     width = max((len(row.cells) for row in zone.rows), default=0)
     page = _page(document)
     spans = _spans(zone, page, under)
+    # Spec 0019, B1: where the page's ruled grid was read, its spans are the
+    # grid's, down as well as across.
+    drawn_spans = {(position, column): cell.span
+                   for position, row in enumerate(zone.rows)
+                   for column, cell in enumerate(row.cells) if cell.span is not None}
+    if drawn_spans:
+        spans = {at: span[1] for at, span in drawn_spans.items() if span[1] > 1}
+    tall = {at: span[0] for at, span in drawn_spans.items() if span[0] > 1}
+    beneath = {(position + down, column + across)
+               for (position, column), (rows, columns) in drawn_spans.items()
+               for down in range(1, rows) for across in range(columns)}
     aligned = _column_aligns(zone, page, spans, numeric)
     roles = [row.role for row in zone.rows]
     data_at = [i for i, role in enumerate(roles) if role is RowRole.DATA]
@@ -2393,6 +2430,12 @@ def _table(zone: Zone, document: Document) -> str:
                 drawn.append(f"text-align:{aligned[number]}")
             elif spans.get((position, number)) == width and _centred_in(cell, zone, page):
                 drawn.append("text-align:center")
+            elif (position, number) in drawn_spans and (position, number) in spans and \
+                    _centred_across(cell, zone, number, spans[(position, number)], page):
+                drawn.append("text-align:center")
+            if drawn_spans:
+                # Spec 0019, B1: each entry at the top of its drawn cell.
+                drawn.append("vertical-align:top")
             if anchors is not None:
                 bar = anchors.cell_lefts.get((index_of, position, number))
                 if bar is not None:
@@ -2408,6 +2451,10 @@ def _table(zone: Zone, document: Document) -> str:
         def entry(index: int, c: Cell) -> str:
             text = (f'<span class="leader" style="{led}">{_cell(c, document)}</span>'
                     if led and c is row.cells[0] else _cell(c, document))
+            for line in c.below:
+                look = _own_look(line, c, house=ink)
+                text += (f'<div{f" style=\"{look}\"" if look else ""}>'
+                         f'{_cell(line, document)}</div>')
             following = index + 1
             while following in under and following < len(row.cells):
                 below = row.cells[following]
@@ -2421,7 +2468,9 @@ def _table(zone: Zone, document: Document) -> str:
         def opened(index: int, c: Cell) -> str:
             span = spans.get((position, index))
             number = (is_numeric(c.text) if span is not None else index in numeric)
+            rows = tall.get((position, index))
             return (f'<{tag}{" class=\"num\"" if number else ""}'
+                    f'{f" rowspan=\"{rows}\"" if rows is not None else ""}'
                     f'{f" colspan=\"{span}\"" if span is not None else ""}'
                     f'{styled(c, index)}>')
 
@@ -2431,6 +2480,7 @@ def _table(zone: Zone, document: Document) -> str:
             opened(index, c) + entry(index, c) + f"</{tag}>"
             for index, c in enumerate(row.cells)
             if index not in under and index not in covered
+            and (position, index) not in beneath
         )
         in_place = places[position]
         hatch = anchors.rows.get((index_of, position)) if anchors else None
@@ -3689,6 +3739,24 @@ def _look(cell: Cell | None, *, sized: bool = True, bold: bool = False,
     if (house is not None and look.color is not None and look.fill is None
             and _apart(look.color, house) > COLOUR_APART):
         parts.append(f"color:{_rgb(look.color)}")
+    return ";".join(parts)
+
+
+def _own_look(line: Cell, above: Cell, *, house: tuple[int, int, int] | None) -> str:
+    """A second line's style inside its first line's cell — spec 0019, B1:
+    `_look`'s, and its size and weight stated even where they are the
+    house's, since the element round it carries the first line's."""
+    parts = [part for part in _look(line, house=house).split(";") if part]
+    look, first = line.look, above.look
+    if look is None or first is None:
+        return ";".join(parts)
+    if (look.size is not None and first.size is not None
+            and abs(look.size - 1.0) < SIZE_STEP <= abs(first.size - look.size)):
+        parts.insert(0, "font-size:var(--body, 1em)")
+    if first.bold and look.bold is False:
+        parts.append("font-weight:400")
+    if first.italic and look.italic is False:
+        parts.append("font-style:normal")
     return ";".join(parts)
 
 
