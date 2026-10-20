@@ -128,6 +128,7 @@ MEASURE = r"""
   const INLINE_BY_TAG = {
     A: 'link', CODE: 'code', KBD: 'code', SAMP: 'code', TT: 'code',
     EM: 'em', I: 'em', STRONG: 'strong', B: 'strong', MARK: 'mark',
+    SUP: 'sup',
   };
 
   const chrome = new Set();

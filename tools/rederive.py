@@ -77,6 +77,9 @@ and can be recomputed from it, in the order a Conversion runs them:
        lines read on their own put in the empty cells they stand in, and
        each cell over the empty slots it covers — spec 0019, B1
                                     spans.read             (_read_spans)
+   14. Each superscript its own Run, and the raised marks the reading
+       dropped or set apart read off the page — spec 0019, B2
+                                    raised.read            (_read_marks)
 
 then re-renders into a run-shaped directory that `doc_to_html.report` and
 `tools/visual_review.py` read without knowing the difference.
@@ -113,7 +116,8 @@ TOOLS = Path(__file__).resolve().parent
 sys.path.insert(0, str(TOOLS.parent / "src"))
 sys.path.insert(0, str(TOOLS))
 
-from doc_to_html import fields, furniture, locate, looks, probes, rhythm, spans  # noqa: E402
+from doc_to_html import (fields, furniture, locate, looks, probes, raised,  # noqa: E402
+                         rhythm, spans)
 from doc_to_html.corpus import SOURCES  # noqa: E402
 from doc_to_html.ir import Caveat, Document, Kind  # noqa: E402
 from doc_to_html.orchestrator import gaps, shortfall  # noqa: E402
@@ -193,6 +197,7 @@ def rederive(document: Document, png: Path) -> None:
         rhythm.read(plain, document)
     looks.read(plain, document, photographed=rectified.warped, inverted=rectified.inverted)
     spans.read(document)
+    raised.read(plain, document)
     # Last, as the audit is in a Conversion: step 9 can widen a Zone's box.
     document.gaps = gaps(image, document.zones)
 

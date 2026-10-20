@@ -25,6 +25,7 @@ from . import locate as locate_module
 from . import looks as looks_module
 from . import probes as probe_module
 from . import rhythm as rhythm_module
+from . import raised as raised_module
 from . import spans as spans_module
 from . import style as style_module
 from .checkpoints import Answer, CheckpointHandler, NullHandler, Question
@@ -906,6 +907,7 @@ class Conversion:
             self._read_rhythm(rectified, document)
             self._read_looks(rectified, document)
             self._read_spans(rectified, document)
+            self._read_marks(rectified, document)
 
             document.probes = probe_module.run(document)
             for probe in document.probes:
@@ -1525,6 +1527,21 @@ class Conversion:
             joined=rows - sum(len(zone.rows) for zone in document.zones),
             spanning=sum(1 for zone in document.zones for row in zone.rows
                          for cell in row.cells if cell.span is not None))
+
+    def _read_marks(self, rectified: Rectified, document: Document) -> None:
+        """Each superscript its own Run, and each raised mark the reading
+        dropped or set apart read off its glyph — spec 0019, B2. See
+        `raised.read`. Last of the steps that write the IR: it reads the
+        boxes `_locate` set."""
+        started = time.perf_counter()
+        plain = rectified.plain if rectified.plain is not None else rectified.image
+        added = raised_module.read(plain, document)
+        self.trace.record(
+            Stage.LAYOUT, "marks", Disposition.ACCEPTED,
+            seconds=time.perf_counter() - started, added=added,
+            marks=sum(1 for zone in document.zones
+                      for cell, _ in locate_module.cells_of(zone)
+                      for run in cell.runs if run.kind == "sup"))
 
     def _cut_at_regions(self, rectified: Rectified, document: Document) -> bool:
         """Cut a Zone that crosses the edge of a grid or a column region — spec

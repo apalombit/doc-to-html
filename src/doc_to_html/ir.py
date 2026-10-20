@@ -118,8 +118,10 @@ class BBox:
         return (ix * iy) / area if area > 0 else 0.0
 
 
-INLINE_KINDS = ("text", "link", "code", "strong", "em", "mark")
+INLINE_KINDS = ("text", "link", "code", "strong", "em", "mark", "sup")
 """What a `Run` may be. `text` is unmarked; the rest are `scoring.INLINE_KINDS`.
+`sup` is a raised mark, spec 0019, B2 — set by `raised.read`, never asked of
+a model: the wire's own kinds are unchanged.
 
 The set is closed and it matches the scorer's, so a kind that cannot be scored
 cannot be produced.

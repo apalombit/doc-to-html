@@ -723,7 +723,7 @@ def palette(source_png: Path, output_png: Path) -> Palette:
 # T6 inline detail
 # --------------------------------------------------------------------------
 
-INLINE_KINDS = ("link", "code", "mark", "strong", "em")
+INLINE_KINDS = ("link", "code", "mark", "strong", "em", "sup")
 
 
 @dataclass(frozen=True)

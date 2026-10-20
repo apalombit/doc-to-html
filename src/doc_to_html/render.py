@@ -16,6 +16,7 @@ import html
 import json
 import math
 import re
+import unicodedata
 from collections import Counter
 from dataclasses import dataclass, field, replace
 from enum import Enum
@@ -4063,6 +4064,7 @@ def _chip(cell: Cell, inner: str, document: Document) -> str:
 
 TAG_FOR_RUN = {
     "link": "a", "code": "code", "strong": "strong", "em": "em", "mark": "mark",
+    "sup": "sup",
 }
 """Which element carries each Run kind.
 
@@ -4071,6 +4073,12 @@ back as the same kind the source is read as. T6 compares the two projections
 run for run, and a kind that only one side can express would score as a loss
 however the page actually looks.
 """
+
+
+SUP = "font-size:0.7em;line-height:0"
+"""A raised mark's size, and no height of its own, so its line keeps the
+spacing of every other: `paper_0018` and `report_0011` set theirs at
+0.68em and 10px on 13px — spec 0019, B2."""
 
 
 def _runs(cell: Cell) -> str:
@@ -4098,9 +4106,17 @@ def _marked(runs: list[Run]) -> str:
         return html.escape(runs[0].text)
     out = []
     for run in runs:
-        text = html.escape(run.text)
+        # A superscript character is a raised glyph already, and inside
+        # `<sup>` it would be raised twice: drawn as the page prints it, its
+        # plain form raised — the one character to a reader and to the
+        # scorer, which folds `¹` to `1` (spec 0019, B2).
+        text = html.escape(unicodedata.normalize("NFKC", run.text)
+                           if run.kind == "sup" else run.text)
         tag = TAG_FOR_RUN.get(run.kind)
-        out.append(f"<{tag}>{text}</{tag}>" if tag else text)
+        # Its size and line inline, not in the stylesheet, so a page with no
+        # mark renders byte for byte as it did.
+        opened = f'<{tag} style="{SUP}">' if run.kind == "sup" else f"<{tag}>"
+        out.append(f"{opened}{text}</{tag}>" if tag else text)
     return "".join(out)
 
 
