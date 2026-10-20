@@ -78,7 +78,8 @@ and can be recomputed from it, in the order a Conversion runs them:
        each cell over the empty slots it covers — spec 0019, B1
                                     spans.read             (_read_spans)
    14. Each superscript its own Run, and the raised marks the reading
-       dropped or set apart read off the page — spec 0019, B2
+       dropped or set apart read off the page — spec 0019, B2; run right
+       after step 8, before anything measures the lines it folds
                                     raised.read            (_read_marks)
    15. A line the page sets apart and centred inside a paragraph, and the
        number flush right on it — spec 0019, B3
@@ -197,13 +198,13 @@ def rederive(document: Document, png: Path) -> None:
             inverted=rectified.inverted)
     locate.locate(plain, document)
     locate.without_cut_copies(document)
+    raised.read(plain, document)
     fields.read(plain, document)
     furniture.place(document.furniture, document.zones)
     if document.style is not None:
         rhythm.read(plain, document)
     looks.read(plain, document, photographed=rectified.warped, inverted=rectified.inverted)
     spans.read(document)
-    raised.read(plain, document)
     display.read(plain, document)
     separator.read(plain, document)
     # Last, as the audit is in a Conversion: step 9 can widen a Zone's box.

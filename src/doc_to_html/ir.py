@@ -516,6 +516,11 @@ class Zone:
     """The Title is set in small capitals — spec 0012, G7, by `looks`; its
     `title_size` is then its capitals' size."""
 
+    title_bold: bool | None = None
+    """Whether the Title is printed bold, measured off its ink as a Cell's
+    weight is — spec 0019, C2, by `looks`. None where it was not measured:
+    no Title, a photographed page, a line that cannot say."""
+
     face: str | None = None
     """The Zone's own face where it is not its page's — spec 0012, G7, by
     `looks`: `report_0011`'s sans table on a serif page."""
@@ -934,6 +939,9 @@ def _without_unset_spans(data: Any) -> None:
                     data.pop(name, None)
             if not data.get("below"):
                 data.pop("below", None)
+        if "blocks" in data and "rows" in data and data.get("title_bold") is None:
+            # A Zone's measured Title weight, spec 0019, C2, likewise.
+            data.pop("title_bold", None)
         if "label" in data and "value" in data and "marks" in data:
             # A Pair's separator and divider, spec 0019, B4, likewise.
             for name in ("separator", "divider"):
@@ -1063,6 +1071,7 @@ def _zone(data: dict[str, Any]) -> Zone:
         fill=_colour(data.get("fill")),
         title_size=data.get("title_size"),
         title_caps=data.get("title_caps", False),
+        title_bold=data.get("title_bold"),
         face=data.get("face"),
         title_color=_colour(data.get("title_color")),
         title_fill=_colour(data.get("title_fill")),

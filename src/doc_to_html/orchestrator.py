@@ -904,12 +904,12 @@ class Conversion:
             self._find_separators(rectified, document)
             self._locate(rectified, document)
             self._read_unclaimed(rectified, document)
+            self._read_marks(rectified, document)
             self._read_fields(rectified, document)
             self._place_furniture(rectified, document)
             self._read_rhythm(rectified, document)
             self._read_looks(rectified, document)
             self._read_spans(rectified, document)
-            self._read_marks(rectified, document)
             self._read_display(rectified, document)
             self._read_separators(rectified, document)
 
@@ -1535,8 +1535,10 @@ class Conversion:
     def _read_marks(self, rectified: Rectified, document: Document) -> None:
         """Each superscript its own Run, and each raised mark the reading
         dropped or set apart read off its glyph — spec 0019, B2. See
-        `raised.read`. Last of the steps that write the IR: it reads the
-        boxes `_locate` set."""
+        `raised.read`. Right after `_locate`, whose boxes it reads, and
+        before anything measures them: a line `3` set apart was placed on a
+        heading's `3.`, and measured, it set `report_0011`'s regular weight
+        (spec 0019, C2)."""
         started = time.perf_counter()
         plain = rectified.plain if rectified.plain is not None else rectified.image
         added = raised_module.read(plain, document)

@@ -712,8 +712,8 @@ def _title_line(zone: Zone, below: float) -> tuple[Cell, bool, BBox]:
     bottom = box.top + TITLE_LINE * max(below - box.top, 0.0)
     at = {"right": box.right, "centre": (box.left + box.right) / 2}.get(
         zone.title_align or "", box.left)
-    look = Look(size=zone.title_size or TITLE_EM, bold=True, color=zone.title_color,
-                caps=zone.title_caps or None)
+    look = Look(size=zone.title_size or TITLE_EM, bold=zone.title_bold is not False,
+                color=zone.title_color, caps=zone.title_caps or None)
     drawn = BBox(at, box.top, at, bottom)
     title = Cell(bbox=drawn, readings=[Reading(engine="title", text=zone.title or "")],
                  look=look)
@@ -1807,6 +1807,9 @@ def _inline_title_style(zone: Zone, extra: str = "") -> str:
         rules.append(f"text-align:{TEXT_ALIGN[zone.title_align]}")
     if zone.title_caps:
         rules.append("font-variant:small-caps")
+    if zone.title_bold is False:
+        # Spec 0019, C2: a Title the page prints regular.
+        rules.append("font-weight:400")
     return f' style="{";".join(rules)}"' if rules else ""
 
 
@@ -3749,10 +3752,13 @@ def _look(cell: Cell | None, *, sized: bool = True, bold: bool = False,
           house: tuple[int, int, int] | None = None) -> str:
     """The inline style for how the page prints one entry — spec 0011,
     step 4: its size against the page's body, and bold or italic **where
-    the page sets it and the stylesheet does not**. Never removes a weight
-    or a slant the house style draws: the measure misses less than it
-    invents in that direction. `sized` is False where the element already
-    has its own size (a heading); `bold` is True where it is already bold.
+    the page sets it and the stylesheet does not**. **Weight as measured,
+    never by element** — spec 0019, C2: an element the stylesheet draws
+    bold — a heading, a header cell, a total — is drawn regular where its
+    entry measured regular, and keeps the house weight only where nothing
+    was measured. A slant the house style draws is never removed. `sized`
+    is False where the element already has its own size (a heading);
+    `bold` is True where it is already bold.
     `house` is the colour the element is drawn in otherwise: the entry's
     own is drawn where it differs by more than `COLOUR_APART` (4b). A chip
     carries its own colour — see `_chip`."""
@@ -3764,6 +3770,8 @@ def _look(cell: Cell | None, *, sized: bool = True, bold: bool = False,
         parts.append(f"font-size:calc({look.size:.2f} * var(--body, 1em))")
     if look.bold and not bold:
         parts.append("font-weight:700")
+    elif bold and look.bold is False:
+        parts.append("font-weight:400")
     if look.italic:
         parts.append("font-style:italic")
     if look.caps:
@@ -3813,14 +3821,14 @@ def _common_colour(cells: list[Cell], house: tuple[int, int, int] | None) -> str
     return f"color:{_rgb(middle)}"
 
 
-def _common_look(cells: list[Cell], *, sized: bool = True,
+def _common_look(cells: list[Cell], *, sized: bool = True, bold: bool = False,
                  house: tuple[int, int, int] | None = None) -> str:
     """One style for a block of lines: the one most of its lines have, or
     none — a paragraph is set in one face, and a line measured otherwise is
     more likely noise than a change of face mid-paragraph."""
     if not cells:
         return ""
-    styles = Counter(_look(cell, sized=sized) for cell in cells)
+    styles = Counter(_look(cell, sized=sized, bold=bold) for cell in cells)
     style, count = styles.most_common(1)[0]
     shape = style if count * 5 >= len(cells) * 3 else ""
     return ";".join(part for part in (shape, _common_colour(cells, house)) if part)
@@ -3842,7 +3850,7 @@ def _block(block: Block, document: Document, spacing: str = "",
         # A size is only ever set smaller than `h1`'s own 1.6em — see
         # `style.heading_sizes` — so the stylesheet keeps the heading's weight
         # and margins and this changes only how large it is.
-        looked = _common_look(block.lines, sized=False, house=_house(document))
+        looked = _common_look(block.lines, sized=False, bold=True, house=_house(document))
         measured = _heading_size(block)
         size = f"font-size:{measured:.2f}em" if measured else ""
         both = ";".join(part for part in (size, looked, spacing) if part)

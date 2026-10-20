@@ -394,6 +394,34 @@ def _title_caps(image: ImageArray, document: Document, body: float) -> None:
             zone.title_size = match
 
 
+def _title_weight(image: ImageArray, grey: ImageArray, zone: Zone) -> float | None:
+    """A Zone's Title's weight — its stem, less `BLUR`, over its glyph
+    height — on the Zone's first printed line, as `_title_caps` finds it;
+    turned over where it is knocked out of a bar. Spec 0019, C2."""
+    if not zone.title or zone.bbox is None:
+        return None
+    mask = np.asarray(type_mask(image, zone)) > 0
+    lines = type_lines(mask)
+    if not lines:
+        return None
+    top, bottom = lines[0]
+    x0, y0 = crop_origin(image, zone.bbox)
+    own = grey[y0:y0 + mask.shape[0], x0:x0 + mask.shape[1]]
+    zoned = mask[top:bottom + 1]
+    patch = own[top:bottom + 1]
+    if float((own < 128).mean()) > 0.5:
+        patch = 255 - patch
+    if float(zoned.mean()) > CHIP and _framed(zoned):
+        patch, zoned = 255 - patch, ~zoned
+    if not zoned.any():
+        return None
+    ink = _own_ink(patch, zoned)
+    glyph = _glyph(ink, zone.title)
+    cover = _cover(patch.astype(float), ink)
+    stem = _stem(cover, glyph) if cover is not None and glyph else None
+    return None if stem is None or not glyph else (stem - BLUR) / glyph
+
+
 def _framed(zoned: ImageArray) -> bool:
     """Whether a crop's outermost rows and columns are inked: a chip's
     ground runs to its edge, where type stops short of it."""
@@ -1013,7 +1041,7 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
     and colour unread. A Cell not placed, or not measurable, keeps None."""
     cv2 = _cv2()
     for zone in document.zones:
-        zone.title_color = None
+        zone.title_color = zone.title_bold = None
         zone.title_caps, zone.face = False, None
         for cell, _ in cells_of(zone):
             cell.look = None
@@ -1123,8 +1151,8 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
         known = [v for v in values if v is not None]
         return float(np.median(known)) if known else None
 
-    regular = median([w for _, size, w, _ in measured
-                      if size is not None and 0.9 <= size <= 1.1])
+    regular = median([w for cell, size, w, _ in measured
+                      if size is not None and 0.9 <= size <= 1.1 and id(cell) not in parted])
     upright = median([s for *_, s in measured])
     for cell, size, weight, slant in measured:
         colour, fill, chip = colours.get(id(cell), (None, None, None))
@@ -1133,8 +1161,11 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
         caps, joined = shaped.get(id(cell), (None, False))
         cell.look = Look(
             size=None if size is None else round(size, 2),
+            # A line of two sizes has two weights' worth of stems over one
+            # glyph height — `pricing_0017`'s bold `£12` over its regular
+            # `/ user / month` measured 0.23 — spec 0019, C2.
             bold=(None if weight is None or not regular or photographed
-                  else weight / regular >= BOLD),
+                  or id(cell) in parted else weight / regular >= BOLD),
             italic=italic,
             color=colour, fill=fill,
             chip=None if chip is None else chip[0],
@@ -1143,6 +1174,10 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
             face=("script" if italic and joined and size is not None and size >= SCRIPT_SIZE
                   else None),
             sizes=parted.get(id(cell)))
+    if regular and not photographed:
+        for zone in document.zones:
+            weight = _title_weight(image, grey, zone)
+            zone.title_bold = None if weight is None else weight / regular >= BOLD
     face = _face(pitches, feet)
     if document.style is not None:
         document.style.face = face
