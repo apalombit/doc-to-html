@@ -299,6 +299,12 @@ class Cell:
     B1: `timetable_0019`'s `Lab 1 · Dr Mensah` under `Science`, which the
     model returned as a row of its own. Empty for a Cell of one line."""
 
+    display: str | None = None
+    """`line` for a line the page sets on its own, centred in its column
+    and apart above and below — an equation — and `number` for the `(n)`
+    printed flush right on it: spec 0019, B3; set by `display.read`. None
+    for every line that flows with its paragraph."""
+
     @property
     def text(self) -> str:
         """The accepted reading. Corrections are applied by the renderer, not here."""
@@ -908,13 +914,14 @@ class Document:
 
 
 def _without_unset_spans(data: Any) -> None:
-    """`Cell.span` and `Cell.below` only where they are set — spec 0019, B1 —
-    so a page with no spanning cell is written as it was before they
-    existed. A Cell is the dict that carries `readings` and `state`."""
+    """`Cell.span`, `Cell.below` and `Cell.display` only where they are set
+    — spec 0019, B1 and B3 — so a page with none is written as it was before
+    they existed. A Cell is the dict that carries `readings` and `state`."""
     if isinstance(data, dict):
         if "readings" in data and "state" in data:
-            if data.get("span") is None:
-                data.pop("span", None)
+            for name in ("span", "display"):
+                if data.get(name) is None:
+                    data.pop(name, None)
             if not data.get("below"):
                 data.pop("below", None)
         for value in data.values():
@@ -991,6 +998,7 @@ def _cell(data: dict[str, Any]) -> Cell:
         span=None if data.get("span") is None
         else (int(data["span"][0]), int(data["span"][1])),
         below=[_cell(line) for line in data.get("below", [])],
+        display=data.get("display"),
     )
 
 

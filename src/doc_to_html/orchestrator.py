@@ -25,6 +25,7 @@ from . import locate as locate_module
 from . import looks as looks_module
 from . import probes as probe_module
 from . import rhythm as rhythm_module
+from . import display as display_module
 from . import raised as raised_module
 from . import spans as spans_module
 from . import style as style_module
@@ -908,6 +909,7 @@ class Conversion:
             self._read_looks(rectified, document)
             self._read_spans(rectified, document)
             self._read_marks(rectified, document)
+            self._read_display(rectified, document)
 
             document.probes = probe_module.run(document)
             for probe in document.probes:
@@ -1542,6 +1544,16 @@ class Conversion:
             marks=sum(1 for zone in document.zones
                       for cell, _ in locate_module.cells_of(zone)
                       for run in cell.runs if run.kind == "sup"))
+
+    def _read_display(self, rectified: Rectified, document: Document) -> None:
+        """A line set apart and centred inside a paragraph, and its number
+        — spec 0019, B3. See `display.read`. After `_locate`, whose boxes
+        it reads the printed lines beside."""
+        started = time.perf_counter()
+        plain = rectified.plain if rectified.plain is not None else rectified.image
+        found = display_module.read(plain, document)
+        self.trace.record(Stage.LAYOUT, "display", Disposition.ACCEPTED,
+                          seconds=time.perf_counter() - started, lines=found)
 
     def _cut_at_regions(self, rectified: Rectified, document: Document) -> bool:
         """Cut a Zone that crosses the edge of a grid or a column region — spec

@@ -3980,6 +3980,8 @@ def _lines(block: Block, document: Document, lane: _Lane | None = None) -> str:
         return "<br>".join(rendered)
     breaks, right = (_broken(block, lane, _page(document)) if lane is not None
                      else (set(), set()))
+    apart = _displayed(block, rendered)
+    breaks, right = set(breaks) - apart, set(right) - apart
     for index in right:
         rendered[index] = f'<span style="display:block;text-align:right">{rendered[index]}</span>'
 
@@ -3987,7 +3989,7 @@ def _lines(block: Block, document: Document, lane: _Lane | None = None) -> str:
     for index, (previous, cell, piece) in enumerate(
             zip(block.lines, block.lines[1:], rendered[1:]), start=1):
         how = _how_to_join(previous.text.rstrip(), cell.text.lstrip())
-        if index in right or index - 1 in right:
+        if index in right or index - 1 in right or index in apart or index - 1 in apart:
             out.append(piece)
         elif index in breaks:
             out.append("<br>" + piece)
@@ -3999,6 +4001,33 @@ def _lines(block: Block, document: Document, lane: _Lane | None = None) -> str:
         else:
             out.append(" " + piece)
     return _SEAM.sub("", "".join(out))
+
+
+DISPLAY = "display:flex;align-items:baseline;margin:.5em 0"
+"""A display line's own line: apart above and below, its number on it —
+spec 0019, B3. `paper_0018` sets its equation 8px apart in 13px type."""
+
+
+def _displayed(block: Block, rendered: list[str]) -> set[int]:
+    """A display line drawn on a line of its own, centred in the room its
+    number leaves, the number flush right — spec 0019, B3 — in place in
+    `rendered`. Returns the indexes, the line's and its number's, that
+    neither join the lines beside them nor break apart from them: the
+    flex line is a line of its own. The number is not drawn `<span>`
+    bare, which `_SEAM` would join to the line before it."""
+    apart: set[int] = set()
+    for index, line in enumerate(block.lines):
+        if line.display != "line":
+            continue
+        inner = f'<span style="flex:1;text-align:center">{rendered[index]}</span>'
+        following = index + 1
+        if following < len(block.lines) and block.lines[following].display == "number":
+            inner += f'<span style="flex:none">{rendered[following]}</span>'
+            rendered[following] = ""
+            apart.add(following)
+        rendered[index] = f'<span style="{DISPLAY}">{inner}</span>'
+        apart.add(index)
+    return apart
 
 
 _SEAM = re.compile(r"</([a-z]+)><\1>")
