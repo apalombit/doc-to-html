@@ -150,8 +150,13 @@ class TestQuotations:
 
 class TestGraphicsAndMarks:
     def test_a_badge_keeps_its_text(self, cards: Document) -> None:
-        """Unlike a logo's wordmark, a badge carries text a reader reads."""
-        assert '<div class="mark" data-kind="badge">CSS</div>' in render(cards)
+        """Unlike a logo's wordmark, a badge carries text a reader reads —
+        since spec 0019, C1, read off its own fill and drawn on it: white
+        on the page's blue."""
+        html = render(cards)
+        badge = html.split('<div class="mark" data-kind="badge">')[1].split("</div>")[0]
+        assert badge.endswith(">CSS</span>")
+        assert "background:rgb(72,139,210)" in badge and "color:rgb(255,255,255)" in badge
 
     def test_a_logo_is_drawn_from_its_own_pixels(self) -> None:
         """End to end through a Conversion, which is the only test that proves

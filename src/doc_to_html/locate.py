@@ -66,7 +66,8 @@ import numpy as np
 
 from .ir import BBox, Cell, Document, Kind, Unclaimed, Zone
 from .preprocess import PAD_X, ImageArray, _cv2, content_ink, crop_origin, zone_pixels
-from .style import body_glyph, type_lines, type_mask
+from .style import body_glyph, dominant, type_lines, type_mask
+from .wire import MARKS
 
 TESSERACT = "tesseract"
 """The binary, looked up on `PATH` — no Python dependency."""
@@ -208,10 +209,19 @@ def words(image: ImageArray, zone: Zone, *, glyph: float,
     `marks` keeps the tokens that fold to nothing, a `|` or a lone `:`, with
     an empty `text` — spec 0019, B4."""
     assert zone.bbox is not None
-    cv2 = _cv2()
     prepared, scale = _prepared(image, zone, glyph, inverted=inverted)
-    height, width = image.shape[:2]
     x0, y0 = crop_origin(image, zone.bbox)
+    return _read(image, prepared, scale, (x0, y0), languages=languages,
+                 key=int(inverted), marks=marks)
+
+
+def _read(image: ImageArray, prepared: ImageArray, scale: float, origin: tuple[int, int],
+          *, languages: str, key: int, marks: bool) -> list[Word]:
+    """tesseract's words in a prepared crop, put back on the page. `key`
+    leads each word's `line`, so lines of two reads are never one."""
+    cv2 = _cv2()
+    height, width = image.shape[:2]
+    x0, y0 = origin
     with tempfile.TemporaryDirectory() as work:
         path = Path(work) / "zone.png"
         cv2.imwrite(str(path), prepared)
@@ -238,9 +248,143 @@ def words(image: ImageArray, zone: Zone, *, glyph: float,
 
         found.append(Word(text, BBox(page_x(left), page_y(top),
                                      page_x(left + wide), page_y(top + tall)),
-                          (int(inverted), int(cols[2]) * 1000 + int(cols[3]),
+                          (key, int(cols[2]) * 1000 + int(cols[3]),
                            int(cols[4])), float(cols[10]), cols[11].strip()))
     return found
+
+
+FILL_SIDE = 1.5
+"""The smallest fill type is read off, in body glyphs, both ways — spec
+0019, C1: `sample_css_0004`'s `CSS` badge is 2.2 glyphs tall. Narrower
+than `furniture.FILL`'s 3, which finds the page's furniture, not a chip."""
+
+FILL_COVER = 0.75
+"""How much of its box a fill covers, its holes filled — as
+`furniture.FILLED`: a disc pi over four, a rounded chip more."""
+
+FILL_GROUND = 36
+"""Channel-sum by which a fill stands off its Zone's ground — as
+`furniture.GROUND_SAME`."""
+
+
+def fills(image: ImageArray, zone: Zone, glyph: float) -> list[BBox]:
+    """The solid areas of colour inside a Zone that type may be knocked out
+    of — a chip, a pill, a disc: off the ground at the edge of the Zone's
+    crop, `FILL_SIDE` glyphs or more both ways once type is opened away,
+    covering `FILL_COVER` of their box, their middle inside the Zone.
+
+    The crop runs a glyph past the Zone's box, and its ground is read at
+    the crop's edge: `sample_css_0004`'s badge runs past its Zone's right
+    edge, and `certificate_0021`'s seal fills 0.79 of its Zone's box, so
+    the Zone's commonest colour is the seal's own gold."""
+    cv2 = _cv2()
+    assert zone.bbox is not None
+    height, width = image.shape[:2]
+    reach = int(np.ceil(glyph))
+    left = max(0, int(zone.bbox.left * width) - reach)
+    top = max(0, int(zone.bbox.top * height) - reach)
+    right = min(width, int(np.ceil(zone.bbox.right * width)) + reach)
+    bottom = min(height, int(np.ceil(zone.bbox.bottom * height)) + reach)
+    pixels = image[top:bottom, left:right]
+    if pixels.ndim != 3 or pixels.size == 0:
+        return []
+    edge = np.concatenate([pixels[0], pixels[-1], pixels[:, 0], pixels[:, -1]])
+    ground = np.array(dominant(edge.reshape(-1, 1, 3)))
+    off = (np.abs(pixels.astype(int) - ground).sum(axis=2) > FILL_GROUND).astype(np.uint8)
+    size = max(3, int(round(glyph / 2)))
+    solid = cv2.morphologyEx(off, cv2.MORPH_OPEN, np.ones((size, size), np.uint8))
+    count, labels, stats, _ = cv2.connectedComponentsWithStats(solid, connectivity=8)
+    found = []
+    for index in range(1, count):
+        x, y, w, h, _ = (int(v) for v in stats[index])
+        middle = ((left + x + w / 2) / width, (top + y + h / 2) / height)
+        if (w < FILL_SIDE * glyph or h < FILL_SIDE * glyph
+                or not (zone.bbox.left <= middle[0] <= zone.bbox.right
+                        and zone.bbox.top <= middle[1] <= zone.bbox.bottom)):
+            continue
+        shape = (labels[y:y + h, x:x + w] == index).astype(np.uint8)
+        outline, _ = cv2.findContours(shape, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        whole = np.zeros_like(shape)
+        cv2.drawContours(whole, outline, -1, 1, thickness=-1)
+        if int(whole.sum()) < FILL_COVER * w * h:
+            continue
+        found.append(BBox((left + x) / width, (top + y) / height,
+                          (left + x + w) / width, (top + y + h) / height))
+    return found
+
+
+def fill_words(image: ImageArray, box: BBox, *, glyph: float,
+               languages: str = "eng", key: int = 2) -> list[Word]:
+    """The words knocked out of one fill, read on the fill's own crop with
+    its type drawn dark on white — spec 0019, C1: each pixel inside the
+    fill's outline as dark as it stands off the fill's colour, and every
+    pixel outside it white. Turned over whole, `certificate_0021`'s gold
+    seal is a grey disc between black corners, and tesseract reads `©`
+    off it; drawn so, `GUILD`, `GTE`, `2026`."""
+    cv2 = _cv2()
+    height, width = image.shape[:2]
+    x0, y0 = int(box.left * width), int(box.top * height)
+    pixels = image[y0:int(np.ceil(box.bottom * height)), x0:int(np.ceil(box.right * width))]
+    if pixels.ndim != 3 or pixels.size == 0:
+        return []
+    colour = np.array(dominant(pixels))
+    apart = np.abs(pixels.astype(int) - colour).sum(axis=2)
+    count, labels, stats, _ = cv2.connectedComponentsWithStats(
+        (apart <= FILL_GROUND).astype(np.uint8), connectivity=8)
+    if count < 2:
+        return []
+    shape = (labels == 1 + int(np.argmax(stats[1:, 4]))).astype(np.uint8)
+    outline, _ = cv2.findContours(shape, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    inside = np.zeros_like(shape)
+    cv2.drawContours(inside, outline, -1, 1, thickness=-1)
+    if not inside.any():
+        return []
+    full = max(1.0, float(np.percentile(apart[inside > 0], 99)))
+    dark = np.where(inside > 0, np.clip(apart * 255.0 / full, 0, 255), 0)
+    grey = (255 - dark).astype(np.uint8)
+    scale = max(1.0, TARGET_GLYPH / glyph)
+    big = cv2.resize(grey, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
+    prepared = cv2.copyMakeBorder(big, PAD, PAD, PAD, PAD, cv2.BORDER_CONSTANT, value=255)
+    return _read(image, prepared, scale, (x0, y0), languages=languages,
+                 key=key, marks=False)
+
+
+SYMBOL = re.compile(r"[^\w\s]+")
+"""A line of marks only — `★`, `✦`, `•` — which tesseract does not read."""
+
+
+def _from_marks(image: ImageArray, zone: Zone,
+                placed: list[BBox | None]) -> list[BBox | None]:
+    """Unplaced lines of marks only, from the glyphs no placed Cell holds,
+    in reading order, when the two count alike — spec 0019, C1:
+    `certificate_0021`'s three `★` under its title."""
+    cells = cells_of(zone)
+    wanted = [index for index, ((cell, _), box) in enumerate(zip(cells, placed))
+              if box is None and SYMBOL.fullmatch(cell.text.strip() or " ")]
+    if not wanted:
+        return placed
+    cv2 = _cv2()
+    assert zone.bbox is not None
+    mask = (np.asarray(type_mask(image, zone)) > 0).astype(np.uint8)
+    height, width = image.shape[:2]
+    x0, y0 = crop_origin(image, zone.bbox)
+    count, _, stats, _ = cv2.connectedComponentsWithStats(mask, connectivity=8)
+    held = [box for box in placed if box is not None]
+    glyphs = []
+    for index in range(1, count):
+        x, y, w, h, area = (int(v) for v in stats[index])
+        box = BBox((x0 + x) / width, (y0 + y) / height,
+                   (x0 + x + w) / width, (y0 + y + h) / height)
+        if area < 4 or any(box.overlap_ratio(other) > 0.5 for other in held):
+            continue
+        glyphs.append(box)
+    if len(glyphs) != len(wanted):
+        return placed
+    glyphs.sort(key=lambda box: (round((box.top + box.bottom) / 2 * height / 4), box.left))
+    out = list(placed)
+    for index, box in zip(wanted, glyphs):
+        out[index] = box
+    return out
 
 
 def cells_of(zone: Zone) -> list[tuple[Cell, int | None]]:
@@ -883,8 +1027,11 @@ def locate(image: ImageArray, document: Document) -> tuple[int, int]:
     """Set `Cell.bbox` on every Cell that can be placed — and None on every
     one that cannot, so a later round keeps no stale box. Returns (placed,
     cells). `image` is `Rectified.plain`."""
+    # A mark — a badge, a stamp, a signature — is a figure whose text is
+    # printed type: spec 0019, C1, `certificate_0021`'s seal.
     zones = [z for z in document.zones
-             if z.bbox is not None and z.kind is not Kind.FIGURE and z.complete]
+             if z.bbox is not None and z.complete
+             and (z.kind is not Kind.FIGURE or z.graphic_kind in MARKS)]
     for zone in document.zones:
         for cell, _ in cells_of(zone):
             cell.bbox = None
@@ -916,6 +1063,20 @@ def locate(image: ImageArray, document: Document) -> tuple[int, int]:
         read[i] = first + [extra for extra in more if not any(
             extra.text == seen.text and extra.box.overlap_ratio(seen.box) > 0.5
             for seen in first)]
+    # Type knocked out of a fill inside the Zone, read on the fill's own
+    # crop turned over, where a Cell is still unplaced — spec 0019, C1.
+    # Kept apart from the Zone's words: they place Cells, and claim no line
+    # for `unclaimed`, which would ask the model for it.
+    filled: list[list[Word]] = [[] for _ in zones]
+    for i, (zone, found) in enumerate(zip(zones, read)):
+        if not any(box is None and fold(cell.text) for (cell, _), box
+                   in zip(cells_of(zone), place(zone, found))):
+            continue
+        for n, fill in enumerate(fills(image, zone, glyph)):
+            more = fill_words(image, fill, glyph=glyph, languages=language(zone), key=2 + n)
+            filled[i] += [extra for extra in more if not any(
+                extra.text == seen.text and extra.box.overlap_ratio(seen.box) > 0.5
+                for seen in read[i] + filled[i])]
     # Display type the first read erased as rules: for the unclaimed lines,
     # and for the extra lines read from them (`_from_lines`) — never to place
     # a Cell of the body.
@@ -924,9 +1085,9 @@ def locate(image: ImageArray, document: Document) -> tuple[int, int]:
             lambda pair: display_words(image, pair[0], pair[1],
                                        languages=language(pair[0])), zip(zones, read)))
     placed = total = 0
-    for zone, found, more in zip(zones, read, display):
-        boxes = place(zone, found)
-        for fallback in (_from_grid, _from_pairs, _from_ink):
+    for zone, found, more, chips in zip(zones, read, display, filled):
+        boxes = place(zone, list(found) + chips)
+        for fallback in (_from_grid, _from_pairs, _from_ink, _from_marks):
             boxes = fallback(image, zone, boxes)
         boxes = _from_lines(zone, list(found) + more, boxes)
         for (cell, _), box in zip(cells_of(zone), boxes):
@@ -940,6 +1101,9 @@ def locate(image: ImageArray, document: Document) -> tuple[int, int]:
     index_of = {id(zone): index for index, zone in enumerate(document.zones)}
     whole = float(ink.sum()) or 1.0
     for zone, found, more in zip(zones, read, display):
+        if zone.kind is Kind.FIGURE:
+            # A mark's type is its own; it claims no line for another Zone.
+            continue
         for box, count, reach in unclaimed(zone, list(found) + more, located):
             inside = ink[int(box.top * height):int(np.ceil(box.bottom * height)),
                          int(box.left * width):int(np.ceil(box.right * width))]

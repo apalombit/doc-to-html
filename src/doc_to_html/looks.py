@@ -15,7 +15,8 @@ asked (ADR 0005).
   reaches the cap height — `each` is three x-height letters and an `h`. A
   Cell's lines are split at empty rows only: `style.type_lines` splits a
   word as short as `CRD` at the waist of its letters. A crop more than
-  `CHIP` ink is a chip the type is knocked out of, and gets no size.
+  `CHIP` ink, its frame inked (`FRAMED`), is a chip the type is knocked
+  out of, and is measured turned over (spec 0019, C1).
 - **Weight** is the Cell's stem — the median ink mass of a horizontal run
   through its strokes, from anti-aliased coverage — less `BLUR`, over its
   glyph height, against the page's body median. Bold at `BOLD` or more.
@@ -108,6 +109,7 @@ import numpy as np
 from .ir import (BBox, Cell, Document, Furniture, Kind, Look, RowRole, Run, Stroke,
                  Style, Zone)
 from .locate import cells_of
+from .wire import MARKS
 from .preprocess import ImageArray, _cv2, crop_origin
 from .style import SAME_COLOUR, body_glyph, dominant, type_lines, type_mask
 
@@ -116,7 +118,16 @@ TALL = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZbdfhklt0123456789")
 all x-height and its height says nothing about its size."""
 
 CHIP = 0.45
-"""A crop more than this share ink is a chip with its type knocked out."""
+"""A crop more than this share ink is a chip with its type knocked out —
+where its frame is inked too (`FRAMED`)."""
+
+FRAMED = 0.25
+"""How much of a crop's outermost pixels must be ink for a crop of more
+than `CHIP` ink to be a chip — spec 0019, C1. Heavy display type in a tight
+box is as dense: `ticket_0020`'s `OSL` 0.467 and `darkdeck_0009`'s `ms`
+0.482, each measured no size. Over the twenty-one pages at `s13-result/`
+every chip's frame is 0.51 to 1.00 ink, and every such run of type's
+0.00."""
 
 BLUR = 0.6
 """Pixels anti-aliasing adds to every stem, whatever the size: the intercept
@@ -307,6 +318,12 @@ def _small_caps(ink: ImageArray, text: str) -> tuple[bool, float] | None:
     if measured is None or not expected or not any(letter.islower() for letter in text):
         return None
     pieces, baseline, height, _ = measured
+    if 2 * sum(1 for letter in text if letter in DESCENDS) >= len(pieces):
+        # Its baseline is a vote of its pieces' feet, and the hanging
+        # letters carry it: `statement_0006`'s header `Type`, its bold `T`
+        # and `y` touching, is three pieces, two hanging — spec 0019, C1,
+        # where the knocked-out header was first measured.
+        return None
     risen = sum(1 for start, end in pieces
                 if abs(end - baseline) <= 1 and end - start >= CAPITAL * height) - capitals
     hung = sum(1 for _, end in pieces if end - baseline >= HANGS * height)
@@ -375,6 +392,13 @@ def _title_caps(image: ImageArray, document: Document, body: float) -> None:
         if match is not None:
             zone.title_caps = True
             zone.title_size = match
+
+
+def _framed(zoned: ImageArray) -> bool:
+    """Whether a crop's outermost rows and columns are inked: a chip's
+    ground runs to its edge, where type stops short of it."""
+    frame = np.concatenate([zoned[0], zoned[-1], zoned[:, 0], zoned[:, -1]])
+    return float(frame.mean()) >= FRAMED
 
 
 def _lines(ink: ImageArray) -> list[tuple[int, int]]:
@@ -1027,7 +1051,8 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
     fills = [item for item in document.furniture
              if item.kind == "fill" and item.style == "solid"]
     for zone in document.zones:
-        if zone.bbox is None or zone.kind is Kind.FIGURE:
+        # A mark's type is measured as any other's — spec 0019, C1.
+        if zone.bbox is None or (zone.kind is Kind.FIGURE and zone.graphic_kind not in MARKS):
             continue
         mask = np.asarray(type_mask(image, zone)) > 0
         x0, y0 = crop_origin(image, zone.bbox)
@@ -1061,11 +1086,18 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
             right = min(mask.shape[1], int(np.ceil(box.right * width)) - x0 + 1)
             bottom = min(mask.shape[0], int(np.ceil(box.bottom * height)) - y0 + 1)
             zoned = mask[top:bottom, left:right]
-            if not zoned.any() or float(zoned.mean()) > CHIP:
+            if not zoned.any():
                 measured.append((cell, None, None, None))
                 continue
             patch = grey[y0 + top:y0 + bottom, x0 + left:x0 + right]
             patch = 255 - patch if turned else patch
+            if float(zoned.mean()) > CHIP and _framed(zoned):
+                # Type knocked out of a chip — spec 0019, C1: its letters are
+                # the chip's holes, measured turned over like any other ink.
+                patch, zoned = 255 - patch, ~zoned
+                if not zoned.any():
+                    measured.append((cell, None, None, None))
+                    continue
             ink = _own_ink(patch, zoned)
             glyph = _glyph(ink, cell.text)
             if glyph and (parts := _two_sizes(ink, cell.text, body)) is not None:

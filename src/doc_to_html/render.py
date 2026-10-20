@@ -1610,6 +1610,10 @@ def _broken(block: Block, lane: _Lane, page: _Page) -> tuple[set[int], set[int]]
     breaks, right = set(), set()
     for index, (line, after) in enumerate(zip(block.lines, block.lines[1:]), start=1):
         box = after.bbox
+        if box is not None and line.bbox is not None and _beside(line.bbox, box):
+            # On the printed line of the one before — spec 0019, C1: the
+            # certificate's three stars, each a Cell, placed side by side.
+            continue
         if (not centred and box is not None and box.left > middle
                 and lane.high - box.right <= ALIGN_SLACK * em
                 and all(other.left < middle for other in located if other is not box)):
@@ -1623,6 +1627,14 @@ def _broken(block: Block, lane: _Lane, page: _Page) -> tuple[set[int], set[int]]
         if room - need > BREAK_ROOM * em:
             breaks.add(index)
     return breaks, right
+
+
+def _beside(before: BBox, box: BBox) -> bool:
+    """Whether `box` stands after `before` on its printed line: sharing
+    half the shorter's height, and starting where `before` ends or later."""
+    shared = min(before.bottom, box.bottom) - max(before.top, box.top)
+    shorter = min(before.bottom - before.top, box.bottom - box.top)
+    return shorter > 0 and shared > 0.5 * shorter and box.left >= before.right
 
 
 def _wrap(root: list[str], rules: list[str]) -> str:
@@ -1877,7 +1889,9 @@ def _furnished(zone: Zone, document: Document, *,
     padded = zone.boxed or (zone.fill is not None and not plain)
 
     if (zone.boxed and not plain and not zone.title and zone.frame is not None
-            and index not in anchors.boxes):
+            and index not in anchors.boxes and zone.kind is not Kind.FIGURE):
+        # Not round a figure: a mark — the certificate's seal, its lines
+        # placed since spec 0019, C1 — is drawn in its own shape.
         # Spec 0012, G4: a card keeps the inset the page gives it, from its
         # frame to its type — `catalogue_0015`'s cards, which a card with no
         # Title drew with its type against the border.
