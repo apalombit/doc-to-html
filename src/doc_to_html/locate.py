@@ -64,7 +64,7 @@ from typing import Iterator, Sequence
 
 import numpy as np
 
-from .ir import BBox, Cell, Document, Kind, Unclaimed, Zone
+from .ir import BBox, Cell, CellState, Document, Kind, Reading, Unclaimed, Zone
 from .preprocess import PAD_X, ImageArray, _cv2, content_ink, crop_origin, zone_pixels
 from .style import body_glyph, dominant, type_lines, type_mask
 from .wire import MARKS
@@ -520,8 +520,11 @@ def _union(found: Sequence[Word], first: int, last: int) -> BBox:
                 max(b.right for b in boxes), max(b.bottom for b in boxes))
 
 
-def place(zone: Zone, found: Sequence[Word]) -> list[BBox | None]:
-    """Each of the Zone's Cells' boxes, in `cells_of` order, or None.
+def place(zone: Zone, found: Sequence[Word],
+          runs: list[tuple[int, int] | None] | None = None) -> list[BBox | None]:
+    """Each of the Zone's Cells' boxes, in `cells_of` order, or None. Given
+    `runs`, each placed Cell's run of `found` — first and last — is put in
+    it: the words that placed it, its second reading (spec 0019, D1).
 
     A Cell whose text no other Cell in the Zone shares, with one best place,
     takes it — best match first. The rest go in reading order, by position:
@@ -559,6 +562,8 @@ def place(zone: Zone, found: Sequence[Word]) -> list[BBox | None]:
     def take(index: int, first: int, last: int) -> None:
         used.update(range(first, last + 1))
         placed[index] = _union(found, first, last)
+        if runs is not None:
+            runs[index] = (first, last)
 
     deferred = []
     for index in sorted(range(len(cells)),
@@ -1023,6 +1028,44 @@ def display_words(image: ImageArray, zone: Zone, first: Sequence[Word], *,
             if not any(word.box.overlap_ratio(box) > 0 for box in sure)]
 
 
+SECOND = "tesseract"
+"""The engine of a Cell's second reading — spec 0019, D1."""
+
+
+def _second(cell: Cell, run: Sequence[Word]) -> None:
+    """Keep the words that placed a Cell as its second Reading — spec 0019,
+    D1: the run of tesseract's words `place` matched it to, raw, as
+    tesseract printed them. `locate` reads them to place the Cell and until
+    spec 0019 threw them away. No text changes: every reader takes the
+    first Reading. A Cell a third reading settled (`RESOLVED`, `DISPUTED`)
+    or a human ruled on keeps the readings it has."""
+    if cell.state is not CellState.AGREED or not cell.readings:
+        return
+    text = " ".join(word.raw for word in run if word.raw)
+    if text:
+        cell.readings.append(Reading(engine=SECOND, text=text))
+
+
+def _inside(box: BBox, found: Sequence[Word]) -> list[Word]:
+    """The words tesseract is sure of inside a box no run placed — a grid's
+    cell, a box drawn from the ink — in reading order: `statement_0006`'s
+    `216.08`, which no run matches since its digits are not the model's
+    `210.08`. Its unsure words there are the texture and rules of the page,
+    `&ta` beside the figure."""
+    return sorted(
+        (word for word in found if word.confidence >= CONFIDENT
+         and box.left <= (word.box.left + word.box.right) / 2 <= box.right
+         and box.top <= (word.box.top + word.box.bottom) / 2 <= box.bottom),
+        key=lambda word: (word.line, word.box.left))
+
+
+def _without_second(cell: Cell) -> None:
+    """A Cell's second reading taken off before it is placed again, so a
+    later round or a rederive keeps one, of the words now in its box."""
+    if cell.state is CellState.AGREED and len(cell.readings) > 1:
+        cell.readings[1:] = [r for r in cell.readings[1:] if r.engine != SECOND]
+
+
 def locate(image: ImageArray, document: Document) -> tuple[int, int]:
     """Set `Cell.bbox` on every Cell that can be placed — and None on every
     one that cannot, so a later round keeps no stale box. Returns (placed,
@@ -1035,6 +1078,7 @@ def locate(image: ImageArray, document: Document) -> tuple[int, int]:
     for zone in document.zones:
         for cell, _ in cells_of(zone):
             cell.bbox = None
+            _without_second(cell)
     document.unclaimed = []
     glyph = body_glyph(image, document.zones)
     if not zones or not glyph or not available():
@@ -1086,14 +1130,19 @@ def locate(image: ImageArray, document: Document) -> tuple[int, int]:
                                        languages=language(pair[0])), zip(zones, read)))
     placed = total = 0
     for zone, found, more, chips in zip(zones, read, display, filled):
-        boxes = place(zone, list(found) + chips)
+        words_ = list(found) + chips
+        runs: list[tuple[int, int] | None] = [None] * len(cells_of(zone))
+        boxes = place(zone, words_, runs)
         for fallback in (_from_grid, _from_pairs, _from_ink, _from_marks):
             boxes = fallback(image, zone, boxes)
         boxes = _from_lines(zone, list(found) + more, boxes)
-        for (cell, _), box in zip(cells_of(zone), boxes):
+        for (cell, _), box, run in zip(cells_of(zone), boxes, runs):
             cell.bbox = box
             placed += box is not None
             total += bool(cell.text.strip())
+            if box is not None:
+                _second(cell, words_[run[0]:run[1] + 1] if run is not None
+                        else _inside(box, words_))
     located = [cell.bbox for zone in document.zones for cell, _ in cells_of(zone)
                if cell.bbox is not None]
     ink = content_ink(image) > 0
