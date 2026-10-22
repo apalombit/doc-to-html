@@ -246,11 +246,13 @@ HANGS = 0.15
 """How far below the baseline, in its capitals' height, a letter must hang
 to descend."""
 
-SCRIPT_JOINED = 0.6
+SCRIPT_JOINED = 0.82
 """Connected pieces per letter under which a line's letters are joined —
 spec 0012, G7. Over the twenty-one's italic entries of 1.1 ems and more:
-the signatures and the certificate's name 0.20-0.57, the newsletter's pull
-quote 0.90-1.03."""
+the signatures and the certificate's name 0.20-0.75, the newsletter's pull
+quote and the timetable's `Lunch` 0.90-1.03. 0.6 until spec 0019, C5:
+`certificate_0021`'s `S. Okonkwo`, placed since C1, stands at 0.75 — its
+`O`, `k` and both `o`s clear of their neighbours at this size."""
 
 SCRIPT_SIZE = 1.1
 """How large, in ems of the body, an entry must be to be read as script:
@@ -1159,6 +1161,12 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
         italic = (None if slant is None or upright is None
                   else upright - slant >= ITALIC)
         caps, joined = shaped.get(id(cell), (None, False))
+        script = (bool(italic) and joined and size is not None and size >= SCRIPT_SIZE)
+        if script:
+            # Handwriting is one size: its pieces are strokes, not glyphs,
+            # and `S. Okonkwo`'s loose tail read as a small `S.` — spec
+            # 0019, C5.
+            parted.pop(id(cell), None)
         cell.look = Look(
             size=None if size is None else round(size, 2),
             # A line of two sizes has two weights' worth of stems over one
@@ -1171,8 +1179,7 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
             chip=None if chip is None else chip[0],
             radius=None if chip is None else chip[1],
             caps=caps or None,
-            face=("script" if italic and joined and size is not None and size >= SCRIPT_SIZE
-                  else None),
+            face="script" if script else None,
             sizes=parted.get(id(cell)))
     if regular and not photographed:
         for zone in document.zones:
