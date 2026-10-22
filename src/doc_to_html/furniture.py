@@ -43,6 +43,8 @@ distribution over all twenty-one pages; each constant says where its gap is.
 
 from __future__ import annotations
 
+import math
+
 from dataclasses import dataclass
 from typing import Any, Sequence
 
@@ -172,6 +174,12 @@ by its outline, holes filled, since spec 0012's step U: `certificate_0021`'s
 seal, unwarped, covers 0.72 of its box with the `GUILD GTE 2026` printed on
 it punched out, and 0.785 by its outline."""
 
+DISC = 0.05
+"""How near pi over four of its box a fill's outline covers, to be a disc —
+spec 0019, C3. Over the twenty-one, `certificate_0021`'s seal covers 0.798
+and the next fill `invoice_0002`'s rounded logo 0.871; every other fill
+0.906 or more."""
+
 BARS = 4
 """The fewest parallel lines, each within `BAR_GAP` of the next, that are
 a texture — a barcode's bars — rather than rules: `receipt_0010`'s barcode
@@ -255,7 +263,8 @@ def find(image: ImageArray, *, inverted: bool = False,
     loose = [line for line in loose if line.vertical or not _in_type(line, bare, unit)]
     found = [_record(line, width, height) for line in loose]
     found += [_frame_record(frame, width, height) for frame in frames]
-    found += [_fill_record(fill, width, height) for fill in fills + hatched]
+    found += [_fill_record(fill, width, height, rgb, ground, unit)
+              for fill in fills + hatched]
     return sorted(found, key=lambda f: (round(f.bbox.top, 4), f.bbox.left))
 
 
@@ -695,6 +704,7 @@ class _Fill:
     second: tuple[int, int, int] | None = None
     period: float | None = None
     angle: int | None = None
+    cover: float = 1.0
 
 
 def _fills(rgb: Any, ground: tuple[int, int, int], ink: Any, unit: float,
@@ -735,7 +745,8 @@ def _fills(rgb: Any, ground: tuple[int, int, int], ink: Any, unit: float,
         if (printed is not None and max(w, h) <= LETTER * unit
                 and np.abs(np.array(colour) - np.array(printed)).sum() <= GROUND_SAME):
             continue
-        found.append(_Fill(int(x), int(y), int(x + w), int(y + h), colour))
+        found.append(_Fill(int(x), int(y), int(x + w), int(y + h), colour,
+                           cover=float(whole.sum()) / (w * h)))
     return found
 
 
@@ -792,7 +803,8 @@ def _hatched(rgb: Any, unit: float) -> list[_Fill]:
     return found
 
 
-def _fill_record(fill: _Fill, width: int, height: int) -> Furniture:
+def _fill_record(fill: _Fill, width: int, height: int, rgb: Any,
+                 ground: tuple[int, int, int], unit: float) -> Furniture:
     box = BBox(fill.left / width, fill.top / height, fill.right / width,
                fill.bottom / height)
     if fill.second is not None:
@@ -800,7 +812,58 @@ def _fill_record(fill: _Fill, width: int, height: int) -> Furniture:
                          second=fill.second,
                          period=None if fill.period is None else fill.period / width,
                          angle=fill.angle)
-    return Furniture(kind="fill", bbox=box, color=fill.color)
+    if abs(fill.cover - math.pi / 4) > DISC:
+        return Furniture(kind="fill", bbox=box, color=fill.color)
+    ring = _ring(rgb, ground, fill, unit)
+    return Furniture(kind="fill", bbox=box, color=fill.color, disc=True,
+                     second=None if ring is None else ring[2],
+                     ring=None if ring is None else (ring[0] / width, ring[1] / width))
+
+
+RING = 3.0
+"""How far past a disc's edge a ring round it is looked for, in glyphs."""
+
+RING_DRAWN = 0.5
+"""How much of a circle round a disc must be off the ground to be drawn:
+a ring's middle is ink, and `certificate_0021`'s 2px ring, blended into
+the ground at its edges, reads 0.74 and 0.71 on its two circles; the
+ground between it and the disc 0.2."""
+
+
+def _ring(rgb: Any, ground: tuple[int, int, int], fill: _Fill,
+          unit: float) -> tuple[float, float, tuple[int, int, int]] | None:
+    """The ring the page draws round a disc, clear of it — spec 0019, C3:
+    its gap from the disc and its width, in pixels, and its colour.
+    `certificate_0021`'s seal is a 2px gold ring 4px clear of its disc.
+    Read circle by circle outward from the disc's edge: past the disc's
+    own blended edge, ground, then the ring, then ground again. None
+    where no circle is drawn round it."""
+    height, width = rgb.shape[:2]
+    across, down = (fill.left + fill.right) / 2, (fill.top + fill.bottom) / 2
+    radius = (fill.right - fill.left + fill.bottom - fill.top) / 4
+    reach = int(np.ceil(radius + RING * unit))
+    x0, x1 = max(0, int(across) - reach), min(width, int(across) + reach + 1)
+    y0, y1 = max(0, int(down) - reach), min(height, int(down) + reach + 1)
+    ys, xs = np.mgrid[y0:y1, x0:x1]
+    past = np.hypot(xs + 0.5 - across, ys + 0.5 - down) - radius
+    pixels = rgb[y0:y1, x0:x1]
+    off = np.abs(pixels - np.array(ground)).sum(axis=2) > GROUND_SAME
+    drawn = []
+    for step in range(int(np.ceil(RING * unit))):
+        circle = (past >= step) & (past < step + 1)
+        drawn.append(bool(circle.any()) and float(off[circle].mean()) >= RING_DRAWN)
+    start = next((i for i, on in enumerate(drawn) if not on), None)
+    if start is None:
+        return None
+    ring = next((i for i in range(start, len(drawn)) if drawn[i]), None)
+    if ring is None:
+        return None
+    end = next((i for i in range(ring, len(drawn)) if not drawn[i]), None)
+    if end is None:
+        return None
+    band = (past >= ring) & (past < end) & off
+    colour = dominant(pixels[band].reshape(-1, 1, 3).astype(np.uint8))
+    return float(ring), float(end - ring), colour
 
 
 def mask(furniture: Sequence[Furniture], shape: tuple[int, ...]) -> Any:

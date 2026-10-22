@@ -216,7 +216,8 @@ class Furniture:
     """One of `FURNITURE_STYLES`."""
 
     second: tuple[int, int, int] | None = None
-    """A hatch's other colour, RGB; None for anything else."""
+    """A hatch's other colour, or a disc's ring's, RGB; None for anything
+    else."""
 
     period: float | None = None
     """The repeat of a dash or a hatch, as a share of the page's width."""
@@ -228,6 +229,16 @@ class Furniture:
     zone: int | None = None
     """The Zone that holds it, by index, once the Zones are final — set by
     `furniture.place`. None where it lies between Zones."""
+
+    disc: bool = False
+    """A fill drawn round — spec 0019, C3: its outline covers pi over four
+    of its box, `certificate_0021`'s seal. False for anything else, and
+    then not written."""
+
+    ring: tuple[float, float] | None = None
+    """The ring drawn round a disc, clear of it: the gap and the ring's
+    width, as shares of the page's width, in `second`'s colour. None where
+    there is none, and then not written."""
 
     @property
     def vertical(self) -> bool:
@@ -942,6 +953,12 @@ def _without_unset_spans(data: Any) -> None:
         if "blocks" in data and "rows" in data and data.get("title_bold") is None:
             # A Zone's measured Title weight, spec 0019, C2, likewise.
             data.pop("title_bold", None)
+        if "kind" in data and "thickness" in data:
+            # A Furniture's disc and ring, spec 0019, C3, likewise.
+            if not data.get("disc"):
+                data.pop("disc", None)
+            if data.get("ring") is None:
+                data.pop("ring", None)
         if "label" in data and "value" in data and "marks" in data:
             # A Pair's separator and divider, spec 0019, B4, likewise.
             for name in ("separator", "divider"):
@@ -1155,7 +1172,9 @@ def _furniture(data: dict[str, Any]) -> Furniture:
         color=_colour(data.get("color")) or (0, 0, 0),
         style=data.get("style", "solid"), second=_colour(data.get("second")),
         period=None if data.get("period") is None else float(data["period"]),
-        angle=data.get("angle"), zone=data.get("zone"))
+        angle=data.get("angle"), zone=data.get("zone"), disc=data.get("disc", False),
+        ring=None if data.get("ring") is None else (float(data["ring"][0]),
+                                                    float(data["ring"][1])))
 
 
 def cell(text: str, engine: str = "fixture", bbox: BBox | None = None) -> Cell:

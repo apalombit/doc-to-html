@@ -1840,7 +1840,7 @@ def _zone(zone: Zone, document: Document, *, plain: bool = False,
 def _section(zone: Zone, body: str, document: Document, *, plain: bool,
              extra: str) -> str:
     classes = f"zone zone-{zone.role.value}"
-    if zone.boxed and not plain:
+    if zone.boxed and not plain and not _ringed(zone, document):
         classes += " boxed"
     elif zone.fill is not None and not plain:
         classes += " filled grounded" if _on_its_ground(zone, document) else " filled"
@@ -3553,15 +3553,20 @@ def _prose(zone: Zone, document: Document) -> str:
     Only *consecutive* items group, because a paragraph between two bullets ends
     the list on the page and should end it here.
     """
-    spacing = dict(zip(map(id, zone.blocks), _spacing(zone.blocks, _page(document))))
+    # Spec 0019, C3: a chip printed on the line before it is drawn there.
+    onto = _on_its_line(zone.blocks)
+    carried = {id(block) for chips in onto.values() for block in chips}
+    blocks = [block for block in zone.blocks if id(block) not in carried]
+    spacing = dict(zip(map(id, blocks), _spacing(blocks, _page(document))))
     for key, ruled in _ruled(zone, document).items():
-        spacing[key] = (ruled, spacing[key][1])
+        if key in spacing:
+            spacing[key] = (ruled, spacing[key][1])
     # Spec 0012, G6: each Block set where the page sets it, its lines
     # broken where the page breaks them.
     aligns = _block_aligns(zone, document)
     lane = _lane(zone, document)
     parts = []
-    for is_item, run in groupby(zone.blocks, key=lambda b: b.kind == "item"):
+    for is_item, run in groupby(blocks, key=lambda b: b.kind == "item"):
         if is_item:
             listed = list(run)
             items = "".join(f"<li{_li_style(b, document, _styled(spacing[id(b)][0]))}>"
@@ -3574,10 +3579,61 @@ def _prose(zone: Zone, document: Document) -> str:
             for b in run:
                 above, closed = spacing[id(b)]
                 aligned = f"text-align:{aligns[id(b)]}" if id(b) in aligns else ""
-                parts.append(_block(b, document, ";".join(
+                drawn = _block(b, document, ";".join(
                     part for part in (above, "margin-bottom:0" if closed else "", aligned)
-                    if part), lane))
+                    if part), lane)
+                if id(b) in onto:
+                    cut = drawn.rindex("</")
+                    drawn = drawn[:cut] + _chips_on(b, onto[id(b)], document) + drawn[cut:]
+                parts.append(drawn)
     return "".join(parts)
+
+
+def _on_its_line(blocks: list[Block]) -> dict[int, list[Block]]:
+    """The chips the page prints at the end of a line, by the id of the
+    Block that line ends — spec 0019, C3: a Block of one line printed on a
+    chip, standing after the last line of the Block before it
+    (`_beside`). `sample_css_0004`'s badge after its heading, which the
+    model returned as an item of its own and the render drew on a line
+    below. Items are left to `_items`, which sets them side by side."""
+    host: dict[int, Block] = {}
+    onto: dict[int, list[Block]] = {}
+    for before, block in zip(blocks, blocks[1:]):
+        if len(block.lines) != 1 or not before.lines:
+            continue
+        chip, last = block.lines[0], before.lines[-1]
+        look = chip.look
+        target = host.get(id(before), before)
+        if (look is None or look.fill is None or look.chip is None
+                or chip.bbox is None or last.bbox is None or target.kind == "item"
+                or not _beside(last.bbox, look.chip)):
+            continue
+        host[id(block)] = target
+        onto.setdefault(id(target), []).append(block)
+    return onto
+
+
+def _chips_on(block: Block, chips: list[Block], document: Document) -> str:
+    """The chips at the end of `block`'s last line, each its page's gap
+    from what it follows. In a heading a chip keeps its own size — the
+    body's where it was not measured — and not the heading's."""
+    page = _page(document)
+    before = block.lines[-1].bbox
+    out = []
+    for chip in chips:
+        cell = chip.lines[0]
+        look, box = cell.look, cell.bbox
+        assert look is not None and look.chip is not None and before is not None
+        parts = [f"margin-left:{_px(max(0.0, (look.chip.left - before.right) * page.x))}"]
+        if look.size is not None:
+            parts.append(f"font-size:{_calc(look.size)}")
+        elif block.kind == "heading":
+            parts.append("font-size:var(--body, 1em)")
+        if look.bold is False:
+            parts.append("font-weight:400")
+        out.append(_cell(cell, document, ";".join(parts)))
+        before = look.chip if box is not None else before
+    return "".join(out)
 
 
 def _styled(css: str) -> str:
@@ -3689,6 +3745,9 @@ def _figure(zone: Zone, document: Document) -> str:
     """
     kind = zone.graphic_kind or "figure"
     if kind in MARKS:
+        disc = _disc(zone, document)
+        if disc is not None:
+            return _on_disc(zone, disc, document)
         # A Mark with no text — an illegible signature — falls back to naming
         # itself. That it is there is the finding, and an empty box states it
         # less clearly than the word does.
@@ -3719,6 +3778,59 @@ def _figure(zone: Zone, document: Document) -> str:
         f'<figure class="omitted" data-kind="{html.escape(kind)}"{bbox}>'
         f"{caption or f'<figcaption>{html.escape(kind)}</figcaption>'}</figure>"
     )
+
+
+def _disc(zone: Zone, document: Document) -> Furniture | None:
+    """The disc a Mark is printed on, where the page draws one: a solid
+    fill drawn round (`Furniture.disc`) whose middle lies in the Zone."""
+    if zone.bbox is None:
+        return None
+    for item in document.furniture:
+        if item.kind == "fill" and item.style == "solid" and item.disc:
+            middle = ((item.bbox.left + item.bbox.right) / 2,
+                      (item.bbox.top + item.bbox.bottom) / 2)
+            if (zone.bbox.left <= middle[0] <= zone.bbox.right
+                    and zone.bbox.top <= middle[1] <= zone.bbox.bottom):
+                return item
+    return None
+
+
+def _ringed(zone: Zone, document: Document) -> bool:
+    """Whether the frame round a Zone is the ring round the disc its Mark
+    is printed on — drawn with the disc, by `_on_disc`, and not as a box."""
+    if zone.graphic_kind not in MARKS:
+        return False
+    disc = _disc(zone, document)
+    return disc is not None and disc.ring is not None
+
+
+def _on_disc(zone: Zone, disc: Furniture, document: Document) -> str:
+    """A Mark drawn as the disc the page prints it on — spec 0019, C3: the
+    disc's size and fill, and each of its lines on a line of its own in its
+    own size, weight and ink, centred: `certificate_0021`'s seal, which the
+    render drew as a text box in the flag's colour."""
+    page = _page(document)
+    lines = [line for block in zone.blocks for line in block.lines]
+    inks = [line.look.color for line in lines
+            if line.look is not None and line.look.color is not None]
+    parts = ["display:inline-flex", "flex-direction:column", "align-items:center",
+             "justify-content:center", "border:0", "padding:0", "border-radius:50%",
+             "letter-spacing:normal", "font-weight:400", "line-height:1.15",
+             f"width:{_px((disc.bbox.right - disc.bbox.left) * page.x)}",
+             f"height:{_px((disc.bbox.bottom - disc.bbox.top) * page.y)}",
+             f"background:{_rgb(disc.color)}"]
+    if inks:
+        parts.append(f"color:{_rgb(Counter(inks).most_common(1)[0][0])}")
+    if disc.ring is not None and disc.second is not None:
+        # The ring the page draws round it, clear of it.
+        gap, width = disc.ring[0] * page.x, (disc.ring[0] + disc.ring[1]) * page.x
+        ground = document.style.page_bg if document.style is not None else (255, 255, 255)
+        parts.append(f"box-shadow:0 0 0 {_px(gap)} {_rgb(ground)},"
+                     f"0 0 0 {_px(width)} {_rgb(disc.second)}")
+    drawn = "".join(f'<span style="{";".join(p for p in ("display:block", _look(line)) if p)}">'
+                    f"{_cell(line, document)}</span>" for line in lines)
+    return (f'<div class="mark" data-kind="{html.escape(zone.graphic_kind or "mark")}"'
+            f' style="{";".join(parts)}">{drawn}</div>')
 
 
 SIZE_STEP = 0.15
@@ -4088,7 +4200,7 @@ which a space join never produces — `</strong> <strong>` does not match.
 """
 
 
-def _cell(cell: Cell, document: Document) -> str:
+def _cell(cell: Cell, document: Document, extra: str = "") -> str:
     """Render one value, applying any Correction anchored to its pixels.
 
     A Correction wins over every Engine reading; the readings it displaced stay
@@ -4110,13 +4222,14 @@ def _cell(cell: Cell, document: Document) -> str:
             f'<span class="disputed" data-alt="{html.escape(alt)}" '
             f'title="also read as: {html.escape(alt)}">{_runs(cell)}</span>'
         )
-    return _chip(cell, _runs(cell), document)
+    return _chip(cell, _runs(cell), document, extra)
 
 
-def _chip(cell: Cell, inner: str, document: Document) -> str:
+def _chip(cell: Cell, inner: str, document: Document, extra: str = "") -> str:
     """The chip a Cell is printed on, when the page prints it on one — a
     badge, a pill, a code tag: spec 0011, step 4b. Its fill, its ink, and
-    the padding and corner the page gives it, round the Cell's words."""
+    the padding and corner the page gives it, round the Cell's words.
+    `extra` is where it stands on a line it shares — `_on_its_line`."""
     look = cell.look
     if look is None or look.fill is None or look.chip is None or cell.bbox is None:
         return inner
@@ -4128,6 +4241,8 @@ def _chip(cell: Cell, inner: str, document: Document) -> str:
              f"border-radius:{_px(corner)}"]
     if look.color is not None:
         parts.append(f"color:{_rgb(look.color)}")
+    if extra:
+        parts.append(extra)
     return f'<span class="chip" style="{";".join(parts)}">{inner}</span>'
 
 
