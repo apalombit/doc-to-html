@@ -313,8 +313,10 @@ class Cell:
     display: str | None = None
     """`line` for a line the page sets on its own, centred in its column
     and apart above and below — an equation — and `number` for the `(n)`
-    printed flush right on it: spec 0019, B3; set by `display.read`. None
-    for every line that flows with its paragraph."""
+    printed flush right on it: spec 0019, B3; set by `display.read`.
+    `cap` for a paragraph's first letter set lines deep at its top left, a
+    drop cap: spec 0019, C4; set by `dropcap.read`. None for every line
+    that flows with its paragraph."""
 
     @property
     def text(self) -> str:

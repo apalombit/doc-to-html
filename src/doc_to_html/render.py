@@ -1320,6 +1320,9 @@ def _style_css(document: Document) -> str:
     if any(row.leader is not None and row.leader.kind != "none"
            for zone in document.zones for row in zone.rows):
         rules.extend(LEADER_CSS)
+    if any(block.lines and block.lines[0].display == "cap"
+           for zone in document.zones for block in zone.blocks):
+        rules.append(CAP_CSS)
 
     style = document.style
     if style is None:
@@ -3975,7 +3978,43 @@ def _block(block: Block, document: Document, spacing: str = "",
         return f"<blockquote{style}>{_lines(block, document, lane)}</blockquote>"
     if block.kind == "attribution":
         return f'<p class="attribution"{style}>{_lines(block, document, lane)}</p>'
+    cap = _cap(block, document)
+    if cap:
+        style = _styled(";".join(part for part in (
+            looked, spacing, _indent(block, _page(document)), cap) if part))
+        return f'<p class="cap"{style}>{_lines(block, document, lane)}</p>'
     return f"<p{style}>{_lines(block, document, lane)}</p>"
+
+
+CAP_CSS = ("p.cap::first-letter { float:left; font-size:var(--cap, 3em); line-height:1;"
+           " padding-right:var(--cap-gap, .1em); font-weight:var(--cap-weight, normal); }")
+"""A drop cap, drawn as the page draws one — spec 0019, C4: the
+paragraph's first letter floated, its lines running round it. A
+`::first-letter`, so the letter stays in its word's text: a floated
+element is a block to `project()`, which would read `T` and `he` where the
+page prints `The`. Emitted only on a page that has one."""
+
+
+def _cap(block: Block, document: Document) -> str:
+    """A drop cap's size, weight and room, as the custom properties
+    `CAP_CSS` reads: as tall as the page draws it (its measured size, in
+    ems of the body), bold where it measured bold, and as far from the
+    lines set beside it as the page sets them. '' where the paragraph has
+    no cap."""
+    first = block.lines[0] if block.lines else None
+    if first is None or first.display != "cap" or first.bbox is None:
+        return ""
+    page, box, look = _page(document), first.bbox, first.look
+    parts = []
+    if look is not None and look.size is not None:
+        parts.append(f"--cap:{_calc(look.size)}")
+    if look is not None and look.bold:
+        parts.append("--cap-weight:700")
+    beside = [cell.bbox.left for cell in block.lines[1:]
+              if cell.bbox is not None and box.top <= cell.bbox.top <= box.bottom]
+    if beside:
+        parts.append(f"--cap-gap:{_px(max(0.0, (median(beside) - box.right) * page.x))}")
+    return ";".join(parts)
 
 
 KEEPS_ITS_LINES = frozenset({"address"})
@@ -4125,7 +4164,7 @@ def _lines(block: Block, document: Document, lane: _Lane | None = None) -> str:
     for index, line in enumerate(block.lines):
         look = line.look
         if (block.kind != "heading" and look is not None and look.size
-                and not look.sizes
+                and not look.sizes and line.display != "cap"
                 and max(look.size / drawn, drawn / look.size) >= TWO_SIZES):
             size = look.size
             rendered[index] = f'<span style="font-size:{_calc(size)}">{rendered[index]}</span>'
@@ -4134,7 +4173,9 @@ def _lines(block: Block, document: Document, lane: _Lane | None = None) -> str:
     breaks, right = (_broken(block, lane, _page(document)) if lane is not None
                      else (set(), set()))
     apart = _displayed(block, rendered)
-    breaks, right = set(breaks) - apart, set(right) - apart
+    # A drop cap runs into the line after it: `CAP_CSS` floats it.
+    capped = {index + 1 for index, line in enumerate(block.lines) if line.display == "cap"}
+    breaks, right = set(breaks) - apart - capped, set(right) - apart
     for index in right:
         rendered[index] = f'<span style="display:block;text-align:right">{rendered[index]}</span>'
 

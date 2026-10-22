@@ -87,6 +87,10 @@ and can be recomputed from it, in the order a Conversion runs them:
    16. The separator the page prints at a pair's label, and the bar it
        prints between two pairs — spec 0019, B4
                                     separator.read         (_read_separators)
+   17. A drop cap placed before its paragraph's first word, and the Blocks
+       set beside it made one paragraph — spec 0019, C4; run right after
+       step 14, before step 12 measures the cap's size
+                                    dropcap.read           (_read_caps)
 
 then re-renders into a run-shaped directory that `doc_to_html.report` and
 `tools/visual_review.py` read without knowing the difference.
@@ -123,8 +127,8 @@ TOOLS = Path(__file__).resolve().parent
 sys.path.insert(0, str(TOOLS.parent / "src"))
 sys.path.insert(0, str(TOOLS))
 
-from doc_to_html import (display, fields, furniture, locate, looks, probes,  # noqa: E402
-                         raised, rhythm, separator, spans)
+from doc_to_html import (display, dropcap, fields, furniture, locate, looks,  # noqa: E402
+                         probes, raised, rhythm, separator, spans)
 from doc_to_html.corpus import SOURCES  # noqa: E402
 from doc_to_html.ir import Caveat, Document, Kind  # noqa: E402
 from doc_to_html.orchestrator import gaps, shortfall  # noqa: E402
@@ -199,6 +203,7 @@ def rederive(document: Document, png: Path) -> None:
     locate.locate(plain, document)
     locate.without_cut_copies(document)
     raised.read(plain, document)
+    dropcap.read(plain, document)
     fields.read(plain, document)
     furniture.place(document.furniture, document.zones)
     if document.style is not None:

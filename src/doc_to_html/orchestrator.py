@@ -26,6 +26,7 @@ from . import looks as looks_module
 from . import probes as probe_module
 from . import rhythm as rhythm_module
 from . import display as display_module
+from . import dropcap as dropcap_module
 from . import raised as raised_module
 from . import separator as separator_module
 from . import spans as spans_module
@@ -905,6 +906,7 @@ class Conversion:
             self._locate(rectified, document)
             self._read_unclaimed(rectified, document)
             self._read_marks(rectified, document)
+            self._read_caps(rectified, document)
             self._read_fields(rectified, document)
             self._place_furniture(rectified, document)
             self._read_rhythm(rectified, document)
@@ -1548,6 +1550,18 @@ class Conversion:
             marks=sum(1 for zone in document.zones
                       for cell, _ in locate_module.cells_of(zone)
                       for run in cell.runs if run.kind == "sup"))
+
+    def _read_caps(self, rectified: Rectified, document: Document) -> None:
+        """Each drop cap placed before its paragraph's first word, and the
+        Blocks set beside it one paragraph — spec 0019, C4. See
+        `dropcap.read`. After `_locate`, whose boxes it reads, and before
+        `_read_looks`, which measures the cap's size."""
+        started = time.perf_counter()
+        plain = rectified.plain if rectified.plain is not None else rectified.image
+        found = dropcap_module.read(plain, document)
+        self.trace.record(
+            Stage.LAYOUT, "drop caps", Disposition.ACCEPTED,
+            seconds=time.perf_counter() - started, found=found)
 
     def _read_display(self, rectified: Rectified, document: Document) -> None:
         """A line set apart and centred inside a paragraph, and its number
