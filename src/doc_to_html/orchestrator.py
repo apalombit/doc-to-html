@@ -21,6 +21,7 @@ from pathlib import Path
 
 from . import fields as fields_module
 from . import furniture as furniture_module
+from . import ladder as ladder_module
 from . import locate as locate_module
 from . import looks as looks_module
 from . import probes as probe_module
@@ -37,7 +38,8 @@ from .engines.base import LayoutEngine, VisionEngine
 from .engines.ollama import OllamaEngine
 from .extractors import for_kind, resolution_caveat
 from .ir import (
-    Caveat, Document, Failure, Furniture, Gap, Kind, Role, RowRole, Shortfall, Zone,
+    Caveat, Document, Failure, Furniture, Gap, Kind, Reading, Role, RowRole, Shortfall,
+    Zone,
 )
 from .preprocess import (
     MIN_ZONE_INK,
@@ -909,7 +911,13 @@ class Conversion:
             self._locate(rectified, document)
             self._read_unclaimed(rectified, document)
             self._measure_placed(rectified, document)
-            self._climb_ladders(rectified, document)
+            if self._climb_ladders(rectified, document):
+                # Spec 0019, D2: a third reading changed a Cell's text, and
+                # everything measured off the text is measured again, as
+                # `tools/rederive.py` measures it — the Cell placed by its
+                # new words, its paragraph's sums probed again.
+                self._locate(rectified, document)
+                self._measure_placed(rectified, document)
 
             answer = self._ask_convergence(document)
             if answer.is_empty:
@@ -1342,11 +1350,13 @@ class Conversion:
         """Where every Cell sits on the page — spec 0011, step 2 — and which
         printed lines no Cell claims, spec 0012, G9. See `locate.locate`.
 
-        **tesseract is never a reader here.** Its words are matched against
-        the model's and only their boxes kept; and where a line of its words
-        is claimed by no Cell, it says where to look, and the model reads
-        what is there — `_read_unclaimed`, spec 0014, step 2. Its own words
-        are never printed. Every round re-locates from scratch, because a
+        **tesseract is never the reader here.** Its words are matched
+        against the model's, and their boxes kept; since spec 0019, D1, the
+        words that placed a Cell are kept too, as its second Reading, which
+        `_climb_ladders` reads. Where a line of its words is claimed by no
+        Cell, it says where to look, and the model reads what is there —
+        `_read_unclaimed`, spec 0014, step 2. Its own words are printed only
+        where a third reading sides with them (`ladder.settle`). Every round re-locates from scratch, because a
         Correction can change a Cell's text, and `_read_unclaimed` runs this
         once more when it keeps a line. Without tesseract on `PATH` it places
         nothing, finds no line, says so, and every Cell renders as it did.
@@ -1378,7 +1388,8 @@ class Conversion:
 
     def _measure_placed(self, rectified: Rectified, document: Document) -> None:
         """Every model-free pass that reads the placed Cells, in order, then
-        the Probes and the audit — after `_locate` and `_read_unclaimed`."""
+        the Probes and the audit — after `_locate` and `_read_unclaimed`,
+        and again after `_climb_ladders` where it changed a Cell's text."""
         self._read_marks(rectified, document)
         self._read_caps(rectified, document)
         self._read_fields(rectified, document)
@@ -2225,20 +2236,71 @@ class Conversion:
         _ground(rectified, document, document.zones)
         document.gaps = gaps(_ink(rectified), document.zones)
 
-    def _climb_ladders(self, rectified: Rectified, document: Document) -> None:
-        """Advance every unresolved item one Rung.
+    def _climb_ladders(self, rectified: Rectified, document: Document) -> bool:
+        """The third reading, where a Cell's two are near — spec 0019, D2.
+        See `ladder`. Returns whether any Cell's text changed.
 
-        Probe findings are used here to decide *which* cells to look at again,
-        at what resolution, with which Engine. Their expected values never reach
-        a prompt: a failed Probe cannot distinguish a misread line item from a
-        misread total, so supplying the expected value would force agreement
-        with whichever number happened to be wrong. See docs/adr/0004.
+        A Cell whose model reading and tesseract's (D1) are 1 to
+        `ladder.NEAR` characters apart, folded, is read once more by the
+        model on its own crop, with the prose prompt and schema, as
+        `_read_unclaimed` reads a line: **a separate pass**, so no
+        Extractor prompt changes and every answer given before is given
+        again. One call per Cell; a call that raises costs that Cell
+        alone, which stays as it was. What two of the three agree on
+        stands (`ladder.settle`).
 
-        Nothing to climb yet. Only one Engine reads each cell in this slice, so
-        no two readings can disagree, so no cell is ever Disputed. Escalation
-        arrives with a second Engine and not before.
+        **Probe findings never reach the prompt** — ADR 0004: a failed
+        Probe cannot tell a misread line from a misread total, and its
+        expected value would force agreement with whichever was wrong.
         """
-        return
+        changed = False
+        for index, zone in enumerate(document.zones):
+            capped = ladder_module.beside_caps(zone)
+            for cell, _ in locate_module.cells_of(zone):
+                if not ladder_module.due(cell) or id(cell) in capped:
+                    continue
+                assert cell.bbox is not None
+                transient = Zone(kind=Kind.PROSE, bbox=cell.bbox)
+                pixels = zone_pixels(rectified.image, transient)
+                mark, started = self.trace.next_call, time.perf_counter()
+                before = cell.text
+                try:
+                    self.engines.extract.extract_zone(pixels, transient, document.hint)
+                except Exception as error:
+                    call, made = self.trace.calls_since(mark)
+                    self.trace.record(
+                        Stage.EXTRACT, "third reading", Disposition.REJECTED,
+                        zone_index=index, seconds=time.perf_counter() - started,
+                        call=call, calls=made, box=_box_data(transient), text=before,
+                        error=f"{type(error).__name__}: {error}",
+                        reason="the Cell was not read again, and stays as it was")
+                    continue
+                lines = [line for block in transient.blocks for line in block.lines
+                         if line.readings]
+                call, made = self.trace.calls_since(mark)
+                if not lines:
+                    self.trace.record(
+                        Stage.EXTRACT, "third reading", Disposition.REJECTED,
+                        zone_index=index, seconds=time.perf_counter() - started,
+                        call=call, calls=made, box=_box_data(transient), text=before,
+                        reason="nothing was read, and the Cell stays as it was")
+                    continue
+                read = lines[0].readings[0]
+                third = Reading(engine=read.engine, model=read.model,
+                                prompt_version=read.prompt_version,
+                                text=" ".join(line.text for line in lines))
+                second = ladder_module.second(cell)
+                moved = ladder_module.settle(cell, third)
+                changed = changed or moved
+                self.trace.record(
+                    Stage.EXTRACT, "third reading", Disposition.ACCEPTED,
+                    zone_index=index, seconds=time.perf_counter() - started,
+                    call=call, calls=made, box=_box_data(transient),
+                    readings=[before, second.text if second else None, third.text],
+                    state=cell.state.value,
+                    changed=[Change(path=f"zones[{index}]", before=before, after=cell.text)]
+                    if moved else [])
+        return changed
 
     def _ask_convergence(self, document: Document) -> Answer:
         """Show a Draft beside the Source Image and ask whether it is converging."""

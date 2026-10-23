@@ -36,12 +36,12 @@ from .wire import MARKS, bands_from_boxes
 STYLESHEET = """
 :root { --ink:#1a1a1a; --muted:#666; --rule:#e0e0e0; --shade:#f4f4f4;
         --page-bg:#fff; --accent:inherit;
-        --flag:#b45309; --flag-bg:#fff7ed;
+        --flag:#b45309;
         --link:#0645ad; --mark-bg:#fff2a8; }
 @media (prefers-color-scheme: dark) {
   :root { --ink:#e8e8e8; --muted:#9a9a9a; --rule:#333; --shade:#1e1e1e;
           --page-bg:#111;
-          --flag:#fbbf24; --flag-bg:#2a1f0a;
+          --flag:#fbbf24;
           --link:#7aa7ff; --mark-bg:#5a4a12; }
 }
 body { font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -139,7 +139,7 @@ figure.omitted { margin:0; border:1px dashed var(--rule); border-radius:3px;
 figure.omitted figcaption { padding:.5em; text-align:center; }
 .mark { display:inline-block; border:2px solid var(--flag); color:var(--flag);
         padding:.15em .6em; border-radius:3px; font-weight:600; letter-spacing:.08em; }
-.disputed { background:var(--flag-bg); border-bottom:2px solid var(--flag); cursor:help; }
+.disputed { cursor:help; }
 .corrected { border-bottom:2px solid var(--rule); cursor:help; }
 .skeleton { background:repeating-linear-gradient(135deg, var(--shade),
             var(--shade) 6px, transparent 6px, transparent 12px);
@@ -4246,6 +4246,12 @@ def _cell(cell: Cell, document: Document, extra: str = "") -> str:
 
     A Correction wins over every Engine reading; the readings it displaced stay
     in the embedded IR, which is what makes each one a ground-truth label.
+
+    A Disputed Cell is drawn as the page prints it — the reading drawn, on
+    its chip — and its rival readings are kept in its title and `data-alt`,
+    never drawn: spec 0019, D2. A tinted ground and an underline no page
+    prints flagged five pages' lines, and on `cv_0013`'s dark sidebar the
+    ground made the email unreadable.
     """
     correction = (
         document.correction_for(cell.bbox) if cell.bbox is not None else None
@@ -4261,7 +4267,8 @@ def _cell(cell: Cell, document: Document, extra: str = "") -> str:
         alt = " / ".join(r.text for r in cell.readings[1:])
         return (
             f'<span class="disputed" data-alt="{html.escape(alt)}" '
-            f'title="also read as: {html.escape(alt)}">{_runs(cell)}</span>'
+            f'title="also read as: {html.escape(alt)}">'
+            f"{_chip(cell, _runs(cell), document, extra)}</span>"
         )
     return _chip(cell, _runs(cell), document, extra)
 

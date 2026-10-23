@@ -154,6 +154,13 @@ class TestRender:
         assert 'class="disputed"' in html
         assert 'data-alt="$800.00"' in html
 
+    def test_a_disputed_cell_is_drawn_as_the_page_prints_it(self, invoice: Document) -> None:
+        """No ground and no underline the page does not print — spec 0019,
+        D2: on a dark ground the flag's tint made the line unreadable."""
+        html = render(invoice)
+        rule = next(line for line in html.splitlines() if line.startswith(".disputed"))
+        assert "background" not in rule and "border" not in rule
+
     def test_unresolved_findings_are_surfaced_to_the_reader(self, invoice: Document) -> None:
         invoice.zones[-1].rows[1].cells[1] = cell("$800.00")
         invoice.probes = probes.run(invoice)

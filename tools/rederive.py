@@ -94,6 +94,12 @@ and can be recomputed from it, in the order a Conversion runs them:
        step 14, before step 12 measures the cap's size
                                     dropcap.read           (_read_caps)
 
+Spec 0019, D2's third reading asks the model, so it is not a step here: what
+it settled is in the IR, and step 8 keeps a settled Cell's readings as they
+are (`locate._second`). In a Conversion a third reading that changes a
+Cell's text runs the passes from step 8 again, so this loop still measures
+what the run drew.
+
 then re-renders into a run-shaped directory that `doc_to_html.report` and
 `tools/visual_review.py` read without knowing the difference.
 
