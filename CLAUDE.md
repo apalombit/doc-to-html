@@ -36,11 +36,10 @@ trial axis is kept rather than rejected.
 
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
-measured numbers and what has already been tried and rejected. **0019 is
-done** — issue #42, swept 2026-10-23 as `S14-sweep`, which waits on
-Alessandro's baseline decision; its "Handover — after the sweep" starts
-the next session. 0018 (issue #41) is done and decided, swept
-2026-10-19 as `S13-sweep`, the baseline. 0017 (issue #40) is done and
+measured numbers and what has already been tried and rejected. **No spec
+is open.** 0019 (issue #42) is done and decided, swept 2026-10-23 as
+`S14-sweep`, the baseline. 0018 (issue #41) is done and decided, swept
+2026-10-19 as `S13-sweep`. 0017 (issue #40) is done and
 kept; 0008 to 0016 (issues #31–#39) are done and decided. 0007 still
 defines the target.
 
@@ -67,7 +66,7 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-23: the baseline is `tests/frozen/s13-result/`, spec 0018's sweep; spec 0019 is done, and its sweep `S14-sweep` waits on Alessandro's baseline decision. Nothing else is open. Work is judged by eye.**
+**Where the project is — 2026-10-23: the baseline is `tests/frozen/s14-result/`, spec 0019's sweep. Every open item was cleared the same day: nothing is open. Work is judged by eye.**
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -220,7 +219,9 @@ Spec 0019   One grouping however the page is pictured, the structure the
                 plain (Alessandro, 2026-10-22); D3 recorded
               S  S14-sweep on a0d73c9, 2026-10-23: prediction held to
                  the byte, 14 pages better, 7 same, none worse
-              WAITING on Alessandro's baseline decision
+              DECIDED 2026-10-23: S14-sweep is the baseline, frozen as s14-result/
+RESET       2026-10-23, Alessandro: every open item cleared, spec 0019's
+              four directions included. Nothing is open.
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
@@ -237,12 +238,13 @@ list, because content must match absolutely — it is a pointer to a page to
 open, not a gate. He checks every run himself too. Spec 0011's "How to
 work" is the full statement.
 
-**The baseline is `tests/frozen/s13-result/` since 2026-10-19** — sweep
-`S13-sweep` on `91a72e1`, spec 0018's, all **twenty-one documents**,
-Alessandro's decision, frozen with its 755 answers, eighteen files
-byte-identical to `s12-result/`'s. Against `S12-sweep` it drew three pages
-better (the ticket, pricing, cv), eighteen the same and none worse;
-pricing's beside is the one ratchet leg below. The six added 2026-10-13
+**The baseline is `tests/frozen/s14-result/` since 2026-10-23** — sweep
+`S14-sweep` on `a0d73c9`, spec 0019's, all **twenty-one documents**,
+Alessandro's decision, frozen with its 811 answers, the first 755 of them
+`s13-result/`'s byte for byte. Against `S13-sweep` it drew fourteen pages
+better, seven the same and none worse; the certificate's and the
+catalogue's beside and the report's precision are the ratchet legs below,
+each traced in its README. The six added 2026-10-13
 (`corpus.NEW`) stay **held out** — authored after every measure was tuned,
 and reported in their own lines. Each earlier floor, and why it moved, is
 in its README and in `docs/status.md`.
@@ -268,14 +270,13 @@ as the baseline** on 2026-10-19, frozen as `tests/frozen/s13-result/`. Its
 four.
 
 **Spec 0019, `docs/specs/0019-steady-checked-structured-styled.md`, is
-done** — issue #42, open until the baseline decision. Every step shipped
-except A2, which had no pages; D3 is recorded. Its sweep `S14-sweep`
-drew fourteen pages better, seven the same and none worse, and its
-prediction held to the byte. **Its "Outcome — the sweep" recommends it as
-the baseline; the decision is Alessandro's**, and the spec's "Handover —
-after the sweep" says how to freeze it as `s14-result/`. Its four
-directions are ranked, not queued. Everything else was cleared on
-2026-10-19: do not pick anything up unless he names it.
+done and decided** — issue #42, closed. Every step shipped except A2,
+which had no pages; D3 is recorded. Its sweep `S14-sweep` drew fourteen
+pages better, seven the same and none worse, and its prediction held to
+the byte. **Alessandro took `S14-sweep` as the baseline on 2026-10-23**,
+frozen as `tests/frozen/s14-result/`, **and cleared every open item the
+same day**, the spec's four ranked directions included. Nothing is open:
+do not pick anything up unless he names it.
 `docs/specs/0007-handover.md` holds spec 0007's prompts, as record.
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
@@ -435,14 +436,15 @@ says they are.
 | `s10-result/` | all twenty-one documents, scores and 735 answers, sweep `S10-sweep` | record — the baseline 2026-10-15 to 2026-10-17 |
 | `s11-result/` | all twenty-one documents, scores and 749 answers, sweep `S11-sweep` | record — the baseline 2026-10-17 to 2026-10-18 |
 | `s12-result/` | all twenty-one documents, scores and 749 answers, sweep `S12-sweep`; `scores-paper-frame.json` its re-score by spec 0018's 0b scorer | record — the baseline 2026-10-18 to 2026-10-19 |
-| **`s13-result/`** | **all twenty-one documents, scores and 755 answers, sweep `S13-sweep`** | **the baseline, from 2026-10-19** |
+| `s13-result/` | all twenty-one documents, scores and 755 answers, sweep `S13-sweep` | record — the baseline 2026-10-19 to 2026-10-23 |
+| **`s14-result/`** | **all twenty-one documents, scores and 811 answers, sweep `S14-sweep`** | **the baseline, from 2026-10-23** |
 
 **Score against the baseline by path**, and always with `--documents sweep` —
 without a `fixtures.txt` the report silently scores the iterate five:
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s13-result/scores.json
+    --documents sweep --previous tests/frozen/s14-result/scores.json
 ```
 
 **Each floor move was measured, not argued:** the new floor was no lower than
@@ -469,10 +471,11 @@ no page worse, the timetable's tau and beside the legs below
 `s10-result/`, accepted 2026-10-17. **`s12-result/`**: no page worse and
 no leg below `s11-result/`, taken 2026-10-18. **`s13-result/`**: no page
 worse, pricing's beside the one leg below `s12-result/`'s re-score, taken
-2026-10-19.
+2026-10-19. **`s14-result/`**: fourteen pages better and none worse, three
+legs below `s13-result/`, each traced in its README, taken 2026-10-23.
 
 **A directory holding documents beside scores buys a loop, not a number.**
-Scored straight out of `s13-result/`, **21 documents, 0 differing fields**, and **`tools/rederive.py`
+Scored straight out of `s14-result/`, **21 documents, 0 differing fields**, and **`tools/rederive.py`
 over it reproduces every page** at the commit it was taken on — 21 of 21
 files byte for byte. When code downstream of the model moves, `rederive.py` brings
 the IRs up to it — re-applying every step downstream of the model — and that,
@@ -484,12 +487,12 @@ to `rederive.py`**, or the loop measures yesterday's code. It is not a target
 to match.
 
 **A directory that also holds the answers buys a second loop.** `q5-result/`
-was the first to carry `answers/`, and `s3-result/`, `s5-result/`, `s6-result/`, `s7-result/`, `s8-result/`, `s9-result/`, `s10-result/`, `s11-result/`, `s12-result/` and `s13-result/` carry them too — each document's model answers, in the
+was the first to carry `answers/`, and `s3-result/`, `s5-result/`, `s6-result/`, `s7-result/`, `s8-result/`, `s9-result/`, `s10-result/`, `s11-result/`, `s12-result/`, `s13-result/` and `s14-result/` carry them too — each document's model answers, in the
 order they were asked — and **`tools/replay_run.py` serves them to today's
 code through a real Conversion**: wire, mapper and every pass, which
 `rederive.py` cannot re-run. With `--swap` it serves one new answer, so a
 prompt change probed on one crop is measured on its whole document, ratchet
-included, with no sweep. It reproduces `s13-result/` **21 of 21 byte for byte** from its answers. A
+included, with no sweep. It reproduces `s14-result/` **21 of 21 byte for byte** from its answers. A
 document it marks **ASKED MORE THAN THE RUN** is not a measurement: the
 change moved a crop, and a crop costs a sweep. **It serves by pass and
 order**, so a change that asks the same number of calls *differently* — a
@@ -695,7 +698,7 @@ each other — `CellState.DISPUTED` and the Ladder are already the vocabulary fo
 it, and `_climb_ladders` already records that it waits on a second Engine. That
 is model time and Alessandro's decision, not a detector.
 
-**Tracker state, 2026-10-23: one open issue — #42, spec 0019, done, its sweep waiting on the baseline decision.** #31–#41 (specs 0008–0018) are closed, each done and decided. #30 (spec 0007) closed when its
+**Tracker state, 2026-10-23: no open issue.** #31–#42 (specs 0008–0019) are closed, each done and decided. #30 (spec 0007) closed when its
 work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
 #17 (the vision layout prompt) were closed by Thread 0. Every other spec is closed
 history; 0007 still defines the target.

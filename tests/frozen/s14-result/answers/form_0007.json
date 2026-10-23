@@ -1,0 +1,356 @@
+{
+ "calls": [
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "4336cda479ae",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Application for full membership\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "8da4ceba1339",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "4ffd339d259b",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"1. APPLICANT DETAILS\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "1007ed812187",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "bb4ff3b7e635",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"2. MEMBERSHIP CATEGORY\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "71d23d836a00",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"list\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "71d23d836a00",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"3. EXPERIENCE\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "fbce6854c49d",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "8546b3f1b82b",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"4. EMERGENCY CONTACT\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "c1fb1f4d44e6",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "ec7879714671",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"5. DECLARATION\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "a2330c707934",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "2d1325e888a0",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "c3cc71457a36",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"OFFICE USE\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Ref.\",\n      \"value\": \"__________\"\n    },\n    {\n      \"label\": \"Date stamp\",\n      \"value\": \"\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "4336cda479ae",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Application for full membership\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Castleton Rowing Club · Form M-2 (revised April 2026)\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "8da4ceba1339",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "8da4ceba1339",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"Family name\",\n      \"value\": \"Whitlock\"\n    },\n    {\n      \"label\": \"Given names\",\n      \"value\": \"Marion Elspeth\"\n    },\n    {\n      \"label\": \"Date of birth (DD MM YYYY)\",\n      \"value\": \"1 4 0 6 1 9 9 1\"\n    },\n    {\n      \"label\": \"Membership number (if renewing)\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Address\",\n      \"value\": \"17 Bellwether Lane, Castleton\"\n    },\n    {\n      \"label\": \"Postcode\",\n      \"value\": \"CT9 4RD\"\n    },\n    {\n      \"label\": \"Telephone\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Email\",\n      \"value\": \"m.whitlock@fempost.example\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "1007ed812187",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "list",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"Full rowing\",\n        \"Social\",\n        \"Junior (under 18)\",\n        \"Country\",\n        \"Locker required\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "049705fbe02f",
+    "picture": "71d23d836a00",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "71d23d836a00",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"Years rowing\",\n      \"value\": \"6\"\n    },\n    {\n      \"label\": \"Previous club\",\n      \"value\": \"Ashgrove ARC\"\n    },\n    {\n      \"label\": \"Highest level of competition reached\",\n      \"value\": \"Regional championships, coxed four, 2024\"\n    },\n    {\n      \"label\": \"Any medical condition we should know about\",\n      \"value\": \"\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "fbce6854c49d",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "table",
+   "answer": "{\n  \"rows\": [\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"4. EMERGENCY CONTACT\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Name\",\n        \"Relationship\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Peter Whitlock\",\n        \"Father\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Daytime telephone\",\n        \"Alternative telephone\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"01632 960 774\",\n        \"\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "c2519318a130",
+    "picture": "c1fb1f4d44e6",
+    "schema": "32d195a8c340"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"I can swim 100 metres in light clothing\",\n      \"value\": \"X\"\n    },\n    {\n      \"label\": \"I accept the club rules\",\n      \"value\": \"X\"\n    },\n    {\n      \"label\": \"I consent to photographs being published\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Signature of applicant\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Date\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Proposer (existing member)\",\n      \"value\": \"\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "a2330c707934",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Return this form to the Membership Secretary, Castletown Rowing Club, Boathouse Reach, Castletown CT9 1AA. Incomplete forms cannot be processed.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "c3cc71457a36",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "c3cc71457a36",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Tick one category. Locker allocation is subject to availability.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "86a2c38ee31c",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"m.whitlock@fernpost.example\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "d53d4330ad94",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Alternative telephone\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "c5b839a7f8d8",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"I can swim 100 metres in light clothing\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "85cfc2cbccd6",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"I accept the club rules\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "a168e43c5b1a",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"I consent to photographs being published\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "b56f92505bc7",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Return this form to the Membership Secretary, Castleton Rowing Club, Boathouse Reach, Castleton CT9 1AA. Incomplete forms cannot be processed.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "cbdf392da3fb",
+    "schema": "2a31e0885054"
+   }
+  }
+ ]
+}

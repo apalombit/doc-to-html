@@ -1,0 +1,246 @@
+{
+ "calls": [
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"The Copper Pot\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "c22e72ac82e2",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "041f82425885",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"To begin\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "d572428a3045",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "10a01813f55d",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Main courses\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "af47ae5e3503",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "3ad40b493b25",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"A discretionary service charge of 12.5% is added to tables of six or more.\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "6ff7f399002c",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "6ff7f399002c",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"THE COPPER POT\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"KITCHEN & CELLAR · EST. 1961\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "c22e72ac82e2",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"KITCHEN & CELLAR · EST. 1961\",\n      \"kind\": \"mark\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "c22e72ac82e2",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "table",
+   "answer": "{\n  \"rows\": [\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"To begin\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Potted brown shrimp\",\n        \"9.50\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"with mace butter and toasted rye\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Celeriac and apple soup vg\",\n        \"7.00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"hazelnut oil, chorvil\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Ox tongue, sauce gribiche\",\n        \"10.25\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Burrata, late tomatoes\",\n        \"11.00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"basil, aged balsamic\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"From the grill\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Rib of beef, for two\",\n        \"62.00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"dripping chips, watercress, bearnaise\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Lamb cutlets\",\n        \"26.50\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Whole plaice on the bone\",\n        \"24.00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"brown butter, capers, lemon\",\n        \"\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "b54f6c40c0a5",
+    "picture": "d572428a3045",
+    "schema": "32d195a8c340"
+   }
+  },
+  {
+   "pass_name": "table",
+   "answer": "{\n  \"rows\": [\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"MAIN COURSES\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Braised shin, bone marrow\",\n        \"mashed potato, red wine\",\n        \"23.00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Guinea fowl, autumn roots\",\n        \"\",\n        \"21.50\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Squash and sage gnocchi VG\",\n        \"crisp sage, toasted pumpkin seed\",\n        \"18.00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Fish pie of the day\",\n        \"\",\n        \"19.75\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"PUDDINGS\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Treacle tart, clotted cream\",\n        \"\",\n        \"8.50\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Poached quince, custard\",\n        \"\",\n        \"8.00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Chocolate pot, sea salt\",\n        \"\",\n        \"8.50\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Cheese, three from the board\",\n        \"quince paste, oat biscuits\",\n        \"12.00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"\",\n        \"\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"\",\n        \"\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"\",\n        \"\",\n        \"\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "49e6aaa3dd4c",
+    "picture": "af47ae5e3503",
+    "schema": "32d195a8c340"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"A discretionary service charge of 12.5% is added to tables of six or more.\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Please tell us of any allergy before ordering.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "6ff7f399002c",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "6ff7f399002c",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"The Copper Pot\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "b18a01d644db",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Puddings\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "40a654ee26b2",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Celeriac and apple soup VG\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "9dde45518ba5",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"hazelnut oil, cheru\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "1eedbbe71ed2",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"mashed potato, red wine\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "080db534293f",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Squash and sage gnocchi VG\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "c54c7b82b9b7",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"crisp sage, toasted pumpkin seed\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "9e669fa7b627",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"quince paste, oat biscuits\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "ac8605761ea7",
+    "schema": "2a31e0885054"
+   }
+  }
+ ]
+}

@@ -1,8 +1,9 @@
-# Status — 2026-10-23 (**spec 0019 done; its sweep `S14-sweep` waits on Alessandro's baseline decision; the baseline is still `tests/frozen/s13-result/`**)
+# Status — 2026-10-23 (**the baseline is `tests/frozen/s14-result/`; spec 0019 done and decided; nothing open**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-23,
-after spec 0019's sweep `S14-sweep` (issue #42).
+when Alessandro took spec 0019's sweep `S14-sweep` as the baseline,
+frozen as `s14-result/` (issue #42 closed), and cleared every open item.
 
 Reading order for a fresh session:
 1. `CLAUDE.md`'s **READ THIS FIRST**;
@@ -10,8 +11,7 @@ Reading order for a fresh session:
    which is authoritative;
 3. this file;
 4. [`specs/0019-steady-checked-structured-styled.md`](specs/0019-steady-checked-structured-styled.md)'s
-   "Outcome — the steps" and "Outcome — the sweep". Its "Handover — after
-   the sweep" starts the next session.
+   "Outcome — the steps" and "Outcome — the sweep", the last work done.
 
 If you are going to look at output — and you should — use the
 **`visual-review` skill**.
@@ -99,7 +99,9 @@ Spec 0019   One grouping however the page is pictured, the structure the
               D3 nonlatin's footer                        recorded
               S  S14-sweep on a0d73c9, 2026-10-23: prediction held to the
                  byte; 14 pages better, 7 same, none worse
-              WAITING on Alessandro's baseline decision
+              DECIDED 2026-10-23: S14-sweep the baseline, frozen as s14-result/
+Reset       2026-10-23, Alessandro: every open item cleared, spec 0019's
+              four directions included. Nothing is open.
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -107,36 +109,30 @@ in [`specs/0007-handover.md`](specs/0007-handover.md).
 
 ---
 
-## The baseline — `tests/frozen/s13-result/`, DECIDED 2026-10-19
+## The baseline — `tests/frozen/s14-result/`, DECIDED 2026-10-23
 
-**`S14-sweep` is the candidate to replace it** — spec 0019's "Outcome —
-the sweep" recommends it, and the decision is Alessandro's. Its
-handover says how to freeze it as `s14-result/`. Until he decides,
-everything below stands.
-
-**Twenty-one documents, 755 answers.** Eighteen answer files are
-byte-identical to `s12-result/`'s. cv, pricing and the ticket are asked as
-A1's targeted run asked them.
-- Sweep `S13-sweep`, commit `91a72e1` (code `e33d246`'s), 2026-10-19 18:42
-  to 21:02 (**2h20m**), shipped defaults, 40%/60% CPU/GPU.
-- Alessandro took it after review: against `S12-sweep`, the ticket,
-  pricing and cv better, eighteen the same, none worse.
+**Twenty-one documents, 811 answers.** The first 755 are `s13-result/`'s,
+byte for byte and in order. The other 56 are D2's third readings, on 17
+pages.
+- Sweep `S14-sweep`, commit `a0d73c9`, 2026-10-23 08:17 to 10:55
+  (**2h38m**), shipped defaults, 40%/60% CPU/GPU.
+- Alessandro took it after review: against `S13-sweep`, fourteen pages
+  better, seven the same, none worse.
 - Its registered prediction held to the byte.
 
-Proved on 2026-10-19, at `e33d246`'s code:
-- `tools/replay_run.py tests/frozen/s13-result`: **21 of 21
+Proved on 2026-10-23, at `a0d73c9`:
+- `tools/replay_run.py tests/frozen/s14-result`: **21 of 21
   byte-identical, 0 asked differently**;
 - `tools/rederive.py` over it: **21 of 21 byte-identical files**;
 - the rederive scored: **21 documents, 0 differing fields** against its
   `scores.json`;
-- its 755 answers against the sweep's `trace.json`: 0 differ.
+- its 811 answers against the sweep's `trace.json`: 0 differ.
 
-Its `scores.json` is spec 0018's 0b scorer's, which measures the source in
-its paper's frame. So it is the file to score against:
+Score against it:
 
 ```
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s13-result/scores.json
+    --documents sweep --previous tests/frozen/s14-result/scores.json
 ```
 
 `--documents sweep` is not optional: without a `fixtures.txt` the report
@@ -144,6 +140,9 @@ scores the iterate five.
 
 ### The baselines before it
 
+- **`s13-result/`** — spec 0018's sweep, `S13-sweep`. The baseline
+  2026-10-19 to 2026-10-23. Its `scores.json` is spec 0018's 0b scorer's,
+  which measures the source in its paper's frame.
 - **`s12-result/`** — spec 0016's sweep, `S12-sweep`. The baseline
   2026-10-18 to 2026-10-19. Its `scores-paper-frame.json` is its re-score
   by spec 0018's 0b scorer, against which `S13-sweep` was scored.
@@ -259,18 +258,11 @@ and `specs/0007-handover.md` for the A phases and the queue.
 
 ---
 
-## Next — Alessandro's baseline decision on `S14-sweep`
+## Next — nothing open
 
-- **Spec 0019's "Handover — after the sweep"** says how to freeze
-  `S14-sweep` as `tests/frozen/s14-result/` if he takes it, and what to
-  record if he does not. **Do not clear `debug/runs/S14-sweep` before
-  then.**
-- **Its four directions are ranked, not queued:**
-  1. shapes and weights the page draws;
-  2. readings settled word by word;
-  3. grouping under a changed picture;
-  4. widths and alignment.
-- **Nothing else is open.** Pick up nothing he does not name.
+**Alessandro cleared every open item on 2026-10-23**, spec 0019's four
+ranked directions included. They stay in the spec's outcome, as record.
+Pick up nothing he does not name.
 
 ---
 
@@ -322,8 +314,9 @@ the last two entries.
   `a1-checkpoint/`, `a0-checkpoint/`, `a0-result/`, `a1-result/`,
   `a2-result/`, `a3-result/`, `reshot/`, `q5-result/`, `s3-result/`,
   `s5-result/`, `s6-result/`, `s7-result/`, `s8-result/`, `s9-result/`,
-  `s10-result/`, `s11-result/`, `s12-result/` — all kept as record — and
-  **`s13-result/`, the baseline** since 2026-10-19, twenty-one documents.
+  `s10-result/`, `s11-result/`, `s12-result/`, `s13-result/` — all kept as
+  record — and **`s14-result/`, the baseline** since 2026-10-23,
+  twenty-one documents.
   `a3-result/` was scored on pictures missing their last lines;
   quote it only as that.
 - **The committed corpus picture is a screenshot of its own HTML.**
@@ -447,7 +440,7 @@ through the detector's grouping (the spec has each in full):
 FIXTURE=sweep tools/iterate.sh <label>        # all twenty-one, ~2¼ h — anything reviewed
 FIXTURE=iterate tools/iterate.sh <label>      # the five, ~20 min — throwaway checks only
 python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
-    --documents sweep --previous tests/frozen/s13-result/scores.json
+    --documents sweep --previous tests/frozen/s14-result/scores.json
 python tools/visual_review.py debug/runs/<label> --previous debug/runs/<older>
 python tools/visual_review.py debug/runs/<label> --check
 python tools/twins.py debug/twins --check     # rectify + layout front on the twins, ~13 min, no model
@@ -469,7 +462,7 @@ converts it once the bug is fixed, with no model call.
 
 **Three offline loops, each proved before it was used, and a sweep. Say which
 produced any number you report.** Start them from the baseline,
-`tests/frozen/s13-result/`. On 2026-10-19 `tools/replay_run.py` and
+`tests/frozen/s14-result/`. On 2026-10-23 `tools/replay_run.py` and
 `tools/rederive.py` over it each reproduced it byte for byte, 21 of 21. Both
 tools take a run directory as well as a frozen one.
 

@@ -1,0 +1,378 @@
+{
+ "calls": [
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"ΤΠΥ 2026/0417\",\n  \"line_is\": \"header\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "19419829f1d0",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "19419829f1d0",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Τυμολόγιο Παροχής Υπηρεσιών\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "b9fd7132a8dc",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "327d1e71af99",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"ΣΤΟΙΧΕΙΑ ΠΕΛΑΤΗ\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "9165106dc377",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "a508d1b9913f",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"ΣΤΟΙΧΕΙΑ ΕΚΔΟΤΗ\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "225d8002626b",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "94c1acb5d414",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Ανάλυση παρεχόμενων υπηρεσιών\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "0fe4848d20ad",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "3aa91cd6ae3d",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"ΟΡΟΙ ΠΛΗΡΩΜΗΣ\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "4474a2574bdb",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "ef417c7c5701",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"ΠΑΡΑΤΗΡΗΣΕΙΣ\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "71b4517a2b8c",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "ddea3ecbde06",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "9f8cedd4990a",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"ΤΠΥ\",\n      \"value\": \"2026/0417\"\n    },\n    {\n      \"label\": \"Ημερομηνία\",\n      \"value\": \"04/09/2026\"\n    },\n    {\n      \"label\": \"Λήξη\",\n      \"value\": \"04/10/2026\"\n    },\n    {\n      \"label\": \"Σειρά\",\n      \"value\": \"Α\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "19419829f1d0",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Τυμολόγιο Παροχής Υπηρεσιών\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Αιγαίο Μηχανική Α.Ε.\",\n        \"Λεωφόρος Συγγρού 128, 11745 Αθήνα\",\n        \"ΑΦΜ 094512773 · ΔΟΥ ΦΑΕ Αθηνών\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "b9fd7132a8dc",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"ΑΦΜ 094512773 · ΔΟΥ ΦΑΕ Αθηνών\",\n      \"kind\": \"mark\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "b9fd7132a8dc",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"Επωνυμία\",\n      \"value\": \"Κυκλάδες Ναυτιλιακή ΕΠΕ\"\n    },\n    {\n      \"label\": \"Διεύθυνση\",\n      \"value\": \"Ακτή Μιαούλη 47, 18536 Πειραιάς\"\n    },\n    {\n      \"label\": \"ΑΦΜ\",\n      \"value\": \"800337912\"\n    },\n    {\n      \"label\": \"ΔΟΥ\",\n      \"value\": \"Α' Πειραιά\"\n    },\n    {\n      \"label\": \"Υπεύθυνος\",\n      \"value\": \"Ελένη Παπαδοπούλου\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "9165106dc377",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"Επωνυμία\",\n      \"value\": \"Αιγαίο Μηχανική Α.Ε.\"\n    },\n    {\n      \"label\": \"Δραστηριότητα\",\n      \"value\": \"Μελέτες και επιβλέψεις\"\n    },\n    {\n      \"label\": \"Τηλέφωνο\",\n      \"value\": \"210 9214 480\"\n    },\n    {\n      \"label\": \"Ηλ. ταχυδρομείο\",\n      \"value\": \"logistirio@aigaiio.example\"\n    },\n    {\n      \"label\": \"Τράπεζα\",\n      \"value\": \"GR96 0110 1250 0000 1234 5678 901\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "225d8002626b",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "table",
+   "answer": "{\n  \"rows\": [\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"Περιγραφή\",\n        \"Ώρες\",\n        \"Τιμή/ώρα\",\n        \"Καθαρή αξία\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Στατική μελέτη προβλήτας\",\n        \"84\",\n        \"65,00\",\n        \"5.460,00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Επίβλεψη εργασιών σκυροδέτησης\",\n        \"40\",\n        \"58,00\",\n        \"2.320,00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Έλευθος αντοχής υλικών\",\n        \"16\",\n        \"72,00\",\n        \"1.152,00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Σύνταξη τεχνικής έκθεσης\",\n        \"12\",\n        \"55,00\",\n        \"660,00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Μετακινήσεις και διαμονή\",\n        \"\",\n        \"\",\n        \"438,50\"\n      ]\n    },\n    {\n      \"role\": \"summary\",\n      \"cells\": [\n        \"\",\n        \"\",\n        \"Καθαρή αξία\",\n        \"10.030,50\"\n      ]\n    },\n    {\n      \"role\": \"summary\",\n      \"cells\": [\n        \"\",\n        \"\",\n        \"ΦΠΑ 24%\",\n        \"2.407,32\"\n      ]\n    },\n    {\n      \"role\": \"summary\",\n      \"cells\": [\n        \"\",\n        \"\",\n        \"\",\n        \"Συνολικό πληρωτέο\",\n        \"12.437,82\"\n      ]\n    },\n    {\n      \"role\": \"summary\",\n      \"cells\": [\n        \"\",\n        \"\",\n        \"\",\n        \"\",\n        \"12.437,82\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "40b028f79886",
+    "picture": "0fe4848d20ad",
+    "schema": "32d195a8c340"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"ΟΡΟΙ ΠΛΗΡΩΜΗΣ\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Η εξόφληση γίνεται εντός τριάντα ημερών από την ημερομηνία έκδοσης, με\",\n        \"κατάθεση στον ανωτέρω τραπεζικό λογαριασμό. Σε περίπτωση καθυστέρησης\",\n        \"επιβαρύνεται με τόκο υπερημερίας.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "4474a2574bdb",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "4474a2574bdb",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"ΠΑΡΑΤΗΡΗΣΕΙΣ\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Οι ώρες επιβλέψεις αφορούν το διάστημα από 01/08/2026 έως 31/08/2026. Το\",\n        \"τιμολόγιο διαβιβάστηκε ηλεκτρονικά στην πλατφόρμα myDATA.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "71b4517a2b8c",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"myDATA\",\n      \"kind\": \"mark\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "71b4517a2b8c",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Αγγελίδης Μπραγκαντής Α.Ε. · ΓΕΜΗ 004512701000 · Το παρόν επιτεύγει θέση φορολογικού παραστατικού\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "9f8cedd4990a",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"ΓΕΜΗ 004512701000\",\n      \"kind\": \"code\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "9f8cedd4990a",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"ΑΦΜ 094512773 · ΔΟΥ ΦΑΕ Αθηνών\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "454554c08d4c",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"ΔΟΥ\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "d88953e38a10",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"A' Πειραιά\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "06e7d24dc841",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"logistirio@aigaoio.example\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "0537e0e4bbbf",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Ἐλευχος αντοχής υλικών\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "40f7dffaa90d",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"επιβαρύνεται με τόκο υπερημερίας.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "6c94080bf534",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Οι ώρες επιβλέψεις αφορούν το διάστημα από 01/08/2026 έως 31/08/2026. Το\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "e8887bab94f2",
+    "schema": "2a31e0885054"
+   }
+  }
+ ]
+}

@@ -795,9 +795,20 @@ scorer seeing more of a page now drawn closer to it, and one is a raised
 mark the page prints. Freeze it as `tests/frozen/s14-result/` with its
 811 answers. **The decision is Alessandro's.**
 
+**Decided 2026-10-23: Alessandro took `S14-sweep` as the baseline.**
+It was frozen as `tests/frozen/s14-result/` with its 811 answers, and
+proved at `a0d73c9`:
+- the answers against the sweep's traces: 0 differ;
+- replay: 21 of 21 byte-identical, 0 asked differently;
+- rederive: 21 of 21;
+- the rederive scored: 0 differing fields.
+
+**The same day he cleared every open item**, §6's four directions
+included. Nothing is open; pick up nothing he does not name.
+
 ---
 
-## Handover — after the sweep
+## Handover — after the sweep (carried out 2026-10-23)
 
 > Spec 0019 (`docs/specs/0019-steady-checked-structured-styled.md`, issue
 > #42) is done, and its sweep `S14-sweep` waits on Alessandro's baseline

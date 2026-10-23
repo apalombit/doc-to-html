@@ -1,0 +1,488 @@
+{
+ "calls": [
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "233a8167bf5f",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Brass cabinet knob\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "252273ab6b00",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "252273ab6b00",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "20584a7e8b14",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Brass cup handle\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "73b1107f73f6",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "73b1107f73f6",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Cast iron butt hinge\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "392970b3a863",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "392970b3a863",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Oak shelf bracket\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "9b990b43b565",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "9b990b43b565",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Iron thumb latch\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "dcbe08fe9ce5",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "dcbe08fe9ce5",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Oak drawer runner\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "838aa4f339b7",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "838aa4f339b7",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Copper escutcheon\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "e980449d84e9",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "e980449d84e9",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Copper pull, long\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "2b5d9b09310e",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "2b5d9b09310e",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Slotted brass screws\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "1368d120a8bf",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "1368d120a8bf",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "09c741688052",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "138e50482ee3",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"Hardwood fittings\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "233a8167bf5f",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "233a8167bf5f",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"BR-114\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Brass cabinet knob\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Unlacquered brass, 32 mm, M4 thread\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"£4.20\",\n      \"value\": \"each\"\n    },\n    {\n      \"label\": \"In stock\",\n      \"value\": \"\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "252273ab6b00",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"AUTUMN LIST 2026 · TRADE PRICES\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "20584a7e8b14",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "20584a7e8b14",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n    \"pairs\": [\n        {\n            \"label\": \"BR-118\",\n            \"value\": \"\"\n        },\n        {\n            \"label\": \"NEW\",\n            \"value\": \"\"\n        },\n        {\n            \"label\": \"Brass cup handle\",\n            \"value\": \"\"\n        },\n        {\n            \"label\": \"Unlacquered brass, 96 mm centres\",\n            \"value\": \"\"\n        },\n        {\n            \"label\": \"£9.80\",\n            \"value\": \"\"\n        },\n        {\n            \"label\": \"each\",\n            \"value\": \"\"\n        },\n        {\n            \"label\": \"In stock\",\n            \"value\": \"\"\n        }\n    ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "73b1107f73f6",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"IR-207\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Cast iron butt hinge\",\n      \"value\": \"102 × 76 mm, black wax finish, pair\"\n    },\n    {\n      \"label\": \"£13.50\",\n      \"value\": \"per pair\"\n    },\n    {\n      \"label\": \"3 left\",\n      \"value\": \"\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "392970b3a863",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"OK-341\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Oak shelf bracket\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Quarter-sawn oak, 220 x 180 mm\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"£16.00\",\n      \"value\": \"each\"\n    },\n    {\n      \"label\": \"Back order\",\n      \"value\": \"\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "9b990b43b565",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"IR-212\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Iron thumb latch\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Suffolk pattern, 265 mm, beeswax\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"£28.00\",\n      \"value\": \"each\"\n    },\n    {\n      \"label\": \"In stock\",\n      \"value\": \"\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "dcbe08fe9ce5",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"OK-330\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"NEW\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Oak drawer runner\",\n      \"value\": \"European oak, 450 mm, unfinished\"\n    },\n    {\n      \"label\": \"£7.40\",\n      \"value\": \"per metre\"\n    },\n    {\n      \"label\": \"In stock\",\n      \"value\": \"\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "838aa4f339b7",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"Copper escutcheon\",\n      \"value\": \"Hammered copper, 48 mm, standard keyway\"\n    },\n    {\n      \"label\": \"£5.60\",\n      \"value\": \"each\"\n    },\n    {\n      \"label\": \"In stock\",\n      \"value\": \"\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "e980449d84e9",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n    \"pairs\": [\n        {\n            \"label\": \"CP-418\",\n            \"value\": \"\"\n        },\n        {\n            \"label\": \"Copper pull, long\",\n            \"value\": \"\"\n        },\n        {\n            \"label\": \"Hammered copper, 224 mm centres\",\n            \"value\": \"\"\n        },\n        {\n            \"label\": \"£18.75\",\n            \"value\": \"each\"\n        },\n        {\n            \"label\": \"In stock\",\n            \"value\": \"\"\n        }\n    ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "2b5d9b09310e",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"SC-501\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Slotted brass screws\",\n      \"value\": \"No. 8 × 32 mm, box of 200\"\n    },\n    {\n      \"label\": \"£22.40\",\n      \"value\": \"per box\"\n    },\n    {\n      \"label\": \"6 left\",\n      \"value\": \"\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "1368d120a8bf",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Prices exclude VAT · Carriage free over £150\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "09c741688052",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "09c741688052",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"Orders\",\n      \"value\": \"trade@wrenfieldfittings.example · 01632 960 220\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "138e50482ee3",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"£28.00\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "de5fc68316df",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"£22.40\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "995b4c47f4d7",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"102 × 76 mm, black wax finish, pair\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "3a4ab409a2b0",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"mark\",\n      \"lines\": [\n        \"SC-501\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "0c7b12bc8a77",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"No. 8 × 32 mm, box of 200\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "78823ed18288",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"orders: trade@wrenfieldfittings.example · 01632 960 220\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "4e8bb1a13cb4",
+    "schema": "2a31e0885054"
+   }
+  }
+ ]
+}
