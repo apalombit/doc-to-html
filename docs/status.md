@@ -1,28 +1,25 @@
-# Status — 2026-10-19 (**the baseline is `tests/frozen/s13-result/`; spec 0019 planned, not started; nothing else open**)
+# Status — 2026-10-23 (**spec 0019 done; its sweep `S14-sweep` waits on Alessandro's baseline decision; the baseline is still `tests/frozen/s13-result/`**)
 
 **Live document.** This is where the project actually is. When it goes stale,
-rewrite it; do not add a banner and leave it. Last rewritten 2026-10-19,
-when spec 0019 was planned (issue #42). The day before it, Alessandro
-took spec 0018's sweep `S13-sweep` as the baseline, frozen as
-`s13-result/` (issue #41 closed).
+rewrite it; do not add a banner and leave it. Last rewritten 2026-10-23,
+after spec 0019's sweep `S14-sweep` (issue #42).
 
 Reading order for a fresh session:
 1. `CLAUDE.md`'s **READ THIS FIRST**;
 2. [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md),
    which is authoritative;
 3. this file;
-4. [`specs/0019-steady-checked-structured-styled.md`](specs/0019-steady-checked-structured-styled.md),
-   the open spec, not started. Its handover prompt starts a session;
-5. [`specs/0018-strip-twins-rectify.md`](specs/0018-strip-twins-rectify.md)'s
-   "Outcome — the sweep", where spec 0019's four parts were ranked.
+4. [`specs/0019-steady-checked-structured-styled.md`](specs/0019-steady-checked-structured-styled.md)'s
+   "Outcome — the steps" and "Outcome — the sweep". Its "Handover — after
+   the sweep" starts the next session.
 
 If you are going to look at output — and you should — use the
 **`visual-review` skill**.
 
-Branch `scaffold`. **1287 tests pass (1 skipped), `mypy src/` clean** — at `91a72e1`, the sweep's commit, 2026-10-19.
+Branch `scaffold`. **1394 tests pass (1 skipped), `mypy src/` clean** — at `a0d73c9`, the sweep's commit, 2026-10-23.
 
 **How work is judged — Alessandro, 2026-10-12, for spec 0011; carried
-over by specs 0012 to 0018.**
+over by specs 0012 to 0019.**
 - **By eye.** Every step's sheets are opened against the previous step's,
   and each page is judged better / same / worse.
 - **Scores** are produced and recorded, and **never gate a step or carry an
@@ -34,7 +31,6 @@ over by specs 0012 to 0018.**
 He checks every run himself too.
 
 ---
-
 ## Where we are
 
 ```
@@ -89,16 +85,21 @@ Spec 0018   The strip as the page draws it, photographed pages, the
 Reset       2026-10-19, Alessandro: everything not in spec 0019 cleared.
 Spec 0019   One grouping however the page is pictured, the structure the
               IR lacks, the page's looks, readings checked — issue #42:
-              A grouping: A0 the jitter check, A1 container or parts on
-                what the page draws, A2 a targeted run
-              B structure: B1 spanning cells, B2 raised marks, B3 display
-                lines, B4 a pair's separator
-              C looks: C1 every entry placed and measured, C2 weight as
-                measured, C3 chips and discs, C4 drop caps, C5 faces
-              D readings: D1 tesseract's reading kept, D2 a third reading
-                where the two are near, D3 recorded
-              one sweep, S14-sweep, at the very end
-              NOT STARTED
+              A0 the jitter check                         DONE
+              A1 container or parts on what the page draws DONE, kept at
+                 the checkpoint; A2 had no pages
+              B1 spanning cells  B2 raised marks  B3 display lines
+              B4 a pair's separator                       each DONE
+              C1 every entry placed and measured  C2 weight as measured
+              C3 chips and discs  C4 drop caps  C5 faces  each DONE
+              D1 tesseract's reading kept                 DONE
+              the second pass's repairs (a78513f)         DONE
+              D2 the third reading                        DONE; a disputed
+                 Cell drawn plain, Alessandro 2026-10-22
+              D3 nonlatin's footer                        recorded
+              S  S14-sweep on a0d73c9, 2026-10-23: prediction held to the
+                 byte; 14 pages better, 7 same, none worse
+              WAITING on Alessandro's baseline decision
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -107,6 +108,11 @@ in [`specs/0007-handover.md`](specs/0007-handover.md).
 ---
 
 ## The baseline — `tests/frozen/s13-result/`, DECIDED 2026-10-19
+
+**`S14-sweep` is the candidate to replace it** — spec 0019's "Outcome —
+the sweep" recommends it, and the decision is Alessandro's. Its
+handover says how to freeze it as `s14-result/`. Until he decides,
+everything below stands.
 
 **Twenty-one documents, 755 answers.** Eighteen answer files are
 byte-identical to `s12-result/`'s. cv, pricing and the ticket are asked as
@@ -165,133 +171,106 @@ scores the iterate five.
 
 ## Where the corpus is — recorded, not a target
 
-Means over `S13-sweep`, against `s12-result/scores-paper-frame.json`:
+Means over `S14-sweep`, against `s13-result/scores.json`:
 
 | | all 21 | the fifteen | the six new |
 |---|---|---|---|
-| vocabulary recall | 0.990 → 0.992 | 0.991 → 0.991 | 0.988 → 0.997 |
-| precision | 0.989 → 0.990 | 0.988 → 0.988 | 0.989 → 0.996 |
-| join recall | 0.961 → 0.963 | 0.965 → 0.965 | 0.949 → 0.958 |
-| tau | 0.982 → 0.982 | 0.990 → 0.990 | 0.963 → 0.964 |
-| beside agreement | 0.853 → 0.874 | 0.877 → 0.894 | 0.791 → 0.825 |
-| height ratio | 1.048 → 1.050 | 1.028 → 1.027 | 1.099 → 1.107 |
-| alignment agreement | 0.805 → 0.804 | 0.843 → 0.841 | 0.711 → 0.712 |
-| scale error | 0.226 → 0.223 | 0.165 → 0.168 | 0.377 → 0.359 |
+| vocabulary recall | 0.992 → 0.994 | 0.991 → 0.993 | 0.997 → 0.999 |
+| precision | 0.990 → 0.992 | 0.988 → 0.989 | 0.996 → 0.998 |
+| join recall | 0.963 → 0.967 | 0.965 → 0.969 | 0.958 → 0.964 |
+| tau | 0.982 → 0.984 | 0.990 → 0.990 | 0.964 → 0.972 |
+| beside agreement | 0.874 → 0.870 | 0.894 → 0.901 | 0.825 → 0.795 |
+| height ratio | 1.050 → 1.043 | 1.027 → 1.022 | 1.107 → 1.096 |
+| alignment agreement | 0.804 → 0.810 | 0.841 → 0.842 | 0.712 → 0.731 |
+| scale error | 0.223 → 0.223 | 0.168 → 0.168 | 0.359 → 0.359 |
 
-- **Moved:** the ticket, cv, pricing and the catalogue.
-- **`vanished`: 26 → 24 words.** The ticket's `nordlys` and `air` are back,
-  and no word is newly vanished.
-- **The spec's §4 lists the misreads** the `invented` lists show: the
-  statement's 216.08 read 210.08, nonlatin's footer naming another
-  company, and others.
+- **`vanished`: 24 → 15 words**, none newly vanished.
+- **Three ratchet legs below `s13-result/`**, each traced in the spec's
+  §3: the certificate's and the catalogue's beside, and the report's
+  precision.
+- **Grouping:** the jitter check keeps 751 of 848 Zones (0.886), and the
+  twins 914 of 1080 (0.846). Both were A1's. The target, ≥ 0.95, is not
+  met.
 
 ---
 
 ## What the last work shipped
 
+### Spec 0019 — steady, checked, structured, styled, 2026-10-19 to 2026-10-23
+
+One commit a step. The spec's "Outcome — the steps" has each step's pages
+and measures.
+
+- **A0** `1397ed4`: `tools/layout_front.py --jitter` — Zones kept under
+  four invisible perturbations of the page's own picture.
+- **A1** `d0c7eea`: four decisions the detector took on a score crossing,
+  now taken on what the page draws. Jitter 0.749 → 0.886, twins
+  0.759 → 0.846, the corpus as shot unmoved. Kept at the checkpoint, and
+  A2 had no pages.
+- **B1** `2f43e43`, `spans.read`: a ruled grid's second lines join the
+  cell above, and an entry spans the empty slots its drawn cell covers
+  (the timetable).
+- **B2** `204db2a`, `raised.read`: superscripts as `sup` Runs (paper,
+  report).
+- **B3** `34820e9`, `display.read`: a display line centred and apart, and
+  its `(n)` (paper's equation).
+- **B4** `e208701`, `separator.read`: the colon a label is printed with,
+  and the bar between pairs (the invoices, nonlatin, catalogue).
+- **C1** `5a7ee93`: type on a fill read on the fill's crop; marks placed
+  on their glyphs; a chip told from heavy type.
+- **C2** `87fc1be`: an element the stylesheet draws bold is drawn regular
+  where its entry measured regular (`Zone.title_bold`).
+- **C3** `f90dbd3`: a chip at a line's end on that line; a disc and its
+  ring (`Furniture.disc`, `Furniture.ring`; the certificate's seal).
+- **C4** `1f9f556`, `dropcap.read`: a drop cap, drawn as the page's
+  `::first-letter` (the newsletter).
+- **C5** `9671acf`: `SCRIPT_JOINED` 0.6 → 0.82, into the measured gap
+  (the certificate's signature).
+- **D1** `2b31497`: the words that placed a Cell kept as its second
+  `Reading`, engine `tesseract`.
+- **The second pass's repairs** `a78513f`: a Conversion that locates
+  twice, and a rederive of a rederive, draw what the first pass drew.
+- **D2** `a0d73c9`, `ladder` and `Conversion._climb_ladders`: a Cell
+  whose two readings are 1–4 characters apart is read a third time, and
+  two of three settle it. On the sweep: 56 asked, 7 repaired, 8 disputed.
+  **A disputed Cell is drawn as the page prints it**, its other readings
+  in its title (Alessandro, 2026-10-22).
+- **D3**, recorded: nonlatin's footer names another company, 18
+  characters away. No near-miss rule reaches it.
+
+**The sweep, `S14-sweep`** (commit `a0d73c9`, 2h38m, 811 calls):
+- the prediction held to the byte;
+- **fourteen pages better, seven the same, none worse**;
+- the replay and the rederive of it each reproduce it, 21 of 21.
+
 ### Spec 0018 — the strip, photographed pages, the straightening step, 2026-10-19
 
-One commit a step.
-
-**Part 0, the tools:**
-- **0a** `592175b`: `doc_to_html.review` re-photographs the render of a
-  warped page onto its outline and adds an overlay. An unwarped page's
-  sheet is byte-identical.
-- **0b** `69e6390`: `project(flat=True)` measures the source in its paper's
-  frame, and `s12-result/scores-paper-frame.json` is the re-scored baseline.
-- **0c** `038b99c`: the per-page index shows `Rectified.image` and the boxes
-  on it, as the detector saw them.
-
-**A1** `7aadacc`, `45604de`: `furniture.grounded` — ink measured against
-its local ground.
-- A solid fill is paper, and type on it is ink by its contrast with the
-  fill. Its blended edge is paper.
-- A fill one Zone holds whole is that Zone's. A fill with no type is a
-  mark.
-- The ticket's halo Zone and its `The` / `The` are gone, the strip is one
-  row, and `TRD` is display size.
-- **The knock-ons, repaired:**
-  - `structure._columns`: a divider is crossed only past its stroke's
-    width;
-  - `render._on_its_ground`: cv's sidebar;
-  - `locate`: a re-read line's `read_from`;
-  - `Document.to_data`: the IR without the null `read_from`.
-
-**B0** `0961c70`: `tools/twins.py`, five photographed twins of every
-corpus page with exact truth.
-- `--check` is model-free and takes about 13 minutes. It reports
-  `rectify` against the truth, and Zones kept against the page as shot,
-  carried into one frame.
-- **Not corpus** — Alessandro, 2026-10-19.
-
-**B1** `aa6d252`: `style._bordered` reads each card edge two lines deep
-(`EDGE_DEPTH`), so a resampled card is still a card. A rule is never a box.
-
-**C1** `8aed639`: an outline holds the page.
-- Paper is told from desk against the desk read at the picture's edge, and
-  a shadow is desk.
-- An outline that leaves paper outside is grown to it, or refused. The
-  strict reading comes first.
-- cv's twins: 307px out → 1.2–1.35px. No corpus outline moves.
-  `RECTIFIER_VERSION` is 7.
-
-**Dropped, each on Alessandro's decision after a targeted run:**
-- **A2** — the merged strip read stacked again;
-- **C2** — corners exact, the receipt and the ticket worse;
-- **C4** — six of eight pages worse, words vanished.
-
-**C3** was skipped. "Measured and not shipped" below has each.
-
-**The lesson the three drops share:** the detector regroups a page whose
-picture changes (B0's fault 5). Every step that changed the picture had
-its own aim right and lost pages through grouping. That is direction 1 in
-the spec's outcome.
-
-### Spec 0017 — margins from the type, one size per role, 2026-10-18
-
-**Render only, no sweep.**
-- The ticket's field grid sits 22px in from the card's edge, and the
-  stub's text 20px off the perforation.
-- `PASSENGER` is a muted label, and the stub's values are one size.
-- Kept 2026-10-19, issue #40 closed.
-- Commits: 1 `1c869fd`, 2 `24b635c`.
-
-### Spec 0016 — structure first, `S12-sweep`, 2026-10-18
-
-One grid per line-drawn Zone, one grid across side-by-side Zones, a drawn
-strip one container, and two `locate` guards. One page better (the
-ticket), twenty the same. Taken as the baseline, `s12-result/`. Issue #39
-closed.
+Part 0 (the render re-photographed, the scorer in the paper's frame, the
+box pictures), A1 (ink against its local ground), B0 (the twins), B1 (a
+card's edge two lines deep) and C1 (an outline holds the page) shipped.
+A2, C2 and C4 were dropped, and C3 skipped. `S13-sweep` drew three pages
+better and none worse; it is `s13-result/`. The spec's outcome has each
+step.
 
 ### Earlier
 
-Specs 0008–0015 and the corpus widening: each spec's "Outcome" sections,
+Specs 0008–0017 and the corpus widening: each spec's "Outcome" sections,
 and `specs/0007-handover.md` for the A phases and the queue.
 
 ---
 
-## Next — spec 0019, not started
+## Next — Alessandro's baseline decision on `S14-sweep`
 
-- **Spec 0019** is issue #42:
-  [`specs/0019-steady-checked-structured-styled.md`](specs/0019-steady-checked-structured-styled.md).
-  It takes up all four of spec 0018's ranked directions together, before
-  one sweep:
-  - **A:** one grouping however the page is pictured;
-  - **B:** the structure the IR lacks;
-  - **C:** the page's looks;
-  - **D:** readings checked by a second and third reader.
-
-  Its handover prompt starts the session.
-- **Its evidence was measured on 2026-10-19** over the corpus and
-  `s13-result/`:
-  - the page's own picture perturbed invisibly keeps 0.744 of its Zones,
-    and 16 of 21 pages regroup;
-  - tesseract's reading disagrees with the model's on 94 of 1,070 placed
-    Cells, 14 of them the model's misreads;
-  - a third reading repairs 6 of 12 and changes none of the model's 41
-    right ones.
-- **Nothing else is open** — Alessandro, 2026-10-19. Every other queue,
-  list and direction is cleared.
+- **Spec 0019's "Handover — after the sweep"** says how to freeze
+  `S14-sweep` as `tests/frozen/s14-result/` if he takes it, and what to
+  record if he does not. **Do not clear `debug/runs/S14-sweep` before
+  then.**
+- **Its four directions are ranked, not queued:**
+  1. shapes and weights the page draws;
+  2. readings settled word by word;
+  3. grouping under a changed picture;
+  4. widths and alignment.
+- **Nothing else is open.** Pick up nothing he does not name.
 
 ---
 
@@ -372,8 +351,32 @@ the last two entries.
   back. Two independent checks, and both must stay.
 - **What is read off a Graphic is `alt`, never printed.** Printing it is how
   `sparksuite` and `logo` were invented.
+- **A disputed Cell is drawn as the page prints it** — Alessandro,
+  2026-10-22. Its other readings go in its title and `data-alt`, never a
+  ground or a mark the page does not print.
+- **A second pass draws what the first drew.** `tools/rederive.py` over
+  its own output reproduces it, 21 of 21. A Conversion locates a second
+  time after a third reading changes a Cell, so a step that cannot read
+  its own output breaks a run, not only the loop.
 
 ## Measured and not shipped — record, not a queue
+
+Spec 0019's, each in its outcome:
+- **A1's rule as worded** — a container only if the page draws it or it
+  holds ink its parts do not. It measured 0.726 on the jitter check and
+  moved 13 pages as shot, because a paragraph over its own lines fails
+  both tests.
+- **D1's second reading as every word in the box.** tesseract's reads of
+  texture and rules beside a figure (`216.08 &ta`) put 471 Cells on the
+  model's side. The run that placed the Cell is the reading.
+- **`spans.read` before `raised`.** The grid's rules carry no Zone until
+  `furniture.place`, so the timetable lost its grid. It runs after
+  `furniture.place`.
+- **A disputed Cell flagged** with a tinted ground and an orange
+  underline (the render's drawing until D2). It flagged five pages and
+  hid cv's email on its sidebar (`S19-D2-targeted`). It is drawn plain.
+
+Earlier specs':
 
 Spec 0018's three drops each moved the picture or the boxes and lost pages
 through the detector's grouping (the spec has each in full):
@@ -448,6 +451,7 @@ python -m doc_to_html.report debug/runs/<label> --model qwen3-vl:4b \
 python tools/visual_review.py debug/runs/<label> --previous debug/runs/<older>
 python tools/visual_review.py debug/runs/<label> --check
 python tools/twins.py debug/twins --check     # rectify + layout front on the twins, ~13 min, no model
+python tools/layout_front.py <out> --documents all --jitter   # Zones kept under four invisible perturbations, no model
 ```
 
 `iterate.sh` records `HEAD` only. **When a sweep runs on uncommitted code, save
@@ -455,7 +459,7 @@ python tools/twins.py debug/twins --check     # rectify + layout front on the tw
 
 **A sweep outlasts a two-hour background task** — `S7-sweep` took 2h16m,
 `S8-sweep` 2h12m, `S9-sweep` 2h16m, `S10-sweep` 2h21m, `S11-sweep` 2h22m,
-`S12-sweep` 2h22m, `S13-sweep` 2h20m. Start it detached and wait on its log, and **never edit
+`S12-sweep` 2h22m, `S13-sweep` 2h20m, `S14-sweep` 2h38m (811 calls). Start it detached and wait on its log, and **never edit
 `tools/iterate.sh` while a sweep is running**: bash reads the script as
 it goes, and `S8-sweep`'s script died after its bake-off on a line the
 edit had shifted:
