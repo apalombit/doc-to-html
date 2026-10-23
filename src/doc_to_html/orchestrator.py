@@ -605,7 +605,10 @@ def read_lines(zone: Zone) -> int:
     """
     lines = 1 if zone.title else 0
     if zone.kind is Kind.TABLE:
-        return lines + len(zone.rows)
+        # A row's cells' second lines are printed lines of its own — spec
+        # 0019, B1, `Cell.below`.
+        return lines + sum(1 + max((len(cell.below) for cell in row.cells), default=0)
+                           for row in zone.rows)
     if zone.kind is Kind.PAIRS:
         return lines + len(zone.pairs)
     return lines + sum(len(block.lines) for block in zone.blocks)
@@ -905,26 +908,7 @@ class Conversion:
             self._find_separators(rectified, document)
             self._locate(rectified, document)
             self._read_unclaimed(rectified, document)
-            self._read_marks(rectified, document)
-            self._read_caps(rectified, document)
-            self._read_fields(rectified, document)
-            self._place_furniture(rectified, document)
-            self._read_rhythm(rectified, document)
-            self._read_looks(rectified, document)
-            self._read_spans(rectified, document)
-            self._read_display(rectified, document)
-            self._read_separators(rectified, document)
-
-            document.probes = probe_module.run(document)
-            for probe in document.probes:
-                self.trace.record(
-                    Stage.PROBE, probe.kind,
-                    Disposition.ACCEPTED if probe.ok else Disposition.REJECTED,
-                    zone_index=probe.zone_index,
-                    ok=probe.ok, computed=probe.computed, stated=probe.stated,
-                    detail=probe.detail,
-                )
-            self._audit(rectified, document)
+            self._measure_placed(rectified, document)
             self._climb_ladders(rectified, document)
 
             answer = self._ask_convergence(document)
@@ -1392,6 +1376,30 @@ class Conversion:
                         "top": round(line.bbox.top, 3)}
                        for line in document.unclaimed])
 
+    def _measure_placed(self, rectified: Rectified, document: Document) -> None:
+        """Every model-free pass that reads the placed Cells, in order, then
+        the Probes and the audit — after `_locate` and `_read_unclaimed`."""
+        self._read_marks(rectified, document)
+        self._read_caps(rectified, document)
+        self._read_fields(rectified, document)
+        self._place_furniture(rectified, document)
+        self._read_spans(rectified, document)
+        self._read_rhythm(rectified, document)
+        self._read_looks(rectified, document)
+        self._read_display(rectified, document)
+        self._read_separators(rectified, document)
+
+        document.probes = probe_module.run(document)
+        for probe in document.probes:
+            self.trace.record(
+                Stage.PROBE, probe.kind,
+                Disposition.ACCEPTED if probe.ok else Disposition.REJECTED,
+                zone_index=probe.zone_index,
+                ok=probe.ok, computed=probe.computed, stated=probe.stated,
+                detail=probe.detail,
+            )
+        self._audit(rectified, document)
+
     def _read_unclaimed(self, rectified: Rectified, document: Document) -> None:
         """Read each printed line no Cell claims on its own crop, and keep
         what its Zone does not print in `Zone.extra` — spec 0014, step 2.
@@ -1523,7 +1531,10 @@ class Conversion:
         """A ruled grid's cells as the page draws them: second lines joined,
         lines read on their own put in their cells, and each cell over the
         empty slots it covers — spec 0019, B1. See `spans.read`. After
-        `_read_looks`, so every line keeps the look measured on its ink."""
+        `_place_furniture`, whose rules are the grid, and before
+        `_read_rhythm` and `_read_looks`, which measure the table as the
+        page draws it. A second pass draws what the first did: `locate`
+        keeps the boxes of the Cells this step built."""
         started = time.perf_counter()
         rows = sum(len(zone.rows) for zone in document.zones)
         spans_module.read(document)

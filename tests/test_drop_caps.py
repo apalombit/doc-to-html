@@ -81,7 +81,23 @@ def test_the_models_letter_is_placed_and_its_paragraph_made_whole() -> None:
     cap = zone.blocks[0].lines[0]
     assert cap.text == "T" and cap.display == "cap" and cap.bbox is not None
     assert len(zone.blocks[0].lines) == 5
-    assert dropcap.read(picture(), document) == 0
+
+
+def test_read_again_after_locate_the_cap_is_placed_again() -> None:
+    """`locate` clears every Cell's box and cannot place a letter alone:
+    a Conversion that locates again after a third reading changed a Cell,
+    and every rederive, hand the cap back unplaced."""
+    zone = paragraph()
+    document = Document(source=Source(path="p.png", sha256="", width=WIDTH, height=HEIGHT),
+                        zones=[zone])
+    dropcap.read(picture(), document)
+    cap = zone.blocks[0].lines[0]
+    box = cap.bbox
+    cap.bbox = None
+    assert dropcap.read(picture(), document) == 1
+    assert cap.bbox == box and cap.display == "cap"
+    assert [block.kind for block in zone.blocks] == ["paragraph"]
+    assert len(zone.blocks[0].lines) == 5
 
 
 def test_a_paragraph_opening_lowercase_has_its_letter_read() -> None:

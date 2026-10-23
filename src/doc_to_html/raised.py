@@ -42,14 +42,13 @@ from __future__ import annotations
 
 import subprocess
 import tempfile
-import unicodedata
 from pathlib import Path
 from typing import Iterator
 
 import numpy as np
 
 from .ir import Cell, Document, Reading, Run, Zone
-from .locate import CONFIDENT, TESSERACT, available
+from .locate import CONFIDENT, TESSERACT, available, superscript
 from .preprocess import _cv2
 
 ImageArray = np.ndarray
@@ -78,16 +77,6 @@ SCALE = 6
 MARGIN = 2.0
 """How far, in x-heights, past a Cell's box its mark may stand: `locate`
 places a line from tesseract's words, and the mark may be no word to it."""
-
-
-def superscript(character: str) -> bool:
-    """A superscript digit or sign, `¹` or `⁺` — not a letter: `™` and `ª`
-    are drawn raised already, and are words."""
-    decomposition = unicodedata.decomposition(character)
-    if not decomposition.startswith("<super>"):
-        return False
-    base = chr(int(decomposition.split()[1], 16))
-    return not base.isalpha()
 
 
 def split(runs: list[Run]) -> list[Run]:

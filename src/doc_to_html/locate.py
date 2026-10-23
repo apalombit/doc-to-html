@@ -388,14 +388,53 @@ def _from_marks(image: ImageArray, zone: Zone,
 
 
 def cells_of(zone: Zone) -> list[tuple[Cell, int | None]]:
-    """A Zone's Cells in reading order, each with its table row or None —
-    and then the lines its Kind has no place for, `Zone.extra`, each with
-    None (spec 0014, step 1). Last, so a body Cell's position in this list
-    is the one `_from_grid` and `_from_pairs` count it by; and in it, so
-    they are placed, claim their line in `unclaimed`, and are measured by
-    `looks.read` like any other Cell."""
-    return _body_of(zone) + [(cell, None) for block in zone.extra
-                             for cell in block.lines]
+    """A Zone's Cells in reading order, each with its table row or None;
+    then a table cell's second lines, `Cell.below` (spec 0019, B1), each
+    with its row; and then the lines its Kind has no place for,
+    `Zone.extra`, each with None (spec 0014, step 1). After the body, so a
+    body Cell's position in this list is the one `_from_grid` and
+    `_from_pairs` count it by; and in it, so they are placed, claim their
+    line in `unclaimed`, and are measured by `looks.read` like any other
+    Cell — a second pass over a table whose lines `spans.read` joined
+    places and measures what the first did."""
+    return (_body_of(zone)
+            + [(line, index) for index, row in enumerate(zone.rows)
+               for cell in row.cells for line in cell.below]
+            + [(cell, None) for block in zone.extra for cell in block.lines])
+
+
+def superscript(character: str) -> bool:
+    """A superscript digit or sign, `¹` or `⁺` — not a letter: `™` and `ª`
+    are drawn raised already, and are words."""
+    decomposition = unicodedata.decomposition(character)
+    if not decomposition.startswith("<super>"):
+        return False
+    base = chr(int(decomposition.split()[1], 16))
+    return not base.isalpha()
+
+
+def _built(zone: Zone) -> set[int]:
+    """Every Cell of a table `spans.read` built, by id — spec 0019, B1: one
+    whose lines it joined or whose cells it spans. Placed on the model's
+    rows, each box is the grid's; placed again on the joined rows, the
+    repeated subjects of `timetable_0019` find other rows. So once built,
+    the table keeps its boxes and its readings whole."""
+    cells = [c for row in zone.rows for cell in row.cells for c in (cell, *cell.below)]
+    if not any(cell.span is not None or cell.below for row in zone.rows
+               for cell in row.cells):
+        return set()
+    return {id(c) for c in cells}
+
+
+def unraised(cell: Cell) -> str:
+    """A Cell's text without its raised marks — spec 0019, B2's `sup` Runs
+    and the superscripts they hold: tesseract reads a mark apart from its
+    line, or as `°` or `’`, and a Cell is matched to its words, and its
+    readings compared, by its words alone. `report_0011`'s `2027.³` is
+    read `2027.°`, `paper_0018`'s `Solberg¹` `Solberg'`. The same before
+    `raised.read` has made the marks Runs as after."""
+    text = "".join(run.text for run in cell.runs if run.kind != "sup")
+    return "".join(c for c in text if not superscript(c))
 
 
 WORD_BREAK = re.compile(r"[\s/·,]+")
@@ -537,11 +576,16 @@ def place(zone: Zone, found: Sequence[Word],
     claimed once.
     """
     cells = cells_of(zone)
-    folded = [fold(cell.text) for cell, _ in cells]
+    folded = [fold(unraised(cell)) for cell, _ in cells]
     repeated = {text for text in folded if text and folded.count(text) > 1}
-    options = [_candidates(text, found) if text else [] for text in folded]
+    # The Cells `spans.read` built keep the boxes it gave them — spec 0019,
+    # B1: a second pass over a joined grid draws what the first did.
+    built = _built(zone)
+    options = [_candidates(text, found) if text and id(cell) not in built else []
+               for text, (cell, _) in zip(folded, cells)]
     used: set[int] = set()
-    placed: list[BBox | None] = [None] * len(cells)
+    placed: list[BBox | None] = [cell.bbox if id(cell) in built else None
+                                 for cell, _ in cells]
 
     def free(first: int, last: int) -> bool:
         return not any(i in used for i in range(first, last + 1))
@@ -1075,8 +1119,11 @@ def locate(image: ImageArray, document: Document) -> tuple[int, int]:
     zones = [z for z in document.zones
              if z.bbox is not None and z.complete
              and (z.kind is not Kind.FIGURE or z.graphic_kind in MARKS)]
+    built = {key for zone in document.zones for key in _built(zone)}
     for zone in document.zones:
         for cell, _ in cells_of(zone):
+            if id(cell) in built:
+                continue
             cell.bbox = None
             _without_second(cell)
     document.unclaimed = []
@@ -1140,7 +1187,7 @@ def locate(image: ImageArray, document: Document) -> tuple[int, int]:
             cell.bbox = box
             placed += box is not None
             total += bool(cell.text.strip())
-            if box is not None:
+            if box is not None and id(cell) not in built:
                 _second(cell, words_[run[0]:run[1] + 1] if run is not None
                         else _inside(box, words_))
     located = [cell.bbox for zone in document.zones for cell, _ in cells_of(zone)

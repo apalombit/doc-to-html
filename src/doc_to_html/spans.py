@@ -33,8 +33,17 @@ one: the only other table with vertical rules is `statement_0006`'s tiles,
 three dividers and no horizontal rule. A table drawn without rules says
 nothing about where a cell ends, so every other table is left as it is.
 
-Run last of the steps that write the IR, after `looks.read`: each line keeps
-the look measured on its own ink wherever it goes.
+Run after `furniture.place`, whose rules are the grid, and **before
+`rhythm` and `looks`**, so every measure is taken on the table as the page
+draws it: a row's extent holds its joined lines (`looks._rows`), and a
+joined line is a Cell to `locate.cells_of`, measured on its own ink, whose
+chip `looks.read` then checks (`off_chips`). **A second pass over its own
+output draws what the first did** — a rederive, or a Conversion locating
+again after a third reading (spec 0019, D2): `locate` keeps the boxes of
+the Cells this step built, its joined lines and its spanning cells, which
+no run of words places as the grid does. Until then this ran after
+`looks.read`, a rederive of its own output lost the timetable's bold
+subjects, and a row joined whole lost the rule under it.
 """
 
 from __future__ import annotations
@@ -160,11 +169,15 @@ def _joined(rows: list[Row], grid: _Grid) -> list[Row]:
             lower = _top(cell) if cell.bbox is not None else _height(row)
             if upper is None or lower is None or grid.ruled_between(upper, lower, lane):
                 continue
-            target.below.append(_off_its_chip(cell, target))
+            target.below.append(cell)
             kept[column] = Cell()
         if any(cell.text.strip() for cell in kept):
             out.append(Row(cells=kept, role=row.role, under=row.under, fill=row.fill,
                            leader=row.leader, gap=row.gap))
+        elif above is not None and above is out[-1] and row.under is not None:
+            # Joined whole: the line the page draws under the drawn cell is
+            # under its last printed line.
+            above.under = row.under
     return out
 
 
@@ -179,6 +192,15 @@ def _off_its_chip(line: Cell, above: Cell) -> Cell:
             and box.right <= look.chip.right and box.bottom <= look.chip.bottom):
         line.look = replace(look, fill=None, chip=None, radius=None)
     return line
+
+
+def off_chips(document: Document) -> None:
+    """Every joined line's measured chip checked against its cell's first
+    line (`_off_its_chip`) — run by `looks.read` once it has measured them."""
+    for zone in document.zones:
+        for row in zone.rows:
+            for cell in row.cells:
+                cell.below = [_off_its_chip(line, cell) for line in cell.below]
 
 
 def _placed_extra(zone: Zone, grid: _Grid) -> None:

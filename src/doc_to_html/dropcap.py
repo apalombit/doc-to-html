@@ -51,7 +51,7 @@ def _ink(grey: ImageArray) -> ImageArray:
     """Dark type on a light ground, by Otsu over the crop."""
     cv2 = _cv2()
     _, ink = cv2.threshold(grey, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
-    return ink > 0
+    return np.asarray(ink, dtype=np.uint8) > 0
 
 
 NARROW = 0.25
@@ -146,7 +146,13 @@ def read(image: ImageArray | None, document: Document) -> int:
         index = 0
         while index < len(zone.blocks):
             block = zone.blocks[index]
-            if any(cell.display == "cap" for cell in block.lines):
+            placed = next((cell for cell in block.lines if cell.display == "cap"), None)
+            if placed is not None:
+                # Read before, and its box taken off by `locate`, which
+                # clears every Cell's and cannot place a letter alone: its
+                # glyph is found again. The paragraph is whole already.
+                placed.bbox = glyph(grey, zone, index)
+                found += placed.bbox is not None
                 index += 1
                 continue
             box = glyph(grey, zone, index)

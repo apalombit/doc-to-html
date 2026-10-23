@@ -109,6 +109,7 @@ import numpy as np
 from .ir import (BBox, Cell, Document, Furniture, Kind, Look, RowRole, Run, Stroke,
                  Style, Zone)
 from .locate import cells_of
+from .spans import off_chips
 from .wire import MARKS
 from .preprocess import ImageArray, _cv2, crop_origin
 from .style import SAME_COLOUR, body_glyph, dominant, type_lines, type_mask
@@ -833,7 +834,9 @@ def _rows(rgb: ImageArray, document: Document, glyph: float,
         placed: list[tuple[int, int, int]] = []
         for index, row in enumerate(zone.rows):
             row.under, row.fill, row.gap = None, None, None
-            boxes = [c.bbox for c in row.cells if c.bbox is not None and c.text.strip()]
+            # A cell's second lines are the row's too — spec 0019, B1.
+            boxes = [line.bbox for c in row.cells for line in (c, *c.below)
+                     if line.bbox is not None and line.text.strip()]
             if boxes:
                 placed.append((int(min(b.top for b in boxes) * height),
                                int(np.ceil(max(b.bottom for b in boxes) * height)), index))
@@ -1198,6 +1201,9 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
                     and all(look.size is not None for look in looks)):
                 block.size = round(float(np.median([look.size for look in looks
                                                     if look.size is not None])), 2)
+    # A ruled grid's joined lines, measured, are checked for the cell's
+    # ground read as a chip — spec 0019, B1.
+    off_chips(document)
 
 
 def _zone_faces(document: Document, stems: dict[int, list[tuple[Cell, list[float]]]],

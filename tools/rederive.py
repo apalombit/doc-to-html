@@ -75,7 +75,9 @@ and can be recomputed from it, in the order a Conversion runs them:
                                     looks.read             (_read_looks)
    13. A ruled grid's second lines joined to the cells above them, its
        lines read on their own put in the empty cells they stand in, and
-       each cell over the empty slots it covers — spec 0019, B1
+       each cell over the empty slots it covers — spec 0019, B1; run after
+       step 10's furniture and before steps 11 and 12, which measure the
+       table as drawn
                                     spans.read             (_read_spans)
    14. Each superscript its own Run, and the raised marks the reading
        dropped or set apart read off the page — spec 0019, B2; run right
@@ -206,10 +208,10 @@ def rederive(document: Document, png: Path) -> None:
     dropcap.read(plain, document)
     fields.read(plain, document)
     furniture.place(document.furniture, document.zones)
+    spans.read(document)
     if document.style is not None:
         rhythm.read(plain, document)
     looks.read(plain, document, photographed=rectified.warped, inverted=rectified.inverted)
-    spans.read(document)
     display.read(plain, document)
     separator.read(plain, document)
     # Last, as the audit is in a Conversion: step 9 can widen a Zone's box.
