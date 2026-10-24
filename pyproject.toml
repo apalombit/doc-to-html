@@ -21,6 +21,13 @@ tesseract = ["pytesseract>=0.3.13"]
 # earns a place before anything in `src/` depends on it.
 detector = ["onnxruntime>=1.20"]
 dev = ["pytest>=8.0", "mypy>=1.11"]
+# Building the corpus's real PDF pages (spec 0020 §P): pypdfium2 renders a page
+# (Apache-2.0 / BSD-3), pdfplumber reads its text layer with positions (MIT).
+# Not PyMuPDF, which is AGPL. Nothing in `src/` imports either.
+corpus = [
+    "pdfplumber>=0.11.10",
+    "pypdfium2>=5.14.0",
+]
 
 [project.scripts]
 doc-to-html = "doc_to_html.cli:main"

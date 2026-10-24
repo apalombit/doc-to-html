@@ -1,0 +1,414 @@
+{
+ "about": "The faces a corpus page may name (spec 0020, step 0). Written by tools/corpus_fonts.py; see doc_to_html.factory.fonts for how each was measured.",
+ "glyphs": "àáâãäçèéêëìíîïñòóôõöùúûüœÀÁÂÃÇÈÉÊÍÑÓÔÕÚÜŒ€£«»’“”–—",
+ "generic": {
+  "serif": "serif",
+  "sans-serif": "sans",
+  "monospace": "mono",
+  "cursive": "script",
+  "ui-serif": "serif",
+  "ui-sans-serif": "sans",
+  "ui-monospace": "mono",
+  "system-ui": "sans"
+ },
+ "faces": {
+  "American Typewriter": {
+   "class": "serif",
+   "origin": "apple",
+   "weights": 3
+  },
+  "Baskerville": {
+   "class": "serif",
+   "origin": "apple",
+   "weights": 3
+  },
+  "Baskervville": {
+   "class": "serif",
+   "origin": "open",
+   "weights": 1
+  },
+  "Big Caslon": {
+   "class": "serif",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Bodoni 72": {
+   "class": "serif",
+   "origin": "apple",
+   "weights": 2
+  },
+  "Charter": {
+   "class": "serif",
+   "origin": "apple",
+   "weights": 3
+  },
+  "Cochin": {
+   "class": "serif",
+   "origin": "apple",
+   "weights": 2
+  },
+  "Cormorant Garamond": {
+   "class": "serif",
+   "origin": "open",
+   "weights": 2
+  },
+  "Didot": {
+   "class": "serif",
+   "origin": "apple",
+   "weights": 2
+  },
+  "Georgia": {
+   "class": "serif",
+   "origin": "apple",
+   "weights": 2
+  },
+  "Hoefler Text": {
+   "class": "serif",
+   "origin": "apple",
+   "weights": 2
+  },
+  "Libre Baskerville": {
+   "class": "serif",
+   "origin": "open",
+   "weights": 2
+  },
+  "Lora": {
+   "class": "serif",
+   "origin": "open",
+   "weights": 2
+  },
+  "PT Serif": {
+   "class": "serif",
+   "origin": "apple",
+   "weights": 2
+  },
+  "PT Serif Caption": {
+   "class": "serif",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Palatino": {
+   "class": "serif",
+   "origin": "apple",
+   "weights": 2
+  },
+  "Rockwell": {
+   "class": "serif",
+   "origin": "apple",
+   "weights": 2
+  },
+  "STIX Two Text": {
+   "class": "serif",
+   "origin": "apple",
+   "weights": 4
+  },
+  "Source Serif Variable": {
+   "class": "serif",
+   "origin": "open",
+   "weights": 5
+  },
+  "Times": {
+   "class": "serif",
+   "origin": "apple",
+   "weights": 2
+  },
+  "Times New Roman": {
+   "class": "serif",
+   "origin": "apple",
+   "weights": 2
+  },
+  "Arial": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 2
+  },
+  "Arial Narrow": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 2
+  },
+  "Arial Rounded MT Bold": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Avenir": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 5
+  },
+  "Avenir Next": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 6
+  },
+  "Avenir Next Condensed": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 6
+  },
+  "Comfortaa": {
+   "class": "sans",
+   "origin": "open",
+   "weights": 5
+  },
+  "Galvji": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 2
+  },
+  "Geneva": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Gill Sans": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 5
+  },
+  "Helvetica": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 3
+  },
+  "Helvetica Neue": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 5
+  },
+  "Hind": {
+   "class": "sans",
+   "origin": "open",
+   "weights": 5
+  },
+  "Lucida Grande": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 2
+  },
+  "Microsoft Sans Serif": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Open Sans": {
+   "class": "sans",
+   "origin": "open",
+   "weights": 3
+  },
+  "Optima": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 3
+  },
+  "PT Sans": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 2
+  },
+  "PT Sans Caption": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 2
+  },
+  "PT Sans Narrow": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 2
+  },
+  "Skia": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 4
+  },
+  "Source Sans Variable": {
+   "class": "sans",
+   "origin": "open",
+   "weights": 5
+  },
+  "Tahoma": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 2
+  },
+  "Trebuchet MS": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 2
+  },
+  "Ubuntu": {
+   "class": "sans",
+   "origin": "open",
+   "weights": 4
+  },
+  "Verdana": {
+   "class": "sans",
+   "origin": "apple",
+   "weights": 2
+  },
+  "Andale Mono": {
+   "class": "mono",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Courier": {
+   "class": "mono",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Courier New": {
+   "class": "mono",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Menlo": {
+   "class": "mono",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Monaco": {
+   "class": "mono",
+   "origin": "apple",
+   "weights": 1
+  },
+  "PT Mono": {
+   "class": "mono",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Source Code Variable": {
+   "class": "mono",
+   "origin": "open",
+   "weights": 1
+  },
+  "Apple Chancery": {
+   "class": "script",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Bradley Hand": {
+   "class": "script",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Brush Script MT": {
+   "class": "script",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Caveat": {
+   "class": "script",
+   "origin": "open",
+   "weights": 1
+  },
+  "Chalkboard SE": {
+   "class": "script",
+   "origin": "apple",
+   "weights": 2
+  },
+  "Marker Felt": {
+   "class": "script",
+   "origin": "apple",
+   "weights": 2
+  },
+  "Noteworthy": {
+   "class": "script",
+   "origin": "apple",
+   "weights": 2
+  },
+  "Savoye LET": {
+   "class": "script",
+   "origin": "apple",
+   "weights": 1
+  },
+  "SignPainter": {
+   "class": "script",
+   "origin": "apple",
+   "weights": 2
+  },
+  "Snell Roundhand": {
+   "class": "script",
+   "origin": "apple",
+   "weights": 3
+  },
+  "Zapfino": {
+   "class": "script",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Arial Black": {
+   "class": "display",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Chalkduster": {
+   "class": "display",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Cinzel": {
+   "class": "display",
+   "origin": "open",
+   "weights": 2
+  },
+  "Copperplate": {
+   "class": "display",
+   "origin": "apple",
+   "weights": 3
+  },
+  "DIN Condensed": {
+   "class": "display",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Herculanum": {
+   "class": "display",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Impact": {
+   "class": "display",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Luminari": {
+   "class": "display",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Oswald": {
+   "class": "display",
+   "origin": "open",
+   "weights": 5
+  },
+  "Papyrus": {
+   "class": "display",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Phosphate": {
+   "class": "display",
+   "origin": "apple",
+   "weights": 1
+  },
+  "Playfair Display": {
+   "class": "display",
+   "origin": "open",
+   "weights": 5
+  },
+  "Trattatello": {
+   "class": "display",
+   "origin": "apple",
+   "weights": 1
+  }
+ },
+ "left_out": {
+  "Bodoni 72 Oldstyle": "lacks €",
+  "Futura": "lacks €",
+  "DIN Alternate": "lacks €",
+  "Bodoni 72 Smallcaps": "lacks €",
+  "Party LET": "does not resolve",
+  "Academy Engraved LET": "does not resolve"
+ }
+}

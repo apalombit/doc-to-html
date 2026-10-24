@@ -1,6 +1,7 @@
 # The corpus: 600 pages, chosen by their variability
 
-**Status: planned 2026-10-24, issue #43; not started.**
+**Status: in progress, issue #43. Step 0 done 2026-10-24 ("Outcome —
+the steps").**
 - **This is step L1b** of the level-up plan
   ([`../level-up.md`](../level-up.md) §6), on branch `level-up`.
 - **It is written to be run in a fresh chat.** Everything it needs is here
@@ -586,6 +587,68 @@ its start:
 | a fixed page | the render is a page at the source's width | — |
 
 ---
+
+## Outcome — the steps
+
+### Step 0 — done 2026-10-24
+
+**Alessandro's three decisions, 2026-10-24:**
+
+| # | asked | decided |
+|---|---|---|
+| 1 | how pages are written | **subagents, two models**: each takes about 10 cards, the brief and the validator, writes and validates its batch, and returns a summary. Batches alternate between Opus and Sonnet, for `level-up.md` §4.6's "several generators". The pilot carries both, and his look at its sheets decides whether they read as different hands |
+| 2 | storage | **commit everything** as plain files. Re-measured after the PDF pilot; stop and ask if the total heads past about 150 MB |
+| 3 | language shares | **as proposed**: English 450, Italian 50, French 50, Spanish 25, Portuguese 25 |
+
+**The facts, re-checked the same day on `level-up` at `4461fa1`:**
+- 1394 tests pass, 1 skipped (10m28s); `mypy src/` clean.
+- The 21 corpus PNGs average 107.6 KB. Over the 31 pages (the 21 and the
+  probe's ten) a picture costs **0.16 bytes per pixel**, which is what
+  the storage estimate was taken from: about 90 MB of generated PNGs,
+  20–40 MB for the PDF pages, about 6 MB of HTML.
+- No PDF library was in `.venv` and poppler is absent; tesseract is at
+  `/opt/homebrew/bin/tesseract`. Git LFS and PyYAML are not installed.
+- `project()` walks `SHOW_TEXT` text nodes only; the scorer folds case.
+- One `project()` and one `screenshot()` of a probe page take 1.1 s and
+  2.0 s, so the validator's two shoots and its checks come to about 6 s a
+  page.
+
+**Installed:** `pypdfium2` 5.14.0 and `pdfplumber` 0.11.10 (with
+`pdfminer.six` 20260107), as the `corpus` extra in `pyproject.toml`,
+locked in `uv.lock`. Nothing in `src/` that converts imports either.
+
+**The font allow-list, `corpus/fonts.json`** (`tools/corpus_fonts.py`,
+`doc_to_html.factory.fonts`). 84 candidates, classed by hand, then
+measured in the corpus's own Chrome: each must resolve and cover the five
+languages' accents and `€ £ « » ’ “ ” – —`. **78 kept:** 21 serif, 26
+sans, 7 mono, 11 script, 13 display. Two origins:
+- `apple`, shipped in `/System/Library/Fonts` and `Supplemental`;
+- `open`, OFL or Ubuntu-licensed faces in `/Library/Fonts` (Lora, Open
+  Sans, Source Sans, Serif and Code, Ubuntu, Playfair Display, Oswald and
+  others).
+
+Left out: Futura, DIN Alternate and two Bodoni 72 cuts lack `€`; Party LET
+and Academy Engraved LET do not resolve by those names. Also left out on
+purpose: the commercial and personal-use faces installed in
+`/Library/Fonts` on this machine (a page in one cannot be re-shot
+elsewhere, and some are licensed for personal use only), faces for
+scripts the corpus does not use, and dingbats.
+
+**Measured, and it shapes the brief:** a synthesised bold keeps the
+regular's advance widths (Monaco, one face, counts one weight). A
+monospaced face keeps them at every weight too, so a mono face counts one
+weight however many it has. `type.weights` therefore names a face with
+three or more real weights: Helvetica Neue, Avenir, Avenir Next, Gill
+Sans, Optima, Skia, Source Sans and Serif, Ubuntu, Hind, Comfortaa, STIX
+Two Text, Charter, Baskerville, American Typewriter, Open Sans, Playfair
+Display, Oswald, Copperplate, Snell Roundhand.
+
+**Code and tests:** `src/doc_to_html/factory/` (`browser.evaluate`, a
+script run in `projection`'s Chrome with its flags; `fonts`), and
+`tests/test_factory_fonts.py`, 6 tests: the list on disk is the code's,
+every class has at least five faces, and on this machine every listed face
+still resolves and covers the glyphs. `corpus/README.md` holds the layout
+on disk.
 
 ## Outcome — the corpus
 
