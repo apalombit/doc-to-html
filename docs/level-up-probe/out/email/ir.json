@@ -1,0 +1,1708 @@
+{
+  "source": {
+    "path": "/Users/aless/Desktop/Projects/pic-to-html/doc-to-html/debug/probe/unseen-2026-10-24/src/email.png",
+    "sha256": "f194b02a98e0bd3648f56828081ca638988beb3fb2ab7548cb29127bb038bcad",
+    "width": 820,
+    "height": 591,
+    "rectified_width": 820,
+    "rectified_height": 591,
+    "paper": null,
+    "surround": null
+  },
+  "ir_version": 1,
+  "rectifier_version": 7,
+  "hint": null,
+  "page_px": 820,
+  "style": {
+    "page_bg": [
+      255,
+      255,
+      255
+    ],
+    "ink": [
+      32,
+      33,
+      36
+    ],
+    "accent": null,
+    "shade": [
+      218,
+      220,
+      224
+    ],
+    "body_px": 13.5,
+    "face": "sans"
+  },
+  "zones": [
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 0,
+      "bbox": {
+        "left": 0.045121951219512194,
+        "top": 0.047377326565143825,
+        "right": 0.1475609756097561,
+        "bottom": 0.06260575296108291
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.04471544715447155,
+                "top": 0.045121263395375075,
+                "right": 0.14878048780487804,
+                "bottom": 0.06824591088550479
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Inbox \u00b7 3 of 214",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": [
+                    {
+                      "text": "Inbox \u00b7 3 of 214",
+                      "kind": "text"
+                    }
+                  ]
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Inbox 3 of 214",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.9,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  33,
+                  36
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": 1.0,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 1,
+      "bbox": {
+        "left": 0.7268292682926829,
+        "top": 0.047377326565143825,
+        "right": 0.9560975609756097,
+        "bottom": 0.0676818950930626
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "address",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.7272357723577236,
+                "top": 0.046813310772701636,
+                "right": 0.9560975609756097,
+                "bottom": 0.06655386350817823
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "j.marchetti@lindqvist-arch.example",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "j.marchetti@lindqvist-arch.example",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.9,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  95,
+                  99,
+                  104
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "right",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "pairs",
+      "role": "body",
+      "band": 1,
+      "column": 0,
+      "bbox": {
+        "left": 0.04390243902439024,
+        "top": 0.1218274111675127,
+        "right": 0.6475609756097561,
+        "bottom": 0.27749576988155666
+      },
+      "title": "Revised drawings for the Elm Street library extension",
+      "rows": [],
+      "pairs": [
+        {
+          "label": {
+            "bbox": {
+              "left": 0.045121951219512194,
+              "top": 0.18781725888324874,
+              "right": 0.07845528455284553,
+              "bottom": 0.20304568527918782
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "From",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "From",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.9,
+              "bold": false,
+              "italic": false,
+              "color": [
+                95,
+                99,
+                104
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": {
+              "left": 0.1073170731707317,
+              "top": 0.18725324309080651,
+              "right": 0.4719512195121951,
+              "bottom": 0.2075578116187253
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "Sofia Lindqvist <s.lindqvist@lindqvist-arch.example>",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "Sofia Lindqvist <s.lindqvist@lindqvist-arch.example>",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.9,
+              "bold": false,
+              "italic": false,
+              "color": [
+                32,
+                33,
+                36
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "marks": []
+        },
+        {
+          "label": {
+            "bbox": {
+              "left": 0.04390243902439024,
+              "top": 0.22165820642978004,
+              "right": 0.05934959349593496,
+              "bottom": 0.23688663282571912
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "To",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "To",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.9,
+              "bold": false,
+              "italic": null,
+              "color": [
+                95,
+                99,
+                104
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": {
+              "left": 0.10772357723577235,
+              "top": 0.22109419063733787,
+              "right": 0.21341463414634146,
+              "bottom": 0.2374506486181613
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "Giulia Marchetti",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "Giulia Marchetti",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.9,
+              "bold": false,
+              "italic": false,
+              "color": [
+                32,
+                33,
+                36
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "marks": []
+        },
+        {
+          "label": {
+            "bbox": {
+              "left": 0.04430894308943089,
+              "top": 0.25662718556119574,
+              "right": 0.06219512195121951,
+              "bottom": 0.272419627749577
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "Cc",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "Cc",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.9,
+              "bold": false,
+              "italic": null,
+              "color": [
+                95,
+                99,
+                104
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": {
+              "left": 0.10813008130081302,
+              "top": 0.25662718556119574,
+              "right": 0.3097560975609756,
+              "bottom": 0.27749576988155666
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "Ben Adeyemi, Planning Office",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "Ben Adeyemi, Planning Office",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.9,
+              "bold": false,
+              "italic": false,
+              "color": [
+                32,
+                33,
+                36
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "marks": []
+        }
+      ],
+      "blocks": [],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": 1.5,
+      "title_caps": false,
+      "title_bold": false,
+      "face": null,
+      "title_color": [
+        32,
+        33,
+        36
+      ],
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": "left",
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 1,
+      "column": 1,
+      "bbox": {
+        "left": 0.7951219512195122,
+        "top": 0.18781725888324874,
+        "right": 0.9548780487804878,
+        "bottom": 0.20642978003384094
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.7955284552845528,
+                "top": 0.18725324309080654,
+                "right": 0.9552845528455285,
+                "bottom": 0.20586576424139877
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Thu 16 Oct 2026, 09:42",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Thu 16 Oct 2026, 09:42",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.9,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  95,
+                  99,
+                  104
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "right",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "pairs",
+      "role": "body",
+      "band": 2,
+      "column": 0,
+      "bbox": {
+        "left": 0.05731707317073171,
+        "top": 0.31810490693739424,
+        "right": 0.5573170731707318,
+        "bottom": 0.350253807106599
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [
+        {
+          "label": {
+            "bbox": {
+              "left": 0.058130081300813014,
+              "top": 0.31754089114495204,
+              "right": 0.08821138211382115,
+              "bottom": 0.3508178228990412
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "PDF",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "PDF",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.2,
+              "bold": false,
+              "italic": null,
+              "color": [
+                255,
+                255,
+                255
+              ],
+              "fill": [
+                217,
+                48,
+                37
+              ],
+              "chip": {
+                "left": 0.05609756097560976,
+                "top": 0.3147208121827411,
+                "right": 0.09146341463414634,
+                "bottom": 0.3536379018612521
+              },
+              "radius": 0.0,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": {
+              "left": 0.10203252032520324,
+              "top": 0.3243090806542583,
+              "right": 0.27967479674796747,
+              "bottom": 0.3446136491821771
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "ElmSt_GA_rev-D.pdf 4.8 MB",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "ElmSt_GA_rev-D.pdf 4.8 vB",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              },
+              {
+                "engine": "ollama",
+                "text": "ElmSt_GA_rev-D.pdf 4.8 MB",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              }
+            ],
+            "state": "resolved",
+            "look": {
+              "size": 0.9,
+              "bold": false,
+              "italic": false,
+              "color": [
+                32,
+                33,
+                36
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "marks": []
+        },
+        {
+          "label": {
+            "bbox": {
+              "left": 0.3239837398373984,
+              "top": 0.32712915961646927,
+              "right": 0.3475609756097561,
+              "bottom": 0.3406655386350818
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "XLS",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "XLS",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.8,
+              "bold": true,
+              "italic": null,
+              "color": [
+                255,
+                255,
+                255
+              ],
+              "fill": [
+                24,
+                128,
+                56
+              ],
+              "chip": {
+                "left": 0.3195121951219512,
+                "top": 0.31810490693739424,
+                "right": 0.3524390243902439,
+                "bottom": 0.350253807106599
+              },
+              "radius": 0.21,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": {
+              "left": 0.3626016260162601,
+              "top": 0.3243090806542583,
+              "right": 0.5565040650406504,
+              "bottom": 0.34348561759729274
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "Door_schedule_v3.xlsx 212 KB",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "Door_schedule_v3.xlsx 212 KB",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.9,
+              "bold": false,
+              "italic": false,
+              "color": [
+                32,
+                33,
+                36
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "marks": []
+        }
+      ],
+      "blocks": [],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 3,
+      "column": 0,
+      "bbox": {
+        "left": 0.04390243902439024,
+        "top": 0.3976311336717428,
+        "right": 0.9134146341463415,
+        "bottom": 0.49915397631133673
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.04471544715447155,
+                "top": 0.3970671178793006,
+                "right": 0.1089430894308943,
+                "bottom": 0.4173716864072194
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Hi Giulia,",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Hi Giulia,",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  33,
+                  36
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        },
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.0434959349593496,
+                "top": 0.44839255499153974,
+                "right": 0.9130081300813008,
+                "bottom": 0.4703891708967851
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Attached are revision D of the general arrangement drawings and the updated door schedule. The main changes since",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Attached are revision D of the general arrangement drawings and the updated door schedule. The main changes since",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  33,
+                  36
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.04471544715447155,
+                "top": 0.48223350253807107,
+                "right": 0.1475609756097561,
+                "bottom": 0.4997179921037789
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "revision C are:",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "revision C are:",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  33,
+                  36
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": 0.03102
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "list",
+      "role": "body",
+      "band": 4,
+      "column": 0,
+      "bbox": {
+        "left": 0.0524390243902439,
+        "top": 0.5346869712351946,
+        "right": 0.6451219512195122,
+        "bottom": 0.6243654822335025
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.07073170731707316,
+                "top": 0.5346869712351946,
+                "right": 0.6451219512195122,
+                "bottom": 0.55668358714044
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "the reading room glazing is set back 600 mm to clear the root protection zone;",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "the reading room glazing is set back 600 mm to clear the root protection zone;",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  33,
+                  36
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        },
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.07073170731707316,
+                "top": 0.5685279187817259,
+                "right": 0.573170731707317,
+                "bottom": 0.5905245346869712
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "the accessible WC moves next to the lift lobby, as discussed on site;",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "the accessible WC moves next to the lift lobby, as discussed on site;",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  33,
+                  36
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": 0.01184
+        },
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.07073170731707316,
+                "top": 0.601804850535815,
+                "right": 0.5646341463414634,
+                "bottom": 0.6243654822335025
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "two doors on the east corridor change to FD30S with vision panels.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "two doors on the east corridor change to FD30S with vision panels.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  33,
+                  36
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": 0.01128
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 5,
+      "column": 0,
+      "bbox": {
+        "left": 0.04390243902439024,
+        "top": 0.6531302876480541,
+        "right": 0.8926829268292683,
+        "bottom": 0.7106598984771574
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.04430894308943089,
+                "top": 0.6531302876480541,
+                "right": 0.8926829268292683,
+                "bottom": 0.7106598984771574
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Could you confirm by Monday whether the structural engineer needs to see the glazing change before we submit to planning?",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Could you confirm by Monday whether the structural engineer needs to see the glazing change before we submit to planning?",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  33,
+                  36
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": 7,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 6,
+      "column": 0,
+      "bbox": {
+        "left": 0.04390243902439024,
+        "top": 0.7428087986463621,
+        "right": 0.3097560975609756,
+        "bottom": 0.8189509306260575
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.04390243902439024,
+                "top": 0.7439368302312465,
+                "right": 0.19065040650406506,
+                "bottom": 0.763677382966723
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Sofia Lindqvist RIBA",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": [
+                    {
+                      "text": "Sofia Lindqvist RIBA",
+                      "kind": "text"
+                    }
+                  ]
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Sofia Lindqvist RIBA",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.9,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  32,
+                  33,
+                  36
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": 1.02,
+          "gap": null
+        },
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.04390243902439024,
+                "top": 0.7727016356457981,
+                "right": 0.3097560975609756,
+                "bottom": 0.7930062041737169
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Associate Director, Lindqvist Architects",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Associate Director, Lindqvist Architects",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.9,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  95,
+                  99,
+                  104
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": 0.00902
+        },
+        {
+          "kind": "address",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.04471544715447155,
+                "top": 0.8037225042301185,
+                "right": 0.16666666666666669,
+                "bottom": 0.8195149464184996
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "+44 113 496 0182",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "+44 113 496 0182",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.9,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  95,
+                  99,
+                  104
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": 0.01072
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": 7,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 7,
+      "column": 0,
+      "bbox": {
+        "left": 0.06219512195121951,
+        "top": 0.8629441624365483,
+        "right": 0.9414634146341463,
+        "bottom": 0.9424703891708968
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "attribution",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.06219512195121951,
+                "top": 0.8623801466441061,
+                "right": 0.4191056910569106,
+                "bottom": 0.8809926677946982
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "On Tue 14 Oct 2026 at 17:05, Giulia Marchetti wrote:",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "On Tue 14 Oct 2026 at 17:05, Giulia Marchetti wrote:",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.9,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  95,
+                  99,
+                  104
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        },
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.06219512195121951,
+                "top": 0.8945290468133107,
+                "right": 0.941869918699187,
+                "bottom": 0.9153976311336718
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Thanks Sofia \u2013 the client has signed off the layout. Please send the next revision when it is ready so we can keep to the planning",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Thanks Sofia the client has signed off the layout. Please send the next revision when it is ready so we can keep to the planning",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.9,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  95,
+                  99,
+                  104
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.06219512195121951,
+                "top": 0.9272419627749577,
+                "right": 0.09552845528455285,
+                "bottom": 0.943034404963339
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "date.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "date.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.9,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  95,
+                  99,
+                  104
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": 0.01354
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    }
+  ],
+  "corrections": [],
+  "probes": [],
+  "gaps": [],
+  "failures": [],
+  "caveats": [],
+  "shortfalls": [],
+  "unclaimed": [],
+  "regions": [
+    {
+      "top": 0.0,
+      "bottom": 1.0,
+      "flow": "single",
+      "splits": [],
+      "rows": 1
+    }
+  ],
+  "separators": [
+    0.08544839255499154
+  ],
+  "furniture": [
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.04390243902439024,
+        "top": 0.08460236886632826,
+        "right": 0.9560975609756097,
+        "bottom": 0.08629441624365482
+      },
+      "thickness": 0.0012195121951219512,
+      "color": [
+        218,
+        220,
+        224
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.04878048780487805,
+        "top": 0.3062605752961083,
+        "right": 0.5658536585365853,
+        "bottom": 0.3079526226734349
+      },
+      "thickness": 0.0012195121951219512,
+      "color": [
+        218,
+        220,
+        224
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.5695121951219512,
+        "top": 0.3130287648054145,
+        "right": 0.5707317073170731,
+        "bottom": 0.3553299492385787
+      },
+      "thickness": 0.0012195121951219512,
+      "color": [
+        218,
+        220,
+        224
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.04878048780487805,
+        "top": 0.3604060913705584,
+        "right": 0.5658536585365853,
+        "bottom": 0.36209813874788493
+      },
+      "thickness": 0.0012195121951219512,
+      "color": [
+        218,
+        220,
+        224
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.04390243902439024,
+        "top": 0.8527918781725888,
+        "right": 0.0475609756097561,
+        "bottom": 0.9560067681895094
+      },
+      "thickness": 0.003658536585365854,
+      "color": [
+        218,
+        220,
+        224
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    }
+  ]
+}

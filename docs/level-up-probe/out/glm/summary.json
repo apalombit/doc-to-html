@@ -1,0 +1,88 @@
+{
+  "payslip": {
+    "seconds": 10.3,
+    "source_words": 121,
+    "vanished": [],
+    "invented": [],
+    "vocabulary_recall": 1.0
+  },
+  "labreport": {
+    "seconds": 8.8,
+    "source_words": 134,
+    "vanished": [
+      "109"
+    ],
+    "invented": [
+      "10"
+    ],
+    "vocabulary_recall": 0.993
+  },
+  "nutrition": {
+    "seconds": 4.7,
+    "source_words": 98,
+    "vanished": [],
+    "invented": [],
+    "vocabulary_recall": 1.0
+  },
+  "recipe": {
+    "seconds": 8.6,
+    "source_words": 141,
+    "vanished": [],
+    "invented": [
+      "5"
+    ],
+    "vocabulary_recall": 1.0
+  },
+  "minutes": {
+    "seconds": 9.5,
+    "source_words": 152,
+    "vanished": [],
+    "invented": [],
+    "vocabulary_recall": 1.0
+  },
+  "flyer": {
+    "seconds": 4.0,
+    "source_words": 65,
+    "vanished": [],
+    "invented": [],
+    "vocabulary_recall": 1.0
+  },
+  "quiz": {
+    "seconds": 6.3,
+    "source_words": 107,
+    "vanished": [
+      "10",
+      "total"
+    ],
+    "invented": [],
+    "vocabulary_recall": 0.981
+  },
+  "datasheet": {
+    "seconds": 8.2,
+    "source_words": 133,
+    "vanished": [],
+    "invented": [
+      "p0e"
+    ],
+    "vocabulary_recall": 1.0
+  },
+  "contract": {
+    "seconds": 8.8,
+    "source_words": 160,
+    "vanished": [],
+    "invented": [],
+    "vocabulary_recall": 1.0
+  },
+  "email": {
+    "seconds": 6.2,
+    "source_words": 133,
+    "vanished": [
+      "214",
+      "3",
+      "inbox",
+      "j"
+    ],
+    "invented": [],
+    "vocabulary_recall": 0.97
+  }
+}

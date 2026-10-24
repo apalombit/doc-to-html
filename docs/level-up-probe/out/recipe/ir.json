@@ -1,0 +1,2989 @@
+{
+  "source": {
+    "path": "/Users/aless/Desktop/Projects/pic-to-html/doc-to-html/debug/probe/unseen-2026-10-24/src/recipe.png",
+    "sha256": "620955b33404c39ef8a4ef3c6a0273e5ff45aa992208d980480595ae01897122",
+    "width": 900,
+    "height": 636,
+    "rectified_width": 900,
+    "rectified_height": 636,
+    "paper": null,
+    "surround": null
+  },
+  "ir_version": 1,
+  "rectifier_version": 7,
+  "hint": null,
+  "page_px": 900,
+  "style": {
+    "page_bg": [
+      251,
+      248,
+      243
+    ],
+    "ink": [
+      45,
+      42,
+      38
+    ],
+    "accent": [
+      122,
+      46,
+      18
+    ],
+    "shade": [
+      239,
+      227,
+      211
+    ],
+    "body_px": 14.5,
+    "face": "serif"
+  },
+  "zones": [
+    {
+      "kind": "pairs",
+      "role": "header",
+      "band": 0,
+      "column": 0,
+      "bbox": {
+        "left": 0.044444444444444446,
+        "top": 0.05345911949685535,
+        "right": 0.4955555555555556,
+        "bottom": 0.18867924528301888
+      },
+      "title": "Roasted Squash & Farro Salad",
+      "rows": [],
+      "pairs": [
+        {
+          "label": {
+            "bbox": {
+              "left": 0.05722222222222222,
+              "top": 0.1738993710691824,
+              "right": 0.09022222222222223,
+              "bottom": 0.18715932914046124
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "PREP",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "PREP",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.73,
+              "bold": true,
+              "italic": false,
+              "color": null,
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": {
+              "left": 0.09551851851851852,
+              "top": 0.17332285115303983,
+              "right": 0.14237037037037037,
+              "bottom": 0.1877358490566038
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "20 MIN",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "20 MIN",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.73,
+              "bold": true,
+              "italic": null,
+              "color": null,
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "marks": []
+        },
+        {
+          "label": {
+            "bbox": {
+              "left": 0.17985185185185187,
+              "top": 0.17332285115303983,
+              "right": 0.221,
+              "bottom": 0.1877358490566038
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "COOK",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "COOK",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.82,
+              "bold": true,
+              "italic": false,
+              "color": null,
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": {
+              "left": 0.2258888888888889,
+              "top": 0.17332285115303983,
+              "right": 0.2727407407407408,
+              "bottom": 0.1877358490566038
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "35 MIN",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "35 MIN",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.82,
+              "bold": true,
+              "italic": null,
+              "color": null,
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "marks": []
+        },
+        {
+          "label": {
+            "bbox": {
+              "left": 0.3102222222222223,
+              "top": 0.17332285115303983,
+              "right": 0.3599259259259259,
+              "bottom": 0.1877358490566038
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "SERVES",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "SERVES",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.73,
+              "bold": true,
+              "italic": false,
+              "color": null,
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": {
+              "left": 0.36481481481481487,
+              "top": 0.1738993710691824,
+              "right": 0.3721481481481482,
+              "bottom": 0.18715932914046124
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "4",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "4",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.73,
+              "bold": true,
+              "italic": null,
+              "color": null,
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "marks": []
+        },
+        {
+          "label": {
+            "bbox": {
+              "left": 0.4088148148148148,
+              "top": 0.17332285115303983,
+              "right": 0.49518518518518523,
+              "bottom": 0.1877358490566038
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "VEGETARIAN",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "VEGETARIAN",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.73,
+              "bold": true,
+              "italic": false,
+              "color": [
+                107,
+                74,
+                43
+              ],
+              "fill": [
+                239,
+                227,
+                211
+              ],
+              "chip": {
+                "left": 0.39666666666666667,
+                "top": 0.16352201257861634,
+                "right": 0.5088888888888888,
+                "bottom": 0.19968553459119498
+              },
+              "radius": 0.49,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": null
+          },
+          "marks": []
+        }
+      ],
+      "blocks": [],
+      "extra": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.04540740740740741,
+                "top": 0.11451781970649896,
+                "right": 0.3676666666666667,
+                "bottom": 0.1370020964360587
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "with brown butter, sage and toasted hazelnuts",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "with brown butter, sage and toasted hazelnuts",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": true,
+                "color": [
+                  107,
+                  97,
+                  88
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null,
+          "read_from": {
+            "left": 0.04540740740740741,
+            "top": 0.11451781970649896,
+            "right": 0.3676666666666667,
+            "bottom": 0.1370020964360587
+          }
+        }
+      ],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": 2.09,
+      "title_caps": false,
+      "title_bold": true,
+      "face": null,
+      "title_color": [
+        122,
+        46,
+        18
+      ],
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": "left",
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 1,
+      "column": 0,
+      "bbox": {
+        "left": 0.04555555555555556,
+        "top": 0.23427672955974843,
+        "right": 0.16,
+        "bottom": 0.25
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.04529629629629629,
+                "top": 0.2348008385744235,
+                "right": 0.1597777777777778,
+                "bottom": 0.25036687631027255
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "INGREDIENTS",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "INGREDIENTS",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.91,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  122,
+                  46,
+                  18
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": 0.91,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 1,
+      "column": 1,
+      "bbox": {
+        "left": 0.39222222222222225,
+        "top": 0.23427672955974843,
+        "right": 0.9388888888888889,
+        "bottom": 0.3757861635220126
+      },
+      "title": "METH",
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.3927777777777778,
+                "top": 0.2348008385744235,
+                "right": 0.4657037037037037,
+                "bottom": 0.25036687631027255
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "METHOD",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "METHOD",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.91,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  122,
+                  46,
+                  18
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": 1.0,
+          "gap": null
+        },
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.3935925925925926,
+                "top": 0.2907232704402516,
+                "right": 0.4033703703703704,
+                "bottom": 0.30974842767295596
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "1",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "1.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.09,
+                "bold": true,
+                "italic": null,
+                "color": [
+                  194,
+                  112,
+                  61
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.4302592592592593,
+                "top": 0.2878406708595388,
+                "right": 0.9391111111111111,
+                "bottom": 0.30974842767295596
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Heat the oven to 200\u00b0C (180\u00b0C fan). Peel and seed the squash, cut it into 2",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Heat the oven to 200\u00b0C (180\u00b0C fan). Peel and seed the squash, cut it into 2",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.4298518518518519,
+                "top": 0.3207023060796646,
+                "right": 0.919962962962963,
+                "bottom": 0.3431865828092243
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "cm cubes, toss with the oil and a good pinch of salt, and roast for 30\u201335",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "cm cubes, toss with the oil and a good pinch of salt, and roast for 30-35",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.4302592592592593,
+                "top": 0.35356394129979035,
+                "right": 0.6967037037037037,
+                "bottom": 0.3760482180293501
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "minutes until caramelised at the edges.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "minutes until caramelised at the edges.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": 0.03747
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": 0.86,
+      "title_caps": false,
+      "title_bold": true,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": "left",
+      "complete": true
+    },
+    {
+      "kind": "list",
+      "role": "body",
+      "band": 2,
+      "column": 0,
+      "bbox": {
+        "left": 0.044444444444444446,
+        "top": 0.2893081761006289,
+        "right": 0.33111111111111113,
+        "bottom": 0.5283018867924528
+      },
+      "title": "For the salad",
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.06537037037037037,
+                "top": 0.32557651991614256,
+                "right": 0.3305925925925926,
+                "bottom": 0.34806079664570233
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "1 small butternut squash (about 900 g)",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "1small butternut squash (about 900 g)",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        },
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.06496296296296296,
+                "top": 0.36132075471698116,
+                "right": 0.19696296296296298,
+                "bottom": 0.38380503144654093
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "200 g pearled farro",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "200 g pearled farro",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": 0.01326
+        },
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.06496296296296296,
+                "top": 0.39764150943396226,
+                "right": 0.16396296296296295,
+                "bottom": 0.420125786163522
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "2 tbsp olive oil",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "2 tbsp olive oil",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": 0.01384
+        },
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.06496296296296296,
+                "top": 0.4339622641509434,
+                "right": 0.28740740740740744,
+                "bottom": 0.4564465408805032
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "60 g hazelnuts, roughly chopped",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "60g hazelnuts, roughly chopped",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": 0.01384
+        },
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.06537037037037037,
+                "top": 0.469706498951782,
+                "right": 0.19533333333333336,
+                "bottom": 0.4921907756813417
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "100 g baby spinach",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "100 g baby spinach",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": 0.01326
+        },
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.06496296296296296,
+                "top": 0.5060272536687631,
+                "right": 0.19777777777777777,
+                "bottom": 0.5273584905660377
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "80 g feta, crumbled",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "80g feta, crumbled",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": 0.01384
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": 1.0,
+      "title_caps": false,
+      "title_bold": false,
+      "face": null,
+      "title_color": [
+        107,
+        97,
+        88
+      ],
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": "left",
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 2,
+      "column": 1,
+      "bbox": {
+        "left": 0.3933333333333333,
+        "top": 0.4025157232704403,
+        "right": 0.9544444444444444,
+        "bottom": 0.45754716981132076
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.3931851851851852,
+                "top": 0.40534591194968556,
+                "right": 0.40622222222222226,
+                "bottom": 0.4243710691823899
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "2",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "2",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.09,
+                "bold": true,
+                "italic": null,
+                "color": [
+                  194,
+                  112,
+                  61
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.4298518518518519,
+                "top": 0.40246331236897276,
+                "right": 0.9537777777777778,
+                "bottom": 0.4243710691823899
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Meanwhile, simmer the farro in salted water for 25 minutes, until tender but",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": [
+                    {
+                      "text": "Meanwhile, simmer the farro in salted water for 25 minutes, until tender but",
+                      "kind": "text"
+                    }
+                  ]
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Meanwhile, simmer the farro in salted water for 25 minutes, until tender but",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.4298518518518519,
+                "top": 0.43532494758909857,
+                "right": 0.8172962962962964,
+                "bottom": 0.45780922431865834
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "still chewy. Drain well and spread on a tray to steam dry.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "still chewy. Drain well and spread on a tray to steam dry.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 3,
+      "column": 0,
+      "bbox": {
+        "left": 0.39222222222222225,
+        "top": 0.48427672955974843,
+        "right": 0.9066666666666666,
+        "bottom": 0.539308176100629
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.39237037037037037,
+                "top": 0.4871069182389937,
+                "right": 0.40581481481481485,
+                "bottom": 0.5124737945492662
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "3",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "3",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.45,
+                "bold": true,
+                "italic": null,
+                "color": [
+                  194,
+                  112,
+                  61
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.42944444444444446,
+                "top": 0.48422431865828086,
+                "right": 0.9065185185185186,
+                "bottom": 0.5067085953878406
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Toast the hazelnuts in a dry pan over a medium heat for 3\u20134 minutes,",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Toast the hazelnuts in a dry pan over a medium heat for 3-4 minutes,",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.4298518518518519,
+                "top": 0.5170859538784067,
+                "right": 0.526,
+                "bottom": 0.5395702306079665
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "shaking often.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "shaking often.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "centre",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "list",
+      "role": "body",
+      "band": 4,
+      "column": 0,
+      "bbox": {
+        "left": 0.044444444444444446,
+        "top": 0.5566037735849056,
+        "right": 0.20333333333333334,
+        "bottom": 0.6147798742138365
+      },
+      "title": "For the dressing",
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.06455555555555556,
+                "top": 0.5922955974842767,
+                "right": 0.2034814814814815,
+                "bottom": 0.6142033542976939
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "40 g unsalted butter",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "40g unsalted butter",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": 0.95,
+      "title_caps": false,
+      "title_bold": false,
+      "face": null,
+      "title_color": [
+        107,
+        97,
+        88
+      ],
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": "left",
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 4,
+      "column": 1,
+      "bbox": {
+        "left": 0.39222222222222225,
+        "top": 0.5660377358490566,
+        "right": 0.9444444444444444,
+        "bottom": 0.6540880503144654
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.4302592592592593,
+                "top": 0.565985324947589,
+                "right": 0.9183333333333333,
+                "bottom": 0.5884696016771488
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "For the dressing, melt the butter with the sage leaves and cook until the",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "For the dressing, melt the butter with the sage leaves and cook until the",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.4298518518518519,
+                "top": 0.5988469601677149,
+                "right": 0.9444074074074075,
+                "bottom": 0.6213312368972747
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "butter smells nutty and turns golden. Off the heat, whisk in the vinegar and",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "butter smells nutty and turns golden. Off the heat, whisk in the vinegar and",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.4302592592592593,
+                "top": 0.6317085953878406,
+                "right": 0.5178518518518519,
+                "bottom": 0.6541928721174004
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "maple syrup.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "maple syrup.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "list",
+      "role": "body",
+      "band": 5,
+      "column": 0,
+      "bbox": {
+        "left": 0.04777777777777778,
+        "top": 0.6289308176100629,
+        "right": 0.15333333333333332,
+        "bottom": 0.6509433962264151
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.06503703703703705,
+                "top": 0.6288784067085953,
+                "right": 0.15262962962962964,
+                "bottom": 0.6513626834381551
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "8 sage leaves",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "8 sage leaves",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "list",
+      "role": "body",
+      "band": 6,
+      "column": 0,
+      "bbox": {
+        "left": 0.04777777777777778,
+        "top": 0.6650943396226415,
+        "right": 0.20666666666666667,
+        "bottom": 0.6871069182389937
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.06544444444444444,
+                "top": 0.665041928721174,
+                "right": 0.20681481481481484,
+                "bottom": 0.6875262054507337
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "1 tbsp sherry vinegar",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "1tbsp sherry vinegar",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 6,
+      "column": 1,
+      "bbox": {
+        "left": 0.39222222222222225,
+        "top": 0.6808176100628931,
+        "right": 0.9444444444444444,
+        "bottom": 0.7641509433962265
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.39237037037037037,
+                "top": 0.6842243186582809,
+                "right": 0.40540740740740744,
+                "bottom": 0.7090146750524109
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "5",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "5",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.45,
+                "bold": true,
+                "italic": null,
+                "color": [
+                  194,
+                  112,
+                  61
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.42944444444444446,
+                "top": 0.6807651991614255,
+                "right": 0.9419629629629629,
+                "bottom": 0.7032494758909853
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Toss the warm farro and squash with the spinach and most of the dressing.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Toss the warm farro and squash with the spinach and most of the dressing.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.4298518518518519,
+                "top": 0.7136268343815514,
+                "right": 0.9435925925925926,
+                "bottom": 0.7361111111111112
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Scatter over the feta and hazelnuts, drizzle with the rest of the dressing and",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Scatter over the feta and hazelnuts, drizzle with the rest of the dressing and",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.4298518518518519,
+                "top": 0.7528301886792453,
+                "right": 0.5121481481481481,
+                "bottom": 0.7643605870020964
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "serve warm.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "serve warm.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": null,
+                "bold": null,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "list",
+      "role": "body",
+      "band": 7,
+      "column": 0,
+      "bbox": {
+        "left": 0.04777777777777778,
+        "top": 0.7012578616352201,
+        "right": 0.18444444444444444,
+        "bottom": 0.7232704402515723
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.06544444444444444,
+                "top": 0.7012054507337526,
+                "right": 0.18400000000000002,
+                "bottom": 0.7236897274633124
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "1 tsp maple syrup",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "1tsp maple syrup",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 8,
+      "column": 0,
+      "bbox": {
+        "left": 0.4088888888888889,
+        "top": 0.8144654088050315,
+        "right": 0.8944444444444445,
+        "bottom": 0.8663522012578616
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.40903703703703703,
+                "top": 0.814412997903564,
+                "right": 0.8946666666666667,
+                "bottom": 0.835167714884696
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "COOK'S TIP \u2014 The farro can be cooked a day ahead; warm it through in the",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": [
+                    {
+                      "text": "COOK'S TIP \u2014 The farro can be cooked a day ahead; warm it through in the",
+                      "kind": "text"
+                    }
+                  ]
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "COOK'S TIP The farro can be cooked a day ahead; warm it through in the",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.91,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.40903703703703703,
+                "top": 0.8455450733752621,
+                "right": 0.6392222222222221,
+                "bottom": 0.8662997903563942
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "roasting tin for the last five minutes.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "roasting tin for the last five minutes.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.91,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  45,
+                  42,
+                  38
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": 0.91,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": [
+        244,
+        235,
+        224
+      ],
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "pairs",
+      "role": "footer",
+      "band": 9,
+      "column": 0,
+      "bbox": {
+        "left": 0.04555555555555556,
+        "top": 0.9339622641509434,
+        "right": 0.56,
+        "bottom": 0.9528301886792453
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [
+        {
+          "label": {
+            "bbox": {
+              "left": 0.06770370370370371,
+              "top": 0.933909853249476,
+              "right": 0.11374074074074075,
+              "bottom": 0.9529350104821803
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "serving",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "serving:",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": null,
+              "bold": null,
+              "italic": false,
+              "color": [
+                107,
+                97,
+                88
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": {
+              "left": 0.11822222222222223,
+              "top": 0.9333333333333333,
+              "right": 0.16751851851851854,
+              "bottom": 0.9517819706498952
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "520 kcal",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "520 kcal",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.82,
+              "bold": false,
+              "italic": false,
+              "color": [
+                107,
+                97,
+                88
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "marks": [],
+          "separator": ":"
+        },
+        {
+          "label": {
+            "bbox": {
+              "left": 0.20581481481481484,
+              "top": 0.9333333333333333,
+              "right": 0.22129629629629632,
+              "bottom": 0.9483228511530398
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "fat",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "fat",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.82,
+              "bold": false,
+              "italic": null,
+              "color": [
+                107,
+                97,
+                88
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": {
+              "left": 0.17811111111111114,
+              "top": 0.9373689727463311,
+              "right": 0.20255555555555557,
+              "bottom": 0.9529350104821803
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "24 g",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "24 g",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.64,
+              "bold": true,
+              "italic": null,
+              "color": [
+                107,
+                97,
+                88
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "marks": []
+        },
+        {
+          "label": {
+            "bbox": {
+              "left": 0.25266666666666665,
+              "top": 0.9356394129979037,
+              "right": 0.30603703703703705,
+              "bottom": 0.9483228511530398
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "saturates",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "saturates",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.73,
+              "bold": false,
+              "italic": false,
+              "color": [
+                107,
+                97,
+                88
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": {
+              "left": 0.2318888888888889,
+              "top": 0.9373689727463311,
+              "right": 0.2494074074074074,
+              "bottom": 0.9529350104821803
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "9 g",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "9 g",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.82,
+              "bold": false,
+              "italic": null,
+              "color": [
+                107,
+                97,
+                88
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "marks": []
+        },
+        {
+          "label": {
+            "bbox": {
+              "left": 0.34311111111111114,
+              "top": 0.9333333333333333,
+              "right": 0.420925925925926,
+              "bottom": 0.9529350104821803
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "carbohydrate",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "carbohydrate",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.82,
+              "bold": false,
+              "italic": false,
+              "color": [
+                107,
+                97,
+                88
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": {
+              "left": 0.31662962962962965,
+              "top": 0.933909853249476,
+              "right": 0.33944444444444444,
+              "bottom": 0.9529350104821803
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "61 g",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "61 g",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.82,
+              "bold": false,
+              "italic": null,
+              "color": [
+                107,
+                97,
+                88
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "marks": []
+        },
+        {
+          "label": {
+            "bbox": {
+              "left": 0.4580000000000001,
+              "top": 0.933909853249476,
+              "right": 0.5003703703703705,
+              "bottom": 0.9529350104821803
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "protein",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "protein",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.73,
+              "bold": false,
+              "italic": false,
+              "color": [
+                107,
+                97,
+                88
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": {
+              "left": 0.43192592592592594,
+              "top": 0.9379454926624737,
+              "right": 0.4547407407407408,
+              "bottom": 0.9529350104821803
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "14 g",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "14 g",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.73,
+              "bold": false,
+              "italic": null,
+              "color": [
+                107,
+                97,
+                88
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "marks": []
+        },
+        {
+          "label": {
+            "bbox": {
+              "left": 0.5390740740740741,
+              "top": 0.9333333333333333,
+              "right": 0.5602592592592592,
+              "bottom": 0.9483228511530398
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "salt",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "salt",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.82,
+              "bold": false,
+              "italic": false,
+              "color": [
+                109,
+                99,
+                90
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": {
+              "left": 0.5117777777777778,
+              "top": 0.9373689727463311,
+              "right": 0.5358148148148149,
+              "bottom": 0.9529350104821803
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "1.1 g",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "1.1 g",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.64,
+              "bold": false,
+              "italic": null,
+              "color": [
+                107,
+                97,
+                88
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "marks": []
+        }
+      ],
+      "blocks": [],
+      "extra": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.044888888888888895,
+                "top": 0.933909853249476,
+                "right": 0.06444444444444444,
+                "bottom": 0.9483228511530398
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Per",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Per",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.82,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  107,
+                  97,
+                  88
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null,
+          "read_from": {
+            "left": 0.044888888888888895,
+            "top": 0.933909853249476,
+            "right": 0.06444444444444444,
+            "bottom": 0.9483228511530398
+          }
+        }
+      ],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    }
+  ],
+  "corrections": [],
+  "probes": [],
+  "gaps": [],
+  "failures": [],
+  "caveats": [],
+  "shortfalls": [],
+  "unclaimed": [
+    {
+      "zone_index": 0,
+      "bbox": {
+        "left": 0.045814814814814815,
+        "top": 0.05340670859538784,
+        "right": 0.4894814814814815,
+        "bottom": 0.10010482180293502
+      },
+      "words": 5,
+      "ink_share": 0.0909,
+      "reach": {
+        "left": 0.015814814814814816,
+        "top": 0.05340670859538784,
+        "right": 0.5194814814814815,
+        "bottom": 0.10010482180293502
+      }
+    }
+  ],
+  "regions": [
+    {
+      "top": 0.0,
+      "bottom": 1.0,
+      "flow": "single",
+      "splits": [],
+      "rows": 1
+    }
+  ],
+  "separators": [
+    0.9143081761006289
+  ],
+  "furniture": [
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.044444444444444446,
+        "top": 0.2641509433962264,
+        "right": 0.35444444444444445,
+        "bottom": 0.26572327044025157
+      },
+      "thickness": 0.0011111111111111111,
+      "color": [
+        217,
+        201,
+        182
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.39222222222222225,
+        "top": 0.2641509433962264,
+        "right": 0.9555555555555556,
+        "bottom": 0.26572327044025157
+      },
+      "thickness": 0.0011111111111111111,
+      "color": [
+        217,
+        201,
+        182
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 2
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.39222222222222225,
+        "top": 0.7955974842767296,
+        "right": 0.39555555555555555,
+        "bottom": 0.8820754716981132
+      },
+      "thickness": 0.0033333333333333335,
+      "color": [
+        194,
+        112,
+        61
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "fill",
+      "bbox": {
+        "left": 0.39222222222222225,
+        "top": 0.7955974842767296,
+        "right": 0.9555555555555556,
+        "bottom": 0.8820754716981132
+      },
+      "thickness": 0.0,
+      "color": [
+        244,
+        235,
+        224
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.044444444444444446,
+        "top": 0.9135220125786163,
+        "right": 0.9555555555555556,
+        "bottom": 0.9150943396226415
+      },
+      "thickness": 0.0011111111111111111,
+      "color": [
+        217,
+        201,
+        182
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    }
+  ]
+}

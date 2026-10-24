@@ -1,22 +1,30 @@
-# Status — 2026-10-23 (**the baseline is `tests/frozen/s14-result/`; spec 0019 done and decided; nothing open**)
+# Status — 2026-10-24 (**the baseline is `tests/frozen/s14-result/`; the level-up plan is decided: the corpus first, then the GLM-OCR PoC**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-23,
 when Alessandro took spec 0019's sweep `S14-sweep` as the baseline,
 frozen as `s14-result/` (issue #42 closed), and cleared every open item.
+Updated 2026-10-24, when he decided the level-up plan
+([`level-up.md`](level-up.md) §8).
 
 Reading order for a fresh session:
 1. `CLAUDE.md`'s **READ THIS FIRST**;
 2. [`specs/0007-look-like-the-document.md`](specs/0007-look-like-the-document.md),
    which is authoritative;
 3. this file;
-4. [`specs/0019-steady-checked-structured-styled.md`](specs/0019-steady-checked-structured-styled.md)'s
-   "Outcome — the steps" and "Outcome — the sweep", the last work done.
+4. [`level-up.md`](level-up.md)'s Gist, §6 and §8: the plan from
+   2026-10-24, and what comes next;
+5. [`specs/0019-steady-checked-structured-styled.md`](specs/0019-steady-checked-structured-styled.md)'s
+   "Outcome — the steps" and "Outcome — the sweep", the last conversion
+   work done.
 
 If you are going to look at output — and you should — use the
 **`visual-review` skill**.
 
-Branch `scaffold`. **1394 tests pass (1 skipped), `mypy src/` clean** — at `a0d73c9`, the sweep's commit, 2026-10-23.
+Branches `main`, `develop` and `level-up`, all on the remote since
+2026-10-24; work continues on `level-up`, and `scaffold` is retired into
+`develop`. **1394 tests pass (1 skipped), `mypy src/` clean**: measured
+2026-10-24 on `level-up`, whose code is `a0d73c9`'s, the sweep's commit.
 
 **How work is judged — Alessandro, 2026-10-12, for spec 0011; carried
 over by specs 0012 to 0019.**
@@ -258,21 +266,37 @@ and `specs/0007-handover.md` for the A phases and the queue.
 
 ---
 
-## Next — nothing open
+## Next — the level-up plan, decided 2026-10-24
 
 **Alessandro cleared every open item on 2026-10-23**, spec 0019's four
 ranked directions included. They stay in the spec's outcome, as record.
-Pick up nothing he does not name.
 
-**2026-10-24, investigation only:**
-[`level-up.md`](level-up.md), on branch `level-up` (cut from `develop` =
-`scaffold` at `99110c2`). It answers two questions he asked: how the test
-set should grow so that conversion generalises, and whether the
-architecture should change. A probe on ten never-seen pages
-([`level-up-probe/`](level-up-probe/README.md)) found a structural fault on
-9 of 10, against 0 of 6 tuned pages drawn at random. The doc proposes a
-generated corpus used as dev / panel / vault pools, and a parser-first
-PoC. **Nothing in it is decided**; its §8 lists his decisions.
+**On 2026-10-24 he decided the level-up plan**
+([`level-up.md`](level-up.md) §8). Its aim is conversion that holds on
+pages nobody has tuned on, not a better result on the 21. A probe on ten
+never-seen pages ([`level-up-probe/`](level-up-probe/README.md)) found a
+structural fault on 9 of 10, against 0 of 6 tuned pages drawn at random,
+judged the same day.
+
+In order (`level-up.md` §6):
+
+1. **L1a — agree the variability** (§4.7): kinds, features, languages,
+   weights. **This is next, and it is a discussion with him.** Nothing is
+   generated before it is agreed.
+2. **L1b — the corpus**: written by Claude from spec cards, plus real PDFs
+   admitted only where their HTML redraws the PDF's own picture; the 21
+   and the ten probe pages join as dev pages; pools dev / panel / vault.
+3. **L2 — measurement**: a per-feature report, a cell check, a judge.
+4. **L3 — an honest baseline**, a task on a limited set (30–40 pages).
+5. **P1 — the parser-first PoC**, after L1, on its own branch: GLM-OCR's
+   latest, whole pipeline (its layout model and its reader), then an
+   adapter into the IR, then our looks and renderer. **Local models
+   only.**
+6. **P2 — the decision**, then **L5 — fit what is left** instead of
+   setting it by hand.
+
+Each step gets its spec and issue when it starts. Pick up nothing outside
+this plan unless he names it.
 
 ---
 

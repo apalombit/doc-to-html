@@ -1,0 +1,3138 @@
+{
+  "source": {
+    "path": "/Users/aless/Desktop/Projects/pic-to-html/doc-to-html/debug/probe/unseen-2026-10-24/src/datasheet.png",
+    "sha256": "68213b5924588b68d94cb14ade598f46c0ef88b4d4f52e426de3ffcd99d2bd5f",
+    "width": 940,
+    "height": 646,
+    "rectified_width": 940,
+    "rectified_height": 646,
+    "paper": null,
+    "surround": null
+  },
+  "ir_version": 1,
+  "rectifier_version": 7,
+  "hint": null,
+  "page_px": 940,
+  "style": {
+    "page_bg": [
+      255,
+      255,
+      255
+    ],
+    "ink": [
+      28,
+      35,
+      43
+    ],
+    "accent": [
+      11,
+      58,
+      91
+    ],
+    "shade": [
+      225,
+      230,
+      235
+    ],
+    "body_px": 12.0,
+    "face": "sans"
+  },
+  "zones": [
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 0,
+      "bbox": {
+        "left": 0.03723404255319149,
+        "top": 0.03560371517027864,
+        "right": 0.16702127659574467,
+        "bottom": 0.04953560371517028
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.036702127659574466,
+                "top": 0.034984520123839014,
+                "right": 0.16723404255319146,
+                "bottom": 0.05030959752321981
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "DATASHEET \u00b7 REV C",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "DATASHEET REV C",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  156,
+                  195,
+                  223
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": 1.0,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": [
+        11,
+        58,
+        91
+      ],
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 1,
+      "column": 0,
+      "bbox": {
+        "left": 0.035106382978723406,
+        "top": 0.0696594427244582,
+        "right": 0.4425531914893617,
+        "bottom": 0.10835913312693499
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.035851063829787234,
+                "top": 0.07043343653250773,
+                "right": 0.4424468085106383,
+                "bottom": 0.10851393188854488
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "AQ-7 Indoor Air Quality Sensor",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "AG-7 ncoor Air Gua iy Sensor",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 2.11,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  255,
+                  255,
+                  255
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": 2.33,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": [
+        11,
+        58,
+        91
+      ],
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 1,
+      "column": 1,
+      "bbox": {
+        "left": 0.8521276595744681,
+        "top": 0.0913312693498452,
+        "right": 0.9606382978723405,
+        "bottom": 0.11145510835913312
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.8515957446808511,
+                "top": 0.09071207430340557,
+                "right": 0.9607446808510639,
+                "bottom": 0.11207430340557277
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "VERIDIAN",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "VERIDIAN",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.44,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  127,
+                  209,
+                  174
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": 1.44,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": [
+        11,
+        58,
+        91
+      ],
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "right",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 2,
+      "column": 0,
+      "bbox": {
+        "left": 0.036170212765957444,
+        "top": 0.1780185758513932,
+        "right": 0.9521276595744681,
+        "bottom": 0.22910216718266255
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.036170212765957444,
+                "top": 0.1780185758513932,
+                "right": 0.951063829787234,
+                "bottom": 0.19814241486068113
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "The AQ-7 measures particulate matter, CO\u2082, temperature and humidity in one compact wall-mounted unit, and reports over Modbus or BACnet",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "The AQ-7 measures particulate matter, CO,, temperature and humidity in one compact wall-mounted unit, and reports over Modbus or BACnet te aie e en ese se eee eee ee",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  51,
+                  64,
+                  77
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.03595744680851064,
+                "top": 0.2089783281733746,
+                "right": 0.39914893617021274,
+                "bottom": 0.22941176470588234
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "for direct integration with building management systems.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "for direct integration with building management systems.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  51,
+                  64,
+                  77
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "list",
+      "role": "body",
+      "band": 3,
+      "column": 0,
+      "bbox": {
+        "left": 0.03723404255319149,
+        "top": 0.2631578947368421,
+        "right": 0.2925531914893617,
+        "bottom": 0.33746130030959753
+      },
+      "title": "KEY FEATURES",
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.058085106382978716,
+                "top": 0.31826625386996904,
+                "right": 0.29265957446808505,
+                "bottom": 0.33730650154798764
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Laser PM1.0, PM2.5 and PM10 sensing",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Laser PM1.0, PM2.5 and PM10 sensing",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": 1.0,
+      "title_caps": false,
+      "title_bold": true,
+      "face": null,
+      "title_color": [
+        11,
+        58,
+        91
+      ],
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": "left",
+      "complete": true
+    },
+    {
+      "kind": "table",
+      "role": "body",
+      "band": 3,
+      "column": 1,
+      "bbox": {
+        "left": 0.4574468085106383,
+        "top": 0.2631578947368421,
+        "right": 0.9106382978723404,
+        "bottom": 0.6888544891640866
+      },
+      "title": "SPECIFICATIONS",
+      "rows": [
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.4645744680851064,
+                "top": 0.3201238390092879,
+                "right": 0.5513829787234042,
+                "bottom": 0.334984520123839
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Measurement",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Measurement",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  11,
+                  58,
+                  91
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            }
+          ],
+          "role": "header",
+          "under": {
+            "kind": "none",
+            "color": null,
+            "width": 0.0
+          },
+          "fill": [
+            238,
+            243,
+            247
+          ],
+          "leader": null,
+          "gap": null
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.4648936170212766,
+                "top": 0.35758513931888547,
+                "right": 0.5914893617021276,
+                "bottom": 0.3761609907120743
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "CO\u2082 range / accuracy",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "CO, range accuracy tae",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                },
+                {
+                  "engine": "ollama",
+                  "text": "CO\u2082 range / accuracy",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "resolved",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  90,
+                  104,
+                  117
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.7071276595744681,
+                "top": 0.3572755417956657,
+                "right": 0.9107446808510637,
+                "bottom": 0.3753869969040248
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "400 \u2013 5,000 ppm, \u00b1(30 ppm + 3%)",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "400 5,000 ppm, +(30 ppm 3%)",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              225,
+              230,
+              235
+            ],
+            "width": 0.00155
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.02012
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.4648936170212766,
+                "top": 0.39628482972136225,
+                "right": 0.5398936170212766,
+                "bottom": 0.41439628482972135
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "PM2.5 range",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "PM2.5 range",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  90,
+                  104,
+                  117
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.7071276595744681,
+                "top": 0.3958204334365325,
+                "right": 0.8009574468085107,
+                "bottom": 0.4148606811145511
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "0 \u2013 1,000 \u03bcg/m\u00b3",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": [
+                    {
+                      "text": "0 \u2013 1,000 \u03bcg/m",
+                      "kind": "text"
+                    },
+                    {
+                      "text": "\u00b3",
+                      "kind": "sup"
+                    }
+                  ]
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "0 1,000 ~ig/m*",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                },
+                {
+                  "engine": "ollama",
+                  "text": "0 \u2013 1,000 \u00b5g/m\u00b3",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "resolved",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              225,
+              230,
+              235
+            ],
+            "width": 0.00155
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.01858
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.463936170212766,
+                "top": 0.4348297213622291,
+                "right": 0.5957446808510638,
+                "bottom": 0.4529411764705883
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Temperature accuracy",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Temperature accuracy",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  90,
+                  104,
+                  117
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.7071276595744681,
+                "top": 0.4343653250773994,
+                "right": 0.7518085106382979,
+                "bottom": 0.44922600619195047
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "\u00b10.3 \u00b0C",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "+0.3 \u00b0C",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              225,
+              230,
+              235
+            ],
+            "width": 0.00155
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.01858
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.4645744680851064,
+                "top": 0.47616099071207435,
+                "right": 0.5229787234042553,
+                "bottom": 0.49102167182662537
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Electrical",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Electrical",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  11,
+                  58,
+                  91
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            }
+          ],
+          "role": "header",
+          "under": {
+            "kind": "none",
+            "color": null,
+            "width": 0.0
+          },
+          "fill": [
+            238,
+            243,
+            247
+          ],
+          "leader": null,
+          "gap": 0.02167
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.4645744680851064,
+                "top": 0.5114551083591331,
+                "right": 0.5054255319148936,
+                "bottom": 0.5342105263157895
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Supply",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Supply",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  90,
+                  104,
+                  117
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.7071276595744681,
+                "top": 0.5133126934984521,
+                "right": 0.8810638297872341,
+                "bottom": 0.531888544891641
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "24 V AC/DC, or PoE (802.3af)",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "24 V AC/DC, or PoE (802.3af)",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              225,
+              230,
+              235
+            ],
+            "width": 0.00155
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.01858
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.4648936170212766,
+                "top": 0.5523219814241486,
+                "right": 0.5022340425531915,
+                "bottom": 0.56671826625387
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Power",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Power",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  90,
+                  104,
+                  117
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.7080851063829786,
+                "top": 0.5523219814241486,
+                "right": 0.7834042553191489,
+                "bottom": 0.5708978328173374
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "1.8 W typical",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "1.8 W typical",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              225,
+              230,
+              235
+            ],
+            "width": 0.00155
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.01548
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.4645744680851064,
+                "top": 0.5941176470588234,
+                "right": 0.5165957446808511,
+                "bottom": 0.6122291021671826
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Physical",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Physical",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  11,
+                  58,
+                  91
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            }
+          ],
+          "role": "header",
+          "under": {
+            "kind": "none",
+            "color": null,
+            "width": 0.0
+          },
+          "fill": [
+            238,
+            243,
+            247
+          ],
+          "leader": null,
+          "gap": 0.02167
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.4648936170212766,
+                "top": 0.6312693498452012,
+                "right": 0.5331914893617021,
+                "bottom": 0.6540247678018576
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Dimensions",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Dimensions",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  90,
+                  104,
+                  117
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.7071276595744681,
+                "top": 0.6326625386996904,
+                "right": 0.8079787234042554,
+                "bottom": 0.6475232198142414
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "86 \u00d7 86 \u00d7 31 mm",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "86 x 86 x 31mm",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                },
+                {
+                  "engine": "ollama",
+                  "text": "86 \u00d7 86 \u00d7 31 mm",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "resolved",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              225,
+              230,
+              235
+            ],
+            "width": 0.00155
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.01703
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.46361702127659576,
+                "top": 0.669814241486068,
+                "right": 0.5223404255319148,
+                "bottom": 0.6925696594427244
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Enclosure",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Enclosure",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  90,
+                  104,
+                  117
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.7074468085106383,
+                "top": 0.6712074303405572,
+                "right": 0.8529787234042553,
+                "bottom": 0.6883900928792569
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "PC/ABS, IP30, UL94 V-0",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "PC/ABS, IP30, UL94 V-0",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              225,
+              230,
+              235
+            ],
+            "width": 0.00155
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.01393
+        }
+      ],
+      "pairs": [],
+      "blocks": [],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": 1.0,
+      "title_caps": false,
+      "title_bold": true,
+      "face": null,
+      "title_color": [
+        11,
+        58,
+        91
+      ],
+      "title_fill": null,
+      "header_fill": [
+        238,
+        243,
+        247
+      ],
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": null,
+      "title_align": "left",
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 4,
+      "column": 0,
+      "bbox": {
+        "left": 0.03723404255319149,
+        "top": 0.3591331269349845,
+        "right": 0.324468085106383,
+        "bottom": 0.3761609907120743
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.03723404255319149,
+                "top": 0.3591331269349845,
+                "right": 0.324468085106383,
+                "bottom": 0.3761609907120743
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "NDIR CO\u2082 with automatic baseline correction",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "NDIR CO, with automatic baseline correction 66 see",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 5,
+      "column": 0,
+      "bbox": {
+        "left": 0.03723404255319149,
+        "top": 0.3993808049535604,
+        "right": 0.28829787234042553,
+        "bottom": 0.4179566563467492
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.05712765957446808,
+                "top": 0.3987616099071208,
+                "right": 0.2885106382978723,
+                "bottom": 0.41780185758513927
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Three-colour status ring visible at 10 m",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Three-colour status ring visible at 10 m",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 6,
+      "column": 0,
+      "bbox": {
+        "left": 0.03723404255319149,
+        "top": 0.43962848297213625,
+        "right": 0.25957446808510637,
+        "bottom": 0.4582043343653251
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.058085106382978716,
+                "top": 0.4394736842105263,
+                "right": 0.25978723404255316,
+                "bottom": 0.45804953560371514
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Field-replaceable sensor cartridge",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Field-replaceable sensor cartridge",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 7,
+      "column": 0,
+      "bbox": {
+        "left": 0.03723404255319149,
+        "top": 0.47987616099071206,
+        "right": 0.31382978723404253,
+        "bottom": 0.4984520123839009
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.05712765957446808,
+                "top": 0.4792569659442725,
+                "right": 0.3134042553191489,
+                "bottom": 0.498297213622291
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Tool-free mounting on a standard back box",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Tool-free mounting on a standard back box",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "list",
+      "role": "body",
+      "band": 8,
+      "column": 0,
+      "bbox": {
+        "left": 0.03723404255319149,
+        "top": 0.5201238390092879,
+        "right": 0.16702127659574467,
+        "bottom": 0.5386996904024768
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.058085106382978716,
+                "top": 0.519969040247678,
+                "right": 0.16723404255319146,
+                "bottom": 0.5385448916408668
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Five-year warranty",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Five-year warranty",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "table",
+      "role": "body",
+      "band": 9,
+      "column": 0,
+      "bbox": {
+        "left": 0.036170212765957444,
+        "top": 0.7275541795665634,
+        "right": 0.9638297872340426,
+        "bottom": 0.8931888544891641
+      },
+      "title": null,
+      "rows": [
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.04521276595744681,
+                "top": 0.7408668730650155,
+                "right": 0.12404255319148935,
+                "bottom": 0.7561919504643962
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Part number",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Part number",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  255,
+                  255,
+                  255
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.24053191489361703,
+                "top": 0.7385448916408669,
+                "right": 0.3142553191489361,
+                "bottom": 0.761764705882353
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Description",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Description",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  255,
+                  255,
+                  255
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.6292553191489362,
+                "top": 0.7385448916408669,
+                "right": 0.6867021276595745,
+                "bottom": 0.761764705882353
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Interface",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Interface",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  255,
+                  255,
+                  255
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.8322340425531914,
+                "top": 0.7404024767801858,
+                "right": 0.8756382978723404,
+                "bottom": 0.7561919504643962
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Colour",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Colour",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  255,
+                  255,
+                  255
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "role": "header",
+          "under": {
+            "kind": "none",
+            "color": null,
+            "width": 0.0
+          },
+          "fill": [
+            11,
+            58,
+            91
+          ],
+          "leader": null,
+          "gap": null
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.04457446808510638,
+                "top": 0.7803405572755419,
+                "right": 0.10648936170212765,
+                "bottom": 0.8044891640866874
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "AQ7\u2013MB\u2013w",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "AQ7-MB-W",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.24117021276595743,
+                "top": 0.7845201238390093,
+                "right": 0.4007446808510638,
+                "bottom": 0.801702786377709
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "AQ-7 sensor, Modbus RTU",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "AQ-7 sensor, Modbus RTU",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.6295744680851063,
+                "top": 0.7840557275541795,
+                "right": 0.6736170212765956,
+                "bottom": 0.7993808049535603
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "RS-485",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "RS-485",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.8322340425531914,
+                "top": 0.7845201238390093,
+                "right": 0.866063829787234,
+                "bottom": 0.7989164086687307
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "White",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "White",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              225,
+              230,
+              235
+            ],
+            "width": 0.00155
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.01703
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.04457446808510638,
+                "top": 0.8244582043343653,
+                "right": 0.10648936170212765,
+                "bottom": 0.848606811145511
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "AQ7\u2013BN\u2013w",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "AQ7-BN-W",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.24117021276595743,
+                "top": 0.8291021671826626,
+                "right": 0.4128723404255319,
+                "bottom": 0.846749226006192
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "AQ-7 sensor, BACnet MS/TP",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "AQ-7 sensor, BACnet MS/TP",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.6295744680851063,
+                "top": 0.8291021671826626,
+                "right": 0.6736170212765956,
+                "bottom": 0.8439628482972137
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "RS-485",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "RS-485",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.8322340425531914,
+                "top": 0.8295665634674922,
+                "right": 0.866063829787234,
+                "bottom": 0.8439628482972137
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "White",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "White",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              225,
+              230,
+              235
+            ],
+            "width": 0.00155
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.01858
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.04457446808510638,
+                "top": 0.8741486068111456,
+                "right": 0.11319148936170212,
+                "bottom": 0.8908668730650154
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "AQ7\u2013POE\u2013G",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "AQ7-POE-G",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.24117021276595743,
+                "top": 0.8741486068111456,
+                "right": 0.384468085106383,
+                "bottom": 0.8913312693498451
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "AQ-7 sensor, BACnet/IP",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "AQ-7 sensor, BACnet/IP",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.6295744680851063,
+                "top": 0.8741486068111456,
+                "right": 0.7106382978723405,
+                "bottom": 0.8913312693498451
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Ethernet, PoE",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Ethernet, PoE",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.8325531914893616,
+                "top": 0.8741486068111456,
+                "right": 0.8832978723404254,
+                "bottom": 0.8922600619195046
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Graphite",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Graphite",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  28,
+                  35,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              225,
+              230,
+              235
+            ],
+            "width": 0.00155
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.02322
+        }
+      ],
+      "pairs": [],
+      "blocks": [],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": [
+        11,
+        58,
+        91
+      ],
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": null,
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 10,
+      "column": 1,
+      "bbox": {
+        "left": 0.8723404255319149,
+        "top": 0.9458204334365325,
+        "right": 0.9638297872340426,
+        "bottom": 0.958204334365325
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.872127659574468,
+                "top": 0.9456656346749226,
+                "right": 0.9640425531914895,
+                "bottom": 0.9591331269349845
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "DS-AQ7 \u00b7 2026-08",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": [
+                    {
+                      "text": "DS-AQ7 \u00b7 2026-08",
+                      "kind": "text"
+                    }
+                  ]
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "DS-AQ7 2026-08",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  122,
+                  135,
+                  148
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "right",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "footer",
+      "band": 10,
+      "column": 0,
+      "bbox": {
+        "left": 0.036170212765957444,
+        "top": 0.9458204334365325,
+        "right": 0.4053191489361702,
+        "bottom": 0.9613003095975232
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.03595744680851064,
+                "top": 0.9456656346749226,
+                "right": 0.40521276595744676,
+                "bottom": 0.9619195046439628
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Veridian Controls GmbH - Specifications subject to change without notice.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Veridian Controls GmbH Specifications subject to change without notice.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  123,
+                  135,
+                  148
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    }
+  ],
+  "corrections": [],
+  "probes": [],
+  "gaps": [],
+  "failures": [],
+  "caveats": [],
+  "shortfalls": [],
+  "unclaimed": [],
+  "regions": [
+    {
+      "top": 0.0,
+      "bottom": 1.0,
+      "flow": "single",
+      "splits": [],
+      "rows": 1
+    }
+  ],
+  "separators": [],
+  "furniture": [
+    {
+      "kind": "fill",
+      "bbox": {
+        "left": 0.0,
+        "top": 0.0,
+        "right": 1.0,
+        "bottom": 0.14396284829721362
+      },
+      "thickness": 0.0,
+      "color": [
+        11,
+        58,
+        91
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.036170212765957444,
+        "top": 0.29102167182662536,
+        "right": 0.425531914893617,
+        "bottom": 0.29411764705882354
+      },
+      "thickness": 0.002127659574468085,
+      "color": [
+        127,
+        209,
+        174
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 4
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.4574468085106383,
+        "top": 0.29102167182662536,
+        "right": 0.9638297872340426,
+        "bottom": 0.29411764705882354
+      },
+      "thickness": 0.002127659574468085,
+      "color": [
+        127,
+        209,
+        174
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 5
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.4574468085106383,
+        "top": 0.38390092879256965,
+        "right": 0.9638297872340426,
+        "bottom": 0.38544891640866874
+      },
+      "thickness": 0.0010638297872340426,
+      "color": [
+        225,
+        230,
+        235
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 5
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.4574468085106383,
+        "top": 0.42260061919504643,
+        "right": 0.9638297872340426,
+        "bottom": 0.4241486068111455
+      },
+      "thickness": 0.0010638297872340426,
+      "color": [
+        225,
+        230,
+        235
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 5
+    },
+    {
+      "kind": "fill",
+      "bbox": {
+        "left": 0.4574468085106383,
+        "top": 0.4613003095975232,
+        "right": 0.9638297872340426,
+        "bottom": 0.5030959752321982
+      },
+      "thickness": 0.0,
+      "color": [
+        238,
+        243,
+        247
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.4574468085106383,
+        "top": 0.5402476780185759,
+        "right": 0.9638297872340426,
+        "bottom": 0.541795665634675
+      },
+      "thickness": 0.0010638297872340426,
+      "color": [
+        225,
+        230,
+        235
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 5
+    },
+    {
+      "kind": "fill",
+      "bbox": {
+        "left": 0.4574468085106383,
+        "top": 0.5789473684210527,
+        "right": 0.9638297872340426,
+        "bottom": 0.6222910216718266
+      },
+      "thickness": 0.0,
+      "color": [
+        238,
+        243,
+        247
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.4574468085106383,
+        "top": 0.6594427244582043,
+        "right": 0.9638297872340426,
+        "bottom": 0.6609907120743034
+      },
+      "thickness": 0.0010638297872340426,
+      "color": [
+        225,
+        230,
+        235
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 5
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.4574468085106383,
+        "top": 0.6981424148606811,
+        "right": 0.9638297872340426,
+        "bottom": 0.6996904024767802
+      },
+      "thickness": 0.0010638297872340426,
+      "color": [
+        225,
+        230,
+        235
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "fill",
+      "bbox": {
+        "left": 0.036170212765957444,
+        "top": 0.7275541795665634,
+        "right": 0.9638297872340426,
+        "bottom": 0.7708978328173375
+      },
+      "thickness": 0.0,
+      "color": [
+        11,
+        58,
+        91
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.036170212765957444,
+        "top": 0.8142414860681114,
+        "right": 0.9638297872340426,
+        "bottom": 0.8157894736842105
+      },
+      "thickness": 0.0010638297872340426,
+      "color": [
+        225,
+        230,
+        235
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 11
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.036170212765957444,
+        "top": 0.8591331269349846,
+        "right": 0.9638297872340426,
+        "bottom": 0.8606811145510835
+      },
+      "thickness": 0.0010638297872340426,
+      "color": [
+        225,
+        230,
+        235
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 11
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.036170212765957444,
+        "top": 0.9040247678018576,
+        "right": 0.9638297872340426,
+        "bottom": 0.9055727554179567
+      },
+      "thickness": 0.0010638297872340426,
+      "color": [
+        225,
+        230,
+        235
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.036170212765957444,
+        "top": 0.9303405572755418,
+        "right": 0.9638297872340426,
+        "bottom": 0.9318885448916409
+      },
+      "thickness": 0.0010638297872340426,
+      "color": [
+        225,
+        230,
+        235
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    }
+  ]
+}

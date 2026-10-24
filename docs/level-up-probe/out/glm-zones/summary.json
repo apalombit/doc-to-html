@@ -1,0 +1,170 @@
+{
+  "payslip": {
+    "seconds": 10.2,
+    "zones": 9,
+    "source_words": 121,
+    "vanished": [],
+    "invented": [],
+    "vocabulary_recall": 1.0
+  },
+  "labreport": {
+    "seconds": 9.8,
+    "zones": 6,
+    "source_words": 134,
+    "vanished": [
+      "02",
+      "07",
+      "109",
+      "1969",
+      "2207",
+      "5518",
+      "57",
+      "93",
+      "birth",
+      "blood",
+      "clinician",
+      "date",
+      "male",
+      "mrn",
+      "okafor",
+      "patient",
+      "requesting",
+      "sex",
+      "tomasz",
+      "venous",
+      "wiśniewski",
+      "y"
+    ],
+    "invented": [
+      "10",
+      "gt",
+      "lt"
+    ],
+    "vocabulary_recall": 0.836
+  },
+  "nutrition": {
+    "seconds": 6.1,
+    "zones": 4,
+    "source_words": 98,
+    "vanished": [
+      "000",
+      "a",
+      "advice",
+      "amount",
+      "calories",
+      "contributes",
+      "day",
+      "diet",
+      "dv",
+      "food",
+      "for",
+      "general",
+      "how",
+      "in",
+      "is",
+      "much",
+      "nutrient",
+      "of",
+      "tells",
+      "the",
+      "to",
+      "tocopherols",
+      "used",
+      "you"
+    ],
+    "invented": [
+      "tocopherol"
+    ],
+    "vocabulary_recall": 0.755
+  },
+  "recipe": {
+    "seconds": 7.4,
+    "zones": 14,
+    "source_words": 141,
+    "vanished": [],
+    "invented": [
+      "5",
+      "circ",
+      "mathrm"
+    ],
+    "vocabulary_recall": 1.0
+  },
+  "minutes": {
+    "seconds": 8.3,
+    "zones": 9,
+    "source_words": 152,
+    "vanished": [],
+    "invented": [],
+    "vocabulary_recall": 1.0
+  },
+  "flyer": {
+    "seconds": 2.8,
+    "zones": 8,
+    "source_words": 65,
+    "vanished": [],
+    "invented": [],
+    "vocabulary_recall": 1.0
+  },
+  "quiz": {
+    "seconds": 6.7,
+    "zones": 28,
+    "source_words": 107,
+    "vanished": [
+      "h2",
+      "h2o",
+      "o2"
+    ],
+    "invented": [
+      "h",
+      "mathrm",
+      "o",
+      "rightarrow"
+    ],
+    "vocabulary_recall": 0.972
+  },
+  "datasheet": {
+    "seconds": 9.6,
+    "zones": 14,
+    "source_words": 133,
+    "vanished": [
+      "24",
+      "31",
+      "8",
+      "mm",
+      "ul94",
+      "v"
+    ],
+    "invented": [
+      "2",
+      "24v",
+      "31mm",
+      "8w",
+      "co",
+      "mathrm",
+      "o",
+      "p0e",
+      "ul94v"
+    ],
+    "vocabulary_recall": 0.955
+  },
+  "contract": {
+    "seconds": 6.9,
+    "zones": 10,
+    "source_words": 160,
+    "vanished": [],
+    "invented": [],
+    "vocabulary_recall": 1.0
+  },
+  "email": {
+    "seconds": 5.3,
+    "zones": 10,
+    "source_words": 133,
+    "vanished": [
+      "fd30s"
+    ],
+    "invented": [
+      "df3os"
+    ],
+    "vocabulary_recall": 0.992
+  }
+}

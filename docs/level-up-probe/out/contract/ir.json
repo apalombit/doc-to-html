@@ -1,0 +1,1853 @@
+{
+  "source": {
+    "path": "/Users/aless/Desktop/Projects/pic-to-html/doc-to-html/debug/probe/unseen-2026-10-24/src/contract.png",
+    "sha256": "2356e2d6db1fdebe8563144410c43e8d0b28036753a851a99ed9d865c603f833",
+    "width": 820,
+    "height": 748,
+    "rectified_width": 820,
+    "rectified_height": 748,
+    "paper": null,
+    "surround": null
+  },
+  "ir_version": 1,
+  "rectifier_version": 7,
+  "hint": null,
+  "page_px": 820,
+  "style": {
+    "page_bg": [
+      255,
+      255,
+      255
+    ],
+    "ink": [
+      17,
+      17,
+      17
+    ],
+    "accent": null,
+    "shade": [
+      101,
+      101,
+      101
+    ],
+    "body_px": 12.0,
+    "face": "serif"
+  },
+  "zones": [
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 0,
+      "bbox": {
+        "left": 0.33414634146341465,
+        "top": 0.04946524064171123,
+        "right": 0.6609756097560976,
+        "bottom": 0.10160427807486631
+      },
+      "title": "SERVICE AGREEMENT",
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.3402439024390244,
+                "top": 0.08609625668449199,
+                "right": 0.66,
+                "bottom": 0.1017379679144385
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Agreement no. SA-2026-0457 - dated 3 October 2026",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": [
+                    {
+                      "text": "Agreement no. ",
+                      "kind": "text"
+                    },
+                    {
+                      "text": "SA-2026-0457",
+                      "kind": "link"
+                    },
+                    {
+                      "text": " - dated ",
+                      "kind": "text"
+                    },
+                    {
+                      "text": "3 October 2026",
+                      "kind": "link"
+                    }
+                  ]
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Agreement no. SA-2026-0457 dated 3 October 2026",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": null,
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": 1.33,
+      "title_caps": false,
+      "title_bold": true,
+      "face": null,
+      "title_color": [
+        17,
+        17,
+        17
+      ],
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "centre",
+      "title_align": "left",
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 1,
+      "column": 0,
+      "bbox": {
+        "left": 0.07073170731707316,
+        "top": 0.1323529411764706,
+        "right": 0.9292682926829269,
+        "bottom": 0.20320855614973263
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.07060975609756097,
+                "top": 0.13248663101604277,
+                "right": 0.9292682926829269,
+                "bottom": 0.15053475935828875
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "This Agreement is made between Calder Valley Veterinary Group LLP, of 12 Bridge Street, Hebden Bridge HX7 8EX (the",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "This Agreement is made between Calder Valley Veterinary Group LLP, of 12 Bridge Street, Hebden Bridge HX7 8EX (the",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.07170731707317073,
+                "top": 0.15935828877005348,
+                "right": 0.9289024390243902,
+                "bottom": 0.17740641711229946
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Client), and Northlight Systems Ltd, a company registered in England under number 09912345, of 7 Wharf Road, Sowerby",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "\u201cClient\u201d), and Northlight Systems Ltd, a company registered in England under number 09912345, of 7 Wharf Road, Sowerby",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.07097560975609757,
+                "top": 0.18462566844919787,
+                "right": 0.3021951219512195,
+                "bottom": 0.20267379679144384
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Bridge HX6 2AG (the Provider).",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Bridge HX6 2AG (the \u201cProvider\u2019).",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "justify",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 2,
+      "column": 0,
+      "bbox": {
+        "left": 0.07073170731707316,
+        "top": 0.22994652406417113,
+        "right": 0.9292682926829269,
+        "bottom": 0.30213903743315507
+      },
+      "title": "1. DEFINITIONS",
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.07170731707317073,
+                "top": 0.26336898395721925,
+                "right": 0.9292682926829269,
+                "bottom": 0.28181818181818186
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "1.1    \"Services\" means the managed IT support described in Schedule 1, including remote monitoring, helpdesk and on-site",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "1.1 \u201cServices\u201d means the managed IT support described in Schedule 1, including remote monitoring, helpdesk and on-site",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.1123170731707317,
+                "top": 0.2898395721925134,
+                "right": 0.18878048780487805,
+                "bottom": 0.30227272727272725
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "attendance.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "attendance.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": 1.0,
+      "title_caps": false,
+      "title_bold": true,
+      "face": null,
+      "title_color": [
+        17,
+        17,
+        17
+      ],
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": 2,
+      "align": "left",
+      "title_align": "left",
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 3,
+      "column": 0,
+      "bbox": {
+        "left": 0.07195121951219512,
+        "top": 0.32219251336898397,
+        "right": 0.8524390243902439,
+        "bottom": 0.37566844919786097
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.07182926829268292,
+                "top": 0.3235294117647059,
+                "right": 0.0897560975609756,
+                "bottom": 0.3359625668449198
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "1.2",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "1.2",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.11317073170731708,
+                "top": 0.32232620320855615,
+                "right": 0.7175609756097561,
+                "bottom": 0.34037433155080216
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "\"Business Day\" means a day other than a Saturday, Sunday or public holiday in England.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "\u201cBusiness Day\u201d means a day other than a Saturday, Sunday or public holiday in England.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        },
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.07182926829268292,
+                "top": 0.35802139037433156,
+                "right": 0.08939024390243902,
+                "bottom": 0.3704545454545455
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "1.3",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "1.3",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  29,
+                  29,
+                  29
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.11317073170731708,
+                "top": 0.3568181818181818,
+                "right": 0.8525609756097561,
+                "bottom": 0.37526737967914436
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "\"Response Time\" means the period between the Client logging a fault and the Provider beginning work on it.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "\u201cResponse Time\u201d means the period between the Client logging a fault and the Provider beginning work on it.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": 0.01644
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": 2,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 4,
+      "column": 0,
+      "bbox": {
+        "left": 0.07073170731707316,
+        "top": 0.40240641711229946,
+        "right": 0.9292682926829269,
+        "bottom": 0.4799465240641711
+      },
+      "title": "2. TERM",
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.07060975609756097,
+                "top": 0.4358288770053476,
+                "right": 0.9292682926829269,
+                "bottom": 0.47954545454545455
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "2.1 This Agreement starts on 1 November 2026 and continues for an initial period of 24 months, after which it renews for successive 12-month periods unless either party gives at least 90 days\u2019 written notice.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "2.1 This Agreement starts on 1 November 2026 and continues for an initial period of 24 months, after which it renews for successive 12-month periods unless either party gives at least 90 days\u2019 written notice.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": 1.0,
+      "title_caps": false,
+      "title_bold": true,
+      "face": null,
+      "title_color": [
+        29,
+        29,
+        29
+      ],
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": 4,
+      "align": "left",
+      "title_align": "left",
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 5,
+      "column": 0,
+      "bbox": {
+        "left": 0.07073170731707316,
+        "top": 0.5066844919786097,
+        "right": 0.8878048780487805,
+        "bottom": 0.5588235294117647
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.07060975609756097,
+                "top": 0.5064171122994653,
+                "right": 0.2597560975609756,
+                "bottom": 0.5192513368983956
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "3. FEES AND PAYMENT",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "3. FEES AND PAYMENT",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": 1.0,
+          "gap": null
+        },
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.07060975609756097,
+                "top": 0.5401069518716578,
+                "right": 0.887560975609756,
+                "bottom": 0.5585561497326204
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "3.1 The Client shall pay a monthly fee of \u00a31,850 plus VAT, invoiced in advance on the first Business Day of each month.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "3.1. The Client shall pay a monthly fee of \u00a31,850 plus VAT, invoiced in advance on the first Business Day of each month.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": 0.02086
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": 4,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 6,
+      "column": 0,
+      "bbox": {
+        "left": 0.07073170731707316,
+        "top": 0.5735294117647058,
+        "right": 0.3951219512195122,
+        "bottom": 0.5922459893048129
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.07060975609756097,
+                "top": 0.5732620320855615,
+                "right": 0.39475609756097557,
+                "bottom": 0.5921122994652406
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "3.2 The Provider may charge additionally for:",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "3.2. The Provider may charge additionally for:",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": 1.11,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": 4,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 7,
+      "column": 0,
+      "bbox": {
+        "left": 0.11219512195121951,
+        "top": 0.606951871657754,
+        "right": 0.7158536585365853,
+        "bottom": 0.6577540106951871
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.11280487804878049,
+                "top": 0.6070855614973263,
+                "right": 0.6743902439024391,
+                "bottom": 0.6251336898395722
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "(a) on-site attendance outside 08:00 \u2013 18:00 on Business Days, at \u00a395 per hour; and",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "(a) on-site attendance outside 08:00 18:00 on Business Days, at \u00a395 per hour; and",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        },
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.11280487804878049,
+                "top": 0.6391711229946524,
+                "right": 0.7160975609756097,
+                "bottom": 0.657620320855615
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "(b) hardware and licences, at cost plus 8%, only with the Client\u2019s prior written approval.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "(b) hardware and licences, at cost plus 8%, only with the Client's prior written approval.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": 0.01404
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 8,
+      "column": 0,
+      "bbox": {
+        "left": 0.07073170731707316,
+        "top": 0.6697860962566845,
+        "right": 0.8890243902439025,
+        "bottom": 0.6885026737967914
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.07060975609756097,
+                "top": 0.6695187165775401,
+                "right": 0.8886585365853658,
+                "bottom": 0.6883689839572192
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "3.3 Invoices are payable within 30 days. Late payments carry interest at 4% a year above the Bank of England base rate.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "3.3 Invoices are payable within 30 days. Late payments carry interest at 4% a year above the Bank of England base rate.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "pairs",
+      "role": "body",
+      "band": 9,
+      "column": 0,
+      "bbox": {
+        "left": 0.07073170731707316,
+        "top": 0.7272727272727273,
+        "right": 0.9292682926829269,
+        "bottom": 0.9705882352941176
+      },
+      "title": "For the Client",
+      "rows": [],
+      "pairs": [
+        {
+          "label": {
+            "bbox": {
+              "left": 0.07060975609756097,
+              "top": 0.7827540106951871,
+              "right": 0.1298780487804878,
+              "bottom": 0.8012032085561497
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "Signature",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "Signature",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.89,
+              "bold": false,
+              "italic": false,
+              "color": [
+                51,
+                51,
+                51
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": null
+          },
+          "marks": [
+            {
+              "kind": "line",
+              "bbox": {
+                "left": 0.07073170731707316,
+                "top": 0.8235294117647058,
+                "right": 0.4719512195121951,
+                "bottom": 0.8248663101604278
+              },
+              "count": 1,
+              "ticked": null
+            },
+            {
+              "kind": "line",
+              "bbox": {
+                "left": 0.07073170731707316,
+                "top": 0.8703208556149733,
+                "right": 0.4719512195121951,
+                "bottom": 0.8716577540106952
+              },
+              "count": 1,
+              "ticked": null
+            }
+          ]
+        },
+        {
+          "label": {
+            "bbox": {
+              "left": 0.07134146341463414,
+              "top": 0.8308823529411765,
+              "right": 0.16353658536585367,
+              "bottom": 0.8425133689839572
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "Name and title",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "Name and title",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.89,
+              "bold": false,
+              "italic": false,
+              "color": [
+                51,
+                51,
+                51
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": null
+          },
+          "marks": []
+        },
+        {
+          "label": {
+            "bbox": {
+              "left": 0.07134146341463414,
+              "top": 0.8782085561497326,
+              "right": 0.09987804878048781,
+              "bottom": 0.8894385026737968
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "Date",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "Date",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.89,
+              "bold": false,
+              "italic": false,
+              "color": [
+                51,
+                51,
+                51
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": null
+          },
+          "marks": []
+        },
+        {
+          "label": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "Signature",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": null
+          },
+          "value": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": null
+          },
+          "marks": []
+        },
+        {
+          "label": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "Name and title",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": null
+          },
+          "value": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": null
+          },
+          "marks": []
+        },
+        {
+          "label": {
+            "bbox": {
+              "left": 0.5286585365853659,
+              "top": 0.8782085561497326,
+              "right": 0.5571951219512195,
+              "bottom": 0.8894385026737968
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "Date",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "Date",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.89,
+              "bold": false,
+              "italic": false,
+              "color": [
+                51,
+                51,
+                51
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": null
+          },
+          "marks": [
+            {
+              "kind": "line",
+              "bbox": {
+                "left": 0.5280487804878049,
+                "top": 0.8703208556149733,
+                "right": 0.9292682926829269,
+                "bottom": 0.8716577540106952
+              },
+              "count": 1,
+              "ticked": null
+            }
+          ]
+        }
+      ],
+      "blocks": [],
+      "extra": [
+        {
+          "kind": "mark",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.07060975609756097,
+                "top": 0.9407754010695187,
+                "right": 0.14085365853658535,
+                "bottom": 0.9568181818181819
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Confidential",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Confidential",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  85,
+                  85,
+                  85
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null,
+          "read_from": {
+            "left": 0.07060975609756097,
+            "top": 0.9407754010695187,
+            "right": 0.8213414634146341,
+            "bottom": 0.9572192513368984
+          }
+        },
+        {
+          "kind": "mark",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.42512195121951213,
+                "top": 0.9427807486631017,
+                "right": 0.4854878048780487,
+                "bottom": 0.9572192513368984
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Page 1 of 6",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Page 1 of 6",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  86,
+                  86,
+                  86
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null,
+          "read_from": {
+            "left": 0.07060975609756097,
+            "top": 0.9407754010695187,
+            "right": 0.8213414634146341,
+            "bottom": 0.9572192513368984
+          }
+        },
+        {
+          "kind": "mark",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.7832926829268292,
+                "top": 0.9407754010695187,
+                "right": 0.8213414634146341,
+                "bottom": 0.9564171122994652
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Initials____",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Initials",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  85,
+                  85,
+                  85
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null,
+          "read_from": {
+            "left": 0.07060975609756097,
+            "top": 0.9407754010695187,
+            "right": 0.8213414634146341,
+            "bottom": 0.9572192513368984
+          }
+        }
+      ],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": 1.0,
+      "title_caps": false,
+      "title_bold": true,
+      "face": null,
+      "title_color": [
+        17,
+        17,
+        17
+      ],
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": "left",
+      "complete": true
+    }
+  ],
+  "corrections": [],
+  "probes": [],
+  "gaps": [],
+  "failures": [],
+  "caveats": [],
+  "shortfalls": [],
+  "unclaimed": [],
+  "regions": [
+    {
+      "top": 0.0,
+      "bottom": 1.0,
+      "flow": "single",
+      "splits": [],
+      "rows": 1
+    }
+  ],
+  "separators": [],
+  "furniture": [
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.07073170731707316,
+        "top": 0.7767379679144385,
+        "right": 0.4719512195121951,
+        "bottom": 0.7780748663101604
+      },
+      "thickness": 0.0012195121951219512,
+      "color": [
+        17,
+        17,
+        17
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 9
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.5280487804878049,
+        "top": 0.7767379679144385,
+        "right": 0.9292682926829269,
+        "bottom": 0.7780748663101604
+      },
+      "thickness": 0.0012195121951219512,
+      "color": [
+        17,
+        17,
+        17
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 9
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.07073170731707316,
+        "top": 0.8235294117647058,
+        "right": 0.4719512195121951,
+        "bottom": 0.8248663101604278
+      },
+      "thickness": 0.0012195121951219512,
+      "color": [
+        17,
+        17,
+        17
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 9
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.5280487804878049,
+        "top": 0.8235294117647058,
+        "right": 0.9292682926829269,
+        "bottom": 0.8248663101604278
+      },
+      "thickness": 0.0012195121951219512,
+      "color": [
+        17,
+        17,
+        17
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 9
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.07073170731707316,
+        "top": 0.8703208556149733,
+        "right": 0.4719512195121951,
+        "bottom": 0.8716577540106952
+      },
+      "thickness": 0.0012195121951219512,
+      "color": [
+        17,
+        17,
+        17
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 9
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.5280487804878049,
+        "top": 0.8703208556149733,
+        "right": 0.9292682926829269,
+        "bottom": 0.8716577540106952
+      },
+      "thickness": 0.0012195121951219512,
+      "color": [
+        17,
+        17,
+        17
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 9
+    },
+    {
+      "kind": "frame",
+      "bbox": {
+        "left": 0.7695121951219512,
+        "top": 0.929144385026738,
+        "right": 0.9292682926829269,
+        "bottom": 0.9705882352941176
+      },
+      "thickness": 0.0012195121951219512,
+      "color": [
+        85,
+        85,
+        85
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.824390243902439,
+        "top": 0.9545454545454546,
+        "right": 0.9158536585365854,
+        "bottom": 0.9558823529411765
+      },
+      "thickness": 0.0012195121951219512,
+      "color": [
+        129,
+        129,
+        129
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 9
+    }
+  ]
+}

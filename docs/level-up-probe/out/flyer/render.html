@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ASHBURY COMMUNITY ARTS FESTIVAL</title>
+<style>
+:root { --ink:#1a1a1a; --muted:#666; --rule:#e0e0e0; --shade:#f4f4f4;
+        --page-bg:#fff; --accent:inherit;
+        --flag:#b45309;
+        --link:#0645ad; --mark-bg:#fff2a8; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink:#e8e8e8; --muted:#9a9a9a; --rule:#333; --shade:#1e1e1e;
+          --page-bg:#111;
+          --flag:#fbbf24;
+          --link:#7aa7ff; --mark-bg:#5a4a12; }
+}
+body { font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+       color:var(--ink); background:var(--page-bg); margin:0; padding:2rem 1rem; }
+.doc { max-width:52rem; margin:0 auto; }
+/* Inline runs. `<a>` carries no href — nothing read off the page says where a
+   link goes — so it needs styling of its own to read as one. */
+a { color:var(--link); text-decoration:underline; }
+code { font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+       font-size:0.92em; }
+mark { background:var(--mark-bg); color:inherit; padding:0 0.15em; }
+.band { display:flex; gap:2rem; align-items:flex-start;
+        margin-bottom:1.75rem; flex-wrap:wrap; }
+.band > * { flex:1 1 12rem; min-width:0; }
+/* A `columns` Region: its lanes side by side, each read top to bottom and as
+   wide as the page draws it. Spec 0008, step 2. */
+.columns { display:flex; gap:2rem; align-items:flex-start; margin-bottom:1.75rem; }
+.lane { min-width:0; }
+.lane > :last-child { margin-bottom:0; }
+/* A rectangle the page draws round a run of Zones in one lane, drawn once
+   round the run. Spec 0011, step 1a — see `rhythm.frames`. */
+.frame { border:1px solid var(--rule); border-radius:4px; margin-bottom:1.75rem; }
+/* One Zone of a Continuation, holding its own margins, so the gap drawn before it is
+   the page's and not that gap collapsed into a paragraph's. Spec 0011, 1b. */
+.cont { display:flow-root; }
+/* A `grid` Region: its Zones by row and by lane, never wrapped. Spec 0010, B1. */
+.grid { display:grid; column-gap:2rem; row-gap:1.75rem; align-items:start;
+        margin-bottom:1.75rem; }
+.grid > * { min-width:0; }
+/* A label column in a lane takes at most half of it. A lane is narrower than
+   the page, and `cv_0013`'s `Chartered Engineer, Engineers Ireland (2019)`
+   sized the `auto` track to the whole sidebar, leaving `Reg. no. 11408` a
+   sliver that `anywhere` broke after every letter — N4's fault, in a lane. */
+.columns dl.pairs { grid-template-columns:fit-content(50%) 1fr; }
+.zone-header { font-size:1.05em; }
+.zone-footer { color:var(--muted); font-size:.875em; }
+h1 { font-size:1.6em; margin:0 0 .35em; letter-spacing:.01em; }
+section.boxed { border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
+section.filled { border-radius:4px; overflow:hidden; }
+h2.zone-title { font-size:.95em; font-weight:600; margin:0; padding:.55em 0; }
+h2.zone-title.barred { padding:.55em .9em; }
+section.boxed > h2.zone-title, section.filled > h2.zone-title { padding:.55em .9em; }
+.zone-body { padding:0; }
+section.boxed > .zone-body, section.filled > .zone-body { padding:.9em; }
+section.boxed > .zone-body > .table-wrap,
+section.filled > .zone-body > .table-wrap { margin:-.9em; }
+section.filled.grounded > h2.zone-title { padding:.55em 0; }
+section.filled.grounded > .zone-body { padding:0; }
+section.filled.grounded > .zone-body > .table-wrap { margin:0; }
+blockquote { margin:.6em 0 .3em 1.5em; }
+p.attribution { color:var(--muted); font-size:.85em; margin:0 0 .4em; }
+ul { margin:0 0 .4em; padding-left:1.3em; }
+.zone-header ul { display:flex; flex-wrap:wrap; gap:1.1rem;
+                  list-style:none; padding:0; }
+p { margin:0 0 .4em; }
+dl.pairs { display:grid; grid-template-columns:auto 1fr; gap:.15em .75em; margin:0; }
+/* A long unbreakable value must wrap, not be hidden. `section.filled` and
+   `section.boxed` both set `overflow:hidden` to keep a fill inside its own
+   rounded corner, so anything wider than the Zone is silently cut off in the
+   screenshot — recall says the text is present and the picture does not
+   contain it. `cv_0013`'s sidebar was the corpus's one case: the `auto` track
+   sized itself to `ines.halloran@fempost.example`, which has no break
+   opportunity, giving the Zone a 368px content width inside a 256px box.
+   `anywhere` rather than `break-word` because only `anywhere` lowers the
+   min-content width the grid track is measured from. Measured 2026-09-25 over
+   all fifteen: corpus `clipped` 1 -> 0, `beside_agreement` +0.0033,
+   `alignment_agreement` +0.0019, ratchet clean, and `cv_0013`'s height_ratio
+   1.77 -> 2.14, which is the wrapped address taking the lines it needs. */
+dl.pairs dt, dl.pairs dd { overflow-wrap:anywhere; }
+/* A label with no value is not in the label column. Left there, the `auto`
+   track sizes itself to it as if a value stood beside it, and the `1fr` track
+   gets what is left: `catalogue_0015`'s `Suffolk pattern, 265 mm, beeswax` took
+   the whole card and `each`, the next line's value, was broken after every
+   letter by the `anywhere` above. Across both columns it sizes neither, so the
+   label column is as wide as the labels that have values. N4, 2026-10-10. */
+dl.pairs dt.alone { grid-column:1 / -1; }
+dl.pairs dt.alone + dd { display:none; }
+dl.pairs dt { color:var(--muted); }
+/* A pairs Zone whose lines the page sets centred or flush right: each pair a
+   line, label beside value, so the line can sit where the page sets it. */
+dl.pairs.lines { display:block; }
+dl.pairs.lines dt, dl.pairs.lines dd { display:inline; }
+dl.pairs dd { margin:0; }
+.zone-summary dl.pairs dd { font-weight:600; text-align:right; }
+.table-wrap { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; }
+th, td { padding:.45em .6em; text-align:left; border-bottom:1px solid var(--rule); }
+thead th { background:var(--shade); font-weight:600; }
+td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+tfoot td:last-child { text-align:right; }
+tfoot td { font-weight:600; border-top:2px solid var(--rule); border-bottom:none; }
+figure.omitted { margin:0; border:1px dashed var(--rule); border-radius:3px;
+                 min-height:3rem; display:flex; align-items:center;
+                 justify-content:center; color:var(--muted); font-size:.8em; }
+figure.omitted figcaption { padding:.5em; text-align:center; }
+.mark { display:inline-block; border:2px solid var(--flag); color:var(--flag);
+        padding:.15em .6em; border-radius:3px; font-weight:600; letter-spacing:.08em; }
+.disputed { cursor:help; }
+.corrected { border-bottom:2px solid var(--rule); cursor:help; }
+.skeleton { background:repeating-linear-gradient(135deg, var(--shade),
+            var(--shade) 6px, transparent 6px, transparent 12px);
+            border:1px dashed var(--rule); min-height:2.5rem; border-radius:3px; }
+</style>
+<style>:root { --page-bg:rgb(31,42,68); --ink:rgb(26,26,26); --muted:rgb(28,31,40); --rule:rgb(30,40,62); --shade:rgb(31,41,65); --accent:rgb(242,165,65); }
+.separator { margin:-0.875rem 0 0.875rem; }
+.rules { display:flex; } .rules > div { flex:none; }
+body { font-size:14.5px; --body:14.5px; }
+body { padding:0px 0px 25px 0px; }
+.doc { max-width:800px; }</style>
+</head>
+<body>
+<div class="doc">
+<div class="band" style="margin-bottom:23px"><section class="zone zone-header filled" style="background:rgb(242,165,65);color:rgb(26,26,26)"><p>The</p><p>The</p></section></div><div class="band" style="margin-bottom:3px"><section class="zone zone-header" style="text-align:center"><h1 style="font-size:0.91em;color:rgb(242,165,65)">ASHBURY COMMUNITY ARTS FESTIVAL</h1></section></div><div class="band" style="margin-bottom:0px"><section class="zone zone-body" style="text-align:center"><h1 style="font-size:3.16em;color:rgb(246,241,231);margin-bottom:0">Lanterns on<br>the River</h1><p style="font-size:calc(1.73 * var(--body, 1em));font-weight:700;color:rgb(246,241,231);margin-top:0px">Saturday 14 June · 7 - 11 pm</p></section></div><div class="band" style="margin-bottom:20px"><section class="zone zone-body" style="text-align:center"><h1 style="font-size:1.09em;font-weight:400;color:rgb(201,209,228)">Ferry Wharf and the Old Towpath, Ashbury</h1></section></div><div class="separator rules" style="margin:0 0 9px"><div style="margin-left:6.00%;width:88.00%;border-top:1px solid rgb(75,88,120)"></div></div><div class="band" style="margin-bottom:11px"><section class="zone zone-body" style="margin-top:6px;margin-left:6.00%;flex:30.2 1 0"><h1 style="font-size:0.91em;color:rgb(242,165,65);margin-bottom:0">MUSIC</h1><p style="color:rgb(223,228,239);margin-top:3px">Brass bands on the wharf, a folk stage under the bridge and a late DJ set by the boathouse.</p></section><section class="zone zone-body" style="flex:30.3 1 0"><h2 class="zone-title" style="color:rgb(242,165,65);font-size:0.91em">FOOD</h2><div class="zone-body"><p style="color:rgb(223,228,239)">Twenty local stalls, from <em>wood-</em>fired flatbreads to <em>Sri</em> <em>Lankan</em> hoppers and hot cider.</p></div></section><section class="zone zone-body" style="flex:33.5 1 0"><h2 class="zone-title" style="color:rgb(242,165,65);font-size:0.91em">WORKSHOPS</h2><div class="zone-body"><p style="color:rgb(223,228,239)">Make your own paper lantern from <em>4 pm</em> in the library hall. All materials provided.</p></div></section></div><div class="separator rules" style="margin:0 0 18px"><div style="margin-left:6.00%;width:88.00%;border-top:1px solid rgb(75,88,120)"></div></div><div class="band"><section class="zone zone-body" style="text-align:center;background-image:linear-gradient(rgb(242,165,65),rgb(242,165,65));background-size:100% 41px;background-repeat:no-repeat"><p style="font-weight:700;color:rgb(31,42,68);margin-bottom:0">Free entry · Family friendly</p><ul><li style="margin-top:12px;color:rgb(200,208,227)">ashburyarts.example/lanterns</li></ul></section></div>
+</div>
+<script type="application/json" id="doc-ir">{"source":{"path":"/Users/aless/Desktop/Projects/pic-to-html/doc-to-html/debug/probe/unseen-2026-10-24/src/flyer.png","sha256":"bf66ee9f0db2ae1fd179d793ff602ca09b801fa229b8d5344033c1a065b9056e","width":800,"height":539,"rectified_width":800,"rectified_height":539,"paper":null,"surround":null},"ir_version":1,"rectifier_version":7,"hint":null,"page_px":800,"style":{"page_bg":[31,42,68],"ink":[26,26,26],"accent":[242,165,65],"shade":[242,165,65],"body_px":14.5,"face":"sans"},"zones":[{"kind":"prose","role":"header","band":1,"column":0,"bbox":{"left":0.26875,"top":0.09461966604823747,"right":0.72625,"bottom":0.11317254174397032},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"heading","lines":[{"bbox":{"left":0.2685416666666667,"top":0.09369202226345083,"right":0.7264166666666668,"bottom":0.11410018552875696},"readings":[{"engine":"ollama","text":"ASHBURY COMMUNITY ARTS FESTIVAL","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"ASHBURY COMMUNITY ARTS FESTIVAL","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.91,"bold":true,"italic":false,"color":[242,165,65],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":0.91,"gap":null}],"extra":[],"graphic_kind":null,"pixels":null,"fill":null,"title_size":null,"title_caps":false,"face":null,"title_color":null,"title_fill":null,"header_fill":null,"boxed":false,"frame":null,"group":null,"align":"centre","title_align":null,"complete":true},{"kind":"prose","role":"body","band":2,"column":0,"bbox":{"left":0.3,"top":0.16512059369202226,"right":0.7025,"bottom":0.44712430426716143},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"heading","lines":[{"bbox":{"left":0.3,"top":0.16512059369202226,"right":0.7025,"bottom":0.24489795918367346},"readings":[{"engine":"ollama","text":"Lanterns on","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"ofl","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":3.82,"bold":true,"italic":false,"color":[246,241,231],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},{"bbox":{"left":0.3525,"top":0.2727272727272727,"right":0.65125,"bottom":0.3562152133580705},"readings":[{"engine":"ollama","text":"the River","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"a","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":4.0,"bold":true,"italic":false,"color":[246,241,231],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":3.16,"gap":null},{"kind":"paragraph","lines":[{"bbox":{"left":0.3011666666666667,"top":0.4009276437847867,"right":0.697625,"bottom":0.4471861471861472},"readings":[{"engine":"ollama","text":"Saturday 14 June \u00b7 7 - 11 pm","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"Saturday 14 June 7-11 pm","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.73,"bold":true,"italic":false,"color":[246,241,231],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":0.04471}],"extra":[],"graphic_kind":null,"pixels":null,"fill":null,"title_size":null,"title_caps":false,"face":null,"title_color":null,"title_fill":null,"header_fill":null,"boxed":false,"frame":null,"group":null,"align":"centre","title_align":null,"complete":true},{"kind":"prose","role":"body","band":3,"column":0,"bbox":{"left":0.31875,"top":0.4675324675324675,"right":0.68125,"bottom":0.4972170686456401},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"heading","lines":[{"bbox":{"left":0.31958333333333333,"top":0.46728509585652445,"right":0.6816666666666668,"bottom":0.4972170686456401},"readings":[{"engine":"ollama","text":"Ferry Wharf and the Old Towpath, Ashbury","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"Ferry Wharf and the Old Towpath, Ashbury","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.09,"bold":false,"italic":false,"color":[201,209,228],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":1.09,"gap":null}],"extra":[],"graphic_kind":null,"pixels":null,"fill":null,"title_size":null,"title_caps":false,"face":null,"title_color":null,"title_fill":null,"header_fill":null,"boxed":false,"frame":null,"group":null,"align":"centre","title_align":null,"complete":true},{"kind":"prose","role":"body","band":4,"column":0,"bbox":{"left":0.06,"top":0.5899814471243042,"right":0.32625,"bottom":0.7421150278293135},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"heading","lines":[{"bbox":{"left":0.061166666666666675,"top":0.5904143475572047,"right":0.12533333333333332,"bottom":0.6087816944959802},"readings":[{"engine":"ollama","text":"MUSIC","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"MUSIC","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.91,"bold":true,"italic":false,"color":[242,165,65],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":0.91,"gap":null},{"kind":"paragraph","lines":[{"bbox":{"left":0.061166666666666675,"top":0.6332714904143475,"right":0.3114166666666667,"bottom":0.6638837353123067},"readings":[{"engine":"ollama","text":"Brass bands on the wharf, a folk","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"Brass bands on the wharf, a folk","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[223,228,239],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},{"bbox":{"left":0.060708333333333336,"top":0.6727272727272727,"right":0.32608333333333334,"bottom":0.7053803339517625},"readings":[{"engine":"ollama","text":"stage under the bridge and a late","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"stage under the bridge and a late","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[223,228,239],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},{"bbox":{"left":0.061166666666666675,"top":0.7142238713667286,"right":0.2564166666666667,"bottom":0.74143475572047},"readings":[{"engine":"ollama","text":"DJ set by the boathouse.","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"DJ set by the boathouse.","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[223,228,239],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":0.02449}],"extra":[],"graphic_kind":null,"pixels":null,"fill":null,"title_size":null,"title_caps":false,"face":null,"title_color":null,"title_fill":null,"header_fill":null,"boxed":false,"frame":null,"group":null,"align":"left","title_align":null,"complete":true},{"kind":"prose","role":"body","band":4,"column":2,"bbox":{"left":0.665,"top":0.5899814471243042,"right":0.9125,"bottom":0.7421150278293135},"title":"WORKSHOPS","rows":[],"pairs":[],"blocks":[{"kind":"paragraph","lines":[{"bbox":{"left":0.6661666666666666,"top":0.6359925788497217,"right":0.899,"bottom":0.6638837353123067},"readings":[{"engine":"ollama","text":"Make your own paper lantern","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"Make your own paper lantern","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[223,228,239],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},{"bbox":{"left":0.6647916666666667,"top":0.6747680890538034,"right":0.9122916666666667,"bottom":0.7026592455163884},"readings":[{"engine":"ollama","text":"from 4 pm in the library hall. All","model":"qwen3-vl:4b","prompt_version":"2","runs":[{"text":"from ","kind":"text"},{"text":"4 pm","kind":"em"},{"text":" in the library hall. All","kind":"text"}]},{"engine":"tesseract","text":"from 4 pm in the library hall. All","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[223,228,239],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},{"bbox":{"left":0.6661666666666666,"top":0.7142238713667286,"right":0.8183333333333335,"bottom":0.74143475572047},"readings":[{"engine":"ollama","text":"materials provided.","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"materials provided.","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[223,228,239],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":null}],"extra":[],"graphic_kind":null,"pixels":null,"fill":null,"title_size":0.91,"title_caps":false,"title_bold":true,"face":null,"title_color":[242,165,65],"title_fill":null,"header_fill":null,"boxed":false,"frame":null,"group":null,"align":"left","title_align":"left","complete":true},{"kind":"prose","role":"body","band":4,"column":1,"bbox":{"left":0.3625,"top":0.5899814471243042,"right":0.605,"bottom":0.7421150278293135},"title":"FOOD","rows":[],"pairs":[],"blocks":[{"kind":"paragraph","lines":[{"bbox":{"left":0.3622916666666666,"top":0.6359925788497217,"right":0.60475,"bottom":0.6638837353123067},"readings":[{"engine":"ollama","text":"Twenty local stalls, from wood-","model":"qwen3-vl:4b","prompt_version":"2","runs":[{"text":"Twenty local stalls, from ","kind":"text"},{"text":"wood-","kind":"em"}]},{"engine":"tesseract","text":"Twenty local stalls, from wood-","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[223,228,239],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},{"bbox":{"left":0.3622916666666666,"top":0.6747680890538034,"right":0.5891666666666667,"bottom":0.6965367965367966},"readings":[{"engine":"ollama","text":"fired flatbreads to Sri Lankan","model":"qwen3-vl:4b","prompt_version":"2","runs":[{"text":"fired flatbreads to ","kind":"text"},{"text":"Sri","kind":"em"},{"text":" ","kind":"text"},{"text":"Lankan","kind":"em"}]},{"engine":"tesseract","text":"fired flatbreads to Sri Lankan","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[223,228,239],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},{"bbox":{"left":0.3636666666666667,"top":0.7142238713667286,"right":0.5433333333333333,"bottom":0.74143475572047},"readings":[{"engine":"ollama","text":"hoppers and hot cider.","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"hoppers and hot cider.","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[223,228,239],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":null}],"extra":[],"graphic_kind":null,"pixels":null,"fill":null,"title_size":0.91,"title_caps":false,"title_bold":true,"face":null,"title_color":[242,165,65],"title_fill":null,"header_fill":null,"boxed":false,"frame":null,"group":null,"align":"left","title_align":"left","complete":true},{"kind":"prose","role":"body","band":5,"column":0,"bbox":{"left":0.34375,"top":0.8218923933209648,"right":0.65625,"bottom":0.9369202226345084},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"mark","lines":[{"bbox":{"left":0.37204166666666666,"top":0.8455163883735313,"right":0.6291666666666668,"bottom":0.8754483611626469},"readings":[{"engine":"ollama","text":"Free entry \u00b7 Family friendly","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"Free entry Family friendly","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.09,"bold":true,"italic":false,"color":[31,42,68],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":null},{"kind":"item","lines":[{"bbox":{"left":0.3825,"top":0.9128014842300557,"right":0.6175,"bottom":0.9369202226345084},"readings":[{"engine":"ollama","text":"ashburyarts.example/lanterns","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"EP","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.91,"bold":false,"italic":false,"color":[200,208,227],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":0.03735}],"extra":[],"graphic_kind":null,"pixels":null,"fill":null,"title_size":null,"title_caps":false,"face":null,"title_color":null,"title_fill":null,"header_fill":null,"boxed":false,"frame":null,"group":null,"align":"centre","title_align":null,"complete":true},{"kind":"prose","role":"header","band":0,"column":0,"bbox":{"left":0.0,"top":0.0074211502782931356,"right":1.0,"bottom":0.025974025974025976},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"paragraph","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"The","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed","look":null}],"size":null,"gap":null},{"kind":"paragraph","lines":[{"bbox":null,"readings":[{"engine":"ollama","text":"The","model":"qwen3-vl:4b","prompt_version":"2","runs":[]}],"state":"agreed","look":null}],"size":null,"gap":null}],"extra":[],"graphic_kind":null,"pixels":null,"fill":[242,165,65],"title_size":null,"title_caps":false,"face":null,"title_color":null,"title_fill":null,"header_fill":null,"boxed":false,"frame":null,"group":null,"align":"left","title_align":null,"complete":true}],"corrections":[],"probes":[],"gaps":[],"failures":[],"caveats":[],"shortfalls":[],"unclaimed":[],"regions":[{"top":0.0,"bottom":1.0,"flow":"single","splits":[],"rows":1}],"separators":[0.5500927643784786,0.7801484230055659],"furniture":[{"kind":"rule","bbox":{"left":0.06,"top":0.549165120593692,"right":0.94,"bottom":0.5510204081632653},"thickness":0.00125,"color":[75,88,120],"style":"solid","second":null,"period":null,"angle":null,"zone":null},{"kind":"rule","bbox":{"left":0.06,"top":0.7792207792207793,"right":0.94,"bottom":0.7810760667903525},"thickness":0.00125,"color":[75,88,120],"style":"solid","second":null,"period":null,"angle":null,"zone":null},{"kind":"fill","bbox":{"left":0.345,"top":0.8237476808905381,"right":0.6575,"bottom":0.8979591836734694},"thickness":0.0,"color":[242,165,65],"style":"solid","second":null,"period":null,"angle":null,"zone":null}]}</script>
+</body>
+</html>

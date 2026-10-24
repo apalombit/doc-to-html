@@ -37,7 +37,8 @@ trial axis is kept rather than rejected.
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
 measured numbers and what has already been tried and rejected. **No spec
-is open.** 0019 (issue #42) is done and decided, swept 2026-10-23 as
+is open.** The level-up plan (`docs/level-up.md`, 2026-10-24) is decided;
+each of its steps gets a spec and an issue when it starts. 0019 (issue #42) is done and decided, swept 2026-10-23 as
 `S14-sweep`, the baseline. 0018 (issue #41) is done and decided, swept
 2026-10-19 as `S13-sweep`. 0017 (issue #40) is done and
 kept; 0008 to 0016 (issues #31–#39) are done and decided. 0007 still
@@ -66,7 +67,15 @@ measure had saturated, and past that point it was steering the wrong way. Spec
 0007 carries the full evidence, including the exact JSON and the exact prompt
 line that caused the deletion.
 
-**Where the project is — 2026-10-23: the baseline is `tests/frozen/s14-result/`, spec 0019's sweep. Every open item was cleared the same day: nothing is open. Work is judged by eye.**
+**Where the project is — 2026-10-23: the baseline is `tests/frozen/s14-result/`, spec 0019's sweep. Every open item was cleared the same day. Work is judged by eye.**
+
+**2026-10-24: Alessandro decided the level-up plan — read
+`docs/level-up.md`'s Gist and §8.** A probe on ten never-seen pages found
+a structural fault on 9 of 10, against 0 of 6 tuned pages. So the aim is
+now conversion that generalises: build a corpus by its variability first
+(L1, next step L1a: agree that variability with him), then a GLM-OCR
+parser-first PoC (P1), local models only. Work continues on branch
+`level-up`; `scaffold` is retired into `develop`.
 
 ```
 Thread 0    Scorer, corpus, report                  DONE 2026-09-18
@@ -222,6 +231,11 @@ Spec 0019   One grouping however the page is pictured, the structure the
               DECIDED 2026-10-23: S14-sweep is the baseline, frozen as s14-result/
 RESET       2026-10-23, Alessandro: every open item cleared, spec 0019's
               four directions included. Nothing is open.
+LEVEL-UP    2026-10-24, Alessandro: docs/level-up.md, branch level-up —
+              a probe on ten unseen pages, a structural fault on 9 of 10;
+              L1a agree the variability    NEXT, a discussion with him
+              L1b the corpus  L2 measurement  L3 a baseline, limited set
+              P1 the GLM-OCR parser-first PoC, after L1  P2 decide  L5 fit
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
@@ -276,7 +290,8 @@ pages better, seven the same and none worse, and its prediction held to
 the byte. **Alessandro took `S14-sweep` as the baseline on 2026-10-23**,
 frozen as `tests/frozen/s14-result/`, **and cleared every open item the
 same day**, the spec's four ranked directions included. Nothing is open:
-do not pick anything up unless he names it.
+do not pick anything up unless he names it. **He named the level-up plan
+on 2026-10-24** (`docs/level-up.md`); its next step is L1a.
 `docs/specs/0007-handover.md` holds spec 0007's prompts, as record.
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after

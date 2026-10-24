@@ -1,0 +1,3396 @@
+{
+  "source": {
+    "path": "/Users/aless/Desktop/Projects/pic-to-html/doc-to-html/debug/probe/unseen-2026-10-24/src/quiz.png",
+    "sha256": "da01d7e3c6f920f0061cf4bc2abf36d2ea239a720b8730363fbb523e3556c51e",
+    "width": 860,
+    "height": 670,
+    "rectified_width": 860,
+    "rectified_height": 670,
+    "paper": null,
+    "surround": null
+  },
+  "ir_version": 1,
+  "rectifier_version": 7,
+  "hint": null,
+  "page_px": 860,
+  "style": {
+    "page_bg": [
+      255,
+      255,
+      255
+    ],
+    "ink": [
+      17,
+      17,
+      17
+    ],
+    "accent": null,
+    "shade": [
+      153,
+      153,
+      153
+    ],
+    "body_px": 12.0,
+    "face": "serif"
+  },
+  "zones": [
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 0,
+      "bbox": {
+        "left": 0.046511627906976744,
+        "top": 0.04776119402985075,
+        "right": 0.47674418604651164,
+        "bottom": 0.06865671641791045
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.04697674418604651,
+                "top": 0.048507462686567165,
+                "right": 0.47604651162790695,
+                "bottom": 0.06776119402985074
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Year 9 Science \u2014 Unit Test: Chemical Reactions",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Year 9 Science Unit Test: Chemical Reactions",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.33,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": 1.33,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 1,
+      "bbox": {
+        "left": 0.827906976744186,
+        "top": 0.05223880597014925,
+        "right": 0.9534883720930233,
+        "bottom": 0.06716417910447761
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.8276744186046511,
+                "top": 0.05298507462686567,
+                "right": 0.952906976744186,
+                "bottom": 0.06776119402985074
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Hollins Park School",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Hollins Park School",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": 1.0,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "right",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 1,
+      "column": 0,
+      "bbox": {
+        "left": 0.046511627906976744,
+        "top": 0.11791044776119403,
+        "right": 0.08372093023255814,
+        "bottom": 0.13134328358208955
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.04697674418604651,
+                "top": 0.1173134328358209,
+                "right": 0.0836046511627907,
+                "bottom": 0.13164179104477614
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Name",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Name",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": 0.9,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 1,
+      "column": 1,
+      "bbox": {
+        "left": 0.4,
+        "top": 0.11641791044776119,
+        "right": 0.43372093023255814,
+        "bottom": 0.13134328358208955
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.4004651162790697,
+                "top": 0.11716417910447761,
+                "right": 0.433953488372093,
+                "bottom": 0.13149253731343283
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Class",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Class",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 1,
+      "column": 2,
+      "bbox": {
+        "left": 0.5534883720930233,
+        "top": 0.11791044776119403,
+        "right": 0.5825581395348837,
+        "bottom": 0.13134328358208955
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.5536046511627907,
+                "top": 0.11776119402985076,
+                "right": 0.5822093023255814,
+                "bottom": 0.13164179104477614
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Date",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Date",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": 0.97,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 2,
+      "column": 0,
+      "bbox": {
+        "left": 0.06046511627906977,
+        "top": 0.1761194029850746,
+        "right": 0.8023255813953488,
+        "bottom": 0.2208955223880597
+      },
+      "title": "Instructions",
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.060581395348837205,
+                "top": 0.2028358208955224,
+                "right": 0.8029069767441861,
+                "bottom": 0.22074626865671643
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Answer all questions. For multiple-choice questions, fill in one circle only. Calculators may be used. Time allowed: 40 minutes.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Answer all questions. For multiple-choice questions, fill in one circle only. Calculators may be used. Time allowed: 40 minutes.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": [
+        240,
+        240,
+        240
+      ],
+      "title_size": 0.89,
+      "title_caps": false,
+      "title_bold": true,
+      "face": null,
+      "title_color": [
+        17,
+        17,
+        17
+      ],
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": true,
+      "frame": {
+        "left": 0.046511627906976744,
+        "top": 0.1582089552238806,
+        "right": 0.9534883720930233,
+        "bottom": 0.23582089552238805
+      },
+      "group": null,
+      "align": "left",
+      "title_align": "left",
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 3,
+      "column": 1,
+      "bbox": {
+        "left": 0.9058139534883721,
+        "top": 0.26119402985074625,
+        "right": 0.9523255813953488,
+        "bottom": 0.2791044776119403
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "mark",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.9055813953488372,
+                "top": 0.2619402985074627,
+                "right": 0.9526744186046511,
+                "bottom": 0.278955223880597
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "[1 mark]",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "[1] mark]",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  68,
+                  68,
+                  68
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "right",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 3,
+      "column": 0,
+      "bbox": {
+        "left": 0.047674418604651166,
+        "top": 0.2626865671641791,
+        "right": 0.5651162790697675,
+        "bottom": 0.282089552238806
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.0477906976744186,
+                "top": 0.26343283582089555,
+                "right": 0.5651162790697675,
+                "bottom": 0.2822388059701492
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "1. Which gas is produced when magnesium reacts with dilute hydrochloric acid?",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "1. Which gas is produced when magnesium reacts with dilute hydrochloric acid?",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": 1.0,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 4,
+      "column": 0,
+      "bbox": {
+        "left": 0.07441860465116279,
+        "top": 0.2955223880597015,
+        "right": 0.16511627906976745,
+        "bottom": 0.31791044776119404
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "O",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            },
+            {
+              "bbox": {
+                "left": 0.09790697674418604,
+                "top": 0.2998507462686567,
+                "right": 0.10872093023255813,
+                "bottom": 0.3137313432835821
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "A",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "A",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.11604651162790697,
+                "top": 0.2998507462686567,
+                "right": 0.16558139534883717,
+                "bottom": 0.3182089552238806
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Oxygen",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Oxygen",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 4,
+      "column": 1,
+      "bbox": {
+        "left": 0.47325581395348837,
+        "top": 0.2955223880597015,
+        "right": 0.577906976744186,
+        "bottom": 0.31791044776119404
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.49709302325581395,
+                "top": 0.2998507462686567,
+                "right": 0.5061627906976744,
+                "bottom": 0.3137313432835821
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "B",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "B",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.5155813953488372,
+                "top": 0.29895522388059703,
+                "right": 0.5773255813953488,
+                "bottom": 0.3182089552238806
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Hydrogen",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Hydrogen",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 5,
+      "column": 0,
+      "bbox": {
+        "left": 0.07441860465116279,
+        "top": 0.32985074626865674,
+        "right": 0.2127906976744186,
+        "bottom": 0.3492537313432836
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.09790697674418604,
+                "top": 0.3332835820895523,
+                "right": 0.21267441860465117,
+                "bottom": 0.3480597014925373
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "C Carbon dioxide",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "C Carbon dioxide",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 5,
+      "column": 1,
+      "bbox": {
+        "left": 0.47325581395348837,
+        "top": 0.32985074626865674,
+        "right": 0.5697674418604651,
+        "bottom": 0.3492537313432836
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.493953488372093,
+                "top": 0.327910447761194,
+                "right": 0.5023255813953489,
+                "bottom": 0.3525373134328358
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "D",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "D",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  52,
+                  52,
+                  52
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.5159302325581395,
+                "top": 0.3332835820895523,
+                "right": 0.5703488372093023,
+                "bottom": 0.3480597014925373
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Chlorine",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Chlorine",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 6,
+      "column": 1,
+      "bbox": {
+        "left": 0.9058139534883721,
+        "top": 0.382089552238806,
+        "right": 0.9523255813953488,
+        "bottom": 0.4
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "mark",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.9055813953488372,
+                "top": 0.38283582089552237,
+                "right": 0.9526744186046511,
+                "bottom": 0.3998507462686567
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "[1 mark]",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "[1] mark]",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  68,
+                  68,
+                  68
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "right",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 6,
+      "column": 0,
+      "bbox": {
+        "left": 0.046511627906976744,
+        "top": 0.3835820895522388,
+        "right": 0.4848837209302326,
+        "bottom": 0.40298507462686567
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.04697674418604651,
+                "top": 0.38388059701492533,
+                "right": 0.48441860465116277,
+                "bottom": 0.403134328358209
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "2. Which of these is a sign that a chemical reaction has taken place?",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "2. Which of these is a sign that a chemical reaction has taken place?",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": 1.0,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 7,
+      "column": 0,
+      "bbox": {
+        "left": 0.07441860465116279,
+        "top": 0.4164179104477612,
+        "right": 0.25116279069767444,
+        "bottom": 0.43582089552238806
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.09790697674418604,
+                "top": 0.4207462686567164,
+                "right": 0.10872093023255813,
+                "bottom": 0.43462686567164177
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "A",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "A",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.11604651162790697,
+                "top": 0.41985074626865676,
+                "right": 0.251046511627907,
+                "bottom": 0.43462686567164177
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "The mixture is stirred",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "The mixture is stirred",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 7,
+      "column": 1,
+      "bbox": {
+        "left": 0.47325581395348837,
+        "top": 0.4164179104477612,
+        "right": 0.5720930232558139,
+        "bottom": 0.43582089552238806
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.4922093023255814,
+                "top": 0.4144776119402985,
+                "right": 0.5005813953488372,
+                "bottom": 0.43910447761194027
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "B",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "B",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  23,
+                  23,
+                  23
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.5155813953488372,
+                "top": 0.4202985074626866,
+                "right": 0.5713953488372093,
+                "bottom": 0.43462686567164177
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Ice melts",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Ice melts",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 8,
+      "column": 0,
+      "bbox": {
+        "left": 0.07441860465116279,
+        "top": 0.4507462686567164,
+        "right": 0.23604651162790696,
+        "bottom": 0.47313432835820896
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.09372093023255813,
+                "top": 0.4488059701492537,
+                "right": 0.23604651162790696,
+                "bottom": 0.47567164179104476
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "C A precipitate forms",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "C Aprecipitate forms",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 8,
+      "column": 1,
+      "bbox": {
+        "left": 0.47325581395348837,
+        "top": 0.4507462686567164,
+        "right": 0.6569767441860465,
+        "bottom": 0.4701492537313433
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "item",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.4922093023255814,
+                "top": 0.4488059701492537,
+                "right": 0.5005813953488372,
+                "bottom": 0.4734328358208955
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "D",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "D",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  27,
+                  27,
+                  27
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.5162790697674419,
+                "top": 0.45417910447761195,
+                "right": 0.656860465116279,
+                "bottom": 0.468955223880597
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Salt dissolves in water",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Salt dissolves in water",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 9,
+      "column": 3,
+      "bbox": {
+        "left": 0.9,
+        "top": 0.5014925373134328,
+        "right": 0.9523255813953488,
+        "bottom": 0.5194029850746269
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "mark",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.9004651162790698,
+                "top": 0.5022388059701492,
+                "right": 0.9527906976744186,
+                "bottom": 0.5192537313432836
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "[2 marks]",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "(2 marks]",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  68,
+                  68,
+                  68
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "right",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 9,
+      "column": 0,
+      "bbox": {
+        "left": 0.046511627906976744,
+        "top": 0.5029850746268657,
+        "right": 0.20930232558139536,
+        "bottom": 0.5223880597014925
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.04662790697674418,
+                "top": 0.503731343283582,
+                "right": 0.2095348837209302,
+                "bottom": 0.5225373134328358
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "3. Balance the equation:",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "3. Balance the equation:",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": 1.0,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "pairs",
+      "role": "body",
+      "band": 9,
+      "column": 1,
+      "bbox": {
+        "left": 0.2453488372093023,
+        "top": 0.5029850746268657,
+        "right": 0.3174418604651163,
+        "bottom": 0.5208955223880597
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [
+        {
+          "label": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "H2",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": null
+          },
+          "value": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "H2",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": null
+          },
+          "marks": []
+        },
+        {
+          "label": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "O2",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": null
+          },
+          "value": {
+            "bbox": null,
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "O2",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": null
+          },
+          "marks": []
+        }
+      ],
+      "blocks": [],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "centre",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 9,
+      "column": 2,
+      "bbox": {
+        "left": 0.35,
+        "top": 0.5044776119402985,
+        "right": 0.37906976744186044,
+        "bottom": 0.5208955223880597
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.32209302325581396,
+                "top": 0.5044776119402985,
+                "right": 0.37790697674418605,
+                "bottom": 0.5223880597014925
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "H2O",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "H20",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                },
+                {
+                  "engine": "ollama",
+                  "text": "2 \u2192 H\u2082O",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "disputed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 10,
+      "column": 1,
+      "bbox": {
+        "left": 0.9,
+        "top": 0.5522388059701493,
+        "right": 0.9523255813953488,
+        "bottom": 0.5701492537313433
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "mark",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.9004651162790698,
+                "top": 0.5529850746268656,
+                "right": 0.9527906976744186,
+                "bottom": 0.57
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "[3 marks]",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "(3 marks]",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  70,
+                  70,
+                  70
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "right",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 10,
+      "column": 0,
+      "bbox": {
+        "left": 0.046511627906976744,
+        "top": 0.5537313432835821,
+        "right": 0.42093023255813955,
+        "bottom": 0.573134328358209
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.04662790697674418,
+                "top": 0.5540298507462686,
+                "right": 0.42093023255813955,
+                "bottom": 0.5732835820895523
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "4. Explain why the mass of a candle decreases as it burns.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "4. Explain why the mass of a candle decreases as it burns.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 11,
+      "column": 1,
+      "bbox": {
+        "left": 0.9,
+        "top": 0.7134328358208956,
+        "right": 0.9523255813953488,
+        "bottom": 0.7313432835820896
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "mark",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.9004651162790698,
+                "top": 0.7141791044776119,
+                "right": 0.9527906976744186,
+                "bottom": 0.7311940298507462
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "[3 marks]",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "(3 marks]",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  70,
+                  70,
+                  70
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "right",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 11,
+      "column": 0,
+      "bbox": {
+        "left": 0.046511627906976744,
+        "top": 0.7149253731343284,
+        "right": 0.4627906976744186,
+        "bottom": 0.7343283582089553
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "heading",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.04697674418604651,
+                "top": 0.7152238805970149,
+                "right": 0.4627906976744186,
+                "bottom": 0.7344776119402986
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "5. Complete the table for the reaction of three metals with water.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "5. Complete the table for the reaction of three metals with water.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": 1.0,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "table",
+      "role": "body",
+      "band": 12,
+      "column": 0,
+      "bbox": {
+        "left": 0.07441860465116279,
+        "top": 0.7477611940298508,
+        "right": 0.7127906976744186,
+        "bottom": 0.9074626865671642
+      },
+      "title": null,
+      "rows": [
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.08534883720930234,
+                "top": 0.7588059701492537,
+                "right": 0.12372093023255813,
+                "bottom": 0.7816417910447762
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Metal",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Metal",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.27406976744186046,
+                "top": 0.7588059701492537,
+                "right": 0.35604651162790696,
+                "bottom": 0.7811940298507463
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Observation",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Observation",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.5259302325581395,
+                "top": 0.7605970149253731,
+                "right": 0.5932558139534884,
+                "bottom": 0.7794029850746269
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Reactivity",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Reactivity",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "role": "header",
+          "under": {
+            "kind": "solid",
+            "color": [
+              17,
+              17,
+              17
+            ],
+            "width": 0.00149
+          },
+          "fill": [
+            240,
+            240,
+            240
+          ],
+          "leader": null,
+          "gap": null
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.08534883720930234,
+                "top": 0.7986567164179105,
+                "right": 0.15093023255813956,
+                "bottom": 0.8214925373134327
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Potassium",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Potassium",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            },
+            {
+              "bbox": {
+                "left": 0.5262790697674419,
+                "top": 0.8004477611940298,
+                "right": 0.5866279069767442,
+                "bottom": 0.8197014925373135
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Very high",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Very high",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              17,
+              17,
+              17
+            ],
+            "width": 0.00149
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.01642
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.08499999999999999,
+                "top": 0.8394029850746269,
+                "right": 0.13767441860465116,
+                "bottom": 0.8541791044776119
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Calcium",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Calcium",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.27406976744186046,
+                "top": 0.8394029850746269,
+                "right": 0.3661627906976744,
+                "bottom": 0.8582089552238806
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Fizzes steadily",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Fizzes steadily",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.11,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              17,
+              17,
+              17
+            ],
+            "width": 0.00149
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.01642
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.08499999999999999,
+                "top": 0.8805970149253731,
+                "right": 0.1313953488372093,
+                "bottom": 0.8985074626865671
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Copper",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Copper",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              17,
+              17,
+              17
+            ],
+            "width": 0.00149
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.02239
+        }
+      ],
+      "pairs": [],
+      "blocks": [],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": true,
+      "frame": {
+        "left": 0.07441860465116279,
+        "top": 0.7477611940298508,
+        "right": 0.7127906976744186,
+        "bottom": 0.9074626865671642
+      },
+      "group": null,
+      "align": null,
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 13,
+      "column": 0,
+      "bbox": {
+        "left": 0.8348837209302326,
+        "top": 0.9402985074626866,
+        "right": 0.9534883720930233,
+        "bottom": 0.9552238805970149
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.8350000000000001,
+                "top": 0.9397014925373135,
+                "right": 0.9532558139534884,
+                "bottom": 0.9598507462686567
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Total: ____ / 10",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Total: /10",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  17,
+                  17,
+                  17
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "right",
+      "title_align": null,
+      "complete": true
+    }
+  ],
+  "corrections": [],
+  "probes": [],
+  "gaps": [
+    {
+      "bbox": {
+        "left": 0.046511627906976744,
+        "top": 0.1582089552238806,
+        "right": 0.9534883720930233,
+        "bottom": 0.23582089552238805
+      },
+      "note": "7.1% of this page's printed ink is in here \u2014 far too much to be a mark, so this is content nothing read",
+      "resolved": false,
+      "ink_share": 0.07133089240813446
+    }
+  ],
+  "failures": [],
+  "caveats": [
+    {
+      "zone_index": 27,
+      "kind": "prose",
+      "note": "classified pairs, re-read as prose: the pairs Extractor found an unlabelled value, which is evidence the region is not pairs \u2014 pairs Zone entry 1 has no label, only '/ 10' \u2014 an unlabelled value is not a Pair, so this region was not Pairs"
+    }
+  ],
+  "shortfalls": [],
+  "unclaimed": [],
+  "regions": [
+    {
+      "top": 0.0,
+      "bottom": 1.0,
+      "flow": "single",
+      "splits": [],
+      "rows": 1
+    }
+  ],
+  "separators": [
+    0.0880597014925373,
+    0.6186567164179104,
+    0.6529850746268657,
+    0.6873134328358209
+  ],
+  "furniture": [
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.046511627906976744,
+        "top": 0.08656716417910448,
+        "right": 0.9534883720930233,
+        "bottom": 0.08955223880597014
+      },
+      "thickness": 0.002325581395348837,
+      "color": [
+        17,
+        17,
+        17
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.09069767441860466,
+        "top": 0.13880597014925372,
+        "right": 0.3697674418604651,
+        "bottom": 0.14029850746268657
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        17,
+        17,
+        17
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.4418604651162791,
+        "top": 0.13880597014925372,
+        "right": 0.5232558139534884,
+        "bottom": 0.14029850746268657
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        17,
+        17,
+        17
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.5895348837209302,
+        "top": 0.13880597014925372,
+        "right": 0.7174418604651163,
+        "bottom": 0.14029850746268657
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        17,
+        17,
+        17
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "frame",
+      "bbox": {
+        "left": 0.046511627906976744,
+        "top": 0.1582089552238806,
+        "right": 0.9534883720930233,
+        "bottom": 0.23582089552238805
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        17,
+        17,
+        17
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "fill",
+      "bbox": {
+        "left": 0.046511627906976744,
+        "top": 0.1582089552238806,
+        "right": 0.9534883720930233,
+        "bottom": 0.23582089552238805
+      },
+      "thickness": 0.0,
+      "color": [
+        240,
+        240,
+        240
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.07441860465116279,
+        "top": 0.6179104477611941,
+        "right": 0.9534883720930233,
+        "bottom": 0.6194029850746269
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        153,
+        153,
+        153
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.07441860465116279,
+        "top": 0.6522388059701493,
+        "right": 0.9534883720930233,
+        "bottom": 0.6537313432835821
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        153,
+        153,
+        153
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.07441860465116279,
+        "top": 0.6865671641791045,
+        "right": 0.9534883720930233,
+        "bottom": 0.6880597014925374
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        153,
+        153,
+        153
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "frame",
+      "bbox": {
+        "left": 0.07441860465116279,
+        "top": 0.7477611940298508,
+        "right": 0.7127906976744186,
+        "bottom": 0.9074626865671642
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        17,
+        17,
+        17
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "fill",
+      "bbox": {
+        "left": 0.07441860465116279,
+        "top": 0.7477611940298508,
+        "right": 0.7127906976744186,
+        "bottom": 0.7895522388059701
+      },
+      "thickness": 0.0,
+      "color": [
+        240,
+        240,
+        240
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.2627906976744186,
+        "top": 0.7492537313432835,
+        "right": 0.26395348837209304,
+        "bottom": 0.9059701492537313
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        17,
+        17,
+        17
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 26
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.5151162790697674,
+        "top": 0.7492537313432835,
+        "right": 0.5162790697674419,
+        "bottom": 0.9059701492537313
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        17,
+        17,
+        17
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 26
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.0755813953488372,
+        "top": 0.7880597014925373,
+        "right": 0.7116279069767442,
+        "bottom": 0.7895522388059701
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        17,
+        17,
+        17
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 26
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.0755813953488372,
+        "top": 0.826865671641791,
+        "right": 0.7116279069767442,
+        "bottom": 0.8283582089552238
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        17,
+        17,
+        17
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 26
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.0755813953488372,
+        "top": 0.8671641791044776,
+        "right": 0.7116279069767442,
+        "bottom": 0.8686567164179104
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        17,
+        17,
+        17
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 26
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.877906976744186,
+        "top": 0.9582089552238806,
+        "right": 0.9267441860465117,
+        "bottom": 0.9597014925373134
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        37,
+        37,
+        37
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    }
+  ]
+}

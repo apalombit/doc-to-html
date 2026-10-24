@@ -1,0 +1,1466 @@
+[
+  {
+    "name": "contract",
+    "split": "sweep",
+    "width": 820,
+    "source_height": 748,
+    "output_height": 737,
+    "completeness": {
+      "recall": 0.9887218045112782,
+      "precision": 1.0,
+      "join_recall": 0.9819004524886877,
+      "vocabulary_recall": 1.0,
+      "vanished": [],
+      "source_tokens": 266,
+      "output_tokens": 263,
+      "lost": [
+        [
+          "for",
+          1
+        ],
+        [
+          "provider",
+          1
+        ],
+        [
+          "the",
+          1
+        ]
+      ],
+      "duplicated": [],
+      "invented": [],
+      "broken_joins": [
+        [
+          "no",
+          "sa"
+        ],
+        [
+          "0457",
+          "dated"
+        ],
+        [
+          "dated",
+          "3"
+        ],
+        [
+          "for",
+          "the"
+        ]
+      ],
+      "figures_lost": 0,
+      "hard_breaks": 0,
+      "source_hard_breaks": 0,
+      "short_lines": 0,
+      "source_short_lines": 0
+    },
+    "order": {
+      "tau": 1.0,
+      "matched": 25,
+      "of": 35
+    },
+    "layout": {
+      "beside_agreement": 0.5,
+      "beside_pairs": 8,
+      "column_error": 0.09533288431778716,
+      "columns_within_tolerance": 0.6666666666666666,
+      "height_ratio": 0.9852941176470589,
+      "matched_blocks": 25,
+      "of_blocks": 35,
+      "split_regions": 0,
+      "merged_regions": 0,
+      "clipped": 0,
+      "source_clipped": 0
+    },
+    "typography": {
+      "source_scale": 1.0,
+      "output_scale": 1.0,
+      "scale_error": 0.0,
+      "heading_levels_source": 2,
+      "heading_levels_output": 3,
+      "alignment_agreement": 0.8,
+      "aligned_blocks": 25
+    },
+    "palette": {
+      "source_background": [
+        248,
+        248,
+        248
+      ],
+      "output_background": [
+        248,
+        248,
+        248
+      ],
+      "source_ink": [
+        192,
+        192,
+        192
+      ],
+      "output_ink": [
+        200,
+        200,
+        200
+      ],
+      "source_accent": null,
+      "output_accent": null,
+      "background_delta": 0.0,
+      "ink_delta": 0.03137254901960784,
+      "accent_delta": 0.0,
+      "source_texture": 0.04235222425350396,
+      "output_texture": 0.04149350649350649
+    },
+    "inline": {
+      "found": {
+        "link": 0,
+        "code": 0,
+        "mark": 0,
+        "strong": 0,
+        "em": 0,
+        "sup": 0
+      },
+      "of": {
+        "link": 0,
+        "code": 0,
+        "mark": 0,
+        "strong": 7,
+        "em": 0,
+        "sup": 0
+      },
+      "missing": [
+        "strong: Calder Valley Veterinary Group LLP",
+        "strong: Client",
+        "strong: Northlight Systems Ltd",
+        "strong: Provider",
+        "strong: Services",
+        "strong: Business Day",
+        "strong: Response Time"
+      ]
+    },
+    "notes": [],
+    "error": null
+  },
+  {
+    "name": "datasheet",
+    "split": "sweep",
+    "width": 940,
+    "source_height": 646,
+    "output_height": 885,
+    "completeness": {
+      "recall": 0.994535519125683,
+      "precision": 0.9891304347826086,
+      "join_recall": 0.9926470588235294,
+      "vocabulary_recall": 0.9924812030075187,
+      "vanished": [
+        "m3"
+      ],
+      "source_tokens": 183,
+      "output_tokens": 184,
+      "lost": [
+        [
+          "m3",
+          1
+        ]
+      ],
+      "duplicated": [],
+      "invented": [
+        [
+          "3",
+          1
+        ],
+        [
+          "m",
+          1
+        ]
+      ],
+      "broken_joins": [
+        [
+          "μg",
+          "m3"
+        ]
+      ],
+      "figures_lost": 0,
+      "hard_breaks": 0,
+      "source_hard_breaks": 0,
+      "short_lines": 0,
+      "source_short_lines": 0
+    },
+    "order": {
+      "tau": 0.8334875115633672,
+      "matched": 47,
+      "of": 47
+    },
+    "layout": {
+      "beside_agreement": 0.7954545454545454,
+      "beside_pairs": 44,
+      "column_error": 0.02197747889904941,
+      "columns_within_tolerance": 0.9772727272727273,
+      "height_ratio": 1.369969040247678,
+      "matched_blocks": 47,
+      "of_blocks": 47,
+      "split_regions": 0,
+      "merged_regions": 0,
+      "clipped": 0,
+      "source_clipped": 0
+    },
+    "typography": {
+      "source_scale": 1.44,
+      "output_scale": 1.05,
+      "scale_error": 0.27083333333333326,
+      "heading_levels_source": 3,
+      "heading_levels_output": 4,
+      "alignment_agreement": 0.9574468085106383,
+      "aligned_blocks": 47
+    },
+    "palette": {
+      "source_background": [
+        248,
+        248,
+        248
+      ],
+      "output_background": [
+        248,
+        248,
+        248
+      ],
+      "source_ink": [
+        8,
+        56,
+        88
+      ],
+      "output_ink": [
+        8,
+        56,
+        88
+      ],
+      "source_accent": [
+        8,
+        56,
+        88
+      ],
+      "output_accent": [
+        8,
+        56,
+        88
+      ],
+      "background_delta": 0.0,
+      "ink_delta": 0.0,
+      "accent_delta": 0.0,
+      "source_texture": 0.07244741100323625,
+      "output_texture": 0.052660766961651916
+    },
+    "inline": {
+      "found": {
+        "link": 0,
+        "code": 0,
+        "mark": 0,
+        "strong": 0,
+        "em": 0,
+        "sup": 0
+      },
+      "of": {
+        "link": 0,
+        "code": 0,
+        "mark": 0,
+        "strong": 0,
+        "em": 0,
+        "sup": 0
+      },
+      "missing": []
+    },
+    "notes": [],
+    "error": null
+  },
+  {
+    "name": "email",
+    "split": "sweep",
+    "width": 820,
+    "source_height": 591,
+    "output_height": 637,
+    "completeness": {
+      "recall": 1.0,
+      "precision": 1.0,
+      "join_recall": 1.0,
+      "vocabulary_recall": 1.0,
+      "vanished": [],
+      "source_tokens": 186,
+      "output_tokens": 186,
+      "lost": [],
+      "duplicated": [],
+      "invented": [],
+      "broken_joins": [],
+      "figures_lost": 0,
+      "hard_breaks": 0,
+      "source_hard_breaks": 3,
+      "short_lines": 0,
+      "source_short_lines": 3
+    },
+    "order": {
+      "tau": 0.9619047619047619,
+      "matched": 21,
+      "of": 22
+    },
+    "layout": {
+      "beside_agreement": 0.9166666666666666,
+      "beside_pairs": 12,
+      "column_error": 0.07598738098718219,
+      "columns_within_tolerance": 0.9230769230769231,
+      "height_ratio": 1.077834179357022,
+      "matched_blocks": 21,
+      "of_blocks": 22,
+      "split_regions": 0,
+      "merged_regions": 0,
+      "clipped": 0,
+      "source_clipped": 0
+    },
+    "typography": {
+      "source_scale": 1.68,
+      "output_scale": 1.05,
+      "scale_error": 0.37499999999999994,
+      "heading_levels_source": 1,
+      "heading_levels_output": 3,
+      "alignment_agreement": 0.8095238095238095,
+      "aligned_blocks": 21
+    },
+    "palette": {
+      "source_background": [
+        248,
+        248,
+        248
+      ],
+      "output_background": [
+        248,
+        248,
+        248
+      ],
+      "source_ink": [
+        200,
+        200,
+        200
+      ],
+      "output_ink": [
+        200,
+        200,
+        200
+      ],
+      "source_accent": null,
+      "output_accent": null,
+      "background_delta": 0.0,
+      "ink_delta": 0.0,
+      "accent_delta": 0.0,
+      "source_texture": 0.04430941358024691,
+      "output_texture": 0.042492846924177395
+    },
+    "inline": {
+      "found": {
+        "link": 0,
+        "code": 0,
+        "mark": 0,
+        "strong": 0,
+        "em": 0,
+        "sup": 0
+      },
+      "of": {
+        "link": 0,
+        "code": 0,
+        "mark": 0,
+        "strong": 3,
+        "em": 0,
+        "sup": 0
+      },
+      "missing": [
+        "strong: Inbox",
+        "strong: Sofia Lindqvist",
+        "strong: Sofia Lindqvist"
+      ]
+    },
+    "notes": [],
+    "error": null
+  },
+  {
+    "name": "flyer",
+    "split": "sweep",
+    "width": 800,
+    "source_height": 539,
+    "output_height": 604,
+    "completeness": {
+      "recall": 1.0,
+      "precision": 0.9753086419753086,
+      "join_recall": 0.8939393939393939,
+      "vocabulary_recall": 1.0,
+      "vanished": [],
+      "source_tokens": 79,
+      "output_tokens": 81,
+      "lost": [],
+      "duplicated": [],
+      "invented": [
+        [
+          "the",
+          2
+        ]
+      ],
+      "broken_joins": [
+        [
+          "from",
+          "wood"
+        ],
+        [
+          "wood",
+          "fired"
+        ],
+        [
+          "to",
+          "sri"
+        ],
+        [
+          "sri",
+          "lankan"
+        ],
+        [
+          "lankan",
+          "hoppers"
+        ],
+        [
+          "from",
+          "4"
+        ],
+        [
+          "pm",
+          "in"
+        ]
+      ],
+      "figures_lost": 0,
+      "hard_breaks": 1,
+      "source_hard_breaks": 1,
+      "short_lines": 1,
+      "source_short_lines": 1
+    },
+    "order": {
+      "tau": 1.0,
+      "matched": 12,
+      "of": 12
+    },
+    "layout": {
+      "beside_agreement": 1.0,
+      "beside_pairs": 6,
+      "column_error": 0.04441466478130687,
+      "columns_within_tolerance": 1.0,
+      "height_ratio": 1.1205936920222634,
+      "matched_blocks": 12,
+      "of_blocks": 12,
+      "split_regions": 1,
+      "merged_regions": 0,
+      "clipped": 0,
+      "source_clipped": 0
+    },
+    "typography": {
+      "source_scale": 4.142857142857143,
+      "output_scale": 0.955503448275862,
+      "scale_error": 0.7693612366230678,
+      "heading_levels_source": 2,
+      "heading_levels_output": 4,
+      "alignment_agreement": 1.0,
+      "aligned_blocks": 12
+    },
+    "palette": {
+      "source_background": [
+        24,
+        40,
+        64
+      ],
+      "output_background": [
+        24,
+        40,
+        64
+      ],
+      "source_ink": [
+        240,
+        160,
+        64
+      ],
+      "output_ink": [
+        240,
+        160,
+        64
+      ],
+      "source_accent": [
+        240,
+        160,
+        64
+      ],
+      "output_accent": [
+        240,
+        160,
+        64
+      ],
+      "background_delta": 0.0,
+      "ink_delta": 0.0,
+      "accent_delta": 0.0,
+      "source_texture": 0.06960396039603961,
+      "output_texture": 0.07115894039735099
+    },
+    "inline": {
+      "found": {
+        "link": 0,
+        "code": 0,
+        "mark": 0,
+        "strong": 0,
+        "em": 0,
+        "sup": 0
+      },
+      "of": {
+        "link": 0,
+        "code": 0,
+        "mark": 0,
+        "strong": 1,
+        "em": 0,
+        "sup": 0
+      },
+      "missing": [
+        "strong: Free entry · Family friendly"
+      ]
+    },
+    "notes": [],
+    "error": null
+  },
+  {
+    "name": "labreport",
+    "split": "sweep",
+    "width": 860,
+    "source_height": 694,
+    "output_height": 693,
+    "completeness": {
+      "recall": 0.9775280898876404,
+      "precision": 0.9560439560439561,
+      "join_recall": 0.941747572815534,
+      "vocabulary_recall": 0.9776119402985075,
+      "vanished": [
+        "109",
+        "2291",
+        "73m2"
+      ],
+      "source_tokens": 178,
+      "output_tokens": 182,
+      "lost": [
+        [
+          "109",
+          2
+        ],
+        [
+          "2291",
+          1
+        ],
+        [
+          "73m2",
+          1
+        ]
+      ],
+      "duplicated": [],
+      "invented": [
+        [
+          "10",
+          2
+        ],
+        [
+          "9",
+          2
+        ],
+        [
+          "2",
+          1
+        ],
+        [
+          "229",
+          1
+        ],
+        [
+          "73m",
+          1
+        ],
+        [
+          "i",
+          1
+        ]
+      ],
+      "broken_joins": [
+        [
+          "np",
+          "2291"
+        ],
+        [
+          "collected",
+          "21"
+        ],
+        [
+          "reported",
+          "21"
+        ],
+        [
+          "109",
+          "l"
+        ],
+        [
+          "1",
+          "73m2"
+        ]
+      ],
+      "figures_lost": 0,
+      "hard_breaks": 1,
+      "source_hard_breaks": 3,
+      "short_lines": 1,
+      "source_short_lines": 0
+    },
+    "order": {
+      "tau": 1.0,
+      "matched": 68,
+      "of": 71
+    },
+    "layout": {
+      "beside_agreement": 0.8434782608695652,
+      "beside_pairs": 115,
+      "column_error": 0.05383664111412536,
+      "columns_within_tolerance": 0.9032258064516129,
+      "height_ratio": 0.9985590778097982,
+      "matched_blocks": 68,
+      "of_blocks": 71,
+      "split_regions": 0,
+      "merged_regions": 0,
+      "clipped": 0,
+      "source_clipped": 0
+    },
+    "typography": {
+      "source_scale": 1.6,
+      "output_scale": 1.638,
+      "scale_error": 0.023749999999999882,
+      "heading_levels_source": 1,
+      "heading_levels_output": 2,
+      "alignment_agreement": 0.8970588235294118,
+      "aligned_blocks": 68
+    },
+    "palette": {
+      "source_background": [
+        248,
+        248,
+        248
+      ],
+      "output_background": [
+        248,
+        248,
+        248
+      ],
+      "source_ink": [
+        184,
+        184,
+        184
+      ],
+      "output_ink": [
+        168,
+        176,
+        176
+      ],
+      "source_accent": [
+        8,
+        104,
+        104
+      ],
+      "output_accent": [
+        96,
+        160,
+        160
+      ],
+      "background_delta": 0.0,
+      "ink_delta": 0.04436748430974415,
+      "accent_delta": 0.26804717632368724,
+      "source_texture": 0.02319214876033058,
+      "output_texture": 0.025500345065562455
+    },
+    "inline": {
+      "found": {
+        "link": 0,
+        "code": 0,
+        "mark": 0,
+        "strong": 1,
+        "em": 0,
+        "sup": 0
+      },
+      "of": {
+        "link": 0,
+        "code": 0,
+        "mark": 0,
+        "strong": 1,
+        "em": 0,
+        "sup": 0
+      },
+      "missing": []
+    },
+    "notes": [],
+    "error": null
+  },
+  {
+    "name": "minutes",
+    "split": "sweep",
+    "width": 820,
+    "source_height": 807,
+    "output_height": 896,
+    "completeness": {
+      "recall": 0.9880952380952381,
+      "precision": 1.0,
+      "join_recall": 0.995049504950495,
+      "vocabulary_recall": 0.993421052631579,
+      "vanished": [
+        "margaret"
+      ],
+      "source_tokens": 252,
+      "output_tokens": 249,
+      "lost": [
+        [
+          "chair",
+          1
+        ],
+        [
+          "ellison",
+          1
+        ],
+        [
+          "margaret",
+          1
+        ]
+      ],
+      "duplicated": [],
+      "invented": [],
+      "broken_joins": [
+        [
+          "margaret",
+          "ellison"
+        ]
+      ],
+      "figures_lost": 0,
+      "hard_breaks": 0,
+      "source_hard_breaks": 0,
+      "short_lines": 0,
+      "source_short_lines": 0
+    },
+    "order": {
+      "tau": 0.9902439024390244,
+      "matched": 41,
+      "of": 44
+    },
+    "layout": {
+      "beside_agreement": 0.9333333333333333,
+      "beside_pairs": 30,
+      "column_error": 0.05720992521419972,
+      "columns_within_tolerance": 0.8,
+      "height_ratio": 1.110285006195787,
+      "matched_blocks": 41,
+      "of_blocks": 44,
+      "split_regions": 0,
+      "merged_regions": 0,
+      "clipped": 0,
+      "source_clipped": 0
+    },
+    "typography": {
+      "source_scale": 1.0769230769230769,
+      "output_scale": 1.0999999999999999,
+      "scale_error": 0.021428571428571352,
+      "heading_levels_source": 2,
+      "heading_levels_output": 5,
+      "alignment_agreement": 0.8780487804878049,
+      "aligned_blocks": 41
+    },
+    "palette": {
+      "source_background": [
+        248,
+        248,
+        248
+      ],
+      "output_background": [
+        248,
+        248,
+        248
+      ],
+      "source_ink": [
+        176,
+        184,
+        200
+      ],
+      "output_ink": [
+        200,
+        200,
+        200
+      ],
+      "source_accent": null,
+      "output_accent": null,
+      "background_delta": 0.0,
+      "ink_delta": 0.0653071686107022,
+      "accent_delta": 0.0,
+      "source_texture": 0.045022598870056496,
+      "output_texture": 0.047654979674796746
+    },
+    "inline": {
+      "found": {
+        "link": 0,
+        "code": 0,
+        "mark": 0,
+        "strong": 0,
+        "em": 0,
+        "sup": 0
+      },
+      "of": {
+        "link": 0,
+        "code": 0,
+        "mark": 0,
+        "strong": 3,
+        "em": 0,
+        "sup": 0
+      },
+      "missing": [
+        "strong: Present:",
+        "strong: Apologies:",
+        "strong: Next meeting:"
+      ]
+    },
+    "notes": [],
+    "error": null
+  },
+  {
+    "name": "nutrition",
+    "split": "sweep",
+    "width": 500,
+    "source_height": 643,
+    "output_height": 821,
+    "completeness": {
+      "recall": 1.0,
+      "precision": 0.8947368421052632,
+      "join_recall": 0.9868421052631579,
+      "vocabulary_recall": 1.0,
+      "vanished": [],
+      "source_tokens": 119,
+      "output_tokens": 133,
+      "lost": [],
+      "duplicated": [
+        [
+          "230",
+          1,
+          2
+        ]
+      ],
+      "invented": [
+        [
+          "a",
+          2
+        ],
+        [
+          "230",
+          1
+        ],
+        [
+          "daily",
+          1
+        ],
+        [
+          "dv",
+          1
+        ],
+        [
+          "how",
+          1
+        ],
+        [
+          "in",
+          1
+        ],
+        [
+          "much",
+          1
+        ],
+        [
+          "nutrient",
+          1
+        ],
+        [
+          "s",
+          1
+        ],
+        [
+          "the",
+          1
+        ],
+        [
+          "told",
+          1
+        ],
+        [
+          "value",
+          1
+        ],
+        [
+          "you",
+          1
+        ]
+      ],
+      "broken_joins": [
+        [
+          "a",
+          "day"
+        ]
+      ],
+      "figures_lost": 0,
+      "hard_breaks": 0,
+      "source_hard_breaks": 1,
+      "short_lines": 0,
+      "source_short_lines": 0
+    },
+    "order": {
+      "tau": 0.910873440285205,
+      "matched": 34,
+      "of": 35
+    },
+    "layout": {
+      "beside_agreement": 1.0,
+      "beside_pairs": 13,
+      "column_error": 0.04803972591880294,
+      "columns_within_tolerance": 0.9230769230769231,
+      "height_ratio": 1.2768273716951788,
+      "matched_blocks": 34,
+      "of_blocks": 35,
+      "split_regions": 0,
+      "merged_regions": 0,
+      "clipped": 0,
+      "source_clipped": 0
+    },
+    "typography": {
+      "source_scale": 1.2307692307692308,
+      "output_scale": 0.9828571428571429,
+      "scale_error": 0.20142857142857146,
+      "heading_levels_source": 4,
+      "heading_levels_output": 2,
+      "alignment_agreement": 0.08823529411764706,
+      "aligned_blocks": 34
+    },
+    "palette": {
+      "source_background": [
+        248,
+        248,
+        248
+      ],
+      "output_background": [
+        248,
+        248,
+        248
+      ],
+      "source_ink": [
+        0,
+        0,
+        0
+      ],
+      "output_ink": [
+        0,
+        0,
+        0
+      ],
+      "source_accent": null,
+      "output_accent": null,
+      "background_delta": 0.0,
+      "ink_delta": 0.0,
+      "accent_delta": 0.0,
+      "source_texture": 0.0422954898911353,
+      "output_texture": 0.03796589524969549
+    },
+    "inline": {
+      "found": {
+        "link": 0,
+        "code": 0,
+        "mark": 0,
+        "strong": 0,
+        "em": 0,
+        "sup": 0
+      },
+      "of": {
+        "link": 0,
+        "code": 0,
+        "mark": 0,
+        "strong": 7,
+        "em": 1,
+        "sup": 0
+      },
+      "missing": [
+        "strong: Total Fat",
+        "em: Trans",
+        "strong: Cholesterol",
+        "strong: Sodium",
+        "strong: Total Carbohydrate",
+        "strong: Protein",
+        "strong: INGREDIENTS:",
+        "strong: CONTAINS: ALMONDS."
+      ]
+    },
+    "notes": [],
+    "error": null
+  },
+  {
+    "name": "payslip",
+    "split": "sweep",
+    "width": 900,
+    "source_height": 628,
+    "output_height": 688,
+    "completeness": {
+      "recall": 0.9939024390243902,
+      "precision": 0.9878787878787879,
+      "join_recall": 0.9595959595959596,
+      "vocabulary_recall": 1.0,
+      "vanished": [],
+      "source_tokens": 164,
+      "output_tokens": 165,
+      "lost": [
+        [
+          "5",
+          1
+        ]
+      ],
+      "duplicated": [],
+      "invented": [
+        [
+          "5x",
+          1
+        ],
+        [
+          "paysllip",
+          1
+        ]
+      ],
+      "broken_joins": [
+        [
+          "period",
+          "1"
+        ],
+        [
+          "1",
+          "5"
+        ],
+        [
+          "to",
+          "payroll"
+        ],
+        [
+          "example",
+          "within"
+        ]
+      ],
+      "figures_lost": 0,
+      "hard_breaks": 0,
+      "source_hard_breaks": 0,
+      "short_lines": 0,
+      "source_short_lines": 0
+    },
+    "order": {
+      "tau": 0.9536723163841808,
+      "matched": 60,
+      "of": 65
+    },
+    "layout": {
+      "beside_agreement": 0.9306930693069307,
+      "beside_pairs": 101,
+      "column_error": 0.021355822618418646,
+      "columns_within_tolerance": 1.0,
+      "height_ratio": 1.0955414012738853,
+      "matched_blocks": 60,
+      "of_blocks": 65,
+      "split_regions": 0,
+      "merged_regions": 0,
+      "clipped": 0,
+      "source_clipped": 0
+    },
+    "typography": {
+      "source_scale": 1.6923076923076923,
+      "output_scale": 1.7535,
+      "scale_error": 0.03615909090909095,
+      "heading_levels_source": 2,
+      "heading_levels_output": 3,
+      "alignment_agreement": 0.6333333333333333,
+      "aligned_blocks": 60
+    },
+    "palette": {
+      "source_background": [
+        248,
+        248,
+        248
+      ],
+      "output_background": [
+        248,
+        248,
+        248
+      ],
+      "source_ink": [
+        40,
+        72,
+        120
+      ],
+      "output_ink": [
+        40,
+        72,
+        120
+      ],
+      "source_accent": [
+        40,
+        72,
+        120
+      ],
+      "output_accent": [
+        40,
+        72,
+        120
+      ],
+      "background_delta": 0.0,
+      "ink_delta": 0.0,
+      "accent_delta": 0.0,
+      "source_texture": 0.06551710421638822,
+      "output_texture": 0.0625199709513435
+    },
+    "inline": {
+      "found": {
+        "link": 0,
+        "code": 0,
+        "mark": 0,
+        "strong": 0,
+        "em": 0,
+        "sup": 0
+      },
+      "of": {
+        "link": 0,
+        "code": 0,
+        "mark": 0,
+        "strong": 3,
+        "em": 0,
+        "sup": 0
+      },
+      "missing": [
+        "strong: £4,098.08",
+        "strong: £1,099.34",
+        "strong: £2,998.74"
+      ]
+    },
+    "notes": [],
+    "error": null
+  },
+  {
+    "name": "quiz",
+    "split": "sweep",
+    "width": 860,
+    "source_height": 670,
+    "output_height": 732,
+    "completeness": {
+      "recall": 1.0,
+      "precision": 0.9788732394366197,
+      "join_recall": 0.97,
+      "vocabulary_recall": 1.0,
+      "vanished": [],
+      "source_tokens": 139,
+      "output_tokens": 142,
+      "lost": [],
+      "duplicated": [],
+      "invented": [
+        [
+          "h2",
+          1
+        ],
+        [
+          "o",
+          1
+        ],
+        [
+          "o2",
+          1
+        ]
+      ],
+      "broken_joins": [
+        [
+          "equation",
+          "h2"
+        ],
+        [
+          "h2",
+          "o2"
+        ],
+        [
+          "o2",
+          "h2o"
+        ]
+      ],
+      "figures_lost": 0,
+      "hard_breaks": 0,
+      "source_hard_breaks": 0,
+      "short_lines": 0,
+      "source_short_lines": 0
+    },
+    "order": {
+      "tau": 1.0,
+      "matched": 33,
+      "of": 39
+    },
+    "layout": {
+      "beside_agreement": 1.0,
+      "beside_pairs": 17,
+      "column_error": 0.025864915179715516,
+      "columns_within_tolerance": 1.0,
+      "height_ratio": 1.0925373134328358,
+      "matched_blocks": 33,
+      "of_blocks": 39,
+      "split_regions": 0,
+      "merged_regions": 0,
+      "clipped": 0,
+      "source_clipped": 0
+    },
+    "typography": {
+      "source_scale": 1.3333333333333333,
+      "output_scale": 1.0,
+      "scale_error": 0.24999999999999994,
+      "heading_levels_source": 1,
+      "heading_levels_output": 6,
+      "alignment_agreement": 0.7878787878787878,
+      "aligned_blocks": 33
+    },
+    "palette": {
+      "source_background": [
+        248,
+        248,
+        248
+      ],
+      "output_background": [
+        248,
+        248,
+        248
+      ],
+      "source_ink": [
+        88,
+        88,
+        88
+      ],
+      "output_ink": [
+        184,
+        184,
+        184
+      ],
+      "source_accent": null,
+      "output_accent": null,
+      "background_delta": 0.0,
+      "ink_delta": 0.3764705882352941,
+      "accent_delta": 0.0,
+      "source_texture": 0.053422555317630266,
+      "output_texture": 0.03826810176125245
+    },
+    "inline": {
+      "found": {
+        "link": 0,
+        "code": 0,
+        "mark": 0,
+        "strong": 0,
+        "em": 0,
+        "sup": 0
+      },
+      "of": {
+        "link": 0,
+        "code": 0,
+        "mark": 0,
+        "strong": 0,
+        "em": 0,
+        "sup": 0
+      },
+      "missing": []
+    },
+    "notes": [],
+    "error": null
+  },
+  {
+    "name": "recipe",
+    "split": "sweep",
+    "width": 900,
+    "source_height": 636,
+    "output_height": 913,
+    "completeness": {
+      "recall": 1.0,
+      "precision": 0.9809160305343512,
+      "join_recall": 0.9344978165938864,
+      "vocabulary_recall": 1.0,
+      "vanished": [],
+      "source_tokens": 257,
+      "output_tokens": 262,
+      "lost": [],
+      "duplicated": [],
+      "invented": [
+        [
+          "1",
+          1
+        ],
+        [
+          "2",
+          1
+        ],
+        [
+          "3",
+          1
+        ],
+        [
+          "5",
+          1
+        ],
+        [
+          "meth",
+          1
+        ]
+      ],
+      "broken_joins": [
+        [
+          "prep",
+          "20"
+        ],
+        [
+          "cook",
+          "35"
+        ],
+        [
+          "serves",
+          "4"
+        ],
+        [
+          "per",
+          "serving"
+        ],
+        [
+          "serving",
+          "520"
+        ],
+        [
+          "kcal",
+          "24"
+        ],
+        [
+          "g",
+          "fat"
+        ],
+        [
+          "fat",
+          "9"
+        ],
+        [
+          "g",
+          "saturates"
+        ],
+        [
+          "saturates",
+          "61"
+        ],
+        [
+          "g",
+          "carbohydrate"
+        ],
+        [
+          "carbohydrate",
+          "14"
+        ],
+        [
+          "g",
+          "protein"
+        ],
+        [
+          "protein",
+          "1"
+        ],
+        [
+          "g",
+          "salt"
+        ]
+      ],
+      "figures_lost": 0,
+      "hard_breaks": 0,
+      "source_hard_breaks": 0,
+      "short_lines": 0,
+      "source_short_lines": 0
+    },
+    "order": {
+      "tau": 0.7661538461538462,
+      "matched": 26,
+      "of": 27
+    },
+    "layout": {
+      "beside_agreement": 0.5882352941176471,
+      "beside_pairs": 17,
+      "column_error": 0.08049813110970663,
+      "columns_within_tolerance": 0.7619047619047619,
+      "height_ratio": 1.4355345911949686,
+      "matched_blocks": 26,
+      "of_blocks": 27,
+      "split_regions": 0,
+      "merged_regions": 0,
+      "clipped": 0,
+      "source_clipped": 0
+    },
+    "typography": {
+      "source_scale": 1.0,
+      "output_scale": 1.1585365853658536,
+      "scale_error": 0.15853658536585358,
+      "heading_levels_source": 3,
+      "heading_levels_output": 5,
+      "alignment_agreement": 0.8076923076923077,
+      "aligned_blocks": 26
+    },
+    "palette": {
+      "source_background": [
+        248,
+        248,
+        240
+      ],
+      "output_background": [
+        248,
+        248,
+        240
+      ],
+      "source_ink": [
+        192,
+        192,
+        184
+      ],
+      "output_ink": [
+        200,
+        200,
+        192
+      ],
+      "source_accent": [
+        120,
+        48,
+        24
+      ],
+      "output_accent": [
+        120,
+        40,
+        16
+      ],
+      "background_delta": 0.0,
+      "ink_delta": 0.03137254901960784,
+      "accent_delta": 0.025615579009497288,
+      "source_texture": 0.043852201257861635,
+      "output_texture": 0.03801587301587302
+    },
+    "inline": {
+      "found": {
+        "link": 0,
+        "code": 0,
+        "mark": 0,
+        "strong": 0,
+        "em": 0,
+        "sup": 0
+      },
+      "of": {
+        "link": 0,
+        "code": 0,
+        "mark": 0,
+        "strong": 1,
+        "em": 0,
+        "sup": 0
+      },
+      "missing": [
+        "strong: Cook's tip"
+      ]
+    },
+    "notes": [],
+    "error": null
+  }
+]

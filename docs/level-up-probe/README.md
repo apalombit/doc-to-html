@@ -16,6 +16,11 @@ never a held-out set, and never a panel or a vault.
 | `scripts/glm_taste.py` | GLM-OCR over each whole page (`Text Recognition:`), `--zones` over today's Zones, `--rescore <folder>` without asking again |
 | `scripts/compare_sets.py` | the ten against the 21, same scorer |
 | `scripts/probe_report.py` | one page with every sheet and the notes |
+| `out/report.html` | **the page to open**: every source beside its render, the numbers and the notes |
+| `out/<page>/render.html`, `out/<page>/ir.json` | each page's render and IR, as converted at `99110c2` |
+| `out/scores.json` | the scorer's full output over the ten |
+| `out/glm/<page>.md`, `out/glm-zones/<page>.md` | GLM-OCR's answers, whole page and per Zone, with each folder's `summary.json` |
+| `out/tuned-sample/<doc>.png` | the six tuned pages' sheets, judged the same way (§3.2) |
 
 ## How it was taken
 
@@ -41,7 +46,9 @@ never a held-out set, and never a panel or a vault.
 .venv/bin/python docs/level-up-probe/scripts/probe_report.py      # → debug/probe/unseen-2026-10-24/report.html
 ```
 
-Outputs go to `debug/probe/unseen-2026-10-24/`, which is gitignored.
+A re-run writes to `debug/probe/unseen-2026-10-24/`, which is gitignored;
+`out/` is a copy of the run this write-up describes. The crops the scripts
+cut are left out.
 
 ## What it cannot tell
 

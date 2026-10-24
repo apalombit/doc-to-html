@@ -1,0 +1,4315 @@
+{
+  "source": {
+    "path": "/Users/aless/Desktop/Projects/pic-to-html/doc-to-html/debug/probe/unseen-2026-10-24/src/labreport.png",
+    "sha256": "6d18caf10c88820964b340af1d4b5c44ec81125fd86f0bfede57768b8ca2cb57",
+    "width": 860,
+    "height": 694,
+    "rectified_width": 860,
+    "rectified_height": 694,
+    "paper": null,
+    "surround": null
+  },
+  "ir_version": 1,
+  "rectifier_version": 7,
+  "hint": null,
+  "page_px": 860,
+  "style": {
+    "page_bg": [
+      255,
+      255,
+      255
+    ],
+    "ink": [
+      32,
+      38,
+      43
+    ],
+    "accent": [
+      13,
+      110,
+      110
+    ],
+    "shade": [
+      223,
+      229,
+      232
+    ],
+    "body_px": 12.0,
+    "face": "sans"
+  },
+  "zones": [
+    {
+      "kind": "pairs",
+      "role": "header",
+      "band": 0,
+      "column": 1,
+      "bbox": {
+        "left": 0.8034883720930233,
+        "top": 0.043227665706051875,
+        "right": 0.9627906976744186,
+        "bottom": 0.11095100864553314
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [
+        {
+          "label": {
+            "bbox": {
+              "left": 0.8175581395348838,
+              "top": 0.0430835734870317,
+              "right": 0.8719767441860465,
+              "bottom": 0.058645533141210376
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "Report ID",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "Report ID",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.89,
+              "bold": false,
+              "italic": false,
+              "color": [
+                32,
+                38,
+                43
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": {
+              "left": 0.8772093023255814,
+              "top": 0.0430835734870317,
+              "right": 0.9619767441860465,
+              "bottom": 0.05475504322766571
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "R-26-118045",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "R-26-118045",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.89,
+              "bold": true,
+              "italic": null,
+              "color": [
+                13,
+                110,
+                110
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "marks": []
+        },
+        {
+          "label": {
+            "bbox": {
+              "left": 0.8032558139534883,
+              "top": 0.06902017291066283,
+              "right": 0.8548837209302326,
+              "bottom": 0.08112391930835734
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "Collected",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "Collected",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.89,
+              "bold": false,
+              "italic": false,
+              "color": [
+                32,
+                38,
+                43
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": {
+              "left": 0.8594186046511628,
+              "top": 0.06902017291066283,
+              "right": 0.9626744186046511,
+              "bottom": 0.08198847262247838
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "21 Oct 2026, 08:12",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "21 Oct 2026, 08:12",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.89,
+              "bold": false,
+              "italic": null,
+              "color": [
+                32,
+                38,
+                43
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "marks": []
+        },
+        {
+          "label": {
+            "bbox": {
+              "left": 0.8043023255813954,
+              "top": 0.09495677233429396,
+              "right": 0.8548837209302326,
+              "bottom": 0.1105187319884726
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "Reported",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "Reported",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.89,
+              "bold": false,
+              "italic": false,
+              "color": [
+                32,
+                38,
+                43
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "value": {
+            "bbox": {
+              "left": 0.8594186046511628,
+              "top": 0.09495677233429396,
+              "right": 0.9626744186046511,
+              "bottom": 0.10792507204610952
+            },
+            "readings": [
+              {
+                "engine": "ollama",
+                "text": "21 Oct 2026, 15:40",
+                "model": "qwen3-vl:4b",
+                "prompt_version": "2",
+                "runs": []
+              },
+              {
+                "engine": "tesseract",
+                "text": "21 Oct 2026, 15:40",
+                "model": null,
+                "prompt_version": null,
+                "runs": []
+              }
+            ],
+            "state": "agreed",
+            "look": {
+              "size": 0.89,
+              "bold": false,
+              "italic": null,
+              "color": [
+                32,
+                38,
+                43
+              ],
+              "fill": null,
+              "chip": null,
+              "radius": null,
+              "caps": null,
+              "face": null,
+              "sizes": null
+            }
+          },
+          "marks": []
+        }
+      ],
+      "blocks": [],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "right",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "header",
+      "band": 0,
+      "column": 0,
+      "bbox": {
+        "left": 0.037209302325581395,
+        "top": 0.04755043227665706,
+        "right": 0.28488372093023256,
+        "bottom": 0.09798270893371758
+      },
+      "title": "Northfield Pathology",
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.037209302325581395,
+                "top": 0.08213256484149856,
+                "right": 0.28488372093023256,
+                "bottom": 0.09798270893371758
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Accredited clinical laboratory \u00b7 Lab ref NP-229 I",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Accredited clinical laboratory \u00abLab ref as ae Law am",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  95,
+                  107,
+                  114
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": 1.56,
+      "title_caps": false,
+      "title_bold": true,
+      "face": null,
+      "title_color": [
+        13,
+        110,
+        110
+      ],
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": "left",
+      "complete": true
+    },
+    {
+      "kind": "table",
+      "role": "body",
+      "band": 1,
+      "column": 0,
+      "bbox": {
+        "left": 0.044186046511627906,
+        "top": 0.15273775216138327,
+        "right": 0.813953488372093,
+        "bottom": 0.7910662824207493
+      },
+      "title": null,
+      "rows": [
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.05581395348837209,
+                "top": 0.15417867435158503,
+                "right": 0.1686046511627907,
+                "bottom": 0.1873198847262248
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "PATIENT",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "\u03a1\u0391\u03a4\u0399\u0395\u039d\u03a4 Tomasz Wisniewski \u03c4\u03b9 sm see",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.05581395348837209,
+                "top": 0.17420749279538905,
+                "right": 0.16883720930232557,
+                "bottom": 0.18760806916426512
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Tomasz Wi\u015bniewski",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "ollama",
+                  "text": "Tomasz W\u015bniewski",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Tomasz Wisniewski",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "resolved",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.3613953488372093,
+                "top": 0.15345821325648415,
+                "right": 0.45104651162790693,
+                "bottom": 0.1642651296829971
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "DATE OF BIRTH",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "DATE \u039f\u0395 BIRTH",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                },
+                {
+                  "engine": "ollama",
+                  "text": "DATE OF BIRTH",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "resolved",
+              "look": {
+                "size": 0.78,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  95,
+                  107,
+                  114
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.3603488372093023,
+                "top": 0.17420749279538905,
+                "right": 0.4643023255813953,
+                "bottom": 0.1919308357348703
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "02/07/1969 (57 y)",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "02/07/1969 (57 y)",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.6652325581395349,
+                "top": 0.15345821325648415,
+                "right": 0.6861627906976745,
+                "bottom": 0.1642651296829971
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "SEX",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "SEX",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.78,
+                "bold": true,
+                "italic": null,
+                "color": [
+                  95,
+                  107,
+                  114
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.6659302325581394,
+                "top": 0.17420749279538905,
+                "right": 0.6924418604651162,
+                "bottom": 0.18760806916426512
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Male",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Male",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "role": "header",
+          "under": {
+            "kind": "none",
+            "color": null,
+            "width": 0.0
+          },
+          "fill": [
+            241,
+            246,
+            246
+          ],
+          "leader": null,
+          "gap": null
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.056511627906976745,
+                "top": 0.21008645533141213,
+                "right": 0.08267441860465116,
+                "bottom": 0.22046109510086456
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "MRN",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "MRN",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.78,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  95,
+                  107,
+                  114
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.056162790697674415,
+                "top": 0.22910662824207492,
+                "right": 0.13604651162790699,
+                "bottom": 0.24250720461095102
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "5518 2207 93",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "5518 2207 93",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.3613953488372093,
+                "top": 0.20965417867435157,
+                "right": 0.5072093023255814,
+                "bottom": 0.22262247838616714
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "REQUESTING CLINICIAN",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "REQUESTING CLINICIAN",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.78,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  95,
+                  107,
+                  114
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.3613953488372093,
+                "top": 0.22910662824207492,
+                "right": 0.4398837209302326,
+                "bottom": 0.24250720461095102
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Dr H. Okafor",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Dr H. Okafor",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.6652325581395349,
+                "top": 0.20965417867435157,
+                "right": 0.7234883720930232,
+                "bottom": 0.22046109510086456
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "SPECIMEN",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "SPECIMEN",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.78,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  95,
+                  107,
+                  114
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.6648837209302325,
+                "top": 0.22910662824207492,
+                "right": 0.7883720930232558,
+                "bottom": 0.24639769452449567
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Venous blood, fasting",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Venous blood, fasting",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "role": "header",
+          "under": {
+            "kind": "none",
+            "color": null,
+            "width": 0.0
+          },
+          "fill": [
+            241,
+            246,
+            246
+          ],
+          "leader": null,
+          "gap": 0.01585
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.044302325581395345,
+                "top": 0.3,
+                "right": 0.06767441860465116,
+                "bottom": 0.3112391930835735
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Test",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Test",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  95,
+                  107,
+                  114
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.2958139534883721,
+                "top": 0.3,
+                "right": 0.32965116279069767,
+                "bottom": 0.3112391930835735
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Result",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Result",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  95,
+                  107,
+                  114
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.40360465116279065,
+                "top": 0.3,
+                "right": 0.4255813953488372,
+                "bottom": 0.31512968299711813
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Flag",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Flag",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  95,
+                  107,
+                  114
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.4848837209302326,
+                "top": 0.29827089337175794,
+                "right": 0.5131395348837209,
+                "bottom": 0.3164265129682997
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Units",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Units",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  95,
+                  107,
+                  114
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.7137209302325581,
+                "top": 0.3,
+                "right": 0.8138372093023255,
+                "bottom": 0.3112391930835735
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Reference interval",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Reference interval",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  95,
+                  107,
+                  114
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [],
+              "state": "agreed",
+              "look": null
+            }
+          ],
+          "role": "header",
+          "under": null,
+          "fill": null,
+          "leader": null,
+          "gap": 0.05187
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.045000000000000005,
+                "top": 0.35014409221902015,
+                "right": 0.1695348837209302,
+                "bottom": 0.3618155619596542
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "HAEMATOLOGY",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "HAEMATOLOGY",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  13,
+                  110,
+                  110
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            },
+            {
+              "bbox": null,
+              "readings": [],
+              "state": "agreed",
+              "look": null
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              13,
+              110,
+              110
+            ],
+            "width": 0.00144
+          },
+          "fill": null,
+          "leader": null,
+          "gap": null
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.045000000000000005,
+                "top": 0.38256484149855907,
+                "right": 0.12209302325581395,
+                "bottom": 0.404178674351585
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Haemoglobin",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Haemoglobin",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.3697674418604651,
+                "top": 0.38472622478386165,
+                "right": 0.3886046511627907,
+                "bottom": 0.3981268011527377
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "128",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "128",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.04988372093023256,
+                "top": 0.3025936599423631,
+                "right": 0.060697674418604644,
+                "bottom": 0.3099423631123919
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "L",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "L.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": true,
+                "italic": null,
+                "color": [
+                  95,
+                  107,
+                  114
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.48383720930232554,
+                "top": 0.38299711815561954,
+                "right": 0.5012790697674419,
+                "bottom": 0.40461095100864547
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "g/L",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "g/L",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.713953488372093,
+                "top": 0.3011527377521614,
+                "right": 0.813953488372093,
+                "bottom": 0.3976945244956772
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "130 \u2013 170",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Reference interval \u039930 170 ore",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.94,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [],
+              "state": "agreed",
+              "look": null
+            }
+          ],
+          "role": "data",
+          "under": null,
+          "fill": null,
+          "leader": null,
+          "gap": null
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.04395348837209302,
+                "top": 0.42363112391930835,
+                "right": 0.14337209302325582,
+                "bottom": 0.4370317002881844
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "White cell count",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "White cell count",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.37186046511627907,
+                "top": 0.4240634005763688,
+                "right": 0.3886046511627907,
+                "bottom": 0.4370317002881844
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "6.4",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "6.4",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            },
+            {
+              "bbox": {
+                "left": 0.37209302325581395,
+                "top": 0.42363112391930835,
+                "right": 0.522093023255814,
+                "bottom": 0.4365994236311239
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "\u00d7 10\u2079/L",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": [
+                    {
+                      "text": "\u00d7 10",
+                      "kind": "text"
+                    },
+                    {
+                      "text": "\u2079",
+                      "kind": "sup"
+                    },
+                    {
+                      "text": "/L",
+                      "kind": "text"
+                    }
+                  ]
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "6.4",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                },
+                {
+                  "engine": "ollama",
+                  "text": "6.4 \u00d710\u00b2/L",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "disputed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.7127906976744186,
+                "top": 0.42363112391930835,
+                "right": 0.7709302325581395,
+                "bottom": 0.4365994236311239
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "4.0 \u2013 11.0",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "40-- 11.09",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                },
+                {
+                  "engine": "ollama",
+                  "text": "4.0\u201311.0",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "resolved",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [],
+              "state": "agreed",
+              "look": null
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              223,
+              229,
+              232
+            ],
+            "width": 0.00144
+          },
+          "fill": null,
+          "leader": null,
+          "gap": null
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.045000000000000005,
+                "top": 0.4586455331412103,
+                "right": 0.09313953488372093,
+                "bottom": 0.48025936599423624
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Platelets",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Platelets",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.3673255813953488,
+                "top": 0.46123919308357353,
+                "right": 0.3861627906976744,
+                "bottom": 0.4742074927953891
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "231",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "231",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            },
+            {
+              "bbox": {
+                "left": 0.3674418604651163,
+                "top": 0.4610951008645533,
+                "right": 0.522093023255814,
+                "bottom": 0.47406340057636887
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "\u00d7 10\u2079/L",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": [
+                    {
+                      "text": "\u00d7 10",
+                      "kind": "text"
+                    },
+                    {
+                      "text": "\u2079",
+                      "kind": "sup"
+                    },
+                    {
+                      "text": "/L",
+                      "kind": "text"
+                    }
+                  ]
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "231",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                },
+                {
+                  "engine": "ollama",
+                  "text": "231 \u00d710\u2079/L",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "disputed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.7162790697674418,
+                "top": 0.4610951008645533,
+                "right": 0.7709302325581395,
+                "bottom": 0.47406340057636887
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "150 \u2013 400",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "\u039950 400 ia \u2018ee",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [],
+              "state": "agreed",
+              "look": null
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              223,
+              229,
+              232
+            ],
+            "width": 0.00144
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.02017
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.04534883720930233,
+                "top": 0.5,
+                "right": 0.07441860465116279,
+                "bottom": 0.5129682997118156
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "MCV",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "\u039c\u03bf\u03bd 4",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                },
+                {
+                  "engine": "ollama",
+                  "text": "MCV",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "resolved",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.3732558139534884,
+                "top": 0.497550432276657,
+                "right": 0.3886046511627907,
+                "bottom": 0.5191642651296831
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "84",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "84",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            },
+            {
+              "bbox": {
+                "left": 0.48383720930232554,
+                "top": 0.497550432276657,
+                "right": 0.4956976744186046,
+                "bottom": 0.5191642651296831
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "fL",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "fl",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.7133720930232558,
+                "top": 0.5001440922190202,
+                "right": 0.7643023255813953,
+                "bottom": 0.5131123919308357
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "80 \u2013 100",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "80 100",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [],
+              "state": "agreed",
+              "look": null
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              223,
+              229,
+              232
+            ],
+            "width": 0.00144
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.01585
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.045000000000000005,
+                "top": 0.5502881844380403,
+                "right": 0.16848837209302325,
+                "bottom": 0.5619596541786743
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "BIOCHEMISTRY",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "BIOCHEMISTRY",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": true,
+                "italic": false,
+                "color": [
+                  13,
+                  110,
+                  110
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            },
+            {
+              "bbox": null,
+              "readings": [],
+              "state": "agreed",
+              "look": null
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              13,
+              110,
+              110
+            ],
+            "width": 0.00144
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.02882
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.044651162790697675,
+                "top": 0.5848703170028818,
+                "right": 0.1419767441860465,
+                "bottom": 0.6025936599423631
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Glucose (fasting)",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Glucose (fasting)",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.05581395348837209,
+                "top": 0.5850144092219021,
+                "right": 0.3883720930232558,
+                "bottom": 0.6023054755043228
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "6.8",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Glucose (fasting) 686 14 5.5",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.403953488372093,
+                "top": 0.5865994236311238,
+                "right": 0.4147674418604651,
+                "bottom": 0.5995677233429394
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "H",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "H",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": true,
+                "italic": null,
+                "color": [
+                  180,
+                  35,
+                  24
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.48453488372093023,
+                "top": 0.5831412103746397,
+                "right": 0.5291860465116278,
+                "bottom": 0.6047550432276657
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "mmol/L",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "mmol/L",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.7137209302325581,
+                "top": 0.5848703170028818,
+                "right": 0.7632558139534883,
+                "bottom": 0.5982708933717579
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "3.9 \u2013 5.6",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "3.9 --5.6",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [],
+              "state": "agreed",
+              "look": null
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              223,
+              229,
+              232
+            ],
+            "width": 0.00144
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.02017
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.04534883720930233,
+                "top": 0.6239193083573487,
+                "right": 0.08488372093023255,
+                "bottom": 0.6368876080691642
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "HbA1c",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.3743023255813953,
+                "top": 0.6237752161383285,
+                "right": 0.3886046511627907,
+                "bottom": 0.6371757925072046
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "49",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "49",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.403953488372093,
+                "top": 0.6255043227665705,
+                "right": 0.4147674418604651,
+                "bottom": 0.6384726224783861
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "H",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "H",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": true,
+                "italic": null,
+                "color": [
+                  180,
+                  35,
+                  24
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.48453488372093023,
+                "top": 0.6220461095100864,
+                "right": 0.5434883720930233,
+                "bottom": 0.6432276657060518
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "mmol/mol",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "mmol/mol",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.7255813953488373,
+                "top": 0.6237752161383285,
+                "right": 0.7398837209302325,
+                "bottom": 0.6371757925072046
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "< 42",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "42",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [],
+              "state": "agreed",
+              "look": null
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              223,
+              229,
+              232
+            ],
+            "width": 0.00144
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.01585
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.044651162790697675,
+                "top": 0.6596541786743516,
+                "right": 0.10534883720930231,
+                "bottom": 0.6795389048991354
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Creatinine",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Creatinine",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.37465116279069766,
+                "top": 0.6613832853025937,
+                "right": 0.3886046511627907,
+                "bottom": 0.6747838616714698
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "92",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "92",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            },
+            {
+              "bbox": {
+                "left": 0.4848837209302326,
+                "top": 0.6596541786743516,
+                "right": 0.5256976744186046,
+                "bottom": 0.6795389048991354
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "\u03bcmol/L",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "umol/L",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                },
+                {
+                  "engine": "ollama",
+                  "text": "\u03bcmol/L",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "resolved",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.7137209302325581,
+                "top": 0.6613832853025937,
+                "right": 0.7643023255813953,
+                "bottom": 0.6747838616714698
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "60 \u2013 110",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "60-110",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [],
+              "state": "agreed",
+              "look": null
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              223,
+              229,
+              232
+            ],
+            "width": 0.00144
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.01441
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.044651162790697675,
+                "top": 0.7002881844380403,
+                "right": 0.07744186046511627,
+                "bottom": 0.7136887608069163
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "eGFR",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "eGFR",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.37465116279069766,
+                "top": 0.7002881844380403,
+                "right": 0.3886046511627907,
+                "bottom": 0.7136887608069163
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "> 90",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "90",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": null
+            },
+            {
+              "bbox": {
+                "left": 0.48453488372093023,
+                "top": 0.6985590778097982,
+                "right": 0.5727906976744186,
+                "bottom": 0.7193083573487031
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "mL/min/1.73m\u00b2",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": [
+                    {
+                      "text": "mL/min/1.73m",
+                      "kind": "text"
+                    },
+                    {
+                      "text": "\u00b2",
+                      "kind": "sup"
+                    }
+                  ]
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "mL/min/1.73m?",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.7259302325581395,
+                "top": 0.7002881844380403,
+                "right": 0.7398837209302325,
+                "bottom": 0.7136887608069163
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "> 60",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "60",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [],
+              "state": "agreed",
+              "look": null
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              223,
+              229,
+              232
+            ],
+            "width": 0.00144
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.01729
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.044302325581395345,
+                "top": 0.7378962536023054,
+                "right": 0.14232558139534882,
+                "bottom": 0.7508645533141209
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Total cholesterol",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Total cholesterol",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.37186046511627907,
+                "top": 0.7378962536023054,
+                "right": 0.3886046511627907,
+                "bottom": 0.7508645533141209
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "5.9",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "5.9",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.403953488372093,
+                "top": 0.7396253602305475,
+                "right": 0.4147674418604651,
+                "bottom": 0.7521613832853026
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "H",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "H",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": true,
+                "italic": null,
+                "color": [
+                  180,
+                  35,
+                  24
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.48453488372093023,
+                "top": 0.7361671469740634,
+                "right": 0.5291860465116278,
+                "bottom": 0.7569164265129682
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "mmol/L",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "mmol/L",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.7262790697674418,
+                "top": 0.7378962536023054,
+                "right": 0.7430232558139535,
+                "bottom": 0.7508645533141209
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "< 5.0",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "5.0",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [],
+              "state": "agreed",
+              "look": null
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              223,
+              229,
+              232
+            ],
+            "width": 0.00144
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.01441
+        },
+        {
+          "cells": [
+            {
+              "bbox": {
+                "left": 0.045000000000000005,
+                "top": 0.7768011527377521,
+                "right": 0.13848837209302325,
+                "bottom": 0.7897694524495676
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "LDL cholesterol",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "LDL cholesterol",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.37186046511627907,
+                "top": 0.7768011527377521,
+                "right": 0.3886046511627907,
+                "bottom": 0.7897694524495676
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "3.7",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "3.7",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.403953488372093,
+                "top": 0.7785302593659942,
+                "right": 0.4147674418604651,
+                "bottom": 0.7910662824207493
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "H",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "H",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": true,
+                "italic": null,
+                "color": [
+                  180,
+                  35,
+                  24
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.48453488372093023,
+                "top": 0.7750720461095101,
+                "right": 0.5291860465116278,
+                "bottom": 0.7958213256484149
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "mmol/L",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "mmol/L",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.7262790697674418,
+                "top": 0.7768011527377521,
+                "right": 0.7430232558139535,
+                "bottom": 0.7897694524495676
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "< 3.0",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "3.0",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": null,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": null,
+              "readings": [],
+              "state": "agreed",
+              "look": null
+            }
+          ],
+          "role": "data",
+          "under": {
+            "kind": "solid",
+            "color": [
+              223,
+              229,
+              232
+            ],
+            "width": 0.00144
+          },
+          "fill": null,
+          "leader": null,
+          "gap": 0.01585
+        }
+      ],
+      "pairs": [],
+      "blocks": [],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": [
+        241,
+        246,
+        246
+      ],
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": null,
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "body",
+      "band": 2,
+      "column": 0,
+      "bbox": {
+        "left": 0.037209302325581395,
+        "top": 0.8328530259365994,
+        "right": 0.9476744186046512,
+        "bottom": 0.8760806916426513
+      },
+      "title": "Comment",
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.03837209302325582,
+                "top": 0.8587896253602305,
+                "right": 0.9476744186046512,
+                "bottom": 0.8760806916426513
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Fasting glucose and HbA1c are in the range consistent with diabetes; suggest repeat HbA1c and clinical review. Mild normocytic anaemia \u2014 consider iron studies.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Fasting glucose and are in the range consistent with diabetes; suggest repeat HbAIc and clinical review. Mild normocytic anaemia consider iron studies. ye 6 be @e",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 1.0,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": 0.84,
+      "title_caps": false,
+      "title_bold": true,
+      "face": null,
+      "title_color": [
+        32,
+        38,
+        43
+      ],
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": "left",
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "footer",
+      "band": 3,
+      "column": 0,
+      "bbox": {
+        "left": 0.03837209302325582,
+        "top": 0.9236311239193083,
+        "right": 0.2802325581395349,
+        "bottom": 0.962536023054755
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.038139534883720926,
+                "top": 0.9234870317002881,
+                "right": 0.27988372093023256,
+                "bottom": 0.9394812680115274
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Results relate only to the specimen received.",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Results relate only to the specimen received.",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  95,
+                  107,
+                  114
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.03837209302325582,
+                "top": 0.946685878962536,
+                "right": 0.0941860465116279,
+                "bottom": 0.962536023054755
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Page 1 of 1",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Page of",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                },
+                {
+                  "engine": "ollama",
+                  "text": "Page 1 of 1",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                }
+              ],
+              "state": "resolved",
+              "look": {
+                "size": 0.89,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  95,
+                  107,
+                  114
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    },
+    {
+      "kind": "prose",
+      "role": "footer",
+      "band": 3,
+      "column": 1,
+      "bbox": {
+        "left": 0.708139534883721,
+        "top": 0.9236311239193083,
+        "right": 0.9197674418604651,
+        "bottom": 0.962536023054755
+      },
+      "title": null,
+      "rows": [],
+      "pairs": [],
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "lines": [
+            {
+              "bbox": {
+                "left": 0.707906976744186,
+                "top": 0.9234870317002881,
+                "right": 0.9196511627906977,
+                "bottom": 0.9394812680115274
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Dr Ingrid Solberg, Consultant Chemical",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Dr Ingrid Solberg, Consultant Chemical",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            },
+            {
+              "bbox": {
+                "left": 0.7075581395348837,
+                "top": 0.9463976945244956,
+                "right": 0.766860465116279,
+                "bottom": 0.9623919308357348
+              },
+              "readings": [
+                {
+                  "engine": "ollama",
+                  "text": "Pathologist",
+                  "model": "qwen3-vl:4b",
+                  "prompt_version": "2",
+                  "runs": []
+                },
+                {
+                  "engine": "tesseract",
+                  "text": "Pathologist",
+                  "model": null,
+                  "prompt_version": null,
+                  "runs": []
+                }
+              ],
+              "state": "agreed",
+              "look": {
+                "size": 0.89,
+                "bold": false,
+                "italic": false,
+                "color": [
+                  32,
+                  38,
+                  43
+                ],
+                "fill": null,
+                "chip": null,
+                "radius": null,
+                "caps": null,
+                "face": null,
+                "sizes": null
+              }
+            }
+          ],
+          "size": null,
+          "gap": null
+        }
+      ],
+      "extra": [],
+      "graphic_kind": null,
+      "pixels": null,
+      "fill": null,
+      "title_size": null,
+      "title_caps": false,
+      "face": null,
+      "title_color": null,
+      "title_fill": null,
+      "header_fill": null,
+      "boxed": false,
+      "frame": null,
+      "group": null,
+      "align": "left",
+      "title_align": null,
+      "complete": true
+    }
+  ],
+  "corrections": [],
+  "probes": [],
+  "gaps": [],
+  "failures": [],
+  "caveats": [
+    {
+      "zone_index": 2,
+      "kind": "table",
+      "note": "rows 2\u201314 (13 rows) each came back 1 cell(s) short of the header's 6 and were padded rather than discarded \u2014 the values they do have may sit in the wrong columns"
+    }
+  ],
+  "shortfalls": [],
+  "unclaimed": [],
+  "regions": [
+    {
+      "top": 0.0,
+      "bottom": 1.0,
+      "flow": "single",
+      "splits": [],
+      "rows": 1
+    }
+  ],
+  "separators": [],
+  "furniture": [
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.037209302325581395,
+        "top": 0.1340057636887608,
+        "right": 0.04186046511627907,
+        "bottom": 0.26512968299711814
+      },
+      "thickness": 0.004651162790697674,
+      "color": [
+        13,
+        110,
+        110
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.037209302325581395,
+        "top": 0.3242074927953891,
+        "right": 0.9627906976744186,
+        "bottom": 0.3270893371757925
+      },
+      "thickness": 0.002325581395348837,
+      "color": [
+        32,
+        38,
+        43
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 2
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.037209302325581395,
+        "top": 0.37319884726224783,
+        "right": 0.9627906976744186,
+        "bottom": 0.3746397694524496
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        13,
+        110,
+        110
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 2
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.037209302325581395,
+        "top": 0.41210374639769454,
+        "right": 0.9627906976744186,
+        "bottom": 0.41354466858789624
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        223,
+        229,
+        232
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 2
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.037209302325581395,
+        "top": 0.4495677233429395,
+        "right": 0.9627906976744186,
+        "bottom": 0.4510086455331412
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        223,
+        229,
+        232
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 2
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.037209302325581395,
+        "top": 0.4884726224783862,
+        "right": 0.9627906976744186,
+        "bottom": 0.4899135446685879
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        223,
+        229,
+        232
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 2
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.037209302325581395,
+        "top": 0.5259365994236311,
+        "right": 0.9627906976744186,
+        "bottom": 0.5273775216138329
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        223,
+        229,
+        232
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 2
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.037209302325581395,
+        "top": 0.5734870317002881,
+        "right": 0.9627906976744186,
+        "bottom": 0.5749279538904899
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        13,
+        110,
+        110
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 2
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.037209302325581395,
+        "top": 0.6123919308357348,
+        "right": 0.9627906976744186,
+        "bottom": 0.6138328530259366
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        223,
+        229,
+        232
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 2
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.037209302325581395,
+        "top": 0.6498559077809798,
+        "right": 0.9627906976744186,
+        "bottom": 0.6512968299711815
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        223,
+        229,
+        232
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 2
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.037209302325581395,
+        "top": 0.6887608069164265,
+        "right": 0.9627906976744186,
+        "bottom": 0.6902017291066282
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        223,
+        229,
+        232
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 2
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.037209302325581395,
+        "top": 0.7262247838616714,
+        "right": 0.9627906976744186,
+        "bottom": 0.7276657060518732
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        223,
+        229,
+        232
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 2
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.037209302325581395,
+        "top": 0.7651296829971181,
+        "right": 0.9627906976744186,
+        "bottom": 0.7665706051873199
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        223,
+        229,
+        232
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": 2
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.037209302325581395,
+        "top": 0.8025936599423631,
+        "right": 0.9627906976744186,
+        "bottom": 0.8040345821325648
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        223,
+        229,
+        232
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    },
+    {
+      "kind": "rule",
+      "bbox": {
+        "left": 0.7069767441860465,
+        "top": 0.9106628242074928,
+        "right": 0.9627906976744186,
+        "bottom": 0.9121037463976945
+      },
+      "thickness": 0.0011627906976744186,
+      "color": [
+        32,
+        38,
+        43
+      ],
+      "style": "solid",
+      "second": null,
+      "period": null,
+      "angle": null,
+      "zone": null
+    }
+  ]
+}
