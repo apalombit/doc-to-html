@@ -1,6 +1,6 @@
 # The corpus: 600 pages, chosen by their variability
 
-**Status: in progress, issue #43. Steps 0 and 1 done 2026-10-24 ("Outcome —
+**Status: in progress, issue #43. Steps 0–2 done 2026-10-24 ("Outcome —
 the steps").**
 - **This is step L1b** of the level-up plan
   ([`../level-up.md`](../level-up.md) §6), on branch `level-up`.
@@ -729,6 +729,86 @@ keep the totals, and the swap is recorded in `cards.json`'s history.
   page, a receipt in three columns, European numbers on an English page,
   two columns at 600 px, a feature its kind excludes;
 - `cards.json` is the seeded draw but for the cards its history names.
+
+### Step 2 — done 2026-10-24
+
+**`tools/corpus_check.py <id>...`** (`doc_to_html.factory.check`) runs §V's
+ten checks, named `renders`, `own_picture`, `fits`, `ink`,
+`self_contained`, `figures`, `generated`, `features`, `language` and
+`distinct`. It exits non-zero and names each failure.
+- **A page that passes** gets its picture, `corpus/pages/<id>.png`, and
+  its record, `corpus/checks/<id>.json`. The record holds the checks, the
+  card's features and the **detected** ones, the picture's hash and both
+  files' sha256.
+- **A page that fails** keeps nothing. Its screenshot is left in
+  `debug/corpus-check/<id>.png` for the writer to look at.
+- **It takes 3.6–4.3 s a page**: a projection, one probe script, and two
+  shoots.
+
+Decisions the spec left open, each in the module's docstring:
+- **Ink (4)** is measured per line box of each text node. The box's
+  commonest colour is its ground, and ink is any pixel more than 48 from
+  it in any channel. A box needs `max(2, 0.4% of its area)` ink pixels.
+- **A stack may lead with a generic** that draws a listed face here:
+  `serif`, `sans-serif`, `monospace` or `cursive` (Times, Helvetica,
+  Courier, Apple Chancery). `system-ui` and `-apple-system` draw the
+  unlisted SF, so a stack may not lead with them.
+- **Text under a `<figure>` is a figure's words** unless it is in its
+  `<figcaption>`.
+- **Two additions to check 3**: no viewport-height unit and no fixed or
+  sticky positioning. `project()` measures in a 3000 px window and the
+  shot is taken in one as tall as the page, so such a page is laid out
+  differently in the two.
+- **Check 8 asks for a real `<table>`** for any `table.*` feature, and a
+  real `<ul>`/`<ol>` for bullets, numbers and nesting, in every style
+  family. Without them L2's cell check has nothing to derive from. The
+  three loose style families keep their loose habits everywhere else.
+- **The language (9)**, measured over the 31: a page of 80 words or more
+  must score 2 in its language. A shorter page needs 1, or nothing in
+  English: `ticket_0020`, 55 words of labels, scores 0.5 in English and
+  0.5 in French. No other language may lead by 1.5 or more.
+- **A near-duplicate (10)** is four-word shingles at a Jaccard of 0.5 or
+  more, or a 64-bit difference hash within 3 bits. It is compared against
+  every accepted page, the 21 and the ten probe pages.
+
+**Run over the 31 pages we already have, with stand-in cards**: 10 pass
+outright. The rest fail on what they really do, which matters for L2,
+because their ground truth is their HTML:
+- **Generated text on six pages.** That text is in the picture and not
+  in the ground truth:
+  - `report_0011`'s section numbers, drawn by CSS counters;
+  - `form_0007`'s ✕ marks and `pricing_0017`'s ✓ marks;
+  - `menu_0012`'s ❦ ornament;
+  - the probe's datasheet's ✓ marks and recipe's step numbers.
+- **Eight pages lead their font stack with a face that is not on the
+  list.** Five of them name a face this machine lacks (Inter, Palatino
+  Linotype, Source Sans Pro, Segoe UI, Cambria), so the face the HTML
+  declares is not the face the picture shows. The other three lead with
+  `system-ui` or `-apple-system`, which draw the unlisted SF.
+- `invoice_0001` and `invoice_0002` load images and a stylesheet from the
+  web; `sample_semantic_0005` sets a quotation inside a `<figure>`.
+- `nonlatin_0014` is Greek, which the language check cannot read.
+
+**No false ink failure** on any of the 31, and no near-duplicate among
+them.
+
+**`tools/corpus_sheet.py`** (`doc_to_html.factory.sheets`) builds the
+contact sheets: twelve thumbnails to an image, four across. Each is
+labelled with its id, kind, style family and locale, then its features,
+width, density, family and writer. They go to `debug/corpus-sheets/`.
+
+**Tests:** `tests/test_factory_check.py`, 23 tests in 41 s:
+- a sound page passes every check, and what it shows is detected;
+- the spec's six planted faults are each named: an external font, words
+  inside an SVG, clipped text, a horizontal overflow, a near-duplicate,
+  and generated text (`::before` content and an `<ol>` that numbers
+  itself);
+- so are eight more: an `@font-face`, a URL in an attribute, text the
+  colour of its ground, the wrong language, a card feature missing, the
+  wrong main face, a viewport-height unit, a page over 2400 px;
+- an `<ol>` with its numbers written passes;
+- the formats are detected by language, and each language reads as itself;
+- the sheets come twelve to an image.
 
 ## Outcome — the corpus
 
