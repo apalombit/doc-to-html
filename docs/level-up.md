@@ -1,7 +1,9 @@
 # Level up — conversion that holds on documents it has never seen
 
-**Status: decided 2026-10-24 (§8).** Next: agree the corpus's variability
-(§4.7), then build it (L1). The parser-first PoC follows (P1). Branches
+**Status: decided 2026-10-24 (§8); the variability agreed the same day
+(§4.7).** Next: build the corpus (L1b), [spec 0020](specs/0020-the-corpus.md),
+issue #43, run in a fresh chat. Three tracks: the corpus, its
+measurement with a judge (§4.9), and the parser-first PoC (P1). Branches
 `main`, `develop` and `level-up`; the work continues on `level-up`.
 
 ## Gist — keep this in mind
@@ -14,10 +16,14 @@ read the words, but the tools cut the structure wrong on nine.
 **Q1 — test set.** Practise on many pages, decide on a fixed set, keep a
 sealed exam.
 
-- Pages are written to cover every layout feature several times, in
-  different kinds of document: chosen, not drawn at random (§4.7).
-- Three pools: **dev** to look at, a **panel** to decide on, and a
-  **vault** nobody opens until a milestone.
+- Pages are written from cards drawn at random inside agreed bounds:
+  eight families of document, every layout feature several times in
+  different kinds, English and the Latin languages (§4.7).
+- A first batch of 600, about 100 of them real PDFs, in three pools of
+  200: **dev** to look at, a **panel** to decide on, and a **vault**
+  nobody opens until a milestone.
+- **The judge is Claude**, with the review skill held to criteria agreed
+  with you (§4.9, `agents/review-criteria.md`).
 
 **Q2 — architecture.** Hire a craftsman, keep our painter.
 
@@ -79,9 +85,9 @@ and re-scored today, and the specs' own text, quoted as text.
 |---|---|
 | Is recent work overfit? | **Yes, and the probe in §3 shows it.** Rules are written for named pages, and 21 pages cannot tell a general rule from a fix for one page. The six "held-out" pages have been the focus of most specs since 2026-10-14, so nothing unseen is measured any more (§2). |
 | What happens on pages it has never seen? | **Words survive, structure breaks.** Nine of ten new pages have a fault that changes how the page reads: a table cut short or flattened, columns interleaved, cells in the wrong column, a block lost or invented. Of six tuned pages drawn at random, none do (same day, same judge). Two of spec 0019's rules misfire on new pages, and a fixed corpus fault returns. A 0.9B document model read the same pages about as completely as the whole pipeline, about 65 times faster (§3). |
-| **Q1** — grow by 5–10, or ~1000? | **~1000, generated from a taxonomy, used as three pools:** a *dev pool* you look at, a fixed *panel* you decide on, and a *vault* nobody looks at. Each model-side change converts the 100-page panel once (about 14 h today). Anything downstream is replayed over it in minutes. Adding 5–10 pages moves no estimate, and each added page becomes a tuning target within days (§4). |
+| **Q1** — grow by 5–10, or ~1000? | **~1000, generated from a taxonomy, used as three pools:** a *dev pool* you look at, a fixed *panel* you decide on, and a *vault* nobody looks at. The first batch is 600 pages, 200 per pool, about 100 of them real PDFs. Each model-side change converts the 200-page panel once (about 27 h today, which is why the baseline runs on 30–40 pages). Anything downstream is replayed over it in minutes. Adding 5–10 pages moves no estimate, and each added page becomes a tuning target within days (§4). |
 | **Q2** — change the architecture? | **Yes: a parser-first pipeline, built as a PoC on its own branch and measured against today's.** Today about 14,500 lines of hand-written rules and 265 tuned constants carry the generality, all set on 21 pages or fewer. Established document parsers (GLM-OCR, PaddleOCR-VL, MinerU2.5; about 1B parameters, small enough for the 8 GB M1) return layout, reading order, tables and formulas, learned from millions of pages. Let one produce the content and structure (the side holding 63 of the constants). Map its blocks into our IR. Keep our own work where no parser competes: style measured from pixels, and the renderer. That looks side holds 135 constants, and they get *fitted* on the generated corpus instead of hand-set; its HTML supplies the labels for free. No pipeline per document type (§5). |
-| Next steps | **L1a** agree the corpus's variability → **L1b** build the corpus → **L2** measurement and a judge → **L3** an honest baseline on a limited set → **P1** the GLM-OCR parser-first PoC → **P2** the decision → **L5** fit what is left (§6) |
+| Next steps | **L1a** agree the corpus's variability (done) → **L1b** build the corpus → **L2** measurement and a judge → **L3** an honest baseline on a limited set → **P1** the GLM-OCR parser-first PoC → **P2** the decision → **L5** fit what is left (§6) |
 | Decisions | taken 2026-10-24, §8 |
 
 ---
@@ -320,9 +326,10 @@ with the project's tokenizer.
 ### 4.1 Recommendation
 
 **Build a generated corpus of the order of 1000 pages from a taxonomy, and
-use it as three pools, never as one.** Start at 300 pages: 100 dev, 100
-panel, 100 vault. Grow to ~1000 once the generator's pages look varied
-enough. The 21 existing pages join the dev pool. Keep clean screenshots, as
+use it as three pools, never as one.** Start at 600 pages, 200 per pool,
+about 100 of them real PDFs (Alessandro, 2026-10-24). Grow to ~1000 once
+the generator's pages look varied enough. The 21 existing pages and the
+ten probe pages join the dev pool. Keep clean screenshots, as
 you said; picture-level difficulty stays a separate preprocessing track.
 
 ### 4.2 Why 5–10 more pages does not help
@@ -337,11 +344,12 @@ half:
 | 21 | ±21 points | today |
 | 31 | ±18 | today + 10 |
 | 50 | ±14 | |
-| 100 | ±10 | one panel |
+| 100 | ±10 | |
+| 200 | ±7 | one panel |
 | 300 | ±6 | |
 | 1000 | ±3 | |
 
-Ten more pages buy about 4 points. A panel of 100 buys about 12.
+Ten more pages buy about 4 points. A panel of 200 buys about 14.
 
 **A worked example.** Suppose a change makes 1 page in 10 better and 1 in 50
 worse.
@@ -364,9 +372,9 @@ dozens.
 
 | pool | size to start | who looks | used for |
 |---|---|---|---|
-| **dev** | 100 + the 21 | anyone, page by page | diagnosing faults, prototyping a rule, by-eye work as today |
-| **panel** | 100, fixed | aggregates by default; single pages only as a sampled audit | deciding: does a change ship? Same pages before and after |
-| **vault** | 100 | nobody, until a milestone | the honest number: how does it do on pages nobody has tuned on? Once opened, it joins dev and a fresh vault is generated |
+| **dev** | 200 + the 31 | anyone, page by page | diagnosing faults, prototyping a rule, by-eye work as today |
+| **panel** | 200, fixed | aggregates by default; single pages only as a sampled audit | deciding: does a change ship? Same pages before and after |
+| **vault** | 200 | nobody, until a milestone | the honest number: how does it do on pages nobody has tuned on? Once opened, it joins dev and a fresh vault is generated |
 
 **ELI5 of the vault.** It is the sealed exam paper. You may practise on
 anything else, but you sit this one only when you claim a level, and once
@@ -393,9 +401,14 @@ Conversion is the binding cost. Today a page takes **4.9 to 14 minutes
 | what | pages | conversion today | downstream change, offline |
 |---|---|---|---|
 | today's sweep | 21 | about 2½ h | about 5 min (rederive + score) |
-| one panel | 100 | **about 14 h** (one long night) | about 25 min |
+| one panel | 200 | **about 27 h** | about 50 min |
 | the full pool, at a milestone | 1000 | **about 5½ days** | about 4 h |
 | for scale: reading alone with a ~1B parser (§3.4) | 1000 | about 2 h for the reading; the rest of a parser-first conversion is unmeasured until P1 | — |
+
+**At 200 pages, a panel conversion with today's pipeline takes more than a
+day.** That is why the honest baseline (L3) runs on 30–40 pages (decision
+1), and one reason the PoC matters: its reader alone is about 65 times
+faster.
 
 The rule that keeps this affordable: **a model-side change costs one panel
 conversion, and anything downstream of the model costs a replay.** That
@@ -412,11 +425,11 @@ step. On the panel:
   while four results move into the Flag column (§3), and `vanished` cannot
   see that. On generated pages both sides are HTML, so "each source cell's
   words sit in the same row and column of the output" is derivable;
-- looks need the **judge** from `future-ideas.md` §11, stage 1, calibrated
-  against your by-eye calls. It pre-screens the panel, and you audit every
-  page it calls worse plus a random few.
+- the rest needs the **review** (§4.9): Claude, by the criteria agreed on
+  2026-10-24, on the pages the checks flag and a sample. You check every
+  page it calls worse, plus two at random.
 
-That is why L2 builds the judge together with the panel (§6).
+That is why L2 evolves the review skill together with the panel (§6).
 
 ### 4.6 Where the pages come from
 
@@ -441,19 +454,25 @@ dropped, never patched by hand.
 - no external resources;
 - no near-duplicate already in the pool.
 
-### 4.7 The variability — the proposal to agree (L1a)
+### 4.7 The variability — agreed 2026-10-24 (L1a)
 
-**Chosen, not drawn at random** (Alessandro: "docs of interest, not fully
-random").
+**Agreed with Alessandro on 2026-10-24.** His answers are table 3; the
+rest of the proposal stands.
+
+**Drawn at random, inside chosen bounds.**
 
 - **A card per page.** Each page is written from a card: a kind (table 1),
   3–6 features (table 2), a style family, a width and a language.
-- **Cards fill gaps.** The next card written is the one that fills the
-  emptiest cell of the coverage table. A feature is covered when it
-  appears on several pages **in at least three different kinds**: only
-  then can a fault be pinned on the feature rather than on the kind.
+- **Cards are drawn at random** inside each family's quota (table 3). A
+  coverage check then tops up any feature with too few pages: each
+  feature must appear on several pages **in at least three different
+  kinds**, so that a fault can be pinned on the feature rather than on
+  the kind.
+- **Pools are split at random**, stratified by family, so dev, panel and
+  vault share one mix.
 - **ELI5.** A driving test does not use random streets. Its route passes
-  every kind of junction a few times, in different neighbourhoods.
+  every kind of junction a few times, in different neighbourhoods; which
+  street serves each junction can be left to chance.
 
 **Table 1 — kinds.** They decide what gets written and how results are
 reported. They never reach the converter, so ADR 0001 (no document types)
@@ -462,10 +481,10 @@ each (in brackets).
 
 | family | kinds (examples) |
 |---|---|
-| transactional | invoice, receipt, statement, payslip, purchase order, utility bill, packing slip (invoice ×2, receipt, statement, payslip) |
-| forms | application, numbered-box tax-style form, questionnaire, exam sheet, checklist (form, quiz) |
-| correspondence and legal | letter, memo, email printout, notice, contract (letter, email, contract) |
-| reports | corporate report page, lab report, minutes, inspection report (report, lab report, minutes) |
+| transactional | invoice, **receipt**, statement, payslip, purchase order, utility bill, packing slip (invoice ×2, receipt, statement, payslip) |
+| forms | application, numbered-box tax-style form, questionnaire, patient intake form, exam sheet, checklist (form, quiz) |
+| correspondence and legal | letter, memo, email printout, notice, contract, referral letter (letter, email, contract) |
+| reports | corporate report page, lab report, minutes, inspection report; **clinical: a doctor's visit note, a discharge summary, a prescription, laid out as tables and fields** (report, lab report, minutes) |
 | publishing | newsletter, magazine page, paper page, textbook page, manual page, recipe, FAQ (newsletter, paper, recipe, two samples) |
 | reference | catalogue, price list, menu, timetable, calendar, datasheet, nutrition label (catalogue, menu, timetable, datasheet, nutrition, a table sample) |
 | credentials | CV, certificate, ticket, invitation (cv, certificate, ticket) |
@@ -484,23 +503,23 @@ it, §3.1). Faults are counted per feature.
 | looks | sans, serif, mono, script and display faces; small caps; weights; colours; a dark ground; bands, chips, buttons, dashed or double rules | flyer, nutrition, email |
 | figures | logos, charts, barcodes, signatures, photos | none in the probe |
 | size and density | 500–1200 px wide; a sparse flyer to a dense statement | quiz (28 Zones) |
-| language and formats | English; European accents; Greek or Cyrillic; CJK and right-to-left later. Number, date and currency formats | lab report (`NP-2291`), datasheet (part numbers) |
+| language and formats | English, Italian, French, Spanish, Portuguese: accents, apostrophes, guillemets; number, date and currency formats (`1.234,56 €`, `24/10/2026`) | lab report (`NP-2291`), datasheet (part numbers) |
 | authoring style | hand-written CSS, framework-like classes, table-based legacy HTML, print-like (from a PDF) | so no single author's habits become the corpus |
 
 **ELI5 of features.** A sentence like "the converter gets table totals
 wrong on 14 of the 31 pages that have one" is a fault class with evidence.
 "The ticket looks wrong" is one page.
 
-**To discuss — each with what I would pick:**
+**Table 3 — agreed, Alessandro, 2026-10-24:**
 
-| # | question | I would pick |
+| # | question | agreed |
 |---|---|---|
-| 1 | **Weights.** Even across the eight families, or tilted toward the documents the tool will meet first? | Even, no family under 10% of the pages, since the aim is the broadest range. Tilt only if a first use is in view |
-| 2 | **Languages.** | English; about one page in six in a European language with accents; a small Greek and Cyrillic slice. CJK and right-to-left later, as their own step |
-| 3 | **Figures.** In or out? | In, as pictures carried over (logo, chart, barcode, signature, photo). The words inside a chart are not asked for |
-| 4 | **Pages.** One page per document, as today? | Yes. Multi-page brings page breaks and running headers, a problem of its own, for later |
-| 5 | **Real PDFs.** Which sources? | Public pages with a text layer: government forms, annual-report pages, product manuals, papers. Each one admitted only through the §4.6 gate |
-| 6 | **First batch.** How many before the first measurement? | 300 (100 dev, 100 panel, 100 vault), then grow toward 1000 as faults get pinned (§4.1) |
+| 1 | **Weights** | The eight families, none under 10%, tilted toward forms, receipts and doctors' notes laid out like tables, with variety kept. Of 600: forms 100, transactional 100 (receipts about 40), reports 100 (clinical notes about 40), the other five families 60 each |
+| 2 | **Languages** | English, Italian, French and the other Latin languages (Spanish, Portuguese). No Greek, Cyrillic, CJK or right-to-left for now. Share proposed: English about three quarters; Italian and French about 50 pages each; Spanish and Portuguese about 25 each |
+| 3 | **Figures** | In, as pictures carried over (logo, chart, barcode, signature, photo). The words inside a chart are not asked for |
+| 4 | **Pages** | One page per document. Multi-page later |
+| 5 | **Real PDFs** | About 100 of the 600, about 33 per pool: public pages with a text layer (government forms, annual-report pages, manuals, papers). Each one admitted only through the §4.6 gate, so none misleads development. They count toward their family's quota |
+| 6 | **First batch** | 600 pages: 200 dev, 200 panel, 200 vault, cards drawn at random inside the quotas |
 
 ### 4.8 Picture-level difficulty stays out — agreed
 
@@ -508,6 +527,70 @@ It is a preprocessing question, and mixing it in muddies every conversion
 measurement. `rectify` and the twins stay their own track, as today. One
 consequence: `ticket_0020` is a *photographed* card (turned 1.5° on a desk).
 Keep it in dev, out of any panel.
+
+### 4.9 The judge — Claude, held to your criteria
+
+**Decided 2026-10-24.** The judge is Claude, using the visual-review
+skill, evolved in L2 after the corpus is built. It is not a local model.
+**What it judges by** was agreed in five rounds of questions and lives in
+[`agents/review-criteria.md`](agents/review-criteria.md): the render must
+look like the page; never guess; every line breaks where printed; net gain
+ships; and a severity for each kind of fault.
+
+**ELI5.** An examiner who marks to your scheme. You re-mark every paper it
+fails and two at random; where you disagree, the scheme changes.
+
+**Why the panel needs one.** Nobody can open 200 sheets at every step.
+Words are already checked automatically and exactly: `vanished`, invented
+words, broken joins. Arrangement and looks are not. The probe's lab report
+kept every word while four results moved into the Flag column (§3.1), and
+an earlier measure called a page whose table had lost all five headers a
+full match.
+
+**Two layers, the exact one first.**
+
+| layer | what it checks | how |
+|---|---|---|
+| **derived checks**, no model | words; each table cell in its row and column (the cell check); tables, lists and headings kept as such; reading order | against the source HTML, which every corpus page has, real PDFs included (§4.6) |
+| **the review** | what the HTML cannot settle: lines and wraps, what sits beside what, frames and fills, type, alignment | Claude, looking at the sheets, by the criteria |
+
+**How a review runs:**
+
+1. The derived checks flag pages.
+2. Claude looks at every flagged page, every page a change moved, and a
+   sample per family: two-panel sheets, zoomed tiles for dense pages, and a
+   highlight of where two renders differ.
+3. Each fault is recorded with its feature (§4.7, table 2), the stage that
+   caused it, its severity and the element.
+4. A ranked roll-up: majors first, then the biggest visible gain for the
+   effort, with the reasoning.
+5. Alessandro checks every page called worse, plus two at random, on one
+   private page with agree buttons. His calls are saved and read back to
+   calibrate.
+
+**What the skill has today, and lacks** — from running it on 2026-10-24
+(S13 against S14 on three corpus pages; two probe pages against their
+sources):
+
+- **has:** sheets at the source's width, pairwise, notes that name the
+  element; it catches what the numbers cannot (the lab report's shifted
+  results: reading order 1.000; the recipe's interleaved steps: no word
+  lost);
+- **lacks:** fault classes and stages, so nothing adds up to what to fix
+  next; axes that fit the criteria (structure is scattered across three,
+  and type and rhythm fire "minor" everywhere); zoom on dense sheets (the
+  ticket's six panels reach the reader at half size); a highlight of what
+  changed; sampling for 200 pages; a form for the source-only mode. Its
+  `owner` field points at phases closed in September, and `numbers.md`'s
+  table is malformed.
+
+**Guards** (`future-ideas.md` §10): the reviewer does not read with the
+converter's own engine; it never supplies content (ADR 0004); its
+agreement with Alessandro is measured, not assumed.
+
+**What waits.** The rest of `future-ideas.md` (judge-led development, a
+case memory, per-page fitting, promoting choices into rules) comes only
+after the review has earned trust on the panel.
 
 ---
 
@@ -671,9 +754,9 @@ In order, as decided 2026-10-24 (§8).
 | step | branch | what | done when | stop if | cost |
 |---|---|---|---|---|---|
 | **L0** | — | `develop` cut from `scaffold`, `level-up` from it, everything pushed, `scaffold` retired | **done 2026-10-24** | — | — |
-| **L1a** | `level-up` | **agree the variability** (§4.7): which kinds, features, languages and weights the corpus covers | the coverage table agreed with Alessandro | — | a discussion |
-| **L1b** | `level-up` | **corpus factory**: taxonomy file, spec cards, generator, validator, and a real-PDF gate (§4.6); pages chosen to cover the table, then split dev / panel / vault; the 21 and the ten probe pages join dev | every page passes the validator; every tag on several pages, in several kinds | a contact sheet of 50 looks like one author → add generators or templates first | generation is cheap; your review of the sheet |
-| **L2** | `level-up` | **panel measurement**: batch conversion; a per-category and per-tag report (vanished, invented, the cell check, order); judge v0 for looks, calibrated on about 50 of your pairwise calls | one command, one report | the judge calls worse pages better too often → use it only to pre-screen | per run, the pages chosen |
+| **L1a** | `level-up` | **agree the variability** (§4.7): which kinds, features, languages and weights the corpus covers | **done 2026-10-24**: §4.7, table 3 | — | — |
+| **L1b** | `level-up` | **corpus factory**, [spec 0020](specs/0020-the-corpus.md), issue #43: taxonomy file, spec cards, generator, validator, and a real-PDF gate (§4.6); 600 pages from cards drawn at random inside the quotas and topped up for coverage, about 100 of them real PDFs; split 200 / 200 / 200 into dev / panel / vault; the 21 and the ten probe pages join dev | every page passes the validator; every tag on several pages, in several kinds | a contact sheet of 50 looks like one author → add generators or templates first | generation is cheap; your review of the sheet |
+| **L2** | `level-up` | **panel measurement**, spec 0021, outlined in spec 0020's "What comes after": batch conversion; a per-category and per-tag report (vanished, invented, the cell check, order); the derived checks, and the review skill evolved to the agreed criteria (§4.9): faults tagged by feature and stage, zoomed tiles, a highlight of what changed, the ranked roll-up, the page with agree buttons | one command, one report | your spot-checks keep overturning the review → change the checklist before relying on it | per run, the pages chosen |
 | **L3** | `level-up` | **honest baseline as a task on a limited set** (decision 1): a fixed subset chosen so that every key tag appears a few times, e.g. 30–40 pages (about 4–5 h today); fault classes ranked by pages touched | one command; a ranked table | — | about 4–5 h |
 | **P1** | `poc-parser-first` | **GLM-OCR parser-first PoC** (§5.3): its latest full pipeline, then the adapter, then our looks and render; against today's on the dev pool and L3's set | by-eye sheets, content and cell checks per page | the parser loses content that today keeps, on most pages → park it and write down why | about a week of building |
 | **P2** | both | **decision**: the PoC against today's on L3's set, by fault-class rates | a decision | no gain → keep today's, go to L5 | one run per arm |
@@ -688,9 +771,9 @@ nobody has tuned on.
 
 | today | proposed |
 |---|---|
-| a rule ships if no page of 21 gets worse | a rule ships if, on the panel, it moves at least k pages of its tag the right way and none the wrong way (k about 5). A rule that fires on one page is a page fix, kept only if it costs nothing |
+| a rule ships if no page of 21 gets worse | **net gain ships** (agreed 2026-10-24): a change that makes more pages of the panel better than worse ships, content included, and every worse page is named and goes next in line. A rule that fires on one page is a page fix, kept only if it costs nothing |
 | faults are found by opening 21 sheets | faults are found in the panel report, by tag; sheets are opened on dev pages with the same tag |
-| every step judged by eye on all 21 | the judge pre-screens the panel; you audit every page it calls worse, plus a sample |
+| every step judged by eye on all 21 | the derived checks pre-screen the panel and Claude reviews by the agreed criteria; you check every page called worse, plus two at random |
 | "held out" pages are looked at and fixed | the vault is opened only at a milestone, then retired into dev |
 | a sweep is the unit of measurement | a panel conversion is the unit for model-side changes; a replay is the unit for everything downstream |
 
@@ -707,9 +790,25 @@ nobody has tuned on.
 | 5 | models? | **Local only, for now** |
 | 6 | backup? | **Push, and tidy git** with every result and this review: done 2026-10-24. `main`, `develop` and `level-up` are on the remote; `scaffold` is retired into `develop` |
 
-**Variability first.** He asked to choose the pages by their relevant
-variability, "docs of interest, not fully random", and to discuss it
-before L1 generates anything. §4.7 is the proposal to discuss.
+**The variability, agreed the same day** (§4.7, table 3): the eight
+families, tilted toward forms, receipts and doctors' notes laid out like
+tables; English, Italian, French and the other Latin languages; figures
+in; one page per document; a first batch of 600, 200 per pool, about 100
+of them real PDFs that must not mislead; cards drawn at random inside
+those bounds.
+
+**The review criteria, agreed the same day** in five rounds of questions
+([`agents/review-criteria.md`](agents/review-criteria.md)):
+
+- Claude is the judge, with the review skill; it evolves in L2, after the
+  corpus;
+- the render must look like the page, and among look-alikes the simplest
+  fitting HTML wins;
+- never guess: a word two readers disagree on is drawn as an "unread" box;
+- a fixed page, every line breaking where printed, by explicit line ends;
+- net gain ships, content included, every worse page named;
+- he checks every page called worse plus two at random, on a page with
+  agree buttons.
 
 **GLM-OCR, as of 2026-10-24** (re-check at P1's start):
 

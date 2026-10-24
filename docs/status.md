@@ -280,13 +280,22 @@ judged the same day.
 
 In order (`level-up.md` §6):
 
-1. **L1a — agree the variability** (§4.7): kinds, features, languages,
-   weights. **This is next, and it is a discussion with him.** Nothing is
-   generated before it is agreed.
-2. **L1b — the corpus**: written by Claude from spec cards, plus real PDFs
-   admitted only where their HTML redraws the PDF's own picture; the 21
-   and the ten probe pages join as dev pages; pools dev / panel / vault.
-3. **L2 — measurement**: a per-feature report, a cell check, a judge.
+1. **L1a — the variability, agreed 2026-10-24** (§4.7, table 3): the
+   eight families, tilted toward forms, receipts and doctors' notes;
+   English, Italian, French and the other Latin languages; one page per
+   document; figures in.
+2. **L1b — the corpus. This is next:
+   [spec 0020](specs/0020-the-corpus.md), issue #43**, run in a fresh
+   chat from its handover prompt. 600 pages, 200 each for dev, panel
+   and vault, from cards drawn at random inside those bounds. Claude
+   writes most; about 100 are real PDFs, admitted only where their HTML
+   redraws the PDF's own picture. The 21 and the ten probe pages join
+   dev.
+3. **L2 — measurement**: derived checks (the cell check, tables, lists,
+   order), and the review skill evolved to the criteria agreed on
+   2026-10-24 ([`agents/review-criteria.md`](agents/review-criteria.md)).
+   Claude is the judge; he checks every page called worse plus two at
+   random.
 4. **L3 — an honest baseline**, a task on a limited set (30–40 pages).
 5. **P1 — the parser-first PoC**, after L1, on its own branch: GLM-OCR's
    latest, whole pipeline (its layout model and its reader), then an

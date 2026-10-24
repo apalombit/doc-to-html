@@ -30,15 +30,23 @@ the answered `findings.json` and names every `major` that sits beside scored
 ratios all at 1.000. `docs/agents/visual-review.md` is the record: the evidence
 behind the rules, what the rubric must never become, and the remaining gaps.
 **The rubric is not frozen** — seven axes with two passes behind them, and a
-trial axis is kept rather than rejected.
+trial axis is kept rather than rejected. **The criteria it judges by were
+agreed with Alessandro on 2026-10-24**: `docs/agents/review-criteria.md`
+(the render looks like the page, never guess, every line as printed, net
+gain ships). The skill takes them up in the level-up's L2, after the
+corpus.
 
 ### Specs
 
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
-measured numbers and what has already been tried and rejected. **No spec
-is open.** The level-up plan (`docs/level-up.md`, 2026-10-24) is decided;
-each of its steps gets a spec and an issue when it starts. 0019 (issue #42) is done and decided, swept 2026-10-23 as
+measured numbers and what has already been tried and rejected. **One spec
+is open: spec 0020, `docs/specs/0020-the-corpus.md`, issue #43 — the
+corpus, the level-up's L1b**, run from its handover prompt. The
+level-up plan (`docs/level-up.md`, 2026-10-24) is decided; each of its
+steps gets a spec and an issue when it starts, and spec 0020's "What comes
+after" outlines the ones that follow (L2 with the judge, L3, the GLM-OCR
+PoC). 0019 (issue #42) is done and decided, swept 2026-10-23 as
 `S14-sweep`, the baseline. 0018 (issue #41) is done and decided, swept
 2026-10-19 as `S13-sweep`. 0017 (issue #40) is done and
 kept; 0008 to 0016 (issues #31–#39) are done and decided. 0007 still
@@ -73,8 +81,8 @@ line that caused the deletion.
 `docs/level-up.md`'s Gist and §8.** A probe on ten never-seen pages found
 a structural fault on 9 of 10, against 0 of 6 tuned pages. So the aim is
 now conversion that generalises: build a corpus by its variability first
-(L1, next step L1a: agree that variability with him), then a GLM-OCR
-parser-first PoC (P1), local models only. Work continues on branch
+(L1: the variability agreed 2026-10-24, next L1b, building it), then a
+GLM-OCR parser-first PoC (P1), local models only. Work continues on branch
 `level-up`; `scaffold` is retired into `develop`.
 
 ```
@@ -233,8 +241,9 @@ RESET       2026-10-23, Alessandro: every open item cleared, spec 0019's
               four directions included. Nothing is open.
 LEVEL-UP    2026-10-24, Alessandro: docs/level-up.md, branch level-up —
               a probe on ten unseen pages, a structural fault on 9 of 10;
-              L1a agree the variability    NEXT, a discussion with him
-              L1b the corpus  L2 measurement  L3 a baseline, limited set
+              L1a the variability          AGREED 2026-10-24
+              L1b the corpus, 600 pages    NEXT: spec 0020, issue #43
+              L2 measurement and a judge   L3 a baseline, limited set
               P1 the GLM-OCR parser-first PoC, after L1  P2 decide  L5 fit
 ```
 
@@ -291,7 +300,7 @@ the byte. **Alessandro took `S14-sweep` as the baseline on 2026-10-23**,
 frozen as `tests/frozen/s14-result/`, **and cleared every open item the
 same day**, the spec's four ranked directions included. Nothing is open:
 do not pick anything up unless he names it. **He named the level-up plan
-on 2026-10-24** (`docs/level-up.md`); its next step is L1a.
+on 2026-10-24** (`docs/level-up.md`); its next step is L1b, spec 0020.
 `docs/specs/0007-handover.md` holds spec 0007's prompts, as record.
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
@@ -332,7 +341,9 @@ Six axes scored source-image against rendered-output: **1 Completeness,
 phase regardless of what improved elsewhere.
 
 **The T1 ratchet: completeness may never decrease between phases, for any
-reason.** Not a target to optimise; a floor never to cross. It is the rule that
+reason.** *(Retired as a gate on 2026-10-24, Alessandro: net gain ships,
+content included, and every worse page is named and goes next in line —
+`docs/agents/review-criteria.md`. It is still reported.)* Not a target to optimise; a floor never to cross. It is the rule that
 would have caught all three faults that shipped as improvements. **Its recall
 leg is `vocabulary_recall` as of 2026-09-22** — see below, and spec 0007's
 "Why the ratchet's recall leg is now distinct tokens" for what moved it.
@@ -713,7 +724,7 @@ each other — `CellState.DISPUTED` and the Ladder are already the vocabulary fo
 it, and `_climb_ladders` already records that it waits on a second Engine. That
 is model time and Alessandro's decision, not a detector.
 
-**Tracker state, 2026-10-23: no open issue.** #31–#42 (specs 0008–0019) are closed, each done and decided. #30 (spec 0007) closed when its
+**Tracker state, 2026-10-24: #43 (spec 0020, the corpus) is open.** #31–#42 (specs 0008–0019) are closed, each done and decided. #30 (spec 0007) closed when its
 work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
 #17 (the vision layout prompt) were closed by Thread 0. Every other spec is closed
 history; 0007 still defines the target.
