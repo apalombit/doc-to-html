@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Nutrition label</title>
+<style>
+  body { margin:0; padding:24px 0; background:#fff; color:#000;
+         font:13px/1.25 "Helvetica Neue", Helvetica, Arial, sans-serif; }
+  .label { width:300px; margin:0 auto; border:1px solid #000; padding:6px 8px 8px; }
+  h1 { font:900 34px/1 "Arial Black", "Helvetica Neue", Arial, sans-serif; margin:0 0 2px;
+       letter-spacing:-.01em; }
+  .thin { border-top:1px solid #000; }
+  .thick { border-top:10px solid #000; }
+  .mid { border-top:5px solid #000; }
+  .row { display:flex; justify-content:space-between; padding:2px 0; }
+  .serv { font-size:15px; }
+  .serv b { font-size:16px; }
+  .cal { display:flex; justify-content:space-between; align-items:flex-end; padding:2px 0 3px; }
+  .cal span { font-weight:900; font-size:15px; line-height:1.1; }
+  .cal b { font:900 38px/1 "Arial Black", Arial, sans-serif; }
+  .dv { text-align:right; font-weight:700; font-size:12px; padding:3px 0 2px; }
+  .ind { padding-left:16px; }
+  .ind2 { padding-left:30px; }
+  .foot { font-size:10.5px; line-height:1.3; padding-top:4px; display:flex; gap:6px; }
+  .ingr { width:300px; margin:12px auto 0; font-size:11.5px; line-height:1.35; }
+</style>
+</head>
+<body>
+<div class="label">
+  <h1>Nutrition Facts</h1>
+  <div class="row">8 servings per container</div>
+  <div class="row serv"><b>Serving size</b><b>2/3 cup (55g)</b></div>
+  <div class="thick"></div>
+  <div class="cal"><span>Amount per serving<br>Calories</span><b>230</b></div>
+  <div class="mid"></div>
+  <div class="dv">% Daily Value*</div>
+  <div class="row thin"><span><b>Total Fat</b> 8g</span><b>10%</b></div>
+  <div class="row thin ind"><span>Saturated Fat 1g</span><b>5%</b></div>
+  <div class="row thin ind"><span><i>Trans</i> Fat 0g</span><span></span></div>
+  <div class="row thin"><span><b>Cholesterol</b> 0mg</span><b>0%</b></div>
+  <div class="row thin"><span><b>Sodium</b> 160mg</span><b>7%</b></div>
+  <div class="row thin"><span><b>Total Carbohydrate</b> 37g</span><b>13%</b></div>
+  <div class="row thin ind"><span>Dietary Fiber 4g</span><b>14%</b></div>
+  <div class="row thin ind"><span>Total Sugars 12g</span><span></span></div>
+  <div class="row thin ind2"><span>Includes 10g Added Sugars</span><b>20%</b></div>
+  <div class="row thin"><span><b>Protein</b> 3g</span><span></span></div>
+  <div class="thick"></div>
+  <div class="row"><span>Vitamin D 2mcg</span><span>10%</span></div>
+  <div class="row thin"><span>Calcium 260mg</span><span>20%</span></div>
+  <div class="row thin"><span>Iron 8mg</span><span>45%</span></div>
+  <div class="row thin"><span>Potassium 240mg</span><span>6%</span></div>
+  <div class="mid"></div>
+  <div class="foot"><span>*</span><span>The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. 2,000 calories a day is used for general nutrition advice.</span></div>
+</div>
+<p class="ingr"><b>INGREDIENTS:</b> Whole grain oats, sugar, sunflower oil, almonds, honey, brown rice flour, salt, natural flavour, mixed tocopherols (vitamin E). <b>CONTAINS: ALMONDS.</b></p>
+</body>
+</html>

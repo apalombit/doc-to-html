@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Quiz</title>
+<style>
+  body { font:13.5px/1.45 "Times New Roman", Times, serif; color:#111; background:#fff;
+         margin:0; padding:26px 40px 24px; }
+  .head { display:flex; justify-content:space-between; align-items:baseline;
+          border-bottom:2px solid #111; padding-bottom:6px; }
+  .head b { font-size:18px; }
+  .fields { display:flex; gap:26px; margin:14px 0 12px; }
+  .fields span { display:flex; align-items:flex-end; gap:6px; }
+  .fields i { display:inline-block; border-bottom:1px solid #111; height:16px; }
+  .instr { border:1px solid #111; background:#f0f0f0; padding:7px 11px; font-size:12.5px; }
+  .instr b { display:block; }
+  .q { margin-top:14px; display:grid; grid-template-columns:24px 1fr 70px; }
+  .q .num { font-weight:700; }
+  .q .marks { text-align:right; font-size:12px; color:#444; }
+  .opts { grid-column:2 / 3; display:grid; grid-template-columns:1fr 1fr; row-gap:3px;
+          margin-top:5px; }
+  .opts span::before { content:""; display:inline-block; width:11px; height:11px;
+                       border:1px solid #111; border-radius:50%; margin-right:7px;
+                       vertical-align:-1px; }
+  .lines { grid-column:2 / 4; margin-top:6px; }
+  .lines div { border-bottom:1px solid #999; height:22px; }
+  table { grid-column:2 / 3; border-collapse:collapse; margin-top:6px; width:80%; }
+  td, th { border:1px solid #111; padding:3px 8px; text-align:left; height:16px; }
+  th { background:#f0f0f0; }
+  .total { margin-top:18px; text-align:right; font-weight:700; }
+</style>
+</head>
+<body>
+<div class="head"><b>Year 9 Science — Unit Test: Chemical Reactions</b><span>Hollins Park School</span></div>
+<div class="fields">
+  <span>Name <i style="width:240px"></i></span>
+  <span>Class <i style="width:70px"></i></span>
+  <span>Date <i style="width:110px"></i></span>
+</div>
+<div class="instr"><b>Instructions</b>Answer all questions. For multiple-choice questions, fill in one circle only. Calculators may be used. Time allowed: 40 minutes.</div>
+<div class="q"><span class="num">1.</span><span>Which gas is produced when magnesium reacts with dilute hydrochloric acid?</span><span class="marks">[1 mark]</span>
+  <div class="opts"><span>A&nbsp; Oxygen</span><span>B&nbsp; Hydrogen</span><span>C&nbsp; Carbon dioxide</span><span>D&nbsp; Chlorine</span></div>
+</div>
+<div class="q"><span class="num">2.</span><span>Which of these is a sign that a chemical reaction has taken place?</span><span class="marks">[1 mark]</span>
+  <div class="opts"><span>A&nbsp; The mixture is stirred</span><span>B&nbsp; Ice melts</span><span>C&nbsp; A precipitate forms</span><span>D&nbsp; Salt dissolves in water</span></div>
+</div>
+<div class="q"><span class="num">3.</span><span>Balance the equation:&nbsp; ___ H₂ + O₂ → ___ H₂O</span><span class="marks">[2 marks]</span></div>
+<div class="q"><span class="num">4.</span><span>Explain why the mass of a candle decreases as it burns.</span><span class="marks">[3 marks]</span>
+  <div class="lines"><div></div><div></div><div></div></div>
+</div>
+<div class="q"><span class="num">5.</span><span>Complete the table for the reaction of three metals with water.</span><span class="marks">[3 marks]</span>
+  <table>
+    <tr><th>Metal</th><th>Observation</th><th>Reactivity</th></tr>
+    <tr><td>Potassium</td><td></td><td>Very high</td></tr>
+    <tr><td>Calcium</td><td>Fizzes steadily</td><td></td></tr>
+    <tr><td>Copper</td><td></td><td></td></tr>
+  </table>
+</div>
+<div class="total">Total: ______ / 10</div>
+</body>
+</html>

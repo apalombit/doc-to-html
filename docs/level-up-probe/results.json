@@ -1,0 +1,324 @@
+{
+  "payslip": {
+    "seconds": 555.1,
+    "zones": 9,
+    "vocabulary_recall": 1.0,
+    "precision": 0.988,
+    "join_recall": 0.96,
+    "tau": 0.954,
+    "beside": 0.931,
+    "height_ratio": 1.096,
+    "vanished": [],
+    "glm_whole_page": {
+      "seconds": 10.3,
+      "vanished": [],
+      "invented": []
+    },
+    "glm_today_zones": {
+      "seconds": 10.2,
+      "vanished": [],
+      "invented": []
+    }
+  },
+  "labreport": {
+    "seconds": 497.1,
+    "zones": 6,
+    "vocabulary_recall": 0.978,
+    "precision": 0.956,
+    "join_recall": 0.942,
+    "tau": 1.0,
+    "beside": 0.843,
+    "height_ratio": 0.999,
+    "vanished": [
+      "109",
+      "2291",
+      "73m2"
+    ],
+    "glm_whole_page": {
+      "seconds": 8.8,
+      "vanished": [
+        "109"
+      ],
+      "invented": [
+        "10"
+      ]
+    },
+    "glm_today_zones": {
+      "seconds": 9.8,
+      "vanished": [
+        "02",
+        "07",
+        "109",
+        "1969",
+        "2207",
+        "5518",
+        "57",
+        "93",
+        "birth",
+        "blood",
+        "clinician",
+        "date",
+        "male",
+        "mrn",
+        "okafor",
+        "patient",
+        "requesting",
+        "sex",
+        "tomasz",
+        "venous",
+        "wiśniewski",
+        "y"
+      ],
+      "invented": [
+        "10",
+        "gt",
+        "lt"
+      ]
+    }
+  },
+  "nutrition": {
+    "seconds": 378.4,
+    "zones": 4,
+    "vocabulary_recall": 1.0,
+    "precision": 0.895,
+    "join_recall": 0.987,
+    "tau": 0.911,
+    "beside": 1.0,
+    "height_ratio": 1.277,
+    "vanished": [],
+    "glm_whole_page": {
+      "seconds": 4.7,
+      "vanished": [],
+      "invented": []
+    },
+    "glm_today_zones": {
+      "seconds": 6.1,
+      "vanished": [
+        "000",
+        "a",
+        "advice",
+        "amount",
+        "calories",
+        "contributes",
+        "day",
+        "diet",
+        "dv",
+        "food",
+        "for",
+        "general",
+        "how",
+        "in",
+        "is",
+        "much",
+        "nutrient",
+        "of",
+        "tells",
+        "the",
+        "to",
+        "tocopherols",
+        "used",
+        "you"
+      ],
+      "invented": [
+        "tocopherol"
+      ]
+    }
+  },
+  "recipe": {
+    "seconds": 571.4,
+    "zones": 14,
+    "vocabulary_recall": 1.0,
+    "precision": 0.981,
+    "join_recall": 0.934,
+    "tau": 0.766,
+    "beside": 0.588,
+    "height_ratio": 1.436,
+    "vanished": [],
+    "glm_whole_page": {
+      "seconds": 8.6,
+      "vanished": [],
+      "invented": [
+        "5"
+      ]
+    },
+    "glm_today_zones": {
+      "seconds": 7.4,
+      "vanished": [],
+      "invented": [
+        "5",
+        "circ",
+        "mathrm"
+      ]
+    }
+  },
+  "minutes": {
+    "seconds": 448.8,
+    "zones": 9,
+    "vocabulary_recall": 0.993,
+    "precision": 1.0,
+    "join_recall": 0.995,
+    "tau": 0.99,
+    "beside": 0.933,
+    "height_ratio": 1.11,
+    "vanished": [
+      "margaret"
+    ],
+    "glm_whole_page": {
+      "seconds": 9.5,
+      "vanished": [],
+      "invented": []
+    },
+    "glm_today_zones": {
+      "seconds": 8.3,
+      "vanished": [],
+      "invented": []
+    }
+  },
+  "flyer": {
+    "seconds": 291.9,
+    "zones": 8,
+    "vocabulary_recall": 1.0,
+    "precision": 0.975,
+    "join_recall": 0.894,
+    "tau": 1.0,
+    "beside": 1.0,
+    "height_ratio": 1.121,
+    "vanished": [],
+    "glm_whole_page": {
+      "seconds": 4.0,
+      "vanished": [],
+      "invented": []
+    },
+    "glm_today_zones": {
+      "seconds": 2.8,
+      "vanished": [],
+      "invented": []
+    }
+  },
+  "quiz": {
+    "seconds": 837.7,
+    "zones": 28,
+    "vocabulary_recall": 1.0,
+    "precision": 0.979,
+    "join_recall": 0.97,
+    "tau": 1.0,
+    "beside": 1.0,
+    "height_ratio": 1.093,
+    "vanished": [],
+    "glm_whole_page": {
+      "seconds": 6.3,
+      "vanished": [
+        "10",
+        "total"
+      ],
+      "invented": []
+    },
+    "glm_today_zones": {
+      "seconds": 6.7,
+      "vanished": [
+        "h2",
+        "h2o",
+        "o2"
+      ],
+      "invented": [
+        "h",
+        "mathrm",
+        "o",
+        "rightarrow"
+      ]
+    }
+  },
+  "datasheet": {
+    "seconds": 531.0,
+    "zones": 14,
+    "vocabulary_recall": 0.992,
+    "precision": 0.989,
+    "join_recall": 0.993,
+    "tau": 0.833,
+    "beside": 0.795,
+    "height_ratio": 1.37,
+    "vanished": [
+      "m3"
+    ],
+    "glm_whole_page": {
+      "seconds": 8.2,
+      "vanished": [],
+      "invented": [
+        "p0e"
+      ]
+    },
+    "glm_today_zones": {
+      "seconds": 9.6,
+      "vanished": [
+        "24",
+        "31",
+        "8",
+        "mm",
+        "ul94",
+        "v"
+      ],
+      "invented": [
+        "2",
+        "24v",
+        "31mm",
+        "8w",
+        "co",
+        "mathrm",
+        "o",
+        "p0e",
+        "ul94v"
+      ]
+    }
+  },
+  "contract": {
+    "seconds": 430.1,
+    "zones": 10,
+    "vocabulary_recall": 1.0,
+    "precision": 1.0,
+    "join_recall": 0.982,
+    "tau": 1.0,
+    "beside": 0.5,
+    "height_ratio": 0.985,
+    "vanished": [],
+    "glm_whole_page": {
+      "seconds": 8.8,
+      "vanished": [],
+      "invented": []
+    },
+    "glm_today_zones": {
+      "seconds": 6.9,
+      "vanished": [],
+      "invented": []
+    }
+  },
+  "email": {
+    "seconds": 385.8,
+    "zones": 10,
+    "vocabulary_recall": 1.0,
+    "precision": 1.0,
+    "join_recall": 1.0,
+    "tau": 0.962,
+    "beside": 0.917,
+    "height_ratio": 1.078,
+    "vanished": [],
+    "glm_whole_page": {
+      "seconds": 6.2,
+      "vanished": [
+        "214",
+        "3",
+        "inbox",
+        "j"
+      ],
+      "invented": []
+    },
+    "glm_today_zones": {
+      "seconds": 5.3,
+      "vanished": [
+        "fd30s"
+      ],
+      "invented": [
+        "df3os"
+      ]
+    }
+  }
+}

@@ -264,6 +264,16 @@ and `specs/0007-handover.md` for the A phases and the queue.
 ranked directions included. They stay in the spec's outcome, as record.
 Pick up nothing he does not name.
 
+**2026-10-24, investigation only:**
+[`level-up.md`](level-up.md), on branch `level-up` (cut from `develop` =
+`scaffold` at `99110c2`). It answers two questions he asked: how the test
+set should grow so that conversion generalises, and whether the
+architecture should change. A probe on ten never-seen pages
+([`level-up-probe/`](level-up-probe/README.md)) found a structural fault on
+9 of 10, against 0 of 6 tuned pages drawn at random. The doc proposes a
+generated corpus used as dev / panel / vault pools, and a parser-first
+PoC. **Nothing in it is decided**; its §8 lists his decisions.
+
 ---
 
 ## Closed, with evidence — do not reopen without a new kind

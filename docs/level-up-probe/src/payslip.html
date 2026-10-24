@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Payslip</title>
+<style>
+  body { font:13px/1.45 Verdana, Geneva, sans-serif; color:#1e2329; background:#fff;
+         margin:0; padding:28px 34px 26px; }
+  .top { display:flex; justify-content:space-between; align-items:flex-start;
+         border-bottom:2px solid #2b4c7e; padding-bottom:12px; }
+  .co { font-size:19px; font-weight:700; color:#2b4c7e; }
+  .co small { display:block; font-size:11px; font-weight:400; color:#5d6670; margin-top:3px; }
+  .doc { text-align:right; }
+  .doc b { display:block; font-size:22px; letter-spacing:.08em; color:#2b4c7e; }
+  .doc span { font-size:11px; color:#5d6670; }
+  .who { display:grid; grid-template-columns:1fr 1fr; column-gap:40px; margin:16px 0 18px; }
+  .who div { display:flex; justify-content:space-between; border-bottom:1px dotted #b9c1ca;
+             padding:3px 0; }
+  .who em { font-style:normal; color:#5d6670; }
+  .tables { display:grid; grid-template-columns:3fr 2fr; gap:22px; }
+  table { width:100%; border-collapse:collapse; }
+  caption { text-align:left; font-weight:700; font-size:12px; letter-spacing:.06em;
+            text-transform:uppercase; color:#fff; background:#2b4c7e; padding:5px 8px; }
+  th { text-align:left; font-size:11px; color:#5d6670; font-weight:400;
+       border-bottom:1px solid #2b4c7e; padding:5px 8px; }
+  td { padding:5px 8px; border-bottom:1px solid #e3e7ec; }
+  td.n, th.n { text-align:right; }
+  tr.tot td { font-weight:700; border-top:2px solid #2b4c7e; border-bottom:none; }
+  .sum { display:flex; margin-top:20px; border:1px solid #2b4c7e; }
+  .sum div { flex:1; padding:9px 12px; border-right:1px solid #2b4c7e; }
+  .sum div:last-child { border-right:none; background:#e6eef9; }
+  .sum em { display:block; font-style:normal; font-size:11px; color:#5d6670; }
+  .sum b { font-size:17px; }
+  .ytd { margin-top:18px; width:60%; font-size:12px; }
+  .ytd td { padding:3px 8px; }
+  .note { margin-top:18px; font-size:10.5px; color:#5d6670; }
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="co">Harrowgate Engineering Ltd<small>Unit 4, Mill Lane Trading Estate, Leeds LS12 6BQ</small></div>
+  <div class="doc"><b>PAYSLIP</b><span>Pay period: 1 – 30 September 2026</span></div>
+</div>
+<div class="who">
+  <div><em>Employee</em><span>Priya Ramaswamy</span></div>
+  <div><em>Tax code</em><span>1257L</span></div>
+  <div><em>Employee no.</em><span>E-04718</span></div>
+  <div><em>NI number</em><span>QQ 12 34 56 C</span></div>
+  <div><em>Department</em><span>Process Design</span></div>
+  <div><em>Pay date</em><span>30/09/2026</span></div>
+</div>
+<div class="tables">
+  <table>
+    <caption>Earnings</caption>
+    <tr><th>Description</th><th class="n">Hours</th><th class="n">Rate</th><th class="n">Amount</th></tr>
+    <tr><td>Basic salary</td><td class="n">150.00</td><td class="n">24.50</td><td class="n">3,675.00</td></tr>
+    <tr><td>Overtime (1.5×)</td><td class="n">6.50</td><td class="n">36.75</td><td class="n">238.88</td></tr>
+    <tr><td>Shift allowance</td><td class="n"></td><td class="n"></td><td class="n">120.00</td></tr>
+    <tr><td>Expenses (non-taxable)</td><td class="n"></td><td class="n"></td><td class="n">64.20</td></tr>
+    <tr class="tot"><td>Gross pay</td><td></td><td></td><td class="n">4,098.08</td></tr>
+  </table>
+  <table>
+    <caption>Deductions</caption>
+    <tr><th>Description</th><th class="n">Amount</th></tr>
+    <tr><td>Income tax</td><td class="n">604.40</td></tr>
+    <tr><td>National Insurance</td><td class="n">251.58</td></tr>
+    <tr><td>Pension (5%)</td><td class="n">201.69</td></tr>
+    <tr><td>Cycle scheme</td><td class="n">41.67</td></tr>
+    <tr class="tot"><td>Total</td><td class="n">1,099.34</td></tr>
+  </table>
+</div>
+<div class="sum">
+  <div><em>Gross pay</em><b>£4,098.08</b></div>
+  <div><em>Total deductions</em><b>£1,099.34</b></div>
+  <div><em>Net pay</em><b>£2,998.74</b></div>
+</div>
+<table class="ytd">
+  <tr><th>Year to date</th><th class="n">Taxable pay</th><th class="n">Tax</th><th class="n">NI</th><th class="n">Pension</th></tr>
+  <tr><td>April – September</td><td class="n">23,824.80</td><td class="n">3,626.40</td><td class="n">1,509.48</td><td class="n">1,210.14</td></tr>
+</table>
+<p class="note">Paid by BACS to account ending 4417. Please keep this payslip for your records; queries to payroll@harrowgate-eng.example within 14 days.</p>
+</body>
+</html>

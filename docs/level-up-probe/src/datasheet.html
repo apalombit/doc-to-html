@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Datasheet</title>
+<style>
+  body { font:12.5px/1.45 "Segoe UI", "Helvetica Neue", Arial, sans-serif; color:#1c232b;
+         background:#fff; margin:0; }
+  .hero { background:#0b3a5b; color:#fff; padding:20px 34px 18px; display:flex;
+          justify-content:space-between; align-items:flex-end; }
+  .hero h1 { font-size:26px; font-weight:600; margin:0; }
+  .hero div span { display:block; font-size:12px; color:#9cc3df; letter-spacing:.06em; }
+  .brand { font:800 18px/1 "Arial Rounded MT Bold", "Helvetica Neue", Arial, sans-serif;
+           letter-spacing:.12em; color:#7fd1ae; }
+  .body { padding:18px 34px 22px; }
+  .intro { font-size:13.5px; margin:0 0 16px; color:#33404d; }
+  .cols { display:grid; grid-template-columns:42% 1fr; gap:30px; }
+  h2 { font-size:12px; text-transform:uppercase; letter-spacing:.1em; color:#0b3a5b;
+       margin:0 0 8px; padding-bottom:4px; border-bottom:2px solid #7fd1ae; }
+  ul { list-style:none; margin:0; padding:0; }
+  li { padding:4px 0 4px 20px; position:relative; }
+  li::before { content:"✓"; position:absolute; left:0; color:#2e9a6b; font-weight:700; }
+  table { width:100%; border-collapse:collapse; }
+  .spec td { padding:3px 6px; border-bottom:1px solid #e1e6eb; }
+  .spec td:first-child { color:#5a6875; width:48%; }
+  .spec tr.grp td { background:#eef3f7; color:#0b3a5b; font-weight:600; border-bottom:none;
+                    padding-top:5px; }
+  .order { margin-top:18px; }
+  .order th { background:#0b3a5b; color:#fff; text-align:left; font-weight:600; padding:5px 8px; }
+  .order td { padding:5px 8px; border-bottom:1px solid #e1e6eb; }
+  .order td:first-child { font-family:Menlo, Consolas, monospace; font-size:12px; }
+  .foot { margin-top:16px; font-size:10.5px; color:#7a8794; display:flex;
+          justify-content:space-between; border-top:1px solid #e1e6eb; padding-top:6px; }
+</style>
+</head>
+<body>
+<div class="hero">
+  <div><span>DATASHEET · REV C</span><h1>AQ-7 Indoor Air Quality Sensor</h1></div>
+  <div class="brand">VERIDIAN</div>
+</div>
+<div class="body">
+  <p class="intro">The AQ-7 measures particulate matter, CO₂, temperature and humidity in one compact wall-mounted unit, and reports over Modbus or BACnet for direct integration with building management systems.</p>
+  <div class="cols">
+    <div>
+      <h2>Key features</h2>
+      <ul>
+        <li>Laser PM1.0, PM2.5 and PM10 sensing</li>
+        <li>NDIR CO₂ with automatic baseline correction</li>
+        <li>Three-colour status ring visible at 10 m</li>
+        <li>Field-replaceable sensor cartridge</li>
+        <li>Tool-free mounting on a standard back box</li>
+        <li>Five-year warranty</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Specifications</h2>
+      <table class="spec">
+        <tr class="grp"><td colspan="2">Measurement</td></tr>
+        <tr><td>CO₂ range / accuracy</td><td>400 – 5,000 ppm, ±(30 ppm + 3%)</td></tr>
+        <tr><td>PM2.5 range</td><td>0 – 1,000 µg/m³</td></tr>
+        <tr><td>Temperature accuracy</td><td>±0.3 °C</td></tr>
+        <tr class="grp"><td colspan="2">Electrical</td></tr>
+        <tr><td>Supply</td><td>24 V AC/DC, or PoE (802.3af)</td></tr>
+        <tr><td>Power</td><td>1.8 W typical</td></tr>
+        <tr class="grp"><td colspan="2">Physical</td></tr>
+        <tr><td>Dimensions</td><td>86 × 86 × 31 mm</td></tr>
+        <tr><td>Enclosure</td><td>PC/ABS, IP30, UL94 V-0</td></tr>
+      </table>
+    </div>
+  </div>
+  <table class="order">
+    <tr><th>Part number</th><th>Description</th><th>Interface</th><th>Colour</th></tr>
+    <tr><td>AQ7-MB-W</td><td>AQ-7 sensor, Modbus RTU</td><td>RS-485</td><td>White</td></tr>
+    <tr><td>AQ7-BN-W</td><td>AQ-7 sensor, BACnet MS/TP</td><td>RS-485</td><td>White</td></tr>
+    <tr><td>AQ7-POE-G</td><td>AQ-7 sensor, BACnet/IP</td><td>Ethernet, PoE</td><td>Graphite</td></tr>
+  </table>
+  <div class="foot"><span>Veridian Controls GmbH · Specifications subject to change without notice.</span><span>DS-AQ7 · 2026-08</span></div>
+</div>
+</body>
+</html>

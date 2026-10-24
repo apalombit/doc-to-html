@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Laboratory report</title>
+<style>
+  body { font:12.5px/1.4 "Gill Sans", "Gill Sans MT", Calibri, sans-serif; color:#20262b;
+         background:#fff; margin:0; padding:26px 32px 24px; }
+  header { display:flex; justify-content:space-between; }
+  .lab { font-size:20px; font-weight:600; color:#0d6e6e; }
+  .lab small { display:block; font-size:11px; font-weight:400; color:#5f6b72; }
+  .ids { text-align:right; font-size:11.5px; line-height:1.55; }
+  .ids b { color:#0d6e6e; }
+  .patient { margin:14px 0 16px; padding:10px 12px; background:#f1f6f6;
+             border-left:4px solid #0d6e6e; display:grid;
+             grid-template-columns:repeat(3, 1fr); row-gap:6px; column-gap:18px; }
+  .patient span { display:block; font-size:10.5px; color:#5f6b72; text-transform:uppercase;
+                  letter-spacing:.05em; }
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:left; font-size:11px; color:#5f6b72; font-weight:600;
+       border-bottom:2px solid #20262b; padding:5px 6px; }
+  td { padding:4px 6px; border-bottom:1px solid #dfe5e8; }
+  tr.sec td { font-weight:700; letter-spacing:.08em; font-size:11.5px; color:#0d6e6e;
+              background:#fff; border-bottom:1px solid #0d6e6e; padding-top:12px; }
+  td.r { text-align:right; font-variant-numeric:tabular-nums; }
+  .hi, .lo { color:#b42318; font-weight:700; }
+  .comment { margin-top:16px; font-size:12px; }
+  .comment b { display:block; margin-bottom:2px; }
+  .sign { margin-top:22px; display:flex; justify-content:space-between; align-items:flex-end;
+          font-size:11.5px; color:#5f6b72; }
+  .sign .line { border-top:1px solid #20262b; width:220px; padding-top:4px; color:#20262b; }
+</style>
+</head>
+<body>
+<header>
+  <div class="lab">Northfield Pathology<small>Accredited clinical laboratory · Lab ref NP-2291</small></div>
+  <div class="ids">Report ID <b>R-26-118045</b><br>Collected 21 Oct 2026, 08:12<br>Reported 21 Oct 2026, 15:40</div>
+</header>
+<div class="patient">
+  <div><span>Patient</span>Tomasz Wiśniewski</div>
+  <div><span>Date of birth</span>02/07/1969 (57 y)</div>
+  <div><span>Sex</span>Male</div>
+  <div><span>MRN</span>5518 2207 93</div>
+  <div><span>Requesting clinician</span>Dr H. Okafor</div>
+  <div><span>Specimen</span>Venous blood, fasting</div>
+</div>
+<table>
+  <tr><th>Test</th><th class="r">Result</th><th>Flag</th><th>Units</th><th>Reference interval</th></tr>
+  <tr class="sec"><td colspan="5">HAEMATOLOGY</td></tr>
+  <tr><td>Haemoglobin</td><td class="r">128</td><td class="lo">L</td><td>g/L</td><td>130 – 170</td></tr>
+  <tr><td>White cell count</td><td class="r">6.4</td><td></td><td>×10⁹/L</td><td>4.0 – 11.0</td></tr>
+  <tr><td>Platelets</td><td class="r">231</td><td></td><td>×10⁹/L</td><td>150 – 400</td></tr>
+  <tr><td>MCV</td><td class="r">84</td><td></td><td>fL</td><td>80 – 100</td></tr>
+  <tr class="sec"><td colspan="5">BIOCHEMISTRY</td></tr>
+  <tr><td>Glucose (fasting)</td><td class="r">6.8</td><td class="hi">H</td><td>mmol/L</td><td>3.9 – 5.6</td></tr>
+  <tr><td>HbA1c</td><td class="r">49</td><td class="hi">H</td><td>mmol/mol</td><td>&lt; 42</td></tr>
+  <tr><td>Creatinine</td><td class="r">92</td><td></td><td>µmol/L</td><td>60 – 110</td></tr>
+  <tr><td>eGFR</td><td class="r">&gt; 90</td><td></td><td>mL/min/1.73m²</td><td>&gt; 60</td></tr>
+  <tr><td>Total cholesterol</td><td class="r">5.9</td><td class="hi">H</td><td>mmol/L</td><td>&lt; 5.0</td></tr>
+  <tr><td>LDL cholesterol</td><td class="r">3.7</td><td class="hi">H</td><td>mmol/L</td><td>&lt; 3.0</td></tr>
+</table>
+<div class="comment"><b>Comment</b>Fasting glucose and HbA1c are in the range consistent with diabetes; suggest repeat HbA1c and clinical review. Mild normocytic anaemia — consider iron studies.</div>
+<div class="sign">
+  <div>Results relate only to the specimen received.<br>Page 1 of 1</div>
+  <div class="line">Dr Ingrid Solberg, Consultant Chemical Pathologist</div>
+</div>
+</body>
+</html>
