@@ -1,6 +1,6 @@
 # The corpus: 600 pages, chosen by their variability
 
-**Status: in progress, issue #43. Step 0 done 2026-10-24 ("Outcome —
+**Status: in progress, issue #43. Steps 0 and 1 done 2026-10-24 ("Outcome —
 the steps").**
 - **This is step L1b** of the level-up plan
   ([`../level-up.md`](../level-up.md) §6), on branch `level-up`.
@@ -649,6 +649,86 @@ script run in `projection`'s Chrome with its flags; `fonts`), and
 every class has at least five faces, and on this machine every listed face
 still resolves and covers the glyphs. `corpus/README.md` holds the layout
 on disk.
+
+### Step 1 — done 2026-10-24
+
+**`corpus/taxonomy.json`** holds the eight families with their quotas and
+PDF slots, 55 kinds, the 54 feature ids with a one-line note each (the
+note is what the brief hands the writer), each family's priors on a 0–3
+scale, each kind's overrides (widths, arrangements, density, styles, boosts,
+exclusions), the twelve style families with their main-type weights, 15
+exclusion pairs, the languages and the coverage rule.
+
+- **Kinds beyond table 1's examples**, for variety inside the tilted
+  families: quotation; registration and consent forms; a status report;
+  a membership card. Table 1 named its kinds as examples.
+- **Receipts are 40 generated cards, and so are the clinical notes**
+  (visit note 14, discharge summary 13, prescription 13). Real PDF
+  receipts and clinical notes would be private, so none of a family's PDF
+  slots is expected to be one.
+- **A locale per card**, an addition the spec did not ask for: English is
+  `en-GB` or `en-US`, Portuguese `pt-PT` or `pt-BR`, so dates and
+  spellings vary inside one language. Every non-English locale keeps the
+  number format the spec asks for.
+- **Arrangements carry a minimum width** (three columns 900, a cards grid
+  760, two columns, a sidebar and side-by-side panels 700). The draw only
+  offers a kind the arrangements its widths can hold. The nutrition label
+  (500–640) never gets side-by-side panels, and a receipt only one column
+  or centred.
+
+**`tools/corpus_cards.py`** (`doc_to_html.factory.cards`) drew
+**`corpus/cards.json` with seed 20261024**:
+- 600 cards: 500 generated and 100 PDF slots, every quota exact;
+- the languages dealt exactly, 450 / 50 / 50 / 25 / 25;
+- the other kinds of each family within one card of each other;
+- 3–6 other features per card (121, 142, 111 and 126 cards with 3, 4, 5
+  and 6);
+- widths from 500 to 1200 px, mean 853;
+- densities 138 sparse, 207 medium, 155 dense;
+- all twelve style families, from `corporate-modern` (79) to `academic`
+  (13).
+
+**The coverage top-up changed 3 cards** (`c0119`, `c0379`, `c0569`), all
+for `fmt.eu_numbers`, which the draw gave only 6 pages. It is excluded on
+English cards, which are three quarters of them. **The rule is met over
+the 500 generated cards**: every feature id is on at least 9 pages in at
+least 3 kinds. The thinnest are:
+- `fmt.eu_numbers`, 9 pages in 8 kinds;
+- `text.drop_cap`, 10 in 7;
+- `text.formula`, 12 in 8;
+- `list.big_steps`, 14 in 10;
+- `look.buttons`, 15 in 9.
+
+The per-pool half of the rule (2 in each pool) is met when the pools are
+dealt, in step 6.
+
+`fmt.eu_numbers` is thin as a card feature only: the brief has every
+non-English page use its own formats. The validator records a page's
+detected features beside its card's, so the per-feature counts in L2 can
+use what the page shows.
+
+**The pilot's 50 cards** are marked on the cards: 10 transactional, 7
+each of forms and reports, 6 each of credentials and presentation, 5 each
+of correspondence and reference, and 4 publishing. All twelve style
+families are in it, and all five languages (38 English, 5 Italian, 4
+French, 2 Portuguese, 1 Spanish).
+
+**The PDF slots want 72 English pages and 28 in the other four
+languages.** Step 4 chooses real pages against that. Where the sources
+cannot meet it, the languages of unwritten generated cards are swapped to
+keep the totals, and the swap is recorded in `cards.json`'s history.
+
+**Tests:** `tests/test_factory_cards.py`, 20 tests:
+- the quotas;
+- the same seed giving the same cards, the top-up and the pilot included;
+- coverage met;
+- a locked card never touched;
+- an impossible feature reported rather than forced;
+- every card sound;
+- six planted faults each named: seven features, a long table on a sparse
+  page, a receipt in three columns, European numbers on an English page,
+  two columns at 600 px, a feature its kind excludes;
+- `cards.json` is the seeded draw but for the cards its history names.
 
 ## Outcome — the corpus
 

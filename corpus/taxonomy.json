@@ -1,0 +1,327 @@
+{
+ "about": "What the corpus is drawn from (spec 0020, step 1). Families and kinds are docs/level-up.md §4.7 table 1; feature ids are the spec's §F; style families its §S; quotas and languages its 'numbers to hit', agreed with Alessandro 2026-10-24. Priors are weights, 0 never to 3 typical. A kind's entry overrides its family's widths, arrangements, density and styles, and adds its 'boost' to, and takes its 'exclude' from, the family's priors. tools/corpus_cards.py draws the cards from it.",
+ "total": 600,
+ "pools": {"dev": 200, "panel": 200, "vault": 200},
+ "features_per_card": [3, 6],
+ "coverage": {"pages": 9, "kinds": 3, "per_pool": 2},
+ "languages": {"en": 450, "it": 50, "fr": 50, "es": 25, "pt": 25},
+ "language_names": {"en": "English", "it": "Italian", "fr": "French", "es": "Spanish", "pt": "Portuguese"},
+ "features": {
+  "arrangement": ["arr.one_column", "arr.two_columns", "arr.three_columns", "arr.sidebar", "arr.cards_grid", "arr.panels_side_by_side", "arr.centred"],
+  "type_main": ["type.serif", "type.sans", "type.mono"],
+  "tables": ["table.ruled", "table.spanning", "table.section_rows", "table.totals", "table.empty_cells", "table.zebra", "table.subrows", "table.long"],
+  "key_value": ["kv.inline", "kv.over", "kv.two_per_line", "kv.leaders", "kv.boxed"],
+  "lists": ["list.bullets", "list.numbers", "list.nested", "list.ticks", "list.clauses", "list.big_steps"],
+  "text": ["text.justified", "text.footnotes", "text.supsub", "text.formula", "text.quote", "text.drop_cap"],
+  "type_extras": ["type.display", "type.script", "type.small_caps", "type.weights"],
+  "looks": ["look.accent", "look.dark_ground", "look.bands", "look.chips", "look.buttons", "look.rules"],
+  "figures": ["fig.logo", "fig.chart", "fig.code", "fig.signature", "fig.photo", "fig.icons"],
+  "formats": ["fmt.eu_numbers", "fmt.dates", "fmt.currency"]
+ },
+ "feature_notes": {
+  "arr.one_column": "one column of content from top to bottom",
+  "arr.two_columns": "two columns of running content side by side",
+  "arr.three_columns": "three columns of running content side by side",
+  "arr.sidebar": "a narrow side column beside a wide main column",
+  "arr.cards_grid": "a grid of repeated cards or tiles, at least two by two",
+  "arr.panels_side_by_side": "two or three framed panels side by side, each its own block",
+  "arr.centred": "everything centred on a vertical axis",
+  "type.serif": "the body is set in a serif face",
+  "type.sans": "the body is set in a sans face",
+  "type.mono": "the body is set in a monospaced face",
+  "table.ruled": "a table ruled between its rows and columns",
+  "table.spanning": "a cell that spans two or more columns or rows (colspan or rowspan)",
+  "table.section_rows": "a full-width row inside a table that names the rows below it",
+  "table.totals": "summary rows (subtotal, tax, total) at a table's foot",
+  "table.empty_cells": "cells left empty on purpose (a blank result, an unfilled box)",
+  "table.zebra": "alternate rows shaded",
+  "table.subrows": "indented sub-rows under a parent row",
+  "table.long": "a table of 25 rows or more",
+  "kv.inline": "label and value on one line (Date: 24/10/2026)",
+  "kv.over": "a small label printed over its value",
+  "kv.two_per_line": "two label-value pairs on one line",
+  "kv.leaders": "leader dots between a label and its value",
+  "kv.boxed": "values in drawn boxes or fields",
+  "list.bullets": "a bulleted list",
+  "list.numbers": "a numbered list, numbers written in the HTML",
+  "list.nested": "a list inside a list",
+  "list.ticks": "ticks and crosses (✓ ✗) or tick boxes (☐ ☑) beside items",
+  "list.clauses": "hanging clause numbers (1.1, 1.2, (a), (b)) with the text indented past them",
+  "list.big_steps": "large step numbers beside each step",
+  "text.justified": "justified paragraphs",
+  "text.footnotes": "footnote marks in the text and the notes at the foot",
+  "text.supsub": "superscripts or subscripts (m², CO₂, 1st, a reference mark)",
+  "text.formula": "a formula or equation set on its own line",
+  "text.quote": "a quotation set apart (a pull quote or a block quote)",
+  "text.drop_cap": "a drop cap at a paragraph's start",
+  "type.display": "a display face for a title or masthead",
+  "type.script": "a script or handwritten face somewhere on the page",
+  "type.small_caps": "small capitals for labels or headings",
+  "type.weights": "three or more weights of one family on the page",
+  "look.accent": "one accent colour carrying meaning (headings, flags, totals)",
+  "look.dark_ground": "the page, or most of it, light type on a dark ground",
+  "look.bands": "full-width bands of fill (a header bar, shaded section strips)",
+  "look.chips": "small rounded chips or badges with a fill",
+  "look.buttons": "button-like boxes",
+  "look.rules": "dashed, dotted or double rules",
+  "fig.logo": "a logo drawn as shapes, its wordmark if any as HTML text beside it",
+  "fig.chart": "a chart, its title and labels as HTML text outside the figure",
+  "fig.code": "a barcode or QR code",
+  "fig.signature": "a handwritten signature drawn as a path",
+  "fig.photo": "a photo-like picture",
+  "fig.icons": "small icons beside text",
+  "fmt.eu_numbers": "numbers in the language's own format (1.234,56 or 1 234,56)",
+  "fmt.dates": "dates in the language's format (24/10/2026, 24 ottobre 2026)",
+  "fmt.currency": "amounts with a currency sign or code"
+ },
+ "min_width": {"arr.three_columns": 900, "arr.cards_grid": 760, "arr.two_columns": 700, "arr.sidebar": 700, "arr.panels_side_by_side": 700},
+ "exclusions": {
+  "features": [
+   ["table.long", "density:sparse"],
+   ["fmt.eu_numbers", "language:en"],
+   ["text.drop_cap", "arr.cards_grid"],
+   ["look.dark_ground", "style:government-form"],
+   ["look.dark_ground", "style:retail-receipt"],
+   ["look.dark_ground", "style:legacy-table"],
+   ["look.dark_ground", "style:print-export"],
+   ["look.dark_ground", "style:clinical-plain"],
+   ["look.dark_ground", "style:academic"],
+   ["text.drop_cap", "style:government-form"],
+   ["text.drop_cap", "style:retail-receipt"],
+   ["text.drop_cap", "style:clinical-plain"],
+   ["look.buttons", "style:retail-receipt"],
+   ["look.chips", "style:retail-receipt"],
+   ["look.chips", "style:legacy-table"]
+  ],
+  "about": "A pair here never shares a card. 'density:', 'language:' and 'style:' name a card's other fields."
+ },
+ "densities": {
+  "sparse": "a few blocks with generous space: a flyer, an invitation",
+  "medium": "a typical page of its kind",
+  "dense": "packed: small type, many rows or fields, little space"
+ },
+ "styles": {
+  "corporate-modern": {"looks": "sans, one accent colour, cards, generous space", "html": "semantic, flex and grid", "type": {"type.sans": 5, "type.serif": 1}},
+  "government-form": {"looks": "numbered boxes, black on white, small type, dense", "html": "fieldsets, tables for boxes", "type": {"type.sans": 3, "type.serif": 2, "type.mono": 1}},
+  "classic-print": {"looks": "serif, rules, columns, small caps", "html": "semantic", "type": {"type.serif": 5, "type.sans": 1}},
+  "retail-receipt": {"looks": "mono, narrow, dashed rules, centred header", "html": "divs and pre-like spacing", "type": {"type.mono": 5, "type.sans": 1}},
+  "clinical-plain": {"looks": "sans, teal or blue, tables and fields, flags", "html": "tables, definition lists", "type": {"type.sans": 5, "type.serif": 1}},
+  "academic": {"looks": "serif, two columns, footnotes, formulas", "html": "semantic, sup/sub", "type": {"type.serif": 5, "type.sans": 1}},
+  "editorial": {"looks": "display type, drop caps, pull quotes", "html": "semantic", "type": {"type.serif": 3, "type.sans": 2}},
+  "minimal-swiss": {"looks": "strict grid, small sizes, lots of white", "html": "grid", "type": {"type.sans": 5, "type.mono": 1}},
+  "bold-marketing": {"looks": "big type, chips, buttons, dark bands", "html": "flex", "type": {"type.sans": 4, "type.serif": 1}},
+  "legacy-table": {"looks": "Verdana or Times, tables for layout, borders", "html": "nested tables", "type": {"type.sans": 3, "type.serif": 2}},
+  "utility-classes": {"looks": "any", "html": "framework-like utility class names", "type": {"type.sans": 4, "type.serif": 1, "type.mono": 1}},
+  "print-export": {"looks": "looks exported from a word processor", "html": "absolute-looking spacing, many spans", "type": {"type.serif": 3, "type.sans": 2}}
+ },
+ "families": {
+  "forms": {
+   "short": "frm", "pages": 100, "pdf": 30,
+   "widths": [760, 1000],
+   "density": {"sparse": 1, "medium": 3, "dense": 3},
+   "arrangements": {"arr.one_column": 3, "arr.two_columns": 2, "arr.three_columns": 1, "arr.sidebar": 1, "arr.panels_side_by_side": 1},
+   "styles": {"government-form": 4, "corporate-modern": 2, "minimal-swiss": 1, "legacy-table": 2, "utility-classes": 2, "print-export": 2, "classic-print": 1},
+   "priors": {
+    "table.ruled": 2, "table.spanning": 2, "table.section_rows": 2, "table.totals": 1, "table.empty_cells": 3, "table.zebra": 1, "table.subrows": 1, "table.long": 1,
+    "kv.inline": 2, "kv.over": 3, "kv.two_per_line": 3, "kv.leaders": 2, "kv.boxed": 3,
+    "list.bullets": 1, "list.numbers": 2, "list.nested": 1, "list.ticks": 3, "list.clauses": 2, "list.big_steps": 1,
+    "text.justified": 1, "text.footnotes": 2, "text.supsub": 1,
+    "type.display": 1, "type.script": 1, "type.small_caps": 2, "type.weights": 2,
+    "look.accent": 2, "look.bands": 3, "look.chips": 1, "look.buttons": 1, "look.rules": 2,
+    "fig.logo": 2, "fig.code": 2, "fig.signature": 2, "fig.photo": 1, "fig.icons": 1,
+    "fmt.eu_numbers": 1, "fmt.dates": 3, "fmt.currency": 1
+   },
+   "kinds": {
+    "application form": {},
+    "numbered-box tax form": {"styles": {"government-form": 6, "legacy-table": 1, "print-export": 1}, "density": {"medium": 1, "dense": 3}, "boost": {"kv.boxed": 2, "table.spanning": 1, "fmt.currency": 2}},
+    "questionnaire": {"boost": {"list.ticks": 2, "list.numbers": 1}},
+    "patient intake form": {"styles": {"clinical-plain": 4, "government-form": 1, "corporate-modern": 1, "utility-classes": 1}, "boost": {"list.ticks": 1}},
+    "exam sheet": {"styles": {"academic": 2, "classic-print": 2, "government-form": 1, "minimal-swiss": 1, "print-export": 1}, "boost": {"text.formula": 2, "list.numbers": 2, "text.supsub": 1}},
+    "checklist": {"boost": {"list.ticks": 3}, "exclude": ["table.long"]},
+    "registration form": {},
+    "consent form": {"boost": {"list.clauses": 1, "fig.signature": 2, "text.justified": 1}}
+   }
+  },
+  "transactional": {
+   "short": "trn", "pages": 100, "pdf": 5,
+   "widths": [760, 1000],
+   "density": {"sparse": 1, "medium": 3, "dense": 2},
+   "arrangements": {"arr.one_column": 3, "arr.two_columns": 1, "arr.sidebar": 1, "arr.panels_side_by_side": 2},
+   "styles": {"corporate-modern": 3, "government-form": 1, "classic-print": 1, "minimal-swiss": 2, "bold-marketing": 1, "legacy-table": 2, "utility-classes": 2, "print-export": 2},
+   "priors": {
+    "table.ruled": 3, "table.spanning": 1, "table.section_rows": 1, "table.totals": 3, "table.empty_cells": 2, "table.zebra": 2, "table.subrows": 1, "table.long": 1,
+    "kv.inline": 3, "kv.over": 2, "kv.two_per_line": 2, "kv.leaders": 1, "kv.boxed": 2,
+    "list.bullets": 1, "list.numbers": 1, "list.ticks": 1, "list.clauses": 1,
+    "text.footnotes": 2, "text.supsub": 1,
+    "type.display": 1, "type.script": 1, "type.small_caps": 1, "type.weights": 2,
+    "look.accent": 3, "look.dark_ground": 1, "look.bands": 2, "look.chips": 1, "look.buttons": 1, "look.rules": 2,
+    "fig.logo": 3, "fig.chart": 1, "fig.code": 2, "fig.signature": 1, "fig.icons": 1,
+    "fmt.eu_numbers": 2, "fmt.dates": 2, "fmt.currency": 3
+   },
+   "kinds": {
+    "receipt": {"pages": 40, "widths": [500, 560], "arrangements": {"arr.one_column": 3, "arr.centred": 2},
+                "styles": {"retail-receipt": 6, "minimal-swiss": 1, "utility-classes": 1, "corporate-modern": 1, "legacy-table": 1},
+                "boost": {"look.rules": 2, "kv.leaders": 1, "fig.code": 1},
+                "exclude": ["kv.over", "table.spanning", "table.subrows", "list.clauses", "look.dark_ground", "look.buttons", "fig.chart", "type.script", "text.footnotes"]},
+    "invoice": {},
+    "bank statement": {"density": {"medium": 2, "dense": 3}, "boost": {"table.long": 2, "table.zebra": 1}},
+    "payslip": {"boost": {"table.section_rows": 2, "table.subrows": 1, "kv.two_per_line": 1}},
+    "purchase order": {"boost": {"fig.signature": 1}},
+    "utility bill": {"boost": {"fig.chart": 2, "look.bands": 1}},
+    "packing slip": {"boost": {"list.ticks": 2, "fig.code": 1}, "exclude": ["table.totals"]},
+    "quotation": {"boost": {"list.clauses": 1}}
+   }
+  },
+  "reports": {
+   "short": "rep", "pages": 100, "pdf": 30,
+   "widths": [760, 1000],
+   "density": {"sparse": 1, "medium": 3, "dense": 2},
+   "arrangements": {"arr.one_column": 3, "arr.two_columns": 2, "arr.sidebar": 2, "arr.panels_side_by_side": 2, "arr.cards_grid": 1, "arr.three_columns": 1},
+   "styles": {"corporate-modern": 3, "academic": 1, "minimal-swiss": 2, "legacy-table": 1, "utility-classes": 2, "print-export": 2, "classic-print": 1, "government-form": 1, "bold-marketing": 1},
+   "priors": {
+    "table.ruled": 3, "table.spanning": 2, "table.section_rows": 2, "table.totals": 2, "table.empty_cells": 2, "table.zebra": 2, "table.subrows": 2, "table.long": 1,
+    "kv.inline": 3, "kv.over": 2, "kv.two_per_line": 2, "kv.leaders": 1, "kv.boxed": 2,
+    "list.bullets": 3, "list.numbers": 2, "list.nested": 2, "list.ticks": 2, "list.clauses": 1,
+    "text.justified": 2, "text.footnotes": 2, "text.supsub": 2, "text.formula": 1, "text.quote": 1,
+    "type.display": 1, "type.small_caps": 1, "type.weights": 2,
+    "look.accent": 3, "look.dark_ground": 1, "look.bands": 2, "look.chips": 2, "look.rules": 2,
+    "fig.logo": 2, "fig.chart": 2, "fig.code": 1, "fig.signature": 2, "fig.icons": 1,
+    "fmt.eu_numbers": 2, "fmt.dates": 3, "fmt.currency": 1
+   },
+   "kinds": {
+    "clinical visit note": {"pages": 14, "clinical": true, "styles": {"clinical-plain": 5, "corporate-modern": 1, "legacy-table": 1, "print-export": 1, "utility-classes": 1}, "boost": {"kv.over": 1, "table.empty_cells": 1, "look.accent": 1}, "exclude": ["fig.chart", "look.dark_ground", "text.quote"]},
+    "discharge summary": {"pages": 13, "clinical": true, "styles": {"clinical-plain": 5, "corporate-modern": 1, "legacy-table": 1, "print-export": 1, "utility-classes": 1}, "boost": {"list.numbers": 1, "kv.inline": 1}, "exclude": ["fig.chart", "look.dark_ground", "text.quote"]},
+    "prescription": {"pages": 13, "clinical": true, "widths": [600, 860], "styles": {"clinical-plain": 5, "corporate-modern": 1, "legacy-table": 1, "print-export": 1, "minimal-swiss": 1}, "arrangements": {"arr.one_column": 3, "arr.sidebar": 1, "arr.two_columns": 1}, "boost": {"fig.signature": 2, "fig.code": 1}, "exclude": ["table.long", "fig.chart", "look.dark_ground", "text.quote", "text.formula"]},
+    "corporate report page": {"boost": {"fig.chart": 1, "text.quote": 1}},
+    "lab report": {"styles": {"clinical-plain": 3, "corporate-modern": 1, "legacy-table": 1, "utility-classes": 1, "print-export": 1}, "boost": {"table.empty_cells": 1, "text.supsub": 1, "look.accent": 1}},
+    "minutes": {"widths": [700, 900], "boost": {"list.numbers": 1, "kv.inline": 1}, "exclude": ["table.long"]},
+    "inspection report": {"boost": {"list.ticks": 2, "kv.boxed": 1}},
+    "status report": {"boost": {"look.chips": 1, "fig.chart": 1}}
+   }
+  },
+  "correspondence and legal": {
+   "short": "cor", "pages": 60, "pdf": 10,
+   "widths": [700, 900],
+   "density": {"sparse": 2, "medium": 3, "dense": 1},
+   "arrangements": {"arr.one_column": 4, "arr.sidebar": 1, "arr.two_columns": 1},
+   "styles": {"classic-print": 3, "corporate-modern": 2, "print-export": 3, "minimal-swiss": 2, "legacy-table": 1, "utility-classes": 1, "government-form": 1, "editorial": 1},
+   "priors": {
+    "table.ruled": 1, "table.totals": 1,
+    "kv.inline": 2, "kv.over": 1, "kv.two_per_line": 1, "kv.leaders": 1, "kv.boxed": 1,
+    "list.bullets": 2, "list.numbers": 2, "list.nested": 2, "list.ticks": 1, "list.clauses": 3,
+    "text.justified": 3, "text.footnotes": 2, "text.supsub": 1, "text.quote": 2, "text.drop_cap": 1,
+    "type.display": 1, "type.script": 2, "type.small_caps": 2, "type.weights": 1,
+    "look.accent": 2, "look.bands": 1, "look.rules": 2,
+    "fig.logo": 3, "fig.signature": 3, "fig.icons": 1,
+    "fmt.eu_numbers": 1, "fmt.dates": 3, "fmt.currency": 1
+   },
+   "kinds": {
+    "letter": {},
+    "memo": {"boost": {"kv.inline": 2}},
+    "email printout": {"styles": {"corporate-modern": 2, "minimal-swiss": 2, "utility-classes": 2, "print-export": 2, "legacy-table": 1}, "boost": {"kv.inline": 2, "kv.two_per_line": 1}, "exclude": ["text.drop_cap", "fig.signature"]},
+    "notice": {"styles": {"government-form": 3, "classic-print": 2, "corporate-modern": 1, "print-export": 1}, "boost": {"look.bands": 1, "list.numbers": 1}},
+    "contract": {"density": {"medium": 2, "dense": 2}, "boost": {"list.clauses": 3, "text.justified": 1, "fig.signature": 1}},
+    "referral letter": {"styles": {"clinical-plain": 3, "classic-print": 1, "print-export": 2, "corporate-modern": 1}, "exclude": ["text.drop_cap"]}
+   }
+  },
+  "publishing": {
+   "short": "pub", "pages": 60, "pdf": 15,
+   "widths": [760, 1100],
+   "density": {"sparse": 1, "medium": 3, "dense": 2},
+   "arrangements": {"arr.one_column": 1, "arr.two_columns": 3, "arr.three_columns": 2, "arr.sidebar": 2, "arr.cards_grid": 1},
+   "styles": {"editorial": 3, "classic-print": 3, "academic": 2, "corporate-modern": 1, "minimal-swiss": 2, "bold-marketing": 1, "utility-classes": 1, "print-export": 1},
+   "priors": {
+    "table.ruled": 2, "table.spanning": 1, "table.section_rows": 1, "table.totals": 1, "table.empty_cells": 1, "table.zebra": 1, "table.subrows": 1,
+    "kv.inline": 1, "kv.over": 1, "kv.two_per_line": 1, "kv.leaders": 1, "kv.boxed": 1,
+    "list.bullets": 3, "list.numbers": 3, "list.nested": 2, "list.ticks": 1, "list.big_steps": 2,
+    "text.justified": 3, "text.footnotes": 2, "text.supsub": 2, "text.formula": 2, "text.quote": 3, "text.drop_cap": 2,
+    "type.display": 3, "type.script": 1, "type.small_caps": 2, "type.weights": 2,
+    "look.accent": 2, "look.dark_ground": 1, "look.bands": 2, "look.chips": 1, "look.rules": 2,
+    "fig.logo": 1, "fig.chart": 2, "fig.code": 1, "fig.photo": 2, "fig.icons": 2,
+    "fmt.eu_numbers": 1, "fmt.dates": 1, "fmt.currency": 1
+   },
+   "kinds": {
+    "newsletter": {"widths": [860, 1100]},
+    "magazine page": {"widths": [860, 1100], "boost": {"text.drop_cap": 1, "text.quote": 1, "fig.photo": 1}},
+    "paper page": {"widths": [800, 1000], "styles": {"academic": 6, "classic-print": 1, "print-export": 1}, "boost": {"text.formula": 2, "text.footnotes": 1, "text.supsub": 1}, "exclude": ["text.drop_cap", "look.dark_ground", "look.chips", "fig.photo"]},
+    "textbook page": {"styles": {"academic": 3, "classic-print": 2, "editorial": 1, "corporate-modern": 1}, "boost": {"text.formula": 1, "list.numbers": 1}},
+    "manual page": {"styles": {"corporate-modern": 2, "minimal-swiss": 2, "utility-classes": 2, "classic-print": 1, "print-export": 1}, "boost": {"list.big_steps": 2, "list.numbers": 1, "fig.icons": 1}},
+    "recipe": {"boost": {"list.big_steps": 2, "list.bullets": 1, "fig.photo": 1}},
+    "FAQ": {"widths": [700, 960], "boost": {"list.numbers": 1}, "exclude": ["text.formula"]}
+   }
+  },
+  "reference": {
+   "short": "ref", "pages": 60, "pdf": 10,
+   "widths": [760, 1200],
+   "density": {"sparse": 1, "medium": 3, "dense": 3},
+   "arrangements": {"arr.one_column": 2, "arr.two_columns": 2, "arr.three_columns": 1, "arr.cards_grid": 3, "arr.sidebar": 1, "arr.panels_side_by_side": 1},
+   "styles": {"corporate-modern": 2, "minimal-swiss": 2, "classic-print": 2, "editorial": 1, "bold-marketing": 1, "legacy-table": 2, "utility-classes": 2, "print-export": 1},
+   "priors": {
+    "table.ruled": 3, "table.spanning": 3, "table.section_rows": 3, "table.totals": 1, "table.empty_cells": 3, "table.zebra": 2, "table.subrows": 2, "table.long": 2,
+    "kv.inline": 2, "kv.over": 2, "kv.two_per_line": 1, "kv.leaders": 3, "kv.boxed": 1,
+    "list.bullets": 2, "list.numbers": 1, "list.nested": 1, "list.ticks": 1,
+    "text.footnotes": 2, "text.supsub": 2, "text.formula": 1,
+    "type.display": 2, "type.script": 1, "type.small_caps": 2, "type.weights": 2,
+    "look.accent": 3, "look.dark_ground": 1, "look.bands": 3, "look.chips": 2, "look.rules": 2,
+    "fig.logo": 2, "fig.chart": 1, "fig.code": 1, "fig.photo": 1, "fig.icons": 2,
+    "fmt.eu_numbers": 2, "fmt.dates": 1, "fmt.currency": 3
+   },
+   "kinds": {
+    "catalogue": {"boost": {"look.chips": 1, "fig.photo": 1, "fig.code": 1}},
+    "price list": {"boost": {"kv.leaders": 1, "table.section_rows": 1}},
+    "menu": {"widths": [600, 960], "styles": {"classic-print": 3, "editorial": 2, "minimal-swiss": 1, "bold-marketing": 1, "corporate-modern": 1}, "boost": {"kv.leaders": 2, "type.script": 1}, "exclude": ["table.long", "fig.chart", "text.formula"]},
+    "timetable": {"widths": [860, 1200], "arrangements": {"arr.one_column": 3, "arr.sidebar": 1}, "boost": {"table.spanning": 2, "table.empty_cells": 1}},
+    "calendar": {"widths": [860, 1200], "arrangements": {"arr.one_column": 3, "arr.sidebar": 1, "arr.cards_grid": 1}, "boost": {"table.ruled": 1, "table.empty_cells": 2}, "exclude": ["table.totals", "table.long"]},
+    "datasheet": {"boost": {"text.supsub": 1, "table.section_rows": 1, "text.formula": 1}},
+    "nutrition label": {"widths": [500, 640], "arrangements": {"arr.one_column": 3, "arr.panels_side_by_side": 1}, "styles": {"minimal-swiss": 2, "corporate-modern": 1, "legacy-table": 1, "utility-classes": 1, "classic-print": 1}, "boost": {"table.subrows": 2, "table.ruled": 1, "text.footnotes": 1}, "exclude": ["fig.photo", "fig.chart", "look.dark_ground"]}
+   }
+  },
+  "credentials": {
+   "short": "crd", "pages": 60, "pdf": 0,
+   "widths": [760, 1100],
+   "density": {"sparse": 3, "medium": 3, "dense": 1},
+   "arrangements": {"arr.one_column": 1, "arr.sidebar": 2, "arr.centred": 3, "arr.panels_side_by_side": 2, "arr.two_columns": 1},
+   "styles": {"classic-print": 3, "corporate-modern": 2, "minimal-swiss": 2, "editorial": 2, "bold-marketing": 1, "utility-classes": 1, "print-export": 1, "legacy-table": 1},
+   "priors": {
+    "table.ruled": 1, "table.spanning": 1,
+    "kv.inline": 2, "kv.over": 3, "kv.two_per_line": 2, "kv.leaders": 1, "kv.boxed": 2,
+    "list.bullets": 2, "list.nested": 1,
+    "text.justified": 1, "text.quote": 1,
+    "type.display": 3, "type.script": 3, "type.small_caps": 3, "type.weights": 2,
+    "look.accent": 3, "look.dark_ground": 2, "look.bands": 2, "look.chips": 2, "look.rules": 2,
+    "fig.logo": 2, "fig.code": 2, "fig.signature": 2, "fig.photo": 1, "fig.icons": 2,
+    "fmt.dates": 3
+   },
+   "kinds": {
+    "CV": {"widths": [760, 1000], "arrangements": {"arr.sidebar": 3, "arr.one_column": 2, "arr.two_columns": 1}, "boost": {"list.bullets": 2, "look.chips": 1, "kv.inline": 1}, "exclude": ["fig.code", "fig.signature", "type.script"]},
+    "certificate": {"widths": [900, 1200], "arrangements": {"arr.centred": 5}, "boost": {"type.script": 1, "fig.signature": 2, "look.rules": 1}, "exclude": ["list.bullets", "list.nested", "fig.code"]},
+    "ticket": {"widths": [800, 1000], "arrangements": {"arr.panels_side_by_side": 3, "arr.sidebar": 2, "arr.one_column": 1}, "boost": {"kv.over": 2, "fig.code": 2, "type.small_caps": 1}, "exclude": ["text.justified", "text.quote", "fig.signature"]},
+    "invitation": {"widths": [600, 900], "arrangements": {"arr.centred": 4, "arr.one_column": 1}, "density": {"sparse": 4, "medium": 1}, "boost": {"type.script": 2, "type.display": 1}, "exclude": ["fig.code", "kv.boxed", "list.nested"]},
+    "membership card": {"widths": [700, 960], "arrangements": {"arr.panels_side_by_side": 2, "arr.sidebar": 2, "arr.centred": 1}, "density": {"sparse": 3, "medium": 2}, "boost": {"kv.over": 1, "fig.code": 2, "fig.photo": 1}, "exclude": ["text.justified", "text.quote", "list.nested"]}
+   }
+  },
+  "presentation": {
+   "short": "prs", "pages": 60, "pdf": 0,
+   "widths": [800, 1200],
+   "density": {"sparse": 3, "medium": 3, "dense": 1},
+   "arrangements": {"arr.centred": 2, "arr.cards_grid": 3, "arr.two_columns": 2, "arr.one_column": 1, "arr.panels_side_by_side": 1, "arr.sidebar": 1},
+   "styles": {"bold-marketing": 4, "corporate-modern": 3, "minimal-swiss": 2, "editorial": 2, "utility-classes": 2},
+   "priors": {
+    "table.ruled": 1, "table.spanning": 1, "table.empty_cells": 1, "table.zebra": 1,
+    "kv.inline": 1, "kv.over": 2, "kv.two_per_line": 1, "kv.boxed": 1,
+    "list.bullets": 3, "list.numbers": 2, "list.nested": 1, "list.ticks": 3, "list.big_steps": 2,
+    "text.footnotes": 1, "text.supsub": 1, "text.quote": 2,
+    "type.display": 3, "type.script": 1, "type.small_caps": 1, "type.weights": 3,
+    "look.accent": 3, "look.dark_ground": 3, "look.bands": 3, "look.chips": 3, "look.buttons": 3, "look.rules": 1,
+    "fig.logo": 2, "fig.chart": 2, "fig.code": 1, "fig.photo": 2, "fig.icons": 3,
+    "fmt.eu_numbers": 1, "fmt.dates": 2, "fmt.currency": 2
+   },
+   "kinds": {
+    "slide": {"widths": [960, 1200], "boost": {"fig.chart": 1, "list.bullets": 1}, "exclude": ["look.buttons"]},
+    "flyer": {"widths": [600, 900], "density": {"sparse": 3, "medium": 2}, "boost": {"look.chips": 1, "fig.photo": 1}},
+    "pricing page": {"widths": [960, 1200], "arrangements": {"arr.cards_grid": 4, "arr.panels_side_by_side": 2}, "boost": {"list.ticks": 2, "look.buttons": 2, "fmt.currency": 2}},
+    "brochure panel": {"widths": [500, 700], "arrangements": {"arr.one_column": 3, "arr.centred": 2}, "boost": {"fig.photo": 1, "fig.icons": 1}}
+   }
+  }
+ }
+}
