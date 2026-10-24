@@ -5,8 +5,9 @@
     python tools/corpus_check.py --dry c0008     # check; keep nothing
 
 A page that passes gets its picture, `corpus/pages/<id>.png`, and its
-record, `corpus/checks/<id>.json`. A page that fails keeps nothing, and its
-screenshot is left at `debug/corpus-check/<id>.png` to look at. The exit
+record, `corpus/checks/<id>.json`. A page that fails keeps nothing (an
+earlier pass's picture and record are removed, since they no longer match
+its HTML), and its screenshot is left at `debug/corpus-check/<id>.png`. The exit
 status is non-zero when any page fails, and each failed check is named.
 Every decision is in `doc_to_html.factory.check`.
 """
@@ -64,6 +65,11 @@ def main() -> int:
                   f"{', '.join(result.detected) or '-'})")
         else:
             failed += 1
+            if not args.dry:
+                # The HTML on disk no longer matches an earlier pass's record.
+                for stale in (CORPUS / "pages" / f"{page_id}.png",
+                              CORPUS / "checks" / f"{page_id}.json"):
+                    stale.unlink(missing_ok=True)
             print(f"FAIL {page_id} ({result.seconds} s, {shape})")
             for name, messages in result.failures.items():
                 for message in messages[:8]:

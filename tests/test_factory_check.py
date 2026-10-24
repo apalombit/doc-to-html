@@ -151,6 +151,21 @@ class TestThePlantedFaults:
         result = _twin(tmp_path, html, sound.picture or Path())
         assert "generated" not in result.failures
 
+    def test_automatic_hyphens(self, tmp_path: Path, sound: check.Result) -> None:
+        html = _with("p { hyphens: auto; }")
+        result = _twin(tmp_path, html, sound.picture or Path())
+        assert any("hyphenate" in m for m in result.failures["generated"])
+
+    def test_a_form_control(self, tmp_path: Path, sound: check.Result) -> None:
+        html = _with(extra_body='<input type="text" value="Eleanor Whitcombe">')
+        result = _twin(tmp_path, html, sound.picture or Path())
+        assert any("form controls" in m for m in result.failures["generated"])
+
+    def test_a_q_draws_its_quote_marks(self, tmp_path: Path, sound: check.Result) -> None:
+        html = _with(extra_body="<p>She said <q>by Friday</q>.</p>")
+        result = _twin(tmp_path, html, sound.picture or Path())
+        assert any("q::before" in m for m in result.failures["generated"])
+
     def test_a_near_duplicate(self, tmp_path: Path, sound: check.Result) -> None:
         assert sound.picture
         twin_of_sound = check.Known("c9999", frozenset(check.shingles(check.html_text(SOUND))),
@@ -203,6 +218,12 @@ class TestThePlantedFaultsThatNeedThePicture:
                      '<p class="ghost">Registered in England no. 08812291.</p>')
         result = check.check(CARD, _page(tmp_path, html), ALLOWED, [])
         assert any("Registered in England" in m for m in result.failures["ink"])
+
+    def test_type_too_small_to_read(self, tmp_path: Path) -> None:
+        html = _with(".fine { font-size: 5px; }",
+                     '<p class="fine">Terms and conditions apply to every order.</p>')
+        result = check.check(CARD, _page(tmp_path, html), ALLOWED, [])
+        assert any("5.0 px" in m for m in result.failures["ink"])
 
     def test_a_page_taller_than_one_page(self, tmp_path: Path) -> None:
         html = _with(".tall { height: 2600px; }", '<div class="tall"></div>')

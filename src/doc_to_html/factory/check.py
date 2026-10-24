@@ -38,9 +38,12 @@ Apple Chancery, all on the list. Every other entry in the stack must be on
 the list or generic too.
 
 **Generated text (7)** is anything a reader sees that is not a text node:
-`::before` or `::after` content with characters in it, an `<ol>` that
-numbers itself, and a list whose marker is a counter or a string. A plain
-`disc`, `circle` or `square` bullet is allowed, as the brief says.
+`::before` or `::after` content with characters in it (a `<q>`'s quote
+marks included), an `<ol>` that numbers itself, a list whose marker is a
+counter or a string, automatic hyphenation (the hyphen is the renderer's,
+CLAUDE.md's `con-` lesson), and form controls, whose values and ticks are
+not text nodes. A plain `disc`, `circle` or `square` bullet is allowed, as
+the brief says. Check 4 also refuses type under `MIN_TYPE_PX`.
 
 **Features (8)** — the auto column of the spec's §F: a `<table>` for any
 `table.*`; `colspan`/`rowspan` above 1; an empty `<td>`; 25 rows or more
@@ -89,6 +92,7 @@ from doc_to_html.factory import browser, fonts
 from doc_to_html.factory.cards import Card
 
 MAX_HEIGHT = 2400
+MIN_TYPE_PX = 7.0
 INK_DIFF = 48
 INK_MIN_PX = 2
 INK_MIN_SHARE = 0.004
@@ -138,6 +142,7 @@ _PROBE = r"""
   const lists = [];
   const tables = [];
   let justified = 0;
+  let hyphenated = 0;
   for (const element of document.querySelectorAll('body *')) {
     if (SKIP.has(element.tagName) || element.closest('svg')) continue;
     for (const pseudo of ['::before', '::after']) {
@@ -166,6 +171,8 @@ _PROBE = r"""
       }
       tables.push({rows: element.rows.length, spans: spans, empty: empty});
     }
+    if ((style.hyphens === 'auto' || style.webkitHyphens === 'auto')
+        && element.textContent.trim()) hyphenated += 1;
     if (style.textAlign === 'justify' && element.textContent.trim()) {
       const range = document.createRange();
       range.selectNodeContents(element);
@@ -177,7 +184,9 @@ _PROBE = r"""
     .filter((e) => e.textContent.trim()).length;
   return {
     texts: texts, generated: generated, lists: lists, tables: tables,
-    justified: justified, sup: count('sup, sub'), blockquote: count('blockquote'),
+    justified: justified, hyphenated: hyphenated,
+    controls: document.querySelectorAll('input, select, textarea, progress, meter, details').length,
+    sup: count('sup, sub'), blockquote: count('blockquote'),
     svg: document.querySelectorAll('body svg').length,
     img: [...document.querySelectorAll('img')].map((i) => (i.getAttribute('src') || '').slice(0, 16)),
     canvas: document.querySelectorAll('canvas').length,
@@ -540,7 +549,10 @@ def check(card: Card, html_path: Path, allowed: dict[str, fonts.Face],
                 if left < -0.5 or top < -0.5 or right > width + 0.5 or bottom > page.height + 0.5:
                     result.fail("fits", f"{item['text'][:40]!r} lies outside the page")
                     break
-        # 4: every word has ink under it.
+        # 4: every word has ink under it, at a size a reader can read.
+        for item in texts:
+            if item["size"] < MIN_TYPE_PX and item["rects"]:
+                result.fail("ink", f"{item['text'][:40]!r} is set at {item['size']:.1f} px")
         for item in texts:
             if not item["rects"] or not item["visible"]:
                 result.fail("ink", f"{item['text'][:40]!r} is in the DOM and not drawn")
@@ -561,6 +573,10 @@ def check(card: Card, html_path: Path, allowed: dict[str, fonts.Face],
             result.fail("figures", f"an <img> whose source is {src!r}")
 
     # 7: no generated text.
+    if probe["hyphenated"]:
+        result.fail("generated", f"{probe['hyphenated']} elements hyphenate automatically")
+    if probe["controls"]:
+        result.fail("generated", f"{probe['controls']} form controls or disclosure widgets")
     for item in probe["generated"]:
         result.fail("generated", f"{item['tag'].lower()}{item['pseudo']} draws {item['content'][:30]}")
     for item in probe["lists"]:
@@ -627,8 +643,10 @@ def keep(result: Result, card: Card, html_path: Path, png_path: Path, record_pat
     png_path.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(result.picture, png_path)
     record_path.parent.mkdir(parents=True, exist_ok=True)
-    record_path.write_text(json.dumps(record(result, card, html_path, png_path),
-                                      ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    partial = record_path.with_suffix(".partial")
+    partial.write_text(json.dumps(record(result, card, html_path, png_path),
+                                  ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    partial.replace(record_path)
 
 
 PROBE_PAGES = ("contract", "datasheet", "email", "flyer", "labreport", "minutes",
@@ -648,7 +666,10 @@ def known_in(repo: Path) -> list[Known]:
                  repo / "docs/level-up-probe/src" / f"{name}.png") for name in PROBE_PAGES]
     found = known_pages(entries)
     for path in sorted((repo / "corpus" / "checks").glob("*.json")):
-        data = json.loads(path.read_text(encoding="utf-8"))
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue  # another writer's record, half written
         page = repo / "corpus" / "pages" / f"{data['id']}.html"
         if data.get("passed") and page.exists():
             found.append(Known(data["id"], frozenset(shingles(html_text(
