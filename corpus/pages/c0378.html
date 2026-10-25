@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Magazine page</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:24px 28px 28px;width:880px;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:12px;line-height:1.45;color:#202124;background:#fff}
+.flex{display:flex}.grid{display:grid}.grid-cols-2{grid-template-columns:1fr 1fr}.grid-cols-3{grid-template-columns:1fr 1fr 1fr}
+.gap-3{gap:14px}.gap-5{gap:22px}
+.p-3{padding:12px}.px-2{padding-left:8px;padding-right:8px}.py-1{padding-top:3px;padding-bottom:3px}
+.mb-1{margin-bottom:4px}.mb-2{margin-bottom:8px}.mb-3{margin-bottom:14px}.mt-3{margin-top:14px}
+.text-xs{font-size:10px}.text-sm{font-size:11px}.text-base{font-size:12px}.text-xl{font-size:18px}.text-4xl{font-size:46px}
+.font-black{font-weight:800}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase;letter-spacing:.1em}
+.text-right{text-align:right}.text-gray{color:#6b7078}.text-white{color:#fff}
+.bg-ink{background:#14213d}.bg-lime{background:#c8e04a}.bg-gray-100{background:#f1f2f4}
+.rounded{border-radius:4px}.rounded-full{border-radius:999px}
+.border-t{border-top:3px solid #14213d}.border-b{border-bottom:1px solid #c9ccd1}
+.chip{display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:2px 8px;border-radius:999px}
+.c-orange{background:#f4a259;color:#3a1f00}.c-teal{background:#2a9d8f;color:#fff}.c-rose{background:#e56b8a;color:#fff}.c-blue{background:#4a6fe3;color:#fff}
+.justify{text-align:justify}
+.photo{display:block;width:100%;height:96px;border-radius:3px}
+table{border-collapse:collapse;width:100%}
+th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#6b7078;padding:3px 4px;border-bottom:2px solid #14213d}
+td{padding:3px 4px;border-bottom:1px solid #dcdfe3}
+.n{text-align:right}
+blockquote{margin:0;padding:6px 0 6px 14px;border-left:4px solid #c8e04a;font-size:17px;line-height:1.3;font-weight:600;color:#14213d}
+</style>
+</head>
+<body>
+<div class="flex border-b" style="justify-content:space-between;align-items:flex-end;padding-bottom:8px;margin-bottom:14px">
+  <div class="text-4xl font-black" style="letter-spacing:-.02em;line-height:1">Wayfarer</div>
+  <div class="text-right text-xs uppercase text-gray">The Outdoors Monthly<br>November 2026 &middot; Issue 11 &middot; $6.99</div>
+</div>
+
+<div class="grid grid-cols-3 gap-5 mb-3">
+  <div style="grid-column:span 2">
+    <span class="chip c-teal mb-1">Feature</span>
+    <div class="text-xl font-black mb-1" style="line-height:1.15;font-size:24px;margin-top:4px">Eleven days on the Pacific Crest, one sock at a time</div>
+    <div class="text-sm text-gray mb-2">By Tomasz Brennan &middot; Photographs by Lena Aldous</div>
+    <svg class="photo mb-2" style="height:150px" viewBox="0 0 560 150" preserveAspectRatio="none"><defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6c28b"/><stop offset="1" stop-color="#9cc7e0"/></linearGradient></defs><rect width="560" height="150" fill="url(#sk)"/><circle cx="440" cy="40" r="20" fill="#fff3d0"/><path d="M0 120 L90 50 L150 90 L230 30 L320 100 L400 60 L480 105 L560 70 L560 150 L0 150Z" fill="#5a6b7c"/><path d="M0 135 L110 95 L200 125 L320 90 L430 130 L560 100 L560 150 L0 150Z" fill="#2f4a3a"/></svg>
+    <p class="justify" style="margin:0 0 8px">The trail begins at a dusty monument and ends, if you are lucky, at a lake you have been promising yourself since August. In between lie 212 miles of switchbacks, snowmelt creeks and the particular loneliness of a campsite at 9,400 feet. Brennan set out on October 2 with a 22-pound pack and a plan that lasted until the second afternoon.</p>
+    <p class="justify" style="margin:0">What follows is a practical account: what he carried, what he regretted, and the eleven small decisions that made the difference between a hard week and a memorable one. Water, as ever, decided everything. Resupply, in the end, decided the rest of it.</p>
+  </div>
+  <div>
+    <blockquote>&ldquo;You do not conquer a ridge. You are tolerated on it.&rdquo;</blockquote>
+    <div class="text-xs text-gray" style="margin:4px 0 12px 18px">&mdash; Tomasz Brennan</div>
+    <div class="bg-gray-100 p-3 rounded">
+      <div class="text-xs font-black uppercase mb-2">Pack weights, Oct. 2026</div>
+      <table>
+        <thead><tr><th>Item</th><th class="n">Oz</th></tr></thead>
+        <tbody>
+          <tr><td>Shelter and stakes</td><td class="n">34</td></tr>
+          <tr><td>Sleeping bag</td><td class="n">28</td></tr>
+          <tr><td>Stove and fuel</td><td class="n">16</td></tr>
+          <tr><td>Food, 3 days</td><td class="n">66</td></tr>
+          <tr><td>Clothing</td><td class="n">52</td></tr>
+          <tr><td>Water, 2 L</td><td class="n">70</td></tr>
+          <tr><td>Odds and ends</td><td class="n">86</td></tr>
+        </tbody>
+        <tfoot>
+          <tr><td class="font-semibold">Total</td><td class="n font-semibold">352</td></tr>
+          <tr><td class="font-semibold">In pounds</td><td class="n font-semibold">22.0</td></tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="border-t" style="padding-top:8px">
+  <div class="flex mb-2" style="justify-content:space-between;align-items:baseline"><span class="text-sm font-black uppercase">Also in this issue</span><span class="text-xs text-gray">Pages 18&ndash;41</span></div>
+  <div class="grid grid-cols-2 gap-3">
+    <div class="flex gap-3 bg-gray-100 p-3 rounded">
+      <svg width="130" height="104" viewBox="0 0 130 104" style="flex:none;border-radius:3px"><rect width="130" height="104" fill="#e9d8a6"/><circle cx="95" cy="28" r="14" fill="#f4a259"/><path d="M0 104 L0 66 Q40 40 70 70 T130 58 L130 104Z" fill="#bc6c25"/><path d="M0 104 L0 84 Q50 66 90 86 T130 80 L130 104Z" fill="#606c38"/></svg>
+      <div><span class="chip c-orange">Food</span><div class="font-black" style="font-size:14px;line-height:1.2;margin:4px 0">Camp cooking beyond the noodle</div><div class="text-sm">Nine one-pot dinners that survive a bear canister. Sept. 29 tasting notes inside.</div><div class="text-xs text-gray" style="margin-top:4px">Oct. 28, 2026 &middot; p. 18</div></div>
+    </div>
+    <div class="flex gap-3 bg-gray-100 p-3 rounded">
+      <svg width="130" height="104" viewBox="0 0 130 104" style="flex:none;border-radius:3px"><rect width="130" height="104" fill="#a8dadc"/><path d="M0 70 Q30 55 60 70 T130 68 L130 104 L0 104Z" fill="#457b9d"/><path d="M20 70 L65 30 L110 70Z" fill="#f1faee"/><rect x="62" y="30" width="3" height="42" fill="#1d3557"/></svg>
+      <div><span class="chip c-blue">Water</span><div class="font-black" style="font-size:14px;line-height:1.2;margin:4px 0">Sea kayaking the San Juans</div><div class="text-sm">Tide tables, put-ins and the one channel you should not cross after noon.</div><div class="text-xs text-gray" style="margin-top:4px">Nov. 3, 2026 &middot; p. 24</div></div>
+    </div>
+    <div class="flex gap-3 bg-gray-100 p-3 rounded">
+      <svg width="130" height="104" viewBox="0 0 130 104" style="flex:none;border-radius:3px"><rect width="130" height="104" fill="#264653"/><circle cx="30" cy="24" r="2" fill="#fff"/><circle cx="70" cy="14" r="1.5" fill="#fff"/><circle cx="104" cy="30" r="2" fill="#fff"/><path d="M0 104 L40 60 L70 84 L100 50 L130 80 L130 104Z" fill="#1b2d36"/><path d="M52 84 L64 62 L76 84Z" fill="#e9c46a"/></svg>
+      <div><span class="chip c-rose">Gear</span><div class="font-black" style="font-size:14px;line-height:1.2;margin:4px 0">Headlamps tested after dark</div><div class="text-sm">Twelve lamps, one cold night, and a clear winner under 3 ounces.</div><div class="text-xs text-gray" style="margin-top:4px">Nov. 10, 2026 &middot; p. 31</div></div>
+    </div>
+    <div class="flex gap-3 bg-gray-100 p-3 rounded">
+      <svg width="130" height="104" viewBox="0 0 130 104" style="flex:none;border-radius:3px"><rect width="130" height="104" fill="#d8e2dc"/><path d="M0 80 L50 40 L90 70 L130 36 L130 104 L0 104Z" fill="#8fb996"/><circle cx="64" cy="64" r="8" fill="#e5989b"/><rect x="62" y="70" width="4" height="14" fill="#6d6875"/></svg>
+      <div><span class="chip c-teal">People</span><div class="font-black" style="font-size:14px;line-height:1.2;margin:4px 0">The ranger who counts owls</div><div class="text-sm">Forty winters in the Cascades, and a notebook that outlived three trucks.</div><div class="text-xs text-gray" style="margin-top:4px">Nov. 17, 2026 &middot; p. 38</div></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

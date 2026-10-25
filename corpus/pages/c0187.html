@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Payslip</title>
+<style>
+body{margin:0;padding:0 0 30px;width:760px;background:#f3f1ff;color:#17133a;font-family:'Avenir Next',Avenir,Helvetica,sans-serif;font-size:14px;}
+.top{background:#17133a;color:#fff;padding:30px 36px 26px;display:flex;justify-content:space-between;align-items:flex-end;}
+.top h1{margin:0;font-size:44px;line-height:1;font-weight:800;letter-spacing:-1px;}
+.top h1 em{font-style:normal;color:#ffcf33;}
+.top .p{text-align:right;font-size:13px;line-height:1.5;}
+.chip{display:inline-block;background:#ffcf33;color:#17133a;font-weight:700;font-size:11px;padding:3px 10px;border-radius:12px;text-transform:uppercase;letter-spacing:1px;}
+.emp{display:flex;gap:30px;padding:18px 36px;background:#fff;border-bottom:1px solid #d9d5f5;}
+.pairs{flex:1;}
+.line{display:flex;gap:30px;margin-bottom:6px;}
+.line div{flex:1;}
+.line small{color:#6b6790;font-size:11px;text-transform:uppercase;letter-spacing:1px;display:block;}
+.line b{font-size:15px;}
+.panels{display:flex;gap:18px;padding:22px 36px 0;}
+.panel{flex:1;background:#fff;border-radius:12px;padding:16px 18px;box-shadow:0 1px 0 #d9d5f5;}
+.panel h2{margin:0 0 10px;font-size:15px;text-transform:uppercase;letter-spacing:1px;color:#5b3df5;}
+table{border-collapse:collapse;width:100%;}
+td{padding:6px 0;border-bottom:1px solid #ece9ff;}
+td.r{text-align:right;font-variant-numeric:tabular-nums;}
+tr.tot td{border-bottom:0;border-top:2px solid #17133a;font-weight:800;font-size:15px;padding-top:9px;}
+.net{margin:22px 36px 0;background:#5b3df5;color:#fff;border-radius:12px;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;}
+.net .a{font-size:38px;font-weight:800;}
+.btns{display:flex;gap:12px;padding:18px 36px 0;}
+.btn{display:inline-block;border-radius:24px;padding:10px 22px;font-weight:700;font-size:13px;background:#17133a;color:#fff;}
+.btn.o{background:#fff;color:#17133a;border:2px solid #17133a;padding:8px 20px;}
+.fn{padding:16px 36px 0;font-size:10px;color:#6b6790;line-height:1.5;}
+</style>
+</head>
+<body>
+<div class="top"><h1>Pay<em>slip</em></h1><div class="p"><span class="chip">Paid</span><br>Pay period Oct 1 &ndash; Oct 31, 2026<br>Pay date: October 30, 2026</div></div>
+<div class="emp"><div class="pairs">
+<div class="line"><div><small>Employee</small><b>Marcus T. Delaney</b></div><div><small>Employee ID</small><b>EMP-20418</b></div></div>
+<div class="line"><div><small>Department</small><b>Logistics</b></div><div><small>Employer</small><b>Brightline Freight Inc.</b></div></div>
+</div></div>
+<div class="panels">
+<div class="panel"><h2>Earnings</h2>
+<table>
+<tr><td>Regular pay</td><td class="r">$4,800.00</td></tr>
+<tr><td>Overtime (12 h)</td><td class="r">$432.00</td></tr>
+<tr><td>Shift bonus</td><td class="r">$150.00</td></tr>
+<tr class="tot"><td>Gross pay</td><td class="r">$5,382.00</td></tr>
+</table></div>
+<div class="panel"><h2>Deductions</h2>
+<table>
+<tr><td>Federal tax<sup>1</sup></td><td class="r">$807.30</td></tr>
+<tr><td>Social Security</td><td class="r">$333.68</td></tr>
+<tr><td>Medicare</td><td class="r">$78.04</td></tr>
+<tr><td>401(k) 5%<sup>2</sup></td><td class="r">$269.10</td></tr>
+<tr class="tot"><td>Total deductions</td><td class="r">$1,488.12</td></tr>
+</table></div>
+</div>
+<div class="net"><div>Net pay<br><span style="font-size:12px">Direct deposit to account ending 4471</span></div><div class="a">$3,893.88</div></div>
+<div class="btns"><span class="btn">Download PDF</span><span class="btn o">View year to date</span></div>
+<div class="fn">1 Withholding based on Form W-4, filing status single. &nbsp; 2 Employer match of 3% is not shown here.</div>
+</body>
+</html>

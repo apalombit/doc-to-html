@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Account statement</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:28px 34px 30px;width:820px;background:#fff;color:#1c2733;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:11.5px;line-height:1.35}
+header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:3px double #1e4d8c}
+.brand{display:flex;gap:10px;align-items:center}
+.brand .w{font-size:21px;font-weight:700;color:#1e4d8c;letter-spacing:-.01em;line-height:1}
+.brand .w small{display:block;font-size:10px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:#6a7787;margin-top:3px}
+.addr{text-align:right;font-size:10.5px;color:#4b5866}
+.who{display:flex;justify-content:space-between;margin:16px 0 14px}
+.who .name{font-size:13px;font-weight:700;line-height:1.4}
+.meta{display:grid;grid-template-columns:repeat(3,auto);gap:8px 30px}
+.meta .k{display:block;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#6a7787}
+.meta .v{font-weight:600;font-size:12px}
+.sum{display:flex;gap:10px;margin-bottom:16px}
+.box{flex:1;border:1px solid #d6dde5;border-radius:6px;padding:8px 12px}
+.box .k{display:block;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#6a7787}
+.box .v{font-size:17px;font-weight:700}
+.box.main{background:#1e4d8c;color:#fff;border-color:#1e4d8c}
+.box.main .k{color:#c4d6ee}
+h2{font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin:0 0 6px;color:#1e4d8c}
+table{border-collapse:collapse;width:100%}
+th{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:#6a7787;text-align:left;padding:5px 6px;border-bottom:1px solid #1c2733}
+td{padding:4px 6px;border-bottom:1px dotted #b6c0cc}
+td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
+.neg{color:#a32a2a}.pos{color:#1b7a43}
+.chip{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:99px;margin-right:6px}
+.c-d{background:#fde4e4;color:#8e2020}.c-c{background:#dcf3e5;color:#176a39}.c-t{background:#e4ecf8;color:#1e4d8c}
+tr.end td{border-bottom:2px double #1c2733;font-weight:700;padding-top:6px}
+.fine{margin-top:14px;font-size:9.5px;color:#6a7787;border-top:1px dashed #9aa6b4;padding-top:8px;line-height:1.5}
+</style>
+</head>
+<body>
+<header>
+<div class="brand"><svg width="38" height="38" viewBox="0 0 38 38"><rect width="38" height="38" rx="8" fill="#1e4d8c"/><path d="M8 28 V16 L19 8 L30 16 V28" fill="none" stroke="#fff" stroke-width="3"/><rect x="16" y="19" width="6" height="9" fill="#fff"/></svg><div class="w">Harborline Bank<small>Personal banking</small></div></div>
+<div class="addr">Harborline Bank, N.A.<br>200 Meridian Plaza, Portland, OR 97204<br>1-800-555-0142 · harborline.example.com</div>
+</header>
+<div class="who">
+<div class="name">Nathaniel J. Whitcombe<br>1148 Alder Court, Apt 6<br>Beaverton, OR 97005</div>
+<div class="meta">
+<div><span class="k">Account</span><span class="v">Everyday Checking</span></div>
+<div><span class="k">Account number</span><span class="v">****  ****  7392</span></div>
+<div><span class="k">Statement date</span><span class="v">10/31/2026</span></div>
+<div><span class="k">Period</span><span class="v">10/01/2026 – 10/31/2026</span></div>
+<div><span class="k">Routing no.</span><span class="v">123000220</span></div>
+<div><span class="k">Page</span><span class="v">1 of 1</span></div>
+</div>
+</div>
+<div class="sum">
+<div class="box"><span class="k">Opening balance</span><span class="v">$4,218.50</span></div>
+<div class="box"><span class="k">Deposits &amp; credits</span><span class="v pos">+$3,284.11</span></div>
+<div class="box"><span class="k">Withdrawals &amp; debits</span><span class="v neg">-$2,385.35</span></div>
+<div class="box main"><span class="k">Closing balance</span><span class="v">$5,117.26</span></div>
+</div>
+<h2>Transactions</h2>
+<table>
+<tr><th style="width:62px">Date</th><th>Description</th><th class="r" style="width:90px">Debit</th><th class="r" style="width:90px">Credit</th><th class="r" style="width:100px">Balance</th></tr>
+<tr><td>10/01</td><td><span class="chip c-c">Deposit</span>Brightwater Logistics payroll</td><td class="r"></td><td class="r">3,240.00</td><td class="r">7,458.50</td></tr>
+<tr><td>10/02</td><td><span class="chip c-t">Transfer</span>Rent – Alder Court Properties</td><td class="r">1,450.00</td><td class="r"></td><td class="r">6,008.50</td></tr>
+<tr><td>10/03</td><td><span class="chip c-d">Card</span>Fieldmarket Grocery #214</td><td class="r">86.42</td><td class="r"></td><td class="r">5,922.08</td></tr>
+<tr><td>10/05</td><td><span class="chip c-d">Bill</span>Cascade Power &amp; Light</td><td class="r">112.30</td><td class="r"></td><td class="r">5,809.78</td></tr>
+<tr><td>10/07</td><td><span class="chip c-d">Card</span>Tern Coffee Roasters</td><td class="r">6.75</td><td class="r"></td><td class="r">5,803.03</td></tr>
+<tr><td>10/09</td><td><span class="chip c-t">Transfer</span>To Savings ****4410</td><td class="r">500.00</td><td class="r"></td><td class="r">5,303.03</td></tr>
+<tr><td>10/12</td><td><span class="chip c-c">Refund</span>Northgate Outfitters</td><td class="r"></td><td class="r">42.99</td><td class="r">5,346.02</td></tr>
+<tr><td>10/14</td><td><span class="chip c-d">Card</span>Linden Pharmacy</td><td class="r">23.18</td><td class="r"></td><td class="r">5,322.84</td></tr>
+<tr><td>10/16</td><td><span class="chip c-d">Card</span>Ironworks Fitness</td><td class="r">39.00</td><td class="r"></td><td class="r">5,283.84</td></tr>
+<tr><td>10/19</td><td><span class="chip c-d">Card</span>Saffron &amp; Salt Kitchen</td><td class="r">64.50</td><td class="r"></td><td class="r">5,219.34</td></tr>
+<tr><td>10/21</td><td><span class="chip c-c">Interest</span>Interest paid</td><td class="r"></td><td class="r">1.12</td><td class="r">5,220.46</td></tr>
+<tr><td>10/24</td><td><span class="chip c-d">Card</span>Pinecrest Fuel Stop</td><td class="r">48.20</td><td class="r"></td><td class="r">5,172.26</td></tr>
+<tr><td>10/28</td><td><span class="chip c-d">Bill</span>Westline Mobile</td><td class="r">55.00</td><td class="r"></td><td class="r">5,117.26</td></tr>
+<tr class="end"><td></td><td>Totals for the period</td><td class="r">2,385.35</td><td class="r">3,284.11</td><td class="r">5,117.26</td></tr>
+</table>
+<div class="fine">Please review this statement and report any error within 60 days of the statement date. Deposits are insured by the FDIC up to the maximum allowed by law. Overdraft fee: $30.00 per item. No overdrafts occurred this period.</div>
+</body>
+</html>

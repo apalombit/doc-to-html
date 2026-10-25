@@ -98,3 +98,39 @@ def sheets(cards: Sequence[Card], pictures: Sequence[Path], out: Path, name: str
         image.save(target)
         written.append(target)
     return written
+
+
+def gallery(cards: Sequence[Card], pictures: Sequence[Path], target: Path, title: str,
+            writers: Sequence[str] | None = None) -> Path:
+    """One local HTML page with every picture at its own size beside its
+    card, for looking at pages closely rather than for variety. It points
+    at the pictures where they are; nothing is copied."""
+    import html
+    import os
+
+    rows = []
+    for index, (card, picture) in enumerate(zip(cards, pictures)):
+        source = os.path.relpath(picture, target.parent)
+        page = os.path.relpath(picture.with_suffix(".html"), target.parent)
+        writer = writers[index] if writers else ""
+        features = ", ".join(card.all_features())
+        rows.append(
+            f'<section id="{card.id}"><h2>{card.id} · {html.escape(card.kind or "")} '
+            f'<small>{html.escape(card.family)} · {card.style} · {card.locale} · '
+            f'{card.width} px · {card.density}{" · " + writer if writer else ""}</small></h2>'
+            f'<p class="f">{html.escape(features)} · <a href="{page}">HTML</a></p>'
+            f'<img src="{source}" width="{card.width}" alt="{card.id}"></section>')
+    index_links = " ".join(f'<a href="#{card.id}">{card.id}</a>' for card in cards)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(
+        "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\">"
+        f"<title>{html.escape(title)}</title><style>"
+        "body{margin:0;padding:16px 24px;background:#e8e8e4;font:14px Helvetica,sans-serif;color:#222}"
+        "section{margin:28px 0 40px}h2{font-size:17px;margin:0 0 4px}"
+        "h2 small{font-weight:400;color:#555;margin-left:8px}.f{margin:0 0 8px;color:#555}"
+        "img{display:block;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.25);max-width:100%;height:auto}"
+        "nav{position:sticky;top:0;background:#e8e8e4;padding:6px 0;line-height:1.8}"
+        "nav a{margin-right:6px}</style></head><body>"
+        f"<h1>{html.escape(title)}</h1><nav>{index_links}</nav>{''.join(rows)}</body></html>",
+        encoding="utf-8")
+    return target

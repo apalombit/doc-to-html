@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Price list</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:40px 44px 44px;width:800px;background:#fff;color:#1f2933;font-family:"Open Sans","Helvetica Neue",Arial,sans-serif;font-size:14px;line-height:1.45}
+header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:26px}
+.brand{display:flex;gap:12px;align-items:center}
+.brand .name{font-weight:700;font-size:20px;color:#0b6e69;line-height:1.1}
+.brand .name small{display:block;font-weight:400;font-size:12px;color:#6b7785;letter-spacing:.04em}
+h1{font-size:30px;margin:0;font-weight:300;text-align:right;line-height:1.1}
+h1 span{display:block;font-size:12px;font-weight:600;color:#6b7785;letter-spacing:.14em;text-transform:uppercase;margin-top:4px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:26px}
+.card{border:1px solid #d5dde5;border-radius:10px;padding:18px 20px;background:#fbfdfd}
+.card h2{margin:0 0 10px;font-size:15px;color:#0b6e69;font-weight:700;border-bottom:2px solid #0b6e69;padding-bottom:6px}
+.row{display:flex;align-items:baseline;gap:6px;margin:6px 0}
+.row .l{white-space:nowrap}
+.row .d{flex:1;border-bottom:2px dotted #9aa8b5;transform:translateY(-3px)}
+.row .p{white-space:nowrap;font-weight:600}
+h3{font-size:15px;margin:0 0 8px;color:#1f2933}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{border:1px solid #cfd8e0;padding:7px 10px;text-align:left}
+th{background:#e9f3f2;font-weight:600;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:#0b4f4b}
+td.r,th.r{text-align:right}
+tr.sub td{border-top:2px solid #0b6e69;background:#fff}
+tr.tot td{font-weight:700;background:#e9f3f2}
+.notes{margin-top:18px;font-size:11.5px;color:#52606d;border-top:1px solid #cfd8e0;padding-top:10px;line-height:1.5}
+.notes p{margin:0 0 3px}
+</style>
+</head>
+<body>
+<header>
+<div class="brand"><svg width="44" height="44" viewBox="0 0 44 44"><rect width="44" height="44" rx="10" fill="#0b6e69"/><path d="M10 30 L22 10 L34 30 Z" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><circle cx="22" cy="26" r="3" fill="#fff"/></svg><div class="name">Cairnwood Studio<small>Brand &amp; web design, Edinburgh</small></div></div>
+<h1>Price List<span>Effective 1 November 2026</span></h1>
+</header>
+<div class="grid">
+<div class="card"><h2>Brand identity</h2>
+<div class="row"><span class="l">Logo design</span><span class="d"></span><span class="p">£850.00</span></div>
+<div class="row"><span class="l">Colour &amp; type guide</span><span class="d"></span><span class="p">£320.00</span></div>
+<div class="row"><span class="l">Stationery set</span><span class="d"></span><span class="p">£275.00</span></div>
+<div class="row"><span class="l">Brand guidelines (PDF)</span><span class="d"></span><span class="p">£480.00</span></div></div>
+<div class="card"><h2>Websites</h2>
+<div class="row"><span class="l">Landing page</span><span class="d"></span><span class="p">£1,200.00</span></div>
+<div class="row"><span class="l">Five-page site*</span><span class="d"></span><span class="p">£2,650.00</span></div>
+<div class="row"><span class="l">Online shop setup</span><span class="d"></span><span class="p">£3,900.00</span></div>
+<div class="row"><span class="l">Content editing training</span><span class="d"></span><span class="p">£180.00</span></div></div>
+<div class="card"><h2>Print</h2>
+<div class="row"><span class="l">Leaflet, A5 double-sided</span><span class="d"></span><span class="p">£260.00</span></div>
+<div class="row"><span class="l">Poster, A2</span><span class="d"></span><span class="p">£195.00</span></div>
+<div class="row"><span class="l">Brochure, 8 pages</span><span class="d"></span><span class="p">£740.00</span></div>
+<div class="row"><span class="l">Business cards (x250)</span><span class="d"></span><span class="p">£65.00</span></div></div>
+<div class="card"><h2>Ongoing care</h2>
+<div class="row"><span class="l">Hosting, per month</span><span class="d"></span><span class="p">£24.00</span></div>
+<div class="row"><span class="l">Updates, per hour</span><span class="d"></span><span class="p">£55.00</span></div>
+<div class="row"><span class="l">Priority support, per month</span><span class="d"></span><span class="p">£90.00</span></div>
+<div class="row"><span class="l">Annual health check&dagger;</span><span class="d"></span><span class="p">£150.00</span></div></div>
+</div>
+<h3>Example: Start-up package</h3>
+<table>
+<tr><th>Item</th><th class="r">Qty</th><th class="r">Unit price</th><th class="r">Amount</th></tr>
+<tr><td>Logo design</td><td class="r">1</td><td class="r">£850.00</td><td class="r">£850.00</td></tr>
+<tr><td>Landing page</td><td class="r">1</td><td class="r">£1,200.00</td><td class="r">£1,200.00</td></tr>
+<tr><td>Business cards (x250)</td><td class="r">2</td><td class="r">£65.00</td><td class="r">£130.00</td></tr>
+<tr class="sub"><td colspan="3">Subtotal</td><td class="r">£2,180.00</td></tr>
+<tr><td colspan="3">Package discount (10%)</td><td class="r">-£218.00</td></tr>
+<tr><td colspan="3">VAT at 20%</td><td class="r">£392.40</td></tr>
+<tr class="tot"><td colspan="3">Total</td><td class="r">£2,354.40</td></tr>
+</table>
+<div class="notes">
+<p>* Includes up to three rounds of revisions. Additional rounds are charged at the hourly rate.</p>
+<p>&dagger; Free in the first year with any website project.</p>
+<p>All prices exclude VAT unless shown. Payment terms: 50% on booking, balance within 14 days of delivery.</p>
+</div>
+</body>
+</html>

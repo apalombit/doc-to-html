@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Invoice</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:32px 28px;width:840px;font-family:Georgia,"Times New Roman",serif;font-size:14px;color:#1f2933;background:#fff}
+.flex{display:flex}.grid{display:grid}.gap-4{gap:16px}.gap-2{gap:8px}
+.p-2{padding:8px}.p-4{padding:16px}.px-4{padding-left:16px;padding-right:16px}.py-2{padding-top:8px;padding-bottom:8px}
+.mb-2{margin-bottom:8px}.mb-4{margin-bottom:16px}.mt-4{margin-top:16px}
+.text-xs{font-size:11px}.text-sm{font-size:12.5px}.text-lg{font-size:20px}.text-2xl{font-size:30px}
+.font-bold{font-weight:700}.uppercase{text-transform:uppercase;letter-spacing:.08em}
+.text-right{text-align:right}.text-white{color:#fff}.text-muted{color:#5b6670}
+.bg-navy{background:#1d3557}.bg-sand{background:#f1ece1}.bg-slate-50{background:#f4f6f8}
+.border{border:1px solid #9aa5b1}.border-b{border-bottom:1px solid #c5ccd3}.rounded{border-radius:3px}
+.side{width:230px;flex:none}.main{width:538px;flex:none}
+table{border-collapse:collapse;width:100%}
+th{background:#e6ebf0;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:7px 8px;border:1px solid #9aa5b1}
+td{padding:7px 8px;border:1px solid #c5ccd3;vertical-align:top}
+td.n,th.n{text-align:right}
+ul{margin:0;padding-left:18px}
+li{margin-bottom:4px}
+.field{border:1px solid #9aa5b1;background:#fbfbf8;padding:5px 8px;margin-top:3px;font-size:13px}
+sup{font-size:9px}
+</style>
+</head>
+<body>
+<div class="bg-navy text-white px-4 py-2 flex" style="justify-content:space-between;align-items:center;margin-bottom:20px;padding-top:16px;padding-bottom:16px">
+  <div><div class="text-2xl" style="font-weight:700">Harlow &amp; Finch</div><div class="text-xs uppercase">Restoration Carpentry &middot; Est. 1987</div></div>
+  <div class="text-right"><div class="text-lg uppercase">Invoice</div><div class="text-sm">No. 2026-0418</div></div>
+</div>
+
+<div class="flex gap-4">
+  <div class="side">
+    <div class="bg-sand p-4 mb-4 rounded">
+      <div class="text-xs uppercase font-bold mb-2">Billed to</div>
+      <div class="font-bold">Marguerite Oyelaran</div>
+      <div>1420 Alder Creek Road</div>
+      <div>Asheville, NC 28803</div>
+    </div>
+    <div class="mb-4">
+      <div class="text-xs uppercase text-muted">Invoice date</div>
+      <div class="field">October 12, 2026</div>
+    </div>
+    <div class="mb-4">
+      <div class="text-xs uppercase text-muted">Due date</div>
+      <div class="field">November 11, 2026</div>
+    </div>
+    <div class="mb-4">
+      <div class="text-xs uppercase text-muted">Job reference</div>
+      <div class="field">HF-2291 Porch rebuild</div>
+    </div>
+    <div class="mb-4">
+      <div class="text-xs uppercase text-muted">Terms</div>
+      <div class="field">Net 30</div>
+    </div>
+    <div class="bg-slate-50 p-4 rounded border">
+      <div class="text-xs uppercase font-bold mb-2">Pay by</div>
+      <ul class="text-sm">
+        <li>Check to Harlow &amp; Finch LLC</li>
+        <li>ACH, routing on request</li>
+        <li>Card, 3% fee applies<sup>3</sup></li>
+      </ul>
+    </div>
+  </div>
+  <div class="main">
+    <div class="uppercase font-bold text-xs mb-2 text-muted">Work completed, September 21 to October 9</div>
+    <table>
+      <thead><tr><th>Description</th><th class="n">Qty</th><th class="n">Rate</th><th class="n">Amount</th></tr></thead>
+      <tbody>
+        <tr><td>Remove rotted porch decking and joists<sup>1</sup></td><td class="n">22 hr</td><td class="n">$68.00</td><td class="n">$1,496.00</td></tr>
+        <tr><td>Pressure-treated joists, 2x8x12</td><td class="n">14</td><td class="n">$24.50</td><td class="n">$343.00</td></tr>
+        <tr><td>Tongue-and-groove fir decking</td><td class="n">190 sq ft</td><td class="n">$6.20</td><td class="n">$1,178.00</td></tr>
+        <tr><td>Install new decking and fascia</td><td class="n">30 hr</td><td class="n">$68.00</td><td class="n">$2,040.00</td></tr>
+        <tr><td>Replacement newel posts, turned oak<sup>2</sup></td><td class="n">4</td><td class="n">$85.00</td><td class="n">$340.00</td></tr>
+        <tr><td>Primer and two coats exterior paint</td><td class="n">12 hr</td><td class="n">$55.00</td><td class="n">$660.00</td></tr>
+        <tr><td>Debris haul-away</td><td class="n">1</td><td class="n">$120.00</td><td class="n">$120.00</td></tr>
+      </tbody>
+      <tfoot>
+        <tr><td colspan="3" class="n">Subtotal</td><td class="n">$6,177.00</td></tr>
+        <tr><td colspan="3" class="n">Sales tax (7.25% on materials, $1,861.00)</td><td class="n">$134.92</td></tr>
+        <tr><td colspan="3" class="n font-bold">Total due</td><td class="n font-bold">$6,311.92</td></tr>
+      </tfoot>
+    </table>
+    <div class="bg-sand p-4 mt-4 rounded text-sm">
+      <div class="text-xs uppercase font-bold mb-2">Notes</div>
+      <ul>
+        <li>Deposit of $2,000.00 was received September 18 and is credited on the final statement.</li>
+        <li>Stair railing work is scheduled for the week of November 2.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="mt-4 text-xs text-muted border-b" style="padding-bottom:6px;margin-top:24px"></div>
+<div class="text-xs text-muted" style="margin-top:8px;line-height:1.5">
+  <div><sup>1</sup> Labor billed at the standard shop rate for hours on site.</div>
+  <div><sup>2</sup> Posts are turned to match the original 1924 profile.</div>
+  <div><sup>3</sup> Late balances accrue 1.5% interest per month after the due date.</div>
+</div>
+</body>
+</html>

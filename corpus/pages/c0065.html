@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Form DL-217 – CDL Skills Test Score Sheet</title>
+<style>
+  html { margin: 0; padding: 0; background: #ffffff; }
+  body {
+    margin: 0;
+    width: 1000px;
+    box-sizing: border-box;
+    padding: 22px 24px 24px 24px;
+    background: #ffffff;
+    color: #000000;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 11.5px;
+    line-height: 1.3;
+  }
+  .sheet { border: 2px solid #000; padding: 10px 12px 12px 12px; }
+  .top { display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #000; padding-bottom: 8px; }
+  .top svg { flex: none; }
+  .agency { flex: 1; }
+  .agency p { margin: 0; }
+  .agency .dept { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; }
+  h1 {
+    margin: 2px 0 0 0;
+    font-family: "DIN Condensed", sans-serif;
+    font-weight: bold;
+    font-size: 34px;
+    line-height: 1;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .formno { text-align: right; font-size: 10.5px; }
+  .formno p { margin: 0; }
+  .formno .big { font-family: "DIN Condensed", sans-serif; font-size: 22px; font-weight: bold; line-height: 1; }
+  .instr { margin: 6px 0 6px 0; font-size: 10.5px; }
+  table.boxes { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  table.boxes td { border: 1px solid #000; padding: 2px 5px 4px 5px; vertical-align: top; }
+  .bl { display: block; font-size: 9px; text-transform: uppercase; letter-spacing: 0.03em; }
+  .bl b { font-weight: bold; margin-right: 3px; }
+  .bv { display: block; font-size: 13px; font-weight: bold; margin-top: 1px; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; column-gap: 16px; margin-top: 10px; }
+  .part {
+    background: #000; color: #fff;
+    font-family: "DIN Condensed", sans-serif;
+    font-size: 16px; letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 3px 6px 1px 6px; margin: 0 0 4px 0;
+  }
+  .note { margin: 0 0 5px 0; font-size: 10.5px; font-style: italic; }
+  .grp { margin: 5px 0 1px 0; font-weight: bold; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #000; }
+  ul.ticks { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; column-gap: 12px; }
+  ul.ticks li { padding: 1px 0; border-bottom: 1px dotted #777; }
+  .ok, .miss { display: inline-block; width: 14px; font-weight: bold; }
+  .miss { }
+  table.ruled { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
+  table.ruled th, table.ruled td { border: 1px solid #000; padding: 2px 5px; }
+  table.ruled th { font-size: 10px; text-transform: uppercase; text-align: center; background: #e6e6e6; font-weight: bold; }
+  table.ruled td.n { text-align: center; width: 62px; }
+  table.ruled tr.tot td { font-weight: bold; background: #f2f2f2; }
+  .tally { border: 1px solid #000; padding: 4px 6px; margin: 4px 0 8px 0; display: flex; justify-content: space-between; font-size: 11.5px; }
+  .tally b { font-weight: bold; }
+  .auto { margin: 0 0 8px 0; font-size: 11px; }
+  .remarks { border: 1px solid #000; padding: 3px 6px 6px 6px; font-size: 11.5px; }
+  .remarks p { margin: 0; }
+  .final { margin-top: 10px; border: 2px solid #000; }
+  .final-head { display: flex; gap: 26px; align-items: baseline; padding: 4px 8px; border-bottom: 1px solid #000; background: #e6e6e6; }
+  .final-head .t { font-family: "DIN Condensed", sans-serif; font-size: 17px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .final-head span { font-size: 13px; }
+  .cert { margin: 0; padding: 5px 8px; font-size: 10.5px; }
+  .sigs { display: grid; grid-template-columns: 1.3fr 0.7fr 1.3fr 0.7fr; column-gap: 14px; padding: 0 8px 8px 8px; align-items: end; }
+  .sig svg { display: block; }
+  .line { border-top: 1px solid #000; padding-top: 1px; font-size: 9px; text-transform: uppercase; }
+  .sigval { font-size: 13px; font-weight: bold; padding-bottom: 2px; }
+  .foot { display: flex; justify-content: space-between; margin-top: 6px; font-size: 9.5px; }
+  .foot p { margin: 0; }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="top">
+    <svg width="54" height="54" viewBox="0 0 54 54" aria-hidden="true">
+      <circle cx="27" cy="27" r="25" fill="none" stroke="#000" stroke-width="2"/>
+      <circle cx="27" cy="27" r="19" fill="none" stroke="#000" stroke-width="1"/>
+      <path d="M27 13 L30.5 23.5 L41.5 23.5 L32.5 30 L36 40.5 L27 34 L18 40.5 L21.5 30 L12.5 23.5 L23.5 23.5 Z" fill="#000"/>
+    </svg>
+    <div class="agency">
+      <p class="dept">Department of Transportation · Driver Licensing Division · Commercial Licensing Unit</p>
+      <h1>CDL Skills Test Score Sheet</h1>
+    </div>
+    <div class="formno">
+      <p class="big">DL-217</p>
+      <p>Rev. 03/2025</p>
+      <p>Page 1 of 1</p>
+    </div>
+  </div>
+
+  <p class="instr">Examiner completes all boxes in ink. Mark each item ✓ if performed correctly or ✗ if missed or performed incorrectly. Parts are administered in order; an applicant who fails a part may not continue to the next part on the same day.</p>
+
+  <table class="boxes">
+    <tr>
+      <td colspan="2"><span class="bl"><b>1</b>Applicant last name</span><span class="bv">HOLLOWAY</span></td>
+      <td colspan="2"><span class="bl"><b>2</b>First name, M.I.</span><span class="bv">DESMOND R.</span></td>
+      <td><span class="bl"><b>3</b>Date of birth</span><span class="bv">08/14/1987</span></td>
+      <td><span class="bl"><b>4</b>Learner permit no.</span><span class="bv">P-4471-0928</span></td>
+    </tr>
+    <tr>
+      <td><span class="bl"><b>5</b>Test date</span><span class="bv">10/24/2026</span></td>
+      <td colspan="2"><span class="bl"><b>6</b>Test site</span><span class="bv">Fairview Regional Test Center</span></td>
+      <td><span class="bl"><b>7</b>CDL class</span><span class="bv">☑ A &nbsp;☐ B &nbsp;☐ C</span></td>
+      <td><span class="bl"><b>8</b>Air brakes</span><span class="bv">☑ Yes &nbsp;☐ No</span></td>
+      <td><span class="bl"><b>9</b>Transmission</span><span class="bv">☑ Manual &nbsp;☐ Auto</span></td>
+    </tr>
+    <tr>
+      <td colspan="2"><span class="bl"><b>10</b>Vehicle type / unit no.</span><span class="bv">Tractor and 53 ft van trailer, unit 1186</span></td>
+      <td><span class="bl"><b>11</b>Plate no.</span><span class="bv">CMV 40-2217</span></td>
+      <td><span class="bl"><b>12</b>GVWR (lb)</span><span class="bv">80,000</span></td>
+      <td><span class="bl"><b>13</b>Start time</span><span class="bv">8:05 a.m.</span></td>
+      <td><span class="bl"><b>14</b>End time</span><span class="bv">10:40 a.m.</span></td>
+    </tr>
+  </table>
+
+  <div class="cols">
+    <div>
+      <p class="part">Part 1 — Vehicle Inspection</p>
+      <p class="note">Applicant names and checks each item aloud. Maximum 7 items missed.</p>
+
+      <p class="grp">Engine compartment</p>
+      <ul class="ticks">
+        <li><span class="ok">✓</span>Oil level</li>
+        <li><span class="ok">✓</span>Coolant level</li>
+        <li><span class="ok">✓</span>Power steering fluid</li>
+        <li><span class="ok">✓</span>Water pump</li>
+        <li><span class="ok">✓</span>Alternator</li>
+        <li><span class="ok">✓</span>Air compressor</li>
+        <li><span class="miss">✗</span>Belts — tension not checked</li>
+        <li><span class="ok">✓</span>Hoses</li>
+      </ul>
+
+      <p class="grp">Cab check / engine start</p>
+      <ul class="ticks">
+        <li><span class="ok">✓</span>Safe start</li>
+        <li><span class="ok">✓</span>Gauges</li>
+        <li><span class="ok">✓</span>Lights and reflectors</li>
+        <li><span class="miss">✗</span>Wipers and washers</li>
+        <li><span class="ok">✓</span>Horn</li>
+        <li><span class="ok">✓</span>Heater and defroster</li>
+        <li><span class="ok">✓</span>Mirrors</li>
+        <li><span class="ok">✓</span>Emergency equipment</li>
+        <li><span class="ok">✓</span>Seat belt</li>
+      </ul>
+
+      <p class="grp">Air brake check</p>
+      <ul class="ticks">
+        <li><span class="ok">✓</span>Air leakage rate</li>
+        <li><span class="ok">✓</span>Low-air warning</li>
+        <li><span class="miss">✗</span>Spring brake pop-out</li>
+        <li><span class="ok">✓</span>Parking brake</li>
+        <li><span class="ok">✓</span>Service brake</li>
+      </ul>
+
+      <p class="grp">Coupling system</p>
+      <ul class="ticks">
+        <li><span class="ok">✓</span>Air and electrical lines</li>
+        <li><span class="ok">✓</span>Fifth-wheel mounting</li>
+        <li><span class="ok">✓</span>Locking jaws</li>
+        <li><span class="ok">✓</span>Release arm</li>
+        <li><span class="miss">✗</span>Kingpin and apron</li>
+        <li><span class="ok">✓</span>Platform</li>
+      </ul>
+
+      <p class="grp">Trailer, wheels and suspension</p>
+      <ul class="ticks">
+        <li><span class="ok">✓</span>Tires</li>
+        <li><span class="ok">✓</span>Rims</li>
+        <li><span class="ok">✓</span>Lug nuts</li>
+        <li><span class="ok">✓</span>Hub oil seal</li>
+        <li><span class="ok">✓</span>Slack adjusters</li>
+        <li><span class="ok">✓</span>Brake drums and linings</li>
+        <li><span class="miss">✗</span>Suspension springs</li>
+        <li><span class="ok">✓</span>Shock absorbers</li>
+        <li><span class="ok">✓</span>Doors, ties and lift</li>
+        <li><span class="ok">✓</span>Landing gear</li>
+      </ul>
+
+      <div class="tally"><span><b>Items checked:</b> 38</span><span><b>Missed:</b> 5</span><span><b>Allowed:</b> 7</span><span><b>Part 1:</b> ☑ Pass ☐ Fail</span></div>
+    </div>
+
+    <div>
+      <p class="part">Part 2 — Basic Control Skills</p>
+      <p class="note">One point per encroachment, pull-up or outside look. Maximum 12 points. Leave the row blank for an exercise not administered.</p>
+      <table class="ruled">
+        <thead>
+          <tr><th style="text-align:left">Exercise</th><th>Encroach.</th><th>Pull-ups</th><th>Looks</th><th>Points</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Straight-line backing</td><td class="n">0</td><td class="n">1</td><td class="n">0</td><td class="n">1</td></tr>
+          <tr><td>Offset back / right</td><td class="n">1</td><td class="n">1</td><td class="n">0</td><td class="n">2</td></tr>
+          <tr><td>Parallel park, driver side</td><td class="n"></td><td class="n"></td><td class="n"></td><td class="n"></td></tr>
+          <tr><td>Alley dock</td><td class="n">0</td><td class="n">2</td><td class="n">1</td><td class="n">3</td></tr>
+          <tr class="tot"><td>Total points</td><td class="n">1</td><td class="n">4</td><td class="n">1</td><td class="n">6</td></tr>
+        </tbody>
+      </table>
+      <div class="tally"><span><b>Points:</b> 6</span><span><b>Allowed:</b> 12</span><span><b>Part 2:</b> ☑ Pass ☐ Fail</span></div>
+
+      <p class="part">Part 3 — On-Road Driving</p>
+      <p class="note">Record the number of times each maneuver was performed and the errors observed. Maximum 30 errors.</p>
+      <table class="ruled">
+        <thead>
+          <tr><th style="text-align:left">Maneuver</th><th>Performed</th><th>Errors</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Left turns</td><td class="n">3</td><td class="n">1</td></tr>
+          <tr><td>Right turns</td><td class="n">3</td><td class="n">0</td></tr>
+          <tr><td>Intersections, through</td><td class="n">4</td><td class="n">1</td></tr>
+          <tr><td>Urban lane changes</td><td class="n">2</td><td class="n">0</td></tr>
+          <tr><td>Expressway entry and exit</td><td class="n">1</td><td class="n">0</td></tr>
+          <tr><td>Expressway lane changes</td><td class="n">2</td><td class="n">1</td></tr>
+          <tr><td>Stop and start</td><td class="n">2</td><td class="n">0</td></tr>
+          <tr><td>Curve</td><td class="n">1</td><td class="n">0</td></tr>
+          <tr><td>Railroad crossing</td><td class="n">1</td><td class="n">0</td></tr>
+          <tr><td>Bridge, overpass or sign</td><td class="n">1</td><td class="n">0</td></tr>
+          <tr><td>General driving behavior</td><td class="n">—</td><td class="n">2</td></tr>
+          <tr class="tot"><td>Total errors</td><td class="n">20</td><td class="n">5</td></tr>
+        </tbody>
+      </table>
+      <p class="auto"><b>Automatic failure:</b> ☐ Accident &nbsp;☐ Dangerous action &nbsp;☐ Traffic violation &nbsp;☐ Failure to obey examiner &nbsp;☐ Hitting curb</p>
+      <div class="tally"><span><b>Errors:</b> 5</span><span><b>Allowed:</b> 30</span><span><b>Part 3:</b> ☑ Pass ☐ Fail</span></div>
+      <div class="remarks">
+        <p class="bl"><b>15</b>Examiner remarks</p>
+        <p>Late mirror check before second left turn on Route 9. Coasted through the curve near the grain elevator. Smooth expressway merge.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="final">
+    <div class="final-head">
+      <span class="t">Overall result</span>
+      <span>☑ PASS — all three parts</span>
+      <span>☐ FAIL — Part ____</span>
+      <span>Retest eligible after: N/A</span>
+    </div>
+    <p class="cert">I certify that I administered this test in accordance with the state skills-test manual and that the scores recorded are a true account of the applicant’s performance. The applicant was informed of the result at the end of the test.</p>
+    <div class="sigs">
+      <div class="sig">
+        <svg width="220" height="40" viewBox="0 0 220 40" aria-hidden="true">
+          <path d="M6 30 C14 8 22 6 24 18 C26 30 18 34 20 22 C22 12 34 10 36 24 C37 32 44 18 50 20 C56 22 54 30 62 26 C70 22 72 12 80 14 C88 16 84 30 94 28 C104 26 112 16 124 20 C134 23 140 28 152 24" fill="none" stroke="#1b2a6b" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M40 34 C80 31 120 32 168 29" fill="none" stroke="#1b2a6b" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+        <p class="line">16 Examiner signature</p>
+      </div>
+      <div>
+        <p class="sigval">E-3318</p>
+        <p class="line">17 Examiner ID</p>
+      </div>
+      <div class="sig">
+        <svg width="220" height="40" viewBox="0 0 220 40" aria-hidden="true">
+          <path d="M8 26 C10 10 18 8 20 16 C22 26 12 34 16 22 C22 10 30 30 38 18 C42 12 46 26 52 22 C60 16 64 8 70 12 C74 15 70 28 78 26 C88 22 96 14 108 18 C116 21 122 26 134 22 C146 18 156 20 166 16" fill="none" stroke="#1b2a6b" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+        <p class="line">18 Applicant signature</p>
+      </div>
+      <div>
+        <p class="sigval">10/24/2026</p>
+        <p class="line">19 Date</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <p>Retain original in applicant file for 3 years. Copy to applicant. Score sheets with erasures are void.</p>
+    <p>DL-217 (Rev. 03/2025)</p>
+  </div>
+</div>
+</body>
+</html>

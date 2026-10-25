@@ -600,6 +600,17 @@ its start:
 | 2 | storage | **commit everything** as plain files. Re-measured after the PDF pilot; stop and ask if the total heads past about 150 MB |
 | 3 | language shares | **as proposed**: English 450, Italian 50, French 50, Spanish 25, Portuguese 25 |
 
+**Decision 1 amended, Alessandro, 2026-10-25: the writers run on Sonnet,
+and this session stays on Opus.** The three Opus pilot batches stopped at
+the monthly spend limit, after 14 of their 30 pages had passed. The two
+Sonnet batches had written all 20 of theirs: 17 on the first validator
+run, about 26 s a page. He asked for Sonnet at `xhigh` effort. An agent
+definition, `.claude/agents/corpus-writer.md`, sets it, but definitions
+load when a session starts, so this session's writers ran on Sonnet at
+its usual effort. The variety the second model was to bring rests on the
+twelve style families and the cards' randomness. The pilot's sheets are
+where that is judged.
+
 **The facts, re-checked the same day on `level-up` at `4461fa1`:**
 - 1394 tests pass, 1 skipped (10m28s); `mypy src/` clean.
 - The 21 corpus PNGs average 107.6 KB. Over the 31 pages (the 21 and the
@@ -809,6 +820,55 @@ width, density, family and writer. They go to `debug/corpus-sheets/`.
 - an `<ol>` with its numbers written passes;
 - the formats are detected by language, and each language reads as itself;
 - the sheets come twelve to an image.
+
+### Step 4 — the sources proposed, 2026-10-24, awaiting Alessandro's approval
+
+Each licence was checked against its own statement on 2026-10-24. Every
+source allows redistribution, commercial use included, so a page can be
+committed to this repository. Each page's provenance and licence go in
+`corpus/pdf/<id>.source.json`. Where a licence asks for attribution, it
+is given there and in `corpus/pdf/ATTRIBUTION.md`.
+
+| # | source | licence, as stated | families | languages | about |
+|---|---|---|---|---|---|
+| 1 | US federal agencies: IRS, SSA, CMS, USCIS and VA forms; GAO, NIST technical series, CDC and NIH publications | public domain in the US: a work of the US Government (17 U.S.C. §105). GAO prints "a work of the U.S. government and is not subject to copyright protection". NIST's SRD (reference data) products are the exception and are not used | forms, reports, transactional (sample statements and notices), reference (NIST tables, FDA label examples), publishing (CDC's MMWR, NIH News in Health), correspondence (GAO decision letters) | en-US | 55 |
+| 2 | GOV.UK and HMRC forms and guidance | Open Government Licence v3.0 (Crown copyright), attribution required. It does not cover personal data, or logos and crests except where integral to a document | forms, reports, notices | en-GB | 12 |
+| 3 | EUR-Lex (the Official Journal, and the standard forms annexed to regulations) and the Publications Office's brochures | Commission Decision 2011/833/EU: reuse authorised, the source acknowledged; CC BY 4.0 unless otherwise noted | forms, correspondence and legal, reports, publishing | it, fr, es, pt-PT (and en) | 15 |
+| 4 | ISTAT | CC BY 4.0, "salvo diversa indicazione" (ISTAT's legal notes) | reports, reference | it | 4 |
+| 5 | INSEE | Licence Ouverte 2.0 (Etalab), source "Insee" | reports, publishing | fr | 3 |
+| 6 | BOE, Spain's official gazette | reuse authorised for any purpose, citing "Fuente: Agencia Estatal Boletín Oficial del Estado" with a link | correspondence and legal, forms annexed to orders | es | 4 |
+| 7 | Brazil's official acts (planalto.gov.br, the Diário Oficial da União) | not protected: Lei 9.610/98 art. 8 excludes official acts and blank forms | correspondence and legal, forms | pt-BR | 3 |
+| 8 | arXiv papers whose licence is CC BY 4.0, chosen paper by paper | CC BY 4.0, attribution required. The default arXiv licence is not used | publishing | en | 4 |
+
+The last column is the number of pages planned, about 100 in all. The
+languages come out at about 72 English, 11 Italian, 7 Spanish, 5 French
+and 5 Portuguese, which is what the PDF slots want.
+
+**Considered and left out:**
+- **DocLayNet**: its pages come as images in a multi-gigabyte archive.
+  No way was found to fetch one PDF page at a time.
+- **INE Portugal**: reproduction for non-commercial purposes only.
+- **PMC**: its service gives individual PDFs only for articles licensed
+  for non-commercial use; arXiv covers papers.
+- **Company reports and manuals**: copyright, with no open licence.
+
+**How the pages are chosen.** One page per document, with a text layer,
+not a scan, and not mostly figure; tables, forms and fields preferred. A
+source PDF is fetched one file at a time, a few MB at most, into
+`debug/corpus-pdf/downloads/` (gitignored). Only the one page is
+committed, as `corpus/pdf/<id>.pdf`, unedited.
+
+**The pilot of 10**, one or two from each source: an IRS form, an SSA
+form, an HMRC form, a GAO report page with a table, an annexed EU
+standard form in Italian, an ISTAT report page, an INSEE page, a BOE
+page, an arXiv CC BY paper page, and a NIST table page.
+
+**The code is ready** (`doc_to_html.factory.pdfpage`,
+`tools/corpus_pdf.py`, `tests/test_factory_pdf.py`, 8 tests). On a PDF
+printed here from an HTML page, the gate admits that page's own HTML as
+its twin: 13 of 13 lines, worst offsets 3.5 px down and 0.3 px across. It
+refuses a twin with a word missing, a line broken elsewhere, or every
+line below its heading moved down by a widened margin.
 
 ## Outcome — the corpus
 

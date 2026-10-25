@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Receipt</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:36px 40px 44px;width:540px;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:12px;line-height:1.4;color:#111;background:#fff}
+.head{display:grid;grid-template-columns:48px 1fr auto;column-gap:14px;align-items:center;padding-bottom:14px;border-bottom:2px solid #111}
+.name{font-size:20px;font-weight:700;letter-spacing:-.01em;line-height:1.05}
+.small{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.08em}
+.accent{color:#e4400f}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+.field .small{margin-bottom:3px}
+.box{border:1px solid #111;padding:5px 8px;font-size:12px;min-height:28px}
+table{width:100%;border-collapse:collapse;margin-top:6px}
+th{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#666;text-align:left;padding:6px 0;border-bottom:1px solid #111}
+td{padding:7px 0;border-bottom:1px solid #ddd}
+.n{text-align:right}
+.lead{display:flex;align-items:baseline;margin-bottom:6px}
+.lead i{flex:1;border-bottom:1px dotted #777;margin:0 6px;position:relative;top:-3px}
+.total{font-size:16px;font-weight:700}
+.total .v{color:#e4400f}
+</style>
+</head>
+<body>
+<div class="head">
+  <svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#e4400f"/><path d="M14 30 H34 V26 Q34 16 24 16 Q14 16 14 26Z" fill="#fff"/><rect x="12" y="32" width="24" height="3" fill="#fff"/></svg>
+  <div><div class="name">Corner Bean</div><div class="small">Coffee &amp; bakery</div></div>
+  <div class="small" style="text-align:right">88 Maple Street<br>Portland, OR 97214</div>
+</div>
+
+<div class="grid3">
+  <div class="field"><div class="small">Receipt no.</div><div class="box">004217</div></div>
+  <div class="field"><div class="small">Date</div><div class="box">10/24/2026</div></div>
+  <div class="field"><div class="small">Time</div><div class="box">8:12 AM</div></div>
+</div>
+
+<table>
+  <thead><tr><th>Item</th><th class="n">Qty</th><th class="n">Unit</th><th class="n">Discount</th><th class="n">Amount</th></tr></thead>
+  <tbody>
+    <tr><td>Oat latte, 12 oz</td><td class="n">2</td><td class="n">$4.75</td><td class="n"></td><td class="n">$9.50</td></tr>
+    <tr><td>Almond croissant</td><td class="n">1</td><td class="n">$4.25</td><td class="n"></td><td class="n">$4.25</td></tr>
+    <tr><td>Cold brew, 16 oz</td><td class="n">1</td><td class="n">$5.00</td><td class="n accent">-$0.50</td><td class="n">$4.50</td></tr>
+    <tr><td>Banana bread slice</td><td class="n">1</td><td class="n">$3.75</td><td class="n"></td><td class="n">$3.75</td></tr>
+  </tbody>
+</table>
+
+<div style="margin-top:20px;width:290px;margin-left:auto">
+  <div class="lead"><span>Subtotal</span><i></i><span>$22.00</span></div>
+  <div class="lead"><span>Sales tax (8.5%)</span><i></i><span>$1.87</span></div>
+  <div class="lead"><span>Tip</span><i></i><span>$3.00</span></div>
+  <div class="lead total" style="margin-top:10px"><span>Charged</span><i></i><span class="v">$26.87</span></div>
+</div>
+
+<div style="margin-top:22px;padding-top:12px;border-top:1px solid #111" class="small">
+  Visa ending 7305 &middot; Approved &middot; Code 318842
+</div>
+<div style="margin-top:14px;font-size:12px"><span class="accent" style="font-weight:700">Thank you.</span> See you tomorrow.</div>
+</body>
+</html>

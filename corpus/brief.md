@@ -280,6 +280,12 @@ Even these three use a real `<table>` and a real list where the card has a
 - **No lorem ipsum.** No real person, company, brand, product or logo.
   Real cities and real generic things are fine (Bristol, Lyon, paracetamol
   500 mg, an oak table).
+- **No real organisation issues the document.** A tax form is issued by
+  an invented revenue office, not the IRS or HMRC; a hospital, a bank, a
+  school, a ministry or a council is invented too. Do not reuse a real
+  form's number or title (`1040`, `P60`, `Cerfa 12345`). Generic systems
+  and the fields they give a document are fine: an NHS number, a VAT or
+  P.IVA number, an IBAN.
 - Phone numbers, account numbers, IBANs and tax or ID numbers are invented
   and need not validate. Web and e-mail addresses use invented names, or
   `example.com`, `example.org` and `example.net`.

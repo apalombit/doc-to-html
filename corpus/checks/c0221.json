@@ -1,0 +1,31 @@
+{
+ "id": "c0221",
+ "passed": true,
+ "failures": {},
+ "checked": "2026-10-25",
+ "seconds": 3.8,
+ "width": 900,
+ "height": 649,
+ "words": 371,
+ "card_features": [
+  "arr.three_columns",
+  "type.serif",
+  "fig.icons",
+  "list.clauses",
+  "table.ruled"
+ ],
+ "detected": [
+  "figure",
+  "fmt.dates",
+  "fmt.eu_numbers",
+  "list.nested",
+  "list.numbers",
+  "table",
+  "table.empty_cells",
+  "text.justified",
+  "type.serif"
+ ],
+ "dhash": "1c25eb4969434a4d",
+ "html_sha256": "93a48d9d7d1cbb30939f75c2ab33e89f5bca1bf0cb9da4b32d64adc19d3e8cb8",
+ "png_sha256": "6927def0b8bd58241b31bb4997c575eb2920a6d8f48571e9b2ff1fc7ae9b76b2"
+}

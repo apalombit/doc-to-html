@@ -4,6 +4,7 @@
     python tools/corpus_sheet.py --ids c0008,c0012
     python tools/corpus_sheet.py --random 24 --seed 7    # drawn from the pages written
     python tools/corpus_sheet.py --since c0300           # pages written after c0300
+    python tools/corpus_sheet.py --pilot --gallery       # and one page at full size
 
 Sheets go to `debug/corpus-sheets/`. Every decision is in
 `doc_to_html.factory.sheets`.
@@ -34,6 +35,8 @@ def main() -> int:
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--since", help="pages whose id comes after this one")
     parser.add_argument("--name", help="the sheets' file name, default from the selection")
+    parser.add_argument("--gallery", action="store_true",
+                        help="also write one HTML page with every picture at full size")
     args = parser.parse_args()
 
     _, drawn = cards.load(CORPUS / "cards.json")
@@ -59,6 +62,10 @@ def main() -> int:
     pictures = [CORPUS / "pages" / f"{card.id}.png" for card in chosen]
     for path in sheets.sheets(chosen, pictures, OUT, name, notes):
         print(path.relative_to(REPO))
+    if args.gallery:
+        page = sheets.gallery(chosen, pictures, OUT / f"{name}.html",
+                              f"Corpus pages — {name}", notes)
+        print(page.relative_to(REPO))
     return 0
 
 

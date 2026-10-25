@@ -675,3 +675,16 @@ def known_in(repo: Path) -> list[Known]:
             found.append(Known(data["id"], frozenset(shingles(html_text(
                 page.read_text(encoding="utf-8")))), data["dhash"]))
     return found
+
+
+def keep_twin(result: Result, card: Card, html_path: Path, png_path: Path,
+              record_path: Path, gate: dict[str, Any]) -> None:
+    """Write a gated twin's record. Its picture is the PDF's render, already
+    in place, and is not touched."""
+    assert result.passed
+    data = record(result, card, html_path, png_path)
+    data["gate"] = gate
+    record_path.parent.mkdir(parents=True, exist_ok=True)
+    partial = record_path.with_suffix(".partial")
+    partial.write_text(json.dumps(data, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    partial.replace(record_path)

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Clinical visit note</title>
+<style>
+body{margin:0;padding:28px 30px 32px;width:720px;background:#fff;color:#16282c;font-family:Verdana,Tahoma,sans-serif;font-size:11.5px;line-height:1.45;}
+.band{background:#0f6f78;color:#fff;padding:9px 14px;display:flex;justify-content:space-between;align-items:baseline;}
+.band h1{margin:0;font-size:16px;font-weight:700;}
+.band span{font-size:11px;}
+.pt{display:flex;border:1px solid #0f6f78;border-top:0;padding:8px 14px;gap:18px;background:#eef6f7;}
+.pt dl{margin:0;flex:1;}
+.pt dt{font-size:9.5px;text-transform:uppercase;color:#4c6a6e;}
+.pt dd{margin:0 0 4px;font-weight:700;}
+.panels{display:flex;gap:14px;margin-top:14px;align-items:flex-start;}
+.panel{flex:1;border:1px solid #9fc2c6;}
+.panel h2{margin:0;background:#d5e8ea;font-size:11.5px;padding:5px 9px;color:#0b4f56;text-transform:uppercase;letter-spacing:.5px;}
+.panel .b{padding:8px 10px;}
+.panel p{margin:0 0 6px;}
+ul{margin:2px 0 6px;padding-left:16px;}
+ul.t{list-style:none;padding-left:0;}
+ul.t li{margin-bottom:3px;}
+ul ul{margin:2px 0 3px;}
+table{border-collapse:collapse;width:100%;margin:2px 0 6px;}
+td,th{padding:3px 4px;border-bottom:1px solid #cfe0e2;text-align:left;font-size:11px;}
+th{font-size:9.5px;color:#4c6a6e;text-transform:uppercase;}
+.flag{color:#b3261e;font-weight:700;}
+.fn{margin-top:14px;border-top:1px solid #9fc2c6;padding-top:6px;font-size:9.5px;color:#4c6a6e;line-height:1.5;}
+.sign{margin-top:10px;font-size:11px;}
+</style>
+</head>
+<body>
+<div class="band"><h1>Outpatient Visit Note</h1><span>Brookside Medical Practice</span></div>
+<div class="pt">
+<dl><dt>Patient</dt><dd>MRS DOROTHY HELLIWELL</dd><dt>DOB</dt><dd>09/02/1951 (75 y)</dd></dl>
+<dl><dt>NHS no.</dt><dd>943 221 0087</dd><dt>Visit date</dt><dd>19/10/2026</dd></dl>
+<dl><dt>Clinician</dt><dd>Dr R. Anand, GP</dd><dt>Type</dt><dd>Review, 20 min</dd></dl>
+</div>
+<div class="panels">
+<div class="panel"><h2>Subjective</h2><div class="b">
+<p>Reports 3 weeks of mild ankle swelling, worse by evening. Breathless on one flight of stairs<sup>1</sup>. No chest pain, no orthopnoea.</p>
+<ul class="t"><li>✓ Appetite normal</li><li>✓ Sleeping 6–7 h</li><li>✗ Palpitations</li><li>✗ Dizziness</li></ul>
+<p><b>Current medication</b></p>
+<ul><li>Ramipril 5 mg OD
+<ul><li>started 03/2022</li></ul></li>
+<li>Bisoprolol 2.5 mg OD</li>
+<li>Atorvastatin 20 mg ON</li></ul>
+</div></div>
+<div class="panel"><h2>Objective</h2><div class="b">
+<table><tr><th>Measure</th><th>Value</th><th>Ref.</th></tr>
+<tr><td>BP</td><td class="flag">152/94 mmHg</td><td>&lt;140/90</td></tr>
+<tr><td>HR</td><td>68 bpm, reg.</td><td>60–100</td></tr>
+<tr><td>SpO₂</td><td>96 % RA</td><td>≥94</td></tr>
+<tr><td>Weight</td><td>71.4 kg</td><td></td></tr>
+<tr><td>eGFR</td><td class="flag">52</td><td>&gt;60</td></tr></table>
+<p>Mild bilateral pitting oedema to mid-shin. Chest clear. HS I+II, no murmur.</p>
+</div></div>
+<div class="panel"><h2>Plan</h2><div class="b">
+<ul class="t"><li>☑ Repeat U&amp;E and BNP<sup>2</sup></li><li>☑ Home BP diary, 2 weeks</li><li>☐ Echocardiogram, if BNP raised</li><li>☐ Refer cardiology</li></ul>
+<ul><li>Advice
+<ul><li>reduce salt intake</li><li>leg elevation</li></ul></li>
+<li>Safety-netting given</li></ul>
+<p><b>Review:</b> 02/11/2026</p>
+</div></div>
+</div>
+<div class="fn">1 Equivalent to NYHA class II.<br>2 BNP: B-type natriuretic peptide; U&amp;E: urea and electrolytes.</div>
+<div class="sign">Signed: Dr R. Anand, 19/10/2026 &middot; Dictated and checked</div>
+</body>
+</html>

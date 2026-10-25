@@ -1,0 +1,614 @@
+{
+ "about": "The 21 corpus pages and the ten probe pages, carded by hand on 2026-10-25 from their pictures (spec 0020, step 6). All go to dev; ticket_0020 is photographed and stays in dev only. Kinds outside the taxonomy are named as they are; nonlatin_0014 is Greek, outside the five languages.",
+ "cards": [
+  {
+   "id": "invoice_0001",
+   "origin": "corpus",
+   "family": "transactional",
+   "kind": "invoice",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fig.logo",
+    "fmt.currency",
+    "fmt.dates",
+    "kv.inline",
+    "table.totals"
+   ],
+   "style": "corporate-modern",
+   "language": "en",
+   "locale": "en-US",
+   "width": 862,
+   "density": "sparse",
+   "pilot": false
+  },
+  {
+   "id": "invoice_0002",
+   "origin": "corpus",
+   "family": "transactional",
+   "kind": "invoice",
+   "arrangement": "arr.panels_side_by_side",
+   "type": "type.sans",
+   "features": [
+    "fig.logo",
+    "fmt.dates",
+    "kv.inline",
+    "look.bands"
+   ],
+   "style": "utility-classes",
+   "language": "en",
+   "locale": "en-US",
+   "width": 1164,
+   "density": "medium",
+   "pilot": false
+  },
+  {
+   "id": "sample_table_0003",
+   "origin": "corpus",
+   "family": "reference",
+   "kind": "statistical table",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "table.ruled"
+   ],
+   "style": "minimal-swiss",
+   "language": "en",
+   "locale": "en-US",
+   "width": 960,
+   "density": "medium",
+   "pilot": false
+  },
+  {
+   "id": "sample_css_0004",
+   "origin": "corpus",
+   "family": "publishing",
+   "kind": "web article",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "look.accent",
+    "look.chips"
+   ],
+   "style": "corporate-modern",
+   "language": "en",
+   "locale": "en-US",
+   "width": 789,
+   "density": "sparse",
+   "pilot": false
+  },
+  {
+   "id": "sample_semantic_0005",
+   "origin": "corpus",
+   "family": "publishing",
+   "kind": "web article",
+   "arrangement": "arr.sidebar",
+   "type": "type.serif",
+   "features": [
+    "list.bullets",
+    "text.quote"
+   ],
+   "style": "classic-print",
+   "language": "en",
+   "locale": "en-US",
+   "width": 915,
+   "density": "medium",
+   "pilot": false
+  },
+  {
+   "id": "statement_0006",
+   "origin": "corpus",
+   "family": "transactional",
+   "kind": "bank statement",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.over",
+    "look.accent",
+    "table.long",
+    "table.totals",
+    "table.zebra"
+   ],
+   "style": "corporate-modern",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 900,
+   "density": "dense",
+   "pilot": false
+  },
+  {
+   "id": "form_0007",
+   "origin": "corpus",
+   "family": "forms",
+   "kind": "application form",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.boxed",
+    "kv.over",
+    "kv.two_per_line",
+    "list.ticks",
+    "look.bands"
+   ],
+   "style": "government-form",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 820,
+   "density": "medium",
+   "pilot": false
+  },
+  {
+   "id": "newsletter_0008",
+   "origin": "corpus",
+   "family": "publishing",
+   "kind": "newsletter",
+   "arrangement": "arr.three_columns",
+   "type": "type.serif",
+   "features": [
+    "look.rules",
+    "text.drop_cap",
+    "text.justified",
+    "text.quote",
+    "type.display",
+    "type.small_caps"
+   ],
+   "style": "editorial",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 960,
+   "density": "dense",
+   "pilot": false
+  },
+  {
+   "id": "darkdeck_0009",
+   "origin": "corpus",
+   "family": "reports",
+   "kind": "status report",
+   "arrangement": "arr.sidebar",
+   "type": "type.sans",
+   "features": [
+    "list.bullets",
+    "look.chips",
+    "look.dark_ground",
+    "table.ruled"
+   ],
+   "style": "corporate-modern",
+   "language": "en",
+   "locale": "en-US",
+   "width": 1000,
+   "density": "dense",
+   "pilot": false
+  },
+  {
+   "id": "receipt_0010",
+   "origin": "corpus",
+   "family": "transactional",
+   "kind": "receipt",
+   "arrangement": "arr.centred",
+   "type": "type.mono",
+   "features": [
+    "fig.code",
+    "kv.inline",
+    "look.rules"
+   ],
+   "style": "retail-receipt",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 500,
+   "density": "medium",
+   "pilot": false
+  },
+  {
+   "id": "report_0011",
+   "origin": "corpus",
+   "family": "reports",
+   "kind": "corporate report page",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "table.ruled",
+    "text.footnotes",
+    "text.justified"
+   ],
+   "style": "classic-print",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 820,
+   "density": "dense",
+   "pilot": false
+  },
+  {
+   "id": "menu_0012",
+   "origin": "corpus",
+   "family": "reference",
+   "kind": "menu",
+   "arrangement": "arr.two_columns",
+   "type": "type.serif",
+   "features": [
+    "kv.leaders",
+    "type.display",
+    "type.small_caps"
+   ],
+   "style": "classic-print",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 760,
+   "density": "medium",
+   "pilot": false
+  },
+  {
+   "id": "cv_0013",
+   "origin": "corpus",
+   "family": "credentials",
+   "kind": "CV",
+   "arrangement": "arr.sidebar",
+   "type": "type.sans",
+   "features": [
+    "kv.over",
+    "list.bullets"
+   ],
+   "style": "corporate-modern",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 900,
+   "density": "medium",
+   "pilot": false
+  },
+  {
+   "id": "nonlatin_0014",
+   "origin": "corpus",
+   "family": "transactional",
+   "kind": "invoice",
+   "arrangement": "arr.panels_side_by_side",
+   "type": "type.sans",
+   "features": [
+    "fmt.dates",
+    "fmt.eu_numbers",
+    "kv.inline",
+    "table.ruled",
+    "table.totals"
+   ],
+   "style": "corporate-modern",
+   "language": "el",
+   "locale": "el-GR",
+   "width": 940,
+   "density": "medium",
+   "pilot": false
+  },
+  {
+   "id": "catalogue_0015",
+   "origin": "corpus",
+   "family": "reference",
+   "kind": "catalogue",
+   "arrangement": "arr.cards_grid",
+   "type": "type.sans",
+   "features": [
+    "fig.photo",
+    "fmt.currency",
+    "look.chips"
+   ],
+   "style": "corporate-modern",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 900,
+   "density": "medium",
+   "pilot": false
+  },
+  {
+   "id": "letter_0016",
+   "origin": "corpus",
+   "family": "correspondence and legal",
+   "kind": "letter",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.inline",
+    "text.justified",
+    "type.script"
+   ],
+   "style": "corporate-modern",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 820,
+   "density": "medium",
+   "pilot": false
+  },
+  {
+   "id": "pricing_0017",
+   "origin": "corpus",
+   "family": "presentation",
+   "kind": "pricing page",
+   "arrangement": "arr.cards_grid",
+   "type": "type.sans",
+   "features": [
+    "fmt.currency",
+    "list.ticks",
+    "look.buttons",
+    "look.chips"
+   ],
+   "style": "corporate-modern",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 1000,
+   "density": "medium",
+   "pilot": false
+  },
+  {
+   "id": "paper_0018",
+   "origin": "corpus",
+   "family": "publishing",
+   "kind": "paper page",
+   "arrangement": "arr.two_columns",
+   "type": "type.serif",
+   "features": [
+    "fig.chart",
+    "table.ruled",
+    "text.footnotes",
+    "text.formula",
+    "text.justified",
+    "text.supsub"
+   ],
+   "style": "academic",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 900,
+   "density": "dense",
+   "pilot": false
+  },
+  {
+   "id": "timetable_0019",
+   "origin": "corpus",
+   "family": "reference",
+   "kind": "timetable",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "look.accent",
+    "look.bands",
+    "table.ruled",
+    "table.spanning"
+   ],
+   "style": "minimal-swiss",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 960,
+   "density": "dense",
+   "pilot": false
+  },
+  {
+   "id": "ticket_0020",
+   "origin": "corpus",
+   "family": "credentials",
+   "kind": "ticket",
+   "arrangement": "arr.panels_side_by_side",
+   "type": "type.sans",
+   "features": [
+    "fig.code",
+    "kv.over",
+    "look.bands",
+    "look.rules",
+    "type.small_caps"
+   ],
+   "style": "corporate-modern",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 900,
+   "density": "medium",
+   "pilot": false
+  },
+  {
+   "id": "certificate_0021",
+   "origin": "corpus",
+   "family": "credentials",
+   "kind": "certificate",
+   "arrangement": "arr.centred",
+   "type": "type.serif",
+   "features": [
+    "look.rules",
+    "type.script",
+    "type.small_caps"
+   ],
+   "style": "classic-print",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 1000,
+   "density": "sparse",
+   "pilot": false
+  },
+  {
+   "id": "probe_contract",
+   "origin": "probe",
+   "family": "correspondence and legal",
+   "kind": "contract",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "list.clauses",
+    "text.justified"
+   ],
+   "style": "classic-print",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 820,
+   "density": "dense",
+   "pilot": false
+  },
+  {
+   "id": "probe_datasheet",
+   "origin": "probe",
+   "family": "reference",
+   "kind": "datasheet",
+   "arrangement": "arr.two_columns",
+   "type": "type.sans",
+   "features": [
+    "list.ticks",
+    "look.bands",
+    "table.ruled",
+    "table.section_rows",
+    "text.supsub"
+   ],
+   "style": "corporate-modern",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 940,
+   "density": "dense",
+   "pilot": false
+  },
+  {
+   "id": "probe_email",
+   "origin": "probe",
+   "family": "correspondence and legal",
+   "kind": "email printout",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.inline",
+    "list.bullets"
+   ],
+   "style": "corporate-modern",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 820,
+   "density": "medium",
+   "pilot": false
+  },
+  {
+   "id": "probe_flyer",
+   "origin": "probe",
+   "family": "presentation",
+   "kind": "flyer",
+   "arrangement": "arr.centred",
+   "type": "type.sans",
+   "features": [
+    "look.buttons",
+    "look.dark_ground",
+    "type.display"
+   ],
+   "style": "bold-marketing",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 800,
+   "density": "sparse",
+   "pilot": false
+  },
+  {
+   "id": "probe_labreport",
+   "origin": "probe",
+   "family": "reports",
+   "kind": "lab report",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.over",
+    "look.accent",
+    "table.section_rows",
+    "text.supsub"
+   ],
+   "style": "clinical-plain",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 860,
+   "density": "medium",
+   "pilot": false
+  },
+  {
+   "id": "probe_minutes",
+   "origin": "probe",
+   "family": "reports",
+   "kind": "minutes",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "kv.inline",
+    "list.bullets",
+    "list.numbers",
+    "table.ruled"
+   ],
+   "style": "classic-print",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 820,
+   "density": "medium",
+   "pilot": false
+  },
+  {
+   "id": "probe_nutrition",
+   "origin": "probe",
+   "family": "reference",
+   "kind": "nutrition label",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "table.ruled",
+    "table.subrows",
+    "text.footnotes"
+   ],
+   "style": "minimal-swiss",
+   "language": "en",
+   "locale": "en-US",
+   "width": 500,
+   "density": "medium",
+   "pilot": false
+  },
+  {
+   "id": "probe_payslip",
+   "origin": "probe",
+   "family": "transactional",
+   "kind": "payslip",
+   "arrangement": "arr.panels_side_by_side",
+   "type": "type.sans",
+   "features": [
+    "kv.boxed",
+    "kv.inline",
+    "kv.two_per_line",
+    "look.bands",
+    "table.totals"
+   ],
+   "style": "corporate-modern",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 900,
+   "density": "medium",
+   "pilot": false
+  },
+  {
+   "id": "probe_quiz",
+   "origin": "probe",
+   "family": "forms",
+   "kind": "exam sheet",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "list.numbers",
+    "table.empty_cells",
+    "table.ruled",
+    "text.supsub"
+   ],
+   "style": "academic",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 860,
+   "density": "medium",
+   "pilot": false
+  },
+  {
+   "id": "probe_recipe",
+   "origin": "probe",
+   "family": "publishing",
+   "kind": "recipe",
+   "arrangement": "arr.sidebar",
+   "type": "type.serif",
+   "features": [
+    "list.big_steps",
+    "list.bullets",
+    "look.chips"
+   ],
+   "style": "editorial",
+   "language": "en",
+   "locale": "en-GB",
+   "width": 900,
+   "density": "medium",
+   "pilot": false
+  }
+ ]
+}

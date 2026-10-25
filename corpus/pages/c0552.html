@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="fr-FR">
+<head>
+<meta charset="utf-8">
+<title>Trions mieux, jetons moins – Val d’Orbize</title>
+<style>
+  html { margin: 0; padding: 0; background: #fbf8f1; }
+  body {
+    margin: 0;
+    width: 820px;
+    box-sizing: border-box;
+    padding: 0;
+    background: #fbf8f1;
+    color: #1f2a24;
+    font-family: Optima, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .band-top {
+    background: #1f4a37;
+    color: #f4efe2;
+    padding: 18px 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand svg { flex: none; }
+  .brand p { margin: 0; line-height: 1.15; }
+  .brand .name { font-size: 19px; letter-spacing: 0.04em; }
+  .brand .sub { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #b9cfbf; }
+  .issue { font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: #b9cfbf; margin: 0; }
+  .hero { padding: 54px 56px 10px 56px; }
+  .kicker { margin: 0 0 10px 0; font-size: 17px; letter-spacing: 0.08em; color: #b8572b; font-weight: 600; }
+  h1 {
+    margin: 0;
+    font-family: "Playfair Display", serif;
+    font-weight: 700;
+    font-size: 70px;
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    color: #1f4a37;
+  }
+  .lede { margin: 22px 0 0 0; font-size: 21px; line-height: 1.4; max-width: 600px; color: #3a463f; }
+  .cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 48px;
+    padding: 34px 56px 50px 56px;
+  }
+  h2 {
+    margin: 0 0 12px 0;
+    font-family: "Playfair Display", serif;
+    font-size: 25px;
+    font-weight: 700;
+    color: #1f4a37;
+  }
+  .col p { margin: 0 0 14px 0; }
+  .col p b { color: #b8572b; font-weight: 600; }
+  .chart-title { margin: 0 0 2px 0; font-weight: 600; font-size: 15px; }
+  .chart-unit { margin: 0 0 14px 0; font-size: 13px; color: #6b746e; }
+  .chart { position: relative; width: 300px; height: 150px; margin-top: 22px; }
+  .chart svg { position: absolute; left: 0; top: 0; }
+  .val {
+    position: absolute;
+    width: 50px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 16px;
+  }
+  .years { display: flex; width: 300px; border-top: 1.5px solid #1f2a24; }
+  .years span { width: 50px; text-align: center; font-size: 13px; color: #3a463f; }
+  .years span.obj { color: #b8572b; }
+  .legend { margin: 10px 0 0 0; font-size: 12px; color: #6b746e; }
+  .bigfig {
+    margin: 26px 0 0 0;
+    font-family: "Playfair Display", serif;
+    font-size: 46px;
+    line-height: 1;
+    color: #b8572b;
+  }
+  .bigfig-cap { margin: 6px 0 0 0; font-size: 15px; color: #3a463f; }
+  .band-bottom {
+    background: #dfe8dc;
+    padding: 28px 56px 30px 56px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 48px;
+  }
+  .band-bottom h3 {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #1f4a37;
+  }
+  .band-bottom p { margin: 0 0 6px 0; font-size: 15px; }
+  .band-bottom .when { font-weight: 600; }
+  .band-foot {
+    background: #1f4a37;
+    color: #d6e2d8;
+    padding: 12px 56px;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+  .band-foot p { margin: 0; }
+</style>
+</head>
+<body>
+  <header class="band-top">
+    <div class="brand">
+      <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="20" cy="20" r="19" fill="#f4efe2"/>
+        <path d="M8 27 C12 18 18 14 30 12 C28 22 22 28 12 29 Z" fill="#1f4a37"/>
+        <path d="M10 30 C15 24 20 20 26 16" fill="none" stroke="#f4efe2" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M6 31 Q20 36 34 31" fill="none" stroke="#b8572b" stroke-width="2.4" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <p class="name">Val d’Orbize</p>
+        <p class="sub">Communauté de communes</p>
+      </div>
+    </div>
+    <p class="issue">Service déchets · Octobre 2026</p>
+  </header>
+
+  <section class="hero">
+    <p class="kicker">Au 1<sup>er</sup> janvier 2027</p>
+    <h1>Trions mieux,<br>jetons moins.</h1>
+    <p class="lede">Tous les emballages se trient désormais. Voici ce qui change dans vos bacs, et pourquoi vos efforts comptent déjà.</p>
+  </section>
+
+  <section class="cols">
+    <div class="col">
+      <h2>Ce qui change</h2>
+      <p><b>Le bac jaune accepte tout.</b> Pots de yaourt, barquettes, films, sachets et tubes : tous les emballages, sans les laver, simplement bien vidés.</p>
+      <p><b>Les épluchures au composteur.</b> Un composteur de 400 litres vous attend gratuitement en mairie, sur simple présentation d’un justificatif de domicile.</p>
+      <p><b>Le bac gris tous les quinze jours.</b> Moins rempli, il sera collecté une semaine sur deux, le même jour qu’aujourd’hui.</p>
+    </div>
+    <div class="col">
+      <h2>Vos efforts en chiffres</h2>
+      <p class="chart-title">Ordures ménagères résiduelles</p>
+      <p class="chart-unit">en kilos par habitant et par an</p>
+      <div class="chart">
+        <svg width="300" height="150" viewBox="0 0 300 150" aria-hidden="true">
+          <rect x="10" y="7.2" width="30" height="142.8" fill="#1f4a37"/>
+          <rect x="60" y="11.4" width="30" height="138.6" fill="#1f4a37"/>
+          <rect x="110" y="18.6" width="30" height="131.4" fill="#1f4a37"/>
+          <rect x="160" y="27.6" width="30" height="122.4" fill="#1f4a37"/>
+          <rect x="210" y="34.8" width="30" height="115.2" fill="#1f4a37"/>
+          <rect x="260" y="51" width="30" height="99" fill="none" stroke="#b8572b" stroke-width="2" stroke-dasharray="4 3"/>
+        </svg>
+        <span class="val" style="left:0; top:-11px">238</span>
+        <span class="val" style="left:50px; top:-7px">231</span>
+        <span class="val" style="left:100px; top:1px">219</span>
+        <span class="val" style="left:150px; top:10px">204</span>
+        <span class="val" style="left:200px; top:17px">192</span>
+        <span class="val" style="left:250px; top:33px; color:#b8572b">165</span>
+      </div>
+      <div class="years">
+        <span>2021</span><span>2022</span><span>2023</span><span>2024</span><span>2025</span><span class="obj">2027</span>
+      </div>
+      <p class="legend">En pointillé : objectif 2027. Source : rapport annuel du service déchets.</p>
+      <p class="bigfig">−19 %</p>
+      <p class="bigfig-cap">de déchets non triés en cinq ans. Merci !</p>
+    </div>
+  </section>
+
+  <section class="band-bottom">
+    <div>
+      <h3>Réunions publiques</h3>
+      <p class="when">Mardi 10 novembre 2026, 19 h</p>
+      <p>Salle des fêtes de Saint-Aubin-sur-Orbize</p>
+      <p class="when">Jeudi 19 novembre 2026, 19 h</p>
+      <p>Mairie de Belleroche, salle du conseil</p>
+    </div>
+    <div>
+      <h3>Une question ?</h3>
+      <p>Numéro vert : 0 800 41 27 90 (appel gratuit)</p>
+      <p>dechets@val-orbize.example.org</p>
+      <p>Guide du tri complet sur val-orbize.example.org/tri</p>
+    </div>
+  </section>
+
+  <footer class="band-foot">
+    <p>Communauté de communes du Val d’Orbize · 2 place de la Halle, 01340 Belleroche · Imprimé sur papier recyclé, ne pas jeter sur la voie publique.</p>
+  </footer>
+</body>
+</html>

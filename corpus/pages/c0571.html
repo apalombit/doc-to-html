@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Pricing</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:64px 70px 70px;width:1120px;background:#fffaf0;color:#1b1237;font-family:"Avenir Next",Avenir,"Helvetica Neue",sans-serif}
+.hero{text-align:center;margin-bottom:46px}
+.chip{display:inline-block;background:#ffd23f;color:#1b1237;font-weight:700;font-size:13px;letter-spacing:.12em;text-transform:uppercase;padding:6px 16px;border-radius:99px}
+h1{font-family:"Oswald","DIN Condensed",Impact,sans-serif;font-weight:700;text-transform:uppercase;font-size:84px;line-height:.98;margin:20px 0 14px;letter-spacing:.01em}
+h1 em{font-style:normal;color:#ff4f5e}
+.lead{font-size:20px;color:#4a4268;margin:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.card{border:3px solid #1b1237;border-radius:22px;padding:30px 32px 32px;background:#fff;box-shadow:8px 8px 0 #1b1237;position:relative}
+.card.hot{background:#1b1237;color:#fff;box-shadow:8px 8px 0 #ff4f5e}
+.top{display:flex;align-items:center;gap:14px}
+.ico{width:46px;height:46px}
+.card h2{font-family:"Oswald",Impact,sans-serif;font-size:34px;text-transform:uppercase;margin:0;font-weight:600;letter-spacing:.02em}
+.tag{margin-left:auto;background:#ff4f5e;color:#fff;font-weight:700;font-size:12px;border-radius:99px;padding:5px 12px;letter-spacing:.08em}
+.price{margin:20px 0 4px}
+.price .lbl{display:block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#7a6f9a}
+.hot .price .lbl{color:#b9aee0}
+.price .amt{font-family:"Oswald",Impact,sans-serif;font-size:68px;font-weight:700;line-height:1.05}
+.price .per{font-size:17px;font-weight:500}
+ul{list-style:none;padding:0;margin:18px 0 26px;font-size:17px;line-height:1.5}
+li{padding:5px 0}
+li b{display:inline-block;width:26px;color:#12a150;font-weight:800}
+.hot li b{color:#ffd23f}
+.btn{display:block;text-align:center;border:3px solid #1b1237;background:#ffd23f;color:#1b1237;font-weight:800;font-size:17px;letter-spacing:.06em;text-transform:uppercase;padding:14px;border-radius:14px}
+.hot .btn{border-color:#ffd23f}
+.quote{margin:56px auto 0;width:820px;text-align:center}
+blockquote{margin:0;font-family:"Oswald",sans-serif;font-size:34px;line-height:1.25;font-weight:500}
+blockquote span{color:#ff4f5e}
+.who{margin-top:16px;font-size:15px;color:#4a4268;font-weight:600}
+</style>
+</head>
+<body>
+<div class="hero">
+<span class="chip">Simple pricing</span>
+<h1>Pick a plan.<br><em>Ship on Friday.</em></h1>
+<p class="lead">Every plan includes unlimited projects and a 30-day money-back promise.</p>
+</div>
+<div class="grid">
+<div class="card">
+<div class="top"><svg class="ico" viewBox="0 0 46 46"><circle cx="23" cy="23" r="22" fill="#ffd23f" stroke="#1b1237" stroke-width="3"/><path d="M13 29 L23 11 L33 29 Z" fill="#1b1237"/></svg><h2>Spark</h2></div>
+<div class="price"><span class="lbl">For solo makers</span><span class="amt">£9</span> <span class="per">per month</span></div>
+<ul><li><b>✓</b>3 active boards</li><li><b>✓</b>5 GB of file storage</li><li><b>✓</b>Email support</li><li><b>✓</b>Public share links</li></ul>
+<span class="btn">Start with Spark</span>
+</div>
+<div class="card hot">
+<div class="top"><svg class="ico" viewBox="0 0 46 46"><circle cx="23" cy="23" r="22" fill="#ff4f5e" stroke="#ffd23f" stroke-width="3"/><path d="M26 8 L14 26 H22 L20 38 L32 20 H24 Z" fill="#ffd23f"/></svg><h2>Blaze</h2><span class="tag">MOST LOVED</span></div>
+<div class="price"><span class="lbl">For growing teams</span><span class="amt">£29</span> <span class="per">per month</span></div>
+<ul><li><b>✓</b>Unlimited boards</li><li><b>✓</b>100 GB of file storage</li><li><b>✓</b>Priority chat support</li><li><b>✓</b>Roles and approvals</li></ul>
+<span class="btn">Go Blaze</span>
+</div>
+<div class="card">
+<div class="top"><svg class="ico" viewBox="0 0 46 46"><circle cx="23" cy="23" r="22" fill="#9be7c4" stroke="#1b1237" stroke-width="3"/><rect x="12" y="24" width="6" height="10" fill="#1b1237"/><rect x="20" y="16" width="6" height="18" fill="#1b1237"/><rect x="28" y="10" width="6" height="24" fill="#1b1237"/></svg><h2>Scale</h2></div>
+<div class="price"><span class="lbl">For whole companies</span><span class="amt">£79</span> <span class="per">per month</span></div>
+<ul><li><b>✓</b>Single sign-on</li><li><b>✓</b>1 TB of file storage</li><li><b>✓</b>Named success manager</li><li><b>✗</b>Custom contract terms</li></ul>
+<span class="btn">Talk to us</span>
+</div>
+<div class="card">
+<div class="top"><svg class="ico" viewBox="0 0 46 46"><circle cx="23" cy="23" r="22" fill="#c8b6ff" stroke="#1b1237" stroke-width="3"/><path d="M23 10 L27 19 L37 20 L29 27 L32 37 L23 31 L14 37 L17 27 L9 20 L19 19 Z" fill="#1b1237"/></svg><h2>Studio</h2></div>
+<div class="price"><span class="lbl">For schools and charities</span><span class="amt">£0</span> <span class="per">for approved groups</span></div>
+<ul><li><b>✓</b>Everything in Blaze</li><li><b>✓</b>Up to 40 seats</li><li><b>✓</b>Annual check-in call</li><li><b>✗</b>Priority chat support</li></ul>
+<span class="btn">Apply today</span>
+</div>
+</div>
+<div class="quote">
+<blockquote>&ldquo;We dropped three tools the week we moved over. <span>Nobody has asked for them back.</span>&rdquo;</blockquote>
+<div class="who">Tamsin Okafor, Head of Operations, Plover &amp; Finch</div>
+</div>
+</body>
+</html>

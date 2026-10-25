@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="it-IT">
+<head>
+<meta charset="utf-8">
+<title>Biglietto – Teatro Belvedere</title>
+<style>
+  * { box-sizing: border-box; }
+  html { background: #e9ecef; }
+  body {
+    margin: 0;
+    width: 820px;
+    padding: 22px 20px 24px;
+    background: #e9ecef;
+    font-family: "Charter", "Georgia", serif;
+    font-size: 11.5px;
+    line-height: 1.35;
+    color: #1d232a;
+  }
+  .ticket {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 14px 16px 12px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 2px solid #1f5c7a;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand .name { font-size: 19px; font-weight: 900; letter-spacing: 0.01em; color: #1f5c7a; margin: 0; line-height: 1.1; }
+  .brand .sub { margin: 1px 0 0; font-size: 10.5px; color: #4a5560; }
+  .doc { text-align: right; }
+  .doc .kind { margin: 0; font-variant: small-caps; letter-spacing: 0.08em; font-size: 13px; font-weight: 700; }
+  .doc .code { margin: 1px 0 0; font-size: 10.5px; color: #4a5560; }
+  .panels {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr 0.78fr;
+    gap: 10px;
+  }
+  .panel {
+    border: 1px solid #c7d0d8;
+    border-radius: 8px;
+    padding: 10px 11px 10px;
+  }
+  .panel.stub { border-style: dashed; border-color: #1f5c7a; background: #f4f8fa; }
+  .panel h2 {
+    margin: 0 0 6px;
+    font-size: 11.5px;
+    font-weight: 700;
+    font-variant: small-caps;
+    letter-spacing: 0.09em;
+    color: #1f5c7a;
+  }
+  .title {
+    font-family: "Snell Roundhand", "Apple Chancery", cursive;
+    font-size: 30px;
+    line-height: 1.05;
+    margin: 0 0 2px;
+    color: #1d232a;
+  }
+  .lead { margin: 0 0 8px; font-size: 11px; }
+  .lead b { font-weight: 700; }
+  .pair { display: flex; gap: 14px; margin: 0; padding: 3px 0; border-top: 1px solid #e3e8ec; }
+  .pair span { flex: 1; }
+  .lbl { font-variant: small-caps; letter-spacing: 0.06em; color: #56616c; font-size: 11px; }
+  .val { font-weight: 700; }
+  .over { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px 10px; margin: 0; }
+  .over div { margin: 0; }
+  .over dt { font-variant: small-caps; letter-spacing: 0.06em; color: #56616c; font-size: 10.5px; }
+  .over dd { margin: 0; font-weight: 700; font-size: 12.5px; }
+  .over dd.big { font-weight: 900; font-size: 24px; line-height: 1.05; color: #1f5c7a; }
+  .wide { grid-column: span 3; }
+  .two { grid-column: span 2; }
+  .prices { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 11px; }
+  .prices td { padding: 2px 0; border-top: 1px solid #e3e8ec; }
+  .prices td.n { text-align: right; font-weight: 700; }
+  .prices tr.tot td { border-top: 1.5px solid #1d232a; font-weight: 900; font-size: 12.5px; padding-top: 3px; }
+  .stub .over { grid-template-columns: 1fr 1fr; }
+  .stub .wide { grid-column: span 2; }
+  .stub svg { display: block; margin: 8px 0 3px; }
+  .stub .num { margin: 0; font-size: 10px; letter-spacing: 0.12em; }
+  .stub .note { margin: 6px 0 0; font-size: 10px; font-style: italic; color: #4a5560; }
+  .fiscal {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px 12px;
+    margin-top: 10px;
+    padding: 7px 10px;
+    background: #f4f6f8;
+    border-radius: 6px;
+    font-size: 10.5px;
+  }
+  .fiscal p { margin: 0; }
+  .terms { margin: 9px 0 0; font-size: 9.5px; line-height: 1.38; color: #39424b; columns: 2; column-gap: 18px; }
+  .terms p { margin: 0 0 3px; break-inside: avoid; }
+  .terms b { font-variant: small-caps; letter-spacing: 0.05em; font-weight: 700; }
+  .light { font-weight: 400; }
+</style>
+</head>
+<body>
+<div class="ticket">
+  <header class="top">
+    <div class="brand">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
+        <rect x="1" y="1" width="32" height="32" rx="7" fill="#1f5c7a"/>
+        <path d="M8 26 L8 14 Q17 5 26 14 L26 26 Z" fill="#ffffff"/>
+        <rect x="14" y="18" width="6" height="8" fill="#1f5c7a"/>
+      </svg>
+      <div>
+        <p class="name">Teatro Belvedere</p>
+        <p class="sub">Fondazione Teatro Belvedere · Corso Garibaldi 41, 26100 Cremona</p>
+      </div>
+    </div>
+    <div class="doc">
+      <p class="kind">Biglietto d’ingresso</p>
+      <p class="code">Stagione concertistica 2026/2027 · Posto numerato</p>
+    </div>
+  </header>
+
+  <div class="panels">
+    <section class="panel">
+      <h2>Spettacolo</h2>
+      <p class="title">Notturno d’Autunno</p>
+      <p class="lead">Concerto per archi e pianoforte<br><b>Ensemble Sinfonico Padano</b> · direttrice <b>Lucia Ferraresi</b><br>pianoforte <b>Tommaso Gallina</b></p>
+      <p class="pair"><span><span class="lbl">Data</span> <span class="val">sabato 14/11/2026</span></span><span><span class="lbl">Ora</span> <span class="val">20:30</span></span></p>
+      <p class="pair"><span><span class="lbl">Apertura porte</span> <span class="val">19:45</span></span><span><span class="lbl">Durata</span> <span class="val">1 h 50’ ca.</span></span></p>
+      <p class="pair"><span><span class="lbl">Sala</span> <span class="val">Grande</span></span><span><span class="lbl">Intervallo</span> <span class="val">sì, 20’</span></span></p>
+      <p class="pair"><span><span class="lbl">Titolare</span> <span class="val">Marco Benedetti</span></span><span><span class="lbl">Ordine</span> <span class="val">TB-558102</span></span></p>
+    </section>
+
+    <section class="panel">
+      <h2>Il tuo posto</h2>
+      <dl class="over">
+        <div><dt>Settore</dt><dd>Platea</dd></div>
+        <div><dt>Fila</dt><dd class="big">G</dd></div>
+        <div><dt>Posto</dt><dd class="big">14</dd></div>
+        <div class="two"><dt>Ingresso</dt><dd>Porta B · Via Cavour</dd></div>
+        <div><dt>Tariffa</dt><dd>Intera</dd></div>
+        <div class="wide"><dt>Acquistato il</dt><dd><span class="light">2 ottobre 2026, ore 11:07 · online</span></dd></div>
+      </dl>
+      <table class="prices">
+        <tr><td>Prezzo del biglietto</td><td class="n">38,00 €</td></tr>
+        <tr><td>Diritti di prevendita</td><td class="n">3,80 €</td></tr>
+        <tr class="tot"><td>Totale pagato</td><td class="n">41,80 €</td></tr>
+      </table>
+    </section>
+
+    <section class="panel stub">
+      <h2>Tagliando di controllo</h2>
+      <dl class="over">
+        <div><dt>Fila</dt><dd>G</dd></div>
+        <div><dt>Posto</dt><dd>14</dd></div>
+        <div class="wide"><dt>Data</dt><dd>14/11/2026 · 20:30</dd></div>
+      </dl>
+      <svg width="150" height="38" viewBox="0 0 150 38" aria-hidden="true">
+        <rect x="0" y="0" width="2" height="38" fill="#1d232a"/><rect x="4" y="0" width="1" height="38" fill="#1d232a"/>
+        <rect x="7" y="0" width="3" height="38" fill="#1d232a"/><rect x="12" y="0" width="1" height="38" fill="#1d232a"/>
+        <rect x="15" y="0" width="2" height="38" fill="#1d232a"/><rect x="19" y="0" width="1" height="38" fill="#1d232a"/>
+        <rect x="22" y="0" width="1" height="38" fill="#1d232a"/><rect x="25" y="0" width="3" height="38" fill="#1d232a"/>
+        <rect x="30" y="0" width="2" height="38" fill="#1d232a"/><rect x="34" y="0" width="1" height="38" fill="#1d232a"/>
+        <rect x="37" y="0" width="2" height="38" fill="#1d232a"/><rect x="41" y="0" width="3" height="38" fill="#1d232a"/>
+        <rect x="46" y="0" width="1" height="38" fill="#1d232a"/><rect x="49" y="0" width="1" height="38" fill="#1d232a"/>
+        <rect x="52" y="0" width="2" height="38" fill="#1d232a"/><rect x="56" y="0" width="3" height="38" fill="#1d232a"/>
+        <rect x="61" y="0" width="1" height="38" fill="#1d232a"/><rect x="64" y="0" width="2" height="38" fill="#1d232a"/>
+        <rect x="68" y="0" width="1" height="38" fill="#1d232a"/><rect x="71" y="0" width="3" height="38" fill="#1d232a"/>
+        <rect x="76" y="0" width="2" height="38" fill="#1d232a"/><rect x="80" y="0" width="1" height="38" fill="#1d232a"/>
+        <rect x="83" y="0" width="1" height="38" fill="#1d232a"/><rect x="86" y="0" width="2" height="38" fill="#1d232a"/>
+        <rect x="90" y="0" width="3" height="38" fill="#1d232a"/><rect x="95" y="0" width="1" height="38" fill="#1d232a"/>
+        <rect x="98" y="0" width="2" height="38" fill="#1d232a"/><rect x="102" y="0" width="1" height="38" fill="#1d232a"/>
+        <rect x="105" y="0" width="3" height="38" fill="#1d232a"/><rect x="110" y="0" width="1" height="38" fill="#1d232a"/>
+        <rect x="113" y="0" width="2" height="38" fill="#1d232a"/><rect x="117" y="0" width="1" height="38" fill="#1d232a"/>
+        <rect x="120" y="0" width="3" height="38" fill="#1d232a"/><rect x="125" y="0" width="1" height="38" fill="#1d232a"/>
+        <rect x="128" y="0" width="2" height="38" fill="#1d232a"/><rect x="132" y="0" width="1" height="38" fill="#1d232a"/>
+        <rect x="135" y="0" width="3" height="38" fill="#1d232a"/><rect x="140" y="0" width="1" height="38" fill="#1d232a"/>
+        <rect x="143" y="0" width="2" height="38" fill="#1d232a"/><rect x="147" y="0" width="3" height="38" fill="#1d232a"/>
+      </svg>
+      <p class="num">8 041 2611 1420 30G14</p>
+      <p class="note">Da conservare ed esibire a richiesta del personale di sala.</p>
+    </section>
+  </div>
+
+  <div class="fiscal">
+    <p><span class="lbl">Sigillo fiscale</span><br><b>4F8A 21C9 77E0 3B12</b></p>
+    <p><span class="lbl">Progressivo</span><br><b>000184527</b></p>
+    <p><span class="lbl">Organizzatore</span><br>Fondazione Teatro Belvedere</p>
+    <p><span class="lbl">C.F. / P.IVA</span><br>01938420196</p>
+  </div>
+
+  <div class="terms">
+    <p><b>Condizioni.</b> Il biglietto è valido solo per la data, l’ora e il posto indicati e non è rimborsabile, salvo annullamento dello spettacolo. In caso di annullamento il rimborso del prezzo, esclusi i diritti di prevendita, si richiede entro 30 giorni presso la biglietteria.</p>
+    <p><b>Ingresso.</b> A spettacolo iniziato l’accesso in sala è consentito solo durante l’intervallo. Non sono ammesse riprese audio o video. I minori di 14 anni devono essere accompagnati.</p>
+    <p><b>Riduzioni.</b> Chi ha acquistato una tariffa ridotta deve esibire un documento che ne attesti il diritto; in mancanza è dovuta la differenza con la tariffa intera.</p>
+    <p><b>Biglietteria.</b> Corso Garibaldi 41, dal martedì al sabato 10:00–13:00 e 16:00–19:00 · tel. 0372 418 220 · biglietteria@teatrobelvedere.example.org</p>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Referral letter – Ashcombe Road Medical Practice</title>
+<style>
+  html { margin: 0; padding: 0; background: #ffffff; }
+  body {
+    margin: 0;
+    width: 740px;
+    box-sizing: border-box;
+    padding: 30px 34px 34px 34px;
+    font-family: Arial, sans-serif;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: #1d2a33;
+    background: #ffffff;
+  }
+  .letterhead {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid #1f7a8c;
+    padding-bottom: 12px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand svg { flex: none; }
+  .practice-name {
+    font-size: 19px;
+    font-weight: bold;
+    color: #1f7a8c;
+    margin: 0;
+    line-height: 1.2;
+  }
+  .practice-sub { margin: 2px 0 0 0; font-size: 11px; color: #4a5a64; }
+  .contact { text-align: right; font-size: 11px; color: #4a5a64; line-height: 1.5; }
+  .contact p { margin: 0; }
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+  }
+  .recipient p { margin: 0; }
+  .recipient .to { font-weight: bold; }
+  .refbox { text-align: right; }
+  .refbox p { margin: 0 0 2px 0; }
+  .flag {
+    display: inline-block;
+    border: 1px solid #1f7a8c;
+    color: #1f7a8c;
+    font-weight: bold;
+    padding: 1px 8px;
+    margin-bottom: 6px;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .patient {
+    margin-top: 16px;
+    background: #eaf4f6;
+    border-left: 4px solid #1f7a8c;
+    padding: 8px 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 18px;
+    row-gap: 2px;
+  }
+  .patient p { margin: 0; }
+  .lbl { font-weight: bold; color: #1f5966; }
+  .salutation { margin: 16px 0 4px 0; }
+  .re { margin: 0 0 12px 0; font-weight: bold; }
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 26px;
+  }
+  .col p { margin: 0 0 9px 0; }
+  h2 {
+    font-variant: small-caps;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 0.03em;
+    color: #1f7a8c;
+    margin: 10px 0 3px 0;
+    border-bottom: 1px solid #b9d6dc;
+    padding-bottom: 1px;
+  }
+  .col h2:first-child { margin-top: 0; }
+  ul { margin: 0 0 8px 0; padding-left: 18px; }
+  li { margin: 0 0 2px 0; }
+  .allergy {
+    border: 1px solid #b3261e;
+    color: #b3261e;
+    padding: 3px 8px;
+    font-weight: bold;
+    margin: 0 0 9px 0;
+  }
+  table.results {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11.5px;
+    margin-bottom: 9px;
+  }
+  table.results th, table.results td {
+    border-bottom: 1px solid #c8dde1;
+    padding: 2px 4px;
+    text-align: left;
+  }
+  table.results th { color: #1f5966; font-weight: bold; background: #eaf4f6; }
+  table.results td.num { text-align: right; }
+  .high { color: #b3261e; font-weight: bold; }
+  .close { margin-top: 10px; }
+  .close p { margin: 0 0 8px 0; }
+  .signoff p { margin: 0; }
+  .signoff .name { font-weight: bold; margin-top: 26px; }
+  .footer {
+    margin-top: 18px;
+    border-top: 1px solid #b9d6dc;
+    padding-top: 6px;
+    font-size: 9.5px;
+    color: #5b6a72;
+  }
+</style>
+</head>
+<body>
+  <header class="letterhead">
+    <div class="brand">
+      <svg width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
+        <rect x="1" y="1" width="44" height="44" rx="10" fill="#1f7a8c"/>
+        <path d="M23 9 C31 15 34 23 23 37 C12 23 15 15 23 9 Z" fill="#ffffff"/>
+        <rect x="21.5" y="16" width="3" height="16" fill="#1f7a8c"/>
+        <rect x="16" y="21.5" width="14" height="3" fill="#1f7a8c"/>
+      </svg>
+      <div>
+        <p class="practice-name">Ashcombe Road Medical Practice</p>
+        <p class="practice-sub">Dr H. Okafor · Dr L. Pennington · Dr S. Rahman</p>
+      </div>
+    </div>
+    <div class="contact">
+      <p>41 Ashcombe Road, Bristol BS7 9QF</p>
+      <p>Tel: 0117 496 0321 · Fax: 0117 496 0322</p>
+      <p>referrals@ashcombe-road.example.org</p>
+    </div>
+  </header>
+
+  <section class="meta">
+    <div class="recipient">
+      <p class="to">Dr Miriam Clegg</p>
+      <p>Consultant Rheumatologist</p>
+      <p>Rheumatology Outpatients</p>
+      <p>Severnside General Hospital</p>
+      <p>Westbury Lane, Bristol BS10 5NB</p>
+    </div>
+    <div class="refbox">
+      <span class="flag">Routine referral</span>
+      <p><span class="lbl">Date:</span> 24 October 2026</p>
+      <p><span class="lbl">Our ref:</span> HO/ER/2610-114</p>
+      <p><span class="lbl">e-RS UBRN:</span> 0418 2273 9965</p>
+    </div>
+  </section>
+
+  <section class="patient">
+    <p><span class="lbl">Patient:</span> Mr Edward Ransome</p>
+    <p><span class="lbl">NHS No:</span> 485 772 9013</p>
+    <p><span class="lbl">DOB:</span> 14/03/1961 (65 y)</p>
+    <p><span class="lbl">Tel:</span> 07700 900418</p>
+    <p><span class="lbl">Address:</span> 12 Coldharbour Lane, Bristol BS6 6ER</p>
+    <p><span class="lbl">Interpreter:</span> not required</p>
+  </section>
+
+  <p class="salutation">Dear Dr Clegg,</p>
+  <p class="re">Re: inflammatory polyarthritis of the hands and wrists – query rheumatoid arthritis</p>
+
+  <div class="columns">
+    <div class="col">
+      <h2>Reason for referral</h2>
+      <p>I would be grateful if you could see this 65-year-old retired bus driver, who has a ten-week history of painful, swollen small joints of both hands with early-morning stiffness lasting about two hours.</p>
+      <h2>History</h2>
+      <p>Symptoms began in mid-August in the right wrist and spread to the MCP joints of both hands. He has had to stop gardening and finds buttoning shirts difficult. He reports fatigue but no weight loss, rash, mouth ulcers or eye symptoms. There is no family history of inflammatory arthritis or psoriasis.</p>
+      <p>A two-week trial of naproxen 500 mg twice daily gave partial relief only.</p>
+      <h2>Examination</h2>
+      <p>Synovitis of the 2nd and 3rd MCP joints bilaterally and of the right wrist, with tenderness on squeezing across the MCPs. Large joints unremarkable. No nodules, skin or nail changes. BP 138/84, BMI 27.</p>
+    </div>
+    <div class="col">
+      <h2>Past medical history</h2>
+      <ul>
+        <li>Hypertension, diagnosed 2018</li>
+        <li>Type 2 diabetes, diet-controlled (HbA1c 49 mmol/mol)</li>
+        <li>Left inguinal hernia repair, 2009</li>
+      </ul>
+      <h2>Current medication</h2>
+      <ul>
+        <li>Amlodipine 5 mg once daily</li>
+        <li>Naproxen 500 mg twice daily, with omeprazole 20 mg</li>
+        <li>Paracetamol 1 g up to four times daily, as needed</li>
+      </ul>
+      <h2>Allergies</h2>
+      <p class="allergy">Penicillin – widespread rash (1994)</p>
+      <h2>Investigations</h2>
+      <table class="results">
+        <thead>
+          <tr><th>Test (06/10/2026)</th><th class="num">Result</th><th>Range</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>CRP</td><td class="num high">31 mg/L</td><td>&lt; 5</td></tr>
+          <tr><td>ESR</td><td class="num high">42 mm/h</td><td>1–20</td></tr>
+          <tr><td>Rheumatoid factor</td><td class="num high">64 IU/mL</td><td>&lt; 14</td></tr>
+          <tr><td>Anti-CCP</td><td class="num">awaited</td><td>&lt; 7</td></tr>
+          <tr><td>eGFR</td><td class="num">78 mL/min</td><td>&gt; 60</td></tr>
+        </tbody>
+      </table>
+      <p>Hand X-rays requested; report to follow.</p>
+    </div>
+  </div>
+
+  <div class="close">
+    <p>I would value your opinion on the diagnosis and on starting disease-modifying treatment. He is happy to be contacted by telephone and can attend at short notice.</p>
+  </div>
+
+  <div class="signoff">
+    <p>Yours sincerely,</p>
+    <p class="name">Dr Helen Okafor</p>
+    <p>MB ChB MRCGP · General Practitioner · GMC 7034519</p>
+  </div>
+
+  <p class="footer">Confidential: this letter contains patient-identifiable information. If received in error, please telephone the practice on 0117 496 0321 and destroy all copies.</p>
+</body>
+</html>
