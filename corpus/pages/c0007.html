@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Patient intake form</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:24px 30px 26px;width:780px;background:#fff;color:#1c2b33;font-family:Charter,"Times New Roman",serif;font-size:11.5px;line-height:1.35}
+.hd{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #1d6f8a;padding-bottom:8px}
+.hd h1{margin:0;font-size:21px;font-weight:300;letter-spacing:.5px;color:#1d6f8a}
+.hd h1 b{font-weight:800}
+.hd .r{text-align:right;font-size:10.5px;font-weight:300}
+h2{margin:14px 0 5px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#1d6f8a;display:flex;align-items:center;gap:6px;border-bottom:1px solid #b9d3dc;padding-bottom:3px}
+.line{display:flex;gap:18px;margin-bottom:5px}
+.kv{flex:1;display:flex;align-items:flex-end;gap:5px;min-width:0}
+.kv b{font-weight:700;white-space:nowrap;font-size:11px}
+.kv span{flex:1;border-bottom:1px solid #1c2b33;padding:0 3px 1px;font-weight:300;font-size:12.5px;min-height:15px;font-style:italic}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid #8fb1be;padding:3px 6px;text-align:left;font-size:11px}
+th{background:#e4f0f4;font-weight:700}
+.cols{display:flex;gap:26px}
+.cols>div{flex:1}
+ul{margin:0;padding-left:16px}
+li{margin-bottom:2px}
+.chk{margin:0 0 3px}
+.note{font-size:10px;font-weight:300;margin-top:6px}
+.sig{display:flex;gap:18px;margin-top:12px;align-items:flex-end}
+</style>
+</head>
+<body>
+<div class="hd">
+ <div><h1><b>Cobalt Foxglove</b> Family Medicine</h1><div style="font-weight:300;font-size:10.5px">Lexington, KY &middot; 418 Bluegrass Parkway, Suite 200 &middot; (859) 555-0123</div></div>
+ <div class="r"><b style="font-weight:700">New patient intake form</b><br>Visit date: 05/28/2024<br>Chart no. 24-06118</div>
+</div>
+
+<h2><svg width="13" height="13" viewBox="0 0 13 13"><circle cx="6.5" cy="4" r="3" fill="#1d6f8a"/><path d="M1 13c0-4 2-5.5 5.5-5.5S12 9 12 13Z" fill="#1d6f8a"/></svg>Patient information</h2>
+<div class="line"><div class="kv"><b>Name:</b><span>Rachel Brennan</span></div><div class="kv"><b>Date of birth:</b><span>09/02/1981</span></div></div>
+<div class="line"><div class="kv"><b>Address:</b><span>77 Red Mile Road, Lexington, KY 40504</span></div><div class="kv"><b>Phone:</b><span>(859) 555-0177</span></div></div>
+<div class="line"><div class="kv"><b>Occupation:</b><span>Middle-school teacher</span></div><div class="kv"><b>Insurance:</b><span>Bluegrass Mutual PPO</span></div></div>
+<div class="line"><div class="kv"><b>Previous clinic:</b><span>Rochester Primary Care, Rochester, MN</span></div><div class="kv"><b>Last visit:</b><span>03/14/2023</span></div></div>
+<div class="line"><div class="kv"><b>Emergency contact:</b><span>Ashley Kim (sister)</span></div><div class="kv"><b>Phone:</b><span>(507) 555-0164</span></div></div>
+
+<h2><svg width="13" height="13" viewBox="0 0 13 13"><rect x="5" y="0" width="3" height="13" fill="#1d6f8a"/><rect x="0" y="5" width="13" height="3" fill="#1d6f8a"/></svg>Reason for visit and history</h2>
+<div class="line"><div class="kv"><b>Main concern:</b><span>Recurring headaches, about twice a week for three months</span></div></div>
+<div class="cols">
+ <div>
+  <p class="chk"><b>Conditions you have had</b> (mark all that apply)</p>
+  <p class="chk">&#9745; Migraine &nbsp;&nbsp; &#9744; Diabetes &nbsp;&nbsp; &#9745; Asthma</p>
+  <p class="chk">&#9744; High blood pressure &nbsp;&nbsp; &#9744; Thyroid disease</p>
+  <p class="chk">&#9745; Seasonal allergies &nbsp;&nbsp; &#9744; Heart disease</p>
+  <p class="chk">&#9744; Depression or anxiety &nbsp;&nbsp; &#9744; Cancer</p>
+ </div>
+ <div>
+  <p class="chk"><b>Before your visit, please remember</b></p>
+  <ul>
+   <li>Bring every medicine in its own bottle</li>
+   <li>Bring your insurance card and photo ID</li>
+   <li>List any allergies to drugs or latex</li>
+   <li>Arrive 15 minutes early on your first day</li>
+  </ul>
+ </div>
+</div>
+
+<h2><svg width="13" height="13" viewBox="0 0 13 13"><rect x="1" y="5" width="11" height="4" rx="2" transform="rotate(-35 6.5 6.5)" fill="#1d6f8a"/></svg>Current medications</h2>
+<table>
+ <tr><th>Medicine</th><th>Dose</th><th>How often</th><th>Started</th><th>Prescribed by</th></tr>
+ <tr><td>Albuterol inhaler</td><td>90 mcg</td><td>As needed</td><td>2012</td><td>Dr. P. Lindqvist</td></tr>
+ <tr><td>Cetirizine</td><td>10 mg</td><td>Once daily, spring</td><td>2016</td><td>Over the counter</td></tr>
+ <tr><td>Ibuprofen</td><td>400 mg</td><td>For headaches</td><td>2024</td><td>Self</td></tr>
+ <tr><td>Multivitamin</td><td>1 tablet</td><td>Once daily</td><td>2019</td><td>Self</td></tr>
+</table>
+<div class="line" style="margin-top:8px"><div class="kv"><b>Allergies:</b><span>Penicillin, rash</span></div><div class="kv"><b>Smoking:</b><span>Never</span></div><div class="kv"><b>Alcohol:</b><span>1&ndash;2 drinks a week</span></div></div>
+
+<h2><svg width="13" height="13" viewBox="0 0 13 13"><circle cx="6.5" cy="6.5" r="5.5" fill="none" stroke="#1d6f8a" stroke-width="2"/></svg>Family history</h2>
+<table>
+ <tr><th>Relative</th><th>Living?</th><th>Conditions</th><th>Age at diagnosis</th></tr>
+ <tr><td>Mother</td><td>Yes</td><td>Migraine, high blood pressure</td><td>34 and 58</td></tr>
+ <tr><td>Father</td><td>No, died at 71</td><td>Heart disease</td><td>63</td></tr>
+ <tr><td>Sister</td><td>Yes</td><td>Asthma</td><td>9</td></tr>
+</table>
+<p class="chk" style="margin-top:6px"><b>In the past month have you had:</b> &#9745; trouble sleeping &nbsp; &#9744; chest pain &nbsp; &#9744; fever &nbsp; &#9745; blurred vision during a headache &nbsp; &#9744; weight change</p>
+
+<h2><svg width="13" height="13" viewBox="0 0 13 13"><path d="M1 7l4 4 7-9" stroke="#1d6f8a" stroke-width="2.5" fill="none"/></svg>Consent and signature</h2>
+<p style="margin:0">I confirm that the answers above are correct to the best of my knowledge, and I consent to examination and treatment by the clinicians of this practice. I have been offered a copy of the privacy notice.</p>
+<div class="sig"><div class="kv"><b>Signature:</b><span>Rachel Brennan</span></div><div class="kv"><b>Date:</b><span>05/28/2024</span></div></div>
+<p class="note"><b style="font-weight:700">For clinic use.</b> Reviewed by Mei Hendricks, MD, on 05/28/2024. &#9744; Records requested &nbsp; &#9745; Insurance verified &nbsp; &#9745; Vitals taken</p>
+</body>
+</html>

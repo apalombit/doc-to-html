@@ -16,6 +16,7 @@ from pathlib import Path
 import pytest
 
 from doc_to_html.factory import cards
+from doc_to_html.projection import MIN_WIDTH
 
 REPO = Path(__file__).resolve().parent.parent
 TAXONOMY = cards.load_taxonomy(REPO / "corpus" / "taxonomy.json")
@@ -192,6 +193,15 @@ class TestTheFileOnDisk:
         assert all(not cards.problems(TAXONOMY, card) for card in on_disk)
         assert cards.shortfalls(TAXONOMY, on_disk) == {}
         assert sum(card.pilot for card in on_disk) == 100
+
+    def test_no_card_or_kind_is_narrower_than_the_browser_lays_out(self) -> None:
+        """Chrome lays out no page under `projection.MIN_WIDTH`, so a narrower
+        card can never pass the validator's width check (c0014, 480 px)."""
+        _, on_disk = cards.load(REPO / "corpus" / "cards.json")
+        assert all((card.width or MIN_WIDTH) >= MIN_WIDTH for card in on_disk)
+        for family, entry in TAXONOMY["families"].items():
+            for kind in entry["kinds"]:
+                assert cards.widths(TAXONOMY, family, kind)[0] >= MIN_WIDTH, kind
 
     def test_cards_json_is_the_seeded_draw_but_for_the_cards_its_history_names(
             self, drawn: list[cards.Card]) -> None:

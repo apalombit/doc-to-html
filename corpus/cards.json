@@ -278,7 +278,7 @@
     "look.accent"
    ],
    "style": "utility-classes",
-   "width": 480,
+   "width": 500,
    "density": "sparse",
    "locale": "en-GB",
    "pilot": false
@@ -2967,7 +2967,7 @@
     "look.accent"
    ],
    "style": "academic",
-   "width": 460,
+   "width": 500,
    "density": "medium",
    "locale": "en-US",
    "pilot": false
@@ -3580,7 +3580,7 @@
     "text.supsub"
    ],
    "style": "print-export",
-   "width": 420,
+   "width": 500,
    "density": "medium",
    "locale": "en-US",
    "pilot": false
@@ -4386,7 +4386,7 @@
     "text.formula"
    ],
    "style": "classic-print",
-   "width": 440,
+   "width": 500,
    "density": "sparse",
    "locale": "en-US",
    "pilot": false
@@ -6634,7 +6634,7 @@
     "text.supsub"
    ],
    "style": "utility-classes",
-   "width": 460,
+   "width": 500,
    "density": "medium",
    "locale": "en-US",
    "pilot": false
@@ -8735,7 +8735,7 @@
     "table.totals"
    ],
    "style": "minimal-swiss",
-   "width": 460,
+   "width": 500,
    "density": "sparse",
    "locale": "pt-BR",
    "pilot": false
@@ -9134,14 +9134,19 @@
    "origin": "pdf",
    "family": "reference",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "technical printout",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "table.ruled",
+    "table.spanning",
+    "text.justified",
+    "text.supsub"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "medium",
+   "locale": "en-US",
    "pilot": false
   },
   {
@@ -10601,7 +10606,7 @@
     "table.zebra"
    ],
    "style": "government-form",
-   "width": 400,
+   "width": 500,
    "density": "sparse",
    "locale": "en-US",
    "pilot": false
@@ -12018,6 +12023,25 @@
     "c0576",
     "c0597"
    ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0471"
+   ]
+  },
+  {
+   "step": "widths",
+   "changed": [
+    "c0014",
+    "c0153",
+    "c0183",
+    "c0224",
+    "c0341",
+    "c0451",
+    "c0544"
+   ],
+   "why": "Chrome lays out no page under 500 px (projection.MIN_WIDTH), so no card may be narrower; the fragments' kinds allowed 360"
   }
  ]
 }

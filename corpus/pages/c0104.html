@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en-US"><head><meta charset="utf-8"><title>Purchase order</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:44px 48px 40px;width:760px;font-family:"Helvetica Neue",Helvetica,sans-serif;font-size:11px;line-height:1.5;color:#111;background:#fff}
+.hd{display:grid;grid-template-columns:repeat(12,1fr);column-gap:16px;margin-bottom:26px}
+.c1{grid-column:1/8}.c2{grid-column:8/13;text-align:right}
+h1{font-size:30px;font-weight:300;letter-spacing:-.02em;margin:0}
+.tiny{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#777}
+.band{background:#111;color:#fff;padding:4px 10px;font-size:9px;text-transform:uppercase;letter-spacing:.12em;margin:22px 0 8px}
+.lead{display:flex;align-items:baseline;margin:3px 0}
+.lead i{flex:1;border-bottom:1px dotted #888;margin:0 6px;height:1px}
+.two{display:grid;grid-template-columns:1fr 1fr;column-gap:48px}
+table{border-collapse:collapse;width:100%}
+th{font-size:9px;text-transform:uppercase;letter-spacing:.08em;text-align:left;color:#555;font-weight:500;border-top:2px solid #111;border-bottom:1px solid #111;padding:5px 6px}
+td{padding:6px;border-bottom:1px solid #ccc}
+.r{text-align:right}
+.dash{border-top:1px dashed #666;margin:18px 0 8px}
+</style></head><body>
+<div class="hd">
+<div class="c1"><h1>Purchase Order</h1><div class="tiny" style="margin-top:6px">Lattice Verdigris Supply Co.</div></div>
+<div class="c2"><div class="tiny">PO number</div><div style="font-size:18px">PO-26-0417</div><div class="tiny" style="margin-top:6px">Issued</div><div>September 7, 2026</div></div>
+</div>
+<div class="two">
+<div><div class="tiny">Vendor</div><div style="font-weight:500">Santa Fe Fastener &amp; Tool</div><div>2210 Cerrillos Road</div><div>Santa Fe, NM 87505</div></div>
+<div><div class="tiny">Ship to</div><div style="font-weight:500">Lattice Verdigris, Peoria Plant</div><div>88 Adams Street, Dock 3</div><div>Peoria, IL 61602</div></div>
+</div>
+<div class="band">Terms</div>
+<div class="two">
+<div><div class="lead"><span>Buyer</span><i></i><span>Brandon Jackson</span></div><div class="lead"><span>Approved by</span><i></i><span>Maria Nguyen</span></div><div class="lead"><span>Receiving</span><i></i><span>Travis Holloway</span></div></div>
+<div><div class="lead"><span>Payment</span><i></i><span>Net 30</span></div><div class="lead"><span>Delivery by</span><i></i><span>09/28/2026</span></div><div class="lead"><span>Freight</span><i></i><span>Prepaid</span></div></div>
+</div>
+<div class="band">Items</div>
+<table>
+<tr><th style="width:36px">Line</th><th>Description</th><th style="width:50px">Qty</th><th style="width:50px">Unit</th><th class="r" style="width:80px">Unit price</th><th class="r" style="width:90px">Amount</th></tr>
+<tr><td>1</td><td>Hex bolt M10 x 60, zinc plated</td><td>2,000</td><td>ea</td><td class="r">$0.18</td><td class="r">$360.00</td></tr>
+<tr><td>2</td><td>Flat washer M10, stainless</td><td>4,000</td><td>ea</td><td class="r">$0.04</td><td class="r">$160.00</td></tr>
+<tr><td>3</td><td>Anchor sleeve, 12 mm</td><td>500</td><td>ea</td><td class="r">$0.46</td><td class="r">$230.00</td></tr>
+<tr><td>4</td><td>Thread locker, 50 ml</td><td>24</td><td>btl</td><td class="r">$9.25</td><td class="r">$222.00</td></tr>
+<tr><td>5</td><td></td><td></td><td></td><td class="r"></td><td class="r"></td></tr>
+<tr><td>6</td><td></td><td></td><td></td><td class="r"></td><td class="r"></td></tr>
+<tr><td colspan="4" style="border:0"></td><td class="r" style="border-bottom:0;padding-top:12px">Subtotal</td><td class="r" style="border-bottom:0;padding-top:12px">$972.00</td></tr>
+<tr><td colspan="4" style="border:0"></td><td class="r" style="border-bottom:0">Tax 6.25%</td><td class="r" style="border-bottom:0">$60.75</td></tr>
+<tr><td colspan="4" style="border:0"></td><td class="r" style="font-weight:600;border-top:2px solid #111;border-bottom:0">Total</td><td class="r" style="font-weight:600;border-top:2px solid #111;border-bottom:0">$1,032.75</td></tr>
+</table>
+<div class="dash"></div>
+<div class="tiny">Notes</div>
+<div>Pack parts by line number. Quote PO-26-0417 on every carton, packing slip and invoice.</div>
+<div style="margin-top:26px;display:flex;gap:60px"><div style="width:240px;border-top:1px solid #111;padding-top:3px" class="tiny">Authorized signature</div><div style="width:140px;border-top:1px solid #111;padding-top:3px" class="tiny">Date</div></div>
+</body></html>

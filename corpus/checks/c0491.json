@@ -1,0 +1,26 @@
+{
+ "id": "c0491",
+ "passed": true,
+ "failures": {},
+ "checked": "2026-10-25",
+ "seconds": 6.3,
+ "width": 900,
+ "height": 571,
+ "words": 128,
+ "card_features": [
+  "arr.one_column",
+  "type.serif",
+  "fmt.dates",
+  "kv.over",
+  "kv.two_per_line",
+  "type.small_caps"
+ ],
+ "detected": [
+  "fmt.currency",
+  "fmt.dates",
+  "type.serif"
+ ],
+ "dhash": "29656666424e6749",
+ "html_sha256": "d9243c94a03057b0a5b03401dcd27e24bba44a4ccb1c38de1ac11652c96b9047",
+ "png_sha256": "4996c02668efe0ebc2d614157d929daed07f64000d5540abfd4817a2ce953ad5"
+}

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en-US"><head><meta charset="utf-8"><title>Paper</title>
+<style>
+body{margin:0;width:840px;box-sizing:border-box;padding:50px 56px 48px;font-family:"Gill Sans",sans-serif;color:#111;background:#fff}
+p.MsoNormal{margin:0 0 7pt;font-size:10pt;line-height:1.38;text-align:left}
+.ttl{font-family:"Oswald","DIN Condensed",sans-serif;font-size:30pt;line-height:1.05;text-align:center;margin:0 0 8pt;font-weight:700}
+.au{text-align:center;font-size:11pt;margin:0}
+.af{text-align:center;font-size:9pt;color:#444;margin:2pt 0 0}
+.abs{border-top:1px solid #000;border-bottom:1px solid #000;margin:16px 0 14px;padding:8px 0;font-size:9.5pt;line-height:1.35}
+.cols{column-count:2;column-gap:28px;column-fill:balance}
+h2{font-size:11pt;margin:10pt 0 4pt;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.eq{text-align:center;font-family:"STIX Two Text",serif;font-size:13pt;margin:8pt 0;font-style:italic;break-inside:avoid}
+.eq span.n{float:right;font-style:normal;font-size:10pt}
+blockquote{margin:6pt 0 8pt 14px;padding-left:10px;border-left:3px solid #999;font-style:italic;font-size:10pt;line-height:1.35;break-inside:avoid}
+.ft{font-size:8.5pt;color:#333;margin-top:18px;border-top:1px solid #999;padding-top:5px}
+</style></head><body>
+<p class="ttl">Charge Recovery in Small Ember-Class Cells</p>
+<p class="au"><span style="font-size:11pt">Kayla Brennan,</span> <span style="font-size:11pt">Brandon Shapiro,</span> <span style="font-size:11pt">Malik Pruitt</span></p>
+<p class="af">Oakridge Institute of Materials, Boise, ID · University of Santa Fe, Santa Fe, NM · July 30, 2021</p>
+<div class="abs"><b>Abstract.</b> We measure how much stored charge a small lithium cell regains during rest after a hard discharge. A simple relaxation model fits eleven cells to within 3% over six hours. We find that recovery depends more on temperature than on the depth of discharge, and we suggest a rest interval for field use.</div>
+<div class="cols">
+<h2>1 Introduction</h2>
+<p class="MsoNormal"><span style="font-size:10pt">Small cells in sensors and handheld tools are often discharged hard and then left idle. Users report that the device works again after a pause, although the cell was nominally empty. This effect has been known for decades.</span></p>
+<blockquote>“A cell is never as empty as its gauge claims, nor as full after a rest as its owner hopes.”</blockquote>
+<p class="MsoNormal"><span style="font-size:10pt">Here we describe the recovery in terms of a single time constant and show how it can be estimated from a short test, without opening the cell.</span></p>
+<h2>2 Model</h2>
+<p class="MsoNormal"><span style="font-size:10pt">We write the recovered voltage after a rest of duration t as an exponential approach to its final value:</span></p>
+<div class="eq">V(t) = V<sub>∞</sub> − (V<sub>∞</sub> − V<sub>0</sub>) e<sup>−t/τ</sup><span class="n">(1)</span></div>
+<p class="MsoNormal"><span style="font-size:10pt">where V<sub>0</sub> is the voltage at the end of discharge, V<sub>∞</sub> the rested voltage and τ the relaxation time. The recovered fraction follows as</span></p>
+<div class="eq">η = (V<sub>∞</sub> − V<sub>0</sub>) / V<sub>0</sub><span class="n">(2)</span></div>
+<h2>3 Method</h2>
+<p class="MsoNormal"><span style="font-size:10pt">Eleven cells of 2,000 mAh were discharged at 2 C to 2.8 V, then rested at 5, 20 and 35 °C. Voltage was logged every ten seconds for six hours. Each run was repeated three times and the mean taken.</span></p>
+<h2>4 Results</h2>
+<p class="MsoNormal"><span style="font-size:10pt">At 20 °C the fitted τ averaged 41 minutes, with a spread of 6 minutes between cells. At 5 °C it rose to 96 minutes, and at 35 °C it fell to 23 minutes. The recovered fraction η varied little with the depth of discharge, between 0.062 and 0.071.</span></p>
+<p class="MsoNormal"><span style="font-size:10pt">Residuals were below 3% for ten of the eleven cells. The eleventh, an older cell, showed a slow second tail that a single exponential does not capture.</span></p>
+<h2>5 Discussion</h2>
+<p class="MsoNormal"><span style="font-size:10pt">A rest of three time constants returns about 95% of the available recovery. In the field, that means roughly two hours in the cold and one hour at room temperature.</span></p>
+<h2>Acknowledgments</h2>
+<p class="MsoNormal"><span style="font-size:10pt">We thank the Oakridge workshop staff for building the test rig.</span></p>
+</div>
+<div class="ft">Correspondence: Kayla Brennan, Oakridge Institute of Materials, Boise, ID. Submitted July 30, 2021.</div>
+</body></html>

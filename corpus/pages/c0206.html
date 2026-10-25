@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Laboratory report</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:28px 34px 30px;width:880px;background:#fff;color:#1f2933;font-family:"Open Sans",Arial,sans-serif;font-size:12px;line-height:1.4}
+.hd{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #00796b;padding-bottom:10px}
+.hd h1{margin:0;font-size:22px;color:#00796b;font-weight:700}
+.hd .sub{color:#52606d;font-size:11px}
+.hd .r{text-align:right;font-size:11px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+.card{background:#f1f6f5;border-radius:6px;padding:8px 10px}
+.card b{display:block;font-size:9.5px;text-transform:uppercase;letter-spacing:.8px;color:#52606d;font-weight:600}
+.card span{font-size:13px;font-weight:600}
+h2{font-size:13px;margin:16px 0 6px;color:#00796b;text-transform:uppercase;letter-spacing:.8px}
+table{border-collapse:collapse;width:100%}
+th{background:#00796b;color:#fff;text-align:left;font-size:10.5px;padding:5px 8px;font-weight:600}
+td{padding:4px 8px;border-bottom:1px solid #d9e2e0;font-size:12px}
+td.n,th.n{text-align:right}
+tr.p td{font-weight:700;background:#eef4f3}
+tr.s td:first-child{padding-left:26px;color:#3e4c59}
+.flag{color:#c0392b;font-weight:700}
+.low{color:#b45309;font-weight:700}
+.ok{color:#00796b}
+.cm{display:flex;gap:16px;margin-top:14px}
+.cm div{flex:1;border:1px solid #d9e2e0;border-radius:6px;padding:8px 10px;font-size:11.5px}
+.cm b{display:block;margin-bottom:3px;color:#00796b}
+.foot{margin-top:16px;border-top:1px solid #d9e2e0;padding-top:8px;font-size:10px;color:#52606d;display:flex;justify-content:space-between}
+</style>
+</head>
+<body>
+<div class="hd">
+ <div><h1>Lodestar Cypress Diagnostics</h1><div class="sub">Clinical Biochemistry and Haematology, Dundee Laboratory Hub</div></div>
+ <div class="r"><b>Laboratory report</b><br>Report issued 8 December 2020, 14:32<br>Report no. LC-20-118402</div>
+</div>
+<div class="cards">
+ <div class="card"><b>Patient</b><span>Ruth Rees</span></div>
+ <div class="card"><b>Date of birth</b><span>14/03/1968 (52 y)</span></div>
+ <div class="card"><b>NHS number</b><span>402 118 6657</span></div>
+ <div class="card"><b>Sex</b><span>Female</span></div>
+ <div class="card"><b>Requested by</b><span>Dr Niamh Treloar</span></div>
+ <div class="card"><b>Practice</b><span>Eastgate Surgery, Norwich</span></div>
+ <div class="card"><b>Collected</b><span>07/12/2020, 09:15</span></div>
+ <div class="card"><b>Received</b><span>08/12/2020, 08:02</span></div>
+</div>
+<h2>Haematology and biochemistry</h2>
+<table>
+ <thead><tr><th style="width:34%">Test</th><th class="n">Result</th><th>Units</th><th>Reference range</th><th>Flag</th></tr></thead>
+ <tbody>
+  <tr class="p"><td>Full blood count</td><td></td><td></td><td></td><td></td></tr>
+  <tr class="s"><td>Haemoglobin</td><td class="n">108</td><td>g/L</td><td>115 &ndash; 165</td><td class="low">Low</td></tr>
+  <tr class="s"><td>White cell count</td><td class="n">6.4</td><td>10<sup>9</sup>/L</td><td>4.0 &ndash; 11.0</td><td class="ok"></td></tr>
+  <tr class="s"><td>Platelets</td><td class="n">312</td><td>10<sup>9</sup>/L</td><td>150 &ndash; 400</td><td></td></tr>
+  <tr class="s"><td>Mean cell volume</td><td class="n">76.2</td><td>fL</td><td>80.0 &ndash; 100.0</td><td class="low">Low</td></tr>
+  <tr class="p"><td>Iron studies</td><td></td><td></td><td></td><td></td></tr>
+  <tr class="s"><td>Serum ferritin</td><td class="n">9</td><td>&micro;g/L</td><td>15 &ndash; 150</td><td class="flag">Low</td></tr>
+  <tr class="s"><td>Transferrin saturation</td><td class="n">11</td><td>%</td><td>20 &ndash; 50</td><td class="low">Low</td></tr>
+  <tr class="p"><td>Renal profile</td><td></td><td></td><td></td><td></td></tr>
+  <tr class="s"><td>Sodium</td><td class="n">139</td><td>mmol/L</td><td>133 &ndash; 146</td><td></td></tr>
+  <tr class="s"><td>Potassium</td><td class="n">4.3</td><td>mmol/L</td><td>3.5 &ndash; 5.3</td><td></td></tr>
+  <tr class="s"><td>Creatinine</td><td class="n">71</td><td>&micro;mol/L</td><td>45 &ndash; 84</td><td></td></tr>
+  <tr class="s"><td>eGFR</td><td class="n">&gt;90</td><td>mL/min/1.73 m<sup>2</sup></td><td></td><td></td></tr>
+  <tr class="p"><td>Thyroid function</td><td></td><td></td><td></td><td></td></tr>
+  <tr class="s"><td>TSH</td><td class="n">2.1</td><td>mU/L</td><td>0.3 &ndash; 4.2</td><td></td></tr>
+  <tr class="s"><td>Free thyroxine</td><td class="n">14.8</td><td>pmol/L</td><td>12.0 &ndash; 22.0</td><td></td></tr>
+  <tr class="s"><td>Vitamin B<sub>12</sub></td><td class="n">355</td><td>ng/L</td><td>197 &ndash; 771</td><td></td></tr>
+  <tr class="s"><td>Folate</td><td class="n"></td><td>&micro;g/L</td><td>&gt;3.9</td><td>Not tested</td></tr>
+  <tr class="p"><td>Liver profile</td><td></td><td></td><td></td><td></td></tr>
+  <tr class="s"><td>Alanine transaminase</td><td class="n">22</td><td>U/L</td><td>10 &ndash; 35</td><td></td></tr>
+  <tr class="s"><td>Alkaline phosphatase</td><td class="n">78</td><td>U/L</td><td>30 &ndash; 130</td><td></td></tr>
+  <tr class="s"><td>Total bilirubin</td><td class="n">8</td><td>&micro;mol/L</td><td>0 &ndash; 21</td><td></td></tr>
+  <tr class="s"><td>Albumin</td><td class="n">41</td><td>g/L</td><td>35 &ndash; 50</td><td></td></tr>
+  <tr class="p"><td>Inflammation</td><td></td><td></td><td></td><td></td></tr>
+  <tr class="s"><td>C-reactive protein</td><td class="n">3</td><td>mg/L</td><td>0 &ndash; 5</td><td></td></tr>
+ </tbody>
+</table>
+<p style="margin:12px 0 0;font-size:10.5px;color:#52606d"><b>Specimens.</b> Venous blood, one EDTA tube and one gel serum tube, received at room temperature, no haemolysis, no lipaemia. Methods: impedance and flow cytometry (full blood count); photometry and immunoassay (chemistry). Ranges are adult female and were last reviewed by the laboratory in March 2020.</p>
+<div class="cm">
+ <div><b>Interpretation</b>Low haemoglobin with a low mean cell volume and a ferritin of 9 &micro;g/L is consistent with iron deficiency anaemia. Renal and thyroid function are normal.</div>
+ <div><b>Advice to requester</b>Consider a trial of oral iron and a repeat full blood count in 4 weeks. Please investigate possible sources of blood loss. Folate was not requested.</div>
+</div>
+<div class="foot"><span>Authorised by Arjun Pritchard, Biomedical Scientist, 8 December 2020. Processed on the Dundee analyser line 2.</span><span>Page 1 of 1 &middot; Results apply to the sample as received</span></div>
+</body>
+</html>

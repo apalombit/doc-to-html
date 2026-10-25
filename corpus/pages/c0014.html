@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><title>Chart</title>
+<style>
+*{box-sizing:border-box}
+html{width:480px}body{margin:0;padding:12px;width:480px;font-family:Menlo,monospace;color:#1c1c1c;background:#fff;font-size:12px;line-height:1.4}
+.p-3{padding:12px}.px-2{padding-left:8px;padding-right:8px}.mb-2{margin-bottom:8px}.mt-2{margin-top:8px}
+.text-sm{font-size:11px}.text-xs{font-size:10px}.font-semibold{font-weight:700}.text-gray{color:#666}
+.flex{display:flex}.justify-between{justify-content:space-between}.border-b{border-bottom:1px solid #bbb}
+.accent{color:#c2410c}.chip{display:inline-block;width:10px;height:10px;background:#c2410c;margin-right:4px}.chip2{background:#8a8a8a}
+.rel{position:relative;height:210px}
+.ylab{position:absolute;left:0;width:34px;text-align:right;font-size:10px;color:#666}
+.xlab{position:absolute;top:186px;font-size:10px;width:70px;margin-left:-7px;white-space:nowrap;text-align:center;color:#444}
+svg{position:absolute;left:40px;top:0}
+.bd{border:1px solid #bbb}
+</style></head><body>
+<div class="p-3 bd">
+<div class="font-semibold mb-2" style="font-size:14px">Weekly visitors, Spruce Linnet Garden Centre</div>
+<div class="text-sm text-gray border-b mb-2">Stockport and Newry sites, thousands, 4 weeks to 22 January 2023</div>
+<div class="text-sm mb-2"><span class="chip"></span>Stockport &nbsp; <span class="chip chip2"></span>Newry</div>
+<div class="rel">
+<span class="ylab" style="top:0">8k</span><span class="ylab" style="top:42px">6k</span><span class="ylab" style="top:84px">4k</span><span class="ylab" style="top:126px">2k</span><span class="ylab" style="top:168px">0</span>
+<svg width="390" height="180" viewBox="0 0 390 180">
+<g stroke="#ddd"><line x1="0" y1="8" x2="390" y2="8"/><line x1="0" y1="50" x2="390" y2="50"/><line x1="0" y1="92" x2="390" y2="92"/><line x1="0" y1="134" x2="390" y2="134"/></g>
+<line x1="0" y1="176" x2="390" y2="176" stroke="#333"/>
+<g fill="#c2410c"><rect x="20" y="62" width="30" height="114"/><rect x="118" y="44" width="30" height="132"/><rect x="216" y="30" width="30" height="146"/><rect x="314" y="14" width="30" height="162"/></g>
+<g fill="#8a8a8a"><rect x="52" y="104" width="30" height="72"/><rect x="150" y="92" width="30" height="84"/><rect x="248" y="80" width="30" height="96"/><rect x="346" y="68" width="30" height="108"/></g>
+</svg>
+<span class="xlab" style="left:48px">w/e 1 Jan</span><span class="xlab" style="left:146px">w/e 8 Jan</span><span class="xlab" style="left:244px">w/e 15 Jan</span><span class="xlab" style="left:342px">w/e 22 Jan</span>
+</div>
+<div class="text-xs text-gray mt-2">Fig. 1. Stockport rose every week after the New Year sale; Newry grew more slowly. Counts by Hannah Odell.</div>
+<div class="text-xs text-gray mt-2">Source: door counters, 22/01/2023. Checked by Leah Pritchard.</div>
+</div>
+</body></html>

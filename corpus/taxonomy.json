@@ -328,7 +328,7 @@
   "fragments": {
    "short": "frag", "pages": 0, "pdf": 0,
    "about": "Not a whole page: one part of a document at its own size, as if cut or exported from a larger one. No cards are drawn for it; 'recasts' turns unwritten cards into it.",
-   "widths": [360, 900],
+   "widths": [500, 900],
    "density": {"sparse": 2, "medium": 3, "dense": 1},
    "arrangements": {"arr.one_column": 4, "arr.centred": 1},
    "styles": {"corporate-modern": 2, "government-form": 1, "classic-print": 2, "clinical-plain": 1, "academic": 2, "editorial": 1, "minimal-swiss": 2, "bold-marketing": 1, "legacy-table": 2, "utility-classes": 2, "print-export": 2},
@@ -344,9 +344,9 @@
    },
    "kinds": {
     "standalone table": {"boost": {"table.ruled": 3, "table.spanning": 2, "table.section_rows": 2, "table.totals": 2, "table.zebra": 2, "table.subrows": 2, "table.empty_cells": 1, "table.long": 2}, "exclude": ["fig.icons", "kv.boxed", "list.ticks"]},
-    "chart with caption": {"always": ["fig.chart"], "widths": [420, 900], "arrangements": {"arr.one_column": 1}, "boost": {"fig.chart": 6, "text.footnotes": 1}, "exclude": ["kv.boxed", "list.ticks", "table.spanning", "table.subrows"]},
-    "annotated map": {"widths": [480, 1000], "arrangements": {"arr.one_column": 2, "arr.sidebar": 1}, "boost": {"fig.icons": 2, "list.bullets": 1, "look.accent": 1}, "exclude": ["kv.boxed", "text.formula", "table.spanning", "table.subrows"]},
-    "form section": {"widths": [400, 900], "arrangements": {"arr.one_column": 2, "arr.two_columns": 1}, "boost": {"kv.boxed": 3, "kv.over": 2, "kv.two_per_line": 2, "list.ticks": 2, "fig.signature": 2}, "exclude": ["text.formula", "fig.icons"]},
+    "chart with caption": {"always": ["fig.chart"], "widths": [500, 900], "arrangements": {"arr.one_column": 1}, "boost": {"fig.chart": 6, "text.footnotes": 1}, "exclude": ["kv.boxed", "list.ticks", "table.spanning", "table.subrows"]},
+    "annotated map": {"widths": [500, 1000], "arrangements": {"arr.one_column": 2, "arr.sidebar": 1}, "boost": {"fig.icons": 2, "list.bullets": 1, "look.accent": 1}, "exclude": ["kv.boxed", "text.formula", "table.spanning", "table.subrows"]},
+    "form section": {"widths": [500, 900], "arrangements": {"arr.one_column": 2, "arr.two_columns": 1}, "boost": {"kv.boxed": 3, "kv.over": 2, "kv.two_per_line": 2, "list.ticks": 2, "fig.signature": 2}, "exclude": ["text.formula", "fig.icons"]},
     "diagram with callouts": {"widths": [520, 1000], "arrangements": {"arr.one_column": 2, "arr.sidebar": 1}, "boost": {"list.numbers": 3, "table.ruled": 2, "text.supsub": 1}, "exclude": ["kv.boxed", "list.ticks", "fmt.currency"]}
    }
   }

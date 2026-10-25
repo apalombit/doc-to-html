@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><title>Technical printout</title>
+<style>
+body{margin:0;padding:24px 30px;width:1040px;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:12px;line-height:1.4;color:#000;background:#fff}
+.hd{display:flex;border:2px solid #000}
+.hd .t{flex:1;padding:8px 12px}
+.hd h1{font-family:"DIN Condensed",Oswald,sans-serif;font-weight:400;font-size:34px;margin:0;text-transform:uppercase;letter-spacing:.03em;line-height:1.05}
+.hd .m{width:330px;border-left:2px solid #000;font-size:11px}
+.hd .m div{display:flex;border-bottom:1px solid #000}.hd .m div:last-child{border:0}
+.hd .m b{width:100px;background:#e6e6e6;padding:3px 6px;font-weight:700;border-right:1px solid #000}.hd .m span{padding:3px 6px;flex:1;font-weight:300}
+.cols{display:flex;gap:24px;margin-top:14px}.cols>div{flex:1}
+h2{font-size:13px;font-weight:800;text-transform:uppercase;background:#000;color:#fff;padding:3px 8px;margin:0 0 6px}
+table{border-collapse:collapse;width:100%;margin-bottom:12px}
+th,td{border:1px solid #000;padding:3px 6px;text-align:left;font-size:11.5px}
+th{background:#e6e6e6;font-weight:700}td{font-weight:400}
+.k{display:flex;margin-bottom:5px}.k b{width:150px;font-weight:700;font-size:11px;text-transform:uppercase;padding-top:4px}
+.k span{flex:1;border:1px solid #000;padding:3px 6px;font-weight:300}
+ol{list-style:none;margin:0 0 12px;padding:0}ol li{margin-bottom:5px;padding-left:26px;text-indent:-26px}
+.warn{border:2px solid #000;padding:6px 10px;margin-bottom:12px}.warn b{font-weight:800}
+.ft{margin-top:12px;border-top:2px solid #000;padding-top:4px;display:flex;justify-content:space-between;font-size:10.5px;font-weight:300}
+</style></head><body>
+<div class="hd"><div class="t"><h1>LB-40 Pump Controller</h1><div style="font-weight:300">Installation and commissioning data sheet</div></div>
+<div class="m"><div><b>Document</b><span>LB-40-DS-017</span></div><div><b>Revision</b><span>C, 19/04/2026</span></div><div><b>Author</b><span>Hannah Bryce</span></div><div><b>Approved</b><span>Tom Rahman</span></div></div></div>
+<div class="cols"><div>
+<h2>1. Terminal assignments</h2>
+<table><tr><th>Terminal</th><th>Signal</th><th>Type</th><th>Rating</th></tr>
+<tr><td>X1:1</td><td>Supply L</td><td>Power</td><td>230 V AC</td></tr>
+<tr><td>X1:2</td><td>Supply N</td><td>Power</td><td>230 V AC</td></tr>
+<tr><td>X1:3</td><td>Earth</td><td>Protective</td><td>&mdash;</td></tr>
+<tr><td>X2:1</td><td>Pump relay</td><td>Output</td><td>5 A</td></tr>
+<tr><td>X2:2</td><td>Alarm relay</td><td>Output</td><td>2 A</td></tr>
+<tr><td rowspan="2">X3:1&ndash;2</td><td>Level probe A</td><td>Input</td><td>4&ndash;20 mA</td></tr>
+<tr><td>Level probe B</td><td>Input</td><td>4&ndash;20 mA</td></tr>
+<tr><td colspan="2">Fieldbus (RS-485)</td><td colspan="2">Terminals X4:1 to X4:3, 9600 baud</td></tr></table>
+<h2>2. Setting record</h2>
+<div class="k"><b>Site</b><span>Wrexham Road pumping station</span></div>
+<div class="k"><b>Commissioned by</b><span>Aisha Burrows</span></div>
+<div class="k"><b>Start level</b><span>1.20 m</span></div>
+<div class="k"><b>Stop level</b><span>0.40 m</span></div>
+<div class="k"><b>Alarm level</b><span>1.80 m</span></div>
+</div><div>
+<h2>3. Commissioning procedure</h2>
+<ol><li>3.1&nbsp; Isolate the supply at the board and prove it dead.</li>
+<li>3.2&nbsp; Fit the probe cables to X3, screen to the earth bar only.</li>
+<li>3.3&nbsp; Restore the supply; the display shows the firmware version for 5 s.</li>
+<li>3.4&nbsp; Enter the setting menu and record start, stop and alarm levels above.</li>
+<li>3.5&nbsp; Raise the sump level by hand; the pump relay must close at the start level.</li></ol>
+<div class="warn"><b>WARNING.</b> Mains voltage is present on X1 and X2 whenever the cabinet is live. Work only on a locked-off supply.</div>
+<h2>4. Environmental limits</h2>
+<table><tr><th>Item</th><th>Minimum</th><th>Maximum</th></tr>
+<tr><td>Ambient temperature</td><td>&minus;10 &deg;C</td><td>+50 &deg;C</td></tr>
+<tr><td>Humidity (non-condensing)</td><td>5 %</td><td>90 %</td></tr>
+<tr><td>Enclosure rating</td><td colspan="2">IP65</td></tr></table>
+</div></div>
+<div class="ft"><span>Lodestar Basalt Controls, Shrewsbury</span><span>Printed 19/04/2026</span><span>Page 1 of 3</span></div>
+</body></html>
