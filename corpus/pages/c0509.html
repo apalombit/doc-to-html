@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Admission Ticket</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:40px 30px;width:820px;background:#f2f2f0;color:#161616;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:11px}
+.t{display:grid;grid-template-columns:230px 1fr;background:#fff;border:1px solid #161616}
+.side{border-right:1px dashed #161616;padding:20px 18px;display:flex;flex-direction:column;gap:14px}
+.main{padding:20px 24px;display:flex;flex-direction:column;gap:14px}
+.sc{font-variant:small-caps;letter-spacing:.08em;font-size:12px;color:#555}
+.lab{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#777}
+.val{font-size:13px;font-weight:600;margin-top:2px}
+h1{font-size:34px;line-height:1;margin:0;font-weight:700;letter-spacing:-.02em}
+h1 em{font-style:normal;color:#e4331b}
+.acc{color:#e4331b}
+.rule{border-top:2px solid #161616}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 16px}
+.script{font-family:Caveat,"Bradley Hand",cursive;font-size:24px;color:#2a2a6a;line-height:1}
+ul{margin:4px 0 0;padding-left:16px;line-height:1.55}
+.ic{display:flex;gap:8px;align-items:center;margin:3px 0}
+.ic svg{flex:none}
+.sn{font-size:9px;line-height:1.4;color:#555}
+.bar{display:flex;justify-content:space-between;align-items:end}
+.seat{border:2px solid #161616;padding:8px 10px;text-align:center}
+.seat b{font-size:26px;display:block;line-height:1.1}
+</style>
+</head>
+<body>
+<div class="t">
+<div class="side">
+<div class="sc">Admit one</div>
+<div class="seat"><span class="lab">Section / Row / Seat</span><b>C &middot; 14 &middot; 22</b></div>
+<div><div class="lab">Gate</div><div class="val">North, Door 4</div></div>
+<div><div class="lab">Doors open</div><div class="val">6:30 PM</div></div>
+<div><div class="lab">Price paid</div><div class="val">$68.00</div></div>
+<svg width="190" height="190" viewBox="0 0 19 19" shape-rendering="crispEdges">
+<rect width="19" height="19" fill="#fff"/>
+<g fill="#161616">
+<rect x="0" y="0" width="7" height="1"/><rect x="0" y="6" width="7" height="1"/><rect x="0" y="0" width="1" height="7"/><rect x="6" y="0" width="1" height="7"/><rect x="2" y="2" width="3" height="3"/>
+<rect x="12" y="0" width="7" height="1"/><rect x="12" y="6" width="7" height="1"/><rect x="12" y="0" width="1" height="7"/><rect x="18" y="0" width="1" height="7"/><rect x="14" y="2" width="3" height="3"/>
+<rect x="0" y="12" width="7" height="1"/><rect x="0" y="18" width="7" height="1"/><rect x="0" y="12" width="1" height="7"/><rect x="6" y="12" width="1" height="7"/><rect x="2" y="14" width="3" height="3"/>
+<rect x="8" y="1" width="1" height="2"/><rect x="9" y="3" width="2" height="1"/><rect x="8" y="5" width="3" height="1"/><rect x="10" y="0" width="1" height="2"/>
+<rect x="8" y="8" width="2" height="2"/><rect x="11" y="8" width="1" height="3"/><rect x="13" y="9" width="3" height="1"/><rect x="17" y="8" width="2" height="2"/><rect x="0" y="8" width="3" height="1"/><rect x="4" y="9" width="2" height="2"/>
+<rect x="8" y="12" width="1" height="3"/><rect x="10" y="13" width="3" height="1"/><rect x="14" y="12" width="2" height="2"/><rect x="17" y="13" width="2" height="1"/><rect x="9" y="16" width="4" height="1"/><rect x="14" y="16" width="1" height="3"/><rect x="16" y="17" width="3" height="1"/><rect x="12" y="18" width="1" height="1"/>
+</g></svg>
+<div class="sn">Order 7741-0952-318<br>Scan at the gate. One entry per code.</div>
+</div>
+<div class="main">
+<div class="bar"><div class="sc">Harbourside Live presents</div><div class="sc">Friday, October 30, 2026</div></div>
+<h1>Midnight <em>Orchard</em><br>in Concert</h1>
+<div class="rule"></div>
+<div class="grid">
+<div><div class="lab">Venue</div><div class="val">Pier 9 Amphitheater</div></div>
+<div><div class="lab">City</div><div class="val">Portland, ME</div></div>
+<div><div class="lab">Show starts</div><div class="val">8:00 PM</div></div>
+<div><div class="lab">Support</div><div class="val">The Lantern Sisters</div></div>
+<div><div class="lab">Ticket type</div><div class="val">Reserved seating</div></div>
+<div><div class="lab">Age</div><div class="val">All ages</div></div>
+</div>
+<div class="rule"></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+<div>
+<div class="sc acc">Good to know</div>
+<ul>
+<li>Doors open 90 minutes before the show</li>
+<li>Bags larger than 12 x 6 x 12 in. are not permitted</li>
+<li>Cameras without detachable lenses are welcome</li>
+<li>No re-entry after the second set begins</li>
+<li>Tickets are non-refundable</li>
+</ul>
+</div>
+<div>
+<div class="sc acc">At the venue</div>
+<div class="ic"><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="6" r="4" fill="none" stroke="#161616" stroke-width="1.5"/><path d="M8 10v5" stroke="#161616" stroke-width="1.5"/></svg>Accessible entrance at Gate B</div>
+<div class="ic"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="9" rx="2" fill="none" stroke="#161616" stroke-width="1.5"/><path d="M5 14h6" stroke="#161616" stroke-width="1.5"/></svg>Shuttle from Union Station, 5:30 PM</div>
+<div class="ic"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 1l2 5h5l-4 3 1.5 5L8 11l-4.5 3L5 9 1 6h5z" fill="none" stroke="#161616" stroke-width="1.2"/></svg>Merchandise stand by Gate 2</div>
+<div class="ic"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 2h10v12H3z" fill="none" stroke="#161616" stroke-width="1.5"/><path d="M5 6h6M5 9h6" stroke="#161616" stroke-width="1.5"/></svg>Lost property: desk at Gate 1</div>
+</div>
+</div>
+<div class="sn">The holder of this ticket is admitted subject to the venue's conditions of entry. The promoter reserves the right to refuse admission, to search bags, and to alter the programme or the running order without notice. Photography for personal use only; professional recording equipment is prohibited. Smoking is permitted only in the marked areas outside the perimeter fence. Please keep this ticket until you leave.</div>
+<div class="rule"></div>
+<div class="bar">
+<div><div class="lab">Purchased by</div><div class="script">Marguerite Tolliver</div></div>
+<div class="sn" style="text-align:right">Terms apply. See harbourside.example.com/terms<br>Resale above face value voids this ticket.</div>
+</div>
+</div>
+</div>
+</body>
+</html>

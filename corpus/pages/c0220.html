@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es-ES">
+<head>
+<meta charset="utf-8">
+<title>Receta médica</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:28px 28px 30px;width:620px;background:#fff;color:#1d2b36;font-family:"Gill Sans",Optima,"Trebuchet MS",sans-serif;font-size:11px;line-height:1.4}
+.top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #1b7f79;padding-bottom:8px}
+.top h1{margin:0;font-size:19px;color:#1b7f79;font-weight:700;font-variant:small-caps;letter-spacing:.06em}
+.top .c{font-size:10px;color:#5a6b78;line-height:1.35}
+.top .n{text-align:right;font-size:10px;color:#5a6b78}
+.top .n b{display:block;font-size:13px;color:#1d2b36}
+.sc{font-variant:small-caps;letter-spacing:.07em;font-weight:700;color:#1b7f79;font-size:12px;margin:12px 0 5px}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+.f small{display:block;font-size:8.5px;color:#5a6b78;text-transform:uppercase;letter-spacing:.06em}
+.f div{border:1px solid #9fb7b4;padding:4px 7px;min-height:24px;background:#f5faf9;font-weight:600}
+.w{grid-column:span 2}
+table{border-collapse:collapse;width:100%}
+th{text-align:left;font-variant:small-caps;letter-spacing:.05em;font-size:11px;border-bottom:2px solid #1b7f79;padding:3px 5px;color:#1b7f79}
+td{padding:4px 5px;border-bottom:1px solid #d5e0df;vertical-align:top}
+td.r,th.r{text-align:right}
+td.sub{padding-left:20px;color:#41525e;font-size:10.5px}
+ul{margin:2px 0;padding-left:16px}
+.sign{display:flex;justify-content:space-between;align-items:flex-end;margin-top:14px}
+.sign .box{border:1px solid #9fb7b4;width:220px;height:48px}
+.fine{font-size:9px;color:#5a6b78;margin-top:10px;border-top:1px dashed #9fb7b4;padding-top:5px}
+</style>
+</head>
+<body>
+<div class="top">
+<div><h1>Receta médica</h1><div class="c">Centro de Salud Las Acacias<br>C/ Alcalá 118, 28009 Madrid<br>Tel. 91 555 01 47</div></div>
+<div class="n">Receta n.º<b>RX-2026-084417</b>Válida hasta el 24/11/2026</div>
+</div>
+
+<div class="sc">Paciente</div>
+<div class="g">
+<div class="f w"><small>Nombre y apellidos</small><div>Marta Beltrán Quiroga</div></div>
+<div class="f"><small>Fecha de nacimiento</small><div>12/03/1968</div></div>
+<div class="f"><small>Tarjeta sanitaria</small><div>BLQM 6803 1234 56</div></div>
+<div class="f"><small>Peso</small><div>71,5 kg</div></div>
+<div class="f"><small>Alergias</small><div>Penicilina</div></div>
+</div>
+
+<div class="sc">Diagnóstico</div>
+<div class="f"><div>Hipertensión arterial esencial; dislipemia mixta (CIE-10: I10, E78.2)</div></div>
+
+<div class="sc">Prescripción</div>
+<table>
+<tr><th>Medicamento</th><th>Envase</th><th class="r">Cant.</th><th class="r">PVP</th></tr>
+<tr><td><b>Enalapril</b> 10 mg comprimidos</td><td>60 comp.</td><td class="r">2</td><td class="r">8,45 €</td></tr>
+<tr><td class="sub">1 comprimido por la mañana, con el desayuno</td><td></td><td></td><td></td></tr>
+<tr><td class="sub">Tratamiento crónico, revisión a los 3 meses</td><td></td><td></td><td></td></tr>
+<tr><td><b>Atorvastatina</b> 20 mg comprimidos</td><td>28 comp.</td><td class="r">3</td><td class="r">12,30 €</td></tr>
+<tr><td class="sub">1 comprimido por la noche, antes de acostarse</td><td></td><td></td><td></td></tr>
+<tr><td><b>Paracetamol</b> 1 g comprimidos</td><td>40 comp.</td><td class="r">1</td><td class="r">2,15 €</td></tr>
+<tr><td class="sub">1 comprimido cada 8 horas si hay dolor, máximo 3 g al día</td><td></td><td></td><td></td></tr>
+</table>
+
+<div class="sc">Recomendaciones</div>
+<ul>
+<li>Tomar la medicación a la misma hora todos los días.</li>
+<li>Reducir la sal y medir la tensión arterial dos veces por semana.</li>
+<li>Consultar si aparece tos seca persistente o hinchazón de labios.</li>
+<li>Control analítico (colesterol y función renal) en 12 semanas.</li>
+</ul>
+
+<div class="sign">
+<div class="f"><small>Médico prescriptor</small><div style="border:0;background:none;padding:0">Dr. Álvaro Sepúlveda Ríos<br><span style="font-weight:400">Col. n.º 28/4471823 &middot; Medicina de Familia</span></div></div>
+<div class="f"><small>Firma y sello</small><div class="box"></div></div>
+</div>
+<div class="fine">Fecha de emisión: 24 de octubre de 2026. Esta receta no es válida con enmiendas. Conserve el envase y el prospecto de cada medicamento. El farmacéutico dispensará la cantidad indicada.</div>
+</body>
+</html>

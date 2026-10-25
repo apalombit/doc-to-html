@@ -41,8 +41,11 @@ def evaluate(html: str, script: str, *, width: int, height: int = 3000
         f"const value = {script};"
         "const pre = document.createElement('pre');"
         f"pre.id = '{_ID}';"
-        "pre.textContent = btoa(String.fromCharCode("
-        "...new TextEncoder().encode(JSON.stringify(value))));"
+        "const bytes = new TextEncoder().encode(JSON.stringify(value));"
+        "let binary = '';"
+        "for (let i = 0; i < bytes.length; i += 0x8000) {"
+        "binary += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));}"
+        "pre.textContent = btoa(binary);"
         "document.documentElement.appendChild(pre);"
         "});</script>"
     )

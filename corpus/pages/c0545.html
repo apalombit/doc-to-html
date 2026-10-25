@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Active Week flyer</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:48px 48px 52px;width:800px;background:#fff;color:#111;font-family:"Avenir Next",Avenir,Helvetica,sans-serif;font-size:13px;line-height:1.5}
+.top{display:grid;grid-template-columns:repeat(12,1fr);column-gap:16px;border-top:6px solid #111;padding-top:14px}
+.top .k{grid-column:1/4;font-size:10px;text-transform:uppercase;letter-spacing:1.6px;line-height:1.7}
+.top h1{grid-column:4/13;margin:0;font-size:46px;line-height:1;font-weight:600;letter-spacing:-1.5px}
+.lead{margin:22px 0 0 calc(25% + 4px);width:480px;font-size:15px;line-height:1.45;color:#333}
+.chips{margin:16px 0 0 calc(25% + 4px)}
+.chip{display:inline-block;background:#e8e8e8;border-radius:12px;padding:2px 11px;font-size:11px;margin-right:6px}
+.chip.hi{background:#111;color:#fff}
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:34px}
+.panel{border:1px solid #111;padding:16px 16px 14px}
+.panel h2{margin:0 0 10px;font-size:11px;text-transform:uppercase;letter-spacing:1.4px;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:12px}
+td,th{padding:5px 8px;text-align:left}
+th{font-size:10px;text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid #111;font-weight:600}
+tbody tr:nth-child(even){background:#f0f0f0}
+td.r,th.r{text-align:right}
+.chart{display:flex;align-items:flex-end;justify-content:space-between}
+.axis{display:flex;justify-content:space-between;font-size:10px;color:#555;margin-top:4px;padding:0 2px}
+.axis span{width:14%;text-align:center}
+.cap{font-size:11px;color:#444;margin-top:10px}
+.foot{display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px;margin-top:34px;border-top:1px solid #111;padding-top:12px;font-size:11px}
+.foot b{display:block;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:2px}
+</style>
+</head>
+<body>
+<div class="top">
+<div class="k">Netherby Leisure Trust<br>Autumn programme<br>2026</div>
+<h1>Active Week at Netherby Baths</h1>
+</div>
+<p class="lead">Seven days of free sessions for every age. Come for a swim, a spin class or a gentle walk, and bring a friend.</p>
+<div class="chips"><span class="chip hi">Free entry</span><span class="chip">All ages</span><span class="chip">No booking</span><span class="chip">Step-free</span></div>
+
+<div class="panels">
+<div class="panel">
+<h2>This week&rsquo;s sessions</h2>
+<table>
+<thead><tr><th>Day</th><th>Session</th><th class="r">Time</th></tr></thead>
+<tbody>
+<tr><td>Mon</td><td>Early lengths</td><td class="r">07:00</td></tr>
+<tr><td>Tue</td><td>Family splash</td><td class="r">16:30</td></tr>
+<tr><td>Wed</td><td>Spin &amp; stretch</td><td class="r">18:00</td></tr>
+<tr><td>Thu</td><td>Walking club</td><td class="r">10:00</td></tr>
+<tr><td>Fri</td><td>Aqua fit</td><td class="r">12:15</td></tr>
+<tr><td>Sat</td><td>Junior relay</td><td class="r">09:30</td></tr>
+<tr><td>Sun</td><td>Open pool</td><td class="r">11:00</td></tr>
+</tbody>
+</table>
+</div>
+<div class="panel">
+<h2>Visitors last Active Week</h2>
+<svg width="100%" height="130" viewBox="0 0 330 130" preserveAspectRatio="none"><line x1="0" y1="129" x2="330" y2="129" stroke="#111"/><g fill="#111"><rect x="8" y="64" width="34" height="65"/><rect x="55" y="42" width="34" height="87"/><rect x="102" y="78" width="34" height="51"/><rect x="149" y="30" width="34" height="99"/><rect x="196" y="56" width="34" height="73"/><rect x="243" y="14" width="34" height="115" fill="#777"/><rect x="290" y="38" width="34" height="91"/></g></svg>
+<div class="axis"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+<div class="cap">A total of 581 visits, busiest on Saturday with 115. Source: Trust turnstile counts.</div>
+</div>
+</div>
+
+<div class="foot">
+<div><b>Where</b>Netherby Baths, 12 Weir Lane, Netherby NB4 2QT</div>
+<div><b>When</b>Monday 2 to Sunday 8 November 2026</div>
+<div><b>Ask us</b>activeweek@example.org<br>01632 960 233</div>
+</div>
+</body>
+</html>

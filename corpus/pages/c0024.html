@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Exam Sheet</title>
+<style>
+body{margin:0;padding:28px 30px 30px;width:900px;background:#fff;color:#000;font-family:Arial,sans-serif;font-size:10.5px;line-height:1.35}
+p.MsoNormal{margin:0 0 4px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #000;padding-bottom:6px}
+.top .t{font-size:17pt;font-weight:bold}
+.top .s{font-size:9pt}
+.info{display:flex;gap:18px;margin:6px 0 8px;font-size:9.5pt}
+.info span{border-bottom:1px solid #000;display:inline-block;min-width:110px;padding:0 3px}
+.cols{display:flex;gap:20px}
+.col{width:286px}
+h3{font-size:10.5pt;margin:8px 0 3px;border-bottom:1px solid #000;font-weight:bold}
+ol{list-style:none;margin:0;padding:0}
+ol>li{margin:0 0 5px;padding-left:20px;text-indent:-20px}
+ol ol{margin:2px 0 0 4px}
+ol ol>li{margin:1px 0;padding-left:18px;text-indent:-18px}
+pre{text-indent:0;font-family:"Courier New",monospace;font-size:9.5px;background:#f0f0f0;border:1px solid #888;padding:4px;margin:3px 0 5px;line-height:1.25}
+table{border-collapse:collapse;width:100%;margin:4px 0}
+td,th{border:1px solid #000;padding:2px 4px;font-size:9.5px;text-align:left}
+tr.z td{background:#e4e4e4}
+.b{font-weight:bold}
+.note{font-size:8.5pt;font-style:italic}
+</style>
+</head>
+<body>
+<div class="top"><div><div class="t">CS 210 · Programming Fundamentals</div><div class="s"><span style="font-size:11pt;">Midterm Examination, Version B</span></div></div>
+<div style="text-align:right"><svg width="150" height="34" viewBox="0 0 150 34"><rect x="0" y="0" width="2" height="34"/><rect x="5" y="0" width="4" height="34"/><rect x="12" y="0" width="2" height="34"/><rect x="17" y="0" width="3" height="34"/><rect x="24" y="0" width="5" height="34"/><rect x="32" y="0" width="2" height="34"/><rect x="38" y="0" width="3" height="34"/><rect x="45" y="0" width="2" height="34"/><rect x="50" y="0" width="6" height="34"/><rect x="60" y="0" width="2" height="34"/><rect x="65" y="0" width="4" height="34"/><rect x="73" y="0" width="2" height="34"/><rect x="78" y="0" width="3" height="34"/><rect x="85" y="0" width="5" height="34"/><rect x="93" y="0" width="2" height="34"/><rect x="98" y="0" width="4" height="34"/><rect x="106" y="0" width="2" height="34"/><rect x="111" y="0" width="3" height="34"/><rect x="118" y="0" width="5" height="34"/><rect x="127" y="0" width="2" height="34"/><rect x="132" y="0" width="4" height="34"/><rect x="140" y="0" width="3" height="34"/><rect x="146" y="0" width="2" height="34"/></svg><div style="font-size:8pt">Exam no. 0482-117-B</div></div></div>
+<div class="info"><div>Name <span>&nbsp;</span></div><div>Student ID <span>&nbsp;</span></div><div>Section <span>&nbsp;</span></div><div>Date: October 21, 2026</div><div>Time allowed: 75 minutes</div></div>
+<p class="MsoNormal note">Answer all questions. No calculators, notes or phones. Write answers in the space given. Marks are shown in brackets.</p>
+<div class="cols">
+<div class="col">
+<h3>Part A. Short answers (20 marks)</h3>
+<ol>
+<li>1. State the value of each expression in Python. [6]
+<ol>
+<li>(a) <b>7 // 2</b></li>
+<li>(b) <b>7 % 2</b></li>
+<li>(c) <b>2 ** 3 ** 2</b></li>
+</ol></li>
+<li>2. Name the data type of each value. [4]
+<ol>
+<li>(a) 3.0</li>
+<li>(b) "3"</li>
+<li>(c) [3]</li>
+<li>(d) (3, 4)</li>
+</ol></li>
+<li>3. Explain in one sentence the difference between a list and a tuple. [3]</li>
+<li>4. What does the following print? [4]
+<pre>x = 5
+while x &gt; 0:
+    x -= 2
+    print(x)</pre></li>
+<li>5. Why does <b>"abc" + 5</b> raise an error? [3]</li>
+</ol>
+<h3>Marking scheme</h3>
+<table>
+<tr><th>Part</th><th>Marks</th><th>Topic</th></tr>
+<tr><td>A</td><td>20</td><td>Expressions, types</td></tr>
+<tr class="z"><td>B</td><td>30</td><td>Control flow, loops</td></tr>
+<tr><td>C</td><td>30</td><td>Functions, recursion</td></tr>
+<tr class="z"><td>D</td><td>20</td><td>Lists and dictionaries</td></tr>
+<tr><td class="b">Total</td><td class="b">100</td><td></td></tr>
+</table>
+</div>
+<div class="col">
+<h3>Part B. Control flow (30 marks)</h3>
+<ol>
+<li>6. Rewrite the loop using <b>for</b> and <b>range</b>. [5]
+<pre>i = 1
+while i &lt; 10:
+    print(i * i)
+    i += 3</pre></li>
+<li>7. Trace the code and fill in the table of values. [8]
+<pre>total = 0
+for n in [4, 7, 1, 9]:
+    if n % 2 == 1:
+        total += n
+print(total)</pre>
+<table>
+<tr><th>n</th><th>odd?</th><th>total</th></tr>
+<tr><td>4</td><td></td><td></td></tr>
+<tr class="z"><td>7</td><td></td><td></td></tr>
+<tr><td>1</td><td></td><td></td></tr>
+<tr class="z"><td>9</td><td></td><td></td></tr>
+</table></li>
+<li>8. Write a condition that is true only when <b>year</b> is a leap year. [6]</li>
+<li>9. Identify the error in each fragment. [6]
+<ol>
+<li>(a) <b>if x = 3:</b></li>
+<li>(b) <b>for i in range(5)</b></li>
+<li>(c) <b>print "done"</b></li>
+</ol></li>
+<li>10. What is the output of <b>print(10 &gt; 9 and not 3 == 3)</b>? [5]</li>
+</ol>
+</div>
+<div class="col">
+<h3>Part C. Functions (30 marks)</h3>
+<ol>
+<li>11. Write a function <b>average(nums)</b> that returns the mean of a non-empty list. [6]</li>
+<li>12. Consider the function below.
+<pre>def f(n):
+    if n &lt;= 1:
+        return 1
+    return n * f(n - 1)</pre>
+<ol>
+<li>(a) What is <b>f(4)</b>? [3]</li>
+<li>(b) Name the base case. [2]</li>
+<li>(c) What happens for <b>f(-2)</b>? [3]</li>
+</ol></li>
+<li>13. Write <b>count_vowels(s)</b> and give one call with its result. [8]</li>
+<li>14. State what is meant by a <i>default argument</i>, with an example. [4]</li>
+<li>15. Explain the difference between <b>return</b> and <b>print</b> inside a function. [4]</li>
+</ol>
+<h3>Part D. Collections (20 marks)</h3>
+<ol>
+<li>16. Given <b>d = {"a": 1, "b": 2}</b>, write one line that adds the key <b>"c"</b> with value 3. [3]</li>
+<li>17. Write a loop that prints every key and value of <b>d</b>. [5]</li>
+<li>18. Using a list comprehension, build the squares of 1 to 6. [5]</li>
+<li>19. Explain why <b>d["z"]</b> raises <b>KeyError</b> and how <b>d.get("z", 0)</b> avoids it. [7]</li>
+</ol>
+<p class="MsoNormal note" style="margin-top:8px">End of paper. Total 100 marks.</p>
+</div>
+</div>
+</body>
+</html>

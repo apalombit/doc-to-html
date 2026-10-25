@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="it-IT">
+<head>
+<meta charset="utf-8">
+<title>Fattura</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:34px 36px 38px;width:840px;background:#fff;color:#1f2937;font-family:Palatino,serif;font-size:12px;line-height:1.4}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .nm{font-size:22px;font-weight:700;color:#1d4ed8;line-height:1}
+.brand .sub{font-size:10.5px;color:#6b7280;margin-top:3px}
+.doc{text-align:right}
+.doc .t{font-size:30px;font-weight:700;color:#1d4ed8;letter-spacing:1px;line-height:1}
+.doc .n{font-size:12px;color:#4b5563;margin-top:3px}
+.panels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.panel{border:1px solid #cbd5e1;border-top:4px solid #1d4ed8;border-radius:4px;padding:10px 12px;background:#fafbff}
+.panel h2{margin:0 0 6px;font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:#1d4ed8;font-family:Arial,sans-serif}
+.panel .big{font-weight:700;font-size:13px}
+.box{border:1px solid #94a3b8;background:#fff;padding:2px 7px;margin-bottom:5px;border-radius:3px;display:flex;justify-content:space-between}
+.box span:first-child{color:#6b7280;font-size:10.5px}
+.box span:last-child{font-weight:700}
+table.lines{width:100%;border-collapse:collapse;margin-top:16px;font-size:11.5px}
+.lines th{background:#1d4ed8;color:#fff;text-align:left;font-family:Arial,sans-serif;font-size:9.5px;letter-spacing:.8px;text-transform:uppercase;padding:5px 7px}
+.lines td{padding:4px 7px;border-bottom:1px solid #e5e7eb}
+.lines .r{text-align:right;white-space:nowrap}
+.lines tr.sec td{background:#e0e7ff;color:#1e3a8a;font-weight:700;border-bottom:0;padding:5px 7px}
+.lines tr.sub td{font-style:italic;color:#4b5563;border-bottom:1.5px solid #94a3b8}
+.bot{display:grid;grid-template-columns:1.3fr 1fr;gap:20px;margin-top:16px}
+.tot{border:1px solid #cbd5e1;border-radius:4px}
+.tot div{display:flex;justify-content:space-between;padding:5px 12px;border-bottom:1px solid #e5e7eb}
+.tot div:last-child{background:#1d4ed8;color:#fff;font-size:16px;font-weight:700;border:0}
+.small{font-size:10px;color:#4b5563}
+h3{margin:0 0 4px;font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:#1d4ed8;font-family:Arial,sans-serif}
+</style>
+</head>
+<body>
+<header>
+<div class="brand">
+<svg width="46" height="46" viewBox="0 0 46 46"><rect width="46" height="46" rx="9" fill="#1d4ed8"/><path d="M10 34 L23 10 L36 34 Z" fill="none" stroke="#fff" stroke-width="3.2" stroke-linejoin="round"/><circle cx="23" cy="27" r="4" fill="#fff"/></svg>
+<div><div class="nm">Studio Lumina S.r.l.</div><div class="sub">Progettazione e impianti di illuminazione</div></div>
+</div>
+<div class="doc"><div class="t">FATTURA</div><div class="n">N. 2026/0317 del 15/10/2026</div></div>
+</header>
+
+<div class="panels">
+<div class="panel">
+<h2>Cedente / prestatore</h2>
+<div class="big">Studio Lumina S.r.l.</div>
+Via dei Tessitori 18<br>40128 Bologna (BO)<br>P.IVA IT01234560371<br>C.F. 01234560371<br>REA BO-512847 &middot; Cap. soc. € 50.000 i.v.
+</div>
+<div class="panel">
+<h2>Cessionario / committente</h2>
+<div class="big">Hotel Villa Serena S.p.A.</div>
+Viale della Repubblica 102<br>47921 Rimini (RN)<br>P.IVA IT09876540401<br>Codice destinatario: M5UXCR1<br>PEC: villaserena@example.org
+</div>
+<div class="panel">
+<h2>Dati del documento</h2>
+<div class="box"><span>Tipo</span><span>TD01 &ndash; Fattura</span></div>
+<div class="box"><span>Scadenza</span><span>14/11/2026</span></div>
+<div class="box"><span>Ordine n.</span><span>OR-2026-088</span></div>
+<div class="box"><span>Cantiere</span><span>Sala Colazioni</span></div>
+</div>
+</div>
+
+<table class="lines">
+<thead><tr><th style="width:44%">Descrizione</th><th>U.M.</th><th class="r">Quantità</th><th class="r">Prezzo unit. (€)</th><th class="r">IVA</th><th class="r">Importo (€)</th></tr></thead>
+<tbody>
+<tr class="sec"><td colspan="6">A. Progettazione e consulenza</td></tr>
+<tr><td>Sopralluogo e rilievo dei locali</td><td>a corpo</td><td class="r">1</td><td class="r">480,00</td><td class="r">22%</td><td class="r">480,00</td></tr>
+<tr><td>Progetto esecutivo dell&rsquo;impianto di illuminazione</td><td>a corpo</td><td class="r">1</td><td class="r">2.350,00</td><td class="r">22%</td><td class="r">2.350,00</td></tr>
+<tr><td>Direzione lavori</td><td>ore</td><td class="r">18</td><td class="r">65,00</td><td class="r">22%</td><td class="r">1.170,00</td></tr>
+<tr class="sub"><td colspan="5">Totale sezione A</td><td class="r">4.000,00</td></tr>
+<tr class="sec"><td colspan="6">B. Forniture</td></tr>
+<tr><td>Apparecchi LED da incasso 4000 K, 18 W</td><td>pz</td><td class="r">24</td><td class="r">42,50</td><td class="r">22%</td><td class="r">1.020,00</td></tr>
+<tr><td>Binario elettrificato trifase, 3 m</td><td>pz</td><td class="r">6</td><td class="r">38,00</td><td class="r">22%</td><td class="r">228,00</td></tr>
+<tr><td>Cavo FG16OR16 3&times;1,5 mm&sup2;</td><td>m</td><td class="r">120</td><td class="r">1,85</td><td class="r">22%</td><td class="r">222,00</td></tr>
+<tr><td>Quadro di comando con dimmer</td><td>pz</td><td class="r">1</td><td class="r">640,00</td><td class="r">22%</td><td class="r">640,00</td></tr>
+<tr class="sub"><td colspan="5">Totale sezione B</td><td class="r">2.110,00</td></tr>
+<tr class="sec"><td colspan="6">C. Posa in opera</td></tr>
+<tr><td>Manodopera specializzata, due operatori</td><td>ore</td><td class="r">32</td><td class="r">38,00</td><td class="r">22%</td><td class="r">1.216,00</td></tr>
+<tr><td>Trasporto e smaltimento imballaggi</td><td>a corpo</td><td class="r">1</td><td class="r">175,00</td><td class="r">22%</td><td class="r">175,00</td></tr>
+<tr class="sub"><td colspan="5">Totale sezione C</td><td class="r">1.391,00</td></tr>
+</tbody>
+</table>
+
+<div class="bot">
+<div>
+<h3>Modalità di pagamento</h3>
+<div class="box"><span>Metodo</span><span>Bonifico bancario, 30 giorni data fattura</span></div>
+<div class="box"><span>IBAN</span><span>IT60 X054 2811 1010 0000 0123 456</span></div>
+<div class="box"><span>Banca</span><span>Banca Appennino, filiale di Bologna Centro</span></div>
+<div class="box"><span>Causale</span><span>Fattura 2026/0317</span></div>
+<p class="small" style="margin-top:8px">Operazione soggetta a IVA ordinaria. In caso di ritardato pagamento si applicano gli interessi previsti dal D.Lgs. 231/2002. Documento emesso in formato elettronico e trasmesso tramite il Sistema di Interscambio.</p>
+</div>
+<div class="tot">
+<div><span>Imponibile</span><span>€ 7.501,00</span></div>
+<div><span>IVA 22%</span><span>€ 1.650,22</span></div>
+<div><span>Sconti e abbuoni</span><span>€ 0,00</span></div>
+<div><span>Totale documento</span><span>€ 9.151,22</span></div>
+</div>
+</div>
+<p class="small" style="margin-top:14px;border-top:1px solid #cbd5e1;padding-top:6px"><b>Note.</b> Garanzia di 24 mesi sugli apparecchi, come da certificati allegati. Il collaudo finale è stato eseguito il 9 ottobre 2026 alla presenza del direttore della struttura. Le fatture si intendono accettate se non contestate entro otto giorni dal ricevimento.</p>
+</body>
+</html>

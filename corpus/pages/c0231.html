@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Discharge summary</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:30px 32px 34px;width:840px;background:#fff;color:#16282b;font-family:"Charter",Georgia,serif;font-size:12.5px;line-height:1.42}
+.hd{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #0f766e;padding-bottom:8px}
+.hd h1{margin:0;font-size:24px;color:#0f766e;font-weight:700}
+.hd .o{text-align:right;font-size:11px;color:#456}
+.pt{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0 4px;background:#eef6f5;padding:8px 10px;border:1px solid #b9d6d3}
+.f small{display:block;font-size:9.5px;text-transform:uppercase;letter-spacing:.8px;color:#4b6b69}
+.f span{font-weight:700}
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px}
+.panel{border:1px solid #9fc4c0;padding:0 12px 10px}
+.panel h2{margin:0 -12px 8px;background:#0f766e;color:#fff;font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:4px 12px;font-family:Arial,sans-serif}
+.flag{display:inline-block;text-indent:0;background:#b91c1c;color:#fff;font-family:Arial,sans-serif;font-size:9px;font-weight:700;padding:0 4px;margin-left:4px;vertical-align:1px}
+ol{list-style:none;margin:0 0 6px;padding:0}
+ol li{margin-bottom:3px;padding-left:20px;text-indent:-20px}
+ul{margin:2px 0 6px;padding-left:18px}
+ul ul{margin:1px 0 2px;list-style:circle}
+table{width:100%;border-collapse:collapse;font-size:11.5px}
+th{text-align:left;font-family:Arial,sans-serif;font-size:9.5px;text-transform:uppercase;letter-spacing:.6px;color:#0f766e;border-bottom:1.5px solid #0f766e;padding:3px 4px}
+td{padding:3px 4px}
+tr:nth-child(even) td{background:#eef6f5}
+p{margin:0 0 6px}
+.sig{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:16px;border-top:1px solid #9fc4c0;padding-top:8px;font-size:11px}
+</style>
+</head>
+<body>
+<div class="hd">
+<h1>Discharge Summary</h1>
+<div class="o">Northmoor General Hospital &middot; Department of General Medicine<br>Ward 7B &middot; Tel 01632 960 700</div>
+</div>
+<div class="pt">
+<div class="f"><small>Patient</small><span>Walker, Margaret J.</span></div>
+<div class="f"><small>Date of birth</small><span>03/02/1951 (75 y)</span></div>
+<div class="f"><small>NHS number</small><span>943 117 2208</span></div>
+<div class="f"><small>Admitted</small><span>06/10/2026</span></div>
+<div class="f"><small>Discharged</small><span>13/10/2026</span></div>
+<div class="f"><small>Consultant</small><span>Dr A. Rahman</span></div>
+<div class="f"><small>GP</small><span>Dr P. Hollis, Elm Surgery</span></div>
+<div class="f"><small>Allergies</small><span>Penicillin (rash)</span></div>
+<div class="f"><small>Destination</small><span>Home, with carer</span></div>
+<div class="f"><small>Length of stay</small><span>7 days</span></div>
+</div>
+
+<div class="panels">
+<div class="panel">
+<h2>Diagnoses and course</h2>
+<p><b>Principal diagnosis</b></p>
+<ol><li>1. Community-acquired pneumonia, right lower lobe</li></ol>
+<p><b>Secondary diagnoses</b></p>
+<ol>
+<li>2. Type 2 diabetes mellitus, HbA1c 58 mmol/mol</li>
+<li>3. Hypertension, controlled</li>
+<li>4. Mild acute kidney injury, resolved<span class="flag">CR 118</span></li>
+</ol>
+<p><b>Hospital course</b></p>
+<ul>
+<li>Presented with 4 days of productive cough, fever and breathlessness; SpO<sub>2</sub> 90% on air.
+<ul><li>CXR: right lower lobe consolidation.</li><li>CRP 148 mg/L, WCC 14.2 &times;10<sup>9</sup>/L.</li></ul></li>
+<li>Treated with IV clarithromycin then oral doxycycline, given the penicillin allergy.
+<ul><li>Oxygen weaned off by day 3.</li><li>Creatinine 118 &rarr; 82 &micro;mol/L with fluids.</li></ul></li>
+<li>Mobilising independently; observations stable for 48 hours before discharge.</li>
+</ul>
+</div>
+
+<div class="panel">
+<h2>Medicines on discharge</h2>
+<table>
+<tr><th>Drug</th><th>Dose</th><th>Freq.</th><th>Note</th></tr>
+<tr><td>Doxycycline</td><td>100 mg</td><td>BD</td><td>3 more days</td></tr>
+<tr><td>Metformin</td><td>500 mg</td><td>TDS</td><td>Restarted</td></tr>
+<tr><td>Ramipril</td><td>5 mg</td><td>OD</td><td>Unchanged</td></tr>
+<tr><td>Amlodipine</td><td>5 mg</td><td>OD</td><td>Unchanged</td></tr>
+<tr><td>Atorvastatin</td><td>20 mg</td><td>ON</td><td>Unchanged</td></tr>
+<tr><td>Paracetamol</td><td>1 g</td><td>QDS PRN</td><td>Max 4 g/day</td></tr>
+</table>
+<p style="margin-top:8px"><b>Follow-up</b></p>
+<ul>
+<li>GP review in 1 week
+<ul><li>Repeat U&amp;E and CRP.</li><li>Review ramipril if creatinine rises.</li></ul></li>
+<li>Repeat chest X-ray at 6 weeks.</li>
+<li>Return to hospital if breathless, febrile, or confused.</li>
+</ul>
+</div>
+</div>
+
+<div class="sig">
+<div>Completed by: Dr S. Imani, Foundation Year 2<br>Date: 13/10/2026, 15:40</div>
+<div>Authorised by: Dr A. Rahman, Consultant Physician<br>Copy sent to: patient, GP, district nursing team</div>
+</div>
+</body>
+</html>

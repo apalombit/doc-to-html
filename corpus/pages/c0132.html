@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Invoice</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:34px 40px 38px;width:820px;background:#fdfcf8;color:#201c18;font-family:Baskerville,"Baskervville",Georgia,serif;font-size:14px;line-height:1.45}
+.top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+.firm{font-size:26px;font-variant:small-caps;letter-spacing:.05em}
+.addr{font-size:12px;color:#5b524a}
+.title{text-align:right;font-size:30px;font-variant:small-caps;letter-spacing:.1em;color:#6b1f2a}
+.band{background:#6b1f2a;color:#f6efe2;font-variant:small-caps;letter-spacing:.12em;padding:5px 12px;margin:20px 0 10px;font-size:15px}
+.meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px 20px;font-size:13px}
+.meta b{font-variant:small-caps;letter-spacing:.06em;font-weight:400;color:#6b1f2a;display:block;font-size:12px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font-variant:small-caps;letter-spacing:.08em;font-weight:400;text-align:left;border-bottom:2px solid #201c18;padding:5px 6px;font-size:13px}
+td{padding:6px;border-bottom:1px solid #cfc6b8}
+.r{text-align:right}
+.tot td{border-bottom:0;padding:3px 6px}
+.grand td{border-top:2px solid #201c18;font-weight:700;font-size:16px;padding-top:6px}
+.chart{display:flex;gap:26px;align-items:flex-end}
+.legend{font-size:12px;color:#5b524a;display:grid;grid-template-columns:repeat(5,52px);padding-left:1px;text-align:center;margin-top:2px}
+.small{font-size:12px;color:#5b524a}
+</style>
+</head>
+<body>
+<div class="top">
+ <div><div class="firm">Pemberton &amp; Lowe</div><div class="addr">Chartered surveyors<br>18 Quay Street, Bristol BS1 4DJ<br>VAT reg. GB 218 4471 09</div></div>
+ <div><div class="title">Invoice</div><div class="addr" style="text-align:right">No. 2026-0341</div></div>
+</div>
+<div class="meta">
+ <div><b>Invoice date</b>12 October 2026</div><div><b>Due date</b>11 November 2026</div><div><b>Order ref.</b>PO-7752</div>
+ <div><b>Billed to</b>Alder Mews Management Ltd<br>3 Canon's Road<br>Bristol BS1 5TX</div><div><b>Project</b>Structural survey, Alder Mews</div><div><b>Surveyor</b>R. Pemberton</div>
+</div>
+<div class="band">Services rendered</div>
+<table>
+<tr><th>Description</th><th class="r">Qty</th><th class="r">Rate</th><th class="r">Amount</th></tr>
+<tr><td>Consulting, structural assessment (hours)</td><td class="r">12</td><td class="r">£85.00</td><td class="r">£1,020.00</td></tr>
+<tr><td>Site survey, one day</td><td class="r">1</td><td class="r">£450.00</td><td class="r">£450.00</td></tr>
+<tr><td>Report, printed and bound</td><td class="r">6</td><td class="r">£18.50</td><td class="r">£111.00</td></tr>
+<tr><td>Travel (miles)</td><td class="r">140</td><td class="r">£0.45</td><td class="r">£63.00</td></tr>
+</table>
+<table style="margin-top:6px">
+<tr class="tot"><td></td><td class="r" style="width:190px">Subtotal</td><td class="r" style="width:120px">£1,644.00</td></tr>
+<tr class="tot"><td></td><td class="r">VAT at 20%</td><td class="r">£328.80</td></tr>
+<tr class="tot grand"><td></td><td class="r">Total due</td><td class="r">£1,972.80</td></tr>
+</table>
+<div class="band">Hours billed this year</div>
+<div class="chart">
+ <svg width="300" height="90" viewBox="0 0 300 90"><rect x="10" y="50" width="34" height="40" fill="#b99a6b"/><rect x="62" y="30" width="34" height="60" fill="#b99a6b"/><rect x="114" y="62" width="34" height="28" fill="#b99a6b"/><rect x="166" y="20" width="34" height="70" fill="#b99a6b"/><rect x="218" y="8" width="34" height="82" fill="#6b1f2a"/><path d="M0 90H300" stroke="#201c18" stroke-width="1"/></svg>
+ <div class="small">Hours billed to this client, May to September 2026: 20, 30, 14, 35 and 41. The September figure includes the twelve hours charged above.</div>
+</div>
+<div class="legend"><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span></div>
+<p class="small" style="margin-top:18px">Payment by bank transfer to Pemberton &amp; Lowe, sort code 40-22-18, account 5519 3047, quoting the invoice number. Interest is charged on overdue sums at 4% above the Bank of England base rate. Thank you for your instruction.</p>
+</body>
+</html>

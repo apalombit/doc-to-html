@@ -3,10 +3,10 @@
  "passed": true,
  "failures": {},
  "checked": "2026-10-25",
- "seconds": 3.7,
+ "seconds": 7.4,
  "width": 880,
- "height": 836,
- "words": 287,
+ "height": 988,
+ "words": 408,
  "card_features": [
   "arr.cards_grid",
   "type.sans",
@@ -26,7 +26,7 @@
   "text.quote",
   "type.sans"
  ],
- "dhash": "69e93f4e7a676767",
- "html_sha256": "75df882a0c22d151775d63b1bebb79aae44d65afcb714cf47b3bf0b3f8ca9cd5",
- "png_sha256": "54f8cc2831820ae8becc468146ff0390c9f4ac2d2b6130e740629304c6bcf7c3"
+ "dhash": "e9397f6e7c676767",
+ "html_sha256": "1424085c34f8864eddc44bda45ebe1e66911c8778ee972f54e064473f438b0dd",
+ "png_sha256": "00cbd90776188447172014a3e92d9afa7553d1d606d4895f831ae1894eab8cdf"
 }

@@ -3,10 +3,10 @@
  "passed": true,
  "failures": {},
  "checked": "2026-10-25",
- "seconds": 4.4,
+ "seconds": 6.3,
  "width": 880,
- "height": 1273,
- "words": 177,
+ "height": 1404,
+ "words": 224,
  "card_features": [
   "arr.one_column",
   "type.sans",
@@ -19,7 +19,7 @@
   "fmt.currency",
   "type.sans"
  ],
- "dhash": "8e0f392d3529352b",
- "html_sha256": "b3faeb7cbbfc38a049c8a3b043f1a3483c3c30553f86baa7d0adf8893414d45f",
- "png_sha256": "a80c1745a23367645a11a14a4f8794ab192faffdf3cdf7b81bc572395079a344"
+ "dhash": "8e0d396d396d3517",
+ "html_sha256": "1fdd9737a6230558edae783efd0a7c8a40c912e3aa258bd199497e5c55720789",
+ "png_sha256": "28bc6daa9ce8f6adc937d91948f23ceb08c40a60f3b338bbe1439fa13041c629"
 }

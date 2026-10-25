@@ -2,11 +2,11 @@
  "id": "c0187",
  "passed": true,
  "failures": {},
- "checked": "2026-10-24",
- "seconds": 4.7,
+ "checked": "2026-10-25",
+ "seconds": 7.0,
  "width": 760,
- "height": 719,
- "words": 109,
+ "height": 1028,
+ "words": 201,
  "card_features": [
   "arr.panels_side_by_side",
   "type.sans",
@@ -22,7 +22,7 @@
   "text.supsub",
   "type.sans"
  ],
- "dhash": "9786c444d4055d70",
- "html_sha256": "1ad562780dac4236bd1131be203c08ae2a03b3cba2ffc1c79e74dfc158294aa7",
- "png_sha256": "c6b19af6456b47a1104b1c36ca7a378b9e1d40813af856e25994bba98c8a93eb"
+ "dhash": "97e6645444c64d7d",
+ "html_sha256": "e0de7600c1586411d5c3bac99de38992305a3c644f640d6d71bcb907bb802ca8",
+ "png_sha256": "8a09c51d1c33a93892d42d909ac1991cff97da42ef7a5e454690d79962f888e6"
 }

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Patient intake</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:34px 44px 36px;width:860px;background:#fff;color:#1f2d33;font-family:"Source Sans Variable","Helvetica Neue",sans-serif;font-size:14px;line-height:1.45}
+header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #0f7c8a;padding-bottom:10px;margin-bottom:18px}
+h1{margin:0;font-size:26px;font-weight:600;color:#0b5f6b}
+.clinic{text-align:right;font-size:12px;color:#4a5b62}
+h2{font-size:14px;font-weight:700;color:#0b5f6b;text-transform:uppercase;letter-spacing:.07em;margin:22px 0 8px}
+.f{display:flex;gap:10px;margin-bottom:8px}
+.box{flex:1;border:1px solid #7fa7ae;border-radius:3px;padding:4px 8px;min-height:36px;background:#f7fbfc}
+.box b{display:block;font-size:10.5px;font-weight:600;color:#4a5b62;text-transform:uppercase;letter-spacing:.05em}
+ol{list-style:none;margin:0;padding:0}
+ol li{margin-bottom:6px;padding-left:26px;text-indent:-26px}
+ol li span.n{display:inline-block;width:26px;text-indent:0;font-weight:700;color:#0f7c8a}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border:1px solid #9bb8be;padding:6px 8px;text-align:left}
+th{background:#e3f1f3;font-weight:600}
+.notes{margin-top:26px;border-top:1px solid #9bb8be;padding-top:8px;font-size:11px;color:#4a5b62}
+.notes p{margin:0 0 3px}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>Patient Intake Form</h1><div style="font-size:13px;color:#4a5b62">New patient registration, please complete in block capitals</div></div>
+  <div class="clinic"><b>Alderbrook Family Practice</b><br>12 Mill Lane, Bath BA2 4QR<br>01225 555 0147</div>
+</header>
+
+<h2>Your details</h2>
+<div class="f"><div class="box"><b>Full name</b>Priya Raghunathan</div><div class="box"><b>Date of birth</b>09/03/1987</div><div class="box"><b>NHS number</b>485 777 3456</div></div>
+<div class="f"><div class="box" style="flex:2"><b>Address</b>7 Weston Court, Bath BA1 3PD</div><div class="box"><b>Mobile</b>07700 900 318</div></div>
+
+<h2>What brings you in</h2>
+<ol>
+<li><span class="n">1.</span>Describe your main concern<sup>1</sup>: recurring headaches for about three weeks, worse in the evening.</li>
+<li><span class="n">2.</span>Are you taking any regular medicines<sup>2</sup>? Yes, cetirizine 10 mg each morning.</li>
+<li><span class="n">3.</span>Do you have any known allergies? Penicillin, rash.</li>
+</ol>
+
+<h2>Current medicines</h2>
+<table>
+<tr><th>Medicine</th><th>Dose</th><th>How often</th><th>Since</th></tr>
+<tr><td>Cetirizine</td><td>10 mg</td><td>Once daily</td><td>March 2025</td></tr>
+<tr><td>Ibuprofen</td><td>200 mg</td><td>When needed</td><td>September 2026</td></tr>
+</table>
+
+<div class="notes">
+<p><sup>1</sup> Include when it started and anything that makes it better or worse.</p>
+<p><sup>2</sup> Include vitamins, herbal remedies and anything bought without a prescription.</p>
+</div>
+</body>
+</html>

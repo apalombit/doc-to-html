@@ -417,11 +417,16 @@ MEASURE = r"""
     figures: figures,
   };
 
+  // In chunks: spreading every byte as an argument fails on a payload
+  // over about 100 KB, a table of 40 rows by 8 columns (spec 0020).
+  const bytes = new TextEncoder().encode(JSON.stringify(payload));
+  let binary = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) {
+    binary += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  }
   const pre = document.createElement('pre');
   pre.id = '__projection';
-  pre.textContent = btoa(
-    String.fromCharCode(...new TextEncoder().encode(JSON.stringify(payload)))
-  );
+  pre.textContent = btoa(binary);
   document.documentElement.appendChild(pre);
 })();
 """

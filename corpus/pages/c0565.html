@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Slide</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;width:1160px;padding:0 0 40px;background:#fafaf7;color:#1c1c1c;font-family:Menlo,Monaco,"Courier New",monospace;font-size:14px;line-height:1.5}
+.flex{display:flex}.grid{display:grid}.grid-cols-2{grid-template-columns:1fr 1fr}.gap-2{gap:8px}.gap-8{gap:36px}
+.p-2{padding:8px}.p-4{padding:16px}.px-10{padding-left:44px;padding-right:44px}.py-6{padding-top:24px;padding-bottom:24px}.mt-2{margin-top:8px}.mt-4{margin-top:16px}.mb-2{margin-bottom:8px}
+.text-xs{font-size:11px}.text-sm{font-size:13px}.text-xl{font-size:22px}.text-3xl{font-size:34px;line-height:1.15}
+.font-bold{font-weight:700}.text-right{text-align:right}.uppercase{text-transform:uppercase}.tracking{letter-spacing:.08em}
+.bg-ink{background:#17212b}.text-white{color:#f4f1e8}.bg-sand{background:#ece7d8}.bg-amber{background:#f2b632}
+.border-b{border-bottom:1px solid #1c1c1c}.border-dashed{border-bottom:2px dashed #8a8570}.border-double{border-bottom:4px double #1c1c1c}
+.rounded{border-radius:12px}.chip{display:inline-block;padding:1px 10px;margin-right:6px;border-radius:12px;font-size:11px;font-weight:700}
+.c-g{background:#cfe8d0;color:#1d5a26}.c-r{background:#f5cccc;color:#8a1c1c}.c-b{background:#cddff5;color:#1b3f78}
+.w-half{width:50%}
+pre{margin:0;padding:12px;background:#17212b;color:#e6e1cf;font-size:12.5px;line-height:1.45;border-radius:6px}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid #1c1c1c;padding:5px 8px;text-align:left;font-size:12.5px}
+th{background:#ece7d8}
+ul{margin:6px 0 0;padding-left:20px}
+li{margin:3px 0}
+</style>
+</head>
+<body>
+<div class="bg-ink text-white px-10 py-6 flex" style="justify-content:space-between;align-items:flex-end">
+<div><div class="text-xs uppercase tracking">Platform Engineering Review · Q3 2026</div><div class="text-3xl font-bold mt-2">Moving the nightly build<br>from cron to a queue</div></div>
+<div class="text-right text-sm">Slide 7 of 18<br>Reviewed 22/10/2026</div>
+</div>
+<div class="bg-amber px-10 p-2 text-sm font-bold uppercase tracking">Result: median build time 41 min down to 17 min</div>
+<div class="px-10 mt-4 grid grid-cols-2 gap-8">
+<div>
+<div class="text-xl font-bold border-double mb-2">What changed</div>
+<ul>
+<li>Jobs enter a shared queue instead of firing at 02:00</li>
+<li>Workers pull jobs when idle, capped at six at once</li>
+<li>Failed jobs retry twice, then page the owner</li>
+<li>Logs go to one store, kept for fourteen days</li>
+</ul>
+<div class="mt-4">
+<span class="chip c-g">stable</span><span class="chip c-b">queued</span><span class="chip c-r">3 flaky</span>
+</div>
+<div class="mt-4 text-xl font-bold border-b mb-2">Run summary</div>
+<div class="flex gap-8 text-sm border-dashed p-2"><div><b>Jobs:</b> 214</div><div><b>Retries:</b> 19</div></div>
+<div class="flex gap-8 text-sm border-dashed p-2"><div><b>Workers:</b> 6</div><div><b>Peak queue:</b> 38</div></div>
+<div class="flex gap-8 text-sm border-dashed p-2"><div><b>Failures:</b> 4</div><div><b>Cost:</b> £212.40</div></div>
+</div>
+<div>
+<div class="text-xl font-bold border-double mb-2">Worker loop</div>
+<pre>while True:
+    job = queue.pop(timeout=30)
+    if job is None:
+        continue
+    try:
+        run(job.command)
+    except BuildError:
+        job.retries += 1
+        if job.retries &lt;= 2:
+            queue.push(job)
+        else:
+            alert(job.owner)</pre>
+<div class="mt-4"><table>
+<tr><th>Team</th><th>Before</th><th>After</th><th>Saved</th></tr>
+<tr><td>Web</td><td>48 min</td><td>19 min</td><td>29 min</td></tr>
+<tr><td>Payments</td><td>52 min</td><td>22 min</td><td>30 min</td></tr>
+<tr><td>Mobile</td><td>36 min</td><td>16 min</td><td>20 min</td></tr>
+<tr><td>Data</td><td>28 min</td><td>11 min</td><td>17 min</td></tr>
+</table></div>
+</div>
+</div>
+<div class="px-10 mt-4 grid grid-cols-2 gap-8">
+<div><div class="text-xl font-bold border-b mb-2">Open risks</div><ul><li>Two builds still assume a fixed clock and fail when retried</li><li>The queue has one host; a standby is planned for November</li><li>Mobile signing keys must move to the vault before rollout</li></ul></div>
+<div><div class="text-xl font-bold border-b mb-2">Next steps</div><ul><li>Migrate Data and Mobile jobs by 6 November</li><li>Add a queue-depth alert at 60 jobs</li><li>Review cost again at the end of the quarter</li></ul></div>
+</div>
+<div class="flex px-10 mt-4 text-xs" style="justify-content:space-between;align-items:center"><div>Source: build log export, 1 to 20 October 2026. Times are medians over 214 nightly jobs.<br>Owner: Priya Ramanathan, Platform Engineering. Questions to the build channel.</div><svg width="54" height="54" viewBox="0 0 54 54"><rect x="0" y="0" width="6" height="6"/><rect x="6" y="0" width="6" height="6"/><rect x="12" y="0" width="6" height="6"/><rect x="18" y="0" width="6" height="6"/><rect x="24" y="0" width="6" height="6"/><rect x="30" y="0" width="6" height="6"/><rect x="0" y="6" width="6" height="6"/><rect x="6" y="6" width="6" height="6"/><rect x="12" y="6" width="6" height="6"/><rect x="18" y="6" width="6" height="6"/><rect x="24" y="6" width="6" height="6"/><rect x="30" y="6" width="6" height="6"/><rect x="0" y="12" width="6" height="6"/><rect x="6" y="12" width="6" height="6"/><rect x="12" y="12" width="6" height="6"/><rect x="42" y="12" width="6" height="6"/><rect x="12" y="18" width="6" height="6"/><rect x="18" y="18" width="6" height="6"/><rect x="24" y="18" width="6" height="6"/><rect x="48" y="18" width="6" height="6"/><rect x="30" y="24" width="6" height="6"/><rect x="42" y="24" width="6" height="6"/><rect x="48" y="24" width="6" height="6"/><rect x="0" y="30" width="6" height="6"/><rect x="12" y="30" width="6" height="6"/><rect x="18" y="30" width="6" height="6"/><rect x="30" y="30" width="6" height="6"/><rect x="42" y="30" width="6" height="6"/><rect x="48" y="30" width="6" height="6"/><rect x="6" y="36" width="6" height="6"/><rect x="12" y="36" width="6" height="6"/><rect x="18" y="36" width="6" height="6"/><rect x="30" y="36" width="6" height="6"/><rect x="36" y="36" width="6" height="6"/><rect x="48" y="36" width="6" height="6"/><rect x="12" y="42" width="6" height="6"/><rect x="18" y="42" width="6" height="6"/><rect x="24" y="42" width="6" height="6"/><rect x="42" y="42" width="6" height="6"/><rect x="48" y="42" width="6" height="6"/><rect x="0" y="48" width="6" height="6"/><rect x="6" y="48" width="6" height="6"/><rect x="12" y="48" width="6" height="6"/><rect x="48" y="48" width="6" height="6"/></svg></div>
+</body>
+</html>

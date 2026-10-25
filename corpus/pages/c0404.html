@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<title>Boletim do Laboratório</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:42px 46px 46px;width:1020px;background:#fff;color:#1c1c1c;font-family:"Source Sans Variable","PT Sans",sans-serif;font-size:14px;line-height:1.5}
+header{border-top:3px solid #1c1c1c;border-bottom:1px solid #1c1c1c;padding:12px 0 10px;display:flex;justify-content:space-between;align-items:baseline}
+header h1{margin:0;font-size:34px;font-weight:600;letter-spacing:-.5px}
+header .m{font-size:12px;color:#555;text-align:right;line-height:1.4}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);column-gap:34px;margin-top:26px}
+.cols>section+section{border-left:1px solid #ccc;padding-left:34px;margin-left:-17px}
+h2{font-size:17px;margin:0 0 8px;font-weight:600;line-height:1.25}
+.kv{font-size:12.5px;margin:0 0 3px}
+.kv b{font-weight:600}
+p{margin:0 0 10px}
+.eq{text-align:center;font-family:"STIX Two Text",Times,serif;font-size:19px;margin:12px 0;font-style:italic}
+ol{margin:0 0 10px;padding:0;list-style:none}
+ol li{margin-bottom:6px;padding-left:22px;text-indent:-22px}
+.chart{margin:6px 0 4px}
+.ct{font-size:12px;font-weight:600;margin-bottom:2px}
+.ax{display:flex;justify-content:space-between;font-size:11px;color:#555;padding:2px 4px 0 24px}
+.cap{font-size:11.5px;color:#555;margin-top:4px}
+.fn{margin-top:28px;border-top:1px solid #1c1c1c;padding-top:8px;font-size:11.5px;color:#444;width:60%}
+</style>
+</head>
+<body>
+<header>
+<h1>Boletim do Laboratório de Óptica</h1>
+<div class="m">Instituto de Ciências Exactas de Coimbra<br>N.º 14 · Outubro de 2026</div>
+</header>
+
+<div class="cols">
+<section>
+<h2>Nova câmara de vácuo entra em funcionamento</h2>
+<div class="kv"><b>Data de instalação:</b> 6 de outubro de 2026</div>
+<div class="kv"><b>Responsável:</b> Prof.ª Inês Sarmento</div>
+<div class="kv"><b>Financiamento:</b> projecto OPT-2024-118</div>
+<p style="margin-top:10px">A câmara, instalada na sala 2.14, atinge uma pressão de base de 2×10<sup>−7</sup> mbar em menos de duas horas. Permite ensaiar filmes finos depositados por evaporação térmica sem exposição ao ar.</p>
+<p>As primeiras amostras de dióxido de titânio foram medidas na semana passada e confirmam o índice de refracção esperado para a banda do visível.</p>
+</section>
+
+<section>
+<h2>Como medimos o índice de refracção</h2>
+<p>Usamos a lei de Snell para relacionar os ângulos de incidência e de refracção de um feixe laser que atravessa o filme:</p>
+<div class="eq">n<sub>1</sub> sin θ<sub>1</sub> = n<sub>2</sub> sin θ<sub>2</sub></div>
+<p>Para cada amostra, seguem-se estes passos:</p>
+<ol>
+<li>1. Alinhar o laser de 633 nm com o eixo do goniómetro.</li>
+<li>2. Registar o ângulo de incidência a cada 5°, de 10° a 70°.</li>
+<li>3. Medir o ângulo do feixe emergente com a câmara.</li>
+<li>4. Calcular n e repetir três vezes.</li>
+</ol>
+</section>
+
+<section>
+<h2>Resultados do primeiro lote</h2>
+<div class="ct">Índice de refracção por espessura do filme</div>
+<div class="chart"><svg width="100%" height="120" viewBox="0 0 300 120" preserveAspectRatio="none"><line x1="24" y1="4" x2="24" y2="108" stroke="#999"/><line x1="24" y1="108" x2="296" y2="108" stroke="#999"/><g stroke="#ddd"><line x1="24" y1="30" x2="296" y2="30"/><line x1="24" y1="56" x2="296" y2="56"/><line x1="24" y1="82" x2="296" y2="82"/></g><polyline points="30,90 80,70 130,52 180,40 230,34 285,30" fill="none" stroke="#1c4e80" stroke-width="2"/><g fill="#1c4e80"><circle cx="30" cy="90" r="3"/><circle cx="80" cy="70" r="3"/><circle cx="130" cy="52" r="3"/><circle cx="180" cy="40" r="3"/><circle cx="230" cy="34" r="3"/><circle cx="285" cy="30" r="3"/></g></svg>
+<div class="ax"><span>50</span><span>100</span><span>150</span><span>200</span><span>250</span><span>300</span></div></div>
+<div class="cap">Espessura, em nanómetros. O índice sobe de 2,12 para 2,41 e estabiliza acima de 250 nm.</div>
+<p style="margin-top:12px">A variação entre as três repetições foi inferior a 0,02, valor compatível com a incerteza do goniómetro<sup>1</sup>.</p>
+<div class="kv"><b>Próxima reunião:</b> 4 de novembro, 14h30</div>
+<div class="kv"><b>Contacto:</b> boletim@example.org</div>
+</section>
+</div>
+<div class="fn"><sup>1</sup> Incerteza angular de ±0,1°, segundo o certificado de calibração de setembro de 2026.</div>
+</body>
+</html>

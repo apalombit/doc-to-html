@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Clinical visit note</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:20px 24px 24px;width:980px;background:#fff;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.35;color:#1e293b}
+.flex{display:flex}.grid{display:grid}.grid-cols-3{grid-template-columns:repeat(3,1fr)}.grid-cols-4{grid-template-columns:repeat(4,1fr)}
+.gap-2{gap:8px}.gap-4{gap:16px}.p-1{padding:3px 6px}.p-2{padding:8px}.p-3{padding:12px}.px-3{padding-left:12px;padding-right:12px}.py-2{padding-top:8px;padding-bottom:8px}
+.mb-2{margin-bottom:8px}.mb-1{margin-bottom:4px}.mt-3{margin-top:12px}
+.text-xs{font-size:10px}.text-sm{font-size:12px}.text-lg{font-size:17px}.font-bold{font-weight:700}.font-semibold{font-weight:600}
+.text-right{text-align:right}.text-center{text-align:center}.uppercase{text-transform:uppercase}.tracking{letter-spacing:.08em}
+.border-b{border-bottom:1px solid #cbd5e1}.border{border:1px solid #cbd5e1}.rounded{border-radius:4px}
+.bg-slate-50{background:#f1f5f9}.bg-teal{background:#0d7c80}.text-white{color:#fff}.text-teal{color:#0d7c80}.text-red{color:#b42318}.text-slate{color:#64748b}
+.items-center{align-items:center}.justify-between{justify-content:space-between}.w-full{width:100%}
+table{border-collapse:collapse}
+h3{margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#0d7c80;border-bottom:2px solid #0d7c80;padding-bottom:2px}
+ul{margin:0 0 8px;padding-left:16px}
+p{margin:0 0 8px}
+</style>
+</head>
+<body>
+<div class="flex items-center justify-between bg-teal text-white px-3 py-2">
+<div class="flex items-center gap-2"><svg width="34" height="34" viewBox="0 0 34 34"><circle cx="17" cy="17" r="16" fill="#fff"/><path d="M17 7 C22 12 22 20 17 27 C12 20 12 12 17 7Z" fill="#0d7c80"/></svg><div><div class="text-lg font-bold">Lakeshore Health Partners</div><div class="text-xs">Primary care &middot; 2210 Shore Drive, Duluth, MN 55802 &middot; (218) 555-0129</div></div></div>
+<div class="text-right"><div class="font-bold uppercase tracking">Clinical visit note</div><div class="text-xs">Encounter 2026-10-20-0417</div></div>
+</div>
+<div class="grid grid-cols-4 gap-2 p-2 border-b">
+<div><div class="text-xs uppercase text-slate">Patient</div><div class="font-semibold">Hendricks, Paul A.</div></div>
+<div><div class="text-xs uppercase text-slate">DOB / age / sex</div><div class="font-semibold">05/17/1964 / 62 / M</div></div>
+<div><div class="text-xs uppercase text-slate">MRN</div><div class="font-semibold">LHP-0092817</div></div>
+<div><div class="text-xs uppercase text-slate">Date of visit</div><div class="font-semibold">10/20/2026</div></div>
+<div><div class="text-xs uppercase text-slate">Provider</div><div class="font-semibold">Dr. Kim Nakamura, MD</div></div>
+<div><div class="text-xs uppercase text-slate">Reason for visit</div><div class="font-semibold">Diabetes and lipid review</div></div>
+<div><div class="text-xs uppercase text-slate">Insurance</div><div class="font-semibold">Northwind PPO 7731-A</div></div>
+<div><div class="text-xs uppercase text-slate">Allergies</div><div class="font-semibold text-red">Sulfa drugs (hives)</div></div>
+</div>
+<div class="grid grid-cols-3 gap-4 mt-3">
+<div>
+<h3>Subjective</h3>
+<p>62-year-old man with type 2 diabetes for 9 years returns for review. Reports fasting readings of 120-140 mg/dL on home monitoring. Occasional numbness in both toes at night. No polyuria, chest pain or dyspnea. Diet adherence fair; walks three times weekly.</p>
+<h3>Vitals</h3>
+<ul><li>BP 132/82 mmHg, HR 76</li><li>Temp 98.4 F, RR 16</li><li>Wt 214 lb, BMI 30.7</li><li>SpO2 97% on room air</li></ul>
+</div>
+<div>
+<h3>Objective</h3>
+<p>Well appearing, no distress. Heart regular, no murmur. Lungs clear bilaterally. Abdomen soft and non-tender. Diminished vibration sense at both great toes; pedal pulses 2+. Retinal exam due.</p>
+<h3>Current medications</h3>
+<ul><li>Metformin 1000 mg BID</li><li>Atorvastatin 20 mg nightly</li><li>Lisinopril 10 mg daily</li><li>Aspirin 81 mg daily</li></ul>
+</div>
+<div>
+<h3>Assessment</h3>
+<ul><li>Type 2 diabetes, above goal (A1c 7.1%)</li><li>Hyperlipidemia, LDL above goal</li><li>Hypertension, controlled</li><li>Early peripheral neuropathy</li></ul>
+<h3>Plan</h3>
+<ul><li>Increase atorvastatin to 40 mg nightly</li><li>Add empagliflozin 10 mg daily</li><li>Podiatry and eye referral</li><li>Repeat labs in 12 weeks; return in 3 months</li></ul>
+<p class="text-xs text-slate">Counselled on diet, foot care and hypoglycemia signs. Patient verbalized understanding.</p>
+</div>
+</div>
+<div class="mt-3 mb-1 font-bold uppercase tracking text-teal">Laboratory results, collected 10/19/2026</div>
+<table class="w-full border">
+<tr class="bg-teal text-white"><th class="p-1" style="text-align:left">Test</th><th class="p-1 text-right">Result</th><th class="p-1" style="text-align:left">Units</th><th class="p-1" style="text-align:left">Reference</th><th class="p-1 text-center">Flag</th></tr>
+<tr class=""><td class="p-1">Sodium</td><td class="p-1 text-right">139</td><td class="p-1">mmol/L</td><td class="p-1">135-145</td><td class="p-1 text-center"></td></tr>
+<tr class="bg-slate-50"><td class="p-1">Potassium</td><td class="p-1 text-right">4.4</td><td class="p-1">mmol/L</td><td class="p-1">3.5-5.1</td><td class="p-1 text-center"></td></tr>
+<tr class=""><td class="p-1">Chloride</td><td class="p-1 text-right">102</td><td class="p-1">mmol/L</td><td class="p-1">98-107</td><td class="p-1 text-center"></td></tr>
+<tr class="bg-slate-50"><td class="p-1">Bicarbonate</td><td class="p-1 text-right">25</td><td class="p-1">mmol/L</td><td class="p-1">22-29</td><td class="p-1 text-center"></td></tr>
+<tr class=""><td class="p-1">Urea nitrogen</td><td class="p-1 text-right">19</td><td class="p-1">mg/dL</td><td class="p-1">7-20</td><td class="p-1 text-center"></td></tr>
+<tr class="bg-slate-50"><td class="p-1">Creatinine</td><td class="p-1 text-right">1.0</td><td class="p-1">mg/dL</td><td class="p-1">0.7-1.3</td><td class="p-1 text-center"></td></tr>
+<tr class=""><td class="p-1">eGFR</td><td class="p-1 text-right">84</td><td class="p-1">mL/min</td><td class="p-1">> 60</td><td class="p-1 text-center"></td></tr>
+<tr class="bg-slate-50"><td class="p-1">Glucose, fasting</td><td class="p-1 text-right" class="text-red font-bold">131</td><td class="p-1">mg/dL</td><td class="p-1">70-99</td><td class="p-1 text-center" class="text-red font-bold">H</td></tr>
+<tr class=""><td class="p-1">Calcium</td><td class="p-1 text-right">9.4</td><td class="p-1">mg/dL</td><td class="p-1">8.6-10.2</td><td class="p-1 text-center"></td></tr>
+<tr class="bg-slate-50"><td class="p-1">Magnesium</td><td class="p-1 text-right"></td><td class="p-1">mg/dL</td><td class="p-1">1.7-2.2</td><td class="p-1 text-center"></td></tr>
+<tr class=""><td class="p-1">Total protein</td><td class="p-1 text-right">7.1</td><td class="p-1">g/dL</td><td class="p-1">6.0-8.3</td><td class="p-1 text-center"></td></tr>
+<tr class="bg-slate-50"><td class="p-1">Albumin</td><td class="p-1 text-right">4.2</td><td class="p-1">g/dL</td><td class="p-1">3.5-5.2</td><td class="p-1 text-center"></td></tr>
+<tr class=""><td class="p-1">Bilirubin, total</td><td class="p-1 text-right">0.7</td><td class="p-1">mg/dL</td><td class="p-1">0.1-1.2</td><td class="p-1 text-center"></td></tr>
+<tr class="bg-slate-50"><td class="p-1">ALT</td><td class="p-1 text-right">34</td><td class="p-1">U/L</td><td class="p-1">7-56</td><td class="p-1 text-center"></td></tr>
+<tr class=""><td class="p-1">AST</td><td class="p-1 text-right">29</td><td class="p-1">U/L</td><td class="p-1">10-40</td><td class="p-1 text-center"></td></tr>
+<tr class="bg-slate-50"><td class="p-1">Alk phosphatase</td><td class="p-1 text-right">88</td><td class="p-1">U/L</td><td class="p-1">44-147</td><td class="p-1 text-center"></td></tr>
+<tr class=""><td class="p-1">Total cholesterol</td><td class="p-1 text-right" class="text-red font-bold">214</td><td class="p-1">mg/dL</td><td class="p-1">< 200</td><td class="p-1 text-center" class="text-red font-bold">H</td></tr>
+<tr class="bg-slate-50"><td class="p-1">LDL cholesterol</td><td class="p-1 text-right" class="text-red font-bold">138</td><td class="p-1">mg/dL</td><td class="p-1">< 100</td><td class="p-1 text-center" class="text-red font-bold">H</td></tr>
+<tr class=""><td class="p-1">HDL cholesterol</td><td class="p-1 text-right">46</td><td class="p-1">mg/dL</td><td class="p-1">> 40</td><td class="p-1 text-center"></td></tr>
+<tr class="bg-slate-50"><td class="p-1">Triglycerides</td><td class="p-1 text-right" class="text-red font-bold">152</td><td class="p-1">mg/dL</td><td class="p-1">< 150</td><td class="p-1 text-center" class="text-red font-bold">H</td></tr>
+<tr class=""><td class="p-1">HbA1c</td><td class="p-1 text-right" class="text-red font-bold">7.1</td><td class="p-1">%</td><td class="p-1">< 5.7</td><td class="p-1 text-center" class="text-red font-bold">H</td></tr>
+<tr class="bg-slate-50"><td class="p-1">TSH</td><td class="p-1 text-right">2.3</td><td class="p-1">mIU/L</td><td class="p-1">0.4-4.0</td><td class="p-1 text-center"></td></tr>
+<tr class=""><td class="p-1">WBC</td><td class="p-1 text-right">6.8</td><td class="p-1">K/uL</td><td class="p-1">4.0-11.0</td><td class="p-1 text-center"></td></tr>
+<tr class="bg-slate-50"><td class="p-1">Hemoglobin</td><td class="p-1 text-right">14.1</td><td class="p-1">g/dL</td><td class="p-1">13.5-17.5</td><td class="p-1 text-center"></td></tr>
+<tr class=""><td class="p-1">Platelets</td><td class="p-1 text-right">248</td><td class="p-1">K/uL</td><td class="p-1">150-400</td><td class="p-1 text-center"></td></tr>
+<tr class="bg-slate-50"><td class="p-1">Urine albumin</td><td class="p-1 text-right"></td><td class="p-1">mg/g</td><td class="p-1">< 30</td><td class="p-1 text-center"></td></tr>
+</table>
+<div class="mt-3 text-xs text-slate">Blank results were not collected or are pending. H = above reference range. Electronically signed by Kim Nakamura, MD on 10/20/2026 at 4:42 PM.</div>
+</body>
+</html>

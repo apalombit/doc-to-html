@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="it-IT">
+<head>
+<meta charset="utf-8">
+<title>Verbale di ispezione</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:24px 28px 28px;width:900px;background:#fff;color:#1e293b;font-family:"Trebuchet MS",Arial,sans-serif;font-size:12px;line-height:1.4}
+.flex{display:flex}.grid{display:grid}.grid-cols-4{grid-template-columns:repeat(4,1fr)}.grid-cols-2{grid-template-columns:1fr 1fr}
+.gap-2{gap:8px}.gap-4{gap:16px}.p-2{padding:6px 8px}.p-3{padding:10px 12px}.mt-3{margin-top:12px}.mt-4{margin-top:18px}.mb-1{margin-bottom:4px}
+.text-xs{font-size:10px}.text-sm{font-size:11.5px}.text-lg{font-size:16px}.text-2xl{font-size:24px}
+.font-semibold{font-weight:700}.text-slate{color:#64748b}.uppercase{text-transform:uppercase;letter-spacing:.05em}
+.border{border:1px solid #94a3b8}.border-b{border-bottom:2px solid #1e293b}.rounded{border-radius:5px}
+.bg-slate-50{background:#f1f5f9}.bg-amber{background:#fef3c7}
+.items-center{align-items:center}.justify-between{justify-content:space-between}.text-right{text-align:right}.text-center{text-align:center}
+.ok{color:#15803d;font-weight:700}.ko{color:#b91c1c;font-weight:700}.mid{color:#b45309;font-weight:700}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid #94a3b8;padding:4px 6px;text-align:left;font-size:11px}
+th{background:#e2e8f0}
+tbody tr:nth-child(even) td{background:#f1f5f9}
+.ic{display:inline-block;vertical-align:middle;margin-right:5px}
+</style>
+</head>
+<body>
+<div class="flex justify-between items-center border-b p-2">
+<div class="flex items-center gap-2"><svg class="ic" width="34" height="34" viewBox="0 0 34 34"><rect width="34" height="34" rx="6" fill="#1e293b"/><path d="M8 18 L15 25 L27 10" fill="none" stroke="#fff" stroke-width="4"/></svg>
+<div><div class="text-2xl font-semibold">Verbale di ispezione</div><div class="text-sm text-slate">Impianti elettrici e antincendio · Condominio Le Magnolie</div></div></div>
+<div class="text-right text-sm"><div class="font-semibold">N. VI-2026/0318</div><div class="text-slate">Data ispezione: 20/10/2026</div></div>
+</div>
+<div class="grid grid-cols-4 gap-2 mt-3">
+<div class="border rounded p-2"><div class="text-xs uppercase text-slate">Committente</div><div class="font-semibold">Condominio Le Magnolie</div></div>
+<div class="border rounded p-2"><div class="text-xs uppercase text-slate">Indirizzo</div><div class="font-semibold">Via Roma 48, Modena</div></div>
+<div class="border rounded p-2"><div class="text-xs uppercase text-slate">Ispettore</div><div class="font-semibold">Ing. Carlo Benedetti</div></div>
+<div class="border rounded p-2"><div class="text-xs uppercase text-slate">Prossima verifica</div><div class="font-semibold">20 aprile 2027</div></div>
+</div>
+<div class="grid grid-cols-4 gap-2 mt-3">
+<div class="border rounded p-2"><div class="text-xs uppercase text-slate">P.IVA studio</div><div class="font-semibold">IT 01234567890</div></div>
+<div class="border rounded p-2"><div class="text-xs uppercase text-slate">Edificio</div><div class="font-semibold">Scala A e B, 6 piani</div></div>
+<div class="border rounded p-2"><div class="text-xs uppercase text-slate">Anno di costruzione</div><div class="font-semibold">1989</div></div>
+<div class="border rounded p-2"><div class="text-xs uppercase text-slate">Meteo</div><div class="font-semibold">Sereno, 14 °C</div></div>
+</div>
+<div class="text-lg font-semibold mt-4 mb-1">1. Esito delle verifiche</div>
+<table>
+<thead><tr><th style="width:42px">N.</th><th>Elemento controllato</th><th>Ubicazione</th><th>Data prova</th><th>Esito</th><th>Osservazioni</th></tr></thead>
+<tbody>
+<tr><td>1.1</td><td>Quadro elettrico generale</td><td>Locale tecnico, piano terra</td><td>20/10/2026</td><td class="ok">✓ Conforme</td><td>Serraggi verificati, nessuna anomalia</td></tr>
+<tr><td>1.2</td><td>Interruttori differenziali</td><td>Quadro generale</td><td>20/10/2026</td><td class="ok">✓ Conforme</td><td>Intervento entro 30 ms su tutti i circuiti</td></tr>
+<tr><td>1.3</td><td>Impianto di messa a terra</td><td>Dispersore, cortile</td><td>20/10/2026</td><td class="ok">✓ Conforme</td><td>Resistenza misurata 4,2 Ω</td></tr>
+<tr><td>1.4</td><td>Illuminazione di emergenza</td><td>Scale A e B</td><td>20/10/2026</td><td class="mid">! Da correggere</td><td>Tre lampade con batteria esaurita al 4° piano</td></tr>
+<tr><td>1.5</td><td>Estintori portatili</td><td>Pianerottoli, vani scala</td><td>20/10/2026</td><td class="ok">✓ Conforme</td><td>12 estintori con revisione in corso di validità</td></tr>
+<tr><td>1.6</td><td>Rilevatori di fumo</td><td>Autorimessa interrata</td><td>20/10/2026</td><td class="ko">✗ Non conforme</td><td>Due rilevatori non rispondono alla prova</td></tr>
+<tr><td>1.7</td><td>Porte tagliafuoco</td><td>Autorimessa, scala B</td><td>20/10/2026</td><td class="mid">! Da correggere</td><td>Chiudiporta della porta REI 60 da regolare</td></tr>
+<tr><td>1.8</td><td>Cartellonistica di sicurezza</td><td>Tutti i piani</td><td>20/10/2026</td><td class="ok">✓ Conforme</td><td>Segnali visibili e leggibili</td></tr>
+<tr><td>1.9</td><td>Ascensore, linea di alimentazione</td><td>Vano corsa, scala A</td><td>20/10/2026</td><td class="ok">✓ Conforme</td><td>Protezioni dimensionate correttamente</td></tr>
+</tbody>
+</table>
+<div class="text-lg font-semibold mt-4 mb-1">2. Interventi richiesti</div>
+<table>
+<thead><tr><th style="width:42px">N.</th><th>Intervento</th><th>Priorità</th><th>Scadenza</th><th>Responsabile</th><th>Costo stimato</th></tr></thead>
+<tbody>
+<tr><td>A</td><td>Sostituire due rilevatori di fumo in autorimessa</td><td class="ko">Alta</td><td>03/11/2026</td><td>Elettro Fabbri S.n.c.</td><td>380,00 €</td></tr>
+<tr><td>B</td><td>Sostituire le batterie delle tre lampade di emergenza</td><td class="mid">Media</td><td>20/11/2026</td><td>Manutenzione interna</td><td>95,00 €</td></tr>
+<tr><td>C</td><td>Regolare il chiudiporta della porta REI 60</td><td class="mid">Media</td><td>20/11/2026</td><td>Serramenti Galli</td><td>140,00 €</td></tr>
+</tbody>
+</table>
+<div class="grid grid-cols-2 gap-4 mt-4">
+<div class="border rounded p-3 bg-slate-50"><div class="text-xs uppercase text-slate mb-1">Conclusioni</div><div>L'edificio risulta idoneo all'esercizio a condizione che gli interventi A, B e C siano eseguiti entro le scadenze indicate. Alla scadenza sarà effettuato un sopralluogo di verifica senza costi aggiuntivi per il committente.</div></div>
+<div class="border rounded p-3 bg-amber"><div class="text-xs uppercase text-slate mb-1">Note dell'ispettore</div><div>Non è stato possibile accedere al locale caldaia al piano interrato perché chiuso a chiave. L'amministratore, dott.ssa Elena Rizzo, provvederà a fornire la chiave entro il 30/10/2026.</div></div>
+</div>
+<div class="flex justify-between mt-4 text-sm"><div>Firma dell'ispettore: Ing. Carlo Benedetti</div><div>Letto e ricevuto, l'amministratore: dott.ssa Elena Rizzo</div></div>
+</body>
+</html>

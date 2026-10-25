@@ -1,4 +1,11 @@
 {
+ "c0004": {
+  "writer": "sonnet",
+  "batch": "pilot2-2",
+  "runs": 2,
+  "batch_seconds": 362.2,
+  "written": "2026-10-25"
+ },
  "c0008": {
   "writer": "opus",
   "batch": "pilot-1",
@@ -7,12 +14,44 @@
   "written": "2026-10-24",
   "note": "batch stopped by the spend limit; this page had passed"
  },
+ "c0010": {
+  "writer": "sonnet",
+  "batch": "pilot2-3",
+  "runs": 1,
+  "batch_seconds": 351.2,
+  "written": "2026-10-25"
+ },
+ "c0011": {
+  "writer": "sonnet",
+  "batch": "pilot2-4",
+  "runs": 4,
+  "batch_seconds": 553.9,
+  "written": "2026-10-25",
+  "note": "three validator runs crashed on the projection's encoder (fixed); the table cut to 6 columns and 25 rows"
+ },
  "c0012": {
   "writer": "sonnet",
   "batch": "pilot-2",
   "runs": 1,
   "batch_seconds": 281.8,
-  "written": "2026-10-24"
+  "written": "2026-10-24",
+  "revised": [
+   {
+    "batch": "floor-1",
+    "writer": "sonnet",
+    "runs": 1,
+    "batch_seconds": 138.4,
+    "date": "2026-10-25",
+    "why": "under the word floor: 250 to 454 words"
+   }
+  ]
+ },
+ "c0024": {
+  "writer": "sonnet",
+  "batch": "pilot2-5",
+  "runs": 2,
+  "batch_seconds": 333.2,
+  "written": "2026-10-25"
  },
  "c0044": {
   "writer": "sonnet",
@@ -29,12 +68,36 @@
   "written": "2026-10-24",
   "note": "batch stopped by the spend limit; this page had passed"
  },
+ "c0049": {
+  "writer": "sonnet",
+  "batch": "pilot2-1",
+  "runs": 1,
+  "batch_seconds": 371.5,
+  "written": "2026-10-25"
+ },
  "c0052": {
   "writer": "sonnet",
   "batch": "pilot-2",
   "runs": 2,
   "batch_seconds": 281.8,
-  "written": "2026-10-24"
+  "written": "2026-10-24",
+  "revised": [
+   {
+    "batch": "floor-2",
+    "writer": "sonnet",
+    "runs": 3,
+    "batch_seconds": 184.8,
+    "date": "2026-10-25",
+    "why": "rewritten afresh: it imitated the IRS Form 1040-EZ"
+   }
+  ]
+ },
+ "c0055": {
+  "writer": "sonnet",
+  "batch": "pilot2-2",
+  "runs": 1,
+  "batch_seconds": 362.2,
+  "written": "2026-10-25"
  },
  "c0065": {
   "writer": "opus",
@@ -51,6 +114,13 @@
   "batch_seconds": null,
   "written": "2026-10-24",
   "note": "batch stopped by the spend limit; this page had passed"
+ },
+ "c0068": {
+  "writer": "sonnet",
+  "batch": "pilot2-3",
+  "runs": 1,
+  "batch_seconds": 351.2,
+  "written": "2026-10-25"
  },
  "c0105": {
   "writer": "sonnet",
@@ -71,13 +141,44 @@
   "batch": "pilot-2",
   "runs": 1,
   "batch_seconds": 281.8,
-  "written": "2026-10-24"
+  "written": "2026-10-24",
+  "revised": [
+   {
+    "batch": "floor-2",
+    "writer": "sonnet",
+    "runs": 1,
+    "batch_seconds": 184.8,
+    "date": "2026-10-25",
+    "why": "under the word floor: 276 to 474 words"
+   }
+  ]
+ },
+ "c0132": {
+  "writer": "sonnet",
+  "batch": "pilot2-2",
+  "runs": 2,
+  "batch_seconds": 362.2,
+  "written": "2026-10-25"
+ },
+ "c0133": {
+  "writer": "sonnet",
+  "batch": "pilot2-3",
+  "runs": 1,
+  "batch_seconds": 351.2,
+  "written": "2026-10-25"
  },
  "c0135": {
   "writer": "sonnet",
   "batch": "pilot-6",
   "runs": 2,
   "batch_seconds": 221.5,
+  "written": "2026-10-25"
+ },
+ "c0139": {
+  "writer": "sonnet",
+  "batch": "pilot2-4",
+  "runs": 2,
+  "batch_seconds": 553.9,
   "written": "2026-10-25"
  },
  "c0140": {
@@ -92,7 +193,17 @@
   "batch": "pilot-7",
   "runs": 3,
   "batch_seconds": 294.9,
-  "written": "2026-10-25"
+  "written": "2026-10-25",
+  "revised": [
+   {
+    "batch": "floor-1",
+    "writer": "sonnet",
+    "runs": 1,
+    "batch_seconds": 138.4,
+    "date": "2026-10-25",
+    "why": "under the word floor: 202 to 253 words"
+   }
+  ]
  },
  "c0148": {
   "writer": "sonnet",
@@ -101,12 +212,43 @@
   "batch_seconds": 294.9,
   "written": "2026-10-25"
  },
+ "c0149": {
+  "writer": "sonnet",
+  "batch": "pilot2-5",
+  "runs": 2,
+  "batch_seconds": 333.2,
+  "written": "2026-10-25"
+ },
+ "c0157": {
+  "writer": "sonnet",
+  "batch": "pilot2-1",
+  "runs": 4,
+  "batch_seconds": 371.5,
+  "written": "2026-10-25"
+ },
+ "c0167": {
+  "writer": "sonnet",
+  "batch": "pilot2-2",
+  "runs": 2,
+  "batch_seconds": 362.2,
+  "written": "2026-10-25"
+ },
  "c0172": {
   "writer": "sonnet",
   "batch": "pilot-4",
   "runs": 1,
   "batch_seconds": 244.5,
-  "written": "2026-10-24"
+  "written": "2026-10-24",
+  "revised": [
+   {
+    "batch": "floor-2",
+    "writer": "sonnet",
+    "runs": 1,
+    "batch_seconds": 184.8,
+    "date": "2026-10-25",
+    "why": "under the word floor: 91 to 125 words"
+   }
+  ]
  },
  "c0175": {
   "writer": "sonnet",
@@ -115,12 +257,57 @@
   "batch_seconds": 294.9,
   "written": "2026-10-25"
  },
+ "c0179": {
+  "writer": "sonnet",
+  "batch": "pilot2-3",
+  "runs": 3,
+  "batch_seconds": 351.2,
+  "written": "2026-10-25"
+ },
+ "c0185": {
+  "writer": "sonnet",
+  "batch": "pilot2-4",
+  "runs": 1,
+  "batch_seconds": 553.9,
+  "written": "2026-10-25"
+ },
  "c0187": {
   "writer": "sonnet",
   "batch": "pilot-4",
   "runs": 1,
   "batch_seconds": 244.5,
-  "written": "2026-10-24"
+  "written": "2026-10-24",
+  "revised": [
+   {
+    "batch": "floor-1",
+    "writer": "sonnet",
+    "runs": 1,
+    "batch_seconds": 138.4,
+    "date": "2026-10-25",
+    "why": "under the word floor: 109 to 201 words"
+   }
+  ]
+ },
+ "c0195": {
+  "writer": "sonnet",
+  "batch": "pilot2-5",
+  "runs": 2,
+  "batch_seconds": 333.2,
+  "written": "2026-10-25"
+ },
+ "c0202": {
+  "writer": "sonnet",
+  "batch": "pilot2-5",
+  "runs": 1,
+  "batch_seconds": 333.2,
+  "written": "2026-10-25"
+ },
+ "c0203": {
+  "writer": "sonnet",
+  "batch": "pilot2-1",
+  "runs": 2,
+  "batch_seconds": 371.5,
+  "written": "2026-10-25"
  },
  "c0208": {
   "writer": "sonnet",
@@ -128,6 +315,13 @@
   "runs": 1,
   "batch_seconds": 281.8,
   "written": "2026-10-24"
+ },
+ "c0215": {
+  "writer": "sonnet",
+  "batch": "pilot2-2",
+  "runs": 1,
+  "batch_seconds": 362.2,
+  "written": "2026-10-25"
  },
  "c0218": {
   "writer": "sonnet",
@@ -143,6 +337,13 @@
   "batch_seconds": 244.5,
   "written": "2026-10-24"
  },
+ "c0220": {
+  "writer": "sonnet",
+  "batch": "pilot2-3",
+  "runs": 1,
+  "batch_seconds": 351.2,
+  "written": "2026-10-25"
+ },
  "c0221": {
   "writer": "sonnet",
   "batch": "pilot-7",
@@ -150,12 +351,43 @@
   "batch_seconds": 294.9,
   "written": "2026-10-25"
  },
+ "c0231": {
+  "writer": "sonnet",
+  "batch": "pilot2-4",
+  "runs": 2,
+  "batch_seconds": 553.9,
+  "written": "2026-10-25"
+ },
+ "c0235": {
+  "writer": "sonnet",
+  "batch": "pilot2-5",
+  "runs": 1,
+  "batch_seconds": 333.2,
+  "written": "2026-10-25"
+ },
+ "c0236": {
+  "writer": "sonnet",
+  "batch": "pilot2-1",
+  "runs": 1,
+  "batch_seconds": 371.5,
+  "written": "2026-10-25"
+ },
  "c0240": {
   "writer": "sonnet",
   "batch": "pilot-6",
   "runs": 1,
   "batch_seconds": 221.5,
-  "written": "2026-10-25"
+  "written": "2026-10-25",
+  "revised": [
+   {
+    "batch": "floor-2",
+    "writer": "sonnet",
+    "runs": 1,
+    "batch_seconds": 184.8,
+    "date": "2026-10-25",
+    "why": "under the word floor: 155 to 297 words"
+   }
+  ]
  },
  "c0254": {
   "writer": "sonnet",
@@ -169,7 +401,17 @@
   "batch": "pilot-6",
   "runs": 1,
   "batch_seconds": 221.5,
-  "written": "2026-10-25"
+  "written": "2026-10-25",
+  "revised": [
+   {
+    "batch": "floor-1",
+    "writer": "sonnet",
+    "runs": 1,
+    "batch_seconds": 138.4,
+    "date": "2026-10-25",
+    "why": "under the word floor: 206 to 273 words"
+   }
+  ]
  },
  "c0305": {
   "writer": "sonnet",
@@ -186,6 +428,20 @@
   "written": "2026-10-24",
   "note": "batch stopped by the spend limit; this page had passed"
  },
+ "c0315": {
+  "writer": "sonnet",
+  "batch": "pilot2-1",
+  "runs": 1,
+  "batch_seconds": 371.5,
+  "written": "2026-10-25"
+ },
+ "c0317": {
+  "writer": "sonnet",
+  "batch": "pilot2-2",
+  "runs": 3,
+  "batch_seconds": 362.2,
+  "written": "2026-10-25"
+ },
  "c0320": {
   "writer": "opus",
   "batch": "pilot-3",
@@ -193,6 +449,20 @@
   "batch_seconds": null,
   "written": "2026-10-24",
   "note": "batch stopped by the spend limit; this page had passed"
+ },
+ "c0328": {
+  "writer": "sonnet",
+  "batch": "pilot2-3",
+  "runs": 1,
+  "batch_seconds": 351.2,
+  "written": "2026-10-25"
+ },
+ "c0331": {
+  "writer": "sonnet",
+  "batch": "pilot2-4",
+  "runs": 1,
+  "batch_seconds": 553.9,
+  "written": "2026-10-25"
  },
  "c0338": {
   "writer": "sonnet",
@@ -209,6 +479,27 @@
   "written": "2026-10-24",
   "note": "batch stopped by the spend limit; this page had passed"
  },
+ "c0349": {
+  "writer": "sonnet",
+  "batch": "pilot2-5",
+  "runs": 1,
+  "batch_seconds": 333.2,
+  "written": "2026-10-25"
+ },
+ "c0363": {
+  "writer": "sonnet",
+  "batch": "pilot2-5",
+  "runs": 2,
+  "batch_seconds": 333.2,
+  "written": "2026-10-25"
+ },
+ "c0366": {
+  "writer": "sonnet",
+  "batch": "pilot2-1",
+  "runs": 2,
+  "batch_seconds": 371.5,
+  "written": "2026-10-25"
+ },
  "c0377": {
   "writer": "sonnet",
   "batch": "pilot-2",
@@ -221,7 +512,17 @@
   "batch": "pilot-7",
   "runs": 1,
   "batch_seconds": 294.9,
-  "written": "2026-10-25"
+  "written": "2026-10-25",
+  "revised": [
+   {
+    "batch": "floor-2",
+    "writer": "sonnet",
+    "runs": 1,
+    "batch_seconds": 184.8,
+    "date": "2026-10-25",
+    "why": "under the word floor: 287 to 408 words"
+   }
+  ]
  },
  "c0392": {
   "writer": "opus",
@@ -231,6 +532,13 @@
   "written": "2026-10-24",
   "note": "batch stopped by the spend limit; this page had passed"
  },
+ "c0394": {
+  "writer": "sonnet",
+  "batch": "pilot2-2",
+  "runs": 1,
+  "batch_seconds": 362.2,
+  "written": "2026-10-25"
+ },
  "c0398": {
   "writer": "sonnet",
   "batch": "pilot-6",
@@ -238,11 +546,42 @@
   "batch_seconds": 221.5,
   "written": "2026-10-25"
  },
+ "c0402": {
+  "writer": "sonnet",
+  "batch": "pilot2-3",
+  "runs": 1,
+  "batch_seconds": 351.2,
+  "written": "2026-10-25"
+ },
+ "c0404": {
+  "writer": "sonnet",
+  "batch": "pilot2-4",
+  "runs": 1,
+  "batch_seconds": 553.9,
+  "written": "2026-10-25"
+ },
  "c0423": {
   "writer": "sonnet",
   "batch": "pilot-6",
   "runs": 1,
   "batch_seconds": 221.5,
+  "written": "2026-10-25",
+  "revised": [
+   {
+    "batch": "floor-1",
+    "writer": "sonnet",
+    "runs": 1,
+    "batch_seconds": 138.4,
+    "date": "2026-10-25",
+    "why": "under the word floor: 229 to 333 words"
+   }
+  ]
+ },
+ "c0424": {
+  "writer": "sonnet",
+  "batch": "pilot2-5",
+  "runs": 1,
+  "batch_seconds": 333.2,
   "written": "2026-10-25"
  },
  "c0425": {
@@ -252,25 +591,83 @@
   "batch_seconds": 281.8,
   "written": "2026-10-24"
  },
+ "c0426": {
+  "writer": "sonnet",
+  "batch": "pilot2-1",
+  "runs": 2,
+  "batch_seconds": 371.5,
+  "written": "2026-10-25"
+ },
+ "c0429": {
+  "writer": "sonnet",
+  "batch": "pilot2-2",
+  "runs": 2,
+  "batch_seconds": 362.2,
+  "written": "2026-10-25"
+ },
  "c0439": {
   "writer": "sonnet",
   "batch": "pilot-7",
   "runs": 1,
   "batch_seconds": 294.9,
-  "written": "2026-10-25"
+  "written": "2026-10-25",
+  "revised": [
+   {
+    "batch": "floor-2",
+    "writer": "sonnet",
+    "runs": 1,
+    "batch_seconds": 184.8,
+    "date": "2026-10-25",
+    "why": "under the word floor: 423 to 503 words"
+   }
+  ]
  },
  "c0442": {
   "writer": "sonnet",
   "batch": "pilot-4",
   "runs": 1,
   "batch_seconds": 244.5,
-  "written": "2026-10-24"
+  "written": "2026-10-24",
+  "revised": [
+   {
+    "batch": "floor-1",
+    "writer": "sonnet",
+    "runs": 1,
+    "batch_seconds": 138.4,
+    "date": "2026-10-25",
+    "why": "under the word floor: 137 to 237 words"
+   }
+  ]
  },
  "c0444": {
   "writer": "sonnet",
   "batch": "pilot-6",
   "runs": 1,
   "batch_seconds": 221.5,
+  "written": "2026-10-25",
+  "revised": [
+   {
+    "batch": "floor-2",
+    "writer": "sonnet",
+    "runs": 1,
+    "batch_seconds": 184.8,
+    "date": "2026-10-25",
+    "why": "under the word floor: 177 to 224 words"
+   }
+  ]
+ },
+ "c0464": {
+  "writer": "sonnet",
+  "batch": "pilot2-3",
+  "runs": 1,
+  "batch_seconds": 351.2,
+  "written": "2026-10-25"
+ },
+ "c0466": {
+  "writer": "sonnet",
+  "batch": "pilot2-4",
+  "runs": 2,
+  "batch_seconds": 553.9,
   "written": "2026-10-25"
  },
  "c0482": {
@@ -281,6 +678,13 @@
   "written": "2026-10-24",
   "note": "batch stopped by the spend limit; this page had passed"
  },
+ "c0486": {
+  "writer": "sonnet",
+  "batch": "pilot2-1",
+  "runs": 1,
+  "batch_seconds": 371.5,
+  "written": "2026-10-25"
+ },
  "c0493": {
   "writer": "opus",
   "batch": "pilot-5",
@@ -289,12 +693,50 @@
   "written": "2026-10-24",
   "note": "batch stopped by the spend limit; this page had passed"
  },
+ "c0506": {
+  "writer": "sonnet",
+  "batch": "pilot2-2",
+  "runs": 1,
+  "batch_seconds": 362.2,
+  "written": "2026-10-25"
+ },
+ "c0509": {
+  "writer": "sonnet",
+  "batch": "pilot2-3",
+  "runs": 2,
+  "batch_seconds": 351.2,
+  "written": "2026-10-25"
+ },
+ "c0511": {
+  "writer": "sonnet",
+  "batch": "pilot2-4",
+  "runs": 2,
+  "batch_seconds": 553.9,
+  "written": "2026-10-25"
+ },
  "c0514": {
   "writer": "sonnet",
   "batch": "pilot-2",
   "runs": 1,
   "batch_seconds": 281.8,
-  "written": "2026-10-24"
+  "written": "2026-10-24",
+  "revised": [
+   {
+    "batch": "floor-1",
+    "writer": "sonnet",
+    "runs": 1,
+    "batch_seconds": 138.4,
+    "date": "2026-10-25",
+    "why": "under the word floor: 77 to 147 words"
+   }
+  ]
+ },
+ "c0520": {
+  "writer": "sonnet",
+  "batch": "pilot2-5",
+  "runs": 2,
+  "batch_seconds": 333.2,
+  "written": "2026-10-25"
  },
  "c0522": {
   "writer": "opus",
@@ -312,12 +754,26 @@
   "written": "2026-10-24",
   "note": "batch stopped by the spend limit; this page had passed"
  },
+ "c0532": {
+  "writer": "sonnet",
+  "batch": "pilot2-1",
+  "runs": 2,
+  "batch_seconds": 371.5,
+  "written": "2026-10-25"
+ },
  "c0536": {
   "writer": "sonnet",
   "batch": "pilot-4",
   "runs": 1,
   "batch_seconds": 244.5,
   "written": "2026-10-24"
+ },
+ "c0545": {
+  "writer": "sonnet",
+  "batch": "pilot2-4",
+  "runs": 2,
+  "batch_seconds": 553.9,
+  "written": "2026-10-25"
  },
  "c0551": {
   "writer": "sonnet",
@@ -333,6 +789,20 @@
   "batch_seconds": null,
   "written": "2026-10-24",
   "note": "batch stopped by the spend limit; this page had passed"
+ },
+ "c0565": {
+  "writer": "sonnet",
+  "batch": "pilot2-5",
+  "runs": 2,
+  "batch_seconds": 333.2,
+  "written": "2026-10-25"
+ },
+ "c0567": {
+  "writer": "sonnet",
+  "batch": "pilot2-1",
+  "runs": 1,
+  "batch_seconds": 371.5,
+  "written": "2026-10-25"
  },
  "c0568": {
   "writer": "opus",
@@ -354,6 +824,30 @@
   "batch": "pilot-6",
   "runs": 1,
   "batch_seconds": 221.5,
+  "written": "2026-10-25",
+  "revised": [
+   {
+    "batch": "floor-2",
+    "writer": "sonnet",
+    "runs": 1,
+    "batch_seconds": 184.8,
+    "date": "2026-10-25",
+    "why": "under the word floor: 159 to 224 words"
+   }
+  ]
+ },
+ "c0574": {
+  "writer": "sonnet",
+  "batch": "pilot2-2",
+  "runs": 3,
+  "batch_seconds": 362.2,
+  "written": "2026-10-25"
+ },
+ "c0586": {
+  "writer": "sonnet",
+  "batch": "pilot2-3",
+  "runs": 1,
+  "batch_seconds": 351.2,
   "written": "2026-10-25"
  },
  "c0589": {
@@ -362,5 +856,12 @@
   "runs": 2,
   "batch_seconds": 244.5,
   "written": "2026-10-24"
+ },
+ "c0595": {
+  "writer": "sonnet",
+  "batch": "pilot2-4",
+  "runs": 2,
+  "batch_seconds": 553.9,
+  "written": "2026-10-25"
  }
 }

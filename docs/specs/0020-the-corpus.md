@@ -1,6 +1,6 @@
 # The corpus: 600 pages, chosen by their variability
 
-**Status: in progress, issue #43. Steps 0–2 done 2026-10-24 ("Outcome —
+**Status: in progress, issue #43. Steps 0–2 done 2026-10-24; step 3, the pilot of 100, awaiting review ("Outcome —
 the steps").**
 - **This is step L1b** of the level-up plan
   ([`../level-up.md`](../level-up.md) §6), on branch `level-up`.
@@ -216,6 +216,10 @@ rather than on one page or one kind.
 - **Measure minutes per page**, writing and validation together, and
   state the estimate for the rest before going on.
 - **The 50 pilot pages go to dev.** They have been looked at closely.
+- **Widened to 100, Alessandro, 2026-10-25:** "inspecting a pilot set
+  before generating the whole thing makes sense", with the gate at 100
+  pages. The first 50 are kept; `cards.widen_pilot` draws 50 more, each
+  family in its share, and all 100 go to dev.
 
 ### Step 4 — the real PDF pages (§P)
 
@@ -820,6 +824,80 @@ width, density, family and writer. They go to `debug/corpus-sheets/`.
 - an `<ol>` with its numbers written passes;
 - the formats are detected by language, and each language reads as itself;
 - the sheets come twelve to an image.
+
+### Step 3 — the pilot, 100 pages, 2026-10-25, awaiting Alessandro's review
+
+**100 pages, each passing the validator, checked again all together**
+(near-duplicates included) at 3.6–4.1 s a page. 17 were written by Opus
+and 83 by Sonnet (decision 1, amended).
+- **Spread:**
+  - every family, in its share: transactional 19, forms 14, reports 14,
+    credentials 12, presentation 12, correspondence 10, reference 10,
+    publishing 9;
+  - all twelve style families, and 46 of the 53 kinds;
+  - English 73, French 13, Italian 8, Portuguese 4, Spanish 2;
+  - dense 39, medium 39, sparse 22.
+  - Every feature is on two pages or more except `text.drop_cap`, on
+    none. Its ten cards all lie outside the pilot.
+- **Heights:** 442 to 1581 px, median 841. **15 MB on disk**, so about
+  100 MB for the 600.
+
+**A word floor per density (check 8), added after the first 50.** The
+Sonnet pages were about half as wordy as the Opus pages at the same
+density. The medians were 254–291 words dense and 177–205 medium for
+Sonnet, against 570 and 404 for Opus. The floor:
+- 400 words per 1000 px of width dense, 220 medium, none sparse;
+- half that for nine compact kinds: certificate, ticket, invitation,
+  membership card, slide, flyer, prescription, calendar and nutrition
+  label.
+
+On the first 50 pages:
+- all 17 Opus pages cleared the floor, and 14 of the 33 Sonnet pages
+  fell under it;
+- those 14 were extended by Sonnet writers with what the kind really
+  carries, from 77–423 words to 125–503, each passing on its first run;
+- the brief states the floor, so the 50 that followed were written to
+  it. Sonnet's medians over all 83 are now 413 words dense and 205
+  medium.
+
+**c0052 was rewritten.** It reproduced the IRS Form 1040-EZ. The brief now
+says no real organisation issues a document. The new page is "Form RV-31"
+of an invented state revenue office.
+
+**Two faults found and fixed outside the pages:**
+- **`projection.project()` crashed on a large page.** It returned no
+  projection for a table of 40 rows by 8 columns, because its script
+  spread every byte of its payload as one call's arguments. A writer
+  found it on c0011, and cut that table to 6 columns by 25 rows to get
+  past it.
+  - The script now encodes in 32 KB chunks; `factory.browser` had the
+    same line and is fixed the same way.
+  - The 21 corpus sources project identically before and after, and
+    `tests/test_projection.py` pins a table of 60 rows by 10 columns.
+  - L2 would have met this on any dense page.
+- **`pools._repair` refused a swap that only partly closed a gap.** With
+  100 pages fixed in dev, it would have left dev with no drop cap.
+
+**Minutes per page.**
+- The five new batches of ten ran in parallel and took 333–554 s each,
+  so about 33–55 s a page per writer, the floor making pages longer.
+- 24 of the 50 passed on their first run. The commonest second run was
+  the floor.
+- At five writers in parallel, **the 400 generated pages left are about
+  an hour to an hour and a half of writing.**
+
+**What the sheets show, for the review:**
+- **They read as documents of their kind**, and mostly from different
+  hands. The strongest are the receipts (till slips, a bookseller, a
+  café, a Brazilian NFC-e, Italian *scontrini*), the forms, the clinical
+  notes, the tickets and the invitations. The `corporate-modern` pages
+  share one look (white rounded cards, a sans and one accent) more than
+  the other families do.
+- **Two signs of one author, measured over the 100:**
+  - **dates:** 69 pages carry an October 2026 date, and 21 are dated 24
+    October 2026, the date the brief's locale table uses as its example;
+  - **names:** "Okafor" is on 8 pages, "Whitcombe" on 7, "Harbour" or
+    "Harbor" on 13, "Fenwick" on 6.
 
 ### Step 4 — the sources proposed, 2026-10-24, awaiting Alessandro's approval
 

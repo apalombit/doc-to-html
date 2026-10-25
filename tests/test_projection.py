@@ -97,6 +97,16 @@ class TestTheBrowserIsPinnedWhereItMatters:
             "the last row is in the DOM but not in the pixels"
         )
 
+    @needs_chrome
+    def test_a_page_with_a_large_table_is_projected(self) -> None:
+        """The payload is encoded in chunks: spreading every byte as one
+        call's arguments failed at a table of 40 rows by 8 columns."""
+        rows = "".join("<tr>" + "".join(f"<td>r{r}c{c} word</td>" for c in range(10))
+                       + "</tr>" for r in range(60))
+        page = project(f"<!doctype html><html><body><table>{rows}</table></body></html>",
+                       width=900)
+        assert len(page.runs) == 600
+
 
 AUTHORED = [name for name in corpus.names("sweep")
             if name not in corpus.names("iterate")]

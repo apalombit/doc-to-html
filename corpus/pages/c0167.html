@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Receipt</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:30px 40px 34px;width:540px;background:#eef1f5;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;color:#1c2430;font-size:14px;line-height:1.4}
+.card{background:#fff;border-radius:12px;padding:26px 28px 24px;box-shadow:0 1px 5px rgba(0,0,0,.15)}
+.hd{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.hd b{font-size:20px;letter-spacing:.02em}
+.sc{font-variant:small-caps;letter-spacing:.1em;color:#6b7686;font-size:13px}
+.acc{color:#e0542f}
+.thanks{font-size:24px;font-weight:700;margin:14px 0 2px}
+.row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #e3e7ec}
+.row span:last-child{font-variant-numeric:tabular-nums}
+.sub{font-size:12px;color:#6b7686}
+.tot{display:flex;justify-content:space-between;font-size:20px;font-weight:700;padding:12px 0 6px}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;margin:14px 0;font-size:13px}
+.foot{margin-top:14px;font-size:12px;color:#6b7686;text-align:center}
+</style>
+</head>
+<body>
+<div class="card">
+ <div class="hd"><svg width="34" height="34" viewBox="0 0 34 34"><rect width="34" height="34" rx="8" fill="#e0542f"/><path d="M9 22l8-12 8 12z" fill="#fff"/></svg><b>Juniper Coffee Co.</b></div>
+ <div class="sc">Receipt &middot; Order 4817</div>
+ <div class="thanks">Thank you, <span class="acc">Marcus</span></div>
+ <div class="sub">Paid in store on October 24, 2026, 8:42 AM</div>
+ <div class="meta"><div><span class="sc">Store</span><br>Elm Street, Denver</div><div><span class="sc">Cashier</span><br>Tamsin R.</div><div><span class="sc">Card</span><br>Visa ending 4417</div><div><span class="sc">Register</span><br>No. 2</div></div>
+ <div class="row"><span>1 Oat flat white, 12 oz</span><span>$5.25</span></div>
+ <div class="row"><span>2 Almond croissants<br><span class="sub">$3.75 each</span></span><span>$7.50</span></div>
+ <div class="row"><span>1 Cold brew, 16 oz</span><span>$4.75</span></div>
+ <div class="row"><span>1 Bag, house blend, 12 oz</span><span>$16.00</span></div>
+ <div class="row"><span class="sub">Subtotal</span><span>$33.50</span></div>
+ <div class="row"><span class="sub">Sales tax, 8.81%</span><span>$2.95</span></div>
+ <div class="tot"><span>Total <span class="acc">paid</span></span><span>$36.45</span></div>
+ <div class="row" style="border:0"><span class="sub">Tip left</span><span>$0.00</span></div>
+ <div class="foot" style="text-align:left;margin-top:10px">Bags of beans may be returned within fourteen days with this receipt if unopened. Drinks made incorrectly are always remade; tell any barista. Prices include recycling of cups at every store.</div>
+ <div class="foot">Earn a free drink after nine visits. You have 7 of 9 stamps.<br>Questions? hello@example.com &middot; 303-555-0171</div>
+</div>
+</body>
+</html>

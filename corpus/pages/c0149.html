@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Purchase Order</title>
+<style>
+body{margin:0;padding:40px 44px 44px;width:672px;background:#fffefa;color:#222;font-family:Baskerville,"Times New Roman",serif;font-size:13.5px;line-height:1.45}
+header{text-align:center;border-top:4px double #222;border-bottom:4px double #222;padding:10px 0 8px}
+header h1{font-size:30px;font-weight:700;margin:0;font-variant:small-caps;letter-spacing:.08em}
+header p{margin:2px 0 0;font-size:12px;font-style:italic;font-weight:400}
+.num{display:flex;justify-content:space-between;margin:10px 0 14px;font-size:13px}
+.panels{display:flex;gap:16px}
+.panel{flex:1;border:1px solid #222;padding:8px 12px}
+.panel h2{font-variant:small-caps;font-size:14px;letter-spacing:.07em;font-weight:600;margin:0 0 4px;border-bottom:1px dotted #222}
+.panel div{margin:1px 0}
+table{width:100%;border-collapse:collapse;margin-top:16px}
+th{font-variant:small-caps;font-weight:600;text-align:left;border-top:1px solid #222;border-bottom:1px solid #222;padding:4px 6px;letter-spacing:.05em}
+td{padding:4px 6px;border-bottom:1px dashed #888}
+.r{text-align:right}
+tr.t td{border-bottom:0;font-weight:700}
+tr.t.first td{border-top:1px solid #222}
+.terms{margin-top:18px;font-size:12px}
+.terms b{font-variant:small-caps;font-weight:700;letter-spacing:.05em}
+.sign{display:flex;justify-content:space-between;margin-top:30px}
+.sign div{width:250px;border-top:1px solid #222;padding-top:3px;font-size:12px;font-style:italic}
+</style>
+</head>
+<body>
+<header><h1>Purchase Order</h1><p>Whitlock &amp; Dane Furniture Makers, Asheville, North Carolina</p></header>
+<div class="num"><span><b>PO No.:</b> 26-0841</span><span><b>Date:</b> October 19, 2026</span><span><b>Terms:</b> Net 30</span></div>
+<div class="panels">
+<div class="panel"><h2>Vendor</h2><div><b>Ridgeline Hardwoods Inc.</b></div><div>1180 Quarry Road</div><div>Boone, NC 28607</div><div><b>Contact:</b> T. Aldrich</div></div>
+<div class="panel"><h2>Ship To</h2><div><b>Whitlock &amp; Dane</b></div><div>72 Mill Race Lane</div><div>Asheville, NC 28801</div><div><b>Deliver by:</b> Nov. 6, 2026</div></div>
+<div class="panel"><h2>Bill To</h2><div><b>Accounts Payable</b></div><div>P.O. Box 318</div><div>Asheville, NC 28802</div><div><b>Dept.:</b> Workshop</div></div>
+</div>
+<table>
+<tr><th>Item</th><th>Description</th><th class="r">Qty</th><th class="r">Unit</th><th class="r">Amount</th></tr>
+<tr><td>WO-114</td><td>White oak boards, 8/4, kiln dried</td><td class="r">120 bf</td><td class="r">$9.40</td><td class="r">$1,128.00</td></tr>
+<tr><td>BW-207</td><td>Black walnut boards, 6/4</td><td class="r">60 bf</td><td class="r">$14.25</td><td class="r">$855.00</td></tr>
+<tr><td>CH-033</td><td>Cherry boards, 4/4, select</td><td class="r">80 bf</td><td class="r">$8.10</td><td class="r">$648.00</td></tr>
+<tr><td>HK-502</td><td>Brass hinge sets, antique finish</td><td class="r">24</td><td class="r">$6.50</td><td class="r">$156.00</td></tr>
+<tr><td>FN-610</td><td>Hide glue, one-quart tins</td><td class="r">12</td><td class="r">$7.00</td><td class="r">$84.00</td></tr>
+<tr class="t first"><td colspan="4" class="r">Subtotal</td><td class="r">$2,871.00</td></tr>
+<tr class="t"><td colspan="4" class="r">Freight</td><td class="r">$85.00</td></tr>
+<tr class="t"><td colspan="4" class="r">Total</td><td class="r">$2,956.00</td></tr>
+</table>
+<div class="terms"><b>Conditions.</b> Boards to be free of splits and cupping. Rejected stock returned at vendor's cost. Invoices must quote the order number above. Please confirm receipt of this order within two business days.</div>
+<div class="sign"><div>Authorized by, Margaret Dane</div><div>Accepted by vendor</div></div>
+</body>
+</html>

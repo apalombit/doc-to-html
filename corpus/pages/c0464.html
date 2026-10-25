@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>VR-450 Datasheet</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:30px 34px 34px;width:820px;background:#fff;color:#1f2933;font-family:"Avenir Next",Avenir,Helvetica,Arial,sans-serif;font-size:11px;line-height:1.4}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-bottom:3px solid #0a5cd1;padding-bottom:12px}
+h1{margin:0;font-size:24px;color:#0a5cd1;font-weight:700}
+header p{margin:4px 0 0;max-width:520px;color:#52606d;font-size:12px}
+.part{text-align:right;font-size:10px;color:#52606d}
+.part b{display:block;font-size:14px;color:#1f2933}
+h2{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#0a5cd1;margin:16px 0 8px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.card{border:1px solid #d3dce6;border-radius:6px;padding:10px 12px;background:#f7f9fc}
+.card h3{margin:0 0 6px;font-size:12px;color:#102a43}
+.kv{margin:4px 0}
+.kv small{display:block;font-size:9px;color:#7b8794;text-transform:uppercase;letter-spacing:.06em}
+.kv span{font-size:12.5px;font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:10.5px}
+th,td{border:1px solid #cbd5e1;padding:4px 7px;text-align:center}
+th{background:#e8f0fb;font-weight:700;color:#102a43}
+td.l,th.l{text-align:left}
+td.g{background:#f7f9fc;font-weight:700;text-align:left}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+ul{margin:0;padding-left:16px}
+.fine{margin-top:14px;font-size:9px;color:#7b8794;border-top:1px solid #d3dce6;padding-top:6px}
+</style>
+</head>
+<body>
+<header>
+<div><h1>VR-450 Series</h1><p>Isolated 450 W DC-DC converter module with 48 V input, programmable output from 5 V to 28 V, and digital telemetry over a two-wire bus. Suited to telecoms, rail and industrial control.</p></div>
+<div class="part">Datasheet<b>VR-450-48S12</b>Revision C &middot; 14 October 2026<br>Ardent Power Components Ltd</div>
+</header>
+
+<h2>Key specifications</h2>
+<div class="grid">
+<div class="card"><h3>Input</h3>
+<div class="kv"><small>Voltage range</small><span>36 to 75 V<sub>DC</sub></span></div>
+<div class="kv"><small>Maximum current</small><span>11.2 A</span></div>
+<div class="kv"><small>Under-voltage lockout</small><span>34.5 V</span></div></div>
+<div class="card"><h3>Output</h3>
+<div class="kv"><small>Nominal voltage</small><span>12 V<sub>DC</sub></span></div>
+<div class="kv"><small>Maximum current</small><span>37.5 A</span></div>
+<div class="kv"><small>Peak efficiency</small><span>95.2 %</span></div></div>
+<div class="card"><h3>Isolation</h3>
+<div class="kv"><small>Input to output</small><span>2,250 V<sub>DC</sub></span></div>
+<div class="kv"><small>Creepage distance</small><span>6.4 mm</span></div>
+<div class="kv"><small>Leakage current</small><span>&lt; 1 &micro;A</span></div></div>
+<div class="card"><h3>Thermal</h3>
+<div class="kv"><small>Operating range</small><span>&minus;40 to +100 &deg;C</span></div>
+<div class="kv"><small>Thermal resistance</small><span>6.8 K/W</span></div>
+<div class="kv"><small>Storage range</small><span>&minus;55 to +125 &deg;C</span></div></div>
+<div class="card"><h3>Mechanical</h3>
+<div class="kv"><small>Footprint</small><span>61 &times; 57.9 mm</span></div>
+<div class="kv"><small>Base area</small><span>35.3 cm<sup>2</sup></span></div>
+<div class="kv"><small>Mass</small><span>112 g</span></div></div>
+<div class="card"><h3>Reliability</h3>
+<div class="kv"><small>MTBF (25 &deg;C)</small><span>2.4 &times; 10<sup>6</sup> h</span></div>
+<div class="kv"><small>Switching frequency</small><span>250 kHz</span></div>
+<div class="kv"><small>Warranty</small><span>5 years</span></div></div>
+</div>
+
+<h2>Electrical characteristics</h2>
+<table>
+<tr><th class="l" rowspan="2">Parameter</th><th class="l" rowspan="2">Conditions</th><th colspan="3">Value</th><th rowspan="2">Unit</th></tr>
+<tr><th>Min</th><th>Typ</th><th>Max</th></tr>
+<tr><td class="g" colspan="6">Input characteristics</td></tr>
+<tr><td class="l">Input voltage V<sub>IN</sub></td><td class="l">Continuous</td><td>36</td><td>48</td><td>75</td><td>V</td></tr>
+<tr><td class="l">Input surge</td><td class="l">100 ms</td><td>&mdash;</td><td>&mdash;</td><td>100</td><td>V</td></tr>
+<tr><td class="l">Input current I<sub>IN</sub></td><td class="l">Full load, 48 V</td><td>&mdash;</td><td>9.8</td><td>11.2</td><td>A</td></tr>
+<tr><td class="l">No-load power</td><td class="l">V<sub>IN</sub> = 48 V</td><td>&mdash;</td><td>3.1</td><td>4.5</td><td>W</td></tr>
+<tr><td class="g" colspan="6">Output characteristics</td></tr>
+<tr><td class="l">Output voltage V<sub>OUT</sub></td><td class="l">I<sub>OUT</sub> = 20 A</td><td>11.88</td><td>12.00</td><td>12.12</td><td>V</td></tr>
+<tr><td class="l">Line regulation</td><td class="l">36 to 75 V</td><td>&mdash;</td><td>&plusmn;0.05</td><td>&plusmn;0.2</td><td>%</td></tr>
+<tr><td class="l">Load regulation</td><td class="l">0 to 100 %</td><td>&mdash;</td><td>&plusmn;0.1</td><td>&plusmn;0.3</td><td>%</td></tr>
+<tr><td class="l">Ripple, peak to peak</td><td class="l">20 MHz bandwidth</td><td>&mdash;</td><td>60</td><td>120</td><td>mV</td></tr>
+<tr><td class="l">Output power</td><td class="l">T<sub>A</sub> &le; 70 &deg;C</td><td>&mdash;</td><td>&mdash;</td><td>450</td><td>W</td></tr>
+</table>
+
+<div class="two" style="margin-top:12px">
+<div><h2>Features</h2><ul>
+<li>Fully regulated, 1500 W/in<sup>3</sup> power density</li>
+<li>Remote on/off and output trim</li>
+<li>Over-current, over-voltage and over-temperature protection</li>
+<li>Digital telemetry: voltage, current and temperature</li></ul></div>
+<div><h2>Ordering information</h2><ul>
+<li>VR-450-48S05: 5 V output, 90 A</li>
+<li>VR-450-48S12: 12 V output, 37.5 A</li>
+<li>VR-450-48S28: 28 V output, 16 A</li>
+<li>Suffix -H: with heatsink; suffix -T: telemetry</li></ul></div>
+</div>
+<div class="fine">All values are measured at T<sub>A</sub> = 25 &deg;C unless otherwise stated. Specifications may change without notice. Contact sales@ardentpower.example.com for qualification reports and application notes.</div>
+</body>
+</html>
