@@ -6,7 +6,8 @@ an external font, words inside an SVG, clipped text, a horizontal
 overflow, a near-duplicate, and generated text (`::before` content and
 `<ol>` auto-numbers) — the spec's list — and beside them text the colour
 of its ground, a page in the wrong language, a feature the card asks for
-and the page lacks, and layout that depends on the window.
+and the page lacks, too few words for the card's density, and layout that
+depends on the window.
 """
 
 from __future__ import annotations
@@ -69,6 +70,12 @@ property during the first week of October, with the materials used.</p>
 <p>Payment is due within 30 days of the invoice date. Our bank details are on
 the back of this page. If you have any questions about this invoice, please
 call the workshop on the number above and ask for the accounts office.</p>
+<p>All timber is sourced from certified suppliers in the south west, and the
+offcuts from your job have been taken back to the workshop for reuse. Any
+fitted joinery is guaranteed against defects in workmanship for two years
+from the date of fitting. Small marks and movement in the wood as it settles
+over its first winter are normal, and we are happy to return and adjust any
+door or window that sticks during that time at no extra charge.</p>
 <!--BODY-->
 </div></body></html>
 """
@@ -192,6 +199,11 @@ class TestThePlantedFaults:
         result = _twin(tmp_path, SOUND, sound.picture or Path(), replace(CARD, type="type.serif"))
         assert any("the main face is sans" in m for m in result.failures["features"])
 
+    def test_too_few_words_for_its_density(self, tmp_path: Path, sound: check.Result) -> None:
+        result = check.check(replace(CARD, density="dense"), _page(tmp_path, SOUND), ALLOWED, [])
+        assert f"{sound.words} words; a dense page 820 px wide holds at least 328" in (
+            result.failures["features"])
+
     def test_a_viewport_height_unit(self, tmp_path: Path, sound: check.Result) -> None:
         html = _with(".page { min-height: 90vh; }")
         result = _twin(tmp_path, html, sound.picture or Path())
@@ -237,6 +249,14 @@ class TestThePieces:
 
     def test_a_stack_may_not_lead_with_the_system_face(self) -> None:
         assert check.face_problems(["system-ui, sans-serif"], ALLOWED) == ["leads with 'system-ui'"]
+
+    def test_the_word_floor_by_density_width_and_kind(self) -> None:
+        wide = replace(CARD, width=1000)
+        assert check.word_floor(replace(wide, density="dense")) == 400
+        assert check.word_floor(replace(wide, density="medium")) == 220
+        assert check.word_floor(replace(wide, density="sparse")) == 0
+        assert check.word_floor(replace(wide, density="dense", kind="ticket")) == 200
+        assert check.word_floor(replace(wide, density="medium", width=500)) == 110
 
     def test_formats_by_language(self) -> None:
         assert check.FORMATS["fmt.eu_numbers"].search("Totale 1.234,56 €")

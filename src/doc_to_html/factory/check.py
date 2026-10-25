@@ -53,6 +53,11 @@ face's class, taken over the characters each face sets; a dark ground,
 taken as the screenshot's median luminance; an `<svg>` or `<img>` for any
 `fig.*`; and a pattern in the text for each `fmt.*`. What a page shows of
 these, whatever its card asked, is recorded as its `detected` features.
+Check 8 also holds the card's density to a word floor: `WORD_FLOOR` words
+per 1000 px of width, half that for the `COMPACT_KINDS`, and none for a
+sparse page. Set from the pilot's 50: the 17 pages written by Opus, which
+read as their density, all clear it, and 14 of the 33 written by Sonnet,
+about half as wordy at the same density, do not.
 
 **Language (9)** counts each language's common words (`STOPWORDS`); a word
 shared by two lists counts half to each. The card's language must score at
@@ -104,6 +109,17 @@ HASH_NEAR = 3
 SHINGLE = 4
 DARK_GROUND = 0.40
 LONG_TABLE = 25
+WORD_FLOOR = {"medium": 220, "dense": 400}
+COMPACT_KINDS = frozenset({"certificate", "ticket", "invitation", "membership card",
+                           "slide", "flyer", "prescription", "calendar",
+                           "nutrition label"})
+
+
+def word_floor(card: Card) -> int:
+    """The fewest words a page of `card`'s density holds at its width."""
+    per_1000 = WORD_FLOOR.get(card.density or "", 0)
+    share = 0.5 if card.kind in COMPACT_KINDS else 1.0
+    return round(per_1000 * (card.width or 0) / 1000 * share)
 
 GENERIC_FIRST = {"serif": "serif", "sans-serif": "sans", "monospace": "mono",
                  "cursive": "script"}
@@ -595,6 +611,9 @@ def check(card: Card, html_path: Path, allowed: dict[str, fonts.Face],
             result.fail("features", f"{fid} is on the card and not on the page")
     if card.type and main and f"type.{main}" != card.type:
         result.fail("features", f"the main face is {main}, the card asks {card.type}")
+    if not twin and result.words < word_floor(card):
+        result.fail("features", f"{result.words} words; a {card.density} page "
+                                f"{card.width} px wide holds at least {word_floor(card)}")
 
     # 9: the language.
     scores = language_scores(text)

@@ -81,7 +81,7 @@
    "width": 760,
    "density": "dense",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0005",
@@ -201,7 +201,7 @@
    "width": 940,
    "density": "dense",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0011",
@@ -220,7 +220,7 @@
    "width": 980,
    "density": "dense",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0012",
@@ -485,7 +485,7 @@
    "width": 960,
    "density": "dense",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0025",
@@ -997,7 +997,7 @@
    "width": 960,
    "density": "dense",
    "locale": "fr-FR",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0050",
@@ -1122,7 +1122,7 @@
    "width": 860,
    "density": "sparse",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0056",
@@ -1391,7 +1391,7 @@
    "width": 900,
    "density": "dense",
    "locale": "fr-FR",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0069",
@@ -2537,7 +2537,7 @@
    "width": 820,
    "density": "medium",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0133",
@@ -2556,7 +2556,7 @@
    "width": 500,
    "density": "sparse",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0134",
@@ -2676,7 +2676,7 @@
    "width": 840,
    "density": "dense",
    "locale": "it-IT",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0140",
@@ -2882,7 +2882,7 @@
    "width": 760,
    "density": "medium",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0150",
@@ -3051,7 +3051,7 @@
    "width": 1000,
    "density": "dense",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0158",
@@ -3256,7 +3256,7 @@
    "width": 540,
    "density": "medium",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0168",
@@ -3501,7 +3501,7 @@
    "width": 500,
    "density": "medium",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0180",
@@ -3625,7 +3625,7 @@
    "width": 860,
    "density": "dense",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0186",
@@ -3826,7 +3826,7 @@
    "width": 540,
    "density": "dense",
    "locale": "pt-BR",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0196",
@@ -3940,7 +3940,7 @@
    "width": 740,
    "density": "medium",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0203",
@@ -3962,7 +3962,7 @@
    "width": 1000,
    "density": "medium",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0204",
@@ -4211,7 +4211,7 @@
    "width": 840,
    "density": "sparse",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0216",
@@ -4311,7 +4311,7 @@
    "width": 620,
    "density": "dense",
    "locale": "es-ES",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0221",
@@ -4536,7 +4536,7 @@
    "width": 840,
    "density": "medium",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0232",
@@ -4620,7 +4620,7 @@
    "width": 900,
    "density": "dense",
    "locale": "it-IT",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0236",
@@ -4642,7 +4642,7 @@
    "width": 980,
    "density": "dense",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0237",
@@ -6102,7 +6102,7 @@
    "width": 840,
    "density": "medium",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0316",
@@ -6142,7 +6142,7 @@
    "width": 900,
    "density": "dense",
    "locale": "fr-FR",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0318",
@@ -6377,7 +6377,7 @@
    "width": 900,
    "density": "medium",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0329",
@@ -6435,7 +6435,7 @@
    "width": 800,
    "density": "medium",
    "locale": "fr-FR",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0332",
@@ -6799,7 +6799,7 @@
    "width": 820,
    "density": "sparse",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0350",
@@ -7031,7 +7031,7 @@
    "width": 1080,
    "density": "medium",
    "locale": "it-IT",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0364",
@@ -7090,7 +7090,7 @@
    "width": 920,
    "density": "dense",
    "locale": "fr-FR",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0367",
@@ -7657,7 +7657,7 @@
    "width": 1000,
    "density": "dense",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0395",
@@ -7816,7 +7816,7 @@
    "width": 1080,
    "density": "medium",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0403",
@@ -7856,7 +7856,7 @@
    "width": 1020,
    "density": "sparse",
    "locale": "pt-PT",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0405",
@@ -8181,7 +8181,7 @@
    "width": 1160,
    "density": "sparse",
    "locale": "fr-FR",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0425",
@@ -8223,7 +8223,7 @@
    "width": 520,
    "density": "medium",
    "locale": "fr-FR",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0427",
@@ -8282,7 +8282,7 @@
    "width": 1180,
    "density": "dense",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0430",
@@ -8991,7 +8991,7 @@
    "width": 820,
    "density": "dense",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0465",
@@ -9031,7 +9031,7 @@
    "width": 940,
    "density": "sparse",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0467",
@@ -9391,7 +9391,7 @@
    "width": 860,
    "density": "sparse",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0487",
@@ -9802,7 +9802,7 @@
    "width": 820,
    "density": "sparse",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0507",
@@ -9865,7 +9865,7 @@
    "width": 820,
    "density": "dense",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0510",
@@ -9907,7 +9907,7 @@
    "width": 980,
    "density": "dense",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0512",
@@ -10097,7 +10097,7 @@
    "width": 840,
    "density": "sparse",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0521",
@@ -10347,7 +10347,7 @@
    "width": 980,
    "density": "medium",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0533",
@@ -10618,7 +10618,7 @@
    "width": 800,
    "density": "medium",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0546",
@@ -11030,7 +11030,7 @@
    "width": 1160,
    "density": "dense",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0566",
@@ -11071,7 +11071,7 @@
    "width": 1160,
    "density": "sparse",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0568",
@@ -11213,7 +11213,7 @@
    "width": 540,
    "density": "medium",
    "locale": "en-US",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0575",
@@ -11455,7 +11455,7 @@
    "width": 640,
    "density": "medium",
    "locale": "fr-FR",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0587",
@@ -11637,7 +11637,7 @@
    "width": 1100,
    "density": "dense",
    "locale": "fr-FR",
-   "pilot": false
+   "pilot": true
   },
   {
    "id": "c0596",
@@ -11806,6 +11806,63 @@
     "c0571",
     "c0573",
     "c0589"
+   ]
+  },
+  {
+   "step": "widen pilot",
+   "seed": 20261025,
+   "count": 100,
+   "changed": [
+    "c0004",
+    "c0010",
+    "c0011",
+    "c0024",
+    "c0049",
+    "c0055",
+    "c0068",
+    "c0132",
+    "c0133",
+    "c0139",
+    "c0149",
+    "c0157",
+    "c0167",
+    "c0179",
+    "c0185",
+    "c0195",
+    "c0202",
+    "c0203",
+    "c0215",
+    "c0220",
+    "c0231",
+    "c0235",
+    "c0236",
+    "c0315",
+    "c0317",
+    "c0328",
+    "c0331",
+    "c0349",
+    "c0363",
+    "c0366",
+    "c0394",
+    "c0402",
+    "c0404",
+    "c0424",
+    "c0426",
+    "c0429",
+    "c0464",
+    "c0466",
+    "c0486",
+    "c0506",
+    "c0509",
+    "c0511",
+    "c0520",
+    "c0532",
+    "c0545",
+    "c0565",
+    "c0567",
+    "c0574",
+    "c0586",
+    "c0595"
    ]
   }
  ]

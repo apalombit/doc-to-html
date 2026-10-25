@@ -1,7 +1,7 @@
 """The pools and the L3 set — spec 0020, step 6.
 
 Dealt over the seeded draw: 200 to a pool, each family split evenly, the
-PDF slots about 33 to a pool, the pilot in dev, two pages of every feature
+PDF slots about 33 to a pool, the pilot's 100 in dev, two pages of every feature
 in every pool, and an L3 set of 36 panel pages covering every family and
 the structural features.
 """
@@ -23,7 +23,7 @@ SEED = 20261024
 @pytest.fixture(scope="module")
 def drawn() -> list[cards.Card]:
     topped, _ = cards.top_up(TAXONOMY, cards.draw(TAXONOMY, SEED), SEED)
-    return cards.choose_pilot(TAXONOMY, topped, SEED)
+    return cards.widen_pilot(TAXONOMY, cards.choose_pilot(TAXONOMY, topped, SEED), SEED + 1, 100)
 
 
 @pytest.fixture(scope="module")

@@ -3,6 +3,7 @@
     python tools/corpus_cards.py                  # draw corpus/cards.json (refuses to overwrite)
     python tools/corpus_cards.py --table          # the coverage table of cards.json
     python tools/corpus_cards.py --top-up         # top up again; written pages stay locked
+    python tools/corpus_cards.py --widen-pilot 100  # more pilot cards, the first kept
 
 Every decision is in `doc_to_html.factory.cards`; this is the command line.
 `cards.json` records the seed it was drawn with and every later top-up,
@@ -47,6 +48,8 @@ def main() -> int:
     parser.add_argument("--table", action="store_true", help="print the table of cards.json")
     parser.add_argument("--top-up", action="store_true",
                         help="top up cards.json again, cards with a page locked")
+    parser.add_argument("--widen-pilot", type=int, metavar="N",
+                        help="widen the pilot to N cards, its cards kept")
     parser.add_argument("--force", action="store_true", help="overwrite cards.json")
     args = parser.parse_args()
     taxonomy = cards.load_taxonomy(TAXONOMY)
@@ -72,6 +75,18 @@ def main() -> int:
         if short:
             print(f"COVERAGE NOT MET: {short}")
             return 1
+        return 0
+
+    if args.widen_pilot:
+        seed, drawn = cards.load(CARDS)
+        history = _history(CARDS)
+        step_seed = seed + len(history)
+        widened = cards.widen_pilot(taxonomy, drawn, step_seed, args.widen_pilot)
+        changed = [new.id for old, new in zip(drawn, widened) if old != new]
+        history.append({"step": "widen pilot", "seed": step_seed,
+                        "count": args.widen_pilot, "changed": changed})
+        _write(widened, seed, history)
+        print(f"the pilot widened by {len(changed)} cards: {', '.join(changed)}")
         return 0
 
     if CARDS.exists() and not args.force:

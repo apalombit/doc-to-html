@@ -106,6 +106,18 @@ class TestEveryCardIsSound:
         assert len({card.style for card in pilot}) >= 8
         assert {card.language for card in pilot} == set(TAXONOMY["languages"])
 
+    def test_the_pilot_widens_keeping_its_cards(self, drawn: list[cards.Card]) -> None:
+        widened = cards.widen_pilot(TAXONOMY, drawn, SEED + 1, 100)
+        first = {card.id for card in drawn if card.pilot}
+        pilot = [card for card in widened if card.pilot]
+        assert len(pilot) == 100 and first < {card.id for card in pilot}
+        assert all(card.origin == "generated" for card in pilot)
+        generated = Counter(card.family for card in drawn if card.origin == "generated")
+        for family, count in Counter(card.family for card in pilot).items():
+            assert abs(count - 100 * generated[family] / 500) < 1, family
+        assert [replace(card, pilot=False) for card in widened] == [
+            replace(card, pilot=False) for card in drawn]
+
     @pytest.fixture
     def sound(self, drawn: list[cards.Card]) -> cards.Card:
         return next(card for card in drawn if card.kind == "invoice"
@@ -147,7 +159,7 @@ class TestTheFileOnDisk:
         assert len(on_disk) == 600
         assert all(not cards.problems(TAXONOMY, card) for card in on_disk)
         assert cards.shortfalls(TAXONOMY, on_disk) == {}
-        assert sum(card.pilot for card in on_disk) == 50
+        assert sum(card.pilot for card in on_disk) == 100
 
     def test_cards_json_is_the_seeded_draw_but_for_the_cards_its_history_names(
             self, drawn: list[cards.Card]) -> None:

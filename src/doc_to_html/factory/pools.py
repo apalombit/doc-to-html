@@ -12,8 +12,9 @@ the pilot's 50 go to dev.
 - *the pilot fixed in dev*;
 - *then repaired for coverage*: while a feature has fewer than
   `per_pool` pages in a pool, two pages of the same family and origin
-  are swapped between pools when that raises the short count and drops
-  no count below its minimum. Pilot pages never move.
+  are swapped between pools when that lowers the pages lacking over
+  every feature and pool, so no other count falls below its minimum.
+  Pilot pages never move.
 
 **The L3 set**: 36 panel pages chosen by greedy cover, so that each
 family is there at least 4 times and each table, key–value, list and
@@ -104,7 +105,7 @@ def _repair(taxonomy: Taxonomy, cards: Sequence[Card], pools: dict[str, str],
             for taker in takers:
                 trial = dict(pools)
                 trial[giver.id], trial[taker.id] = pool, pools[giver.id]
-                if len(shortfalls(taxonomy, cards, trial)) < len(short):
+                if sum(shortfalls(taxonomy, cards, trial).values()) < sum(short.values()):
                     pools = trial
                     done = True
                     break

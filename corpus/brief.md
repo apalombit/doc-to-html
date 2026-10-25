@@ -249,6 +249,18 @@ Even these three use a real `<table>` and a real list where the card has a
 - **dense**: packed: small type (10–12 px), many rows or fields, little
   space.
 
+**The words a density asks for.** The validator counts the page's words
+(numbers count, each run of letters or digits is one) and fails a page
+below its floor: **400 words per 1000 px of width for dense, 220 for
+medium**, none for sparse. A certificate, ticket, invitation, membership
+card, slide, flyer, prescription, calendar or nutrition label needs half
+that. So a dense page 820 px wide holds at least 328 words, and a medium
+receipt 500 px wide at least 110. That is a floor, not the aim: a real
+dense statement or form is often twice it. Reach it with what a real
+document of the kind carries (more rows, more fields, the small print,
+the terms, the second address, the reference numbers), never with
+filler or repetition.
+
 ### Locales
 
 | locale | dates | numbers | money |

@@ -418,6 +418,33 @@ def choose_pilot(taxonomy: Taxonomy, cards: list[Card], seed: int, count: int = 
     raise ValueError("no pilot spans eight style families and every language")
 
 
+def widen_pilot(taxonomy: Taxonomy, cards: list[Card], seed: int, count: int
+                ) -> list[Card]:
+    """The pilot widened to `count` cards, the cards already in it kept.
+
+    Each family takes its share of `count`, as in `choose_pilot`, less the
+    pilot cards it already has; those are drawn from its other generated
+    cards with `seed`. The widened pilot goes to dev, like the first."""
+    generated = [card for card in cards if card.origin == "generated"]
+    by_family: dict[str, list[Card]] = defaultdict(list)
+    for card in generated:
+        by_family[card.family].append(card)
+    share = {family: count * len(members) / len(generated)
+             for family, members in by_family.items()}
+    quota = {family: int(value) for family, value in share.items()}
+    for family in sorted(share, key=lambda f: share[f] - quota[f], reverse=True):
+        if sum(quota.values()) >= count:
+            break
+        quota[family] += 1
+    rng = random.Random(seed)
+    ids = {card.id for card in cards if card.pilot}
+    for family in sorted(by_family):
+        rest = [card for card in by_family[family] if not card.pilot]
+        held = len(by_family[family]) - len(rest)
+        ids.update(card.id for card in rng.sample(rest, max(0, quota[family] - held)))
+    return [replace(card, pilot=card.id in ids) for card in cards]
+
+
 def problems(taxonomy: Taxonomy, card: Card) -> list[str]:
     """Everything wrong with one card; empty for a sound one. A PDF slot
     not yet filled is sound with no fields."""
