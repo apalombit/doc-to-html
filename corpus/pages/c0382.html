@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><title>Textbook page</title>
+<style>
+body{margin:0;padding:0 0 28px;font-family:"STIX Two Text","Times New Roman",serif;font-size:16px;color:#1d1b1a;background:#fffefb;line-height:1.5}
+.run{display:flex;justify-content:space-between;padding:14px 40px 6px;font-size:12px;font-variant:small-caps;letter-spacing:1.5px;color:#555;border-bottom:1px solid #aaa}
+.band{background:#243a5e;color:#f6efe0;padding:22px 40px;display:flex;align-items:center;gap:20px}
+.band .ch{font-size:13px;letter-spacing:3px;font-variant:small-caps;color:#e0b95b}
+.band h1{margin:2px 0 0;font-size:34px;font-weight:600}
+.band .pub{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;font-variant:small-caps;letter-spacing:1px}
+.wrap{padding:18px 40px 0}
+.intro{margin:0 0 16px;max-width:760px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{border:1px solid #b9b2a0;padding:14px 16px;background:#faf6ea}
+.card h2{margin:0 0 6px;font-size:18px;display:flex;align-items:center;gap:10px}
+.card p{margin:4px 0;font-size:15px}
+.formula{text-align:center;font-style:italic;font-size:22px;margin:8px 0;padding:6px;border-top:1px solid #c9c1ad;border-bottom:1px solid #c9c1ad}
+.chart{position:relative;width:360px;height:190px;margin:6px auto 0}
+.chart svg{position:absolute;left:0;top:0}
+.chart span{position:absolute;font-size:11px;background:rgba(250,246,234,.85);padding:0 2px}
+.cap{font-size:13px;text-align:center;margin-top:4px}
+.note{font-family:"Snell Roundhand","Apple Chancery",cursive;font-size:22px;color:#9b2f2f;transform:rotate(-2deg);margin:8px 0 0}
+.folio{text-align:center;margin-top:20px;font-size:13px}
+</style></head><body>
+<div class="run"><span>Oliver Caldwell &amp; Arjun Fairclough</span><span>Heat and Change</span></div>
+<div class="band"><div><div class="ch">Chapter 7</div><h1>How Things Cool Down</h1></div>
+<div class="pub"><svg width="34" height="34" viewBox="0 0 34 34"><polygon points="17,2 32,12 26,31 8,31 2,12" fill="none" stroke="#e0b95b" stroke-width="2"/><polygon points="17,9 24,14 21,24 13,24 10,14" fill="#e0b95b"/></svg>Indigo Topaz Press</div></div>
+<div class="wrap">
+<p class="intro">A cup of tea left on the desk loses heat quickly at first, then ever more slowly. This page sets out the pattern, gives the law behind it and shows how each quantity enters. Revised 11 March 2023 for the Taunton and Stockport editions.</p>
+<div class="grid">
+<section class="card"><h2><svg width="30" height="30" viewBox="0 0 30 30"><rect x="11" y="3" width="8" height="18" rx="4" fill="none" stroke="#9b2f2f" stroke-width="2"/><circle cx="15" cy="23" r="5" fill="#9b2f2f"/></svg>The law</h2>
+<p>The rate of cooling is proportional to the gap between the body and its surroundings.</p>
+<div class="formula">T(t) = T<sub>e</sub> + (T<sub>0</sub> &minus; T<sub>e</sub>) e<sup>&minus;kt</sup></div>
+<p>Here T<sub>e</sub> is room temperature and k the cooling constant.</p></section>
+<section class="card"><h2><svg width="30" height="30" viewBox="0 0 30 30"><path d="M4 24 L12 12 L18 18 L26 6" fill="none" stroke="#243a5e" stroke-width="2.5"/><circle cx="26" cy="6" r="3" fill="#243a5e"/></svg>The curve</h2>
+<div class="chart"><svg width="360" height="190" viewBox="0 0 360 190"><path d="M40 10 V160 H350" fill="none" stroke="#333" stroke-width="1.5"/><path d="M40 20 C80 80 130 120 200 138 S300 152 350 155" fill="none" stroke="#9b2f2f" stroke-width="3"/><path d="M40 155 H350" stroke="#888" stroke-dasharray="4 4"/></svg>
+<span style="left:0;top:8px">90</span><span style="left:0;top:146px">20</span><span style="left:40px;top:166px">0</span><span style="left:300px;top:166px">60</span><span style="left:120px;top:170px">time (min)</span><span style="left:210px;top:112px">tea</span><span style="left:240px;top:130px">room</span></div>
+<div class="cap">Figure 7.1 Temperature (&deg;C) of a cup of tea against time</div></section>
+<section class="card"><h2><svg width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="11" fill="none" stroke="#243a5e" stroke-width="2"/><path d="M15 8 V15 L20 18" fill="none" stroke="#243a5e" stroke-width="2"/></svg>Half-life of the gap</h2>
+<p>The gap halves every 0.69/k minutes, whatever its starting size.</p>
+<div class="formula">t<sub>&frac12;</sub> = ln 2 / k</div>
+<p>For k = 0.05 per minute, t<sub>&frac12;</sub> is about 14 minutes.</p></section>
+<section class="card"><h2><svg width="30" height="30" viewBox="0 0 30 30"><path d="M5 25 H25 M8 25 V14 L15 5 L22 14 V25" fill="none" stroke="#9b2f2f" stroke-width="2"/></svg>Try it</h2>
+<p>A mug starts at 90&deg;C in a 20&deg;C room. Using k = 0.05, find its temperature after 30 minutes.</p>
+<p>Leah Pritchard&rsquo;s worked answer is on page 212.</p>
+<div class="note">hint: e<sup>&minus;1.5</sup> &asymp; 0.22</div></section>
+</div>
+<div class="folio">148</div>
+</div></body></html>

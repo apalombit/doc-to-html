@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en-US"><head><meta charset="utf-8"><title>Visit note</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;width:780px;padding:30px;background:#fff;color:#1a1a1a;font-family:"Courier New",Courier,monospace;font-size:13px;line-height:1.5}
+.flex{display:flex}.gap-6{gap:24px}.w-side{width:200px;flex:none}.flex-1{flex:1}
+.p-3{padding:12px}.px-2{padding-left:8px;padding-right:8px}.mb-2{margin-bottom:8px}.mb-4{margin-bottom:18px}.mt-4{margin-top:18px}
+.text-sm{font-size:11px}.text-xs{font-size:10px}.font-bold{font-weight:700}.uppercase{text-transform:uppercase;letter-spacing:.06em}
+.border-b{border-bottom:2px solid #b3341f}.border-l{border-left:1px solid #999}
+.bg-gray{background:#f1efe9}.text-red{color:#b3341f}.rounded{border-radius:4px}
+.w-full{width:100%;border-collapse:collapse}
+.w-full th,.w-full td{border:1px solid #999;padding:4px 8px;text-align:left}
+.w-full th{background:#f1efe9;font-size:11px}
+h1{font-size:19px;margin:0}
+h2{font-size:13px;margin:0 0 6px}
+ul,ol{margin:0 0 10px;padding-left:20px}
+ol{list-style:none;padding-left:0}ol li span{display:inline-block;width:22px}
+sup{font-size:9px}
+</style></head><body>
+<div class="flex gap-6">
+<div class="w-side text-sm">
+<div class="p-3 bg-gray rounded mb-2"><div class="uppercase text-xs text-red font-bold">Patient</div>Jasmine Lindqvist<br>DOB 03/14/1988<br>MRN 4410-2297</div>
+<div class="p-3 bg-gray rounded mb-2"><div class="uppercase text-xs text-red font-bold">Visit</div>02/01/2020<br>Established patient<br>Provider: Malik Kowalczyk, MD</div>
+<div class="p-3 bg-gray rounded mb-2"><div class="uppercase text-xs text-red font-bold">Site</div>Maple Cypress Family Clinic<br>Tacoma, WA</div>
+</div>
+<div class="flex-1 border-l px-2">
+<div class="border-b mb-4"><h1>Clinic Visit Note</h1><div class="text-sm">Saturday walk-in &middot; Printed from chart 02/01/2020</div></div>
+<h2 class="uppercase text-red">Reason for visit</h2>
+<p>Cough and sore throat for five days, no fever since day two.<sup>1</sup></p>
+<h2 class="uppercase text-red">Vitals</h2>
+<table class="w-full mb-4"><tr><th>Measure</th><th>Value</th><th>Units</th></tr><tr><td>Temp</td><td>98.4</td><td>°F</td></tr><tr><td>BP</td><td>118/74</td><td>mmHg</td></tr><tr><td>SpO2</td><td>98</td><td>%</td></tr></table>
+<h2 class="uppercase text-red">Findings</h2>
+<ul><li>Throat mildly erythematous, no exudate</li><li>Lungs clear to auscultation</li></ul>
+<h2 class="uppercase text-red">Plan</h2>
+<ol><li><span>1.</span>Rest, fluids, honey in warm water</li><li><span>2.</span>Return if fever above 100.4 °F<sup>2</sup></li><li><span>3.</span>Follow up in two weeks with Dr. Washington</li></ol>
+<div class="mt-4 flex" style="align-items:flex-end;gap:16px"><svg width="150" height="46" viewBox="0 0 150 46"><path d="M6 34C14 6 22 6 20 24S30 40 40 18 50 10 56 28 74 36 84 20 104 14 112 28 134 30 146 12" fill="none" stroke="#1d2f6b" stroke-width="2" stroke-linecap="round"/></svg><div class="text-sm">Malik Kowalczyk, MD<br>Signed 02/01/2020, 11:42</div></div>
+<div class="mt-4 text-xs"><sup>1</sup> Patient is a non-smoker. <sup>2</sup> Instructions given in writing. Referral to Boise, ID not needed.</div>
+</div></div>
+</body></html>

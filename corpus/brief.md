@@ -65,6 +65,14 @@ looking at your page's screenshot.
   Nothing smaller than 8 px; fine print is 8–10 px.
 - `text-transform`, `letter-spacing` and `font-variant: small-caps` are
   fine: the words stay the same.
+- **A line a reader reads as one is one block.** A numbered heading
+  (`1.2 Les prestations`), a numbered clause or list item, or an entry in
+  a table of contents keeps its number and its text in one element: give
+  the number an inline `<span>` (`display: inline-block; width: …` for a
+  hanging column). Making them two flex or grid items, or placing either
+  with `position: absolute`, turns them into two blocks, and the scorer
+  groups text by its block. A label and its value set as two cells of a
+  table or grid are two blocks on purpose, and that is fine.
 
 ## Figures
 
@@ -346,9 +354,15 @@ its card's `particulars.date`.
     patient, the signatory, the author. Add more only if the kind needs
     them, invented in the same locale.
   - `places` are the towns it is set in.
-  - `name_words` are for building the organisation's, the brand's or
-    the product's name: *Linnet Joinery*, *Garnet & Vale*, *Verdigris
-    Analytics*. Translate or adapt them for a page not in English.
+  - `name_words` are seeds for the names the page needs: the
+    organisation's, a brand's, a product's, a building's. Use one, both
+    or neither, in the form a real one of this kind and locale takes: a
+    word and what it does (*Linnet Dental*, *Verdigris Analytics*), a
+    surname or a family (*Hendricks Plumbing*, *Rossi & Figli*), a town
+    (*Ipswich Joinery*), initials (*KBV Logistik*), a product line (*the
+    Cinder 40 kettle*). **Do not join the two words into one name with
+    "&"**: a third of the first 150 pages did, and it reads as one
+    author. Translate or adapt them for a page not in English.
   - Never use Okafor, Whitcombe, Harbour, Harbor, Fenwick, Calloway,
     Marchetti or Marrowfield: earlier pages wore them out.
 - **No lorem ipsum.** No real person, company, brand, product or logo.

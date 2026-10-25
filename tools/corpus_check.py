@@ -1,7 +1,7 @@
 """Run the validator (spec 0020 §V) on corpus pages, and keep the ones that pass.
 
     python tools/corpus_check.py c0008 c0012     # check; keep each page that passes
-    python tools/corpus_check.py --all           # every page in corpus/pages/
+    python tools/corpus_check.py --all           # every generated page in corpus/pages/
     python tools/corpus_check.py --dry c0008     # check; keep nothing
 
 A page that passes gets its picture, `corpus/pages/<id>.png`, and its
@@ -37,10 +37,18 @@ def main() -> int:
 
     _, drawn = cards.load(CORPUS / "cards.json")
     by_id = {card.id: card for card in drawn}
-    ids = sorted(p.stem for p in (CORPUS / "pages").glob("*.html")) if args.all else args.ids
+    ids = sorted(p.stem for p in (CORPUS / "pages").glob("*.html")
+                 if p.stem in by_id and by_id[p.stem].origin != "pdf") if args.all else args.ids
     unknown = [page_id for page_id in ids if page_id not in by_id]
     if unknown or not ids:
         print(f"no such card: {', '.join(unknown)}" if unknown else "name a page, or --all")
+        return 2
+    # A PDF page's picture is the PDF's render and its HTML a twin, admitted
+    # by `tools/corpus_pdf.py gate`; this loop would keep the twin's
+    # screenshot in the PDF render's place.
+    twins = [page_id for page_id in ids if by_id[page_id].origin == "pdf"]
+    if twins:
+        print(f"PDF pages are gated by tools/corpus_pdf.py gate: {', '.join(twins)}")
         return 2
     allowed = fonts.load(CORPUS / "fonts.json")
     known = check.known_in(REPO)

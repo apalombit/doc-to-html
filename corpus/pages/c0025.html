@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><title>Patient intake form</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;width:760px;padding:30px 36px;background:#fff;color:#1b1b1b;font-family:Georgia,"Times New Roman",serif;font-size:13px;line-height:1.45}
+.flex{display:flex}.between{justify-content:space-between}.items-end{align-items:flex-end}.gap-4{gap:16px}.flex-1{flex:1}
+.p-2{padding:8px}.px-4{padding-left:16px;padding-right:16px}.py-1{padding-top:4px;padding-bottom:4px}.mb-2{margin-bottom:8px}.mb-4{margin-bottom:16px}.mt-4{margin-top:16px}
+.text-xs{font-size:10px}.text-sm{font-size:12px}.text-lg{font-size:20px}.font-bold{font-weight:700}.uppercase{text-transform:uppercase;letter-spacing:.07em}
+.bg-teal{background:#2f6f6a;color:#fff}.bg-slate{background:#eef1f0}.border{border:1px solid #777}.rounded{border-radius:3px}.text-right{text-align:right}
+.lead{display:flex;align-items:baseline;margin:5px 0}
+.lead i{flex:1;border-bottom:1px dotted #333;margin:0 6px;height:1px;position:relative;top:-3px}
+.lead b{font-weight:400;font-style:italic}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid #777;padding:5px 8px;text-align:left}
+th{background:#eef1f0;font-size:11px}
+td.c,th.c{text-align:center;width:70px}
+.btn{display:inline-block;border:1.5px solid #2f6f6a;color:#2f6f6a;border-radius:16px;padding:3px 14px;font-size:12px;margin-right:6px}
+.btn.on{background:#2f6f6a;color:#fff}
+ul{margin:2px 0 8px;padding-left:20px}ul ul{margin:0;list-style:circle}
+h2{font-size:12px;margin:0 0 8px}
+</style></head><body>
+<div class="flex between items-end mb-4" style="border-bottom:3px double #2f6f6a;padding-bottom:8px"><div><div class="text-lg font-bold">Spruce Millstone Surgery</div><div class="text-sm">New patient registration and health questionnaire</div></div><div class="text-sm text-right">Salisbury &middot; Truro branch<br>Form date: 13/07/2026</div></div>
+<div class="bg-teal uppercase font-bold text-xs p-2 mb-2">1. About you</div>
+<div class="flex gap-4"><div class="flex-1"><div class="lead">Full name<i></i><b>Owen MacLeod</b></div><div class="lead">Date of birth<i></i><b>02/11/1979</b></div><div class="lead">NHS number<i></i><b>485 221 0067</b></div></div>
+<div class="flex-1"><div class="lead">Address<i></i><b>9 Exeter Street, Salisbury</b></div><div class="lead">Telephone<i></i><b>01722 555 0143</b></div><div class="lead">Emergency contact<i></i><b>Amelia Whitaker</b></div></div></div>
+<div class="bg-teal uppercase font-bold text-xs p-2 mb-2 mt-4">2. Your history</div>
+<p style="margin:0 0 4px">Please tick what applies. Your GP is Dr Stuart Fairclough.</p>
+<div class="mb-2"><span class="btn on">☑ Asthma</span><span class="btn">☐ Diabetes</span><span class="btn on">☑ Hay fever</span><span class="btn">☐ Heart condition</span></div>
+<ul><li>Current medication
+<ul><li>Salbutamol inhaler, 100 micrograms as needed</li><li>Cetirizine 10 mg, daily in summer</li></ul></li>
+<li>Allergies
+<ul><li>Penicillin: rash</li><li>Pollen</li></ul></li></ul>
+<div class="bg-teal uppercase font-bold text-xs p-2 mb-2 mt-4">3. Last two weeks: how often have you had these?</div>
+<table><tr><th>Statement</th><th class="c">Not at all</th><th class="c">Some days</th><th class="c">Most days</th><th class="c">Score</th></tr>
+<tr><td>Little interest in doing things</td><td class="c"></td><td class="c">☑</td><td class="c"></td><td class="c">1</td></tr>
+<tr><td>Trouble sleeping</td><td class="c"></td><td class="c"></td><td class="c">☑</td><td class="c">2</td></tr>
+<tr><td>Feeling tired</td><td class="c"></td><td class="c">☑</td><td class="c"></td><td class="c">1</td></tr>
+<tr><td>Poor appetite</td><td class="c">☑</td><td class="c"></td><td class="c"></td><td class="c">0</td></tr>
+<tr><td>Feeling low or down</td><td class="c">☑</td><td class="c"></td><td class="c"></td><td class="c">0</td></tr>
+<tr><td>Difficulty concentrating on reading</td><td class="c"></td><td class="c">☑</td><td class="c"></td><td class="c">1</td></tr>
+<tr><td>Other (please say)</td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
+<tr class="bg-slate"><th colspan="4">Total score</th><th class="c">5</th></tr></table>
+<p class="text-sm mt-4" style="margin-bottom:6px">I confirm the details above are correct to the best of my knowledge and I agree to the practice sharing my record with the hospital when I am referred.</p>
+<div class="lead"><span>Signed</span><i></i><span>Date</span><i style="max-width:120px"></i></div>
+<p class="text-xs mt-4" style="margin-bottom:0">Information on this form is kept in your record under the practice privacy notice. Reception use only: checked by ______ on ____/____/______.</p>
+</body></html>

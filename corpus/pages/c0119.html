@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr-FR"><head><meta charset="utf-8"><title>Facture d'électricité</title>
+<style>
+body{margin:0;padding:32px 40px 36px;width:840px;background:#fff;color:#22303c;font-family:"Gill Sans","Trebuchet MS",sans-serif;font-size:13px;line-height:1.4}
+.head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+.logo{display:flex;gap:10px;align-items:center}
+.logo b{font-size:22px;color:#d4600a;letter-spacing:.5px}
+.logo small{display:block;color:#667}
+.ref{text-align:right;font-size:12.5px}
+.ref .t{font-size:20px;color:#d4600a;font-weight:bold}
+.cust{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:16px}
+.cust>div{border:1px solid #d9dee4;border-radius:6px;padding:10px 14px}
+.pair{display:flex;gap:30px;margin:2px 0}
+.pair span{flex:1}
+b.l{color:#667;font-weight:normal}
+h2{font-size:15px;color:#d4600a;margin:20px 0 6px;border-bottom:2px solid #d4600a;padding-bottom:3px}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;background:#fbe9db;padding:4px 8px;font-size:12px}
+th.r,td.r{text-align:right}
+td{padding:3px 8px;border-bottom:1px solid #e6e9ed}
+table.hist td{font-size:12px;padding:2px 8px}
+tr.tot td{font-weight:bold;border-top:2px solid #22303c;border-bottom:none;font-size:15px;color:#d4600a}
+.fine{font-size:10.5px;color:#667;margin-top:16px;line-height:1.35}
+</style></head><body>
+<div class="head"><div class="logo"><svg width="46" height="46" viewBox="0 0 46 46"><circle cx="23" cy="23" r="22" fill="#d4600a"/><path d="M26 6 L13 26 H22 L19 40 L33 19 H24 Z" fill="#fff"/></svg><div><b>Redstart Halcyon Énergie</b><small>Votre électricité, simplement</small></div></div>
+<div class="ref"><div class="t">Facture d’électricité</div>Facture n° 22-0716-5821<br>Émise le 16/07/2022</div></div>
+<div class="cust"><div><div class="pair"><span><b class="l">Client :</b> Léa Perrin</span></div><div>12, rue des Granges<br>25000 Besançon</div><div class="pair" style="margin-top:6px"><span><b class="l">Contrat :</b> Tarif Fixe</span><span><b class="l">Puissance :</b> 6&nbsp;kVA</span></div></div>
+<div><div class="pair"><span><b class="l">Référence client :</b> 4471&nbsp;9023</span><span><b class="l">PDL :</b> 1420&nbsp;0897&nbsp;3341</span></div><div class="pair"><span><b class="l">Période :</b> du 16/05/2022</span><span><b class="l">au :</b> 15/07/2022</span></div><div class="pair"><span><b class="l">Échéance :</b> 05/08/2022</span><span><b class="l">Paiement :</b> prélèvement</span></div></div></div>
+<h2>Détail de la facture</h2>
+<table><tr><th>Désignation</th><th class="r">Quantité</th><th class="r">Prix unitaire</th><th class="r">Montant HT</th></tr>
+<tr><td>Abonnement (2 mois)</td><td class="r">2</td><td class="r">7,41&nbsp;€</td><td class="r">14,82&nbsp;€</td></tr>
+<tr><td>Consommation</td><td class="r">1&nbsp;248&nbsp;kWh</td><td class="r">0,2276&nbsp;€</td><td class="r">284,04&nbsp;€</td></tr>
+<tr><td>Contribution au service public</td><td class="r">1&nbsp;248&nbsp;kWh</td><td class="r">0,0225&nbsp;€</td><td class="r">28,08&nbsp;€</td></tr>
+<tr><td>Taxe sur la consommation finale</td><td class="r">1&nbsp;248&nbsp;kWh</td><td class="r">0,0096&nbsp;€</td><td class="r">11,98&nbsp;€</td></tr>
+<tr><td colspan="3" class="r">Total HT</td><td class="r">338,92&nbsp;€</td></tr>
+<tr><td colspan="3" class="r">TVA 20&nbsp;%</td><td class="r">67,78&nbsp;€</td></tr>
+<tr class="tot"><td colspan="3" class="r">Total TTC à payer</td><td class="r">406,70&nbsp;€</td></tr></table>
+<h2>Historique de consommation</h2>
+<table class="hist"><tr><th>Mois</th><th class="r">Index (kWh)</th><th class="r">Consommation (kWh)</th><th class="r">Montant estimé HT</th></tr>
+<tr><td>mai 2020</td><td class='r'>12 447</td><td class='r'>47</td><td class='r'>25,52</td></tr>
+<tr><td>juin 2020</td><td class='r'>12 528</td><td class='r'>81</td><td class='r'>33,26</td></tr>
+<tr><td>juil. 2020</td><td class='r'>12 643</td><td class='r'>115</td><td class='r'>40,99</td></tr>
+<tr><td>août 2020</td><td class='r'>12 802</td><td class='r'>159</td><td class='r'>51,01</td></tr>
+<tr><td>sept. 2020</td><td class='r'>12 979</td><td class='r'>177</td><td class='r'>55,11</td></tr>
+<tr><td>oct. 2020</td><td class='r'>13 125</td><td class='r'>146</td><td class='r'>48,05</td></tr>
+<tr><td>nov. 2020</td><td class='r'>13 249</td><td class='r'>124</td><td class='r'>43,04</td></tr>
+<tr><td>déc. 2020</td><td class='r'>13 338</td><td class='r'>89</td><td class='r'>35,08</td></tr>
+<tr><td>janv. 2021</td><td class='r'>13 390</td><td class='r'>52</td><td class='r'>26,66</td></tr>
+<tr><td>févr. 2021</td><td class='r'>13 439</td><td class='r'>49</td><td class='r'>25,97</td></tr>
+<tr><td>mars 2021</td><td class='r'>13 478</td><td class='r'>39</td><td class='r'>23,70</td></tr>
+<tr><td>avr. 2021</td><td class='r'>13 507</td><td class='r'>29</td><td class='r'>21,42</td></tr>
+<tr><td>mai 2021</td><td class='r'>13 554</td><td class='r'>47</td><td class='r'>25,52</td></tr>
+<tr><td>juin 2021</td><td class='r'>13 642</td><td class='r'>88</td><td class='r'>34,85</td></tr>
+<tr><td>juil. 2021</td><td class='r'>13 765</td><td class='r'>123</td><td class='r'>42,81</td></tr>
+<tr><td>août 2021</td><td class='r'>13 920</td><td class='r'>155</td><td class='r'>50,10</td></tr>
+<tr><td>sept. 2021</td><td class='r'>14 087</td><td class='r'>167</td><td class='r'>52,83</td></tr>
+<tr><td>oct. 2021</td><td class='r'>14 232</td><td class='r'>145</td><td class='r'>47,82</td></tr>
+<tr><td>nov. 2021</td><td class='r'>14 362</td><td class='r'>130</td><td class='r'>44,41</td></tr>
+<tr><td>déc. 2021</td><td class='r'>14 455</td><td class='r'>93</td><td class='r'>35,99</td></tr>
+<tr><td>janv. 2022</td><td class='r'>14 507</td><td class='r'>52</td><td class='r'>26,66</td></tr>
+<tr><td>févr. 2022</td><td class='r'>14 552</td><td class='r'>45</td><td class='r'>25,06</td></tr>
+<tr><td>mars 2022</td><td class='r'>14 590</td><td class='r'>38</td><td class='r'>23,47</td></tr>
+<tr><td>avr. 2022</td><td class='r'>14 624</td><td class='r'>34</td><td class='r'>22,56</td></tr>
+<tr><td>mai 2022</td><td class='r'>14 669</td><td class='r'>45</td><td class='r'>25,06</td></tr>
+<tr><td>juin 2022</td><td class='r'>14 750</td><td class='r'>81</td><td class='r'>33,26</td></tr>
+</table>
+<p class="fine">En cas de désaccord, contactez le service client au 03&nbsp;81&nbsp;55&nbsp;01&nbsp;24 ou écrivez à Redstart Halcyon Énergie, 3, avenue de la Gare, 25000 Besançon. Médiateur : Sarah Fournier. Contrat suivi par Hugo Collet, agence de La Rochelle. Pénalité de retard : trois fois le taux d’intérêt légal. Indemnité forfaitaire de recouvrement : 40&nbsp;€.</p>
+</body></html>

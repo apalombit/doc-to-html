@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en-US"><head><meta charset="utf-8"><title>Pricing</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:28px 32px 34px;font-family:Menlo,"Courier New",monospace;font-size:12px;line-height:1.5;color:#2b2a24;background:#f7f4ec}
+.flex{display:flex}.gap-2{gap:8px}.gap-4{gap:16px}.grid{display:grid}.grid-cols-4{grid-template-columns:repeat(4,1fr)}.grid-cols-3{grid-template-columns:repeat(3,1fr)}
+.p-4{padding:16px}.mt-1{margin-top:4px}.mt-2{margin-top:8px}.mb-4{margin-bottom:16px}
+.text-sm{font-size:11px;font-weight:400}.text-lg{font-size:18px}.font-bold{font-weight:700}
+.text-center{text-align:center}.rounded{border-radius:8px}.border{border:1px solid #cfc8b4}
+.bg-white{background:#fff}.items-center{align-items:center}
+nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;font-size:12px}
+nav .links{display:flex;gap:20px}
+.hero{display:flex;gap:24px;align-items:center;margin-bottom:24px}
+.hero h1{font-size:34px;line-height:1.1;margin:0 0 8px}
+.script{font-family:Caveat,"Bradley Hand",cursive;font-size:30px;color:#c2410c;margin:0 0 6px}
+.card{background:#fff;border:1px solid #cfc8b4;border-radius:8px;position:relative;display:flex;flex-direction:column}
+.card.hot{border:2px solid #c2410c}
+.badge{position:absolute;top:-11px;right:14px;background:#c2410c;color:#fff;padding:1px 10px;border-radius:10px;font-size:10px}
+.price{font-size:30px;font-weight:700;margin:10px 0 4px;color:#c2410c}
+.card ul{list-style:none;margin:0 0 14px;padding:0;flex:1}
+.card li{margin:4px 0;align-items:center}
+.btn{border:1px solid #2b2a24;border-radius:6px;text-align:center;padding:6px;font-weight:700}
+.hot .btn{background:#c2410c;border-color:#c2410c;color:#fff}
+h2{font-size:15px;margin:26px 0 10px}
+.inc div,.faq div{background:#fff;border:1px solid #cfc8b4;border-radius:8px;padding:12px}
+.inc b,.faq b{display:block;margin-bottom:4px}
+.lim{width:100%;border-collapse:collapse;background:#fff}.lim td,.lim th{border:1px solid #cfc8b4;padding:5px 10px;text-align:left}.lim th{background:#efe9d8}
+footer{margin-top:22px;font-size:10px;color:#6b6656;border-top:1px solid #cfc8b4;padding-top:8px}
+</style></head><body>
+<nav><div class="flex items-center gap-2"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M15 27 V12 M15 14 C6 14 5 7 5 4 C12 4 15 8 15 14 M15 18 C22 18 25 12 25 8 C18 8 15 12 15 18" fill="none" stroke="#2f6b3a" stroke-width="2"/></svg><b style="font-size:16px">Sycamore &amp; Fern</b></div>
+<div class="links"><span>Product</span><span>Pricing</span><span>Guides</span><span>Sign in</span></div></nav>
+<div class="hero"><div style="flex:1"><div class="script">grow more, track less</div><h1>Simple prices for every kind of garden</h1><p>Pick a plan, change it any month. All plans include a 30 day free trial and no card is needed to start. Prices checked 10 January 2027.</p></div>
+<svg width="300" height="150" viewBox="0 0 300 150" style="border-radius:8px;flex:none"><defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6c88a"/><stop offset="1" stop-color="#f9e6c5"/></linearGradient></defs><rect width="300" height="150" fill="url(#sk)"/><circle cx="230" cy="40" r="20" fill="#fff3d6"/><path d="M0 100 Q60 60 120 95 T300 85 V150 H0 Z" fill="#6f9a5c"/><path d="M0 125 Q80 100 160 120 T300 112 V150 H0 Z" fill="#3f7a46"/><path d="M40 130 V108 M40 112 l-6 -6 M40 116 l6 -6" stroke="#244c2a" stroke-width="2"/></svg></div>
+<div class="grid grid-cols-4 gap-4 mb-4">
+<div class="card p-4"><div class="font-bold text-lg">Seedling</div><div class="text-sm mt-1">For one grower trying the tool.</div><div class="price">$0<span class="text-sm"> per month</span></div><ul class="mt-2"><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>1 garden plot</span></li><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>10 plant records</span></li><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>Weekly frost alerts</span></li><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>Community forum access</span></li><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>Email support, 3 days</span></li></ul><div class="btn">Choose Seedling</div></div>
+<div class="card p-4"><div class="font-bold text-lg">Sprout</div><div class="text-sm mt-1">For small market gardens.</div><div class="price">$12<span class="text-sm"> per month</span></div><ul class="mt-2"><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>5 garden plots</span></li><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>500 plant records</span></li><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>Daily frost alerts</span></li><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>Seed inventory sheets</span></li><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>Export to CSV</span></li><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>Email support, 1 day</span></li></ul><div class="btn">Choose Sprout</div></div>
+<div class="card hot p-4"><div class="badge">Most chosen</div><div class="font-bold text-lg">Orchard</div><div class="text-sm mt-1">Our pick for growing teams.</div><div class="price">$39<span class="text-sm"> per month</span></div><ul class="mt-2"><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>25 garden plots</span></li><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>Unlimited plant records</span></li><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>Hourly weather feed</span></li><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>Harvest planner</span></li><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>Team roles for 10 people</span></li><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>Chat support, 4 hours</span></li></ul><div class="btn">Choose Orchard</div></div>
+<div class="card p-4"><div class="font-bold text-lg">Canopy</div><div class="text-sm mt-1">For farms across several sites.</div><div class="price">$120<span class="text-sm"> per month</span></div><ul class="mt-2"><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>Unlimited plots</span></li><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>Unlimited people</span></li><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>Duluth and Provo field maps</span></li><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>Audit log, 2 years</span></li><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>Phone support, 1 hour</span></li><li class="flex gap-2"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7.5 L5.5 11 L12 3" fill="none" stroke="#c2410c" stroke-width="2"/></svg><span>Named account manager</span></li></ul><div class="btn">Choose Canopy</div></div>
+</div>
+<h2>Every plan includes</h2>
+<div class="grid grid-cols-4 gap-4 mb-4 inc">
+<div><b>Frost watch</b>Alerts sent to your phone before the night drops below freezing.</div>
+<div><b>Seed library</b>More than 900 varieties with sowing dates for your zone.</div>
+<div><b>Bed planner</b>Drag crops onto a plot and see spacing and companions.</div>
+<div><b>Yearly review</b>A printable report of what you grew and what it cost.</div>
+</div>
+<h2>Limits at a glance</h2>
+<table class="lim"><tr><th>Plan</th><th>Plots</th><th>People</th><th>History kept</th><th>Support reply</th></tr>
+<tr><td>Seedling</td><td>1</td><td>1</td><td>6 months</td><td>3 days</td></tr>
+<tr><td>Sprout</td><td>5</td><td>2</td><td>2 years</td><td>1 day</td></tr>
+<tr><td>Orchard</td><td>25</td><td>10</td><td>5 years</td><td>4 hours</td></tr>
+<tr><td>Canopy</td><td>Unlimited</td><td>Unlimited</td><td>Forever</td><td>1 hour</td></tr></table>
+<h2>Questions we hear most</h2>
+<div class="grid grid-cols-3 gap-4 faq">
+<div><b>Can I switch plans?</b>Yes. Upgrades apply at once and downgrades start at your next bill, with unused days credited.</div>
+<div><b>Do you offer discounts?</b>Schools, community gardens and food banks pay 50% on any plan. Write to Rachel Nguyen to apply.</div>
+<div><b>Where is my data kept?</b>On servers in Duluth, MN and Provo, UT, copied nightly. You can export everything at any time.</div>
+<div><b>Is there a contract?</b>No. Plans renew monthly and you can cancel from your account page in two clicks.</div>
+<div><b>Do you help us move over?</b>Send us your spreadsheets and we load them for you, free on Orchard and Canopy.</div>
+<div><b>What if a frost alert is wrong?</b>Tell us the plot and the date and we credit that month in full.</div>
+</div>
+<p class="text-center" style="margin:22px 0 0;font-size:13px">&ldquo;We cut our losses to late frost by half in the first season.&rdquo; Market gardener, Provo, UT</p>
+<footer>Sycamore &amp; Fern Software &middot; 410 Lake Avenue, Duluth, MN 55802 &middot; Billing questions: Darnell Holloway &middot; Press: Emily Vasquez &middot; Prices in US dollars, taxes extra where they apply.</footer>
+</body></html>
