@@ -2,7 +2,8 @@
 
     python tools/corpus_batch.py --next 50 --batches 5 --out <dir>
 
-Takes the next `--next` generated cards with no page, families taken in
+Takes the next `--next` generated cards with no passing page (no record in
+`corpus/checks/`; a draft without one is handed out again), families taken in
 turn so every batch mixes them, and writes `<dir>/batch-<n>.jsonl`: one
 card a line, as the brief shows it, with the card's particulars
 (`doc_to_html.factory.particulars`). Nothing in `corpus/` is changed.
@@ -43,7 +44,7 @@ def main() -> int:
     _, drawn = cards.load(CORPUS / "cards.json")
     open_: dict[str, list[cards.Card]] = defaultdict(list)
     for card in drawn:
-        if card.origin == "generated" and not (CORPUS / "pages" / f"{card.id}.html").exists():
+        if card.origin == "generated" and not (CORPUS / "checks" / f"{card.id}.json").exists():
             open_[card.family].append(card)
     order: list[cards.Card] = []
     while any(open_.values()):

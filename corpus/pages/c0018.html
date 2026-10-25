@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="fr-FR"><head><meta charset="utf-8"><title>Fiche d’admission</title>
+<style>
+body{margin:0;padding:22px;width:956px;background:#fff;font-family:"Times New Roman",Times,serif;font-size:12px;color:#000}
+.top{display:flex;border:2px solid #000}
+.top .t{flex:1;padding:6px 10px}
+.top h1{font-size:20px;margin:0;font-weight:700;text-transform:uppercase}
+.top .s{font-size:11px}
+.top .r{width:230px;border-left:2px solid #000;padding:6px 10px;font-size:11px}
+.panels{display:flex;gap:10px;margin-top:10px;align-items:flex-start}
+.pl{width:360px;flex:none}
+.pr{flex:1}
+fieldset{border:1px solid #000;margin:0 0 10px;padding:4px 8px 8px}
+legend{font-weight:700;font-size:11px;text-transform:uppercase;padding:0 4px}
+.f{display:flex;border-bottom:1px solid #999;margin:3px 0;padding-bottom:2px;align-items:baseline}
+.f label{font-size:10px;width:105px;flex:none;color:#222}
+.f .v{font-family:"Caveat","Bradley Hand",cursive;font-size:17px;color:#1a2f8a}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th,td{border:1px solid #000;padding:2px 5px;text-align:left}
+th{background:#e6e6e6;font-size:10px;text-transform:uppercase}
+td.num{width:20px;text-align:center}
+td.c{width:32px;text-align:center}
+td.h{font-family:"Caveat","Bradley Hand",cursive;font-size:15px;color:#1a2f8a;width:78px}
+.sig{display:flex;justify-content:space-between;margin-top:6px;font-size:11px}
+.sig .v{font-family:"Caveat","Bradley Hand",cursive;font-size:20px;color:#1a2f8a}
+.note{font-size:9.5px;margin-top:6px}
+</style></head><body>
+<div class="top"><div class="t"><h1>Fiche d’admission du patient</h1><div class="s">Centre de santé Bluebell Atlas · 8 rue du Port, 63000 Clermont-Ferrand</div></div><div class="r">Formulaire CS-12<br>À remplir en majuscules ou à l’encre bleue<br>Date : 23/02/2020</div></div>
+<div class="panels">
+<div class="pl">
+<fieldset><legend>1. Identité</legend>
+<div class="f"><label>Nom</label><span class="v">Garnier</span></div>
+<div class="f"><label>Prénom</label><span class="v">Romain</span></div>
+<div class="f"><label>Date de naissance</label><span class="v">14/09/1971</span></div>
+<div class="f"><label>Sexe</label><span class="v">Masculin</span></div>
+<div class="f"><label>Adresse</label><span class="v">27 avenue Carnot</span></div>
+<div class="f"><label>Ville</label><span class="v">63000 Clermont-Ferrand</span></div>
+<div class="f"><label>Téléphone</label><span class="v">04 73 55 01 27</span></div>
+<div class="f"><label>N° de sécurité sociale</label><span class="v">1 71 09 63 113 042 58</span></div>
+</fieldset>
+<fieldset><legend>2. Personne à prévenir</legend>
+<div class="f"><label>Nom et prénom</label><span class="v">Dumont Margaux</span></div>
+<div class="f"><label>Lien</label><span class="v">Épouse</span></div>
+<div class="f"><label>Téléphone</label><span class="v">06 12 55 01 88</span></div>
+</fieldset>
+<fieldset><legend>3. Médecin traitant</legend>
+<div class="f"><label>Docteur</label><span class="v">Renaud Yann</span></div>
+<div class="f"><label>Ville</label><span class="v">Limoges</span></div>
+<div class="f"><label>Motif de la visite</label><span class="v">Douleurs au dos</span></div>
+</fieldset>
+</div>
+<div class="pr">
+<fieldset><legend>4. Antécédents médicaux</legend>
+<table><tr><th>N°</th><th>Affection</th><th>Oui</th><th>Non</th><th>Année</th><th>Remarque</th></tr>
+<tr><td class="num">1</td><td>Hypertension artérielle</td><td class="c">☑</td><td class="c">☐</td><td class="h">2014</td><td class="h">Traité</td></tr>
+<tr><td class="num">2</td><td>Diabète</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+<tr><td class="num">3</td><td>Asthme</td><td class="c">☑</td><td class="c">☐</td><td class="h">2003</td><td class="h">Ventoline</td></tr>
+<tr><td class="num">4</td><td>Bronchite chronique</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+<tr><td class="num">5</td><td>Allergie médicamenteuse</td><td class="c">☑</td><td class="c">☐</td><td class="h">2011</td><td class="h">Pénicilline</td></tr>
+<tr><td class="num">6</td><td>Allergie alimentaire</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+<tr><td class="num">7</td><td>Maladie cardiaque</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+<tr><td class="num">8</td><td>Infarctus du myocarde</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+<tr><td class="num">9</td><td>Accident vasculaire cérébral</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+<tr><td class="num">10</td><td>Épilepsie</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+<tr><td class="num">11</td><td>Migraines</td><td class="c">☑</td><td class="c">☐</td><td class="h">2018</td><td class="h"></td></tr>
+<tr><td class="num">12</td><td>Ulcère de l’estomac</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+<tr><td class="num">13</td><td>Hépatite</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+<tr><td class="num">14</td><td>Maladie de la thyroïde</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+<tr><td class="num">15</td><td>Insuffisance rénale</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+<tr><td class="num">16</td><td>Calculs rénaux</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+<tr><td class="num">17</td><td>Arthrose</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+<tr><td class="num">18</td><td>Ostéoporose</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+<tr><td class="num">19</td><td>Cancer</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+<tr><td class="num">20</td><td>Dépression</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+<tr><td class="num">21</td><td>Anémie</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+<tr><td class="num">22</td><td>Varices</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+<tr><td class="num">23</td><td>Glaucome</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+<tr><td class="num">24</td><td>Opération chirurgicale</td><td class="c">☑</td><td class="c">☐</td><td class="h">2009</td><td class="h">Appendicectomie</td></tr>
+<tr><td class="num">25</td><td>Transfusion sanguine</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+<tr><td class="num">26</td><td>Tabagisme</td><td class="c">☐</td><td class="c">☑</td><td class="h"></td><td class="h"></td></tr>
+</table>
+</fieldset>
+<div class="sig"><span>Fait à Clermont-Ferrand, le 23/02/2020</span><span>Signature : <span class="v">R. Garnier</span></span></div>
+<div class="note">Les informations recueillies sont couvertes par le secret médical et ne seront transmises qu’avec votre accord.</div>
+</div></div></body></html>

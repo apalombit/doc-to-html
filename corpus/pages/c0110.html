@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Receipt</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;width:520px;padding:32px 40px 36px;background:#f1f3f4;font-family:Charter,Georgia,serif;font-size:14px;line-height:1.45;color:#1c2a33}
+.sheet{background:#fff;padding:28px 30px 26px;border-top:5px solid #2b6f8f;border-radius:4px}
+.head{display:flex;align-items:center;gap:12px}
+.head .nm{font-size:22px;font-weight:700;letter-spacing:.01em}
+.head .ad{font-size:12px;color:#5a6a73}
+h1{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#2b6f8f;margin:20px 0 8px;font-weight:700}
+.meta{display:flex;justify-content:space-between;font-size:13px}
+.meta small{display:block;color:#5a6a73;font-size:11px}
+hr.d{border:0;border-top:2px dashed #9aa8b0;margin:16px 0}
+hr.dbl{border:0;border-top:4px double #1c2a33;margin:6px 0 10px}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#5a6a73;border-bottom:1px solid #1c2a33;padding:4px 0}
+td{padding:6px 0;border-bottom:1px solid #d5dce0;vertical-align:top}
+td.r,th.r{text-align:right}
+.tot td{border:0;padding:2px 0}
+.tot .g td{font-size:18px;font-weight:700;padding-top:6px}
+.ticks{list-style:none;margin:0;padding:0}
+.ticks li{margin:3px 0}
+.ticks span{color:#2b6f8f;font-weight:700;display:inline-block;width:22px}
+.foot{text-align:center;font-size:12px;color:#5a6a73;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="sheet">
+<div class="head">
+<svg width="40" height="40" viewBox="0 0 40 40"><ellipse cx="20" cy="22" rx="16" ry="12" fill="#2b6f8f"/><circle cx="26" cy="12" r="6" fill="#2b6f8f"/><path d="M30 12 L38 10" stroke="#2b6f8f" stroke-width="3"/></svg>
+<div><div class="nm">Cormorant &amp; Pebble</div><div class="ad">12 Terrace Road, Aberystwyth SY23 2AZ</div></div>
+</div>
+<h1>Receipt</h1>
+<div class="meta"><div><small>Date</small>20 January 2021</div><div><small>Receipt no.</small>CP-004172</div><div><small>Served by</small>Ruth Fairclough</div></div>
+<hr class="d">
+<table>
+<tr><th>Item</th><th class="r">Qty</th><th class="r">Price</th></tr>
+<tr><td>Stoneware mug, slate</td><td class="r">2</td><td class="r">£18.00</td></tr>
+<tr><td>Tea towel, linen</td><td class="r">1</td><td class="r">£9.50</td></tr>
+<tr><td>Honey, 340 g</td><td class="r">1</td><td class="r">£6.25</td></tr>
+</table>
+<hr class="dbl">
+<table class="tot">
+<tr><td>Subtotal</td><td class="r">£33.75</td></tr>
+<tr><td>VAT included (20%)</td><td class="r">£5.63</td></tr>
+<tr class="g"><td>Total</td><td class="r">£33.75</td></tr>
+</table>
+<hr class="d">
+<ul class="ticks">
+<li><span>✓</span>Paid by card, ending 4471</li>
+<li><span>✓</span>Gift wrapped for Gareth Sinclair</li>
+<li><span>✗</span>Loyalty card not presented</li>
+</ul>
+<hr class="d">
+<div class="foot">Thank you for shopping with us.<br>Also at our Norwich shop. Returns within 28 days with this receipt.</div>
+</div>
+</body>
+</html>

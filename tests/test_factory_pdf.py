@@ -59,9 +59,8 @@ def printed(tmp_path_factory: pytest.TempPathFactory) -> Path:
 
 
 def _gate(printed: Path, twin: str) -> pdfpage.Gate:
-    pdf_lines = pdfpage.lines(pdfpage.pdf_words(printed, pdfpage.WIDTH))
-    twin_lines = pdfpage.lines(pdfpage.twin_words(twin, pdfpage.WIDTH))
-    return pdfpage.gate(pdf_lines, twin_lines, pdfpage.WIDTH)
+    return pdfpage.gate(pdfpage.pdf_words(printed, pdfpage.WIDTH),
+                        pdfpage.twin_words(twin, pdfpage.WIDTH), pdfpage.WIDTH)
 
 
 @needs_chrome
@@ -72,29 +71,29 @@ class TestTheGate:
         width, height = pdfpage.render(printed, pdfpage.WIDTH, tmp_path / "page.png")
         assert (width, height) == (1000, 1294) or (width, height) == (1000, 1295)
 
-    def test_the_text_layer_reads_as_lines(self, printed: Path) -> None:
-        found = [" ".join(line.words)
-                 for line in pdfpage.lines(pdfpage.pdf_words(printed, pdfpage.WIDTH))]
+    def test_the_text_layer_reads_as_rows(self, printed: Path) -> None:
+        found = [row.shown for row in pdfpage.rows(pdfpage.pdf_words(printed, pdfpage.WIDTH))]
         assert "This statement lists the payments received" in found
         assert "between 1 July and 30 September 2026." in found
-        assert "Reference" in found and "Amount" in found
+        assert "Date Reference Amount" in found
 
     def test_a_true_twin_is_admitted(self, printed: Path) -> None:
         result = _gate(printed, SOURCE.replace("/*EXTRA*/", ZOOM))
         assert result.failures == {}
-        assert result.matched == result.lines == 13
+        assert result.matched == result.rows == 7
 
     def test_a_twin_missing_a_word(self, printed: Path) -> None:
         twin = SOURCE.replace("/*EXTRA*/", ZOOM).replace("Office supplies", "Office")
         result = _gate(printed, twin)
-        assert "the twin lacks 'supplies'" in result.failures["words"]
+        assert any(m.startswith("the twin lacks") for m in result.failures["words"])
+        assert any("Office supplies" in m for m in result.failures["rows"])
 
     def test_a_twin_breaking_a_line_elsewhere(self, printed: Path) -> None:
         twin = SOURCE.replace("/*EXTRA*/", ZOOM).replace(
             "payments received<br>between", "payments<br>received between")
         result = _gate(printed, twin)
         assert "words" not in result.failures
-        assert any("payments received" in m for m in result.failures["lines"])
+        assert any("payments received" in m for m in result.failures["rows"])
 
     def test_a_twin_with_a_line_moved_down(self, printed: Path) -> None:
         twin = SOURCE.replace("/*EXTRA*/", ZOOM + " h1 { margin-bottom: 40px; }")
@@ -105,10 +104,125 @@ class TestTheGate:
 class TestNormalising:
     def test_ligatures_soft_hyphens_and_case(self) -> None:
         assert pdfpage.normalise("ﬁnal") == "final"
-        assert pdfpage.normalise("con­firmed") == "confirmed"
+        assert pdfpage.normalise("con\xadfirmed") == "confirmed"
         assert pdfpage.normalise("TOTAL") == "total"
 
-    def test_a_wide_gap_cuts_a_row_into_two_lines(self) -> None:
+    def test_white_space_and_accents_as_text_layers_get_them_wrong(self) -> None:
+        """The pilot's text layers, each beside what the picture shows."""
+        for layer, picture in [("Whenyoumakeaclaim", "When you make a claim"),
+                               ("1.IDENTIFICAÇÃO", "1. IDENTIFICAÇÃO"),
+                               ("P esquisa", "Pesquisa"),
+                               ("Brynjarsd´ottir", "Brynjarsdóttir"),
+                               ("λˆ", "λ̂"), ("𝔼[L", "E[L"), ("zero\u200bwidth", "zerowidth")]:
+            assert pdfpage.normalise(layer) == pdfpage.normalise(picture), layer
+
+    def test_the_listing_marks_which_gaps_the_twin_must_keep(self) -> None:
         words = [pdfpage.Word("Name", 0, 0, 40, 12, 12), pdfpage.Word("Ada", 45, 0, 70, 12, 12),
+                 pdfpage.Word("Lovelace", 100, 0, 150, 12, 12),
                  pdfpage.Word("Date", 200, 1, 240, 13, 12)]
-        assert [line.words for line in pdfpage.lines(words)] == [("Name", "Ada"), ("Date",)]
+        assert pdfpage.listing(words) == ["    0.0  13.0  0 Name Ada  | 100 Lovelace  ‖ 200 Date"]
+
+
+def _row(*words: tuple[str, float]) -> list[pdfpage.Word]:
+    """Words on one row at 12 px, each placed at its left edge, 7 px a letter."""
+    return [pdfpage.Word(text, left, 0, left + 7 * len(text), 12, 12) for text, left in words]
+
+
+class TestRows:
+    def _gate(self, pdf: list[pdfpage.Word], twin: list[pdfpage.Word]) -> pdfpage.Gate:
+        return pdfpage.gate(pdf, twin, pdfpage.WIDTH)
+
+    def test_spaces_the_text_layer_lacks_are_allowed(self) -> None:
+        result = self._gate(_row(("Whenyoumakeaclaim", 40)),
+                            _row(("When", 40), ("you", 75), ("make", 100), ("a", 133), ("claim", 145)))
+        assert result.failures == {}
+
+    def test_a_justified_line_may_be_one_piece(self) -> None:
+        """Word spaces of 2 em cut the PDF's row into pieces; the twin's
+        paragraph keeps the line whole, and that is allowed."""
+        result = self._gate(_row(("Solicito", 0), ("a", 80), ("Pesquisa", 111)),
+                            _row(("Solicito", 0), ("a", 60), ("Pesquisa", 71)))
+        assert result.failures == {}
+
+    def test_heads_the_text_layer_runs_together_may_be_cells(self) -> None:
+        result = self._gate(_row(("CONSUNTIVO", 0), ("AL", 80)),
+                            _row(("CONSUNTIVO", 0), ("AL", 95)))
+        assert result.failures == {}
+
+    def test_a_column_the_pdf_sets_apart_must_stay_apart(self) -> None:
+        result = self._gate(_row(("Name", 0), ("Ada", 200)),
+                            _row(("Name", 0), ("Ada", 35)))
+        assert any("sets it apart" in m for m in result.failures["rows"])
+
+    def test_a_piece_out_of_place_is_refused(self) -> None:
+        result = self._gate(_row(("Name", 0), ("Ada", 200)),
+                            _row(("Name", 0), ("Ada", 240)))
+        assert any("'ada' begins 40 px across" in m for m in result.failures["geometry"])
+
+
+def _block(text: str, left: float, top: float, right: float, *, tag: str = "div",
+           cell: int = -1, rows: int = 1) -> pdfpage.TwinBlock:
+    return pdfpage.TwinBlock(tag, cell, 16.0, 400, "Arial", left, top, right, rows, text)
+
+
+class TestSplitParagraphs:
+    def test_a_paragraph_cut_into_one_block_a_line_is_reported(self) -> None:
+        lines = [_block("Table 2 reports empirical miscoverage", 150, 517, 850),
+                 _block("observed weekly cases, and average", 150, 541, 850),
+                 _block("and the MCMC baseline.", 150, 565, 400)]
+        assert len(pdfpage.split_paragraphs(lines)) == 1
+
+    def test_a_stack_of_short_items_is_not(self) -> None:
+        stack = [_block("12 Mill Lane", 40, 100, 160), _block("Leeds", 40, 120, 90),
+                 _block("LS2 7DT", 40, 140, 110)]
+        assert pdfpage.split_paragraphs(stack) == []
+
+    def test_a_paragraph_that_is_one_block_is_not(self) -> None:
+        whole = [_block("Table 2 reports ... the MCMC baseline.", 150, 517, 850, tag="p", rows=3)]
+        assert pdfpage.split_paragraphs(whole) == []
+
+    def test_cells_are_blocks_on_purpose(self) -> None:
+        column = [_block("Radius-based", 267, 200, 380, tag="td", cell=0),
+                  _block("Posterior-based", 267, 220, 390, tag="td", cell=4)]
+        assert pdfpage.split_paragraphs(column) == []
+
+    def test_lines_inside_one_cell_are_reported(self) -> None:
+        cell = [_block("Stato di", 722, 164, 790, cell=3), _block("avanzamento %", 699, 187, 810, cell=3)]
+        assert len(pdfpage.split_paragraphs(cell)) == 1
+
+    def test_a_line_cut_into_words_is_reported(self) -> None:
+        words = [_block("Solicito", 82, 640, 140), _block("a", 150, 640, 158),
+                 _block("Pesquisa", 180, 640, 245)]
+        assert any("words of one line" in m for m in pdfpage.split_paragraphs(words))
+
+    def test_cells_set_apart_on_one_row_are_not(self) -> None:
+        row = [_block("Name", 0, 100, 40, tag="td", cell=0),
+               _block("Ada", 45, 100, 70, tag="td", cell=1)]
+        assert pdfpage.split_paragraphs(row) == []
+
+
+class TestTurned:
+    """Text set at an angle: compared by its characters, never by rows."""
+
+    MARGIN = [pdfpage.Word(char, 950, 900 - 8 * i, 958, 908 - 8 * i, 8, upright=False)
+              for i, char in enumerate("cve: BOE-A-2025-6771")]
+
+    def test_a_turned_margin_is_in_the_words_test_only(self) -> None:
+        row = _row(("Núm.", 0), ("81", 40))
+        twin = row + [pdfpage.Word(w, 940, 700, 948, 760, 8, upright=False)
+                      for w in ("cve:", "BOE-A-2025-6771")]
+        assert pdfpage.gate(row + self.MARGIN, twin, pdfpage.WIDTH).failures == {}
+
+    def test_a_twin_without_it_lacks_its_characters(self) -> None:
+        row = _row(("Núm.", 0), ("81", 40))
+        result = pdfpage.gate(row + self.MARGIN, row, pdfpage.WIDTH)
+        assert set(result.failures) == {"words"}
+
+    def test_the_twin_reads_a_rotated_element_as_turned(self) -> None:
+        html = ("<!doctype html><html><body style='margin:0'><p>Núm. 81</p>"
+                "<div style='position:absolute;left:900px;top:600px;"
+                "transform:rotate(-90deg)'>cve: BOE-A-2025-6771</div></body></html>")
+        words = pdfpage.twin_words(html, pdfpage.WIDTH)
+        assert [w.text for w in words if w.upright] == ["Núm.", "81"]
+        assert pdfpage.turned(words) == "cve:BOE-A-2025-6771"
+

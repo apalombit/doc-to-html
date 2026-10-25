@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Discharge Summary</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;width:960px;padding:28px 36px 32px;background:#fff;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.45;color:#1b2b30}
+.hd{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #0d7c86;padding-bottom:8px}
+.hd .org{font-size:12px;color:#0d7c86;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+h1{font-family:"DIN Condensed",Oswald,sans-serif;font-weight:400;font-size:44px;letter-spacing:.04em;text-transform:uppercase;margin:0;color:#0d7c86;line-height:1}
+.hd .r{text-align:right;font-size:12px}
+dl.pt{display:grid;grid-template-columns:repeat(4,1fr);gap:6px 20px;margin:12px 0;padding:10px 12px;background:#e8f3f4;border-left:4px solid #0d7c86}
+dl.pt div dt{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#4d6a70}
+dl.pt div dd{margin:0;font-weight:700}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#0d7c86;margin:14px 0 4px;border-bottom:1px solid #b9d3d6;padding-bottom:2px}
+p{margin:0 0 6px}
+table{border-collapse:collapse;width:100%;margin:4px 0 8px}
+th{background:#0d7c86;color:#fff;text-align:left;padding:4px 8px;font-size:11px;letter-spacing:.05em;text-transform:uppercase}
+td{border-bottom:1px solid #cfdfe1;padding:4px 8px}
+tr.sec td{background:#e8f3f4;font-weight:700;color:#0d5a62;font-size:12px;border-bottom:1px solid #9ec6ca}
+.flag{display:inline-block;background:#fde4e0;color:#a2271a;font-weight:700;padding:0 6px;font-size:11px}
+.sign{display:flex;gap:40px;margin-top:14px;align-items:flex-end}
+.sign div{flex:1;border-top:1px solid #1b2b30;padding-top:3px;font-size:12px}
+.sign svg{display:block;margin-bottom:-8px}
+</style>
+</head>
+<body>
+<div class="hd">
+<div><div class="org">Acorn &amp; Fern NHS Trust &middot; Norwich General Ward 7</div><h1>Discharge Summary</h1></div>
+<div class="r">Printed 26/01/2020<br>Page 1 of 1</div>
+</div>
+<dl class="pt">
+<div><dt>Patient</dt><dd>Bethan Kaur</dd></div>
+<div><dt>Date of birth</dt><dd>14/09/1958 (61 y)</dd></div>
+<div><dt>Hospital no.</dt><dd>NW 4408217</dd></div>
+<div><dt>Consultant</dt><dd>Dr Priya Mercer</dd></div>
+<div><dt>Admitted</dt><dd>21/01/2020</dd></div>
+<div><dt>Discharged</dt><dd>26/01/2020</dd></div>
+<div><dt>GP</dt><dd>Dr Zara Stirling, Taunton</dd></div>
+<div><dt>Allergies</dt><dd><span class="flag">Penicillin</span></dd></div>
+</dl>
+<h2>Diagnosis</h2>
+<p>Community-acquired pneumonia, right lower lobe. Background of type 2 diabetes and hypertension. SpO<sub>2</sub> 88% on admission, 96% on air at discharge.</p>
+<h2>Progress</h2>
+<p>Treated with IV clarithromycin for 48 h then oral. CRP fell from 186 to 22 mg/L. Chest X-ray repeat not required unless symptoms persist beyond 6 weeks. Mobilising independently; seen by physiotherapy.</p>
+<h2>Medication on discharge</h2>
+<table>
+<tr><th style="width:34%">Drug</th><th>Dose</th><th>Frequency</th><th>Comment</th></tr>
+<tr class="sec"><td colspan="4">Continued</td></tr>
+<tr><td>Metformin</td><td>500 mg</td><td>twice daily</td><td>With food</td></tr>
+<tr><td>Ramipril</td><td>5 mg</td><td>once daily</td><td>Check U&amp;E at GP review</td></tr>
+<tr class="sec"><td colspan="4">New</td></tr>
+<tr><td>Clarithromycin</td><td>500 mg</td><td>twice daily</td><td>3 more days, avoid statin interaction</td></tr>
+<tr class="sec"><td colspan="4">Stopped</td></tr>
+<tr><td>Simvastatin</td><td>40 mg</td><td>at night</td><td>Hold until course complete</td></tr>
+</table>
+<h2>Investigations</h2>
+<p>Blood cultures: no growth at 48 h. Sputum: normal respiratory flora. HbA<sub>1c</sub> 58 mmol/mol, unchanged from last year. eGFR 71 mL/min/1.73 m<sup>2</sup>, stable. ECG: sinus rhythm.</p>
+<h2>Follow-up</h2>
+<p>GP review in 1 week with bloods. Respiratory clinic only if not resolved at 6 weeks. Return advice given: breathlessness, fever above 38.5&deg;C, chest pain.</p>
+<div class="sign">
+<div><svg width="150" height="34" viewBox="0 0 150 34"><path d="M4 26 C14 4 22 4 22 18 C22 28 30 10 40 14 C50 18 44 28 58 20 C74 10 84 26 100 16 C112 8 130 14 146 8" fill="none" stroke="#14315c" stroke-width="2" stroke-linecap="round"/></svg>Dr Priya Mercer, Consultant Physician</div>
+<div>Date: 26/01/2020</div>
+</div>
+</body>
+</html>

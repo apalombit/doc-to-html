@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Discharge summary</title>
+<style>
+body{margin:0;padding:28px 30px 34px;width:800px;font-family:"Source Sans Variable","Helvetica Neue",sans-serif;font-size:14px;color:#1d2b2f;background:#fff}
+header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #0f7c86;padding-bottom:10px;margin-bottom:16px}
+h1{margin:0;font-size:24px;font-weight:600;color:#0f7c86}
+.org{font-size:12px;color:#51656a;text-align:right;line-height:1.4}
+.panels{display:flex;gap:18px}
+.panel{flex:1;border:1px solid #9fc3c7;border-radius:4px;padding:12px 14px}
+.panel h2{margin:0 0 10px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#0f7c86;border-bottom:1px solid #cfe3e5;padding-bottom:4px}
+.f{margin-bottom:9px}
+.f small{display:block;font-size:10.5px;color:#6a7f84;text-transform:uppercase;letter-spacing:.05em}
+.f span{font-size:14px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-size:11px;text-transform:uppercase;color:#51656a;border-bottom:1px solid #9fc3c7;padding:4px 4px}
+td{padding:4px 4px;border-bottom:1px solid #e3eef0;vertical-align:top}
+tr.sec td{background:#e6f2f3;font-weight:600;color:#0f7c86;font-size:12px}
+tr.sub td:first-child{padding-left:20px;color:#3d5156}
+.flag{color:#b3261e;font-weight:600}
+footer{margin-top:18px;font-size:11px;color:#51656a;display:flex;justify-content:space-between}
+</style>
+</head>
+<body>
+<header>
+<div><h1>Discharge Summary</h1></div>
+<div class="org">Quill &amp; Driftwood Medical Center<br>Provo, UT · Inpatient Medicine Unit</div>
+</header>
+<div class="panels">
+<section class="panel">
+<h2>Patient</h2>
+<div class="f"><small>Name</small><span>DeShawn Shapiro</span></div>
+<div class="f"><small>Date of birth</small><span>03/14/1958 (61 y)</span></div>
+<div class="f"><small>MRN</small><span>QD-4418207</span></div>
+<div class="f"><small>Admitted</small><span>09/24/2019</span></div>
+<div class="f"><small>Discharged</small><span>10/01/2019</span></div>
+<div class="f"><small>Attending</small><span>Rachel Kim, MD</span></div>
+<div class="f"><small>Discharge to</small><span>Home, Tulsa, OK, with home health</span></div>
+</section>
+<section class="panel" style="flex:1.5">
+<h2>Medications at discharge</h2>
+<table>
+<tr><th>Drug</th><th>Dose</th><th>Freq</th></tr>
+<tr class="sec"><td colspan="3">Continued</td></tr>
+<tr><td>Metoprolol succinate</td><td>50 mg</td><td>daily</td></tr>
+<tr class="sub"><td>hold if HR &lt; 55</td><td></td><td></td></tr>
+<tr><td>Atorvastatin</td><td>40 mg</td><td>nightly</td></tr>
+<tr class="sec"><td colspan="3">New</td></tr>
+<tr><td>Apixaban</td><td>5 mg</td><td>twice daily</td></tr>
+<tr class="sub"><td>started 09/26/2019</td><td></td><td></td></tr>
+<tr class="sub"><td>review at 3 months</td><td></td><td></td></tr>
+<tr><td>Furosemide</td><td>20 mg</td><td>daily</td></tr>
+<tr class="sec"><td colspan="3">Stopped</td></tr>
+<tr><td>Ibuprofen</td><td>400 mg</td><td class="flag">stop</td></tr>
+</table>
+</section>
+</div>
+<div class="panels" style="margin-top:18px">
+<section class="panel">
+<h2>Diagnosis</h2>
+<div class="f"><small>Principal</small><span>Acute decompensated heart failure</span></div>
+<div class="f"><small>Secondary</small><span>Atrial fibrillation, hypertension</span></div>
+</section>
+<section class="panel">
+<h2>Follow-up</h2>
+<div class="f"><small>Primary care</small><span>Jasmine Pruitt, NP, in 7 days</span></div>
+<div class="f"><small>Labs</small><span>BMP on 10/08/2019</span></div>
+</section>
+</div>
+<footer><span>Dictated by Rachel Kim, MD</span><span>Printed 10/01/2019</span></footer>
+</body>
+</html>

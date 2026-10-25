@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><title>Datasheet</title>
+<style>
+:root{--a:#e4572e}
+body{margin:0;padding:44px 48px 40px;width:804px;background:#fff;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;color:#111;font-size:11px;line-height:1.5}
+header{display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px;border-top:4px solid #111;padding-top:10px;margin-bottom:30px}
+h1{font-size:26px;font-weight:600;margin:0;letter-spacing:-.5px;grid-column:span 2}
+.meta{text-align:right;color:#555}
+.cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px}
+h2{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--a);margin:0 0 8px;font-weight:600}
+p{margin:0 0 10px}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin-bottom:14px}
+.kv b{display:block;font-weight:600}
+.kv span{color:#555}
+table{width:100%;border-collapse:collapse;margin-bottom:14px}
+th,td{text-align:left;padding:4px 0;border-bottom:1px solid #ddd;font-weight:400}
+th{font-weight:600}
+td.r{text-align:right}
+th[colspan]{text-align:center;color:var(--a);border-bottom:1px solid var(--a)}
+footer{margin-top:34px;border-top:1px solid #111;padding-top:8px;display:flex;justify-content:space-between;color:#555;font-size:10px}
+</style></head><body>
+<header>
+<h1>Tansy Paragon TP-200<br>Temperature controller</h1>
+<div class="meta">Datasheet rev. C<br>20 October 2025</div>
+</header>
+<div class="cols">
+<div>
+<h2>Overview</h2>
+<p>The TP-200 is a compact panel controller for ovens, kilns and incubators. It reads one thermocouple and drives a relay or a solid-state output.</p>
+<p>Setpoint, ramp and soak are set from the front keys and held through a power cut.</p>
+<h2>Key facts</h2>
+<div class="kv">
+<div><span>Input</span><b>K, J, S</b></div><div><span>Range</span><b>0 to 1300 &deg;C</b></div>
+<div><span>Accuracy</span><b>&plusmn;0.3 %</b></div><div><span>Supply</span><b>24 V DC</b></div>
+</div>
+</div>
+<div>
+<h2>Specification</h2>
+<table>
+<tr><th colspan="2">Electrical</th></tr>
+<tr><td>Supply voltage</td><td class="r">20 to 28 V DC</td></tr>
+<tr><td>Power draw</td><td class="r">3 W</td></tr>
+<tr><td>Relay rating</td><td class="r">5 A at 250 V</td></tr>
+<tr><th colspan="2">Mechanical</th></tr>
+<tr><td>Panel cut-out</td><td class="r">45 &times; 45 mm</td></tr>
+<tr><td>Depth</td><td class="r">78 mm</td></tr>
+<tr><td>Weight</td><td class="r">140 g</td></tr>
+</table>
+</div>
+<div>
+<h2>Ordering</h2>
+<table>
+<tr><th>Code</th><th>Output</th></tr>
+<tr><td>TP-200-R</td><td>Relay</td></tr>
+<tr><td>TP-200-S</td><td>SSR drive</td></tr>
+<tr><td>TP-200-A</td><td>4 to 20 mA</td></tr>
+</table>
+<h2>Contact</h2>
+<div class="kv">
+<div><span>Design</span><b>Stuart Nwosu</b></div><div><span>Sales</span><b>Sophie Odell</b></div>
+<div><span>Works</span><b>Lancaster</b></div><div><span>Support</span><b>Barnsley</b></div>
+</div>
+</div>
+</div>
+<footer><span>Oliver Stirling, technical editor</span><span>Specifications may change without notice.</span></footer>
+</body></html>

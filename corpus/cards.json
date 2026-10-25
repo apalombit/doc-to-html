@@ -1444,14 +1444,17 @@
    "origin": "pdf",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "application form",
+   "arrangement": "arr.two_columns",
+   "type": "type.sans",
+   "features": [
+    "kv.boxed",
+    "kv.over"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "medium",
+   "locale": "en-GB",
    "pilot": false
   },
   {
@@ -1459,29 +1462,37 @@
    "origin": "pdf",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "numbered-box tax form",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.boxed",
+    "kv.over",
+    "list.numbers"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "dense",
+   "locale": "en-US",
    "pilot": false
   },
   {
    "id": "c0073",
    "origin": "pdf",
    "family": "forms",
-   "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "language": "pt",
+   "kind": "application form",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.boxed",
+    "kv.over",
+    "look.bands"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "sparse",
+   "locale": "pt-BR",
    "pilot": false
   },
   {
@@ -5513,14 +5524,20 @@
    "origin": "pdf",
    "family": "reports",
    "language": "fr",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "corporate report page",
+   "arrangement": "arr.two_columns",
+   "type": "type.sans",
+   "features": [
+    "fig.chart",
+    "fmt.eu_numbers",
+    "table.ruled",
+    "table.subrows",
+    "text.footnotes"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "dense",
+   "locale": "fr-FR",
    "pilot": false
   },
   {
@@ -5588,14 +5605,20 @@
    "origin": "pdf",
    "family": "reports",
    "language": "it",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "corporate report page",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "look.bands",
+    "table.ruled",
+    "text.footnotes",
+    "text.justified",
+    "text.supsub"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "medium",
+   "locale": "it-IT",
    "pilot": false
   },
   {
@@ -5783,14 +5806,18 @@
    "origin": "pdf",
    "family": "reports",
    "language": "it",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "status report",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "look.bands",
+    "table.ruled",
+    "table.totals"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "medium",
+   "locale": "it-IT",
    "pilot": false
   },
   {
@@ -6963,14 +6990,19 @@
    "origin": "pdf",
    "family": "correspondence and legal",
    "language": "es",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "notice",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fmt.eu_numbers",
+    "table.ruled",
+    "text.footnotes",
+    "text.justified"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "dense",
+   "locale": "es-ES",
    "pilot": false
   },
   {
@@ -7888,14 +7920,18 @@
    "origin": "pdf",
    "family": "publishing",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "paper page",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "table.ruled",
+    "text.formula",
+    "text.justified"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "dense",
+   "locale": "en-US",
    "pilot": false
   },
   {
@@ -7933,14 +7969,17 @@
    "origin": "pdf",
    "family": "publishing",
    "language": "fr",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "textbook page",
+   "arrangement": "arr.two_columns",
+   "type": "type.sans",
+   "features": [
+    "kv.leaders",
+    "list.numbers"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "medium",
+   "locale": "fr-FR",
    "pilot": false
   },
   {
@@ -12042,6 +12081,60 @@
     "c0544"
    ],
    "why": "Chrome lays out no page under 500 px (projection.MIN_WIDTH), so no card may be narrower; the fragments' kinds allowed 360"
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0071"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0072"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0073"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0360"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0287"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0300"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0282"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0409"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0406"
+   ]
   }
  ]
 }

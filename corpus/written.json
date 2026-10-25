@@ -152,6 +152,30 @@
   "written": "2026-10-24",
   "note": "batch stopped by the spend limit; this page had passed"
  },
+ "c0009": {
+  "writer": "sonnet",
+  "batch": "round2-4",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2027-06-05",
+   "people": [
+    "Trevor Duarte",
+    "Travis Kim",
+    "Brooke Morales"
+   ],
+   "places": [
+    "Wichita, KS",
+    "Fresno, CA"
+   ],
+   "name_words": [
+    "Sandpiper",
+    "Pinewood"
+   ]
+  },
+  "note": "passed in round 2's first attempt, before the spend limit stopped its writer; the batch was handed out again without it, and its run count was never reported"
+ },
  "c0010": {
   "writer": "sonnet",
   "batch": "pilot2-3",
@@ -184,6 +208,29 @@
    }
   ]
  },
+ "c0013": {
+  "writer": "sonnet",
+  "batch": "round2-4",
+  "runs": 2,
+  "batch_seconds": 393.9,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2019-02-25",
+   "people": [
+    "Isla Patel",
+    "Tom Nwosu",
+    "Yusuf Chowdhury"
+   ],
+   "places": [
+    "Shrewsbury",
+    "Taunton"
+   ],
+   "name_words": [
+    "Rowan",
+    "Vale"
+   ]
+  }
+ },
  "c0014": {
   "writer": "sonnet",
   "batch": "round1-3",
@@ -207,6 +254,98 @@
    ]
   },
   "note": "written for 480 px; failed only on the width, Chrome's floor being 500; the card moved to 500 and the page passed unchanged"
+ },
+ "c0015": {
+  "writer": "sonnet",
+  "batch": "round2-3",
+  "runs": 1,
+  "batch_seconds": 221.5,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2022-08-04",
+   "people": [
+    "Niamh Burrows",
+    "Harry Chowdhury",
+    "Gareth Pritchard"
+   ],
+   "places": [
+    "Salisbury",
+    "Lincoln"
+   ],
+   "name_words": [
+    "Oakridge",
+    "Cypress"
+   ]
+  }
+ },
+ "c0016": {
+  "writer": "sonnet",
+  "batch": "round2-2",
+  "runs": 3,
+  "batch_seconds": 349.2,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2027-02-02",
+   "people": [
+    "Tyler Washington",
+    "Travis Adeyemi",
+    "DeShawn Gutierrez"
+   ],
+   "places": [
+    "Macon, GA",
+    "Wichita, KS"
+   ],
+   "name_words": [
+    "Tern",
+    "Iris"
+   ]
+  }
+ },
+ "c0017": {
+  "writer": "sonnet",
+  "batch": "round2-1",
+  "runs": 2,
+  "batch_seconds": 365.3,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2025-03-20",
+   "people": [
+    "Trevor Ramirez",
+    "Rachel Morales",
+    "Erin Hendricks"
+   ],
+   "places": [
+    "Ithaca, NY",
+    "Billings, MT"
+   ],
+   "name_words": [
+    "Heron",
+    "Timber"
+   ]
+  }
+ },
+ "c0018": {
+  "writer": "sonnet",
+  "batch": "round2-5",
+  "runs": 1,
+  "batch_seconds": 336.3,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2020-02-23",
+   "people": [
+    "Romain Garnier",
+    "Yann Renaud",
+    "Margaux Dumont"
+   ],
+   "places": [
+    "Clermont-Ferrand",
+    "Limoges"
+   ],
+   "name_words": [
+    "Bluebell",
+    "Atlas"
+   ]
+  }
  },
  "c0019": {
   "writer": "sonnet",
@@ -376,6 +515,30 @@
    ]
   }
  },
+ "c0060": {
+  "writer": "sonnet",
+  "batch": "round2-3",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2026-08-08",
+   "people": [
+    "Hiro Shapiro",
+    "Nadia Lockhart",
+    "Tyler Brennan"
+   ],
+   "places": [
+    "Chattanooga, TN",
+    "Macon, GA"
+   ],
+   "name_words": [
+    "Pebble",
+    "Wagtail"
+   ]
+  },
+  "note": "passed in round 2's first attempt, before the spend limit stopped its writer; the batch was handed out again without it, and its run count was never reported"
+ },
  "c0065": {
   "writer": "opus",
   "batch": "pilot-5",
@@ -392,12 +555,58 @@
   "written": "2026-10-24",
   "note": "batch stopped by the spend limit; this page had passed"
  },
+ "c0067": {
+  "writer": "sonnet",
+  "batch": "round2-3",
+  "runs": 1,
+  "batch_seconds": 221.5,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2025-09-18",
+   "people": [
+    "Declan Fairclough",
+    "Stuart Rees",
+    "Owen Begum"
+   ],
+   "places": [
+    "Ayr",
+    "Shrewsbury"
+   ],
+   "name_words": [
+    "Linnet",
+    "Redstart"
+   ]
+  }
+ },
  "c0068": {
   "writer": "sonnet",
   "batch": "pilot2-3",
   "runs": 1,
   "batch_seconds": 351.2,
   "written": "2026-10-25"
+ },
+ "c0070": {
+  "writer": "sonnet",
+  "batch": "round2-2",
+  "runs": 1,
+  "batch_seconds": 349.2,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2026-12-30",
+   "people": [
+    "Keisha Lindqvist",
+    "Ashley Adeyemi",
+    "Travis Mahoney"
+   ],
+   "places": [
+    "Tacoma, WA",
+    "Flagstaff, AZ"
+   ],
+   "name_words": [
+    "Quarry",
+    "Nuthatch"
+   ]
+  }
  },
  "c0101": {
   "writer": "sonnet",
@@ -544,12 +753,173 @@
    ]
   }
  },
+ "c0108": {
+  "writer": "sonnet",
+  "batch": "round2-1",
+  "runs": 3,
+  "batch_seconds": 365.3,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2023-03-20",
+   "people": [
+    "Freya Thornton",
+    "Finlay Begum",
+    "Callum Fairclough"
+   ],
+   "places": [
+    "Truro",
+    "Bangor"
+   ],
+   "name_words": [
+    "Sedge",
+    "Umber"
+   ]
+  }
+ },
+ "c0109": {
+  "writer": "sonnet",
+  "batch": "round2-5",
+  "runs": 1,
+  "batch_seconds": 336.3,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2022-06-30",
+   "people": [
+    "Ellie Pritchard",
+    "Arjun Nwosu",
+    "Gareth Lindsay"
+   ],
+   "places": [
+    "Ayr",
+    "Inverness"
+   ],
+   "name_words": [
+    "Ochre",
+    "Linden"
+   ]
+  }
+ },
+ "c0110": {
+  "writer": "sonnet",
+  "batch": "round2-4",
+  "runs": 1,
+  "batch_seconds": 393.9,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2021-01-20",
+   "people": [
+    "Gareth Sinclair",
+    "Ruth Fairclough",
+    "Hannah Gallagher"
+   ],
+   "places": [
+    "Aberystwyth",
+    "Norwich"
+   ],
+   "name_words": [
+    "Cormorant",
+    "Pebble"
+   ]
+  }
+ },
+ "c0111": {
+  "writer": "sonnet",
+  "batch": "round2-3",
+  "runs": 1,
+  "batch_seconds": 221.5,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2025-04-06",
+   "people": [
+    "Roberta Gatti",
+    "Marco Galli",
+    "Ilaria Barbieri"
+   ],
+   "places": [
+    "Novara",
+    "Bergamo"
+   ],
+   "name_words": [
+    "Basalt",
+    "Dovetail"
+   ]
+  }
+ },
  "c0112": {
   "writer": "sonnet",
   "batch": "pilot-6",
   "runs": 1,
   "batch_seconds": 221.5,
   "written": "2026-10-25"
+ },
+ "c0113": {
+  "writer": "sonnet",
+  "batch": "round2-2",
+  "runs": 2,
+  "batch_seconds": 349.2,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2019-10-19",
+   "people": [
+    "Freya Whitaker",
+    "Harry Patel",
+    "Arjun Ashworth"
+   ],
+   "places": [
+    "Lancaster",
+    "Salisbury"
+   ],
+   "name_words": [
+    "Lantern",
+    "Slate"
+   ]
+  }
+ },
+ "c0114": {
+  "writer": "sonnet",
+  "batch": "round2-1",
+  "runs": 2,
+  "batch_seconds": 365.3,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2023-12-07",
+   "people": [
+    "Tom Stirling",
+    "Sophie Rahman",
+    "Oliver MacLeod"
+   ],
+   "places": [
+    "Newry",
+    "Shrewsbury"
+   ],
+   "name_words": [
+    "Birch",
+    "Cairn"
+   ]
+  }
+ },
+ "c0120": {
+  "writer": "sonnet",
+  "batch": "round2-1",
+  "runs": 1,
+  "batch_seconds": 365.3,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2024-11-15",
+   "people": [
+    "Imogen Pritchard",
+    "Rohan Rees",
+    "Tom Bryce"
+   ],
+   "places": [
+    "Lincoln",
+    "Perth"
+   ],
+   "name_words": [
+    "Osprey",
+    "Pinewood"
+   ]
+  }
  },
  "c0131": {
   "writer": "sonnet",
@@ -588,6 +958,29 @@
   "runs": 2,
   "batch_seconds": 221.5,
   "written": "2026-10-25"
+ },
+ "c0136": {
+  "writer": "sonnet",
+  "batch": "round2-5",
+  "runs": 1,
+  "batch_seconds": 336.3,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2026-07-30",
+   "people": [
+    "Sofia Fitzgerald",
+    "Travis Schultz",
+    "Mei Castillo"
+   ],
+   "places": [
+    "Madison, WI",
+    "Mobile, AL"
+   ],
+   "name_words": [
+    "Sedge",
+    "Dovetail"
+   ]
+  }
  },
  "c0139": {
   "writer": "sonnet",
@@ -633,6 +1026,29 @@
   "runs": 2,
   "batch_seconds": 333.2,
   "written": "2026-10-25"
+ },
+ "c0151": {
+  "writer": "sonnet",
+  "batch": "round2-4",
+  "runs": 3,
+  "batch_seconds": 393.9,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2019-09-04",
+   "people": [
+    "Owen Rees",
+    "Yusuf Patel",
+    "Aisha Ashworth"
+   ],
+   "places": [
+    "Lancaster",
+    "Hereford"
+   ],
+   "name_words": [
+    "Wagtail",
+    "Acorn"
+   ]
+  }
  },
  "c0157": {
   "writer": "sonnet",
@@ -869,12 +1285,174 @@
    ]
   }
  },
+ "c0210": {
+  "writer": "sonnet",
+  "batch": "round2-2",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2019-10-01",
+   "people": [
+    "DeShawn Shapiro",
+    "Rachel Kim",
+    "Jasmine Pruitt"
+   ],
+   "places": [
+    "Provo, UT",
+    "Tulsa, OK"
+   ],
+   "name_words": [
+    "Quill",
+    "Driftwood"
+   ]
+  },
+  "note": "passed in round 2's first attempt, before the spend limit stopped its writer; the batch was handed out again without it, and its run count was never reported"
+ },
+ "c0211": {
+  "writer": "sonnet",
+  "batch": "round2-2",
+  "runs": 1,
+  "batch_seconds": 349.2,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2025-11-21",
+   "people": [
+    "Callum Bryce",
+    "Zara Patel",
+    "Yusuf Chowdhury"
+   ],
+   "places": [
+    "Dundee",
+    "Swindon"
+   ],
+   "name_words": [
+    "Zephyr",
+    "Umber"
+   ]
+  }
+ },
+ "c0212": {
+  "writer": "sonnet",
+  "batch": "round2-1",
+  "runs": 2,
+  "batch_seconds": 365.3,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2019-07-26",
+   "people": [
+    "Nadia Le",
+    "Rachel Brandt",
+    "Hiro Delgado"
+   ],
+   "places": [
+    "Ithaca, NY",
+    "Sioux Falls, SD"
+   ],
+   "name_words": [
+    "Sedge",
+    "Obsidian"
+   ]
+  }
+ },
+ "c0213": {
+  "writer": "sonnet",
+  "batch": "round2-5",
+  "runs": 1,
+  "batch_seconds": 336.3,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2022-05-17",
+   "people": [
+    "Rui Moreira Simões",
+    "Joana Ferreira da Costa",
+    "Pedro Cardoso Mendes"
+   ],
+   "places": [
+    "Beja",
+    "Viseu"
+   ],
+   "name_words": [
+    "Siskin",
+    "Granite"
+   ]
+  }
+ },
+ "c0214": {
+  "writer": "sonnet",
+  "batch": "round2-4",
+  "runs": 2,
+  "batch_seconds": 393.9,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2020-01-26",
+   "people": [
+    "Bethan Kaur",
+    "Priya Mercer",
+    "Zara Stirling"
+   ],
+   "places": [
+    "Norwich",
+    "Taunton"
+   ],
+   "name_words": [
+    "Acorn",
+    "Fern"
+   ]
+  }
+ },
  "c0215": {
   "writer": "sonnet",
   "batch": "pilot2-2",
   "runs": 1,
   "batch_seconds": 362.2,
   "written": "2026-10-25"
+ },
+ "c0216": {
+  "writer": "sonnet",
+  "batch": "round2-3",
+  "runs": 1,
+  "batch_seconds": 221.5,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2025-12-19",
+   "people": [
+    "Finlay Ahmed",
+    "Gareth Pritchard",
+    "Yusuf Rahman"
+   ],
+   "places": [
+    "Inverness",
+    "Durham"
+   ],
+   "name_words": [
+    "Cypress",
+    "Cobalt"
+   ]
+  }
+ },
+ "c0217": {
+  "writer": "sonnet",
+  "batch": "round2-2",
+  "runs": 1,
+  "batch_seconds": 349.2,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2023-10-04",
+   "people": [
+    "Karim Collet",
+    "Léa Bonnet",
+    "Élodie Perrin"
+   ],
+   "places": [
+    "Annecy",
+    "Angers"
+   ],
+   "name_words": [
+    "Umber",
+    "Spruce"
+   ]
+  }
  },
  "c0218": {
   "writer": "sonnet",
@@ -1088,6 +1666,98 @@
    ]
   }
  },
+ "c0308": {
+  "writer": "sonnet",
+  "batch": "round2-2",
+  "runs": 1,
+  "batch_seconds": 349.2,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2019-04-22",
+   "people": [
+    "Adrián Rubio Santos",
+    "Irene Gallego Peña",
+    "Rocío Domínguez Prieto"
+   ],
+   "places": [
+    "Girona",
+    "Santander"
+   ],
+   "name_words": [
+    "Lattice",
+    "Zephyr"
+   ]
+  }
+ },
+ "c0309": {
+  "writer": "sonnet",
+  "batch": "round2-1",
+  "runs": 1,
+  "batch_seconds": 365.3,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2021-12-28",
+   "people": [
+    "Élodie Renaud",
+    "Karim Moreau",
+    "Nicolas Masson"
+   ],
+   "places": [
+    "La Rochelle",
+    "Nantes"
+   ],
+   "name_words": [
+    "Vale",
+    "Clover"
+   ]
+  }
+ },
+ "c0310": {
+  "writer": "sonnet",
+  "batch": "round2-5",
+  "runs": 1,
+  "batch_seconds": 336.3,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2021-08-24",
+   "people": [
+    "Álvaro Romero Gil",
+    "Jorge Vega Cabrera",
+    "Cristina Medina Calvo"
+   ],
+   "places": [
+    "Murcia",
+    "Toledo"
+   ],
+   "name_words": [
+    "Quarry",
+    "Basalt"
+   ]
+  }
+ },
+ "c0311": {
+  "writer": "sonnet",
+  "batch": "round2-4",
+  "runs": 1,
+  "batch_seconds": 393.9,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2025-03-08",
+   "people": [
+    "Declan Patel",
+    "Ewan Hughes",
+    "Yusuf Chowdhury"
+   ],
+   "places": [
+    "Ipswich",
+    "Taunton"
+   ],
+   "name_words": [
+    "Iris",
+    "Quill"
+   ]
+  }
+ },
  "c0312": {
   "writer": "opus",
   "batch": "pilot-1",
@@ -1095,6 +1765,29 @@
   "batch_seconds": null,
   "written": "2026-10-24",
   "note": "batch stopped by the spend limit; this page had passed"
+ },
+ "c0313": {
+  "writer": "sonnet",
+  "batch": "round2-3",
+  "runs": 1,
+  "batch_seconds": 221.5,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2020-09-16",
+   "people": [
+    "Arjun Rees",
+    "Priya Hughes",
+    "Tom Nwosu"
+   ],
+   "places": [
+    "Swindon",
+    "Durham"
+   ],
+   "name_words": [
+    "Flint",
+    "Larch"
+   ]
+  }
  },
  "c0315": {
   "writer": "sonnet",
@@ -1280,6 +1973,121 @@
    "name_words": [
     "Meridian",
     "Pinewood"
+   ]
+  }
+ },
+ "c0372": {
+  "writer": "sonnet",
+  "batch": "round2-4",
+  "runs": 3,
+  "batch_seconds": 393.9,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2023-01-13",
+   "people": [
+    "Leah Kowalski",
+    "Finlay MacLeod",
+    "Rohan Odell"
+   ],
+   "places": [
+    "Taunton",
+    "Swindon"
+   ],
+   "name_words": [
+    "Beacon",
+    "Granite"
+   ]
+  }
+ },
+ "c0373": {
+  "writer": "sonnet",
+  "batch": "round2-3",
+  "runs": 2,
+  "batch_seconds": 221.5,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2023-01-21",
+   "people": [
+    "Emily Abernathy",
+    "Lauren Brandt",
+    "Maria Sullivan"
+   ],
+   "places": [
+    "Flagstaff, AZ",
+    "Macon, GA"
+   ],
+   "name_words": [
+    "Fieldfare",
+    "Tamarisk"
+   ]
+  }
+ },
+ "c0374": {
+  "writer": "sonnet",
+  "batch": "round2-2",
+  "runs": 1,
+  "batch_seconds": 349.2,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2024-09-25",
+   "people": [
+    "Freya Stirling",
+    "Declan Gallagher",
+    "Owen Caldwell"
+   ],
+   "places": [
+    "Dundee",
+    "Newry"
+   ],
+   "name_words": [
+    "Lark",
+    "Vale"
+   ]
+  }
+ },
+ "c0375": {
+  "writer": "sonnet",
+  "batch": "round2-1",
+  "runs": 1,
+  "batch_seconds": 365.3,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2022-06-21",
+   "people": [
+    "Élodie Perrin",
+    "Camille Leroy",
+    "Olivier Bonnet"
+   ],
+   "places": [
+    "Pau",
+    "Nîmes"
+   ],
+   "name_words": [
+    "Basalt",
+    "Acorn"
+   ]
+  }
+ },
+ "c0376": {
+  "writer": "sonnet",
+  "batch": "round2-5",
+  "runs": 2,
+  "batch_seconds": 336.3,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2020-07-07",
+   "people": [
+    "Raj Brandt",
+    "Jasmine Pruitt",
+    "Travis Brennan"
+   ],
+   "places": [
+    "Erie, PA",
+    "Greenville, SC"
+   ],
+   "name_words": [
+    "Willow",
+    "Kestrel"
    ]
   }
  },
@@ -1500,6 +2308,121 @@
    "name_words": [
     "Maple",
     "Cormorant"
+   ]
+  }
+ },
+ "c0431": {
+  "writer": "sonnet",
+  "batch": "round2-3",
+  "runs": 1,
+  "batch_seconds": 221.5,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2024-07-17",
+   "people": [
+    "Carlos Abernathy",
+    "Luis Hendricks",
+    "Mei Holloway"
+   ],
+   "places": [
+    "Macon, GA",
+    "Greenville, SC"
+   ],
+   "name_words": [
+    "Verdigris",
+    "Pinewood"
+   ]
+  }
+ },
+ "c0432": {
+  "writer": "sonnet",
+  "batch": "round2-2",
+  "runs": 2,
+  "batch_seconds": 349.2,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2019-06-18",
+   "people": [
+    "Yusuf Burrows",
+    "Zara Fairclough",
+    "Stuart Ashworth"
+   ],
+   "places": [
+    "Wrexham",
+    "Colchester"
+   ],
+   "name_words": [
+    "Topaz",
+    "Timber"
+   ]
+  }
+ },
+ "c0433": {
+  "writer": "sonnet",
+  "batch": "round2-1",
+  "runs": 1,
+  "batch_seconds": 365.3,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2025-10-20",
+   "people": [
+    "Stuart Nwosu",
+    "Sophie Odell",
+    "Oliver Stirling"
+   ],
+   "places": [
+    "Lancaster",
+    "Barnsley"
+   ],
+   "name_words": [
+    "Tansy",
+    "Paragon"
+   ]
+  }
+ },
+ "c0435": {
+  "writer": "sonnet",
+  "batch": "round2-5",
+  "runs": 2,
+  "batch_seconds": 336.3,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2026-08-17",
+   "people": [
+    "Yusuf Rahman",
+    "Aisha Kowalski",
+    "Niamh Caldwell"
+   ],
+   "places": [
+    "Newry",
+    "Aberystwyth"
+   ],
+   "name_words": [
+    "Summit",
+    "Tansy"
+   ]
+  }
+ },
+ "c0436": {
+  "writer": "sonnet",
+  "batch": "round2-4",
+  "runs": 3,
+  "batch_seconds": 393.9,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2019-07-03",
+   "people": [
+    "Brooke Washington",
+    "Maria Pruitt",
+    "Tyler Shapiro"
+   ],
+   "places": [
+    "Boise, ID",
+    "Santa Fe, NM"
+   ],
+   "name_words": [
+    "Foxglove",
+    "Maple"
    ]
   }
  },
@@ -1729,6 +2652,29 @@
    ]
   }
  },
+ "c0492": {
+  "writer": "sonnet",
+  "batch": "round2-1",
+  "runs": 2,
+  "batch_seconds": 365.3,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2022-04-07",
+   "people": [
+    "Grant Nguyen",
+    "Camila Park",
+    "Hiro Ramirez"
+   ],
+   "places": [
+    "Chattanooga, TN",
+    "Erie, PA"
+   ],
+   "name_words": [
+    "Summit",
+    "Timber"
+   ]
+  }
+ },
  "c0493": {
   "writer": "opus",
   "batch": "pilot-5",
@@ -1736,6 +2682,98 @@
   "batch_seconds": null,
   "written": "2026-10-24",
   "note": "batch stopped by the spend limit; this page had passed"
+ },
+ "c0494": {
+  "writer": "sonnet",
+  "batch": "round2-5",
+  "runs": 1,
+  "batch_seconds": 336.3,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2027-01-23",
+   "people": [
+    "Riccardo Santoro",
+    "Giulia Orlando",
+    "Roberta Ricci"
+   ],
+   "places": [
+    "Brescia",
+    "Lecce"
+   ],
+   "name_words": [
+    "Beacon",
+    "Siskin"
+   ]
+  }
+ },
+ "c0495": {
+  "writer": "sonnet",
+  "batch": "round2-4",
+  "runs": 2,
+  "batch_seconds": 393.9,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2023-02-11",
+   "people": [
+    "Zara Doherty",
+    "Isla Rahman",
+    "Megan Begum"
+   ],
+   "places": [
+    "Lancaster",
+    "Durham"
+   ],
+   "name_words": [
+    "Clover",
+    "Foxglove"
+   ]
+  }
+ },
+ "c0496": {
+  "writer": "sonnet",
+  "batch": "round2-3",
+  "runs": 1,
+  "batch_seconds": 221.5,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2024-11-17",
+   "people": [
+    "Mathieu Gauthier",
+    "Pauline Morel",
+    "Chloé Masson"
+   ],
+   "places": [
+    "Pau",
+    "Tours"
+   ],
+   "name_words": [
+    "Verdigris",
+    "Bluebell"
+   ]
+  }
+ },
+ "c0497": {
+  "writer": "sonnet",
+  "batch": "round2-2",
+  "runs": 1,
+  "batch_seconds": 349.2,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2020-06-28",
+   "people": [
+    "Harry Treloar",
+    "Amelia Rahman",
+    "Ewan Whitaker"
+   ],
+   "places": [
+    "Kendal",
+    "Bangor"
+   ],
+   "name_words": [
+    "Spruce",
+    "Sedge"
+   ]
+  }
  },
  "c0506": {
   "writer": "sonnet",
@@ -1934,6 +2972,29 @@
    ]
   }
  },
+ "c0549": {
+  "writer": "sonnet",
+  "batch": "round2-5",
+  "runs": 3,
+  "batch_seconds": 336.3,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2024-06-13",
+   "people": [
+    "Ellie Caldwell",
+    "Yusuf Thornton",
+    "Aisha Haworth"
+   ],
+   "places": [
+    "Kendal",
+    "Lincoln"
+   ],
+   "name_words": [
+    "Basalt",
+    "Lantern"
+   ]
+  }
+ },
  "c0551": {
   "writer": "sonnet",
   "batch": "pilot-4",
@@ -1948,6 +3009,98 @@
   "batch_seconds": null,
   "written": "2026-10-24",
   "note": "batch stopped by the spend limit; this page had passed"
+ },
+ "c0553": {
+  "writer": "sonnet",
+  "batch": "round2-4",
+  "runs": 2,
+  "batch_seconds": 393.9,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2019-11-09",
+   "people": [
+    "Karim Dumont",
+    "Léa Faure",
+    "Claire Picard"
+   ],
+   "places": [
+    "Clermont-Ferrand",
+    "Limoges"
+   ],
+   "name_words": [
+    "Keystone",
+    "Verdigris"
+   ]
+  }
+ },
+ "c0554": {
+  "writer": "sonnet",
+  "batch": "round2-3",
+  "runs": 1,
+  "batch_seconds": 221.5,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2019-10-12",
+   "people": [
+    "Nadia Hendricks",
+    "Brooke Jackson",
+    "Kayla Kowalczyk"
+   ],
+   "places": [
+    "Fort Collins, CO",
+    "Eugene, OR"
+   ],
+   "name_words": [
+    "Compass",
+    "Paragon"
+   ]
+  }
+ },
+ "c0555": {
+  "writer": "sonnet",
+  "batch": "round2-2",
+  "runs": 4,
+  "batch_seconds": 349.2,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2022-02-14",
+   "people": [
+    "Aisha Patel",
+    "Rhys Gallagher",
+    "Zara Burrows"
+   ],
+   "places": [
+    "Colchester",
+    "Norwich"
+   ],
+   "name_words": [
+    "Verdigris",
+    "Topaz"
+   ]
+  }
+ },
+ "c0556": {
+  "writer": "sonnet",
+  "batch": "round2-1",
+  "runs": 5,
+  "batch_seconds": 365.3,
+  "written": "2026-10-25",
+  "particulars": {
+   "date": "2023-05-12",
+   "people": [
+    "Diego Fitzgerald",
+    "Keisha Jackson",
+    "Emily Le"
+   ],
+   "places": [
+    "Ithaca, NY",
+    "Tacoma, WA"
+   ],
+   "name_words": [
+    "Osprey",
+    "Larch"
+   ]
+  }
  },
  "c0565": {
   "writer": "sonnet",

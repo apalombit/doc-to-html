@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><title>Map</title>
+<style>
+body{margin:0;padding:10px;width:980px;background:#fff;font-family:Georgia,"Times New Roman",serif;color:#1a1a1a;font-size:13px;line-height:1.4}
+.wrap{display:flex;gap:20px}
+.main{width:660px}
+.side{width:300px}
+h1{font-size:19px;margin:0 0 2px}
+.sub{font-style:italic;color:#555;margin-bottom:8px}
+.map{position:relative;width:660px;height:430px;border:1px solid #444}
+.map svg{display:block}
+.map span{position:absolute;font-size:11px;background:rgba(255,255,255,.88);padding:0 3px;white-space:nowrap}
+.map .n{font-weight:bold;color:#fff;background:#8b1e1e;border-radius:9px;width:18px;height:18px;line-height:18px;text-align:center;padding:0;font-size:11px}
+.bar{background:#2f4a3a;color:#fff;font-variant:small-caps;letter-spacing:1px;padding:3px 8px;margin:0 0 6px;font-size:13px}
+.kv{display:flex;gap:18px;margin-bottom:8px}
+.kv div small{display:block;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#666}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:10px}
+th{text-align:left;border-bottom:1px solid #333;padding:2px 4px}
+td{padding:2px 4px}
+tr:nth-child(even) td{background:#ecefe8}
+ul{list-style:none;margin:0 0 10px;padding:0}
+li{display:flex;align-items:center;gap:6px;margin:2px 0}
+.leg{display:flex;align-items:center;gap:6px}
+.fn{font-size:10.5px;color:#444;border-top:1px solid #999;margin-top:8px;padding-top:4px}
+</style></head><body>
+<div class="wrap">
+<div class="main">
+<h1>Pinewood Osprey Reserve: visitor trail map</h1>
+<div class="sub">Walking routes and hides, survey of 15 November 2024</div>
+<div class="map">
+<svg width="660" height="430" viewBox="0 0 660 430">
+<rect width="660" height="430" fill="#eef2e4"/>
+<path d="M0 330 C120 290 200 380 330 340 C450 300 540 360 660 320 L660 430 L0 430 Z" fill="#b7d3e6"/>
+<path d="M60 40 L260 30 L300 140 L180 190 L50 150 Z" fill="#a9c79a"/>
+<path d="M400 60 L610 80 L600 210 L440 230 Z" fill="#9dbd8e"/>
+<path d="M20 250 C150 230 260 260 380 240 C480 224 560 250 650 236" fill="none" stroke="#fff" stroke-width="7"/>
+<path d="M20 250 C150 230 260 260 380 240 C480 224 560 250 650 236" fill="none" stroke="#9a8f78" stroke-width="1.5"/>
+<path d="M300 140 L330 240 L350 330" fill="none" stroke="#8b6b3d" stroke-width="2.5" stroke-dasharray="6 4"/>
+<path d="M440 230 L400 245" fill="none" stroke="#8b6b3d" stroke-width="2.5" stroke-dasharray="6 4"/>
+<path d="M120 190 L100 245" fill="none" stroke="#8b6b3d" stroke-width="2.5" stroke-dasharray="6 4"/>
+<rect x="320" y="228" width="26" height="16" fill="#d9c9a0" stroke="#554"/>
+<circle cx="520" cy="150" r="22" fill="#7fb2d4" stroke="#456"/>
+<path d="M590 380 L604 350 L618 380 M604 350 L604 392" stroke="#222" stroke-width="2" fill="none"/>
+</svg>
+<span style="left:12px;top:10px;font-style:italic">Pinewood Copse</span>
+<span style="left:440px;top:100px;font-style:italic">Heron Wood</span>
+<span style="left:490px;top:176px">Osprey Pool</span>
+<span style="left:60px;top:262px">Lincoln Road (B1190)</span>
+<span style="left:180px;top:380px;font-style:italic">River Witham</span>
+<span style="left:300px;top:252px">Visitor centre</span>
+<span style="left:560px;top:396px">N, north</span>
+<span class="n" style="left:316px;top:262px">1</span>
+<span class="n" style="left:110px;top:200px">2</span>
+<span class="n" style="left:500px;top:120px">3</span>
+<span class="n" style="left:338px;top:322px">4</span>
+</div>
+<div class="fn">Scale 1:5,000; about 1 cm to 50 m.<sup>1</sup> Trails are shown dashed; the road is shown in white.</div>
+</div>
+<div class="side">
+<div class="bar">Key</div>
+<ul>
+<li><svg width="26" height="12"><path d="M0 6 L26 6" stroke="#8b6b3d" stroke-width="2.5" stroke-dasharray="6 4"/></svg> Footpath</li>
+<li><svg width="26" height="12"><rect width="26" height="12" fill="#a9c79a"/></svg> Woodland</li>
+<li><svg width="26" height="12"><rect width="26" height="12" fill="#b7d3e6"/></svg> River and pool</li>
+<li><svg width="26" height="16"><circle cx="13" cy="8" r="8" fill="#8b1e1e"/></svg> Numbered stop</li>
+</ul>
+<div class="kv"><div><small>Surveyed by</small>Imogen Pritchard</div><div><small>Checked</small>Rohan Rees</div></div>
+<div class="kv"><div><small>Nearest town</small>Lincoln</div><div><small>Partner site</small>Perth</div></div>
+<div class="bar">Numbered stops</div>
+<table>
+<tr><th>No.</th><th>Stop</th><th>Walk</th></tr>
+<tr><td>1</td><td>Visitor centre</td><td>0 min</td></tr>
+<tr><td>2</td><td>Copse hide</td><td>12 min</td></tr>
+<tr><td>3</td><td>Osprey Pool hide</td><td>20 min</td></tr>
+<tr><td>4</td><td>River bridge</td><td>9 min</td></tr>
+</table>
+<div class="bar">Facilities</div>
+<ul>
+<li>✓ Car park, 40 spaces</li>
+<li>✓ Toilets at stop 1</li>
+<li>✗ Cafe (closed in winter)</li>
+<li>✓ Wheelchair access to stop 4</li>
+<li>✗ Dogs not permitted in hides</li>
+</ul>
+<div class="fn"><sup>1</sup> Mapping by Tom Bryce, volunteer warden. Hide opening times vary with the season.</div>
+</div>
+</div>
+</body></html>

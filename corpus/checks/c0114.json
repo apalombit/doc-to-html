@@ -1,0 +1,26 @@
+{
+ "id": "c0114",
+ "passed": true,
+ "failures": {},
+ "checked": "2026-10-25",
+ "seconds": 3.5,
+ "width": 560,
+ "height": 721,
+ "words": 133,
+ "card_features": [
+  "arr.centred",
+  "type.mono",
+  "list.numbers",
+  "look.accent",
+  "look.rules"
+ ],
+ "detected": [
+  "fmt.currency",
+  "fmt.dates",
+  "list.numbers",
+  "type.mono"
+ ],
+ "dhash": "d4d4f8d8f0f8d4d4",
+ "html_sha256": "a03b6e1618f38c10eb40461c5f20fdd7f33878d61a6ad39d31dfb878fe6e71da",
+ "png_sha256": "6e46ff78ac4dc24e1e48fb11ed8e7bbb0c9e713094e494bb24bb971ee9f6cf0d"
+}

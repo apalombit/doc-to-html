@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en-US"><head><meta charset="utf-8"><title>Results</title>
+<style>
+html,body{margin:0;padding:0;background:#fff}
+.pg{position:relative;width:1000px;height:1415px;font-family:"Times New Roman",Times,serif;color:#000;font-size:17px;line-height:16.7px;overflow:hidden}
+.l{position:absolute;margin:0;white-space:nowrap;height:16.7px}
+sub{font-size:12px;line-height:0;vertical-align:baseline;position:relative;top:4px}
+table{position:absolute;left:0;top:170px;border-collapse:collapse;width:771px;table-layout:fixed;font-size:17px}
+.rule{position:absolute;left:257px;width:487px;height:1px;background:#000}
+td,th{box-sizing:border-box;padding:0;font-weight:normal;text-align:left;white-space:nowrap;overflow:visible;line-height:16.7px}
+.h th{height:28.7px;padding-top:6px;vertical-align:top;}
+.r td{height:20.1px;padding-top:5.8px;vertical-align:top}.r.e td{height:28.2px;}
+.t td{height:29.5px;padding-top:5.8px;vertical-align:top}
+p,h2{position:absolute;margin:0;white-space:nowrap}
+.cap{width:700px;text-align:justify;text-align-last:justify;font-size:17px;line-height:20.1px;left:150px;top:312.8px}
+.b{text-align:justify;text-align-last:justify;left:150px;line-height:33.5px;width:700px}
+.i{text-indent:25.1px}
+</style></head><body><div class="pg">
+<div class="rule" style="top:170px"></div><div class="rule" style="top:198px"></div><div class="rule" style="top:267px"></div><div class="rule" style="top:296px"></div>
+<table>
+<colgroup><col style="width:408px"><col style="width:109.6px"><col style="width:53.4px"><col style="width:200px"></colgroup>
+<thead><tr class="h"><th style="padding-left:267px">Method</th><th>Miscoverage</th><th>RMSE</th><th>Avg. interval length</th></tr></thead>
+<tbody>
+<tr class="r"><td style="padding-left:267px">Radius-based</td><td style="padding-left:21.1px">0.1379</td><td style="padding-left:0">940.77</td><td style="padding-left:60.6px">2540.26</td></tr>
+<tr class="r"><td style="padding-left:267px">Posterior-based</td><td style="padding-left:21.1px">0.1379</td><td>908.40</td><td style="padding-left:60.6px">3157.48</td></tr>
+<tr class="r e"><td style="padding-left:267px">MCMC baseline</td><td style="padding-left:21.1px">0.0345</td><td>947.96</td><td style="padding-left:60.6px">3526.89</td></tr>
+<tr class="t"><td style="padding-left:267px">Target (α = 0.1)</td><td style="padding-left:21.1px">0.1000</td><td style="padding-left:14.9px">—</td><td style="padding-left:79.7px">—</td></tr>
+</tbody></table>
+<p class="cap">Table 2: Empirical miscoverage, RMSE between the median predicted weekly cases and the<br>observed measles outbreak, and average pointwise interval length for the radius-based parameter<br>set, posterior-based parameter set, and MCMC baseline. The target miscoverage level is α = 0.1.</p>
+<p style="left:150px;top:410.9px;line-height:16.7px">given in Section S3.2 of the Supplementary Material.</p>
+<h2 style="left:150px;top:470.7px;font-size:20px;line-height:20px;font-weight:bold">5.3&nbsp;&nbsp;&nbsp;Results</h2>
+<p class="b" style="top:509.3px">Table 2 reports empirical miscoverage, RMSE between the median predicted trajectory and the<br>observed weekly cases, and average pointwise interval length for the two proposed constructions<br>and the MCMC baseline. Figure 6 displays the proposed bands overlaid on the Malawi data,<br>with miscovered weeks highlighted in orange; the KOH–MCMC band was shown in Figure 1a.</p>
+<p class="b i" style="top:643.2px">Both proposed parameter sets achieve an empirical miscoverage of 0.1379, moderately above<br>the target α = 0.1 and consistent with the CRC guarantee 𝔼[<i>L</i><sub><i>n</i>+1</sub>(λ̂)] ≤ α, with average<br>interval lengths of 2540.26 and 3157.48 cases. The MCMC baseline attains a miscoverage of<br>0.0345, less than half the nominal level, with the widest band (3526.89 cases); this pattern is<br>consistent with the sensitivity of posterior uncertainty to the assumed discrepancy specification<br>(Brynjarsdóttir and O’Hagan, 2014, Syring and Martin, 2019). The CRC procedure instead<br>calibrates λ̂ directly against the empirical miscoverage of synthetic data generated under the<br>heterogeneous GP family, sidestepping the need for any single parametric noise model to be<br>exactly correct. The RMSE values of the three methods are comparable. The ablation study<br>in Section S4 of the Supplementary Material isolates the role of the CRC step on these data:<br>retaining a fixed 90% of the generated draws without CRC, under either selection rule, attains<br>zero miscoverage on the evaluated weeks but produces bands considerably wider than both the<br><span style="display:inline-block;text-indent:0;text-align-last:left">CRC and KOH–MCMC bands, indicating overcoverage (cf. Figure 1b).</span></p>
+<p class="b i" style="top:1078.4px">A further feature of the framework is that the miscovered weeks, shown as orange bands in<br>Figure 6, localize where the SEIR model struggles most. In both CRC panels the orange bands</p>
+<div class="l" style="left:491.6px;top:1196.4px">24</div>
+</div></body></html>

@@ -403,14 +403,23 @@ same way: their HTML re-renders only approximately to their picture, and
    - the structure is real (tables, lists, headings);
    - faces come from the allow-list, at sizes and positions as close as
      flow layout allows.
-6. **The gate.** A page is admitted only if all three hold:
-   - **words:** the twin's projected words equal the text layer's, as a
-     multiset, after normalising ligatures, soft hyphens and white space;
-   - **lines:** every PDF line's word sequence is one line of the twin's
-     projection;
-   - **geometry:** each line's top and left lie within 1.5% of the page's
-     width of the PDF's, scaled. Measure the spread on the pilot of 10
-     and state the threshold before admitting more.
+6. **The gate.** A page is admitted only if all three hold. *Restated
+   2026-10-25 on the pilot of 10; the reasons are in step 4's outcome.*
+   - **words:** the twin's characters equal the text layer's, as a
+     multiset. Both sides first drop white space, accents and format
+     characters, unfold ligatures and compatibility forms, and fold
+     case. Text set at an angle takes part in this test only;
+   - **rows:** every PDF row's text is one row of the twin. The twin must
+     break wherever the PDF leaves a gap wider than 3 em (a column or a
+     cell), and may break or run on at a narrower one;
+   - **geometry:** each row's top, and the left of each of the twin's
+     pieces, lie within 1.5% of the page's width of where the PDF sets
+     the same text. Over the pilot of 10 the worst offsets were 12.4 px
+     across and 10.0 px down at 1000 px, median 4 px each way, so the
+     threshold stays at 1.5% (15 px).
+   - **A pointer, not a test:** runs of one-line blocks that may be one
+     paragraph cut into lines, or one line cut into words, are listed for
+     whoever reviews the twin (`pdfpage.split_paragraphs`).
 7. **Revise the twin, never the PDF.** A page whose twin cannot pass after
    three revisions is dropped, and the reason recorded.
 
@@ -825,7 +834,15 @@ width, density, family and writer. They go to `debug/corpus-sheets/`.
 - the formats are detected by language, and each language reads as itself;
 - the sheets come twelve to an image.
 
-### Step 3 — the pilot, 100 pages, 2026-10-25, awaiting Alessandro's review
+### Step 3 — the pilot, 100 pages, 2026-10-25, reviewed and kept
+
+**Alessandro's review, 2026-10-25:** all 100 are good and stay as they
+are. He asked for three additions, which step 5 takes up:
+- simpler documents that are not a whole page: a table smaller than a
+  page, an annotated map, a book page with a chart, a printout from a
+  technical manual, a utility bill;
+- keep the forms;
+- random dates and names.
 
 **100 pages, each passing the validator, checked again all together**
 (near-duplicates included) at 3.6–4.1 s a page. 17 were written by Opus
@@ -899,7 +916,7 @@ of an invented state revenue office.
   - **names:** "Okafor" is on 8 pages, "Whitcombe" on 7, "Harbour" or
     "Harbor" on 13, "Fenwick" on 6.
 
-### Step 4 — the sources proposed, 2026-10-24, awaiting Alessandro's approval
+### Step 4 — the sources proposed 2026-10-24, approved 2026-10-25
 
 Each licence was checked against its own statement on 2026-10-24. Every
 source allows redistribution, commercial use included, so a page can be
@@ -947,6 +964,111 @@ printed here from an HTML page, the gate admits that page's own HTML as
 its twin: 13 of 13 lines, worst offsets 3.5 px down and 0.3 px across. It
 refuses a twin with a word missing, a line broken elsewhere, or every
 line below its heading moved down by a widened margin.
+
+### Step 4 — the pilot of 10, 2026-10-25, waiting on Alessandro
+
+**Alessandro approved the list, 2026-10-25:** "keep it simple for now and
+we revisit once you get 10 examples we can actually use as render cases
+— if this gets complicated we drop for now to focus on synth test cases".
+So PDF work stops at these ten until he looks at them; the other 90 PDF
+slots stay open.
+
+**Three sources could not be fetched, and one was a scan.** GAO, SSA and
+EUR-Lex refuse a scripted download (bot protection), and NIST's 1995
+edition of SP 811 has no text layer. The ten came from what could be
+fetched:
+
+| page | source | kind | rows | words | worst across | worst down |
+|---|---|---|---|---|---|---|
+| c0071 | HMRC form HS275, p1 (OGL v3.0) | application form | 28 | 295 | 0.0 | 3.0 |
+| c0072 | IRS Form W-9, p1 (public domain) | numbered-box tax form | 64 | 950 | 1.6 | 1.0 |
+| c0073 | Receita Federal request form, Acre, p1 (blank form) | application form | 24 | 133 | 0.9 | 4.0 |
+| c0282 | INSEE, TEF 2019, p52 (Licence Ouverte 2.0) | corporate report page | 65 | 655 | 4.8 | 4.3 |
+| c0287 | Istat, Relazione sulla performance 2025, p20 (CC BY 4.0) | corporate report page | 36 | 428 | 4.9 | 9.0 |
+| c0300 | the same, p13 | status report | 35 | 274 | 10.3 | 5.1 |
+| c0360 | BOE-A-2025-6771, p2 (reuse with citation) | notice | 42 | 578 | 12.4 | 9.3 |
+| c0406 | arXiv:2610.31163, p24 (CC BY 4.0) | paper page | 30 | 367 | 0.1 | 3.2 |
+| c0409 | INSEE, TEF 2019, p8 | textbook page | 54 | 290 | 3.2 | 10.0 |
+| c0471 | NIST SP 811 (2008), p16 (public domain) | technical printout | 53 | 403 | 8.6 | 1.4 |
+
+Offsets are in px at 1000 px wide; the tolerance is 15. Each page's
+provenance is in `corpus/pdf/<id>.source.json`, and
+`corpus/pdf/ATTRIBUTION.md` is written from those records
+(`tools/corpus_pdf.py attribution`).
+
+**A twin costs a writer from under a minute to seven** (Sonnet, 1 to 10 gate
+runs). The cost of a PDF page is in fetching its source and in what the
+gate gets wrong, and the pilot found three faults in the gate and one in
+the twins. All four are fixed:
+1. **The text layer's white space and accents are wrong more often than
+   not**, on five of the first seven pages. HMRC's form holds
+   `Whenyoumakeaclaimasanindividual,`, LaTeX's captions run their words
+   together, Brazil's form reads `1.IDENTIFICAÇÃO` and `P esquisa`, and
+   accents come apart (`Brynjarsd´ottir`, `λˆ`). The first gate compared
+   words, so a twin had to copy those, and would then have marked a
+   converter wrong for reading the picture right. **The gate now compares
+   rows as a reader reads them** (§P step 6), and the twin spaces words as
+   the picture shows them.
+2. **Twins cut paragraphs into one block a line**, in three of the first
+   six (c0287, c0300, c0406), and a fourth cut a line into words with
+   `position: absolute` (c0073). Every one passed the gate, and the scorer
+   groups text by its block. `pdfpage.split_paragraphs` lists such runs.
+   It is a pointer, not a test, because a stack of separate items reads the
+   same to geometry: over the first 200 generated pages it reports 12 runs
+   of lines and 24 of words, and the lines are all footnotes, items or
+   particulars.
+3. **Text set at an angle has no rows.** BOE's margin and the W-9's side
+   text stand on end, and pdfplumber spells their words in the order of
+   their boxes (`5202` for 2025). That text is now compared by its
+   characters only, never by rows or geometry.
+4. **The listing a writer works from now shows rows**: each piece at its
+   left, `‖` before a piece the twin must set apart and `|` before one it
+   may run on, with any turned text in its last line.
+
+**Every twin was opened beside its page** (`debug/corpus-pdf/sheets/`).
+All ten read as their pages: the same words, lines, tables and boxes in
+the same places, in the allow-list's nearest faces. Logos and emblems are
+left out, as the brief asks. One fault was found and fixed by hand:
+c0073 drew empty the three radios its page shows selected.
+
+**For Alessandro to decide:** go on to about 100 PDF pages, from the
+sources that can be fetched (US federal, GOV.UK, ISTAT, INSEE, BOE,
+Brazil, arXiv), or stop at ten. If the PDF slots are dropped, they would
+be recast as generated cards.
+
+### Step 5 — the rest, in progress, 2026-10-25
+
+**What changed after the pilot's review:**
+- **Fragments**, a new family of 50 cards, recast from unwritten cards
+  (`tools/corpus_cards.py --recast`, once, seed 20261026). Its kinds:
+  standalone table, annotated map, chart with caption, diagram with
+  callouts and form section, 500–1000 px wide. Recast alongside them:
+  book page 8, technical printout 8, utility bill 4. Each card keeps its
+  id, language and locale, and no card the pilot holds was touched: 70
+  cards recast, 71 changed, all named in the cards' history.
+- **No card under 500 px.** Chrome lays out no page narrower, so seven
+  fragment cards moved to 500 px. c0014, written for 480 px, passed
+  unchanged at 500.
+- **Particulars**: each card gets its own date, three people, two places
+  and two name words, drawn from its locale's lists
+  (`factory.particulars`, seeded by the card's id). The names the pilot
+  overused are on no list. Fragments get half the word floor.
+
+**Two rounds of 50, written by Sonnet, five writers at a time:**
+
+| round | pages | first run passed | batch of ten, seconds |
+|---|---|---|---|
+| 1 | 50 | 27 | 271–388 |
+| 2 | 50 | 26 of 47 reported | 222–394 |
+
+Round 2's first attempt stopped at the spend limit. Its batches were
+handed out again, and three pages that had already passed (c0009, c0060,
+c0210) kept their pages, their run counts unreported; `tools/corpus_batch.py`
+now takes a card as written by its check record, not by its HTML.
+
+**Where it stands:** 200 of 500 generated pages and 10 of 100 PDF pages
+written, every one passing. Median words: 408 dense, 222 medium, 121
+sparse. Heights run from 228 to 1581 px, median 798. 28 MB on disk.
 
 ## Outcome — the corpus
 
