@@ -37,7 +37,7 @@
   "table.zebra": "alternate rows shaded",
   "table.subrows": "indented sub-rows under a parent row",
   "table.long": "a table of 25 rows or more",
-  "kv.inline": "label and value on one line (Date: 24/10/2026)",
+  "kv.inline": "label and value on one line (Date: 07/03/2024)",
   "kv.over": "a small label printed over its value",
   "kv.two_per_line": "two label-value pairs on one line",
   "kv.leaders": "leader dots between a label and its value",
@@ -71,7 +71,7 @@
   "fig.photo": "a photo-like picture",
   "fig.icons": "small icons beside text",
   "fmt.eu_numbers": "numbers in the language's own format (1.234,56 or 1 234,56)",
-  "fmt.dates": "dates in the language's format (24/10/2026, 24 ottobre 2026)",
+  "fmt.dates": "dates in the language's format (07/03/2024, 7 marzo 2024)",
   "fmt.currency": "amounts with a currency sign or code"
  },
  "min_width": {"arr.three_columns": 900, "arr.cards_grid": 760, "arr.two_columns": 700, "arr.sidebar": 700, "arr.panels_side_by_side": 700},
@@ -247,7 +247,8 @@
     "textbook page": {"styles": {"academic": 3, "classic-print": 2, "editorial": 1, "corporate-modern": 1}, "boost": {"text.formula": 1, "list.numbers": 1}},
     "manual page": {"styles": {"corporate-modern": 2, "minimal-swiss": 2, "utility-classes": 2, "classic-print": 1, "print-export": 1}, "boost": {"list.big_steps": 2, "list.numbers": 1, "fig.icons": 1}},
     "recipe": {"boost": {"list.big_steps": 2, "list.bullets": 1, "fig.photo": 1}},
-    "FAQ": {"widths": [700, 960], "boost": {"list.numbers": 1}, "exclude": ["text.formula"]}
+    "FAQ": {"widths": [700, 960], "boost": {"list.numbers": 1}, "exclude": ["text.formula"]},
+    "book page": {"always": ["fig.chart"], "recast_only": true, "widths": [700, 1000], "arrangements": {"arr.one_column": 3, "arr.two_columns": 1}, "styles": {"classic-print": 3, "academic": 3, "editorial": 1, "minimal-swiss": 1}, "density": {"medium": 3, "dense": 2}, "boost": {"fig.chart": 4, "text.footnotes": 2, "text.justified": 2}, "exclude": ["look.buttons", "look.chips", "kv.boxed", "fig.logo", "fig.signature"]}
    }
   },
   "reference": {
@@ -273,7 +274,8 @@
     "timetable": {"widths": [860, 1200], "arrangements": {"arr.one_column": 3, "arr.sidebar": 1}, "boost": {"table.spanning": 2, "table.empty_cells": 1}},
     "calendar": {"widths": [860, 1200], "arrangements": {"arr.one_column": 3, "arr.sidebar": 1, "arr.cards_grid": 1}, "boost": {"table.ruled": 1, "table.empty_cells": 2}, "exclude": ["table.totals", "table.long"]},
     "datasheet": {"boost": {"text.supsub": 1, "table.section_rows": 1, "text.formula": 1}},
-    "nutrition label": {"widths": [500, 640], "arrangements": {"arr.one_column": 3, "arr.panels_side_by_side": 1}, "styles": {"minimal-swiss": 2, "corporate-modern": 1, "legacy-table": 1, "utility-classes": 1, "classic-print": 1}, "boost": {"table.subrows": 2, "table.ruled": 1, "text.footnotes": 1}, "exclude": ["fig.photo", "fig.chart", "look.dark_ground"]}
+    "nutrition label": {"widths": [500, 640], "arrangements": {"arr.one_column": 3, "arr.panels_side_by_side": 1}, "styles": {"minimal-swiss": 2, "corporate-modern": 1, "legacy-table": 1, "utility-classes": 1, "classic-print": 1}, "boost": {"table.subrows": 2, "table.ruled": 1, "text.footnotes": 1}, "exclude": ["fig.photo", "fig.chart", "look.dark_ground"]},
+    "technical printout": {"recast_only": true, "widths": [760, 1100], "arrangements": {"arr.one_column": 3, "arr.two_columns": 1, "arr.sidebar": 1}, "styles": {"print-export": 3, "legacy-table": 2, "minimal-swiss": 1, "government-form": 1, "utility-classes": 1}, "density": {"medium": 2, "dense": 3}, "boost": {"table.ruled": 2, "list.numbers": 2, "kv.leaders": 1, "table.section_rows": 1}, "exclude": ["type.script", "fig.photo", "look.chips", "look.buttons", "look.dark_ground"]}
    }
   },
   "credentials": {
@@ -322,6 +324,40 @@
     "pricing page": {"widths": [960, 1200], "arrangements": {"arr.cards_grid": 4, "arr.panels_side_by_side": 2}, "boost": {"list.ticks": 2, "look.buttons": 2, "fmt.currency": 2}},
     "brochure panel": {"widths": [500, 700], "arrangements": {"arr.one_column": 3, "arr.centred": 2}, "boost": {"fig.photo": 1, "fig.icons": 1}}
    }
+  },
+  "fragments": {
+   "short": "frag", "pages": 0, "pdf": 0,
+   "about": "Not a whole page: one part of a document at its own size, as if cut or exported from a larger one. No cards are drawn for it; 'recasts' turns unwritten cards into it.",
+   "widths": [360, 900],
+   "density": {"sparse": 2, "medium": 3, "dense": 1},
+   "arrangements": {"arr.one_column": 4, "arr.centred": 1},
+   "styles": {"corporate-modern": 2, "government-form": 1, "classic-print": 2, "clinical-plain": 1, "academic": 2, "editorial": 1, "minimal-swiss": 2, "bold-marketing": 1, "legacy-table": 2, "utility-classes": 2, "print-export": 2},
+   "priors": {
+    "table.ruled": 2, "table.spanning": 1, "table.section_rows": 1, "table.totals": 1, "table.empty_cells": 1, "table.zebra": 1, "table.subrows": 1,
+    "kv.inline": 1, "kv.over": 1, "kv.two_per_line": 1, "kv.leaders": 1, "kv.boxed": 1,
+    "list.bullets": 2, "list.numbers": 2, "list.ticks": 1,
+    "text.footnotes": 3, "text.supsub": 2, "text.formula": 1,
+    "type.display": 1, "type.small_caps": 1, "type.weights": 2,
+    "look.accent": 3, "look.dark_ground": 1, "look.bands": 1, "look.chips": 1, "look.rules": 2,
+    "fig.logo": 1, "fig.icons": 2,
+    "fmt.eu_numbers": 1, "fmt.dates": 2, "fmt.currency": 2
+   },
+   "kinds": {
+    "standalone table": {"boost": {"table.ruled": 3, "table.spanning": 2, "table.section_rows": 2, "table.totals": 2, "table.zebra": 2, "table.subrows": 2, "table.empty_cells": 1, "table.long": 2}, "exclude": ["fig.icons", "kv.boxed", "list.ticks"]},
+    "chart with caption": {"always": ["fig.chart"], "widths": [420, 900], "arrangements": {"arr.one_column": 1}, "boost": {"fig.chart": 6, "text.footnotes": 1}, "exclude": ["kv.boxed", "list.ticks", "table.spanning", "table.subrows"]},
+    "annotated map": {"widths": [480, 1000], "arrangements": {"arr.one_column": 2, "arr.sidebar": 1}, "boost": {"fig.icons": 2, "list.bullets": 1, "look.accent": 1}, "exclude": ["kv.boxed", "text.formula", "table.spanning", "table.subrows"]},
+    "form section": {"widths": [400, 900], "arrangements": {"arr.one_column": 2, "arr.two_columns": 1}, "boost": {"kv.boxed": 3, "kv.over": 2, "kv.two_per_line": 2, "list.ticks": 2, "fig.signature": 2}, "exclude": ["text.formula", "fig.icons"]},
+    "diagram with callouts": {"widths": [520, 1000], "arrangements": {"arr.one_column": 2, "arr.sidebar": 1}, "boost": {"list.numbers": 3, "table.ruled": 2, "text.supsub": 1}, "exclude": ["kv.boxed", "list.ticks", "fmt.currency"]}
+   }
   }
+ },
+ "recasts": {
+  "about": "Applied once, after the pilot (Alessandro, 2026-10-25: 'some examples can also be simpler docs, not full page'): unwritten generated cards recast as these kinds, drawn from the families named in proportion to what they have left, never from a kind with fixed pages. tools/corpus_cards.py --recast.",
+  "plan": [
+   {"family": "fragments", "count": 50, "from": "all"},
+   {"family": "publishing", "kind": "book page", "count": 8, "from": "publishing"},
+   {"family": "reference", "kind": "technical printout", "count": 8, "from": "reference"},
+   {"family": "transactional", "kind": "utility bill", "count": 4, "from": "transactional"}
+  ]
  }
 }

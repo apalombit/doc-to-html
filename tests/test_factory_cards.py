@@ -48,7 +48,10 @@ class TestQuotas:
     def test_the_other_kinds_of_a_family_differ_by_at_most_one(
             self, drawn: list[cards.Card]) -> None:
         for family, entry in TAXONOMY["families"].items():
-            free = [kind for kind, spec in entry["kinds"].items() if "pages" not in spec]
+            if not entry["pages"]:
+                continue
+            free = [kind for kind, spec in entry["kinds"].items()
+                    if "pages" not in spec and not spec.get("recast_only")]
             counts = Counter(card.kind for card in drawn
                              if card.family == family and card.kind in free)
             assert max(counts.values()) - min(counts.values()) <= 1, family
@@ -102,7 +105,8 @@ class TestEveryCardIsSound:
         pilot = [card for card in drawn if card.pilot]
         assert len(pilot) == 50
         assert all(card.origin == "generated" for card in pilot)
-        assert {card.family for card in pilot} == set(TAXONOMY["families"])
+        assert {card.family for card in pilot} == {
+            family for family, entry in TAXONOMY["families"].items() if entry["pages"]}
         assert len({card.style for card in pilot}) >= 8
         assert {card.language for card in pilot} == set(TAXONOMY["languages"])
 
@@ -117,6 +121,34 @@ class TestEveryCardIsSound:
             assert abs(count - 100 * generated[family] / 500) < 1, family
         assert [replace(card, pilot=False) for card in widened] == [
             replace(card, pilot=False) for card in drawn]
+
+    def test_a_recast_takes_only_free_cards_and_draws_them_afresh(
+            self, drawn: list[cards.Card]) -> None:
+        locked = {card.id for card in drawn if card.pilot}
+        recast = cards.recast(TAXONOMY, drawn, SEED + 3, locked)
+        moved = [(old, new) for old, new in zip(drawn, recast) if old != new]
+        plan = TAXONOMY["recasts"]["plan"]
+        assert len(moved) == sum(entry["count"] for entry in plan)
+        assert not {old.id for old, _ in moved} & locked
+        planned = {entry["kind"] for entry in plan if entry.get("kind")}
+        for old, new in moved:
+            entry = TAXONOMY["families"][old.family]["kinds"][old.kind]
+            assert "pages" not in entry and old.kind not in planned, old.id
+            assert (new.id, new.language, new.locale) == (old.id, old.language, old.locale)
+            assert not cards.problems(TAXONOMY, new), new.id
+            if new.kind in ("chart with caption", "book page"):
+                assert "fig.chart" in new.features
+        made = Counter(new.kind if new.family != "fragments" else "fragments"
+                       for _, new in moved)
+        for entry in plan:
+            assert made[entry.get("kind", entry["family"])] == entry["count"]
+        assert cards.recast(TAXONOMY, drawn, SEED + 3, locked) == recast
+
+    def test_the_draw_never_deals_a_recast_kind(self, drawn: list[cards.Card]) -> None:
+        recast_only = {kind for fam in TAXONOMY["families"].values()
+                       for kind, entry in fam["kinds"].items() if entry.get("recast_only")}
+        assert recast_only and not {card.kind for card in drawn} & recast_only
+        assert not any(card.family == "fragments" for card in drawn)
 
     @pytest.fixture
     def sound(self, drawn: list[cards.Card]) -> cards.Card:

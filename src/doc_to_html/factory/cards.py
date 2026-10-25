@@ -195,7 +195,8 @@ def _width_for(rng: random.Random, taxonomy: Taxonomy, family: str, kind: str,
 def _kinds_for(rng: random.Random, taxonomy: Taxonomy, family: str, count: int
                ) -> list[str]:
     """`count` kinds for a family's generated cards, shares exact."""
-    kinds = taxonomy["families"][family]["kinds"]
+    kinds = {kind: entry for kind, entry in taxonomy["families"][family]["kinds"].items()
+             if not entry.get("recast_only")}
     fixed = {kind: int(entry["pages"]) for kind, entry in kinds.items() if "pages" in entry}
     rest = [kind for kind in kinds if kind not in fixed]
     dealt = [kind for kind, pages in fixed.items() for _ in range(pages)]
@@ -222,7 +223,7 @@ def _features_for(rng: random.Random, taxonomy: Taxonomy, card: Card) -> tuple[s
     weights = priors(taxonomy, card.family, card.kind)
     low, high = taxonomy["features_per_card"]
     wanted = rng.randint(low, high)
-    chosen: list[str] = []
+    chosen: list[str] = list(kind_entry(taxonomy, card.family, card.kind).get("always", ()))
     while len(chosen) < wanted:
         tokens = card.tokens() | set(chosen)
         open_ = {fid: weight for fid, weight in weights.items()
@@ -233,27 +234,39 @@ def _features_for(rng: random.Random, taxonomy: Taxonomy, card: Card) -> tuple[s
     return tuple(sorted(chosen))
 
 
+def _drawn_as(rng: random.Random, taxonomy: Taxonomy, card: Card, with_locale: bool
+              ) -> Card:
+    """`card` drawn as its family and kind: style, main type, arrangement,
+    width, density, the locale if asked, and its other features."""
+    assert card.kind
+    family, kind = card.family, card.kind
+    style = _pick(rng, styles(taxonomy, family, kind))
+    main = _pick(rng, {cls: float(w) for cls, w in taxonomy["styles"][style]["type"].items()})
+    arrangement = _pick(rng, arrangements(taxonomy, family, kind))
+    card = replace(
+        card, style=style, type=main, arrangement=arrangement,
+        width=_width_for(rng, taxonomy, family, kind, arrangement),
+        density=_pick(rng, densities(taxonomy, family, kind)),
+        locale=(_pick(rng, {k: float(v) for k, v in LOCALES[card.language].items()})
+                if with_locale else card.locale),
+        features=(),
+    )
+    return replace(card, features=_features_for(rng, taxonomy, card))
+
+
 def draw(taxonomy: Taxonomy, seed: int) -> list[Card]:
     """Every card, PDF slots included, before the coverage top-up."""
     rng = random.Random(seed)
     languages = _languages(rng, taxonomy)
     cards: list[Card] = []
     for family, fam in taxonomy["families"].items():
+        if not fam["pages"]:
+            continue
         generated = int(fam["pages"]) - int(fam["pdf"])
         for kind in _kinds_for(rng, taxonomy, family, generated):
             card = Card(id="", origin="generated", family=family,
                         language=languages[len(cards)], kind=kind)
-            style = _pick(rng, styles(taxonomy, family, kind))
-            main = _pick(rng, {cls: float(w) for cls, w in
-                               taxonomy["styles"][style]["type"].items()})
-            arrangement = _pick(rng, arrangements(taxonomy, family, kind))
-            card = replace(
-                card, style=style, type=main, arrangement=arrangement,
-                width=_width_for(rng, taxonomy, family, kind, arrangement),
-                density=_pick(rng, densities(taxonomy, family, kind)),
-                locale=_pick(rng, {k: float(v) for k, v in LOCALES[card.language].items()}),
-            )
-            cards.append(replace(card, features=_features_for(rng, taxonomy, card)))
+            cards.append(_drawn_as(rng, taxonomy, card, with_locale=True))
         for _ in range(int(fam["pdf"])):
             cards.append(Card(id="", origin="pdf", family=family,
                               language=languages[len(cards)]))
@@ -443,6 +456,66 @@ def widen_pilot(taxonomy: Taxonomy, cards: list[Card], seed: int, count: int
         held = len(by_family[family]) - len(rest)
         ids.update(card.id for card in rng.sample(rest, max(0, quota[family] - held)))
     return [replace(card, pilot=card.id in ids) for card in cards]
+
+
+def recast(taxonomy: Taxonomy, cards: list[Card], seed: int, locked: Iterable[str] = ()
+           ) -> list[Card]:
+    """Unwritten generated cards recast as the kinds `taxonomy["recasts"]`
+    plans, which the draw does not deal.
+
+    Each entry of the plan takes `count` cards from the families it names
+    (`"all"` for every family), in proportion to the cards each has left.
+    It never takes a locked card, a card already recast, one of a kind
+    with fixed pages, or one of a kind the plan adds to. Within a family the kind with the most cards left
+    gives first, so no kind is emptied. A recast card keeps its id,
+    language and locale. It is drawn afresh as its new family and kind, as
+    `draw` would draw it, the features its kind lists as `always` first.
+    The kinds of an entry naming none are dealt as `draw` deals a
+    family's."""
+    rng = random.Random(seed)
+    fixed = set(locked)
+    cards = list(cards)
+    taken: set[str] = set()
+    planned = {entry["kind"] for entry in taxonomy["recasts"]["plan"] if entry.get("kind")}
+    for entry in taxonomy["recasts"]["plan"]:
+        family, count = entry["family"], int(entry["count"])
+        sources = (list(taxonomy["families"]) if entry["from"] == "all" else [entry["from"]])
+        free: dict[str, list[Card]] = {}
+        for source in sources:
+            kinds = taxonomy["families"][source]["kinds"]
+            free[source] = [
+                card for card in cards
+                if card.family == source and card.origin == "generated"
+                and card.id not in fixed and card.id not in taken and card.kind in kinds
+                and "pages" not in kinds[card.kind] and not kinds[card.kind].get("recast_only")
+                and card.kind not in planned]
+        total = sum(len(members) for members in free.values())
+        if total < count:
+            raise ValueError(f"{family}: {count} to recast, {total} cards free")
+        share = {source: count * len(members) / total for source, members in free.items()}
+        quota = {source: int(value) for source, value in share.items()}
+        for source in sorted(share, key=lambda f: share[f] - quota[f], reverse=True):
+            if sum(quota.values()) >= count:
+                break
+            quota[source] += 1
+        chosen: list[Card] = []
+        for source in sorted(quota):
+            members = free[source]
+            rng.shuffle(members)
+            for _ in range(quota[source]):
+                left = Counter(card.kind for card in members if card.id not in taken)
+                most = max(left.values())
+                kind = next(k for k in sorted(left, key=str) if left[k] == most)
+                card = next(c for c in members if c.kind == kind and c.id not in taken)
+                taken.add(card.id)
+                chosen.append(card)
+        targets = ([entry["kind"]] * count if entry.get("kind")
+                   else _kinds_for(rng, taxonomy, family, count))
+        index = {card.id: position for position, card in enumerate(cards)}
+        for card, kind in zip(sorted(chosen, key=lambda c: c.id), targets):
+            fresh = replace(card, family=family, kind=kind)
+            cards[index[card.id]] = _drawn_as(rng, taxonomy, fresh, with_locale=False)
+    return cards
 
 
 def problems(taxonomy: Taxonomy, card: Card) -> list[str]:

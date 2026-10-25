@@ -4,6 +4,7 @@
     python tools/corpus_cards.py --table          # the coverage table of cards.json
     python tools/corpus_cards.py --top-up         # top up again; written pages stay locked
     python tools/corpus_cards.py --widen-pilot 100  # more pilot cards, the first kept
+    python tools/corpus_cards.py --recast         # unwritten cards as the taxonomy's recasts, once
 
 Every decision is in `doc_to_html.factory.cards`; this is the command line.
 `cards.json` records the seed it was drawn with and every later top-up,
@@ -50,6 +51,8 @@ def main() -> int:
                         help="top up cards.json again, cards with a page locked")
     parser.add_argument("--widen-pilot", type=int, metavar="N",
                         help="widen the pilot to N cards, its cards kept")
+    parser.add_argument("--recast", action="store_true",
+                        help="recast unwritten cards as the taxonomy's 'recasts' plan, then top up")
     parser.add_argument("--force", action="store_true", help="overwrite cards.json")
     args = parser.parse_args()
     taxonomy = cards.load_taxonomy(TAXONOMY)
@@ -87,6 +90,31 @@ def main() -> int:
                         "count": args.widen_pilot, "changed": changed})
         _write(widened, seed, history)
         print(f"the pilot widened by {len(changed)} cards: {', '.join(changed)}")
+        return 0
+
+    if args.recast:
+        seed, drawn = cards.load(CARDS)
+        history = _history(CARDS)
+        if any(entry["step"] == "recast" for entry in history):
+            print("cards.json has been recast already")
+            return 1
+        locked = {card.id for card in drawn
+                  if (CORPUS / "pages" / f"{card.id}.html").exists()}
+        step_seed = seed + len(history)
+        recast = cards.recast(taxonomy, drawn, step_seed, locked)
+        topped, short = cards.top_up(taxonomy, recast, step_seed, locked)
+        moved = [new.id for old, new in zip(drawn, recast) if old != new]
+        changed = [new.id for old, new in zip(drawn, topped) if old != new]
+        history.append({"step": "recast", "seed": step_seed, "locked": len(locked),
+                        "recast": moved, "changed": changed})
+        _write(topped, seed, history)
+        print(cards.coverage_table(taxonomy, topped))
+        print(f"recast {len(moved)} cards; with the top-up {len(changed)} changed")
+        for problem in [(c.id, p) for c in topped for p in cards.problems(taxonomy, c)]:
+            print(f"PROBLEM {problem}")
+        if short:
+            print(f"COVERAGE NOT MET: {short}")
+            return 1
         return 0
 
     if CARDS.exists() and not args.force:

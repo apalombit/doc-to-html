@@ -119,7 +119,10 @@ A card looks like this:
  "arrangement": "arr.two_columns", "type": "type.sans",
  "features": ["kv.over", "table.ruled", "table.empty_cells", "text.supsub"],
  "style": "clinical-plain", "language": "it", "locale": "it-IT",
- "width": 820, "density": "dense"}
+ "width": 820, "density": "dense",
+ "particulars": {"date": "2021-03-11",
+                 "people": ["Giulia Ricci", "Stefano Fontana", "Anna Gatti"],
+                 "places": ["Lecce", "Matera"], "name_words": ["Garnet", "Linnet"]}}
 ```
 
 - **kind**: what document it is. Make it unmistakably one.
@@ -133,6 +136,8 @@ A card looks like this:
 - **width**: the page's width in CSS pixels.
 - **density**: sparse, medium or dense (below).
 - **locale**: the language and its conventions (below).
+- **particulars**: what to fill the page with, so that no two pages
+  share their names and dates (below, under Content).
 
 ### Features
 
@@ -157,7 +162,7 @@ A card looks like this:
 | `table.zebra` | alternate rows shaded |
 | `table.subrows` | indented sub-rows under a parent row |
 | `table.long` | a table of 25 rows or more |
-| `kv.inline` | label and value on one line (Date: 24/10/2026) |
+| `kv.inline` | label and value on one line (Date: 07/03/2024) |
 | `kv.over` | a small label printed over its value |
 | `kv.two_per_line` | two label-value pairs on one line |
 | `kv.leaders` | leader dots between a label and its value |
@@ -191,7 +196,7 @@ A card looks like this:
 | `fig.photo` | a photo-like picture |
 | `fig.icons` | small icons beside text |
 | `fmt.eu_numbers` | numbers in the language's own format (1.234,56 or 1 234,56) |
-| `fmt.dates` | dates in the language's format (24/10/2026, 24 ottobre 2026) |
+| `fmt.dates` | dates in the language's format (07/03/2024, 7 marzo 2024) |
 | `fmt.currency` | amounts with a currency sign or code |
 <!-- features:end -->
 
@@ -261,17 +266,61 @@ document of the kind carries (more rows, more fields, the small print,
 the terms, the second address, the reference numbers), never with
 filler or repetition.
 
+### Kinds that need a word
+
+**A fragment** (family `fragments`) is not a whole page. It is one part
+of a document at its own size, as if cut from a larger one or exported
+on its own: a table with its title and notes, a chart with its caption,
+a map with its labels, one section of a form, a diagram with its
+callouts. The picture is the fragment and little else: a few pixels of
+margin, no page header, footer or letterhead unless the part itself
+carries one. Its height is what it needs, often 200–700 px.
+
+- **standalone table**: a table with its title, column heads, units and
+  a source or note line; pasted from a report, a spreadsheet or a
+  website.
+- **chart with caption**: a chart drawn in an `<svg>` (bars, lines,
+  pie), with its title, axis labels, legend, caption and source as HTML
+  text around it.
+- **annotated map**: a simple map drawn in an `<svg>` (streets, a
+  river, a park, numbered markers) with its labels, a legend, a scale and
+  a north arrow written as HTML text.
+- **form section**: one panel of a form, such as applicant details, a
+  declaration, an office-use box or a payment block.
+- **diagram with callouts**: a technical drawing in an `<svg>` (a
+  device, a part, a wiring layout) with numbered callouts and a parts or
+  key list beside or below it.
+
+**Labels over a drawing.** A map's street names or a diagram's callout
+numbers sit **over** the drawing, so they cannot be inside the `<svg>`
+(§ Figures). Put the `<svg>` in a `position: relative` box and each
+label in a positioned `<span>` beside it in the same box, outside the
+`<svg>` and outside any `<figure>`. Give each label a ground it reads
+on: a halo of `text-shadow` or a small white box.
+
+Two kinds are whole pages and new:
+- **book page** (`publishing`): a page from a non-fiction book, with a
+  running head, a folio (the page number), body text set as a book sets
+  it, and a chart or figure with its numbered caption.
+- **technical printout** (`reference`): pages printed from a technical
+  manual or a system's documentation, such as parameter tables, wiring or
+  pin tables, numbered procedures, warnings, a revision line and
+  "page x of y". Plain and functional.
+
 ### Locales
 
 | locale | dates | numbers | money |
 |---|---|---|---|
-| `en-GB` | 24/10/2026, 24 October 2026 | 1,234.56 | £1,234.56 (or € where it fits) |
-| `en-US` | 10/24/2026, October 24, 2026 | 1,234.56 | $1,234.56 |
-| `it-IT` | 24/10/2026, 24 ottobre 2026 | 1.234,56 | 1.234,56 € or € 1.234,56 |
-| `fr-FR` | 24/10/2026, 24 octobre 2026 | 1 234,56 | 1 234,56 € |
-| `es-ES` | 24/10/2026, 24 de octubre de 2026 | 1.234,56 | 1.234,56 € |
-| `pt-PT` | 24/10/2026, 24 de outubro de 2026 | 1 234,56 | 1 234,56 € |
-| `pt-BR` | 24/10/2026, 24 de outubro de 2026 | 1.234,56 | R$ 1.234,56 |
+| `en-GB` | 07/03/2024, 7 March 2024 | 1,234.56 | £1,234.56 (or € where it fits) |
+| `en-US` | 03/07/2024, March 7, 2024 | 1,234.56 | $1,234.56 |
+| `it-IT` | 07/03/2024, 7 marzo 2024 | 1.234,56 | 1.234,56 € or € 1.234,56 |
+| `fr-FR` | 07/03/2024, 7 mars 2024 | 1 234,56 | 1 234,56 € |
+| `es-ES` | 07/03/2024, 7 de marzo de 2024 | 1.234,56 | 1.234,56 € |
+| `pt-PT` | 07/03/2024, 7 de março de 2024 | 1 234,56 | 1 234,56 € |
+| `pt-BR` | 07/03/2024, 7 de março de 2024 | 1.234,56 | R$ 1.234,56 |
+
+The dates in this table show the **format** only. A page's own date is
+its card's `particulars.date`.
 
 - **Write the whole page in its language**, the way a native document of
   that kind is written: its labels, its legal lines, its abbreviations
@@ -289,6 +338,19 @@ filler or repetition.
   people, companies, addresses, products, numbers.
 - **Totals add up, dates agree, ages match birth dates**, and a tax rate
   is the rate the totals were computed with.
+- **Use the card's particulars.**
+  - `date` is the document's own date: issued, printed, the visit, the
+    statement. Every other date on the page agrees with it: a due date
+    after it, a birth date and a career before it, a schedule around it.
+  - `people` are the people the document names: the customer, the
+    patient, the signatory, the author. Add more only if the kind needs
+    them, invented in the same locale.
+  - `places` are the towns it is set in.
+  - `name_words` are for building the organisation's, the brand's or
+    the product's name: *Linnet Joinery*, *Garnet & Vale*, *Verdigris
+    Analytics*. Translate or adapt them for a page not in English.
+  - Never use Okafor, Whitcombe, Harbour, Harbor, Fenwick, Calloway,
+    Marchetti or Marrowfield: earlier pages wore them out.
 - **No lorem ipsum.** No real person, company, brand, product or logo.
   Real cities and real generic things are fine (Bristol, Lyon, paracetamol
   500 mg, an oak table).
