@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Library visits table</title>
+<style>
+*{box-sizing:border-box}
+.p-4{padding:16px}.px-2{padding-left:8px;padding-right:8px}.py-1{padding-top:4px;padding-bottom:4px}
+.text-sm{font-size:13px}.text-xs{font-size:11px}.text-lg{font-size:19px}
+.font-semibold{font-weight:600}.font-bold{font-weight:700}
+.flex{display:flex}.grid{display:grid}.grid-cols-3{grid-template-columns:repeat(3,1fr)}.gap-2{gap:8px}.gap-4{gap:16px}
+.text-right{text-align:right}.text-slate-500{color:#64748b}.text-slate-900{color:#0f172a}
+.border-b{border-bottom:1px solid #cbd5e1}.border{border:1px solid #cbd5e1}
+.bg-slate-50{background:#f8fafc}.bg-slate-100{background:#f1f5f9}
+.rounded{border-radius:6px}.mb-2{margin-bottom:8px}.mb-4{margin-bottom:16px}.mt-2{margin-top:8px}
+.w-full{width:100%}.flex-1{flex:1}.items-end{align-items:flex-end}
+.dots{flex:1;border-bottom:2px dotted #94a3b8;margin:0 6px 4px}
+.uppercase{text-transform:uppercase}.tracking{letter-spacing:.8px}
+body{margin:0;padding:8px;width:640px;font-family:Avenir,"Helvetica Neue",sans-serif;color:#0f172a;background:#fff}
+table{border-collapse:collapse}
+th,td{border:1px solid #cbd5e1;padding:5px 9px;font-size:13px}
+th{background:#f1f5f9;text-align:left;font-weight:600}
+</style>
+</head>
+<body>
+<div class="p-4 border rounded bg-slate-50">
+<div class="text-lg font-bold mb-2">Table 3. Reading-room visits by branch, 2026</div>
+<div class="grid grid-cols-3 gap-4 mb-4">
+<div><div class="text-xs uppercase tracking text-slate-500">Compiled by</div><div class="text-sm font-semibold">Emily Holloway</div></div>
+<div><div class="text-xs uppercase tracking text-slate-500">Reporting period</div><div class="text-sm font-semibold">Jan to Dec 2026</div></div>
+<div><div class="text-xs uppercase tracking text-slate-500">Unit</div><div class="text-sm font-semibold">Visits, thousands</div></div>
+</div>
+<table class="w-full bg-white">
+<tr><th>Branch</th><th class="text-right">Q1</th><th class="text-right">Q2</th><th class="text-right">Q3</th><th class="text-right">Q4</th><th class="text-right">Year</th></tr>
+<tr><td>Provo Central</td><td class="text-right">18.4</td><td class="text-right">19.1</td><td class="text-right">16.2</td><td class="text-right">20.7</td><td class="text-right font-semibold">74.4</td></tr>
+<tr><td>Orem Lakeside</td><td class="text-right">11.2</td><td class="text-right">12.0</td><td class="text-right">10.5</td><td class="text-right">12.9</td><td class="text-right font-semibold">46.6</td></tr>
+<tr><td>Bangor Waterfront</td><td class="text-right">9.8</td><td class="text-right">10.3</td><td class="text-right">13.6</td><td class="text-right">9.1</td><td class="text-right font-semibold">42.8</td></tr>
+<tr><td>Bangor Hill</td><td class="text-right">6.4</td><td class="text-right">6.9</td><td class="text-right">7.7</td><td class="text-right">6.2</td><td class="text-right font-semibold">27.2</td></tr>
+<tr><td>Mobile library</td><td class="text-right">2.1</td><td class="text-right">2.8</td><td class="text-right">3.4</td><td class="text-right">2.0</td><td class="text-right font-semibold">10.3</td></tr>
+<tr class="bg-slate-100"><td class="font-bold">All branches</td><td class="text-right font-bold">47.9</td><td class="text-right font-bold">51.1</td><td class="text-right font-bold">51.4</td><td class="text-right font-bold">50.9</td><td class="text-right font-bold">201.3</td></tr>
+</table>
+<div class="mt-2 text-sm">
+<div class="flex items-end"><span>Busiest branch</span><span class="dots"></span><span class="font-semibold">Provo Central</span></div>
+<div class="flex items-end"><span>Busiest quarter</span><span class="dots"></span><span class="font-semibold">Q3 (51.4)</span></div>
+<div class="flex items-end"><span>Change on 2025</span><span class="dots"></span><span class="font-semibold">+3.8%</span></div>
+</div>
+<div class="text-xs text-slate-500 mt-2">Source: Quill County Library System, door counters and mobile-van logs. Note: Bangor Waterfront was closed for six days in August; figures are unrounded sums of monthly counts. Updated April 8, 2027.</div>
+</div>
+</body>
+</html>

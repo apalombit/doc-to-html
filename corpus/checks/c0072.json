@@ -2,7 +2,7 @@
  "id": "c0072",
  "passed": true,
  "failures": {},
- "checked": "2026-10-25",
+ "checked": "2026-10-26",
  "seconds": 1.8,
  "width": 1000,
  "height": 1295,
@@ -22,9 +22,10 @@
  "html_sha256": "d8c80323c47a116d435a91e60192292a4c48e256eaf35ae900ec1e330a6e3eee",
  "png_sha256": "8c903b39393f2d0d3bb76ed2388f7a508e8865fc175503c4f1280aa859b99369",
  "gate": {
-  "rows": 64,
+  "rows": 102,
   "worst_left": 1.6,
-  "worst_top": 1.0,
-  "one_line_runs": 2
+  "worst_top": 1.9,
+  "one_line_runs": 2,
+  "type_off": 102
  }
 }

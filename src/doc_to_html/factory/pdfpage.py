@@ -34,10 +34,11 @@ as the picture shows them.
 - *words*: the twin's characters equal the text layer's, as a multiset,
   after `normalise` — text set at an angle included, which takes part in
   this test only (`turned`);
-- *rows*: every PDF row's text is one row of the twin. Within it, the
-  twin must break wherever the PDF has a gap wider than `MERGE_EM`, and
-  may keep or break a narrower one: a justified line's wide word spaces,
-  or column heads the text layer runs together;
+- *rows*: every PDF row's text is one row of the twin. A row is a line's
+  run up to a gap wider than `MERGE_EM`, where a column or a cell
+  begins, so the twin must break there; it may keep or break a narrower
+  gap: a justified line's wide word spaces, or column heads the text
+  layer runs together;
 - *geometry*: each matched row's top, and the left of each of the twin's
   pieces, lie within `GEOMETRY` of the page's width of where the PDF
   sets the same text.
@@ -62,6 +63,13 @@ from doc_to_html.factory import browser
 
 GAP_EM = 1.5
 MERGE_EM = 3.0
+TYPE_SIZE = 0.10
+"""How far a twin's type may differ from the page's before the gate points
+at it. The first nineteen twins set theirs at 0.84 to 1.02 of the page's,
+by median: six under 0.90, shrunk to pass rows banded by their boxes."""
+JUMP_EM = 0.3
+"""Two words whose middles differ by more than this many times the larger
+one's size are on two lines or in two cells, however close across."""
 GEOMETRY = 0.015
 WIDTH = 1000
 """The width a page is rendered at, unless its card says otherwise; the
@@ -95,84 +103,192 @@ def normalise(text: str) -> str:
                    if unicodedata.category(char) not in _DROPPED).casefold()
 
 
+def _middle(word: Word) -> float:
+    return (word.top + word.bottom) / 2
+
+
+def _type_top(word: Word) -> float:
+    """Where a word's type begins: half its size above its middle. A
+    browser draws a word's box as tall as its line's content, about 1.2
+    times the size, and a PDF its glyphs' box, about 1.0; the middle and
+    the size are the same on both sides."""
+    return _middle(word) - word.size / 2
+
+
+def _jumps(one: Word, other: Word) -> bool:
+    """`JUMP_EM`: a change of line or cell between two words of a band."""
+    return abs(_middle(one) - _middle(other)) > JUMP_EM * max(one.size, other.size, 1.0)
+
+
+def _stacked(one: Word, other: Word) -> bool:
+    """Two words that share more than half the narrower one's width across
+    the page are on two lines, one above the other: words of one line
+    never do."""
+    shared = min(one.x1, other.x1) - max(one.x0, other.x0)
+    return shared > 0.5 * min(one.x1 - one.x0, other.x1 - other.x0)
+
+
 def _bands(words: Sequence[Word]) -> list[list[Word]]:
-    """Upright words grouped into rows by their bands, each left to right."""
-    rows: list[list[Word]] = []
-    for word in sorted((w for w in words if w.upright), key=lambda w: (w.top, w.x0)):
-        middle = (word.top + word.bottom) / 2
-        for row in rows:
-            top = min(w.top for w in row)
-            bottom = max(w.bottom for w in row)
-            if top <= middle <= bottom:
+    """Upright words grouped into rows, each left to right. A word joins
+    the first row whose mean middle lies within half a type size of its
+    own (the larger of its size and the row's), unless the row holds a
+    word stacked over it (`_stacked`).
+
+    The centre does not move with what joins, so rows never chain. Taken
+    from the words' boxes, a band grew with each word it took: across a
+    page's width, a left column's lines at heights between stretched the
+    W-9's line down to take a word of the next line in the right column,
+    and a browser's boxes, about 1.2 times the type size against a PDF's
+    1.0, ran two tightly set lines into one row that the PDF kept as two.
+    Twins passed only with their type shrunk, to 0.84–0.90 of the page's
+    size on six of the first nineteen."""
+    rows: list[tuple[list[Word], list[float]]] = []
+    for word in sorted((w for w in words if w.upright), key=lambda w: (_type_top(w), w.x0)):
+        middle = _middle(word)
+        for row, centre in rows:
+            mean = centre[0] / centre[1]
+            if (abs(middle - mean) <= max(word.size, centre[2], 1.0) / 2
+                    and not any(_stacked(word, o) for o in row)):
                 row.append(word)
+                centre[0] += middle
+                centre[1] += 1
+                centre[2] = max(centre[2], word.size)
                 break
         else:
-            rows.append([word])
-    for row in rows:
+            rows.append(([word], [middle, 1.0, word.size]))
+    for row, _ in rows:
         row.sort(key=lambda w: w.x0)
-    return rows
+    return [row for row, _ in rows]
 
 
 @dataclass(frozen=True)
 class Row:
-    """One band of words, its text run together as the gate compares it.
+    """One run of a line, its text run together as the gate compares it:
+    a band's words up to a gap over `MERGE_EM`, where a column or a cell
+    begins and the next row of the band with it.
 
     `starts` are the offsets in `text` where a piece begins (a gap over
-    `GAP_EM`), and `wide` those after a gap over `MERGE_EM`. `spans` is
-    each word's box with the offsets its text covers."""
+    `GAP_EM`). `spans` is each word's offsets in `text`, its left and
+    right, its type top and its type size."""
 
     text: str
     shown: str
     left: float
     top: float
     starts: tuple[int, ...]
-    wide: frozenset[int]
-    spans: tuple[tuple[int, int, float, float], ...]
+    spans: tuple[tuple[int, int, float, float, float, float], ...]
 
     def x_at(self, offset: int) -> float:
         """Where the character at `offset` begins, along its word's box."""
-        for start, end, x0, x1 in self.spans:
+        for start, end, x0, x1, _, _ in self.spans:
             if start <= offset < end:
                 return x0 + (x1 - x0) * (offset - start) / (end - start)
         return self.spans[-1][3] if self.spans else self.left
+
+    def top_at(self, offset: int, length: int) -> float:
+        """The type top of the words `text[offset:offset + length]` lies in."""
+        tops = [top for start, end, _, _, top, _ in self.spans
+                if start < offset + length and offset < end]
+        return min(tops) if tops else self.top
+
+    def size_at(self, offset: int, length: int) -> float:
+        """The median type size of the words `text[offset:offset + length]`
+        lies in."""
+        sizes = sorted(size for start, end, _, _, _, size in self.spans
+                       if start < offset + length and offset < end)
+        return sizes[len(sizes) // 2] if sizes else 0.0
 
     def piece(self, offset: int) -> str:
         later = [start for start in self.starts if start > offset]
         return self.text[offset:min(later) if later else len(self.text)]
 
 
-def rows(words: Sequence[Word]) -> list[Row]:
-    """Words grouped into rows, both sides alike; rows with no text that
-    `normalise` keeps are left out."""
+def rows(words: Sequence[Word], *, cut: bool = True) -> list[Row]:
+    """Words grouped into rows: each band, cut at its gaps over `MERGE_EM`
+    when `cut`, whole when not. Rows with no text that `normalise` keeps
+    are left out."""
     found: list[Row] = []
     for band in _bands(words):
-        text = ""
-        spans: list[tuple[int, int, float, float]] = []
-        starts: list[int] = []
-        wide: set[int] = set()
+        runs: list[list[Word]] = [[]]
         previous: Word | None = None
-        pending = 0.0
         for word in band:
-            gap = 0.0 if previous is None else word.x0 - previous.x1
-            size = word.size if previous is None else max(word.size, previous.size)
-            pending = max(pending, gap / size if size else 0.0)
+            if cut and previous is not None and runs[-1]:
+                gap = word.x0 - previous.x1
+                if gap > MERGE_EM * max(word.size, previous.size, 1e-9):
+                    runs.append([])
+            runs[-1].append(word)
             previous = word
-            folded = normalise(word.text)
-            if not folded:
-                continue
-            offset = len(text)
-            if not starts or pending > GAP_EM:
-                starts.append(offset)
-            if starts and offset and pending > MERGE_EM:
-                wide.add(offset)
-            pending = 0.0
-            spans.append((offset, offset + len(folded), word.x0, word.x1))
-            text += folded
-        if text:
-            found.append(Row(text, " ".join(w.text for w in band), band[0].x0,
-                             min(w.top for w in band), tuple(starts), frozenset(wide),
-                             tuple(spans)))
+        for run in runs:
+            row = _row(run)
+            if row is not None:
+                found.append(row)
     return sorted(found, key=lambda row: (row.top, row.left))
+
+
+def _row(run: Sequence[Word]) -> Row | None:
+    text = ""
+    spans: list[tuple[int, int, float, float, float, float]] = []
+    starts: list[int] = []
+    previous: Word | None = None
+    pending = 0.0
+    last: Word | None = None
+    for word in run:
+        gap = 0.0 if previous is None else word.x0 - previous.x1
+        size = word.size if previous is None else max(word.size, previous.size)
+        pending = max(pending, gap / size if size else 0.0)
+        previous = word
+        folded = normalise(word.text)
+        if not folded:
+            continue
+        offset = len(text)
+        if not starts or pending > GAP_EM or (last is not None and _jumps(last, word)):
+            starts.append(offset)
+        pending = 0.0
+        last = word
+        spans.append((offset, offset + len(folded), word.x0, word.x1, _type_top(word),
+                      word.size))
+        text += folded
+    if not text:
+        return None
+    kept = [w for w in run if normalise(w.text)]
+    return Row(text, " ".join(w.text for w in run), kept[0].x0,
+               min(_type_top(w) for w in kept), tuple(starts), tuple(spans))
+
+
+@dataclass(frozen=True)
+class Piece:
+    """A run of a PDF row as the gate looks for it in the twin: the row cut
+    at each gap over `GAP_EM` and each jump (`_jumps`). Its start and end
+    are `hard` where the twin must break too: the row's own start and end,
+    and a gap over `MERGE_EM`."""
+
+    row: Row
+    hard_start: bool
+    hard_end: bool
+
+
+def pieces(words: Sequence[Word]) -> list[Piece]:
+    """The PDF's rows cut into `Piece`s."""
+    found: list[Piece] = []
+    for band in _bands(words):
+        kept = [w for w in band if normalise(w.text)]
+        runs: list[list[Word]] = []
+        hard: list[bool] = []
+        for word in kept:
+            if runs:
+                before = runs[-1][-1]
+                gap = (word.x0 - before.x1) / max(word.size, before.size, 1e-9)
+                if gap > GAP_EM or _jumps(before, word):
+                    hard.append(gap > MERGE_EM)
+                    runs.append([])
+            else:
+                runs.append([])
+            runs[-1].append(word)
+        for n, run in enumerate(runs):
+            row = _row(run)
+            if row is not None:
+                found.append(Piece(row, n == 0 or hard[n - 1], n == len(runs) - 1 or hard[n]))
+    return sorted(found, key=lambda piece: (piece.row.top, piece.row.left))
 
 
 def turned(words: Sequence[Word]) -> str:
@@ -187,14 +303,15 @@ def turned(words: Sequence[Word]) -> str:
 
 
 def listing(words: Sequence[Word]) -> list[str]:
-    """The rows as a twin's writer works from them: each row's top and
-    height, then its pieces as the text layer spells them, each at its
-    left. `‖` comes before a piece the twin must set apart (a gap over
-    `MERGE_EM`), `|` before one it may run on or set apart."""
+    """The rows as a twin's writer works from them: each row's type top
+    and type size (the font size to set it in), then its pieces as the
+    text layer spells them, each at its left. `‖` comes before a piece
+    the twin must set apart (a gap over `MERGE_EM`), `|` before one it
+    may run on or set apart."""
     found: list[tuple[float, float, str]] = []
     for band in _bands(words):
-        top = min(w.top for w in band)
-        height = max(w.bottom for w in band) - top
+        top = min(_type_top(w) for w in band)
+        height = sorted(w.size for w in band)[len(band) // 2]
         text = f"{band[0].x0:.0f} {band[0].text}"
         for previous, word in zip(band, band[1:]):
             ratio = (word.x0 - previous.x1) / max(word.size, previous.size, 1e-9)
@@ -482,6 +599,9 @@ class Gate:
     """What the gate found between a PDF page and its twin."""
 
     failures: dict[str, list[str]] = field(default_factory=dict)
+    type_off: list[str] = field(default_factory=list)
+    """Matched runs set in type more than `TYPE_SIZE` off the page's: a
+    pointer, not a test."""
     rows: int = 0
     matched: int = 0
     worst_top: float = 0.0
@@ -501,11 +621,22 @@ def _chars(counts: Counter[str]) -> str:
 
 
 def gate(pdf_words: Sequence[Word], twin_words: Sequence[Word], width: int) -> Gate:
-    """The three tests of §P, step 6, row by row; text set at an angle
-    (`turned`) is in the first test only."""
-    pdf_rows, twin_rows = rows(pdf_words), rows(twin_words)
-    result = Gate(rows=len(pdf_rows))
-    pdf_chars = Counter("".join(row.text for row in pdf_rows) + normalise(turned(pdf_words)))
+    """The three tests of §P, step 6; text set at an angle (`turned`) is in
+    the first test only.
+
+    The PDF's rows are cut into `pieces`, and each piece must be found in
+    one of the twin's whole rows as one run of its text, at the same
+    place. Where the piece's start or end is hard, the twin must break
+    there too: begin a piece, or end its row. So the twin breaks wherever
+    the PDF sets text apart and may run on where it does not, and which
+    row a small thing set between two lines falls into, on either side,
+    decides nothing. Matched by whole rows, three twins of nineteen failed
+    on just that: the W-9's `or` between two boxes, 2.7 em after a line;
+    box digits between two lines of a Spanish form; a header cell's second
+    line half a line above the next cell's."""
+    pdf_pieces, twin_rows = pieces(pdf_words), rows(twin_words, cut=False)
+    result = Gate(rows=len(pdf_pieces))
+    pdf_chars = Counter("".join(p.row.text for p in pdf_pieces) + normalise(turned(pdf_words)))
     twin_chars = Counter("".join(row.text for row in twin_rows)
                          + normalise(turned(twin_words)))
     if pdf_chars - twin_chars:
@@ -514,30 +645,53 @@ def gate(pdf_words: Sequence[Word], twin_words: Sequence[Word], width: int) -> G
         result.fail("words", f"the twin adds {_chars(twin_chars - pdf_chars)}")
 
     tolerance = GEOMETRY * width
-    unused = list(twin_rows)
-    for row in pdf_rows:
-        same = [other for other in unused if other.text == row.text]
-        if not same:
-            result.fail("rows", f"no twin row reads {row.shown[:60]!r} "
-                                f"(at {row.left:.0f},{row.top:.0f})")
+    claimed: set[tuple[int, int]] = set()
+    for piece in pdf_pieces:
+        row, size = piece.row, len(piece.row.text)
+        found: list[tuple[bool, int, int]] = []
+        for k, twin in enumerate(twin_rows):
+            ends = set(twin.starts) | {len(twin.text)}
+            at = twin.text.find(row.text)
+            while at >= 0:
+                whole = ((not piece.hard_start or at in twin.starts)
+                         and (not piece.hard_end or at + size in ends))
+                found.append((whole, k, at))
+                at = twin.text.find(row.text, at + 1)
+
+        def distance(k: int, at: int) -> float:
+            twin = twin_rows[k]
+            return abs(twin.top_at(at, size) - row.top) + abs(twin.x_at(at) - row.left)
+
+        open_ = [(k, at) for whole, k, at in found if whole and (k, at) not in claimed]
+        if not open_:
+            near = [(k, at) for _, k, at in found if distance(k, at) <= 2 * tolerance]
+            if near:
+                result.fail("rows", f"the twin runs {row.shown[:40]!r} together with what "
+                                    f"is beside it; the PDF sets it apart, as a column or "
+                                    f"a cell (at {row.left:.0f},{row.top:.0f})")
+            else:
+                result.fail("rows", f"no twin row reads {row.shown[:60]!r} "
+                                    f"(at {row.left:.0f},{row.top:.0f})")
             continue
-        twin = min(same, key=lambda o: abs(o.top - row.top) + abs(o.left - row.left))
-        unused.remove(twin)
+        k, at = min(open_, key=lambda c: distance(*c))
+        claimed.add((k, at))
+        twin = twin_rows[k]
         result.matched += 1
-        off_top = abs(twin.top - row.top)
+        page_size, twin_size = row.size_at(0, size), twin.size_at(at, size)
+        if page_size and abs(twin_size / page_size - 1) > TYPE_SIZE:
+            result.type_off.append(f"{row.shown[:40]!r} is set at {twin_size:.1f} px, "
+                                   f"the page's at {page_size:.1f}")
+        off_top = abs(twin.top_at(at, size) - row.top)
         result.worst_top = max(result.worst_top, off_top)
         if off_top > tolerance:
             result.fail("geometry", f"{row.shown[:40]!r} is {off_top:.0f} px down "
                                     f"from the PDF's")
-        for start in twin.starts:
-            off_left = abs(twin.x_at(start) - row.x_at(start))
+        for start in [s for s in twin.starts if at <= s < at + size]:
+            off_left = abs(twin.x_at(start) - row.x_at(start - at))
             result.worst_left = max(result.worst_left, off_left)
             if off_left > tolerance:
                 result.fail("geometry", f"{twin.piece(start)[:40]!r} begins {off_left:.0f} "
                                         f"px across from the PDF's")
-        for start in sorted(row.wide - set(twin.starts)):
-            result.fail("rows", f"the twin runs {row.piece(start)[:40]!r} on from what "
-                                f"precedes it; the PDF sets it apart, as a column or a cell")
     return result
 
 

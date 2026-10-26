@@ -1500,14 +1500,19 @@
    "origin": "pdf",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "application form",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.boxed",
+    "kv.over",
+    "list.ticks",
+    "table.empty_cells"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "medium",
+   "locale": "en-US",
    "pilot": false
   },
   {
@@ -1515,14 +1520,20 @@
    "origin": "pdf",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "numbered-box tax form",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.boxed",
+    "list.numbers",
+    "list.ticks",
+    "table.empty_cells",
+    "table.ruled"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "dense",
+   "locale": "en-US",
    "pilot": false
   },
   {
@@ -1530,14 +1541,18 @@
    "origin": "pdf",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "application form",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fig.logo",
+    "kv.boxed",
+    "look.rules"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "medium",
+   "locale": "en-GB",
    "pilot": false
   },
   {
@@ -1560,14 +1575,17 @@
    "origin": "pdf",
    "family": "forms",
    "language": "it",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "questionnaire",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.boxed",
+    "list.ticks"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "medium",
+   "locale": "it-IT",
    "pilot": false
   },
   {
@@ -1635,14 +1653,21 @@
    "origin": "pdf",
    "family": "forms",
    "language": "es",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "numbered-box tax form",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.boxed",
+    "kv.leaders",
+    "kv.over",
+    "look.accent",
+    "look.bands",
+    "table.empty_cells"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "dense",
+   "locale": "es-ES",
    "pilot": false
   },
   {
@@ -5374,14 +5399,19 @@
    "origin": "pdf",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "minutes",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "look.accent",
+    "look.rules",
+    "text.footnotes",
+    "text.supsub"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "medium",
+   "locale": "en-US",
    "pilot": false
   },
   {
@@ -5389,14 +5419,20 @@
    "origin": "pdf",
    "family": "reports",
    "language": "es",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "status report",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fmt.dates",
+    "fmt.eu_numbers",
+    "table.long",
+    "table.ruled",
+    "table.spanning"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "medium",
+   "locale": "es-ES",
    "pilot": false
   },
   {
@@ -5404,14 +5440,18 @@
    "origin": "pdf",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "status report",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "look.bands",
+    "table.ruled",
+    "table.spanning"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "dense",
+   "locale": "en-US",
    "pilot": false
   },
   {
@@ -8032,14 +8072,18 @@
    "origin": "pdf",
    "family": "publishing",
    "language": "it",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "paper page",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "text.footnotes",
+    "text.justified",
+    "text.supsub"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "dense",
+   "locale": "it-IT",
    "pilot": false
   },
   {
@@ -12134,6 +12178,121 @@
    "step": "pdf page",
    "changed": [
     "c0406"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0272"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0074"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0272"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0078"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0076"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0078"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0413"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0075"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0274"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0271"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0271"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0083"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0083"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0076"
+   ]
+  },
+  {
+   "step": "pdf page dropped",
+   "changed": [
+    "c0271"
+   ],
+   "why": "Ofsted's 2011 report states its own terms, not the OGL: copying for non-commercial educational purposes only, unaltered; the corpus takes only sources that allow commercial use"
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0413"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0076"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0273"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0273"
    ]
   }
  ]

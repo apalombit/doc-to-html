@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="it-IT"><head><meta charset="utf-8"><title>Questionario</title>
+<style>
+html,body{margin:0;padding:0;background:#fff}
+body{width:1000px;height:1414px;position:relative;font-family:Arial,Helvetica,sans-serif;font-size:19.3px;line-height:23.2px;color:#000}
+body>div{position:absolute;white-space:nowrap}
+p,h3,ul{margin:0;padding:0}
+h3{font-size:19.3px;font-weight:700}
+.c{color:#f00;font-style:italic}
+.q{font-weight:700}
+.lab{display:inline-block}
+.tag{text-align:right;font-size:16.5px;line-height:23px;font-weight:700;color:#000}
+.tag .g{color:#008000}
+.tag i{font-weight:700}
+.ref{text-align:right}
+ul{list-style:none}
+li{font-weight:400}
+li i{font-style:italic}
+.o{display:inline-block;width:179px}
+.o+*{}
+</style></head><body>
+<div class="" style="top:166.3px;left:95px;width:809px"><p class="c">Se UMID_PI=1</p></div>
+<div class="" style="top:120.0px;left:95px;width:809px"><h3>F1.335</h3></div>
+<div class="" style="top:189.5px;left:95px;width:809px"><p class="q"><span class="lab" style="width:121px">Testo α</span>Mi conferma che l’abitazione ha problemi di umidità nei muri, nei<br><span class="lab" style="width:121px"></span>pavimenti, nei soffitti, nelle fondamenta?</p></div>
+<div class="" style="top:235.9px;left:95px;width:809px"><p class="c">Se UMID_PI≠1</p></div>
+<div class="" style="top:259.1px;left:95px;width:809px"><p class="q"><span class="lab" style="width:121px">Testo β</span>Mi conferma che l’abitazione NON ha problemi di umidità nei muri, nei<br><span class="lab" style="width:121px"></span>pavimenti, nei soffitti, nelle fondamenta?</p></div>
+<div class="" style="top:304.8px;left:95px;width:809px"><p class="tag"><span class="g">[CUMID]</span> <i>EU</i></p></div>
+<div class="" style="top:324.9px;left:95px;width:809px"><ul><li><span class="o">SI</span>1 |_| <i>(porre F1.340=UMID_PI e passare a F1.345)</i></li><li><span class="o">NO</span>2 |_| <i>(porre F1.340=(3 - UMID_PI) e passare a F1.345)</i></li></ul></div>
+<div class="" style="top:394.4px;left:95px;width:809px"><p class="c">Se F1.20=1 o UMID_PI=null</p></div>
+<div class="" style="top:417.7px;left:95px;width:809px"><p class="q"><span class="lab" style="width:119px">F1.340</span>Ha problemi di umidità nei muri, nei pavimenti, nei soffitti, nelle<br>fondamenta?</p></div>
+<div class="" style="top:463.3px;left:95px;width:809px"><p class="tag"><span class="g">[UMID]</span> <i>EU</i></p></div>
+<div class="" style="top:483.5px;left:95px;width:809px"><ul><li><span class="o">SI</span>1 |_|</li><li><span class="o">NO</span>2 |_|</li></ul></div>
+<div class="" style="top:552.7px;left:95px;width:809px"><p class="c">Se F1.20=2 e NOLUCE_PI≠NULL</p></div>
+<div class="" style="top:575.9px;left:95px;width:809px"><h3>F1.345</h3></div>
+<div class="" style="top:622.2px;left:95px;width:809px"><p class="c">Se NOLUCE_PI=1</p></div>
+<div class="" style="top:645.5px;left:95px;width:809px"><p class="q"><span class="lab" style="width:121px">Testo α</span>Mi conferma che l’abitazione ha problemi di scarsa luminosità?</p></div>
+<div class="" style="top:668.6px;left:95px;width:809px"><p class="c">Se NOLUCE_PI≠1</p></div>
+<div class="" style="top:691.8px;left:95px;width:809px"><p class="q"><span class="lab" style="width:121px">Testo β</span>Mi conferma che l’abitazione NON ha problemi di scarsa luminosità?</p></div>
+<div class="" style="top:714.3px;left:95px;width:809px"><p class="tag"><span class="g">[CNOLUCE]</span> <i>EU</i></p></div>
+<div class="" style="top:734.8px;left:95px;width:809px"><p class="ref">[IESS HS160adH]</p></div>
+<div class="" style="top:757.6px;left:95px;width:809px"><ul><li><span class="o">SI</span>1 |_| <i>(porre F1.350=NOLUCE_PI e passare a F1.355)</i></li><li><span class="o">NO</span>2 |_| <i>(porre F1.350=NOLUCE _PI e passare a F1.355)</i></li></ul></div>
+<div class="" style="top:850.4px;left:95px;width:809px"><p class="c">Se F1.20=1 o NOLUCE_PI=null</p></div>
+<div class="" style="top:873.6px;left:95px;width:809px"><p class="q"><span class="lab" style="width:119px">F1.350</span>Ha problemi di scarsa luminosità?</p></div>
+<div class="" style="top:896.1px;left:95px;width:809px"><p class="tag"><span class="g">[NOLUCE]</span> <i>EU</i></p></div>
+<div class="" style="top:916.3px;left:95px;width:809px"><p class="ref">[IESS HS160adH]</p></div>
+<div class="" style="top:939.4px;left:95px;width:809px"><ul><li><span class="o">SI</span>1 |_|</li><li><span class="o">NO</span>2 |_|</li></ul></div>
+<div class="" style="top:1008.6px;left:95px;width:809px"><p class="c">Se F1.20=2 e NOSPAZ_PI≠NULL</p></div>
+<div class="" style="top:1031.9px;left:95px;width:809px"><h3>F1.355</h3></div>
+<div class="" style="top:1078.2px;left:95px;width:809px"><p class="c">Se NOSPAZ_PI=1</p></div>
+<div class="" style="top:1101.4px;left:95px;width:809px"><p class="q"><span class="lab" style="width:121px">Testo α</span>Mi conferma che l’abitazione ha problemi di spazio insufficiente?</p></div>
+<div class="" style="top:1124.5px;left:95px;width:809px"><p class="c">Se NOSPAZ_PI≠1</p></div>
+<div class="" style="top:1147.8px;left:95px;width:809px"><p class="q"><span class="lab" style="width:119px">Testo β</span>Mi conferma che l’abitazione NON ha problemi di spazio insufficiente?</p></div>
+<div class="" style="top:1170.2px;left:95px;width:809px"><p class="tag"><span class="g">[CNOSPAZ]</span></p></div>
+<div class="" style="top:1190.4px;left:95px;width:809px"><ul><li><span class="o">SI</span>1 |_| <i>(porre F1.360=NOSPAZ_PI e passare a F1.370)</i></li><li><span class="o">NO</span>2 |_| <i>(porre F1.360= NOSPAZ_PI e passare a F1.370)</i></li></ul></div>
+<div class="" style="top:1283.1px;left:95px;width:809px"><p class="c">Se F1.20=1 o NOSPAZ_PI=null</p></div>
+</body></html>

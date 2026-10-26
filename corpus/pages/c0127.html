@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en-US"><head><meta charset="utf-8"><title>Purchase order</title>
+<style>
+:root{--ac:#1d5fd1}
+body{margin:0;padding:34px 40px 40px;width:860px;font-family:"Open Sans","Helvetica Neue",Arial,sans-serif;font-size:13px;color:#1e2430;background:#fff}
+header{display:flex;justify-content:space-between;align-items:flex-start}
+.co{font-size:24px;font-weight:700;color:var(--ac)}
+.co small{display:block;font-size:12px;font-weight:400;color:#5b6577;margin-top:4px;line-height:1.5}
+.po{text-align:right}
+.po h1{margin:0;font-size:28px;letter-spacing:2px;font-weight:300;text-transform:uppercase}
+.po svg{margin-top:6px}
+.cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:26px 0 22px}
+.card{background:#f3f6fb;border-radius:8px;padding:14px 16px;line-height:1.7}
+.card h3{margin:0 0 4px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ac)}
+.card b{font-weight:600}
+table{width:100%;border-collapse:collapse}
+th{background:var(--ac);color:#fff;font-weight:600;text-align:left;padding:8px 10px;font-size:12px}
+td{padding:8px 10px}
+tbody tr:nth-child(even){background:#eef3fa}
+.r{text-align:right}
+tfoot td{padding:5px 10px}
+tfoot .t td{font-weight:700;font-size:15px;border-top:2px solid var(--ac)}
+.bottom{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:26px}
+ul{list-style:none;margin:0;padding:0}
+li{padding:4px 0}
+li span.m{display:inline-block;width:24px;font-weight:700}
+.y{color:#1f8a4c}.n{color:#c0392b}
+.terms{font-size:11px;color:#5b6577;line-height:1.55}
+</style></head><body>
+<header>
+<div class="co">Avocet Supply Co.<small>3300 Marsh Avenue, Lubbock, TX 79401<br>accounts@example.com &middot; (806) 555-0144</small></div>
+<div class="po"><h1>Purchase order</h1>
+<svg width="170" height="38" viewBox="0 0 170 38"><g fill="#111"><rect x="0" width="3" height="38"/><rect x="6" width="1.5" height="38"/><rect x="10" width="4" height="38"/><rect x="17" width="2" height="38"/><rect x="22" width="1.5" height="38"/><rect x="27" width="5" height="38"/><rect x="35" width="2" height="38"/><rect x="40" width="3" height="38"/><rect x="46" width="1.5" height="38"/><rect x="51" width="4" height="38"/><rect x="58" width="2" height="38"/><rect x="63" width="1.5" height="38"/><rect x="68" width="5" height="38"/><rect x="76" width="2" height="38"/><rect x="81" width="3" height="38"/><rect x="88" width="1.5" height="38"/><rect x="93" width="4" height="38"/><rect x="100" width="2" height="38"/><rect x="106" width="3" height="38"/><rect x="112" width="1.5" height="38"/><rect x="117" width="5" height="38"/><rect x="125" width="2" height="38"/><rect x="131" width="1.5" height="38"/><rect x="136" width="4" height="38"/><rect x="143" width="2" height="38"/><rect x="149" width="3" height="38"/><rect x="155" width="1.5" height="38"/><rect x="160" width="5" height="38"/></g></svg></div>
+</header>
+<div class="cards">
+<div class="card"><h3>Order details</h3><div><b>PO number:</b> PO-26-07318</div><div><b>Order date:</b> 07/21/2026</div><div><b>Delivery by:</b> 08/04/2026</div><div><b>Terms:</b> Net 30</div></div>
+<div class="card"><h3>Vendor</h3><div><b>Iris Industrial Supply</b></div><div>1840 Cotton Mill Road</div><div>Macon, GA 31201</div><div><b>Contact:</b> Maria Pruitt</div></div>
+<div class="card"><h3>Ship to</h3><div><b>Avocet Supply Co., Dock 2</b></div><div>3300 Marsh Avenue</div><div>Lubbock, TX 79401</div><div><b>Buyer:</b> Raj Abernathy</div></div>
+</div>
+<table>
+<thead><tr><th style="width:36px">#</th><th style="width:90px">Item code</th><th>Description</th><th class="r" style="width:60px">Qty</th><th class="r" style="width:100px">Unit price</th><th class="r" style="width:110px">Amount</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>AX-1204</td><td>Hex bolt M10 x 60 mm, box of 100</td><td class="r">12</td><td class="r">$18.40</td><td class="r">$220.80</td></tr>
+<tr><td>2</td><td>BR-330</td><td>Brass fitting, 3/4 in</td><td class="r">40</td><td class="r">$6.25</td><td class="r">$250.00</td></tr>
+<tr><td>3</td><td>GL-077</td><td>Nitrile gloves, case of 1,000</td><td class="r">8</td><td class="r">$42.00</td><td class="r">$336.00</td></tr>
+<tr><td>4</td><td>PL-912</td><td>Pallet wrap, 18 in roll</td><td class="r">24</td><td class="r">$11.75</td><td class="r">$282.00</td></tr>
+<tr><td>5</td><td>TP-005</td><td>Packing tape, 2 in, pack of 36</td><td class="r">10</td><td class="r">$29.90</td><td class="r">$299.00</td></tr>
+<tr><td>6</td><td>LB-210</td><td>Shipping labels, 4 x 6 in, roll</td><td class="r">15</td><td class="r">$9.60</td><td class="r">$144.00</td></tr>
+</tbody>
+<tfoot>
+<tr><td colspan="3"></td><td class="r" colspan="2" style="white-space:nowrap">Subtotal</td><td class="r">$1,531.80</td></tr>
+<tr><td colspan="3"></td><td class="r" colspan="2" style="white-space:nowrap">Sales tax (8.25%)</td><td class="r">$126.37</td></tr>
+<tr><td colspan="3"></td><td class="r" colspan="2" style="white-space:nowrap">Freight</td><td class="r">$45.00</td></tr>
+<tr class="t"><td colspan="3"></td><td class="r" colspan="2" style="white-space:nowrap">Total</td><td class="r">$1,703.17</td></tr>
+</tfoot></table>
+<div class="bottom">
+<div><b>Approval checklist</b><ul>
+<li><span class="m y">✓</span>Budget code confirmed</li>
+<li><span class="m y">✓</span>Vendor on approved list</li>
+<li><span class="m y">✓</span>Approved by Mei Nguyen, 07/21/2026</li>
+<li><span class="m n">✗</span>Contract price not yet verified</li>
+</ul></div>
+<div class="terms"><b>Terms and conditions.</b> Goods must match the descriptions above and arrive by the delivery date. Quote the PO number on every invoice, packing slip and carton. Damaged or short shipments must be reported within five days of receipt. Prices are fixed for this order.</div>
+</div>
+</body></html>

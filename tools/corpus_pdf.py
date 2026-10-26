@@ -17,6 +17,9 @@
     # corpus/pdf/ATTRIBUTION.md, from every page's source record
     python tools/corpus_pdf.py attribution
 
+    # empty a slot whose page cannot stay, the reason in the cards' history
+    python tools/corpus_pdf.py drop c0461 --why "..."
+
 `take` writes `corpus/pdf/<id>.pdf` (the page, never edited),
 `corpus/pdf/<id>.source.json`, `corpus/pages/<id>.png` (the PDF's render)
 and `debug/corpus-pdf/<id>.lines.txt`, and fills the PDF slot's card in
@@ -27,8 +30,12 @@ passes. Every decision is in `doc_to_html.factory.pdfpage`.
 from __future__ import annotations
 
 import argparse
+import fcntl
+import hashlib
 import json
+import shutil
 import sys
+import tempfile
 from dataclasses import replace
 from pathlib import Path
 
@@ -49,7 +56,7 @@ def _listing(page_id: str, single: Path, width: int, height: int) -> int:
     faces = pdfpage.pdf_faces(single)
     header = [f"# {page_id}: {width}x{height} px; faces by characters: "
               + ", ".join(f"{face} {n}" for face, n in faces.most_common()),
-              "# top height  left piece  ‖ left piece (set apart)  | left piece (either)"]
+              "# type top, type size (px)  left piece  ‖ left piece (set apart)  | left piece (either)"]
     angled = pdfpage.turned(words)
     footer = [f"# set at an angle, compared by its characters only: {angled}"] if angled else []
     (DEBUG / f"{page_id}.lines.txt").write_text("\n".join(header + found + footer) + "\n",
@@ -58,27 +65,51 @@ def _listing(page_id: str, single: Path, width: int, height: int) -> int:
 
 
 def _take(args: argparse.Namespace) -> int:
+    # Writers take pages side by side; cards.json is read, changed and
+    # written back, so one take at a time.
+    DEBUG.mkdir(parents=True, exist_ok=True)
+    with open(DEBUG / "cards.lock", "w") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        return _take_locked(args)
+
+
+def _take_locked(args: argparse.Namespace) -> int:
     seed, drawn = cards.load(CORPUS / "cards.json")
     by_id = {card.id: card for card in drawn}
     card = by_id.get(args.id)
     if card is None or card.origin != "pdf":
         print(f"{args.id} is not a PDF slot")
         return 2
-    single = CORPUS / "pdf" / f"{args.id}.pdf"
-    pdfpage.one_page(Path(args.source), args.page, single)
-    width, height = pdfpage.render(single, args.width, CORPUS / "pages" / f"{args.id}.png")
+    if card.kind and not args.again:
+        print(f"{args.id} is taken already ({card.kind}); --again to take it afresh")
+        return 2
+    source = Path(args.source)
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    for record in sorted((CORPUS / "pdf").glob("*.source.json")):
+        data = json.loads(record.read_text(encoding="utf-8"))
+        if data["id"] != args.id and (data["source_sha256"] == digest
+                                      or data["url"] == args.url):
+            print(f"{data['id']} is a page of this document already: one page per document")
+            return 2
+    with tempfile.TemporaryDirectory() as scratch:
+        single = Path(scratch) / "page.pdf"
+        pdfpage.one_page(source, args.page, single)
+        filled = replace(card, kind=args.kind, language=args.language, locale=args.locale,
+                         type=args.type, arrangement=args.arrangement,
+                         features=tuple(sorted(f for f in args.features.split(",") if f)),
+                         style="real-pdf", width=args.width, density=args.density)
+        taxonomy = cards.load_taxonomy(CORPUS / "taxonomy.json")
+        problems = cards.problems(taxonomy, filled)
+        if problems:
+            print(f"the card would not be sound: {problems}")
+            return 1
+        kept = CORPUS / "pdf" / f"{args.id}.pdf"
+        shutil.copyfile(single, kept)
+    width, height = pdfpage.render(kept, args.width, CORPUS / "pages" / f"{args.id}.png")
     pdfpage.write_json(CORPUS / "pdf" / f"{args.id}.source.json", pdfpage.source_record(
-        args.id, args.url, args.licence, args.page, Path(args.source), single, args.note))
-    found = _listing(args.id, single, width, height)
-    filled = replace(card, kind=args.kind, language=args.language, locale=args.locale,
-                     type=args.type, arrangement=args.arrangement,
-                     features=tuple(sorted(f for f in args.features.split(",") if f)),
-                     style="real-pdf", width=width, density=args.density)
-    taxonomy = cards.load_taxonomy(CORPUS / "taxonomy.json")
-    problems = cards.problems(taxonomy, filled)
-    if problems:
-        print(f"the card would not be sound: {problems}")
-        return 1
+        args.id, args.url, args.licence, args.page, source, kept, args.note))
+    found = _listing(args.id, kept, width, height)
+    filled = replace(filled, width=width)
     data = json.loads((CORPUS / "cards.json").read_text(encoding="utf-8"))
     data["cards"] = [filled.to_json() if c["id"] == args.id else c for c in data["cards"]]
     data.setdefault("history", []).append({"step": "pdf page", "changed": [args.id]})
@@ -86,6 +117,33 @@ def _take(args: argparse.Namespace) -> int:
                                        encoding="utf-8")
     print(f"took {args.id}: {width}x{height} px, {found} rows; "
           f"{(DEBUG / f'{args.id}.lines.txt').relative_to(REPO)}")
+    return 0
+
+
+def _drop(args: argparse.Namespace) -> int:
+    """Empty a PDF slot: its page, picture, twin, record and listing go, and
+    the card goes back to its family and language, the reason recorded."""
+    DEBUG.mkdir(parents=True, exist_ok=True)
+    with open(DEBUG / "cards.lock", "w") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        _, drawn = cards.load(CORPUS / "cards.json")
+        card = {c.id: c for c in drawn}.get(args.id)
+        if card is None or card.origin != "pdf" or not card.kind:
+            print(f"{args.id} is not a PDF slot with a page")
+            return 2
+        for path in (CORPUS / "pdf" / f"{args.id}.pdf", CORPUS / "pdf" / f"{args.id}.source.json",
+                     CORPUS / "pages" / f"{args.id}.png", CORPUS / "pages" / f"{args.id}.html",
+                     CORPUS / "checks" / f"{args.id}.json", DEBUG / f"{args.id}.lines.txt"):
+            path.unlink(missing_ok=True)
+        empty = replace(card, kind=None, arrangement=None, type=None, features=(), style=None,
+                        width=None, density=None, locale=None)
+        data = json.loads((CORPUS / "cards.json").read_text(encoding="utf-8"))
+        data["cards"] = [empty.to_json() if c["id"] == args.id else c for c in data["cards"]]
+        data["history"].append({"step": "pdf page dropped", "changed": [args.id],
+                                "why": args.why})
+        (CORPUS / "cards.json").write_text(json.dumps(data, ensure_ascii=False, indent=1)
+                                           + "\n", encoding="utf-8")
+    print(f"dropped {args.id}: {args.why}")
     return 0
 
 
@@ -111,10 +169,15 @@ def _gate(args: argparse.Namespace) -> int:
                                                         card.width))
     for run in runs:
         print(f"  structure, to read: {run}")
+    for message in gated.type_off[:10]:
+        print(f"  type, to read: {message}")
+    if len(gated.type_off) > 10:
+        print(f"  type, to read: ... and {len(gated.type_off) - 10} more")
     if result.passed:
         check.keep_twin(result, card, twin, picture, CORPUS / "checks" / f"{args.id}.json",
                         {"rows": gated.rows, "worst_left": round(gated.worst_left, 1),
-                         "worst_top": round(gated.worst_top, 1), "one_line_runs": len(runs)})
+                         "worst_top": round(gated.worst_top, 1), "one_line_runs": len(runs),
+                         "type_off": len(gated.type_off)})
         print(f"PASS {args.id}")
         return 0
     (CORPUS / "checks" / f"{args.id}.json").unlink(missing_ok=True)
@@ -175,7 +238,11 @@ def main() -> int:
     take.add_argument("--features", required=True)
     take.add_argument("--density", default="medium")
     take.add_argument("--width", type=int, default=pdfpage.WIDTH)
+    take.add_argument("--again", action="store_true", help="take a slot already taken afresh")
     sub.add_parser("attribution", help="write corpus/pdf/ATTRIBUTION.md from the records")
+    drop = sub.add_parser("drop", help="empty a PDF slot, recording why")
+    drop.add_argument("id")
+    drop.add_argument("--why", required=True)
     listed = sub.add_parser("list", help="write a taken page's rows for the twin's writer again")
     listed.add_argument("id")
     gate = sub.add_parser("gate", help="gate a PDF page's twin")
@@ -183,6 +250,8 @@ def main() -> int:
     args = parser.parse_args()
     if args.command == "attribution":
         return _attribution()
+    if args.command == "drop":
+        return _drop(args)
     if args.command == "list":
         from PIL import Image
 

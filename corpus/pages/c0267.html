@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Declaration</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:10px;width:760px;font-family:"Open Sans",Arial,sans-serif;font-size:14px;color:#1f2933;background:#fff}
+.p-4{padding:16px}.px-2{padding-left:8px;padding-right:8px}.py-1{padding-top:4px;padding-bottom:4px}
+.flex{display:flex}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-2{gap:8px}.gap-4{gap:16px}
+.grid{display:grid}.grid-cols-2{grid-template-columns:1fr 1fr}
+.text-xs{font-size:11px}.text-sm{font-size:13px}.text-lg{font-size:19px}
+.font-light{font-weight:300}.font-semibold{font-weight:600}.font-bold{font-weight:800}
+.border{border:1px solid #cbd2d9}.border-b{border-bottom:1px solid #cbd2d9}
+.rounded{border-radius:6px}.bg-slate-50{background:#f5f7fa}
+.text-teal{color:#0b7a75}.text-gray{color:#616e7c}
+.chip{display:inline-block;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:600}
+.chip-done{background:#d3f2ee;color:#0b7a75}.chip-todo{background:#fde8c8;color:#8a5200}
+.mb-2{margin-bottom:8px}.mt-2{margin-top:8px}
+.num{display:inline-block;width:26px;font-weight:800;color:#0b7a75}
+ol{list-style:none;margin:0;padding:0}
+li{padding:10px 0;border-bottom:1px dashed #cbd2d9}
+li:last-child{border-bottom:0}
+</style>
+</head>
+<body>
+<div class="border rounded">
+  <div class="p-4 border-b flex justify-between items-center bg-slate-50">
+    <div>
+      <div class="text-xs font-semibold text-teal">SECTION 4 OF 6</div>
+      <div class="text-lg font-bold">Applicant declaration</div>
+    </div>
+    <span class="chip chip-todo">Awaiting signature</span>
+  </div>
+  <div class="p-4">
+    <p class="text-sm font-light mb-2">Oakridge Housing Trust, Lincoln. Read each statement and confirm it before the form is passed to the allocations team. Applicant: Rohan Sinclair. Form opened on 3 January 2023.</p>
+    <ol>
+      <li><span class="num">1.</span><span class="font-semibold">I confirm that the household details given in section 2 are complete</span> <span class="chip chip-done">Confirmed</span><div class="text-sm text-gray" style="margin-left:26px">Everyone who will live at the address, including children under 16, must be listed.</div></li>
+      <li><span class="num">2.</span><span class="font-semibold">I have not applied to another housing register in Derby or Lincoln</span> <span class="chip chip-done">Confirmed</span><div class="text-sm text-gray" style="margin-left:26px">If you have, tell us the date and the council in section 5.</div></li>
+      <li><span class="num">3.</span><span class="font-semibold">I agree to Puffin Credit Check carrying out an affordability review</span> <span class="chip chip-todo">Needs initials</span><div class="text-sm text-gray" style="margin-left:26px">The check does not affect your credit rating and the result is kept for 12 months.</div></li>
+      <li><span class="num">4.</span><span class="font-semibold">I understand that giving false information may end my application</span> <span class="chip chip-todo">Needs initials</span><div class="text-sm text-gray" style="margin-left:26px">We may ask for proof of income, such as three recent payslips.</div></li>
+    </ol>
+    <div class="grid grid-cols-2 gap-4 mt-2">
+      <div class="border rounded p-4"><div class="text-xs text-gray">Signed by</div><div class="font-semibold">&nbsp;</div></div>
+      <div class="border rounded p-4"><div class="text-xs text-gray">Witness: Niamh Mensah</div><div class="font-semibold">&nbsp;</div></div>
+    </div>
+    <div class="text-xs text-gray mt-2">Case officer: Amelia Chowdhury. Return within 14 days of 3 January 2023.</div>
+  </div>
+</div>
+</body>
+</html>

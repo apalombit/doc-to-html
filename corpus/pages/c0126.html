@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en-US"><head><meta charset="utf-8"><title>Purchase order</title>
+<style>
+body{margin:0;padding:44px 48px 50px;width:724px;background:#fff;font-family:Menlo,Monaco,"Courier New",monospace;font-size:11px;color:#111}
+.top{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;align-items:start}
+.logo{display:flex;align-items:center;gap:8px}
+.logo b{font-size:15px;letter-spacing:-.3px}
+h1{margin:0;font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:400;color:#666}
+.num{font-size:22px;margin:4px 0 0;font-weight:700}
+.lab{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:#777;margin-bottom:3px}
+p{margin:0 0 2px;line-height:1.5}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin:26px 0 22px;border-top:3px double #111;padding-top:12px}
+table{width:100%;border-collapse:collapse}
+th{font-weight:400;font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#666;text-align:left;padding:6px 6px;border-top:1px solid #111;border-bottom:1px solid #111}
+td{padding:6px 6px;border-bottom:1px solid #ccc;vertical-align:top}
+td.r,th.r{text-align:right}
+tr.sub td{color:#555;font-size:10.5px;border-bottom:1px dotted #ccc}
+tr.sub td:first-child{padding-left:24px}
+tr.tot td{border:none;padding:3px 6px}
+tr.tot.g td{border-top:1px solid #111;font-weight:700;font-size:12px;padding-top:7px}
+.notes{margin-top:26px;border-top:1px dashed #111;padding-top:10px;display:grid;grid-template-columns:2fr 1fr;gap:24px}
+.sig{border-top:1px solid #111;padding-top:4px;margin-top:34px;font-size:10px}
+</style></head><body>
+<div class="top">
+<div class="logo"><svg width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="none" stroke="#111" stroke-width="2"/><path d="M15 5 L19 15 L15 25 L11 15Z" fill="#111"/></svg><b>Compass Outfitters</b></div>
+<div><h1>Purchase order</h1><div class="num">PO-20-0531</div></div>
+<div><div class="lab">Order date</div><p>May 31, 2020</p><div class="lab" style="margin-top:6px">Deliver by</div><p>June 19, 2020</p></div></div>
+<div class="grid4">
+<div><div class="lab">Buyer</div><p>Mei Jackson</p><p>Compass Outfitters</p><p>412 W Front St</p><p>Boise, ID 83702</p></div>
+<div><div class="lab">Supplier</div><p>Clover Supply Co.</p><p>Attn: Travis Washington</p><p>88 Willamette Ave</p><p>Eugene, OR 97401</p></div>
+<div><div class="lab">Ship to</div><p>Compass Outfitters</p><p>Warehouse 2, Dock B</p><p>Boise, ID 83705</p></div>
+<div><div class="lab">Terms</div><p>Net 30</p><p>FOB Eugene</p><p>Ref: Q-4471</p></div></div>
+<table><tr><th>Item</th><th>Description</th><th class="r">Qty</th><th class="r">Unit</th><th class="r">Amount</th></tr>
+<tr><td>CL-100</td><td>Trail tent, 2-person</td><td class="r">40</td><td class="r">$84.50</td><td class="r">$3,380.00</td></tr>
+<tr class="sub"><td>-01</td><td>Colour: olive</td><td class="r">24</td><td class="r"></td><td class="r"></td></tr>
+<tr class="sub"><td>-02</td><td>Colour: sand</td><td class="r">16</td><td class="r"></td><td class="r"></td></tr>
+<tr><td>CL-210</td><td>Sleeping bag, 3-season</td><td class="r">60</td><td class="r">$52.00</td><td class="r">$3,120.00</td></tr>
+<tr class="sub"><td>-R</td><td>Regular length</td><td class="r">45</td><td class="r"></td><td class="r"></td></tr>
+<tr class="sub"><td>-L</td><td>Long length</td><td class="r">15</td><td class="r"></td><td class="r"></td></tr>
+<tr><td>CL-305</td><td>Camp stove, single burner</td><td class="r">30</td><td class="r">$27.75</td><td class="r">$832.50</td></tr>
+<tr><td>CL-412</td><td>Water filter bottle</td><td class="r">100</td><td class="r">$11.40</td><td class="r">$1,140.00</td></tr>
+<tr class="tot"><td></td><td></td><td></td><td class="r">Subtotal</td><td class="r">$8,472.50</td></tr>
+<tr class="tot"><td></td><td></td><td></td><td class="r">Freight</td><td class="r">$215.00</td></tr>
+<tr class="tot"><td></td><td></td><td></td><td class="r">Tax (exempt)</td><td class="r">$0.00</td></tr>
+<tr class="tot g"><td></td><td></td><td></td><td class="r">Total USD</td><td class="r">$8,687.50</td></tr></table>
+<div class="notes"><div><div class="lab">Notes</div><p>Pack tents and bags in master cartons of 10. Mark each carton with the PO number. Partial shipments need written approval from the buyer. Send the packing list and invoice with the goods, quoting this order number. Questions to purchasing at the address above.</p></div>
+<div><div class="lab">Approved</div><p>Jasmine Shapiro, Purchasing Manager</p><div class="sig">Signature &nbsp; 05/31/2020</div></div></div>
+</body></html>

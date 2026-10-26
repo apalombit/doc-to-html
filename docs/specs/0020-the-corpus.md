@@ -404,22 +404,29 @@ same way: their HTML re-renders only approximately to their picture, and
    - faces come from the allow-list, at sizes and positions as close as
      flow layout allows.
 6. **The gate.** A page is admitted only if all three hold. *Restated
-   2026-10-25 on the pilot of 10; the reasons are in step 4's outcome.*
+   2026-10-25 on the pilot of 10, and again 2026-10-26 on the next ten;
+   the reasons are in step 4's outcome.*
    - **words:** the twin's characters equal the text layer's, as a
      multiset. Both sides first drop white space, accents and format
      characters, unfold ligatures and compatibility forms, and fold
      case. Text set at an angle takes part in this test only;
-   - **rows:** every PDF row's text is one row of the twin. The twin must
-     break wherever the PDF leaves a gap wider than 3 em (a column or a
-     cell), and may break or run on at a narrower one;
-   - **geometry:** each row's top, and the left of each of the twin's
+   - **rows:** words are grouped into rows the same way on both sides:
+     a word joins a row whose centre lies within half a type size of
+     its middle, unless the row holds a word above or below it. The
+     PDF's rows are cut into runs at every gap wider than 1.5 em and
+     every step to another line or cell. Each run must be found in the
+     twin as one run of text at the same place. Where the PDF's gap is
+     wider than 3 em (a column or a cell), or a row starts or ends, the
+     twin must break too; at a narrower gap it may run on;
+   - **geometry:** each run's top, and the left of each of the twin's
      pieces, lie within 1.5% of the page's width of where the PDF sets
      the same text. Over the pilot of 10 the worst offsets were 12.4 px
      across and 10.0 px down at 1000 px, median 4 px each way, so the
      threshold stays at 1.5% (15 px).
-   - **A pointer, not a test:** runs of one-line blocks that may be one
-     paragraph cut into lines, or one line cut into words, are listed for
-     whoever reviews the twin (`pdfpage.split_paragraphs`).
+   - **Two pointers, not tests,** listed for whoever reviews the twin:
+     runs of one-line blocks that may be one paragraph cut into lines,
+     or one line cut into words (`pdfpage.split_paragraphs`), and runs
+     set more than 10% off the page's type size.
 7. **Revise the twin, never the PDF.** A page whose twin cannot pass after
    three revisions is dropped, and the reason recorded.
 
@@ -965,7 +972,7 @@ its twin: 13 of 13 lines, worst offsets 3.5 px down and 0.3 px across. It
 refuses a twin with a word missing, a line broken elsewhere, or every
 line below its heading moved down by a widened margin.
 
-### Step 4 — the pilot of 10, 2026-10-25, waiting on Alessandro
+### Step 4 — the pilot of 10, 2026-10-25, approved 2026-10-26
 
 **Alessandro approved the list, 2026-10-25:** "keep it simple for now and
 we revisit once you get 10 examples we can actually use as render cases
@@ -1031,10 +1038,12 @@ the same places, in the allow-list's nearest faces. Logos and emblems are
 left out, as the brief asks. One fault was found and fixed by hand:
 c0073 drew empty the three radios its page shows selected.
 
-**For Alessandro to decide:** go on to about 100 PDF pages, from the
+**Alessandro's review, 2026-10-26:** "pdf choice and conversion 10 cases
+are good". The ten stay as they are.
+
+**Alessandro's decision, 2026-10-26: go on to about 100**, from the
 sources that can be fetched (US federal, GOV.UK, ISTAT, INSEE, BOE,
-Brazil, arXiv), or stop at ten. If the PDF slots are dropped, they would
-be recast as generated cards.
+Brazil, arXiv CC BY), ten at a time, each ten opened beside its pages.
 
 ### Step 5 — the rest, in progress, 2026-10-25
 

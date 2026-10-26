@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr-FR"><head><meta charset="utf-8"><title>Ticket de caisse</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:0 40px 24px;width:500px;background:#fff;font-family:"Courier New",Courier,monospace;font-size:13px;color:#111}
+.slip{background:#fbfbf8;padding:0 0 14px}
+.band{background:#222;color:#fff;text-align:center;padding:10px 6px;letter-spacing:2px;font-weight:700;font-size:16px}
+.c{text-align:center}
+.boxes{display:flex;gap:6px;margin:10px 8px}
+.boxes div{flex:1;border:1px solid #111;padding:3px 5px;font-size:12px}
+.boxes small{display:block;font-size:9px;text-transform:uppercase}
+table{border-collapse:collapse;width:calc(100% - 16px);margin:6px 8px}
+th,td{border:1px solid #111;padding:3px 5px;text-align:left}
+th{font-size:11px;background:#e5e5e0}
+td.r,th.r{text-align:right}
+.tot{background:#222;color:#fff;display:flex;justify-content:space-between;padding:8px 10px;margin:8px 0;font-size:17px;font-weight:700}
+.dash{border-top:1px dashed #111;margin:8px 8px}
+.l{display:flex;justify-content:space-between;padding:1px 10px}
+</style></head><body><div class="slip">
+<div class="band">ÉPICERIE SITTELLE</div>
+<div class="c" style="margin-top:8px">12 rue de la Monnaie<br>35000 Rennes<br>Tél. 02 99 55 01 48 — SIRET 412 555 019 00027</div>
+<div class="boxes"><div><small>Date</small>02/06/2020</div><div><small>Heure</small>11:42</div><div><small>Caisse</small>02</div></div>
+<div class="boxes"><div><small>Caissier</small>Nicolas Moreau</div><div><small>Ticket n°</small>004918</div></div>
+<table>
+<tr><th>Article</th><th class="r">Qté</th><th class="r">Prix</th><th class="r">Total</th></tr>
+<tr><td>Baguette tradition</td><td class="r">2</td><td class="r">1,10</td><td class="r">2,20</td></tr>
+<tr><td>Pain aux céréales</td><td class="r">1</td><td class="r">3,40</td><td class="r">3,40</td></tr>
+<tr><td>Beurre demi-sel 250 g</td><td class="r">1</td><td class="r">2,85</td><td class="r">2,85</td></tr>
+<tr><td>Confiture de fraises</td><td class="r">1</td><td class="r">3,95</td><td class="r">3,95</td></tr>
+<tr><td>Café moulu 250 g</td><td class="r">1</td><td class="r">4,60</td><td class="r">4,60</td></tr>
+<tr><td>Savon de Marseille*</td><td class="r">2</td><td class="r">2,90</td><td class="r">5,80</td></tr>
+<tr><td>Sac réutilisable*</td><td class="r">1</td><td class="r">1,50</td><td class="r">1,50</td></tr>
+</table>
+<div class="tot"><span>TOTAL TTC</span><span>24,30 €</span></div>
+<div class="l"><span>Espèces</span><span>30,00 €</span></div>
+<div class="l"><span>Rendu</span><span>5,70 €</span></div>
+<div class="dash"></div>
+<div class="l"><span>TVA 5,5 % sur 16,11 HT</span><span>0,89</span></div>
+<div class="l"><span>TVA 20 % sur 6,08 HT</span><span>1,22</span></div>
+<div class="l"><span>* article taxé à 20 %</span><span></span></div>
+<div class="dash"></div>
+<div class="c">Carte fidélité : Karim Diallo<br>Points gagnés : 24 — solde : 318</div>
+<div class="c" style="margin-top:8px">Merci de votre visite !<br>Échange sous 7 jours avec ce ticket.</div>
+</div></body></html>

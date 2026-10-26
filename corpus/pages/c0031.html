@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="it-IT"><head><meta charset="utf-8"><title>Scheda paziente</title>
+<style>
+body{margin:0;padding:26px 32px 30px;width:696px;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:12.5px;color:#1e2b30;background:#fff}
+.head{display:flex;align-items:center;justify-content:space-between;border-bottom:3px double #1b7f8c;padding-bottom:12px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .n{font-family:"Playfair Display",Georgia,serif;font-size:26px;color:#1b7f8c;line-height:1}
+.brand .s{font-size:11px;color:#4b5d63;margin-top:3px}
+.head .r{text-align:right;font-size:11px;line-height:1.5;color:#4b5d63}
+h1{font-family:"Playfair Display",Georgia,serif;font-size:24px;margin:16px 0 4px;color:#14343b}
+h2{font-variant:small-caps;letter-spacing:1px;font-size:14px;color:#1b7f8c;margin:18px 0 6px;border-bottom:1px dotted #1b7f8c;padding-bottom:3px}
+table{border-collapse:collapse;width:100%}
+td{padding:4px 6px 4px 0;vertical-align:middle}
+.l{font-size:10.5px;color:#4b5d63;white-space:nowrap}
+.f{border:1px solid #8fb3b9;background:#f5fafb;padding:5px 8px;min-height:16px;height:16px}
+dl{margin:0;display:grid;grid-template-columns:230px 1fr;row-gap:6px}
+dt{color:#1e2b30}dd{margin:0}
+.chk span{display:inline-block;margin-right:20px}
+.note{margin-top:18px;border-top:2px dashed #8fb3b9;padding-top:8px;font-size:10.5px;color:#4b5d63;line-height:1.5}
+.sign{display:flex;justify-content:space-between;gap:30px;margin-top:20px}
+.sign div{flex:1;border-top:1px solid #333;padding-top:4px;font-size:10.5px;color:#4b5d63}
+</style></head><body>
+<div class="head">
+<div class="brand">
+<svg width="46" height="46" viewBox="0 0 46 46"><circle cx="23" cy="23" r="21" fill="#1b7f8c"/><circle cx="23" cy="23" r="13" fill="none" stroke="#fff" stroke-width="3"/><path d="M23 12v22M12 23h22" stroke="#fff" stroke-width="3"/></svg>
+<div><div class="n">Studio Medico Iris</div><div class="s">Medicina generale e specialistica &middot; Ferrara</div></div>
+</div>
+<div class="r">Via delle Volte 18, 44121 Ferrara<br>Tel. 0532 555 0149<br>Studio Copper Iris Srl &middot; P.IVA 01987650381</div>
+</div>
+<h1>Scheda di accoglienza del paziente</h1>
+<div style="font-size:11px;color:#4b5d63">Da compilare prima della prima visita &middot; Data: 8 aprile 2027</div>
+<h2>Dati anagrafici</h2>
+<table>
+<tr><td class="l">Cognome e nome</td><td class="f" colspan="3">Mancini Chiara</td><td class="l">Sesso</td><td class="f" style="width:50px">F</td></tr>
+<tr><td class="l">Data di nascita</td><td class="f" style="width:120px">14/09/1991</td><td class="l">Età</td><td class="f" style="width:60px">35</td><td class="l">Luogo</td><td class="f">Perugia</td></tr>
+<tr><td class="l">Codice fiscale</td><td class="f" colspan="5">MNCCHR91P54G478K</td></tr>
+<tr><td class="l">Indirizzo</td><td class="f" colspan="5">Via Garibaldi 42, 44121 Ferrara</td></tr>
+<tr><td class="l">Telefono</td><td class="f" colspan="2"></td><td class="l">E-mail</td><td class="f" colspan="2"></td></tr>
+</table>
+<h2>Medico e contatti</h2>
+<dl>
+<dt>Medico di famiglia</dt><dd class="f">Dott. Simone Colombo</dd>
+<dt>Persona da contattare in caso di urgenza</dt><dd class="f">Stefano Bianchi, tel. 333 555 0172</dd>
+<dt>Gruppo sanguigno, se noto</dt><dd class="f"></dd>
+</dl>
+<h2>Anamnesi</h2>
+<dl>
+<dt>Allergie a farmaci o alimenti</dt><dd class="chk"><span>☐ No</span><span>☑ Sì</span> penicillina</dd>
+<dt>Assume farmaci regolarmente</dt><dd class="chk"><span>☑ No</span><span>☐ Sì</span></dd>
+<dt>Interventi chirurgici</dt><dd class="chk"><span>☐ No</span><span>☑ Sì</span> appendicectomia, 2009</dd>
+<dt>Fumatore</dt><dd class="chk"><span>☑ No</span><span>☐ Sì</span><span>☐ Ex fumatore</span></dd>
+<dt>Motivo della visita</dt><dd class="f"></dd>
+</dl>
+<h2>Consenso</h2>
+<p style="margin:0;line-height:1.5">Autorizzo lo studio al trattamento dei miei dati personali ai fini sanitari, secondo l’informativa consegnata, e confermo che quanto dichiarato è esatto.</p>
+<div class="sign"><div>Firma del paziente</div><div>Data</div></div>
+<div class="note">Riservato allo studio: scheda n. ______ &middot; Accettazione a cura di ______ &middot; Si prega di portare tessera sanitaria e referti precedenti.</div>
+</body></html>

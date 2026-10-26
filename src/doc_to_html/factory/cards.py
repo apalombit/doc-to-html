@@ -540,6 +540,13 @@ def problems(taxonomy: Taxonomy, card: Card) -> list[str]:
         found.append("a feature twice")
     for a, b in clashes(taxonomy, card.tokens()):
         found.append(f"{a} with {b}")
+    if card.origin == "pdf":
+        # A real page is what it is: its width and features are not drawn,
+        # but its kind and locale are the taxonomy's like any card's.
+        if card.kind not in taxonomy["families"][card.family]["kinds"]:
+            found.append(f"kind {card.kind!r} not in {card.family}")
+        if card.locale not in LOCALES[card.language]:
+            found.append(f"locale {card.locale} for {card.language}")
     if card.origin == "generated":
         assert card.kind
         if card.kind not in taxonomy["families"][card.family]["kinds"]:

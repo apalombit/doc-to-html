@@ -75,12 +75,12 @@ class TestTheGate:
         found = [row.shown for row in pdfpage.rows(pdfpage.pdf_words(printed, pdfpage.WIDTH))]
         assert "This statement lists the payments received" in found
         assert "between 1 July and 30 September 2026." in found
-        assert "Date Reference Amount" in found
+        assert ["Date", "Reference", "Amount"] == found[3:6]
 
     def test_a_true_twin_is_admitted(self, printed: Path) -> None:
         result = _gate(printed, SOURCE.replace("/*EXTRA*/", ZOOM))
         assert result.failures == {}
-        assert result.matched == result.rows == 7
+        assert result.matched == result.rows == 13
 
     def test_a_twin_missing_a_word(self, printed: Path) -> None:
         twin = SOURCE.replace("/*EXTRA*/", ZOOM).replace("Office supplies", "Office")
@@ -120,7 +120,7 @@ class TestNormalising:
         words = [pdfpage.Word("Name", 0, 0, 40, 12, 12), pdfpage.Word("Ada", 45, 0, 70, 12, 12),
                  pdfpage.Word("Lovelace", 100, 0, 150, 12, 12),
                  pdfpage.Word("Date", 200, 1, 240, 13, 12)]
-        assert pdfpage.listing(words) == ["    0.0  13.0  0 Name Ada  | 100 Lovelace  ‖ 200 Date"]
+        assert pdfpage.listing(words) == ["    0.0  12.0  0 Name Ada  | 100 Lovelace  ‖ 200 Date"]
 
 
 def _row(*words: tuple[str, float]) -> list[pdfpage.Word]:
@@ -201,6 +201,40 @@ class TestSplitParagraphs:
         assert pdfpage.split_paragraphs(row) == []
 
 
+def _at(text: str, left: float, middle: float, size: float = 12.0) -> pdfpage.Word:
+    """A word of `size` px type centred on `middle`, 0.6 of its size a letter."""
+    return pdfpage.Word(text, left, middle - size / 2, left + 0.6 * size * len(text),
+                        middle + size / 2, size)
+
+
+class TestPieces:
+    """Small things set between two rows decide nothing, either side."""
+
+    def test_a_label_after_a_line_may_sit_in_a_row_of_its_own(self) -> None:
+        """The W-9's `or`, 2.7 em after a line in the PDF, a few px lower in
+        the twin: the PDF's row runs on into it and the twin's does not."""
+        line = [_at("see", 0, 100), _at("How", 25, 100), _at("to", 55, 100)]
+        pdf = line + [_at("or", 101, 100)]
+        twin = line + [_at("or", 101, 107)]
+        assert pdfpage.gate(pdf, twin, pdfpage.WIDTH).failures == {}
+
+    def test_a_cells_second_line_half_a_line_up_is_its_own_piece(self) -> None:
+        pdf = [_at("number", 0, 327), _at("household", 60, 321)]
+        twin = [_at("number", 0, 327), _at("household", 60, 314)]
+        assert pdfpage.gate(pdf, twin, pdfpage.WIDTH).failures == {}
+
+    def test_a_column_run_on_is_still_refused(self) -> None:
+        pdf = [_at("Name", 0, 100), _at("Ada", 200, 100)]
+        twin = [_at("Name", 0, 100), _at("Ada", 40, 100)]
+        assert "rows" in pdfpage.gate(pdf, twin, pdfpage.WIDTH).failures
+
+    def test_type_set_smaller_than_the_page_is_pointed_at(self) -> None:
+        pdf = [_at("Total", 0, 100, 12.0)]
+        twin = [_at("Total", 0, 100, 10.0)]
+        result = pdfpage.gate(pdf, twin, pdfpage.WIDTH)
+        assert result.failures == {} and len(result.type_off) == 1
+
+
 class TestTurned:
     """Text set at an angle: compared by its characters, never by rows."""
 
@@ -226,3 +260,25 @@ class TestTurned:
         assert [w.text for w in words if w.upright] == ["Núm.", "81"]
         assert pdfpage.turned(words) == "cve:BOE-A-2025-6771"
 
+
+
+class TestBands:
+    def test_a_browsers_taller_boxes_band_as_the_pdfs_do(self) -> None:
+        """Two lines of 10 px type set 6 px apart, as a form's stacked
+        label is: the PDF's boxes are 10 px tall and the browser's 12.2.
+        Banded by its boxes, the twin's second line fell inside the first's
+        band and the PDF's did not."""
+        pdf = [pdfpage.Word("Codigo", 0, 100, 40, 110, 10), pdfpage.Word("NIF", 0, 106, 20, 116, 10)]
+        twin = [pdfpage.Word("Codigo", 0, 98.9, 40, 111.1, 10),
+                pdfpage.Word("NIF", 0, 104.9, 20, 117.1, 10)]
+        assert len(pdfpage.rows(pdf)) == len(pdfpage.rows(twin)) == 2
+        assert pdfpage.gate(pdf, twin, pdfpage.WIDTH).failures == {}
+
+    def test_a_two_line_label_beside_a_heading_is_three_rows(self) -> None:
+        """The W-9's corner: two lines of small type in one column, one line
+        of larger type in the next, set between them. Banded alone, the
+        heading's band took both label lines and their words interleaved."""
+        words = [pdfpage.Word("Department", 0, 100, 60, 107, 7),
+                 pdfpage.Word("Internal", 0, 108, 40, 115, 7),
+                 pdfpage.Word("Go", 200, 102, 215, 113, 11)]
+        assert sorted(r.text for r in pdfpage.rows(words)) == ["department", "go", "internal"]
