@@ -21,13 +21,13 @@
   "type.sans"
  ],
  "dhash": "4f6f716165456d18",
- "html_sha256": "9a059cff400dc0b844c34648503e18c52bd2daabb2f065ff20eb136bab38025e",
+ "html_sha256": "6962cb7c1efe96a44a1fb4cdbdc51dcf1f8a1f8589e33d3e75e2ef416d6e1b6c",
  "png_sha256": "ce91c4ea132ce49181a004d5220bc49ea9628187a41d5633051e2d2108c2a8ee",
  "gate": {
   "rows": 58,
   "worst_left": 2.3,
   "worst_top": 5.3,
   "one_line_runs": 0,
-  "type_off": 5
+  "type_off": 0
  }
 }

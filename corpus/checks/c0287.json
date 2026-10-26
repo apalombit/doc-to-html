@@ -24,13 +24,13 @@
   "type.sans"
  ],
  "dhash": "7d3f716935717577",
- "html_sha256": "eb9152be9d2cc7df54c3ceb4d896c96493a1fa1a186727748ab08c77cd096703",
+ "html_sha256": "3245f3434cb1784194f9549e1b8554424b6e24c529c4b4a7b389d8aa64180482",
  "png_sha256": "fc0360f7794222f4f683bda0c612bcaa4a071cfffa0503936eab22358322a269",
  "gate": {
   "rows": 91,
-  "worst_left": 4.9,
-  "worst_top": 8.0,
+  "worst_left": 4.7,
+  "worst_top": 8.8,
   "one_line_runs": 0,
-  "type_off": 23
+  "type_off": 0
  }
 }
