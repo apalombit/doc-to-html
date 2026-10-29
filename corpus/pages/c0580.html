@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Pricing</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:36px 40px 40px;width:1040px;font-family:"Open Sans","Helvetica Neue",Arial,sans-serif;font-size:13px;line-height:1.5;color:#1c2431;background:#f7f8fb}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px}
+.nav{display:flex;gap:22px;font-size:12px;color:#5a6577}
+h1{font-family:"Playfair Display",Georgia,serif;font-size:44px;line-height:1.1;margin:0 0 8px;text-align:center}
+.lead{text-align:center;color:#5a6577;font-size:14px;margin:0 auto 24px;width:620px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:#fff;border:1px solid #dde2ea;border-radius:12px;padding:20px}
+.card.hot{border:2px solid #e2573a;position:relative}
+.tag{display:inline-block;background:#e2573a;color:#fff;font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.card h3{margin:0 0 2px;font-size:17px}
+.card .d{font-size:12px;color:#5a6577;margin-bottom:10px}
+.price{font-family:"Playfair Display",Georgia,serif;font-size:36px;line-height:1.1}
+.price small{font-family:"Open Sans",Arial,sans-serif;font-size:12px;color:#5a6577}
+.btn{display:block;text-align:center;border-radius:8px;padding:8px;margin:12px 0;font-weight:700;font-size:13px;background:#1c2431;color:#fff}
+.hot .btn{background:#e2573a}
+ul{list-style:none;margin:0;padding:0}
+li{margin-bottom:5px;font-size:12.5px}
+li .t{color:#e2573a;font-weight:700;display:inline-block;width:18px}
+li .x{color:#9aa3b2;display:inline-block;width:18px}
+h2{font-size:20px;margin:30px 0 12px}
+.add{padding:16px}
+.add .kv{display:flex;justify-content:space-between;border-bottom:1px solid #eceff4;padding:3px 0;font-size:12.5px}
+.add .kv b{font-weight:700}
+.add h3{font-size:15px;margin:0 0 4px}
+.add p{margin:0 0 8px;font-size:12px;color:#5a6577}
+.faq{display:grid;grid-template-columns:1fr 1fr;gap:12px 30px;margin-top:6px}
+.faq h4{margin:0 0 2px;font-size:13px}
+.faq p{margin:0;font-size:12px;color:#5a6577}
+.fine{margin-top:22px;font-size:10.5px;color:#7a8497;text-align:center}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="logo"><svg width="26" height="26" viewBox="0 0 26 26"><path d="M3 20 C6 8 14 4 23 5 C22 14 16 22 3 20Z" fill="#e2573a"/><path d="M3 20 L16 10" stroke="#fff" stroke-width="2"/></svg>Redstart Cloud</div>
+  <div class="nav"><span>Product</span><span>Pricing</span><span>Customers</span><span>Docs</span><span>Sign in</span></div>
+</div>
+<h1>Simple pricing that grows with you</h1>
+<p class="lead">Every plan includes unlimited viewers, daily backups and support from our team in Shrewsbury. Prices correct from 16 April 2026.</p>
+<div class="grid">
+  <div class="card">
+    <h3>Starter</h3><div class="d">For one person trying things out</div>
+    <div class="price">£0 <small>/ month</small></div>
+    <div class="btn">Start free</div>
+    <ul>
+      <li><span class="t">✓</span>1 workspace</li>
+      <li><span class="t">✓</span>3 projects</li>
+      <li><span class="t">✓</span>1 GB storage</li>
+      <li><span class="x">✗</span>Shared dashboards</li>
+      <li><span class="x">✗</span>Single sign-on</li>
+    </ul>
+  </div>
+  <div class="card hot">
+    <span class="tag">Most popular</span>
+    <h3>Team</h3><div class="d">For groups shipping every week</div>
+    <div class="price">£18 <small>/ user / month</small></div>
+    <div class="btn">Try Team for 14 days</div>
+    <ul>
+      <li><span class="t">✓</span>10 workspaces</li>
+      <li><span class="t">✓</span>Unlimited projects</li>
+      <li><span class="t">✓</span>100 GB storage</li>
+      <li><span class="t">✓</span>Shared dashboards</li>
+      <li><span class="x">✗</span>Single sign-on</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Business</h3><div class="d">For companies with audit needs</div>
+    <div class="price">£42 <small>/ user / month</small></div>
+    <div class="btn">Talk to sales</div>
+    <ul>
+      <li><span class="t">✓</span>Unlimited workspaces</li>
+      <li><span class="t">✓</span>Unlimited projects</li>
+      <li><span class="t">✓</span>2 TB storage</li>
+      <li><span class="t">✓</span>Shared dashboards</li>
+      <li><span class="t">✓</span>Single sign-on</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Add-ons, billed monthly</h2>
+<div class="grid">
+  <div class="card add"><h3>Extra storage</h3><p>Room for large files and long histories.</p>
+    <div class="kv"><span>Per 100 GB:</span><b>£4.00</b></div><div class="kv"><span>Minimum:</span><b>100 GB</b></div></div>
+  <div class="card add"><h3>Priority support</h3><p>A named engineer and a two-hour reply.</p>
+    <div class="kv"><span>Per workspace:</span><b>£60.00</b></div><div class="kv"><span>Reply time:</span><b>2 hours</b></div></div>
+  <div class="card add"><h3>Nuthatch audit log</h3><p>Every change, kept for seven years.</p>
+    <div class="kv"><span>Per user:</span><b>£5.50</b></div><div class="kv"><span>Retention:</span><b>7 years</b></div></div>
+</div>
+
+<h2>Included in every plan</h2>
+<div class="grid" style="grid-template-columns:repeat(4,1fr)">
+  <div class="card add"><h3>Daily backups</h3><p>Restore any project to any night in the last thirty days.</p></div>
+  <div class="card add"><h3>Open exports</h3><p>Take your data out as CSV or JSON whenever you like.</p></div>
+  <div class="card add"><h3>Two-step sign-in</h3><p>Authenticator codes and hardware keys on every account.</p></div>
+  <div class="card add"><h3>Status page</h3><p>Live uptime, incident notes and a ninety-day history.</p></div>
+</div>
+
+<h2>What customers say</h2>
+<div class="grid" style="grid-template-columns:1fr 1fr">
+  <div class="card add"><p style="font-size:13px;color:#1c2431">“We moved forty people over in an afternoon and nobody asked for a manual.”</p><div class="kv"><span>Harry Kowalski:</span><b>Operations lead</b></div></div>
+  <div class="card add"><p style="font-size:13px;color:#1c2431">“The audit log answered a regulator’s question in ten minutes, not ten days.”</p><div class="kv"><span>Isla Burrows:</span><b>Finance director</b></div></div>
+</div>
+
+<h2>Questions we hear</h2>
+<div class="faq">
+  <div><h4>Can I change plan later?</h4><p>Yes. Upgrades take effect at once and downgrades at the end of the billing month.</p></div>
+  <div><h4>Do you offer discounts?</h4><p>Charities and schools receive 30% off any paid plan. Annual billing saves two months.</p></div>
+  <div><h4>Where is my data held?</h4><p>In two data centres in the United Kingdom, copied every night.</p></div>
+  <div><h4>Who do I contact about invoices?</h4><p>Isla Burrows and the billing team reply within one working day.</p></div>
+</div>
+<h2>Limits at a glance</h2>
+<div class="grid" style="grid-template-columns:repeat(3,1fr)">
+  <div class="card add"><h3>Starter</h3><div class="kv"><span>API calls per day:</span><b>1,000</b></div><div class="kv"><span>File size:</span><b>25 MB</b></div><div class="kv"><span>History:</span><b>7 days</b></div></div>
+  <div class="card add"><h3>Team</h3><div class="kv"><span>API calls per day:</span><b>50,000</b></div><div class="kv"><span>File size:</span><b>2 GB</b></div><div class="kv"><span>History:</span><b>90 days</b></div></div>
+  <div class="card add"><h3>Business</h3><div class="kv"><span>API calls per day:</span><b>500,000</b></div><div class="kv"><span>File size:</span><b>10 GB</b></div><div class="kv"><span>History:</span><b>7 years</b></div></div>
+</div>
+<div class="faq" style="grid-template-columns:repeat(4,1fr);margin-top:26px;border-top:1px solid #dde2ea;padding-top:16px">
+  <div><h4>Product</h4><p>Features<br>Integrations<br>Security<br>Roadmap</p></div>
+  <div><h4>Company</h4><p>About us<br>Careers<br>Press<br>Contact</p></div>
+  <div><h4>Resources</h4><p>Documentation<br>Guides<br>Community<br>Status</p></div>
+  <div><h4>Legal</h4><p>Terms of service<br>Privacy notice<br>Cookie settings<br>Data processing</p></div>
+</div>
+<div class="fine">All prices exclude VAT at 20%. Redstart Cloud Ltd, registered in Ipswich. Declan Kaur, Head of Customer Success.</div>
+</body>
+</html>

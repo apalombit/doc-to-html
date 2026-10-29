@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Stonecrop CX-8 guide, section 4</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0}
+body{width:1000px;padding:20px 28px 22px;background:#fff;color:#1c2430;font-family:"Avenir Next","Helvetica Neue",Arial,sans-serif;font-size:12.5px;line-height:1.45}
+.flex{display:flex}
+.items-center{align-items:center}
+.justify-between{justify-content:space-between}
+.gap-6{gap:28px}
+.gap-2{gap:8px}
+.w-64{width:244px;flex:none}
+.flex-1{flex:1;min-width:0}
+.p-4{padding:14px 16px}
+.p-3{padding:10px 12px}
+.pb-2{padding-bottom:8px}
+.mb-1{margin-bottom:4px}
+.mb-2{margin-bottom:8px}
+.mb-3{margin-bottom:12px}
+.mb-4{margin-bottom:18px}
+.mt-2{margin-top:8px}
+.text-xs{font-size:10.5px}
+.text-sm{font-size:12px}
+.text-base{font-size:12.5px}
+.text-2xl{font-size:27px;line-height:1.1}
+.text-lg{font-size:15.5px;line-height:1.25}
+.font-medium{font-weight:500}
+.font-semibold{font-weight:600}
+.font-bold{font-weight:700}
+.uppercase{text-transform:uppercase}
+.tracking-wide{letter-spacing:.09em}
+.text-slate-500{color:#5b6676}
+.text-slate-700{color:#364152}
+.text-green-800{color:#1f5c3a}
+.bg-slate-50{background:#f2f4f7}
+.bg-green-50{background:#eaf4ee}
+.bg-amber-50{background:#fdf3dc}
+.border{border:1px solid #d3d9e0}
+.border-b{border-bottom:1px solid #c5ccd6}
+.border-b-2{border-bottom:2px solid #1f5c3a}
+.border-t{border-top:1px solid #c5ccd6}
+.border-l-4{border-left:4px solid #1f5c3a}
+.border-l-amber{border-left:4px solid #c98a0b}
+.rounded{border-radius:4px}
+.m-0{margin:0}
+.nav,.nav ul{list-style:disc;margin:0;padding-left:16px}
+.nav li{margin:2px 0}
+.nav ul{margin-top:2px;list-style:circle}
+.nav .on{font-weight:700;color:#1f5c3a}
+.steps,.steps ul{margin:3px 0 0;padding-left:20px}
+.steps li{margin:3px 0}
+.steps ul{list-style:circle}
+h1{margin:0}
+h2{margin:0 0 4px;font-size:15.5px;line-height:1.25}
+h2 .n{display:inline-block;width:38px;color:#1f5c3a}
+h1 .n{display:inline-block;width:38px;color:#1f5c3a}
+p{margin:0 0 8px}
+kbd{font-family:Menlo,monospace;font-size:11px;background:#fff;border:1px solid #b8c0cb;border-bottom-width:2px;border-radius:3px;padding:0 5px}
+.sec{margin-bottom:16px}
+</style>
+</head>
+<body>
+<header class="flex justify-between items-center pb-2 border-b-2 mb-4 text-xs uppercase tracking-wide font-semibold text-slate-700">
+  <span>Stonecrop CX-8 Irrigation Controller · Installation and Operation Guide</span>
+  <span class="text-slate-500">Rev. C · May 20, 2021</span>
+</header>
+
+<div class="flex gap-6">
+  <aside class="w-64">
+    <div class="bg-slate-50 border rounded p-4 mb-3">
+      <div class="text-xs uppercase tracking-wide font-bold text-green-800 mb-2">In this guide</div>
+      <ul class="nav text-sm">
+        <li>Safety and warranty</li>
+        <li>What is in the box</li>
+        <li>Mounting the controller</li>
+        <li class="on">Setting a schedule
+          <ul class="font-medium">
+            <li>Choose a program</li>
+            <li>Set start times</li>
+            <li>Set run times</li>
+            <li>Seasonal adjustment</li>
+          </ul>
+        </li>
+        <li>Connecting sensors
+          <ul>
+            <li>Rain sensor</li>
+            <li>Flow meter</li>
+          </ul>
+        </li>
+        <li>Troubleshooting</li>
+      </ul>
+    </div>
+    <div class="border rounded p-4 mb-3">
+      <div class="text-xs uppercase tracking-wide font-bold text-green-800 mb-2">Video walkthrough</div>
+      <div class="flex gap-2 items-center">
+        <svg width="100" height="100" viewBox="0 0 100 100" style="flex:none;display:block" fill="#111"><rect x="0" y="0" width="4" height="4"/><rect x="4" y="0" width="4" height="4"/><rect x="8" y="0" width="4" height="4"/><rect x="12" y="0" width="4" height="4"/><rect x="16" y="0" width="4" height="4"/><rect x="20" y="0" width="4" height="4"/><rect x="24" y="0" width="4" height="4"/><rect x="32" y="0" width="4" height="4"/><rect x="36" y="0" width="4" height="4"/><rect x="44" y="0" width="4" height="4"/><rect x="52" y="0" width="4" height="4"/><rect x="56" y="0" width="4" height="4"/><rect x="64" y="0" width="4" height="4"/><rect x="72" y="0" width="4" height="4"/><rect x="76" y="0" width="4" height="4"/><rect x="80" y="0" width="4" height="4"/><rect x="84" y="0" width="4" height="4"/><rect x="88" y="0" width="4" height="4"/><rect x="92" y="0" width="4" height="4"/><rect x="96" y="0" width="4" height="4"/><rect x="0" y="4" width="4" height="4"/><rect x="24" y="4" width="4" height="4"/><rect x="32" y="4" width="4" height="4"/><rect x="36" y="4" width="4" height="4"/><rect x="40" y="4" width="4" height="4"/><rect x="44" y="4" width="4" height="4"/><rect x="52" y="4" width="4" height="4"/><rect x="56" y="4" width="4" height="4"/><rect x="72" y="4" width="4" height="4"/><rect x="96" y="4" width="4" height="4"/><rect x="0" y="8" width="4" height="4"/><rect x="8" y="8" width="4" height="4"/><rect x="12" y="8" width="4" height="4"/><rect x="16" y="8" width="4" height="4"/><rect x="24" y="8" width="4" height="4"/><rect x="36" y="8" width="4" height="4"/><rect x="44" y="8" width="4" height="4"/><rect x="52" y="8" width="4" height="4"/><rect x="56" y="8" width="4" height="4"/><rect x="60" y="8" width="4" height="4"/><rect x="64" y="8" width="4" height="4"/><rect x="72" y="8" width="4" height="4"/><rect x="80" y="8" width="4" height="4"/><rect x="84" y="8" width="4" height="4"/><rect x="88" y="8" width="4" height="4"/><rect x="96" y="8" width="4" height="4"/><rect x="0" y="12" width="4" height="4"/><rect x="8" y="12" width="4" height="4"/><rect x="12" y="12" width="4" height="4"/><rect x="16" y="12" width="4" height="4"/><rect x="24" y="12" width="4" height="4"/><rect x="36" y="12" width="4" height="4"/><rect x="48" y="12" width="4" height="4"/><rect x="56" y="12" width="4" height="4"/><rect x="60" y="12" width="4" height="4"/><rect x="64" y="12" width="4" height="4"/><rect x="72" y="12" width="4" height="4"/><rect x="80" y="12" width="4" height="4"/><rect x="84" y="12" width="4" height="4"/><rect x="88" y="12" width="4" height="4"/><rect x="96" y="12" width="4" height="4"/><rect x="0" y="16" width="4" height="4"/><rect x="8" y="16" width="4" height="4"/><rect x="12" y="16" width="4" height="4"/><rect x="16" y="16" width="4" height="4"/><rect x="24" y="16" width="4" height="4"/><rect x="36" y="16" width="4" height="4"/><rect x="40" y="16" width="4" height="4"/><rect x="48" y="16" width="4" height="4"/><rect x="52" y="16" width="4" height="4"/><rect x="64" y="16" width="4" height="4"/><rect x="72" y="16" width="4" height="4"/><rect x="80" y="16" width="4" height="4"/><rect x="84" y="16" width="4" height="4"/><rect x="88" y="16" width="4" height="4"/><rect x="96" y="16" width="4" height="4"/><rect x="0" y="20" width="4" height="4"/><rect x="24" y="20" width="4" height="4"/><rect x="48" y="20" width="4" height="4"/><rect x="56" y="20" width="4" height="4"/><rect x="60" y="20" width="4" height="4"/><rect x="72" y="20" width="4" height="4"/><rect x="96" y="20" width="4" height="4"/><rect x="0" y="24" width="4" height="4"/><rect x="4" y="24" width="4" height="4"/><rect x="8" y="24" width="4" height="4"/><rect x="12" y="24" width="4" height="4"/><rect x="16" y="24" width="4" height="4"/><rect x="20" y="24" width="4" height="4"/><rect x="24" y="24" width="4" height="4"/><rect x="32" y="24" width="4" height="4"/><rect x="36" y="24" width="4" height="4"/><rect x="40" y="24" width="4" height="4"/><rect x="60" y="24" width="4" height="4"/><rect x="72" y="24" width="4" height="4"/><rect x="76" y="24" width="4" height="4"/><rect x="80" y="24" width="4" height="4"/><rect x="84" y="24" width="4" height="4"/><rect x="88" y="24" width="4" height="4"/><rect x="92" y="24" width="4" height="4"/><rect x="96" y="24" width="4" height="4"/><rect x="40" y="28" width="4" height="4"/><rect x="52" y="28" width="4" height="4"/><rect x="60" y="28" width="4" height="4"/><rect x="12" y="32" width="4" height="4"/><rect x="16" y="32" width="4" height="4"/><rect x="24" y="32" width="4" height="4"/><rect x="28" y="32" width="4" height="4"/><rect x="32" y="32" width="4" height="4"/><rect x="36" y="32" width="4" height="4"/><rect x="40" y="32" width="4" height="4"/><rect x="48" y="32" width="4" height="4"/><rect x="52" y="32" width="4" height="4"/><rect x="56" y="32" width="4" height="4"/><rect x="64" y="32" width="4" height="4"/><rect x="68" y="32" width="4" height="4"/><rect x="88" y="32" width="4" height="4"/><rect x="92" y="32" width="4" height="4"/><rect x="96" y="32" width="4" height="4"/><rect x="8" y="36" width="4" height="4"/><rect x="12" y="36" width="4" height="4"/><rect x="16" y="36" width="4" height="4"/><rect x="20" y="36" width="4" height="4"/><rect x="24" y="36" width="4" height="4"/><rect x="32" y="36" width="4" height="4"/><rect x="36" y="36" width="4" height="4"/><rect x="40" y="36" width="4" height="4"/><rect x="44" y="36" width="4" height="4"/><rect x="72" y="36" width="4" height="4"/><rect x="92" y="36" width="4" height="4"/><rect x="96" y="36" width="4" height="4"/><rect x="0" y="40" width="4" height="4"/><rect x="8" y="40" width="4" height="4"/><rect x="12" y="40" width="4" height="4"/><rect x="16" y="40" width="4" height="4"/><rect x="20" y="40" width="4" height="4"/><rect x="24" y="40" width="4" height="4"/><rect x="28" y="40" width="4" height="4"/><rect x="32" y="40" width="4" height="4"/><rect x="36" y="40" width="4" height="4"/><rect x="40" y="40" width="4" height="4"/><rect x="44" y="40" width="4" height="4"/><rect x="48" y="40" width="4" height="4"/><rect x="60" y="40" width="4" height="4"/><rect x="64" y="40" width="4" height="4"/><rect x="68" y="40" width="4" height="4"/><rect x="72" y="40" width="4" height="4"/><rect x="76" y="40" width="4" height="4"/><rect x="88" y="40" width="4" height="4"/><rect x="92" y="40" width="4" height="4"/><rect x="96" y="40" width="4" height="4"/><rect x="0" y="44" width="4" height="4"/><rect x="4" y="44" width="4" height="4"/><rect x="8" y="44" width="4" height="4"/><rect x="16" y="44" width="4" height="4"/><rect x="20" y="44" width="4" height="4"/><rect x="32" y="44" width="4" height="4"/><rect x="40" y="44" width="4" height="4"/><rect x="60" y="44" width="4" height="4"/><rect x="64" y="44" width="4" height="4"/><rect x="68" y="44" width="4" height="4"/><rect x="84" y="44" width="4" height="4"/><rect x="88" y="44" width="4" height="4"/><rect x="16" y="48" width="4" height="4"/><rect x="24" y="48" width="4" height="4"/><rect x="28" y="48" width="4" height="4"/><rect x="32" y="48" width="4" height="4"/><rect x="36" y="48" width="4" height="4"/><rect x="40" y="48" width="4" height="4"/><rect x="52" y="48" width="4" height="4"/><rect x="68" y="48" width="4" height="4"/><rect x="72" y="48" width="4" height="4"/><rect x="76" y="48" width="4" height="4"/><rect x="80" y="48" width="4" height="4"/><rect x="84" y="48" width="4" height="4"/><rect x="0" y="52" width="4" height="4"/><rect x="12" y="52" width="4" height="4"/><rect x="32" y="52" width="4" height="4"/><rect x="36" y="52" width="4" height="4"/><rect x="44" y="52" width="4" height="4"/><rect x="56" y="52" width="4" height="4"/><rect x="60" y="52" width="4" height="4"/><rect x="72" y="52" width="4" height="4"/><rect x="76" y="52" width="4" height="4"/><rect x="80" y="52" width="4" height="4"/><rect x="92" y="52" width="4" height="4"/><rect x="8" y="56" width="4" height="4"/><rect x="16" y="56" width="4" height="4"/><rect x="20" y="56" width="4" height="4"/><rect x="40" y="56" width="4" height="4"/><rect x="52" y="56" width="4" height="4"/><rect x="56" y="56" width="4" height="4"/><rect x="60" y="56" width="4" height="4"/><rect x="64" y="56" width="4" height="4"/><rect x="72" y="56" width="4" height="4"/><rect x="76" y="56" width="4" height="4"/><rect x="80" y="56" width="4" height="4"/><rect x="88" y="56" width="4" height="4"/><rect x="92" y="56" width="4" height="4"/><rect x="4" y="60" width="4" height="4"/><rect x="24" y="60" width="4" height="4"/><rect x="28" y="60" width="4" height="4"/><rect x="32" y="60" width="4" height="4"/><rect x="36" y="60" width="4" height="4"/><rect x="44" y="60" width="4" height="4"/><rect x="48" y="60" width="4" height="4"/><rect x="60" y="60" width="4" height="4"/><rect x="76" y="60" width="4" height="4"/><rect x="84" y="60" width="4" height="4"/><rect x="88" y="60" width="4" height="4"/><rect x="12" y="64" width="4" height="4"/><rect x="32" y="64" width="4" height="4"/><rect x="40" y="64" width="4" height="4"/><rect x="60" y="64" width="4" height="4"/><rect x="76" y="64" width="4" height="4"/><rect x="80" y="64" width="4" height="4"/><rect x="84" y="64" width="4" height="4"/><rect x="88" y="64" width="4" height="4"/><rect x="92" y="64" width="4" height="4"/><rect x="96" y="64" width="4" height="4"/><rect x="44" y="68" width="4" height="4"/><rect x="56" y="68" width="4" height="4"/><rect x="68" y="68" width="4" height="4"/><rect x="76" y="68" width="4" height="4"/><rect x="80" y="68" width="4" height="4"/><rect x="92" y="68" width="4" height="4"/><rect x="96" y="68" width="4" height="4"/><rect x="0" y="72" width="4" height="4"/><rect x="4" y="72" width="4" height="4"/><rect x="8" y="72" width="4" height="4"/><rect x="12" y="72" width="4" height="4"/><rect x="16" y="72" width="4" height="4"/><rect x="20" y="72" width="4" height="4"/><rect x="24" y="72" width="4" height="4"/><rect x="36" y="72" width="4" height="4"/><rect x="40" y="72" width="4" height="4"/><rect x="44" y="72" width="4" height="4"/><rect x="52" y="72" width="4" height="4"/><rect x="60" y="72" width="4" height="4"/><rect x="64" y="72" width="4" height="4"/><rect x="68" y="72" width="4" height="4"/><rect x="80" y="72" width="4" height="4"/><rect x="96" y="72" width="4" height="4"/><rect x="0" y="76" width="4" height="4"/><rect x="24" y="76" width="4" height="4"/><rect x="32" y="76" width="4" height="4"/><rect x="36" y="76" width="4" height="4"/><rect x="44" y="76" width="4" height="4"/><rect x="48" y="76" width="4" height="4"/><rect x="52" y="76" width="4" height="4"/><rect x="64" y="76" width="4" height="4"/><rect x="68" y="76" width="4" height="4"/><rect x="84" y="76" width="4" height="4"/><rect x="88" y="76" width="4" height="4"/><rect x="96" y="76" width="4" height="4"/><rect x="0" y="80" width="4" height="4"/><rect x="8" y="80" width="4" height="4"/><rect x="12" y="80" width="4" height="4"/><rect x="16" y="80" width="4" height="4"/><rect x="24" y="80" width="4" height="4"/><rect x="32" y="80" width="4" height="4"/><rect x="48" y="80" width="4" height="4"/><rect x="56" y="80" width="4" height="4"/><rect x="64" y="80" width="4" height="4"/><rect x="68" y="80" width="4" height="4"/><rect x="80" y="80" width="4" height="4"/><rect x="84" y="80" width="4" height="4"/><rect x="92" y="80" width="4" height="4"/><rect x="96" y="80" width="4" height="4"/><rect x="0" y="84" width="4" height="4"/><rect x="8" y="84" width="4" height="4"/><rect x="12" y="84" width="4" height="4"/><rect x="16" y="84" width="4" height="4"/><rect x="24" y="84" width="4" height="4"/><rect x="32" y="84" width="4" height="4"/><rect x="36" y="84" width="4" height="4"/><rect x="40" y="84" width="4" height="4"/><rect x="44" y="84" width="4" height="4"/><rect x="48" y="84" width="4" height="4"/><rect x="56" y="84" width="4" height="4"/><rect x="64" y="84" width="4" height="4"/><rect x="68" y="84" width="4" height="4"/><rect x="72" y="84" width="4" height="4"/><rect x="76" y="84" width="4" height="4"/><rect x="80" y="84" width="4" height="4"/><rect x="92" y="84" width="4" height="4"/><rect x="96" y="84" width="4" height="4"/><rect x="0" y="88" width="4" height="4"/><rect x="8" y="88" width="4" height="4"/><rect x="12" y="88" width="4" height="4"/><rect x="16" y="88" width="4" height="4"/><rect x="24" y="88" width="4" height="4"/><rect x="36" y="88" width="4" height="4"/><rect x="44" y="88" width="4" height="4"/><rect x="48" y="88" width="4" height="4"/><rect x="56" y="88" width="4" height="4"/><rect x="72" y="88" width="4" height="4"/><rect x="88" y="88" width="4" height="4"/><rect x="92" y="88" width="4" height="4"/><rect x="96" y="88" width="4" height="4"/><rect x="0" y="92" width="4" height="4"/><rect x="24" y="92" width="4" height="4"/><rect x="32" y="92" width="4" height="4"/><rect x="36" y="92" width="4" height="4"/><rect x="44" y="92" width="4" height="4"/><rect x="48" y="92" width="4" height="4"/><rect x="52" y="92" width="4" height="4"/><rect x="68" y="92" width="4" height="4"/><rect x="72" y="92" width="4" height="4"/><rect x="76" y="92" width="4" height="4"/><rect x="80" y="92" width="4" height="4"/><rect x="84" y="92" width="4" height="4"/><rect x="88" y="92" width="4" height="4"/><rect x="92" y="92" width="4" height="4"/><rect x="0" y="96" width="4" height="4"/><rect x="4" y="96" width="4" height="4"/><rect x="8" y="96" width="4" height="4"/><rect x="12" y="96" width="4" height="4"/><rect x="16" y="96" width="4" height="4"/><rect x="20" y="96" width="4" height="4"/><rect x="24" y="96" width="4" height="4"/><rect x="40" y="96" width="4" height="4"/><rect x="48" y="96" width="4" height="4"/><rect x="52" y="96" width="4" height="4"/><rect x="56" y="96" width="4" height="4"/><rect x="60" y="96" width="4" height="4"/><rect x="64" y="96" width="4" height="4"/><rect x="72" y="96" width="4" height="4"/><rect x="80" y="96" width="4" height="4"/><rect x="84" y="96" width="4" height="4"/><rect x="88" y="96" width="4" height="4"/><rect x="92" y="96" width="4" height="4"/><rect x="96" y="96" width="4" height="4"/></svg>
+        <div class="text-xs text-slate-700">Scan the code to watch how to build a three-program schedule.</div>
+      </div>
+      <div class="text-xs text-slate-500 mt-2">cypress-irrigation.example.com/cx8</div>
+    </div>
+    <div class="text-xs text-slate-700 border-t" style="padding-top:8px">
+      <div class="font-semibold mb-1">Cypress Irrigation Support</div>
+      <div>Provo, UT 84604</div>
+      <div>1-800-555-0187, weekdays 7 am to 6 pm Mountain</div>
+      <div class="mt-2">Service center: Mobile, AL 36602</div>
+    </div>
+  </aside>
+
+  <main class="flex-1">
+    <h1 class="text-2xl font-bold mb-3"><span class="n">4</span>Setting a schedule</h1>
+    <p class="mb-3">The CX-8 runs up to three independent programs, labeled A, B and C. Each program has its own start times, run times and watering days. Most lawns need one program; use a second for drip beds and a third for newly seeded areas.</p>
+
+    <section class="sec">
+      <h2><span class="n">4.1</span>Choose a program</h2>
+      <ul class="steps">
+        <li>Turn the dial to <kbd>SCHEDULE</kbd>. The display shows the active program letter.</li>
+        <li>Press <kbd>PROG</kbd> to move between A, B and C.
+          <ul>
+            <li>Program A is on at the factory; B and C are off until you give them a start time.</li>
+            <li>A program that is off keeps its settings but never runs.</li>
+          </ul>
+        </li>
+        <li>Press <kbd>DAYS</kbd> and select the days to water:
+          <ul>
+            <li>Specific weekdays, such as Tuesday and Saturday.</li>
+            <li>Odd or even calendar dates, for cities with date-based limits.</li>
+            <li>An interval of every 2 to 14 days.</li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+
+    <section class="sec">
+      <h2><span class="n">4.2</span>Set start times</h2>
+      <p>Each program accepts up to four start times a day. Every start time runs all the zones in that program, one after another, so one entry is usually enough.</p>
+      <ul class="steps">
+        <li>Press <kbd>START</kbd> and use the arrow keys to set the hour and minute.</li>
+        <li>Press <kbd>ADD</kbd> for a second start time, for example 5:30 am and again at 9:00 pm.</li>
+        <li>To remove one, set it to <kbd>OFF</kbd> by pressing both arrow keys together.</li>
+      </ul>
+    </section>
+
+    <div class="bg-amber-50 border-l-amber rounded p-3 mb-4 text-sm">
+      <div class="font-bold mb-1">Caution</div>
+      <div>Do not schedule start times between 10:00 am and 4:00 pm in summer. Water lost to evaporation can reach 30 percent, and wet leaves in full sun may scorch.</div>
+    </div>
+
+    <section class="sec">
+      <h2><span class="n">4.3</span>Set run times</h2>
+      <ul class="steps">
+        <li>Turn the dial to <kbd>RUN TIME</kbd> and press <kbd>ZONE</kbd> to select a zone from 1 to 8.</li>
+        <li>Enter minutes from 1 to 240. Typical settings are:
+          <ul>
+            <li>Lawn with spray heads: 12 to 15 minutes.</li>
+            <li>Lawn with rotors: 25 to 40 minutes.</li>
+            <li>Drip lines and shrub beds: 45 to 60 minutes.</li>
+          </ul>
+        </li>
+        <li>Repeat for every zone that the program should water. A zone left at 0 is skipped.</li>
+      </ul>
+    </section>
+
+    <section class="sec">
+      <h2><span class="n">4.4</span>Seasonal adjustment</h2>
+      <p>Press <kbd>%</kbd> to scale every run time at once, from 10 to 200 percent in steps of 10. Raise it in July and lower it in October instead of editing each zone.</p>
+    </section>
+
+    <div class="bg-green-50 border-l-4 rounded p-3 text-sm"><b>Tip.</b> Write your final settings on the label inside the cabinet door before you close it.</div>
+  </main>
+</div>
+
+<footer class="flex justify-between border-t text-xs text-slate-500 mt-2" style="padding-top:8px;margin-top:14px">
+  <span>Written by Kayla Brennan · Reviewed by Aaliyah Lindqvist · Approved by Nadia Adeyemi</span>
+  <span class="font-semibold text-slate-700">Page 24</span>
+</footer>
+</body>
+</html>

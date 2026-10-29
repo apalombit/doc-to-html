@@ -24,7 +24,14 @@ from doc_to_html.factory import cards, particulars  # noqa: E402
 
 CORPUS = REPO / "corpus"
 FIELDS = ("id", "family", "kind", "arrangement", "type", "features", "style",
-          "language", "locale", "width", "density")
+          "language", "locale", "width", "density", "scope")
+
+
+def _passed(card_id: str) -> bool:
+    """A card is written once its page has passed: a draft's failed record
+    leaves it open."""
+    record = CORPUS / "checks" / f"{card_id}.json"
+    return record.exists() and bool(json.loads(record.read_text(encoding="utf-8"))["passed"])
 
 
 def line(card: cards.Card) -> str:
@@ -44,7 +51,7 @@ def main() -> int:
     _, drawn = cards.load(CORPUS / "cards.json")
     open_: dict[str, list[cards.Card]] = defaultdict(list)
     for card in drawn:
-        if card.origin == "generated" and not (CORPUS / "checks" / f"{card.id}.json").exists():
+        if card.origin == "generated" and not _passed(card.id):
             open_[card.family].append(card)
     order: list[cards.Card] = []
     while any(open_.values()):

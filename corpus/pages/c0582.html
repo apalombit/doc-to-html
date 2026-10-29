@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Slide: Cobalt pilot, depot results</title>
+<style>
+  html { background: #0d1829; }
+  body { margin: 0; width: 800px; box-sizing: border-box; background: #0d1829; color: #e8eef8; font-family: "Avenir Next", "Helvetica Neue", sans-serif; padding: 0 0 18px; }
+  .top { display: flex; justify-content: space-between; align-items: center; background: #2a64d6; color: #fff; padding: 9px 32px; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+  .top span + span { font-weight: 400; letter-spacing: 0.06em; }
+  header { padding: 26px 32px 6px; }
+  h1 { margin: 0; font-size: 30px; line-height: 1.15; font-weight: 300; letter-spacing: -0.01em; }
+  h1 b { font-weight: 700; color: #7fa8f5; }
+  header p { margin: 8px 0 0; font-size: 14px; color: #a9b9d3; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; padding: 18px 32px 8px; }
+  .card { background: #15253d; border-left: 4px solid #2a64d6; padding: 11px 16px 12px; border-radius: 3px; display: grid; grid-template-columns: 1fr auto; align-items: end; column-gap: 12px; }
+  .card h3 { grid-column: 1 / 3; }
+  .card.hot { border-left-color: #f2b544; }
+  .card h3 { margin: 0 0 6px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; color: #9fb2d0; line-height: 1.3; }
+  .card .big { font-size: 32px; font-weight: 300; line-height: 1; color: #fff; }
+  .card .big small { font-size: 16px; color: #a9b9d3; margin-left: 2px; }
+  .card .delta { margin: 0 0 3px; font-size: 12px; color: #6fd6a0; }
+  .card.hot .delta { color: #f2b544; }
+  .strip { margin: 16px 0 0; background: #1b3050; padding: 8px 32px; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; color: #cfdcf2; }
+  .tablewrap { padding: 0 32px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 10px; }
+  th, td { padding: 8px 10px; text-align: right; border-bottom: 1px solid #28405f; }
+  th { font-weight: 600; font-size: 12px; color: #9fb2d0; }
+  th.grp { text-align: center; border-bottom: 1px solid #4a79c9; color: #cfe0ff; }
+  th.l, td.l { text-align: left; }
+  tr.net td { font-weight: 700; color: #fff; border-bottom: 0; background: #14233a; }
+  tr.net td:first-child { color: #7fa8f5; }
+  .src { padding: 10px 32px 0; font-size: 11px; color: #7f93b3; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+<div class="top"><span>Tern Freight</span><span>Network review · 13 February 2025</span></div>
+<header>
+  <h1>Cobalt routing pilot: <b>on time up 2.1 points</b></h1>
+  <p>Presented by Ewan Thornton, Head of Operations</p>
+</header>
+
+<section class="grid">
+  <article class="card">
+    <h3>Deliveries on time</h3>
+    <div class="big">96.4<small>%</small></div>
+    <p class="delta">▲ 2.1 pts on Q3</p>
+  </article>
+  <article class="card">
+    <h3>Cost per drop</h3>
+    <div class="big">£3.18</div>
+    <p class="delta">▼ £0.27 on Q3</p>
+  </article>
+  <article class="card">
+    <h3>Vehicles on Cobalt</h3>
+    <div class="big">38<small>of 52</small></div>
+    <p class="delta">▲ 14 since October</p>
+  </article>
+  <article class="card hot">
+    <h3>Open complaints</h3>
+    <div class="big">41</div>
+    <p class="delta">▼ 18 on Q3</p>
+  </article>
+</section>
+
+<div class="strip">Results by depot</div>
+<div class="tablewrap">
+<table>
+  <thead>
+    <tr>
+      <th class="l" rowspan="2">Depot</th>
+      <th class="grp" colspan="2">On time, %</th>
+      <th class="grp" colspan="2">Cost per drop</th>
+      <th class="l" rowspan="2">Depot lead</th>
+    </tr>
+    <tr><th>Q3</th><th>Q4</th><th>Q3</th><th>Q4</th></tr>
+  </thead>
+  <tbody>
+    <tr><td class="l">Kendal</td><td>93.8</td><td>96.1</td><td>£3.41</td><td>£3.12</td><td class="l">Isla Nwosu</td></tr>
+    <tr><td class="l">Truro</td><td>92.1</td><td>96.9</td><td>£3.52</td><td>£3.25</td><td class="l">Amelia Odell</td></tr>
+    <tr class="net"><td class="l">Network</td><td>94.3</td><td>96.4</td><td>£3.45</td><td>£3.18</td><td class="l">Ewan Thornton</td></tr>
+  </tbody>
+</table>
+</div>
+<div class="src"><span>Source: Tern Freight depot logs, October to December 2024</span><span>Network includes four further depots</span></div>
+</body>
+</html>

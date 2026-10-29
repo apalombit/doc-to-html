@@ -812,10 +812,11 @@
     "type.weights"
    ],
    "style": "minimal-swiss",
-   "width": 840,
+   "width": 740,
    "density": "dense",
    "locale": "fr-FR",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0041",
@@ -955,15 +956,14 @@
    "features": [
     "fig.code",
     "fig.icons",
-    "kv.inline",
-    "kv.two_per_line",
     "table.empty_cells"
    ],
    "style": "classic-print",
-   "width": 880,
+   "width": 780,
    "density": "dense",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0048",
@@ -979,10 +979,11 @@
     "type.display"
    ],
    "style": "corporate-modern",
-   "width": 860,
+   "width": 800,
    "density": "dense",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0049",
@@ -1010,21 +1011,19 @@
    "family": "forms",
    "language": "it",
    "kind": "application form",
-   "arrangement": "arr.three_columns",
+   "arrangement": "arr.one_column",
    "type": "type.serif",
    "features": [
-    "fig.code",
-    "fig.signature",
     "list.big_steps",
     "list.numbers",
-    "table.subrows",
     "table.totals"
    ],
    "style": "legacy-table",
-   "width": 1000,
+   "width": 620,
    "density": "medium",
    "locale": "it-IT",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0051",
@@ -1096,18 +1095,16 @@
    "arrangement": "arr.sidebar",
    "type": "type.sans",
    "features": [
-    "fig.signature",
-    "list.bullets",
     "look.buttons",
-    "table.section_rows",
     "table.totals",
     "type.small_caps"
    ],
    "style": "legacy-table",
-   "width": 820,
+   "width": 760,
    "density": "dense",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0055",
@@ -1139,17 +1136,15 @@
    "type": "type.sans",
    "features": [
     "fig.photo",
-    "fmt.dates",
-    "kv.boxed",
-    "list.nested",
     "look.accent",
     "table.spanning"
    ],
    "style": "utility-classes",
-   "width": 860,
+   "width": 640,
    "density": "dense",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0057",
@@ -1157,21 +1152,19 @@
    "family": "forms",
    "language": "fr",
    "kind": "questionnaire",
-   "arrangement": "arr.three_columns",
+   "arrangement": "arr.one_column",
    "type": "type.sans",
    "features": [
-    "fig.icons",
-    "list.numbers",
     "list.ticks",
-    "look.bands",
     "look.buttons",
     "table.section_rows"
    ],
    "style": "utility-classes",
-   "width": 980,
+   "width": 560,
    "density": "sparse",
    "locale": "fr-FR",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0058",
@@ -1268,14 +1261,14 @@
    "features": [
     "fig.signature",
     "list.bullets",
-    "look.bands",
-    "table.spanning"
+    "look.bands"
    ],
    "style": "classic-print",
-   "width": 760,
+   "width": 600,
    "density": "dense",
    "locale": "it-IT",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0063",
@@ -1313,10 +1306,11 @@
     "table.ruled"
    ],
    "style": "government-form",
-   "width": 780,
+   "width": 540,
    "density": "medium",
    "locale": "pt-BR",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0065",
@@ -1414,10 +1408,11 @@
     "table.spanning"
    ],
    "style": "legacy-table",
-   "width": 960,
+   "width": 800,
    "density": "dense",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0070",
@@ -1557,18 +1552,23 @@
   },
   {
    "id": "c0077",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "checklist",
+   "arrangement": "arr.two_columns",
+   "type": "type.sans",
+   "features": [
+    "fig.signature",
+    "kv.leaders",
+    "list.ticks"
+   ],
+   "style": "government-form",
+   "width": 700,
+   "density": "dense",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0078",
@@ -1590,62 +1590,82 @@
   },
   {
    "id": "c0079",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "it",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "checklist",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "fig.code",
+    "list.clauses",
+    "table.totals"
+   ],
+   "style": "government-form",
+   "width": 580,
+   "density": "dense",
+   "locale": "it-IT",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0080",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "application form",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fig.code",
+    "kv.leaders",
+    "list.clauses"
+   ],
+   "style": "government-form",
+   "width": 780,
+   "density": "sparse",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0081",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "it",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "questionnaire",
+   "arrangement": "arr.sidebar",
+   "type": "type.sans",
+   "features": [
+    "list.big_steps",
+    "list.ticks",
+    "type.script"
+   ],
+   "style": "legacy-table",
+   "width": 720,
+   "density": "dense",
+   "locale": "it-IT",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0082",
    "origin": "pdf",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "application form",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.boxed",
+    "kv.over",
+    "look.accent",
+    "look.bands"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "sparse",
+   "locale": "en-GB",
    "pilot": false
   },
   {
@@ -1672,258 +1692,341 @@
   },
   {
    "id": "c0084",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "consent form",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.over",
+    "table.ruled",
+    "text.justified"
+   ],
+   "style": "corporate-modern",
+   "width": 740,
+   "density": "medium",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0085",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "registration form",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fmt.dates",
+    "look.rules",
+    "table.zebra"
+   ],
+   "style": "corporate-modern",
+   "width": 640,
+   "density": "dense",
+   "locale": "en-GB",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0086",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "checklist",
+   "arrangement": "arr.one_column",
+   "type": "type.mono",
+   "features": [
+    "fig.logo",
+    "look.accent",
+    "table.ruled",
+    "text.justified"
+   ],
+   "style": "utility-classes",
+   "width": 800,
+   "density": "dense",
+   "locale": "en-US",
    "pilot": false
   },
   {
    "id": "c0087",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "it",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "patient intake form",
+   "arrangement": "arr.panels_side_by_side",
+   "type": "type.serif",
+   "features": [
+    "look.bands",
+    "look.rules",
+    "table.subrows"
+   ],
+   "style": "clinical-plain",
+   "width": 780,
+   "density": "dense",
+   "locale": "it-IT",
    "pilot": false
   },
   {
    "id": "c0088",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "exam sheet",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fig.logo",
+    "list.ticks",
+    "type.display"
+   ],
+   "style": "government-form",
+   "width": 660,
+   "density": "medium",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0089",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "questionnaire",
+   "arrangement": "arr.one_column",
+   "type": "type.mono",
+   "features": [
+    "fmt.dates",
+    "table.empty_cells",
+    "type.small_caps"
+   ],
+   "style": "government-form",
+   "width": 780,
+   "density": "medium",
+   "locale": "en-US",
    "pilot": false
   },
   {
    "id": "c0090",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "application form",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fig.signature",
+    "kv.boxed",
+    "kv.two_per_line"
+   ],
+   "style": "utility-classes",
+   "width": 800,
+   "density": "dense",
+   "locale": "en-GB",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0091",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "questionnaire",
+   "arrangement": "arr.sidebar",
+   "type": "type.sans",
+   "features": [
+    "fig.logo",
+    "kv.two_per_line",
+    "text.justified"
+   ],
+   "style": "government-form",
+   "width": 760,
+   "density": "medium",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0092",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "registration form",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fig.icons",
+    "kv.inline",
+    "type.weights"
+   ],
+   "style": "corporate-modern",
+   "width": 580,
+   "density": "medium",
+   "locale": "en-GB",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0093",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "numbered-box tax form",
+   "arrangement": "arr.two_columns",
+   "type": "type.serif",
+   "features": [
+    "kv.over",
+    "list.ticks",
+    "look.rules",
+    "type.small_caps"
+   ],
+   "style": "government-form",
+   "width": 780,
+   "density": "dense",
+   "locale": "en-US",
    "pilot": false
   },
   {
    "id": "c0094",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "patient intake form",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.two_per_line",
+    "list.nested",
+    "table.zebra",
+    "type.display"
+   ],
+   "style": "clinical-plain",
+   "width": 820,
+   "density": "dense",
+   "locale": "en-US",
    "pilot": false
   },
   {
    "id": "c0095",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "application form",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "fig.logo",
+    "kv.over",
+    "kv.two_per_line"
+   ],
+   "style": "print-export",
+   "width": 740,
+   "density": "dense",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0096",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "checklist",
+   "arrangement": "arr.panels_side_by_side",
+   "type": "type.sans",
+   "features": [
+    "kv.two_per_line",
+    "list.ticks",
+    "look.accent"
+   ],
+   "style": "utility-classes",
+   "width": 760,
+   "density": "dense",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0097",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "exam sheet",
+   "arrangement": "arr.sidebar",
+   "type": "type.mono",
+   "features": [
+    "list.big_steps",
+    "list.clauses",
+    "table.subrows"
+   ],
+   "style": "government-form",
+   "width": 720,
+   "density": "medium",
+   "locale": "en-GB",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0098",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "es",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "consent form",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.boxed",
+    "list.clauses",
+    "table.ruled"
+   ],
+   "style": "legacy-table",
+   "width": 500,
+   "density": "sparse",
+   "locale": "es-ES",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0099",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "exam sheet",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "look.bands",
+    "table.empty_cells",
+    "type.small_caps"
+   ],
+   "style": "print-export",
+   "width": 800,
+   "density": "dense",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0100",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "forms",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "consent form",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fig.signature",
+    "list.numbers",
+    "look.rules"
+   ],
+   "style": "government-form",
+   "width": 520,
+   "density": "sparse",
+   "locale": "en-GB",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0101",
@@ -2853,10 +2956,7 @@
    "arrangement": "arr.panels_side_by_side",
    "type": "type.serif",
    "features": [
-    "fig.chart",
     "list.clauses",
-    "look.accent",
-    "look.bands",
     "table.empty_cells",
     "text.supsub"
    ],
@@ -2864,7 +2964,8 @@
    "width": 760,
    "density": "medium",
    "locale": "it-IT",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0147",
@@ -2936,18 +3037,16 @@
    "arrangement": "arr.one_column",
    "type": "type.sans",
    "features": [
-    "fig.code",
     "fig.signature",
     "kv.two_per_line",
-    "list.ticks",
-    "table.totals",
     "type.weights"
    ],
    "style": "government-form",
-   "width": 960,
+   "width": 640,
    "density": "medium",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0151",
@@ -2979,14 +3078,14 @@
    "features": [
     "fig.code",
     "kv.two_per_line",
-    "look.rules",
     "table.empty_cells"
    ],
    "style": "utility-classes",
-   "width": 920,
+   "width": 780,
    "density": "medium",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0153",
@@ -3162,16 +3261,16 @@
    "arrangement": "arr.two_columns",
    "type": "type.serif",
    "features": [
-    "fig.code",
     "fmt.dates",
     "kv.inline",
     "look.bands"
    ],
    "style": "print-export",
-   "width": 880,
+   "width": 760,
    "density": "medium",
    "locale": "fr-FR",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0162",
@@ -3306,17 +3405,15 @@
    "type": "type.sans",
    "features": [
     "fig.code",
-    "list.bullets",
     "list.numbers",
-    "list.ticks",
-    "text.supsub",
-    "type.small_caps"
+    "text.supsub"
    ],
    "style": "minimal-swiss",
-   "width": 860,
+   "width": 780,
    "density": "dense",
    "locale": "es-ES",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0169",
@@ -3407,15 +3504,15 @@
    "type": "type.sans",
    "features": [
     "fig.code",
-    "fig.icons",
     "fmt.currency",
     "table.ruled"
    ],
    "style": "corporate-modern",
-   "width": 880,
+   "width": 780,
    "density": "dense",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0174",
@@ -3467,18 +3564,16 @@
    "arrangement": "arr.one_column",
    "type": "type.sans",
    "features": [
-    "kv.inline",
     "kv.two_per_line",
     "look.rules",
-    "table.ruled",
-    "table.spanning",
-    "text.supsub"
+    "table.spanning"
    ],
    "style": "legacy-table",
-   "width": 940,
+   "width": 600,
    "density": "medium",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0177",
@@ -3548,16 +3643,16 @@
    "arrangement": "arr.sidebar",
    "type": "type.mono",
    "features": [
-    "fmt.currency",
     "kv.over",
     "table.empty_cells",
     "table.zebra"
    ],
    "style": "minimal-swiss",
-   "width": 940,
+   "width": 780,
    "density": "medium",
    "locale": "it-IT",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0181",
@@ -3732,16 +3827,16 @@
    "arrangement": "arr.sidebar",
    "type": "type.serif",
    "features": [
-    "kv.over",
     "list.numbers",
     "look.rules",
     "table.ruled"
    ],
    "style": "classic-print",
-   "width": 860,
+   "width": 800,
    "density": "medium",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0190",
@@ -3792,16 +3887,16 @@
    "arrangement": "arr.one_column",
    "type": "type.sans",
    "features": [
-    "fmt.currency",
     "list.bullets",
     "text.footnotes",
     "type.display"
    ],
    "style": "utility-classes",
-   "width": 980,
+   "width": 500,
    "density": "medium",
    "locale": "pt-PT",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0193",
@@ -3814,14 +3909,14 @@
    "features": [
     "fig.code",
     "fig.signature",
-    "kv.inline",
-    "table.empty_cells"
+    "kv.inline"
    ],
    "style": "classic-print",
-   "width": 880,
+   "width": 740,
    "density": "dense",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0194",
@@ -3868,14 +3963,19 @@
    "origin": "pdf",
    "family": "transactional",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "invoice",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.boxed",
+    "list.numbers",
+    "look.rules",
+    "table.empty_cells"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "medium",
+   "locale": "en-US",
    "pilot": false
   },
   {
@@ -3883,60 +3983,81 @@
    "origin": "pdf",
    "family": "transactional",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "purchase order",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.boxed",
+    "list.ticks",
+    "look.rules",
+    "table.empty_cells"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "medium",
+   "locale": "en-US",
    "pilot": false
   },
   {
    "id": "c0198",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "transactional",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "packing slip",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "list.ticks",
+    "table.ruled",
+    "text.footnotes"
+   ],
+   "style": "classic-print",
+   "width": 500,
+   "density": "dense",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0199",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "transactional",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "purchase order",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fig.chart",
+    "list.clauses",
+    "list.ticks",
+    "table.empty_cells",
+    "table.totals"
+   ],
+   "style": "legacy-table",
+   "width": 760,
+   "density": "sparse",
+   "locale": "en-US",
    "pilot": false
   },
   {
    "id": "c0200",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "transactional",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "bank statement",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fmt.dates",
+    "kv.boxed",
+    "list.bullets"
+   ],
+   "style": "minimal-swiss",
+   "width": 680,
+   "density": "medium",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0201",
@@ -4885,10 +5006,11 @@
     "look.rules"
    ],
    "style": "clinical-plain",
-   "width": 780,
+   "width": 720,
    "density": "medium",
    "locale": "it-IT",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0247",
@@ -4924,10 +5046,11 @@
     "table.section_rows"
    ],
    "style": "legacy-table",
-   "width": 840,
+   "width": 780,
    "density": "dense",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0249",
@@ -5066,14 +5189,14 @@
    "features": [
     "fig.signature",
     "kv.inline",
-    "table.totals",
     "type.weights"
    ],
    "style": "legacy-table",
-   "width": 880,
+   "width": 500,
    "density": "dense",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0256",
@@ -5085,17 +5208,15 @@
    "type": "type.serif",
    "features": [
     "fmt.eu_numbers",
-    "kv.inline",
     "kv.over",
-    "table.section_rows",
-    "table.totals",
     "type.weights"
    ],
    "style": "print-export",
-   "width": 820,
+   "width": 760,
    "density": "medium",
    "locale": "pt-PT",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0257",
@@ -5103,19 +5224,19 @@
    "family": "reports",
    "language": "en",
    "kind": "inspection report",
-   "arrangement": "arr.three_columns",
+   "arrangement": "arr.one_column",
    "type": "type.serif",
    "features": [
     "fig.chart",
     "look.accent",
-    "table.ruled",
     "text.footnotes"
    ],
    "style": "bold-marketing",
-   "width": 980,
+   "width": 600,
    "density": "dense",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0258",
@@ -5143,20 +5264,19 @@
    "family": "reports",
    "language": "en",
    "kind": "discharge summary",
-   "arrangement": "arr.three_columns",
+   "arrangement": "arr.one_column",
    "type": "type.sans",
    "features": [
     "fmt.dates",
-    "kv.inline",
     "look.bands",
-    "text.footnotes",
     "text.supsub"
    ],
    "style": "clinical-plain",
-   "width": 940,
+   "width": 500,
    "density": "medium",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0260",
@@ -5168,15 +5288,15 @@
    "type": "type.serif",
    "features": [
     "fig.chart",
-    "look.bands",
     "table.spanning",
     "type.small_caps"
    ],
    "style": "print-export",
-   "width": 880,
+   "width": 780,
    "density": "sparse",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0261",
@@ -5192,10 +5312,11 @@
     "table.ruled"
    ],
    "style": "corporate-modern",
-   "width": 620,
+   "width": 500,
    "density": "sparse",
    "locale": "pt-PT",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0262",
@@ -5211,10 +5332,11 @@
     "text.footnotes"
    ],
    "style": "utility-classes",
-   "width": 840,
+   "width": 520,
    "density": "medium",
    "locale": "it-IT",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0263",
@@ -5245,15 +5367,15 @@
    "type": "type.sans",
    "features": [
     "fig.code",
-    "list.numbers",
     "table.section_rows",
     "text.justified"
    ],
    "style": "utility-classes",
-   "width": 820,
+   "width": 720,
    "density": "medium",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0265",
@@ -5289,10 +5411,11 @@
     "list.ticks"
    ],
    "style": "print-export",
-   "width": 800,
+   "width": 740,
    "density": "sparse",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0267",
@@ -5323,18 +5446,16 @@
    "arrangement": "arr.sidebar",
    "type": "type.sans",
    "features": [
-    "fig.icons",
     "kv.over",
-    "list.bullets",
     "list.clauses",
-    "look.chips",
     "table.subrows"
    ],
    "style": "clinical-plain",
-   "width": 800,
+   "width": 720,
    "density": "sparse",
    "locale": "fr-FR",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0269",
@@ -5368,31 +5489,35 @@
    "type": "type.serif",
    "features": [
     "kv.boxed",
-    "list.nested",
     "look.accent",
-    "table.ruled",
-    "text.supsub"
+    "table.ruled"
    ],
    "style": "print-export",
-   "width": 780,
+   "width": 700,
    "density": "medium",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0271",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "corporate report page",
+   "arrangement": "arr.two_columns",
+   "type": "type.sans",
+   "features": [
+    "fig.code",
+    "kv.inline",
+    "look.rules"
+   ],
+   "style": "classic-print",
+   "width": 800,
+   "density": "dense",
+   "locale": "en-GB",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0272",
@@ -5456,108 +5581,144 @@
   },
   {
    "id": "c0275",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "minutes",
+   "arrangement": "arr.two_columns",
+   "type": "type.sans",
+   "features": [
+    "kv.boxed",
+    "kv.inline",
+    "kv.two_per_line"
+   ],
+   "style": "utility-classes",
+   "width": 780,
+   "density": "dense",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0276",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "lab report",
+   "arrangement": "arr.two_columns",
+   "type": "type.serif",
+   "features": [
+    "fig.signature",
+    "list.bullets",
+    "text.supsub"
+   ],
+   "style": "utility-classes",
+   "width": 800,
+   "density": "medium",
+   "locale": "en-GB",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0277",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "corporate report page",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "fig.logo",
+    "kv.inline",
+    "text.supsub"
+   ],
+   "style": "print-export",
+   "width": 600,
+   "density": "dense",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0278",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "minutes",
+   "arrangement": "arr.panels_side_by_side",
+   "type": "type.serif",
+   "features": [
+    "fig.logo",
+    "list.nested",
+    "table.subrows"
+   ],
+   "style": "print-export",
+   "width": 800,
+   "density": "dense",
+   "locale": "en-GB",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0279",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "corporate report page",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fmt.dates",
+    "list.clauses",
+    "table.spanning"
+   ],
+   "style": "corporate-modern",
+   "width": 780,
+   "density": "medium",
+   "locale": "en-GB",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0280",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "status report",
+   "arrangement": "arr.panels_side_by_side",
+   "type": "type.sans",
+   "features": [
+    "fig.code",
+    "fmt.dates",
+    "look.bands",
+    "look.chips",
+    "text.supsub"
+   ],
+   "style": "government-form",
+   "width": 840,
+   "density": "medium",
+   "locale": "en-US",
    "pilot": false
   },
   {
    "id": "c0281",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "inspection report",
+   "arrangement": "arr.two_columns",
+   "type": "type.serif",
+   "features": [
+    "list.numbers",
+    "text.footnotes",
+    "type.display"
+   ],
+   "style": "print-export",
+   "width": 780,
+   "density": "medium",
+   "locale": "en-GB",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0282",
@@ -5582,63 +5743,83 @@
   },
   {
    "id": "c0283",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "lab report",
+   "arrangement": "arr.panels_side_by_side",
+   "type": "type.sans",
+   "features": [
+    "kv.over",
+    "kv.two_per_line",
+    "list.ticks",
+    "table.totals"
+   ],
+   "style": "utility-classes",
+   "width": 840,
+   "density": "medium",
+   "locale": "en-GB",
    "pilot": false
   },
   {
    "id": "c0284",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "pt",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "minutes",
+   "arrangement": "arr.cards_grid",
+   "type": "type.sans",
+   "features": [
+    "fig.logo",
+    "kv.boxed",
+    "table.subrows"
+   ],
+   "style": "legacy-table",
+   "width": 780,
+   "density": "medium",
+   "locale": "pt-PT",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0285",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "corporate report page",
+   "arrangement": "arr.cards_grid",
+   "type": "type.sans",
+   "features": [
+    "table.empty_cells",
+    "text.justified",
+    "type.display"
+   ],
+   "style": "corporate-modern",
+   "width": 800,
+   "density": "sparse",
+   "locale": "en-GB",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0286",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "status report",
+   "arrangement": "arr.two_columns",
+   "type": "type.mono",
+   "features": [
+    "fmt.dates",
+    "table.spanning",
+    "text.supsub"
+   ],
+   "style": "utility-classes",
+   "width": 760,
+   "density": "medium",
+   "locale": "en-GB",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0287",
@@ -5663,183 +5844,244 @@
   },
   {
    "id": "c0288",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "fr",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "lab report",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "table.spanning",
+    "table.subrows",
+    "text.supsub"
+   ],
+   "style": "clinical-plain",
+   "width": 640,
+   "density": "dense",
+   "locale": "fr-FR",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0289",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "es",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "inspection report",
+   "arrangement": "arr.two_columns",
+   "type": "type.serif",
+   "features": [
+    "kv.boxed",
+    "list.ticks",
+    "table.ruled"
+   ],
+   "style": "classic-print",
+   "width": 780,
+   "density": "sparse",
+   "locale": "es-ES",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0290",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "minutes",
+   "arrangement": "arr.two_columns",
+   "type": "type.serif",
+   "features": [
+    "list.bullets",
+    "list.numbers",
+    "text.quote"
+   ],
+   "style": "corporate-modern",
+   "width": 780,
+   "density": "medium",
+   "locale": "en-GB",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0291",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "status report",
+   "arrangement": "arr.cards_grid",
+   "type": "type.sans",
+   "features": [
+    "list.nested",
+    "list.ticks",
+    "look.accent"
+   ],
+   "style": "government-form",
+   "width": 800,
+   "density": "medium",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0292",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "inspection report",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fig.signature",
+    "look.bands",
+    "table.ruled"
+   ],
+   "style": "legacy-table",
+   "width": 880,
+   "density": "sparse",
+   "locale": "en-GB",
    "pilot": false
   },
   {
    "id": "c0293",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "lab report",
+   "arrangement": "arr.sidebar",
+   "type": "type.serif",
+   "features": [
+    "fig.chart",
+    "table.zebra",
+    "text.supsub"
+   ],
+   "style": "utility-classes",
+   "width": 800,
+   "density": "medium",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0294",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "corporate report page",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.boxed",
+    "kv.inline",
+    "list.bullets",
+    "look.accent",
+    "text.justified",
+    "text.supsub"
+   ],
+   "style": "utility-classes",
+   "width": 860,
+   "density": "dense",
+   "locale": "en-US",
    "pilot": false
   },
   {
    "id": "c0295",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "status report",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "list.bullets",
+    "look.accent",
+    "type.weights"
+   ],
+   "style": "utility-classes",
+   "width": 640,
+   "density": "medium",
+   "locale": "en-GB",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0296",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "lab report",
+   "arrangement": "arr.panels_side_by_side",
+   "type": "type.sans",
+   "features": [
+    "fig.code",
+    "fig.logo",
+    "list.ticks"
+   ],
+   "style": "clinical-plain",
+   "width": 800,
+   "density": "medium",
+   "locale": "en-GB",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0297",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "corporate report page",
+   "arrangement": "arr.cards_grid",
+   "type": "type.sans",
+   "features": [
+    "look.chips",
+    "table.empty_cells",
+    "type.weights"
+   ],
+   "style": "corporate-modern",
+   "width": 760,
+   "density": "dense",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0298",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "minutes",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "table.zebra",
+    "text.formula",
+    "text.justified"
+   ],
+   "style": "classic-print",
+   "width": 660,
+   "density": "medium",
+   "locale": "en-GB",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0299",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reports",
    "language": "es",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "inspection report",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.over",
+    "list.bullets",
+    "list.ticks"
+   ],
+   "style": "government-form",
+   "width": 580,
+   "density": "sparse",
+   "locale": "es-ES",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0300",
@@ -6594,14 +6836,14 @@
    "features": [
     "fig.signature",
     "list.nested",
-    "list.numbers",
-    "text.justified"
+    "list.numbers"
    ],
    "style": "classic-print",
-   "width": 800,
+   "width": 580,
    "density": "sparse",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0337",
@@ -6612,16 +6854,16 @@
    "arrangement": "arr.one_column",
    "type": "type.sans",
    "features": [
-    "kv.inline",
     "list.bullets",
     "text.footnotes",
     "text.justified"
    ],
    "style": "minimal-swiss",
-   "width": 860,
+   "width": 720,
    "density": "sparse",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0338",
@@ -6674,15 +6916,15 @@
    "type": "type.serif",
    "features": [
     "fig.logo",
-    "kv.inline",
     "kv.over",
     "list.clauses"
    ],
    "style": "print-export",
-   "width": 780,
+   "width": 680,
    "density": "medium",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0341",
@@ -6841,14 +7083,14 @@
    "features": [
     "fig.logo",
     "fig.signature",
-    "kv.boxed",
     "look.rules"
    ],
    "style": "print-export",
    "width": 780,
    "density": "medium",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0349",
@@ -6881,148 +7123,195 @@
    "features": [
     "fig.logo",
     "kv.boxed",
-    "text.justified",
     "type.weights"
    ],
    "style": "minimal-swiss",
-   "width": 800,
+   "width": 500,
    "density": "medium",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0351",
    "origin": "pdf",
    "family": "correspondence and legal",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "letter",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fmt.currency",
+    "fmt.dates",
+    "list.bullets"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "medium",
+   "locale": "en-GB",
    "pilot": false
   },
   {
    "id": "c0352",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "correspondence and legal",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "contract",
+   "arrangement": "arr.two_columns",
+   "type": "type.mono",
+   "features": [
+    "fig.signature",
+    "list.bullets",
+    "list.clauses"
+   ],
+   "style": "minimal-swiss",
+   "width": 740,
+   "density": "dense",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0353",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "correspondence and legal",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "letter",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "fig.logo",
+    "fig.signature",
+    "fmt.dates",
+    "type.small_caps",
+    "type.weights"
+   ],
+   "style": "government-form",
+   "width": 760,
+   "density": "medium",
+   "locale": "en-US",
    "pilot": false
   },
   {
    "id": "c0354",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "correspondence and legal",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "email printout",
+   "arrangement": "arr.two_columns",
+   "type": "type.sans",
+   "features": [
+    "fmt.currency",
+    "list.bullets",
+    "list.clauses"
+   ],
+   "style": "print-export",
+   "width": 760,
+   "density": "medium",
+   "locale": "en-GB",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0355",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "correspondence and legal",
    "language": "pt",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "email printout",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "look.accent",
+    "text.justified",
+    "type.script"
+   ],
+   "style": "utility-classes",
+   "width": 720,
+   "density": "dense",
+   "locale": "pt-PT",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0356",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "correspondence and legal",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "letter",
+   "arrangement": "arr.two_columns",
+   "type": "type.sans",
+   "features": [
+    "kv.two_per_line",
+    "list.bullets",
+    "type.small_caps"
+   ],
+   "style": "minimal-swiss",
+   "width": 740,
+   "density": "medium",
+   "locale": "en-GB",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0357",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "correspondence and legal",
    "language": "it",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "contract",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "fmt.dates",
+    "text.footnotes",
+    "type.small_caps"
+   ],
+   "style": "print-export",
+   "width": 720,
+   "density": "dense",
+   "locale": "it-IT",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0358",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "correspondence and legal",
    "language": "it",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "letter",
+   "arrangement": "arr.sidebar",
+   "type": "type.sans",
+   "features": [
+    "fig.signature",
+    "fmt.dates",
+    "text.justified"
+   ],
+   "style": "utility-classes",
+   "width": 800,
+   "density": "dense",
+   "locale": "it-IT",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0359",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "correspondence and legal",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "contract",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "fig.logo",
+    "list.bullets",
+    "list.clauses",
+    "list.numbers",
+    "text.justified",
+    "type.small_caps"
+   ],
+   "style": "corporate-modern",
+   "width": 820,
+   "density": "medium",
+   "locale": "en-US",
    "pilot": false
   },
   {
@@ -7788,14 +8077,14 @@
    "features": [
     "look.bands",
     "text.formula",
-    "text.justified",
     "text.supsub"
    ],
    "style": "academic",
-   "width": 900,
+   "width": 700,
    "density": "dense",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0398",
@@ -7825,17 +8114,16 @@
    "arrangement": "arr.one_column",
    "type": "type.serif",
    "features": [
-    "fig.icons",
-    "look.bands",
     "table.totals",
     "text.drop_cap",
     "type.weights"
    ],
    "style": "editorial",
-   "width": 800,
+   "width": 500,
    "density": "medium",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0400",
@@ -7851,10 +8139,11 @@
     "table.ruled"
    ],
    "style": "academic",
-   "width": 960,
+   "width": 580,
    "density": "medium",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0401",
@@ -7870,10 +8159,11 @@
     "table.subrows"
    ],
    "style": "utility-classes",
-   "width": 1020,
+   "width": 800,
    "density": "medium",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0402",
@@ -7905,16 +8195,16 @@
    "arrangement": "arr.cards_grid",
    "type": "type.serif",
    "features": [
-    "fig.chart",
     "fmt.dates",
     "list.numbers",
     "table.subrows"
    ],
    "style": "classic-print",
-   "width": 820,
+   "width": 760,
    "density": "sparse",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0404",
@@ -7942,7 +8232,7 @@
    "family": "publishing",
    "language": "en",
    "kind": "recipe",
-   "arrangement": "arr.three_columns",
+   "arrangement": "arr.one_column",
    "type": "type.sans",
    "features": [
     "kv.over",
@@ -7950,10 +8240,11 @@
     "text.supsub"
    ],
    "style": "corporate-modern",
-   "width": 1100,
+   "width": 620,
    "density": "sparse",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0406",
@@ -7976,33 +8267,43 @@
   },
   {
    "id": "c0407",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "publishing",
    "language": "pt",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "magazine page",
+   "arrangement": "arr.two_columns",
+   "type": "type.serif",
+   "features": [
+    "fig.chart",
+    "look.chips",
+    "text.drop_cap"
+   ],
+   "style": "bold-marketing",
+   "width": 780,
+   "density": "medium",
+   "locale": "pt-PT",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0408",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "publishing",
    "language": "pt",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "paper page",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "list.ticks",
+    "look.rules",
+    "text.quote"
+   ],
+   "style": "academic",
+   "width": 780,
+   "density": "medium",
+   "locale": "pt-PT",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0409",
@@ -8024,32 +8325,44 @@
   },
   {
    "id": "c0410",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "publishing",
    "language": "es",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "FAQ",
+   "arrangement": "arr.cards_grid",
+   "type": "type.serif",
+   "features": [
+    "fig.photo",
+    "fmt.dates",
+    "text.quote"
+   ],
+   "style": "classic-print",
+   "width": 760,
+   "density": "dense",
+   "locale": "es-ES",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0411",
    "origin": "pdf",
    "family": "publishing",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "paper page",
+   "arrangement": "arr.two_columns",
+   "type": "type.serif",
+   "features": [
+    "table.ruled",
+    "table.section_rows",
+    "table.spanning",
+    "text.footnotes",
+    "text.justified",
+    "text.supsub"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "dense",
+   "locale": "en-US",
    "pilot": false
   },
   {
@@ -8057,14 +8370,19 @@
    "origin": "pdf",
    "family": "publishing",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "paper page",
+   "arrangement": "arr.two_columns",
+   "type": "type.serif",
+   "features": [
+    "table.ruled",
+    "text.formula",
+    "text.justified",
+    "text.supsub"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "dense",
+   "locale": "en-US",
    "pilot": false
   },
   {
@@ -8088,108 +8406,143 @@
   },
   {
    "id": "c0414",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "publishing",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "magazine page",
+   "arrangement": "arr.sidebar",
+   "type": "type.sans",
+   "features": [
+    "table.ruled",
+    "text.drop_cap",
+    "text.justified"
+   ],
+   "style": "classic-print",
+   "width": 720,
+   "density": "medium",
+   "locale": "en-GB",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0415",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "publishing",
    "language": "fr",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "manual page",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fig.icons",
+    "fig.logo",
+    "type.display"
+   ],
+   "style": "minimal-swiss",
+   "width": 760,
+   "density": "medium",
+   "locale": "fr-FR",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0416",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "publishing",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "recipe",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "fig.icons",
+    "type.small_caps",
+    "type.weights"
+   ],
+   "style": "academic",
+   "width": 580,
+   "density": "dense",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0417",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "publishing",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "textbook page",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "list.nested",
+    "list.numbers",
+    "look.bands"
+   ],
+   "style": "academic",
+   "width": 560,
+   "density": "medium",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0418",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "publishing",
    "language": "it",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "paper page",
+   "arrangement": "arr.sidebar",
+   "type": "type.sans",
+   "features": [
+    "fig.code",
+    "fig.logo",
+    "table.zebra"
+   ],
+   "style": "print-export",
+   "width": 700,
+   "density": "medium",
+   "locale": "it-IT",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0419",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "publishing",
    "language": "fr",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "newsletter",
+   "arrangement": "arr.sidebar",
+   "type": "type.sans",
+   "features": [
+    "fmt.dates",
+    "list.big_steps",
+    "text.quote"
+   ],
+   "style": "bold-marketing",
+   "width": 800,
+   "density": "dense",
+   "locale": "fr-FR",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0420",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "publishing",
    "language": "it",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "FAQ",
+   "arrangement": "arr.two_columns",
+   "type": "type.sans",
+   "features": [
+    "table.zebra",
+    "text.quote",
+    "type.weights"
+   ],
+   "style": "bold-marketing",
+   "width": 720,
+   "density": "medium",
+   "locale": "it-IT",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0421",
@@ -9019,10 +9372,11 @@
     "table.long"
    ],
    "style": "print-export",
-   "width": 880,
+   "width": 520,
    "density": "medium",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0462",
@@ -9054,17 +9408,16 @@
    "arrangement": "arr.one_column",
    "type": "type.serif",
    "features": [
-    "kv.over",
     "list.ticks",
-    "table.empty_cells",
     "type.small_caps",
     "type.weights"
    ],
    "style": "corporate-modern",
-   "width": 1000,
+   "width": 520,
    "density": "dense",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0464",
@@ -9094,18 +9447,16 @@
    "arrangement": "arr.two_columns",
    "type": "type.serif",
    "features": [
-    "kv.leaders",
-    "look.rules",
     "table.empty_cells",
     "table.zebra",
-    "text.footnotes",
     "type.weights"
    ],
    "style": "legacy-table",
-   "width": 860,
+   "width": 760,
    "density": "medium",
    "locale": "pt-PT",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0466",
@@ -9166,7 +9517,8 @@
    "width": 800,
    "density": "dense",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0469",
@@ -9199,18 +9551,16 @@
    "arrangement": "arr.one_column",
    "type": "type.sans",
    "features": [
-    "list.numbers",
     "look.bands",
     "table.section_rows",
-    "text.footnotes",
-    "text.supsub",
-    "type.display"
+    "text.footnotes"
    ],
    "style": "legacy-table",
-   "width": 940,
+   "width": 680,
    "density": "dense",
    "locale": "es-ES",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0471",
@@ -9237,135 +9587,182 @@
    "origin": "pdf",
    "family": "reference",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "timetable",
+   "arrangement": "arr.two_columns",
+   "type": "type.sans",
+   "features": [
+    "fmt.dates",
+    "look.bands",
+    "table.ruled",
+    "type.weights"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "dense",
+   "locale": "en-US",
    "pilot": false
   },
   {
    "id": "c0473",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reference",
    "language": "pt",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "calendar",
+   "arrangement": "arr.cards_grid",
+   "type": "type.sans",
+   "features": [
+    "look.rules",
+    "table.section_rows",
+    "type.display"
+   ],
+   "style": "minimal-swiss",
+   "width": 760,
+   "density": "medium",
+   "locale": "pt-BR",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0474",
    "origin": "pdf",
    "family": "reference",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "price list",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "look.rules",
+    "table.ruled",
+    "text.supsub"
+   ],
+   "style": "real-pdf",
+   "width": 1000,
+   "density": "medium",
+   "locale": "en-US",
    "pilot": false
   },
   {
    "id": "c0475",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reference",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "catalogue",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fmt.dates",
+    "table.ruled",
+    "type.display"
+   ],
+   "style": "print-export",
+   "width": 500,
+   "density": "medium",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0476",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reference",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "menu",
+   "arrangement": "arr.cards_grid",
+   "type": "type.sans",
+   "features": [
+    "kv.two_per_line",
+    "look.accent",
+    "look.chips"
+   ],
+   "style": "minimal-swiss",
+   "width": 780,
+   "density": "medium",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0477",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reference",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "nutrition label",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.leaders",
+    "kv.over",
+    "look.chips",
+    "table.subrows",
+    "table.totals",
+    "text.supsub"
+   ],
+   "style": "utility-classes",
+   "width": 600,
+   "density": "dense",
+   "locale": "en-US",
    "pilot": false
   },
   {
    "id": "c0478",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reference",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "catalogue",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "kv.over",
+    "look.bands",
+    "table.empty_cells"
+   ],
+   "style": "legacy-table",
+   "width": 740,
+   "density": "medium",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0479",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reference",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
+   "kind": "price list",
+   "arrangement": "arr.three_columns",
+   "type": "type.sans",
+   "features": [
+    "fmt.currency",
+    "kv.over",
+    "table.empty_cells",
+    "text.footnotes",
+    "type.weights"
+   ],
+   "style": "corporate-modern",
+   "width": 980,
+   "density": "sparse",
+   "locale": "en-US",
    "pilot": false
   },
   {
    "id": "c0480",
-   "origin": "pdf",
+   "origin": "generated",
    "family": "reference",
    "language": "en",
-   "kind": null,
-   "arrangement": null,
-   "type": null,
-   "features": [],
-   "style": null,
-   "width": null,
-   "density": null,
-   "locale": null,
-   "pilot": false
+   "kind": "calendar",
+   "arrangement": "arr.cards_grid",
+   "type": "type.serif",
+   "features": [
+    "list.bullets",
+    "table.section_rows",
+    "table.zebra"
+   ],
+   "style": "print-export",
+   "width": 780,
+   "density": "medium",
+   "locale": "en-US",
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0481",
@@ -10139,17 +10536,16 @@
    "arrangement": "arr.centred",
    "type": "type.serif",
    "features": [
-    "kv.over",
-    "look.bands",
     "table.spanning",
     "text.justified",
     "type.script"
    ],
    "style": "classic-print",
-   "width": 1020,
+   "width": 800,
    "density": "medium",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0519",
@@ -10161,17 +10557,15 @@
    "type": "type.sans",
    "features": [
     "kv.inline",
-    "look.chips",
-    "table.ruled",
     "type.display",
-    "type.script",
     "type.weights"
    ],
    "style": "classic-print",
-   "width": 840,
+   "width": 720,
    "density": "sparse",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0520",
@@ -10251,10 +10645,11 @@
     "type.script"
    ],
    "style": "legacy-table",
-   "width": 1000,
+   "width": 700,
    "density": "sparse",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0524",
@@ -10291,10 +10686,11 @@
     "text.quote"
    ],
    "style": "bold-marketing",
-   "width": 940,
+   "width": 660,
    "density": "dense",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0526",
@@ -10305,17 +10701,16 @@
    "arrangement": "arr.panels_side_by_side",
    "type": "type.sans",
    "features": [
-    "fig.photo",
     "fmt.dates",
-    "kv.inline",
     "kv.over",
     "type.weights"
    ],
    "style": "legacy-table",
-   "width": 940,
+   "width": 780,
    "density": "medium",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0527",
@@ -10331,10 +10726,11 @@
     "kv.leaders"
    ],
    "style": "corporate-modern",
-   "width": 800,
+   "width": 760,
    "density": "sparse",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0528",
@@ -10369,14 +10765,14 @@
    "features": [
     "fmt.dates",
     "kv.inline",
-    "list.bullets",
     "look.rules"
    ],
    "style": "bold-marketing",
-   "width": 820,
+   "width": 740,
    "density": "sparse",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0530",
@@ -10410,16 +10806,14 @@
    "features": [
     "kv.boxed",
     "kv.inline",
-    "list.bullets",
-    "look.dark_ground",
-    "look.rules",
-    "type.weights"
+    "look.dark_ground"
    ],
    "style": "editorial",
-   "width": 940,
+   "width": 620,
    "density": "sparse",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0532",
@@ -10473,18 +10867,16 @@
    "arrangement": "arr.two_columns",
    "type": "type.serif",
    "features": [
-    "kv.boxed",
     "kv.inline",
-    "kv.over",
     "list.bullets",
-    "list.nested",
-    "look.chips"
+    "list.nested"
    ],
    "style": "print-export",
-   "width": 820,
+   "width": 720,
    "density": "medium",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0535",
@@ -10497,15 +10889,14 @@
    "features": [
     "kv.boxed",
     "kv.over",
-    "look.accent",
-    "look.bands",
     "type.small_caps"
    ],
    "style": "classic-print",
-   "width": 800,
+   "width": 700,
    "density": "sparse",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0536",
@@ -10558,16 +10949,15 @@
    "type": "type.sans",
    "features": [
     "fmt.dates",
-    "kv.boxed",
     "look.chips",
-    "type.small_caps",
     "type.weights"
    ],
    "style": "utility-classes",
-   "width": 720,
+   "width": 620,
    "density": "sparse",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0539",
@@ -11465,10 +11855,11 @@
     "table.spanning"
    ],
    "style": "corporate-modern",
-   "width": 1200,
+   "width": 800,
    "density": "sparse",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0583",
@@ -11518,16 +11909,16 @@
    "arrangement": "arr.cards_grid",
    "type": "type.mono",
    "features": [
-    "list.bullets",
     "list.ticks",
     "table.ruled",
     "type.display"
    ],
    "style": "minimal-swiss",
-   "width": 1200,
+   "width": 800,
    "density": "sparse",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0586",
@@ -11563,10 +11954,11 @@
     "list.ticks"
    ],
    "style": "editorial",
-   "width": 960,
+   "width": 780,
    "density": "medium",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0588",
@@ -11578,17 +11970,15 @@
    "type": "type.sans",
    "features": [
     "fmt.currency",
-    "kv.boxed",
-    "list.ticks",
     "look.rules",
-    "type.script",
     "type.small_caps"
    ],
    "style": "corporate-modern",
-   "width": 1040,
+   "width": 760,
    "density": "sparse",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0589",
@@ -11644,10 +12034,11 @@
     "look.chips"
    ],
    "style": "bold-marketing",
-   "width": 800,
+   "width": 780,
    "density": "sparse",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0592",
@@ -11660,15 +12051,14 @@
    "features": [
     "fmt.currency",
     "fmt.dates",
-    "list.numbers",
-    "look.chips",
     "type.weights"
    ],
    "style": "corporate-modern",
-   "width": 1120,
+   "width": 740,
    "density": "sparse",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0593",
@@ -11684,10 +12074,11 @@
     "text.footnotes"
    ],
    "style": "utility-classes",
-   "width": 820,
+   "width": 740,
    "density": "sparse",
    "locale": "es-ES",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0594",
@@ -11698,16 +12089,16 @@
    "arrangement": "arr.one_column",
    "type": "type.sans",
    "features": [
-    "fig.photo",
     "list.numbers",
     "text.supsub",
     "type.small_caps"
    ],
    "style": "minimal-swiss",
-   "width": 880,
+   "width": 560,
    "density": "sparse",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0595",
@@ -11805,16 +12196,14 @@
    "features": [
     "fig.code",
     "list.bullets",
-    "list.ticks",
-    "table.ruled",
-    "table.spanning",
-    "text.quote"
+    "table.spanning"
    ],
    "style": "utility-classes",
-   "width": 800,
+   "width": 780,
    "density": "sparse",
    "locale": "en-US",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   },
   {
    "id": "c0600",
@@ -11826,16 +12215,15 @@
    "type": "type.serif",
    "features": [
     "kv.over",
-    "kv.two_per_line",
     "look.buttons",
-    "look.chips",
     "table.empty_cells"
    ],
    "style": "utility-classes",
-   "width": 760,
+   "width": 780,
    "density": "sparse",
    "locale": "en-GB",
-   "pilot": false
+   "pilot": false,
+   "scope": "part"
   }
  ],
  "history": [
@@ -12294,6 +12682,474 @@
    "changed": [
     "c0273"
    ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0077"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0472"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0196"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0082"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0411"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0411"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0472"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0082"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0351"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0351"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0077"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0474"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0412"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0197"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0474"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0474"
+   ]
+  },
+  {
+   "step": "pdf page",
+   "changed": [
+    "c0412"
+   ]
+  },
+  {
+   "step": "pdf page dropped",
+   "changed": [
+    "c0077"
+   ],
+   "why": "PDF additions stopped at 27 pages (Alessandro, 2026-10-27) with this twin one row short: the gate's banding puts the PDF's 'it,' (on the row 'got a benefit for it,') into the row above, because 'got a benefit for' is stacked under that row's words and 'it,' is not; the twin set the line as the page prints it. A gate fault, left unrepaired with PDF work stopped."
+  },
+  {
+   "step": "zoom",
+   "seed": 20261075,
+   "locked": 364,
+   "slots": [
+    "c0077",
+    "c0079",
+    "c0080",
+    "c0081",
+    "c0084",
+    "c0085",
+    "c0086",
+    "c0087",
+    "c0088",
+    "c0089",
+    "c0090",
+    "c0091",
+    "c0092",
+    "c0093",
+    "c0094",
+    "c0095",
+    "c0096",
+    "c0097",
+    "c0098",
+    "c0099",
+    "c0100",
+    "c0198",
+    "c0199",
+    "c0200",
+    "c0271",
+    "c0275",
+    "c0276",
+    "c0277",
+    "c0278",
+    "c0279",
+    "c0280",
+    "c0281",
+    "c0283",
+    "c0284",
+    "c0285",
+    "c0286",
+    "c0288",
+    "c0289",
+    "c0290",
+    "c0291",
+    "c0292",
+    "c0293",
+    "c0294",
+    "c0295",
+    "c0296",
+    "c0297",
+    "c0298",
+    "c0299",
+    "c0352",
+    "c0353",
+    "c0354",
+    "c0355",
+    "c0356",
+    "c0357",
+    "c0358",
+    "c0359",
+    "c0407",
+    "c0408",
+    "c0410",
+    "c0414",
+    "c0415",
+    "c0416",
+    "c0417",
+    "c0418",
+    "c0419",
+    "c0420",
+    "c0473",
+    "c0475",
+    "c0476",
+    "c0477",
+    "c0478",
+    "c0479",
+    "c0480"
+   ],
+   "parts": [
+    "c0040",
+    "c0047",
+    "c0048",
+    "c0050",
+    "c0054",
+    "c0056",
+    "c0057",
+    "c0062",
+    "c0064",
+    "c0069",
+    "c0077",
+    "c0079",
+    "c0080",
+    "c0081",
+    "c0084",
+    "c0085",
+    "c0088",
+    "c0090",
+    "c0091",
+    "c0092",
+    "c0095",
+    "c0096",
+    "c0097",
+    "c0098",
+    "c0099",
+    "c0100",
+    "c0146",
+    "c0150",
+    "c0152",
+    "c0161",
+    "c0168",
+    "c0173",
+    "c0176",
+    "c0180",
+    "c0189",
+    "c0192",
+    "c0193",
+    "c0198",
+    "c0200",
+    "c0246",
+    "c0248",
+    "c0255",
+    "c0256",
+    "c0257",
+    "c0259",
+    "c0260",
+    "c0261",
+    "c0262",
+    "c0264",
+    "c0266",
+    "c0268",
+    "c0270",
+    "c0271",
+    "c0275",
+    "c0276",
+    "c0277",
+    "c0278",
+    "c0279",
+    "c0281",
+    "c0284",
+    "c0285",
+    "c0286",
+    "c0288",
+    "c0289",
+    "c0290",
+    "c0291",
+    "c0293",
+    "c0295",
+    "c0296",
+    "c0297",
+    "c0298",
+    "c0299",
+    "c0336",
+    "c0337",
+    "c0340",
+    "c0348",
+    "c0350",
+    "c0352",
+    "c0354",
+    "c0355",
+    "c0356",
+    "c0357",
+    "c0358",
+    "c0397",
+    "c0399",
+    "c0400",
+    "c0401",
+    "c0403",
+    "c0405",
+    "c0407",
+    "c0408",
+    "c0410",
+    "c0414",
+    "c0415",
+    "c0416",
+    "c0417",
+    "c0418",
+    "c0419",
+    "c0420",
+    "c0461",
+    "c0463",
+    "c0465",
+    "c0468",
+    "c0470",
+    "c0473",
+    "c0475",
+    "c0476",
+    "c0478",
+    "c0480",
+    "c0518",
+    "c0519",
+    "c0523",
+    "c0525",
+    "c0526",
+    "c0527",
+    "c0529",
+    "c0531",
+    "c0534",
+    "c0535",
+    "c0538",
+    "c0582",
+    "c0585",
+    "c0587",
+    "c0588",
+    "c0591",
+    "c0592",
+    "c0593",
+    "c0594",
+    "c0599",
+    "c0600"
+   ],
+   "changed": [
+    "c0040",
+    "c0047",
+    "c0048",
+    "c0050",
+    "c0054",
+    "c0056",
+    "c0057",
+    "c0062",
+    "c0064",
+    "c0069",
+    "c0077",
+    "c0079",
+    "c0080",
+    "c0081",
+    "c0084",
+    "c0085",
+    "c0086",
+    "c0087",
+    "c0088",
+    "c0089",
+    "c0090",
+    "c0091",
+    "c0092",
+    "c0093",
+    "c0094",
+    "c0095",
+    "c0096",
+    "c0097",
+    "c0098",
+    "c0099",
+    "c0100",
+    "c0146",
+    "c0150",
+    "c0152",
+    "c0161",
+    "c0168",
+    "c0173",
+    "c0176",
+    "c0180",
+    "c0189",
+    "c0192",
+    "c0193",
+    "c0198",
+    "c0199",
+    "c0200",
+    "c0246",
+    "c0248",
+    "c0255",
+    "c0256",
+    "c0257",
+    "c0259",
+    "c0260",
+    "c0261",
+    "c0262",
+    "c0264",
+    "c0266",
+    "c0268",
+    "c0270",
+    "c0271",
+    "c0275",
+    "c0276",
+    "c0277",
+    "c0278",
+    "c0279",
+    "c0280",
+    "c0281",
+    "c0283",
+    "c0284",
+    "c0285",
+    "c0286",
+    "c0288",
+    "c0289",
+    "c0290",
+    "c0291",
+    "c0292",
+    "c0293",
+    "c0294",
+    "c0295",
+    "c0296",
+    "c0297",
+    "c0298",
+    "c0299",
+    "c0336",
+    "c0337",
+    "c0340",
+    "c0348",
+    "c0350",
+    "c0352",
+    "c0353",
+    "c0354",
+    "c0355",
+    "c0356",
+    "c0357",
+    "c0358",
+    "c0359",
+    "c0397",
+    "c0399",
+    "c0400",
+    "c0401",
+    "c0403",
+    "c0405",
+    "c0407",
+    "c0408",
+    "c0410",
+    "c0414",
+    "c0415",
+    "c0416",
+    "c0417",
+    "c0418",
+    "c0419",
+    "c0420",
+    "c0461",
+    "c0463",
+    "c0465",
+    "c0468",
+    "c0470",
+    "c0473",
+    "c0475",
+    "c0476",
+    "c0477",
+    "c0478",
+    "c0479",
+    "c0480",
+    "c0518",
+    "c0519",
+    "c0523",
+    "c0525",
+    "c0526",
+    "c0527",
+    "c0529",
+    "c0531",
+    "c0534",
+    "c0535",
+    "c0538",
+    "c0582",
+    "c0585",
+    "c0587",
+    "c0588",
+    "c0591",
+    "c0592",
+    "c0593",
+    "c0594",
+    "c0599",
+    "c0600"
+   ],
+   "why": "Alessandro, 2026-10-27: PDF pages stop at those taken; the rest are generated, smaller ones used liberally, 'acting like a zoom to a specific doc layout item'"
   }
  ]
 }

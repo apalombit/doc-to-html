@@ -145,6 +145,36 @@ class TestEveryCardIsSound:
             assert made[entry.get("kind", entry["family"])] == entry["count"]
         assert cards.recast(TAXONOMY, drawn, SEED + 3, locked) == recast
 
+    def test_a_zoom_deals_the_open_slots_and_makes_parts_of_free_cards(
+            self, drawn: list[cards.Card]) -> None:
+        locked = {card.id for card in drawn if card.pilot}
+        zoomed = cards.zoom(TAXONOMY, drawn, SEED + 4, locked, parts=100)
+        assert zoomed == cards.zoom(TAXONOMY, drawn, SEED + 4, locked, parts=100)
+        assert not any(card.origin == "pdf" for card in zoomed)
+        assert [c.id for c in zoomed] == [c.id for c in drawn]
+        for old, new in zip(drawn, zoomed):
+            assert not cards.problems(TAXONOMY, new), new.id
+            if old.origin == "pdf":
+                assert (new.family, new.language) == (old.family, old.language)
+            if old.id in locked:
+                assert new == old
+        parts = [(old, new) for old, new in zip(drawn, zoomed) if new.scope == "part"]
+        assert len(parts) == 100
+        for old, new in parts:
+            assert new.family != "fragments" and (new.family, new.kind) != (None, None)
+            assert old.origin == "pdf" or (old.family, old.kind) == (new.family, new.kind)
+            assert 500 <= (new.width or 0) <= 800
+            assert len(new.features) == TAXONOMY["features_per_card"][0]
+        assert cards.Card.from_json(parts[0][1].to_json()) == parts[0][1]
+        assert "scope" not in drawn[0].to_json()
+
+    def test_a_part_is_held_to_a_part_s_width(self, drawn: list[cards.Card]) -> None:
+        card = next(c for c in drawn if c.kind == "invoice" and c.arrangement == "arr.one_column")
+        assert not cards.problems(TAXONOMY, replace(card, scope="part", width=600))
+        assert cards.problems(TAXONOMY, replace(card, scope="part", width=900)) == [
+            "width 900 outside 500-800"]
+        assert cards.problems(TAXONOMY, replace(card, scope="zoom")) == ["scope 'zoom'"]
+
     def test_the_draw_never_deals_a_recast_kind(self, drawn: list[cards.Card]) -> None:
         recast_only = {kind for fam in TAXONOMY["families"].values()
                        for kind, entry in fam["kinds"].items() if entry.get("recast_only")}

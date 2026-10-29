@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="es-ES"><head><meta charset="utf-8"><title>Factura de electricidad</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:24px;width:960px;font-family:Verdana,sans-serif;color:#1d2733;font-size:12px;background:#fff}
+.grid{display:grid}.grid-cols-2{grid-template-columns:1fr 1fr}.grid-cols-3{grid-template-columns:1fr 1fr 1fr}
+.gap-2{gap:8px}.gap-4{gap:16px}.flex{display:flex}.between{justify-content:space-between}.items-center{align-items:center}
+.p-2{padding:8px}.p-3{padding:12px}.px-2{padding-left:8px;padding-right:8px}.mb-2{margin-bottom:8px}.mb-4{margin-bottom:16px}.mt-2{margin-top:8px}
+.text-xs{font-size:10px}.text-sm{font-size:11px}.text-lg{font-size:16px}.text-xl{font-size:22px}.font-bold{font-weight:700}.font-semibold{font-weight:600}
+.text-right{text-align:right}.muted{color:#5d6b7a}.border{border:1px solid #9aa7b4}.border-b{border-bottom:1px solid #c5ced7}
+.dashed{border-top:2px dashed #7b8896}.dotted{border-bottom:1px dotted #7b8896}
+.bg-slate-50{background:#eef2f6}.bg-teal{background:#0d6e6e;color:#fff}.rounded{border-radius:4px}
+.box{border:1px solid #6d7a88;padding:4px 8px;margin-top:2px;font-weight:600;background:#fff}
+.lbl{font-size:10px;color:#5d6b7a;text-transform:uppercase}
+table{width:100%;border-collapse:collapse;font-size:11px}td,th{padding:4px 6px;text-align:left}
+th{border-bottom:1px solid #6d7a88;font-size:10px;text-transform:uppercase;color:#5d6b7a}
+td.n,th.n{text-align:right}
+</style></head><body>
+<div class="flex between items-center mb-4">
+ <div class="flex items-center gap-4"><svg width="46" height="46" viewBox="0 0 46 46"><circle cx="23" cy="23" r="22" fill="#0d6e6e"/><path d="M26 6 L14 26 H23 L20 40 L33 19 H24 Z" fill="#ffd34d"/></svg>
+ <div><div class="text-xl font-bold">Meridian Energía</div><div class="text-xs muted">Meridian Acorn Comercializadora S.L. &middot; CIF B-31245987 &middot; Pamplona</div></div></div>
+ <div class="text-right"><div class="text-lg font-bold">Factura de electricidad</div><div class="text-sm">N.º F-2022-0207731</div></div>
+</div>
+<div class="grid grid-cols-3 gap-4 mb-4">
+ <div class="border rounded p-3"><div class="lbl mb-2">Titular del contrato</div><div class="font-bold">Elena Vega Cabrera</div><div>C/ Estafeta 14, 3.º B</div><div>31001 Pamplona (Navarra)</div><div class="mt-2">NIF: 72.418.936-K</div></div>
+ <div class="border rounded p-3"><div class="lbl mb-2">Datos del suministro</div><div>Dirección: C/ Estafeta 14, 3.º B</div><div>CUPS: ES0021 0000 3187 4412 QL</div><div>Tarifa: 2.0TD</div><div>Potencia contratada: 4,6 kW</div></div>
+ <div class="border rounded p-3"><div class="lbl mb-2">Datos de la factura</div><div>Fecha de emisión: 06/02/2022</div><div>Periodo: 01/01/2022 - 31/01/2022 (31 días)</div><div>Fecha de cargo: 14/02/2022</div><div>Forma de pago: domiciliación bancaria</div></div>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-4">
+ <div>
+  <div class="bg-teal p-2 font-bold rounded mb-2">Resumen de la factura</div>
+  <table>
+   <tr><th>Concepto</th><th class="n">Importe</th></tr>
+   <tr><td>Término de potencia (4,6 kW x 31 días)</td><td class="n">7,43 €</td></tr>
+   <tr><td>Término de energía (212 kWh)</td><td class="n">39,22 €</td></tr>
+   <tr><td>Impuesto sobre la electricidad (5,11 %)</td><td class="n">2,38 €</td></tr>
+   <tr><td>Alquiler de equipos de medida</td><td class="n">0,81 €</td></tr>
+   <tr><td>Bono social financiado</td><td class="n">0,19 €</td></tr>
+   <tr><td>Base imponible</td><td class="n">50,03 €</td></tr>
+   <tr><td>IVA (10 %)</td><td class="n">5,00 €</td></tr>
+   <tr class="font-bold"><td style="border-top:1px solid #1d2733">Total a pagar</td><td class="n" style="border-top:1px solid #1d2733">55,03 €</td></tr>
+  </table>
+  <div class="dashed mt-2 mb-2"></div>
+  <div class="text-xs muted">Los importes incluyen todos los impuestos aplicables. Esta factura puede consultarse en el área de clientes de la web de la comercializadora.</div>
+ </div>
+ <div>
+  <div class="bg-teal p-2 font-bold rounded mb-2">Consumo de los últimos meses (kWh)</div>
+  <svg width="440" height="150" viewBox="0 0 440 150" style="display:block;border-bottom:1px solid #6d7a88">
+   <rect x="14" y="60" width="40" height="90" fill="#8fc3c3"/><rect x="82" y="40" width="40" height="110" fill="#8fc3c3"/><rect x="150" y="30" width="40" height="120" fill="#8fc3c3"/><rect x="218" y="75" width="40" height="75" fill="#8fc3c3"/><rect x="286" y="52" width="40" height="98" fill="#8fc3c3"/><rect x="354" y="22" width="40" height="128" fill="#0d6e6e"/>
+  </svg>
+  <div class="grid text-xs muted" style="grid-template-columns:repeat(6,1fr);text-align:center;width:440px;margin-top:3px"><span>ago.</span><span>sep.</span><span>oct.</span><span>nov.</span><span>dic.</span><span>ene.</span></div>
+  <div class="grid text-xs" style="grid-template-columns:repeat(6,1fr);text-align:center;width:440px;margin-top:2px;font-weight:700"><span>158</span><span>193</span><span>204</span><span>131</span><span>172</span><span>212</span></div>
+  <div class="text-xs muted mt-2">Consumo medio diario en el periodo: 6,8 kWh. Lecturas reales. Próxima lectura prevista: 28/02/2022, sin coste adicional.</div>
+ </div>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-4">
+ <div class="border rounded p-3">
+  <div class="lbl mb-2">Lecturas del contador</div>
+  <div class="flex between dotted"><span>Lectura anterior (31/12/2021):</span><b>18.402 kWh</b></div>
+  <div class="flex between dotted mt-2"><span>Lectura actual (31/01/2022):</span><b>18.614 kWh</b></div>
+  <div class="flex between dotted mt-2"><span>Consumo facturado:</span><b>212 kWh</b></div>
+  <div class="flex between mt-2"><span>Contador n.º:</span><b>0412-88731</b></div>
+ </div>
+ <div class="border rounded p-3">
+  <div class="lbl mb-2">Datos de pago</div>
+  <div class="grid grid-cols-2 gap-2">
+   <div><div class="lbl">Entidad</div><div class="box">Caja Navarra Norte</div></div>
+   <div><div class="lbl">Referencia</div><div class="box">0207731-22</div></div>
+   <div><div class="lbl">IBAN</div><div class="box">ES76 2100 0418 4502 0005 1332</div></div>
+   <div><div class="lbl">Importe</div><div class="box">55,03 €</div></div>
+  </div>
+ </div>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-4">
+ <div class="text-xs"><b>Información sobre su suministro.</b> El origen de la electricidad suministrada por Meridian Energía en 2021 fue: renovable 48 %, cogeneración de alta eficiencia 9 %, cogeneración 4 %, gas natural 22 %, carbón 3 %, nuclear 11 %, otras 3 %. Emisiones de CO₂ equivalente: 0,19 kg/kWh. Residuos radiactivos de alta actividad: 0,0004 mg/kWh.</div>
+ <div class="text-xs"><b>Reclamaciones.</b> Puede presentar su reclamación en el teléfono gratuito 900 123 456, en la dirección atencion@example.com o por escrito en C/ Navas de Tolosa 9, 31002 Pamplona. Si no está conforme con la respuesta, puede acudir a la Junta Arbitral de Consumo de su comunidad. Su contrato fue firmado ante Raúl Domínguez Prieto, agente comercial, en la oficina de Granada.</div>
+</div>
+<div class="dashed"></div>
+<div class="flex between items-center mt-2">
+ <div><div class="lbl">Talón de pago</div><div class="text-sm">Factura F-2022-0207731 &middot; Nerea Ramos Serrano (gestora de cuenta)</div><div class="text-sm">Pagar antes del 28/02/2022 &middot; Total: <b>55,03 €</b></div></div>
+ <svg width="260" height="46" viewBox="0 0 260 46"><g fill="#1d2733"><rect x="0" width="3" height="46"/><rect x="6" width="2" height="46"/><rect x="11" width="5" height="46"/><rect x="19" width="2" height="46"/><rect x="24" width="3" height="46"/><rect x="31" width="6" height="46"/><rect x="40" width="2" height="46"/><rect x="45" width="4" height="46"/><rect x="53" width="2" height="46"/><rect x="58" width="3" height="46"/><rect x="65" width="5" height="46"/><rect x="73" width="2" height="46"/><rect x="79" width="4" height="46"/><rect x="86" width="2" height="46"/><rect x="92" width="6" height="46"/><rect x="101" width="3" height="46"/><rect x="108" width="2" height="46"/><rect x="113" width="5" height="46"/><rect x="121" width="2" height="46"/><rect x="127" width="3" height="46"/><rect x="134" width="4" height="46"/><rect x="141" width="2" height="46"/><rect x="147" width="6" height="46"/><rect x="156" width="2" height="46"/><rect x="162" width="3" height="46"/><rect x="169" width="5" height="46"/><rect x="178" width="2" height="46"/><rect x="184" width="4" height="46"/><rect x="191" width="2" height="46"/><rect x="197" width="6" height="46"/><rect x="206" width="3" height="46"/><rect x="213" width="2" height="46"/><rect x="219" width="5" height="46"/><rect x="228" width="2" height="46"/><rect x="234" width="4" height="46"/><rect x="241" width="3" height="46"/><rect x="248" width="6" height="46"/></g></svg>
+</div>
+</body></html>

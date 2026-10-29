@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="fr-FR">
+<head>
+<meta charset="utf-8">
+<title>Ticket de caisse</title>
+<style>
+  html { background: #dedbd4; }
+  body { margin: 0; width: 560px; box-sizing: border-box; padding: 24px 60px 30px; background: #dedbd4; font-family: "Source Code Variable", "Menlo", monospace; font-size: 11px; line-height: 1.45; color: #1a1a1a; }
+  .slip { width: 440px; box-sizing: border-box; background: #fcfbf8; padding: 20px 18px 22px; text-align: center; box-shadow: 0 1px 6px rgba(0,0,0,.18); }
+  .shop { font-size: 17px; font-weight: 800; letter-spacing: 0.04em; color: #b3261e; margin: 0 0 2px; line-height: 1.2; }
+  .tag { font-weight: 300; margin: 0 0 6px; }
+  .addr { margin: 0; font-weight: 400; }
+  .small { font-size: 10px; font-weight: 300; margin: 0; }
+  .dash { border: 0; border-top: 1px dashed #333; margin: 10px 0; }
+  .dbl { border: 0; border-top: 3px double #333; margin: 10px 0; }
+  h1 { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; margin: 0 0 6px; }
+  .kv { display: flex; justify-content: center; gap: 16px; margin: 0; }
+  .kv span b { font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 0; text-align: left; }
+  th { font-weight: 700; font-size: 10px; letter-spacing: 0.04em; padding: 3px 3px; border-top: 1px dashed #333; border-bottom: 1px dashed #333; }
+  td { padding: 3px 3px; border-bottom: 1px dashed #aaa; vertical-align: top; }
+  td + td, th + th { border-left: 1px dashed #aaa; }
+  .q { width: 28px; text-align: center; }
+  .pu { width: 52px; text-align: right; }
+  .t { width: 22px; text-align: center; }
+  .m { width: 62px; text-align: right; font-weight: 600; }
+  th.q, th.t { text-align: center; }
+  th.pu, th.m { text-align: right; }
+  td.sub { font-weight: 300; font-size: 10px; padding-top: 0; }
+  tr.promo td { color: #b3261e; font-weight: 600; }
+  tfoot td { border-bottom: 0; border-left: 0; padding: 2px 3px; }
+  tfoot td.l { text-align: right; padding-right: 8px; font-weight: 400; }
+  tfoot td.v { text-align: right; width: 62px; }
+  tfoot tr.first td { border-top: 1px solid #333; padding-top: 5px; }
+  tfoot tr.ttc td { font-size: 14px; font-weight: 800; color: #b3261e; border-top: 3px double #333; padding-top: 5px; padding-bottom: 5px; }
+  tfoot tr.pay td { font-weight: 400; }
+  tfoot tr.pay td.v { font-weight: 600; }
+  .vat { margin: 0 auto; width: 100%; font-size: 10px; text-align: right; }
+  .vat th { border: 0; border-bottom: 1px solid #333; font-weight: 600; padding: 2px 3px; text-align: right; }
+  .vat td { border: 0; padding: 1px 3px; }
+  .vat th:first-child, .vat td:first-child { text-align: left; }
+  ul { margin: 6px 0 0; padding: 0; list-style: disc inside; text-align: center; }
+  li { margin: 0 0 3px; font-weight: 400; }
+  .thanks { font-weight: 700; font-size: 12px; margin: 8px 0 2px; letter-spacing: 0.06em; }
+</style>
+</head>
+<body>
+<div class="slip">
+  <p class="shop">L’ÉPICERIE DU CORMORAN</p>
+  <p class="tag">Produits fins, vrac et cave</p>
+  <p class="addr">14 rue des Halles, 87000 Limoges</p>
+  <p class="addr">Tél. 05 55 01 42 18</p>
+  <p class="small">SIRET 512 346 987 00021 – TVA FR41 512346987</p>
+  <hr class="dash">
+  <h1>TICKET DE CAISSE N° 004127</h1>
+  <p class="kv"><span>Date : <b>15/09/2025</b></span><span>Heure : <b>11:42</b></span></p>
+  <p class="kv"><span>Caisse : <b>02</b></span><span>Caissier : <b>Thomas B.</b></span></p>
+  <p class="kv"><span>Rayon fromages : <b>Chloé M.</b></span></p>
+  <p class="kv"><span>Client fidélité : <b>Manon Mercier</b></span></p>
+  <hr class="dash">
+  <table>
+    <thead>
+      <tr><th class="q">Qté</th><th>Désignation</th><th class="pu">PU €</th><th class="t">T</th><th class="m">Montant</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="q">2</td><td>Baguette tradition</td><td class="pu">1,35</td><td class="t">A</td><td class="m">2,70</td></tr>
+      <tr><td class="q">1</td><td>Chèvre cendré 0,240 kg<br><span class="small">24,50 €/kg</span></td><td class="pu">5,88</td><td class="t">A</td><td class="m">5,88</td></tr>
+      <tr><td class="q">1</td><td>Confiture de figues 370 g</td><td class="pu">4,90</td><td class="t">A</td><td class="m">4,90</td></tr>
+      <tr><td class="q">1</td><td>Jambon de Bayonne 0,120 kg<br><span class="small">38,00 €/kg</span></td><td class="pu">4,56</td><td class="t">A</td><td class="m">4,56</td></tr>
+      <tr><td class="q">2</td><td>Cidre brut bio 75 cl</td><td class="pu">5,40</td><td class="t">B</td><td class="m">10,80</td></tr>
+      <tr class="promo"><td class="q"></td><td>Remise 2e bouteille</td><td class="pu"></td><td class="t">B</td><td class="m">-2,70</td></tr>
+      <tr><td class="q">1</td><td>Pommes Chantecler 1,350 kg<br><span class="small">3,20 €/kg</span></td><td class="pu">4,32</td><td class="t">A</td><td class="m">4,32</td></tr>
+      <tr><td class="q">6</td><td>Lait demi-écrémé 1 L</td><td class="pu">1,08</td><td class="t">A</td><td class="m">6,48</td></tr>
+      <tr><td class="q">1</td><td>Huile d’olive vierge 50 cl</td><td class="pu">8,90</td><td class="t">A</td><td class="m">8,90</td></tr>
+      <tr><td class="q">1</td><td>Café moulu pur arabica 250 g</td><td class="pu">5,95</td><td class="t">A</td><td class="m">5,95</td></tr>
+      <tr><td class="q">3</td><td>Chocolat noir 70 % 100 g</td><td class="pu">2,30</td><td class="t">A</td><td class="m">6,90</td></tr>
+      <tr><td class="q">1</td><td>Bougie parfumée figue</td><td class="pu">7,50</td><td class="t">B</td><td class="m">7,50</td></tr>
+      <tr><td class="q">1</td><td>Sac cabas réutilisable</td><td class="pu">1,50</td><td class="t">B</td><td class="m">1,50</td></tr>
+    </tbody>
+    <tfoot>
+      <tr class="first"><td colspan="4" class="l">Nombre d’articles : 21 – Total HT</td><td class="v">62,20</td></tr>
+      <tr><td colspan="4" class="l">TVA 5,5 % (A)</td><td class="v">2,64</td></tr>
+      <tr><td colspan="4" class="l">TVA 20 % (B)</td><td class="v">2,85</td></tr>
+      <tr class="ttc"><td colspan="4" class="l">TOTAL TTC €</td><td class="v">67,69</td></tr>
+      <tr class="pay"><td colspan="4" class="l">Carte bancaire</td><td class="v">40,00</td></tr>
+      <tr class="pay"><td colspan="4" class="l">Espèces</td><td class="v">30,00</td></tr>
+      <tr class="pay"><td colspan="4" class="l">Rendu monnaie</td><td class="v">2,31</td></tr>
+    </tfoot>
+  </table>
+  <hr class="dash">
+  <table class="vat">
+    <thead><tr><th>Taux</th><th>Base HT</th><th>TVA</th><th>Base TTC</th></tr></thead>
+    <tbody>
+      <tr><td>A 5,5 %</td><td>47,95</td><td>2,64</td><td>50,59</td></tr>
+      <tr><td>B 20 %</td><td>14,25</td><td>2,85</td><td>17,10</td></tr>
+    </tbody>
+  </table>
+  <hr class="dbl">
+  <p class="kv"><span>CB VISA ****&nbsp;4471</span><span>Autorisation : 08Q2T9</span></p>
+  <p class="small">Transaction acceptée – Contrat 0092318</p>
+  <ul>
+    <li>Cagnotte fidélité : 0,68 € ce jour, 12,40 € disponibles</li>
+    <li>Cidre brut : 2e bouteille à −50 % jusqu’au 28/09/2025</li>
+    <li>Échange sous 15 jours sur présentation de ce ticket</li>
+  </ul>
+  <hr class="dash">
+  <p class="thanks">MERCI DE VOTRE VISITE</p>
+  <p class="small">Ouvert du lundi au samedi, 8 h 30 – 19 h 30</p>
+  <p class="small">Ticket à conserver – Aucun remboursement</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Auditing LLM Alpha-Factor Mining, page 3</title>
+<style>
+html,body{margin:0;padding:0;background:#fff}
+body{width:1000px;height:1415px;position:relative;font-family:"Times New Roman",Times,serif;font-size:18.3px;line-height:22.7px;color:#000;white-space:nowrap}
+.pg{position:relative;width:1000px;height:1415px}
+.b{position:absolute;margin:0}
+.j{text-align:justify}
+.l{left:119px}.r{left:514px}
+.c{font-size:16.7px;line-height:20.1px}
+.ref{color:#00007f}
+h2{margin:0;font-weight:bold;font-size:20.1px;line-height:24px}
+table{position:absolute;border-collapse:collapse;font-size:15.1px;line-height:16.7px;table-layout:fixed}
+td,th{padding:0;font-weight:normal;text-align:left;height:16.7px;white-space:nowrap}
+td.n,th.n{text-align:right}
+.rule td,.rule th{border-top:1px solid #000}
+.fr{display:inline-block;vertical-align:middle;text-align:center;line-height:17px;font-size:18.3px}
+.fr .t{display:block;border-bottom:1px solid #000;padding:0 2px}
+.fr .u{display:block}
+sup.s,sub.s{font-size:12.5px;line-height:0}
+</style>
+</head>
+<body>
+<div class="pg">
+
+<p class="b l c" style="top:117px">Table 2: Read-only audit of OOS artifacts. The retained<br>catalog was selected using OOS outcomes.</p>
+
+<table style="left:158px;top:176px;width:287px;border-top:1px solid #000;border-bottom:1px solid #000">
+<colgroup><col style="width:232px"><col style="width:55px"></colgroup>
+<tr><td style="padding:4px 0 4px 11px;height:17px;border-bottom:1px solid #000">Artifact count</td><td class="n" style="padding-right:11px;border-bottom:1px solid #000">Value</td></tr>
+<tr><td style="padding:6px 0 0 11px">Checkpoint expressions</td><td class="n" style="padding:6px 11px 0 0">2,016</td></tr>
+<tr><td style="padding-left:11px">Negative-OOS checkpoint rows</td><td class="n" style="padding-right:11px">368</td></tr>
+<tr><td style="padding-left:11px">Retained catalog expressions</td><td class="n" style="padding-right:11px">1,837</td></tr>
+<tr><td style="padding-left:11px">Non-positive-OOS catalog rows</td><td class="n" style="padding-right:11px">0</td></tr>
+<tr><td style="padding-left:11px">Checkpoint-only expressions</td><td class="n" style="padding-right:11px">368</td></tr>
+<tr><td style="padding-left:11px">Checkpoint-only negative OOS</td><td class="n" style="padding-right:11px">368</td></tr>
+<tr><td style="padding:0 0 3px 11px">Catalog rows passing stated IS rule</td><td class="n" style="padding:0 11px 3px 0">1,037</td></tr>
+</table>
+
+<p class="b r c" style="top:117px">Table 3: Full frozen cohort under the corrected public<br>evaluator. Non-scorable records remain in the denomi-<br>nator; no missing result is assigned zero alpha.</p>
+
+<table style="left:553px;top:196px;width:289px;border-top:1px solid #000;border-bottom:1px solid #000">
+<colgroup><col style="width:229px"><col style="width:60px"></colgroup>
+<tr><td style="padding:4px 0 4px 10px;height:17px;border-bottom:1px solid #000">Outcome</td><td class="n" style="padding-right:10px;border-bottom:1px solid #000">Records</td></tr>
+<tr><td style="padding:6px 0 0 10px">Scorable signed rank-IC</td><td class="n" style="padding:6px 10px 0 0">923</td></tr>
+<tr><td style="padding-left:10px">Insufficient valid dates</td><td class="n" style="padding-right:10px">99</td></tr>
+<tr><td style="padding-left:10px">Unsupported operator or variable</td><td class="n" style="padding-right:10px">25</td></tr>
+<tr><td style="padding:0 0 3px 10px;border-bottom:1px solid #000;font-weight:bold">All frozen records</td><td class="n" style="padding:0 10px 3px 0;border-bottom:1px solid #000;font-weight:bold">1,047</td></tr>
+<tr><td style="padding:3px 0 0 10px">Positive mean rank-IC (of 923)</td><td class="n" style="padding:3px 10px 0 0">671</td></tr>
+<tr><td style="padding-left:10px">Negative mean rank-IC (of 923)</td><td class="n" style="padding-right:10px">252</td></tr>
+<tr><td style="padding:0 0 3px 10px">Median mean rank-IC (of 923)</td><td class="n" style="padding:0 10px 3px 0">0.0148</td></tr>
+</table>
+
+<p class="b l j" style="top:364px">preserved artifacts and runner shows that this in-<br>terpretation is not valid: the runner uses a looser<br>preliminary screen and explicitly drops records<br>with OOS Sharpe ≤ 0 before writing the retained<br>file. Moreover, only 1,037 rows in that file sat-<br>isfy the manuscript’s stated IS rule (Sharpe ≥ 2,<br>Fitness ≥ 0, Turnover ≤ 500). The checkpoint con-<br>tains 2,016 unique expressions, including 368 with<br>negative OOS Sharpe. All 368 expressions found<br>only in the checkpoint are negative OOS; all 189<br>expressions found only in the retained catalog are<br>positive OOS; and the 1,648 common expressions<br>have no sign disagreement. The catalog’s zero sign-<br>reversal rate and its decay summaries are there-<br>fore properties of outcome-based retention, not evi-<br>dence that the mined factors generalize.</p>
+
+<p class="b l j" style="top:728px"><span style="display:inline-block;width:18px"></span>A clean OOS evaluation remains pending. It<br>must recover and hash the complete pre-OOS pool,<br>pre-specify an IS-only screen, perform any dedu-<br>plication using IS data, freeze the expression list<br>before OOS access, checkpoint every response, and<br>preserve every numerical OOS outcome and error<br>regardless of sign. Numerical OOS and general-<br>ization claims should not be restored until that run<br>exists.</p>
+
+<h2 class="b l" style="top:948px">6&nbsp;&nbsp;&nbsp;&nbsp;Full-Cohort Public Reanalysis</h2>
+
+<p class="b l j" style="top:985px">We separately evaluate a frozen list of 1,047 unique<br>expressions selected from 3,114 preserved input<br>rows using the stated IS screen. This does not es-<br>tablish a census of all generated candidates or a<br>historically blind holdout. The broader preserved<br>pool is not a matched replay of the three historical<br>keep totals. All IDs are retained regardless of sub-<br>sequent public-evaluator outcome; no expression<br>is chosen by its new score.</p>
+<p class="b l j" style="top:1189px"><span style="display:inline-block;width:18px"></span>The new snapshot contains the same ordered<br>40-stock convenience universe over 727 trading<br>dates in 2023–2025. We acquire both unadjusted<br>and provider-adjusted daily views through BaoS-<br>tock 0.9.3 and verify all 80 files, their byte hashes,</p>
+
+<p class="b r j" style="top:386px">date/stock/adjustment identities, and shared quan-<br>tity and trading-status fields. Features use nomi-<br>nal prices, shares, and nominal traded amount; the<br>adjusted-price view is reserved for labels. Two<br>non-trading stock-day cells are masked. We neither<br>forward-fill missing observations nor substitute a<br>smaller acquired stock prefix.<br><span style="display:inline-block;width:19px"></span>For each 2024–2025 date <i>t</i>, the label is the<br>provider-adjusted close change over five trading-<br>calendar rows,</p>
+
+<p class="b" style="left:638px;top:643px;line-height:30px"><i>y</i><sub class="s"><i>i,t</i></sub> = <span class="fr"><span class="t"><i>P</i><sup class="s">adj</sup><sub class="s" style="margin-left:-12px"><i>i,t</i>+5</sub></span><span class="u"><i>P</i><sup class="s">adj</sup><sub class="s" style="margin-left:-12px"><i>i,t</i></sub></span></span> − 1.</p>
+
+<p class="b r j" style="top:705px">Both endpoint prices must be finite and positive<br>and both endpoints tradable. This is not an investor<br>total-return or executable-P&amp;L claim; the last five<br>captured dates have no label. Daily rank-IC is the<br>Pearson correlation of average-tie cross-sectional<br>ranks. We require at least five eligible stocks, three<br>distinct signal values, and two distinct labels. The<br>three-signal-value threshold is a chosen diagnostic<br>convention, not a claim that binary signals cannot<br>have a mathematically defined correlation. A factor<br>is scorable only with at least 20 valid dates. Its<br>mean/SD ratio, if reported, is unannualized and is<br>not a trading Sharpe.</p>
+
+<p class="b r j" style="top:1007px"><span style="display:inline-block;width:19px"></span>The frozen public implementation initially pro-<br>duces 57 numerical errors: its conditional operator<br>attempts to interpret a panel as one Boolean when<br>the true branch is scalar. We preserve this v1 run<br>and add a versioned scalar-broadcasting correction<br>with the existing elementwise conditional seman-<br>tics. All 1,047 records are then re-evaluated, rather<br>than rerunning only promising failures. The other<br>990 diagnostic records remain unchanged; 56 cor-<br>rected records become scorable and one remains<br>insufficiently observed.<br><span style="display:inline-block;width:19px"></span><span class="ref">Table 3</span> is descriptive. Of the 923 scorable ex-<br>pressions, 835 have all 480 label-available target</p>
+
+<p class="b" style="left:495px;top:1331px">3</p>
+</div>
+</body>
+</html>

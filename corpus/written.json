@@ -699,6 +699,150 @@
    ]
   }
  },
+ "c0035": {
+  "writer": "sonnet",
+  "batch": "round5-4",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2020-04-20",
+   "people": [
+    "Kayla Nguyen",
+    "Nadia Brennan",
+    "Diego Kim"
+   ],
+   "places": [
+    "Ithaca, NY",
+    "Sioux Falls, SD"
+   ],
+   "name_words": [
+    "Sorrel",
+    "Hawthorn"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0036": {
+  "writer": "sonnet",
+  "batch": "round5-3",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2021-03-26",
+   "people": [
+    "Anna Conti",
+    "Lorenzo Rinaldi",
+    "Valentina Greco"
+   ],
+   "places": [
+    "Lecce",
+    "Modena"
+   ],
+   "name_words": [
+    "Timber",
+    "Obsidian"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0037": {
+  "writer": "sonnet",
+  "batch": "round5-2",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2025-10-04",
+   "people": [
+    "Cristina López Navarro",
+    "Iván Medina Calvo",
+    "Raúl Castro Lozano"
+   ],
+   "places": [
+    "Gijón",
+    "Pamplona"
+   ],
+   "name_words": [
+    "Acorn",
+    "Cairn"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0038": {
+  "writer": "sonnet",
+  "batch": "round5-1",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2025-01-14",
+   "people": [
+    "Imogen Lindsay",
+    "Ellie Hughes",
+    "Hannah Kowalski"
+   ],
+   "places": [
+    "Shrewsbury",
+    "Bangor"
+   ],
+   "name_words": [
+    "Meridian",
+    "Ochre"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0039": {
+  "writer": "sonnet",
+  "batch": "round6-3",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-27",
+  "particulars": {
+   "date": "2026-11-14",
+   "people": [
+    "Leah Pritchard",
+    "Tom Burrows",
+    "Rhys Whitaker"
+   ],
+   "places": [
+    "Ayr",
+    "Wrexham"
+   ],
+   "name_words": [
+    "Northgate",
+    "Verdigris"
+   ]
+  },
+  "note": "its writer was stopped by an interrupt before reporting; the page had passed"
+ },
+ "c0040": {
+  "writer": "sonnet",
+  "batch": "round6-6",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-27",
+  "particulars": {
+   "date": "2022-06-24",
+   "people": [
+    "Claire Bonnet",
+    "Léa Lambert",
+    "Karim Gauthier"
+   ],
+   "places": [
+    "Nîmes",
+    "Dijon"
+   ],
+   "name_words": [
+    "Flint",
+    "Merlin"
+   ]
+  },
+  "note": "its writer was stopped by an interrupt before reporting; the page had passed"
+ },
  "c0041": {
   "writer": "sonnet",
   "batch": "round1-4",
@@ -721,6 +865,30 @@
     "Sycamore"
    ]
   }
+ },
+ "c0042": {
+  "writer": "sonnet",
+  "batch": "round6-3",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-27",
+  "particulars": {
+   "date": "2026-11-25",
+   "people": [
+    "Amelia Pritchard",
+    "Owen Hughes",
+    "Sophie Bryce"
+   ],
+   "places": [
+    "Norwich",
+    "Ipswich"
+   ],
+   "name_words": [
+    "Siskin",
+    "Copper"
+   ]
+  },
+  "note": "its writer was stopped by an interrupt before reporting; the page had passed"
  },
  "c0044": {
   "writer": "sonnet",
@@ -1473,6 +1641,78 @@
    ]
   }
  },
+ "c0128": {
+  "writer": "sonnet",
+  "batch": "round5-1",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2021-07-06",
+   "people": [
+    "Niamh Doherty",
+    "Yusuf Gallagher",
+    "Owen Rahman"
+   ],
+   "places": [
+    "Carlisle",
+    "Perth"
+   ],
+   "name_words": [
+    "Maple",
+    "Basalt"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0129": {
+  "writer": "sonnet",
+  "batch": "round5-5",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2022-02-06",
+   "people": [
+    "Elena Vega Cabrera",
+    "Nerea Ramos Serrano",
+    "Raúl Domínguez Prieto"
+   ],
+   "places": [
+    "Pamplona",
+    "Granada"
+   ],
+   "name_words": [
+    "Meridian",
+    "Acorn"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0130": {
+  "writer": "sonnet",
+  "batch": "round5-4",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2023-11-04",
+   "people": [
+    "Brooke Kowalczyk",
+    "Darnell Duarte",
+    "Diego Morales"
+   ],
+   "places": [
+    "Ithaca, NY",
+    "Eugene, OR"
+   ],
+   "name_words": [
+    "Iris",
+    "Summit"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
  "c0131": {
   "writer": "sonnet",
   "batch": "pilot-2",
@@ -1504,6 +1744,30 @@
   "batch_seconds": 351.2,
   "written": "2026-10-25"
  },
+ "c0134": {
+  "writer": "sonnet",
+  "batch": "round5-3",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2027-01-14",
+   "people": [
+    "Leah Treloar",
+    "Finlay Rees",
+    "Gareth Chowdhury"
+   ],
+   "places": [
+    "Salisbury",
+    "Lincoln"
+   ],
+   "name_words": [
+    "Oakridge",
+    "Amber"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
  "c0135": {
   "writer": "sonnet",
   "batch": "pilot-6",
@@ -1533,6 +1797,54 @@
     "Dovetail"
    ]
   }
+ },
+ "c0137": {
+  "writer": "sonnet",
+  "batch": "round6-2",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-27",
+  "particulars": {
+   "date": "2023-06-29",
+   "people": [
+    "Finlay Rahman",
+    "Ruth Caldwell",
+    "Freya Chowdhury"
+   ],
+   "places": [
+    "Derby",
+    "Shrewsbury"
+   ],
+   "name_words": [
+    "Driftwood",
+    "Willow"
+   ]
+  },
+  "note": "its writer was stopped by an interrupt before reporting; the page had passed"
+ },
+ "c0138": {
+  "writer": "sonnet",
+  "batch": "round6-5",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-27",
+  "particulars": {
+   "date": "2025-09-15",
+   "people": [
+    "Manon Mercier",
+    "Thomas Bonnet",
+    "Chloé Morel"
+   ],
+   "places": [
+    "Limoges",
+    "Nantes"
+   ],
+   "name_words": [
+    "Cormorant",
+    "Obsidian"
+   ]
+  },
+  "note": "its writer was stopped by an interrupt before reporting; the page had passed"
  },
  "c0139": {
   "writer": "sonnet",
@@ -2423,6 +2735,54 @@
    ]
   }
  },
+ "c0238": {
+  "writer": "sonnet",
+  "batch": "round5-2",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2021-02-15",
+   "people": [
+    "Yusuf Kaur",
+    "Kwame Kowalski",
+    "Leah Nwosu"
+   ],
+   "places": [
+    "Ipswich",
+    "Aberystwyth"
+   ],
+   "name_words": [
+    "Walnut",
+    "Siskin"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0239": {
+  "writer": "sonnet",
+  "batch": "round5-1",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2026-02-19",
+   "people": [
+    "Brooke Delgado",
+    "Tyler Hendricks",
+    "Carlos Fitzgerald"
+   ],
+   "places": [
+    "Billings, MT",
+    "Mobile, AL"
+   ],
+   "name_words": [
+    "Siskin",
+    "Walnut"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
  "c0240": {
   "writer": "sonnet",
   "batch": "pilot-6",
@@ -2439,6 +2799,126 @@
     "why": "under the word floor: 155 to 297 words"
    }
   ]
+ },
+ "c0241": {
+  "writer": "sonnet",
+  "batch": "round5-5",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2020-11-28",
+   "people": [
+    "Raúl Domínguez Prieto",
+    "Iván Moreno Pastor",
+    "Pablo Vega Cabrera"
+   ],
+   "places": [
+    "Salamanca",
+    "Burgos"
+   ],
+   "name_words": [
+    "Lark",
+    "Bracken"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0242": {
+  "writer": "sonnet",
+  "batch": "round5-4",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2026-12-30",
+   "people": [
+    "Rohan Nwosu",
+    "Ewan Mensah",
+    "Tom Bryce"
+   ],
+   "places": [
+    "Hereford",
+    "Lancaster"
+   ],
+   "name_words": [
+    "Redstart",
+    "Lattice"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0243": {
+  "writer": "sonnet",
+  "batch": "round5-3",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2024-11-08",
+   "people": [
+    "Priya Llewellyn",
+    "Ellie Gallagher",
+    "Gareth Caldwell"
+   ],
+   "places": [
+    "Norwich",
+    "Ipswich"
+   ],
+   "name_words": [
+    "Quill",
+    "Iris"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0244": {
+  "writer": "sonnet",
+  "batch": "round6-1",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-27",
+  "particulars": {
+   "date": "2021-06-26",
+   "people": [
+    "Travis Tillman",
+    "Mei Ramirez",
+    "Wesley Brennan"
+   ],
+   "places": [
+    "Lubbock, TX",
+    "Tulsa, OK"
+   ],
+   "name_words": [
+    "Tidewater",
+    "Northgate"
+   ]
+  },
+  "note": "its writer was stopped by an interrupt before reporting; the page had passed"
+ },
+ "c0245": {
+  "writer": "sonnet",
+  "batch": "round6-4",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-27",
+  "particulars": {
+   "date": "2025-07-06",
+   "people": [
+    "Diogo Almeida Santos",
+    "Sofia Antunes Faria",
+    "Inês Marques Teixeira"
+   ],
+   "places": [
+    "Bragança",
+    "Aveiro"
+   ],
+   "name_words": [
+    "Marigold",
+    "Dunlin"
+   ]
+  },
+  "note": "its writer was stopped by an interrupt before reporting; the page had passed"
  },
  "c0249": {
   "writer": "sonnet",
@@ -3136,6 +3616,126 @@
   "batch_seconds": 553.9,
   "written": "2026-10-25"
  },
+ "c0332": {
+  "writer": "sonnet",
+  "batch": "round5-2",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2022-09-22",
+   "people": [
+    "Oliver Mensah",
+    "Kwame Mercer",
+    "Callum Ahmed"
+   ],
+   "places": [
+    "Shrewsbury",
+    "Perth"
+   ],
+   "name_words": [
+    "Canopy",
+    "Keystone"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0333": {
+  "writer": "sonnet",
+  "batch": "round5-1",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2024-11-27",
+   "people": [
+    "Ashley Ramirez",
+    "Mei Lockhart",
+    "Grant Abernathy"
+   ],
+   "places": [
+    "Greenville, SC",
+    "Fort Collins, CO"
+   ],
+   "name_words": [
+    "Maple",
+    "Meridian"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0334": {
+  "writer": "sonnet",
+  "batch": "round5-5",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2025-09-06",
+   "people": [
+    "Zara Patel",
+    "Priya Caldwell",
+    "Gareth Gallagher"
+   ],
+   "places": [
+    "Barnsley",
+    "Lincoln"
+   ],
+   "name_words": [
+    "Umber",
+    "Cormorant"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0335": {
+  "writer": "sonnet",
+  "batch": "round5-4",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2027-06-10",
+   "people": [
+    "Camila Park",
+    "Carlos Pruitt",
+    "Diego Brandt"
+   ],
+   "places": [
+    "Tulsa, OK",
+    "Fort Collins, CO"
+   ],
+   "name_words": [
+    "Avocet",
+    "Orchard"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0336": {
+  "writer": "sonnet",
+  "batch": "round6-5",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-27",
+  "particulars": {
+   "date": "2021-05-13",
+   "people": [
+    "Brooke Adeyemi",
+    "Emily Fitzgerald",
+    "Kayla Duarte"
+   ],
+   "places": [
+    "Fresno, CA",
+    "Tulsa, OK"
+   ],
+   "name_words": [
+    "Marigold",
+    "Summit"
+   ]
+  },
+  "note": "its writer was stopped by an interrupt before reporting; the page had passed"
+ },
  "c0338": {
   "writer": "sonnet",
   "batch": "pilot-2",
@@ -3165,6 +3765,30 @@
     "Nettle"
    ]
   }
+ },
+ "c0342": {
+  "writer": "sonnet",
+  "batch": "round5-3",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2020-03-05",
+   "people": [
+    "Keisha Brennan",
+    "Kayla Delgado",
+    "Carlos Mahoney"
+   ],
+   "places": [
+    "Billings, MT",
+    "Eugene, OR"
+   ],
+   "name_words": [
+    "Umber",
+    "Cypress"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
  },
  "c0347": {
   "writer": "opus",
@@ -3234,6 +3858,54 @@
   "batch_seconds": 333.2,
   "written": "2026-10-25"
  },
+ "c0364": {
+  "writer": "sonnet",
+  "batch": "round5-2",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2023-04-27",
+   "people": [
+    "Nuno Correia Leite",
+    "Mariana Fernandes Matos",
+    "Sofia Antunes Faria"
+   ],
+   "places": [
+    "Portimão",
+    "Viseu"
+   ],
+   "name_words": [
+    "Cypress",
+    "Sparrow"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0365": {
+  "writer": "sonnet",
+  "batch": "round5-1",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2026-12-15",
+   "people": [
+    "Travis Delgado",
+    "Trevor Hendricks",
+    "Tyler Gutierrez"
+   ],
+   "places": [
+    "Boise, ID",
+    "Billings, MT"
+   ],
+   "name_words": [
+    "Vale",
+    "Ember"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
  "c0366": {
   "writer": "sonnet",
   "batch": "pilot2-1",
@@ -3286,6 +3958,54 @@
     "Oakridge"
    ]
   }
+ },
+ "c0369": {
+  "writer": "sonnet",
+  "batch": "round5-5",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2026-10-25",
+   "people": [
+    "Karim Garnier",
+    "Thomas Nguyen",
+    "Nadia Mercier"
+   ],
+   "places": [
+    "Nîmes",
+    "Brest"
+   ],
+   "name_words": [
+    "Ochre",
+    "Sedge"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0370": {
+  "writer": "sonnet",
+  "batch": "round5-4",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2024-10-04",
+   "people": [
+    "Oliver Burrows",
+    "Priya Llewellyn",
+    "Niamh Ahmed"
+   ],
+   "places": [
+    "Hereford",
+    "Norwich"
+   ],
+   "name_words": [
+    "Gannet",
+    "Moss"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
  },
  "c0371": {
   "writer": "sonnet",
@@ -3541,6 +4261,30 @@
    ]
   }
  },
+ "c0383": {
+  "writer": "sonnet",
+  "batch": "round6-4",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-27",
+  "particulars": {
+   "date": "2023-07-21",
+   "people": [
+    "Amelia Doherty",
+    "Stuart Pritchard",
+    "Declan Stirling"
+   ],
+   "places": [
+    "Ayr",
+    "Bangor"
+   ],
+   "name_words": [
+    "Fieldfare",
+    "Cormorant"
+   ]
+  },
+  "note": "its writer was stopped by an interrupt before reporting; the page had passed"
+ },
  "c0384": {
   "writer": "sonnet",
   "batch": "round3-5",
@@ -3679,6 +4423,54 @@
    ]
   }
  },
+ "c0390": {
+  "writer": "sonnet",
+  "batch": "round5-4",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2024-11-29",
+   "people": [
+    "Owen Sinclair",
+    "Priya Llewellyn",
+    "Amelia Kaur"
+   ],
+   "places": [
+    "Salisbury",
+    "Inverness"
+   ],
+   "name_words": [
+    "Driftwood",
+    "Lodestar"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0391": {
+  "writer": "sonnet",
+  "batch": "round5-3",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2021-08-27",
+   "people": [
+    "Diego Torres Vidal",
+    "Ainhoa Martínez Ruiz",
+    "Nerea Fuentes Mora"
+   ],
+   "places": [
+    "Alicante",
+    "Toledo"
+   ],
+   "name_words": [
+    "Quill",
+    "Sycamore"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
  "c0392": {
   "writer": "opus",
   "batch": "pilot-1",
@@ -3687,12 +4479,84 @@
   "written": "2026-10-24",
   "note": "batch stopped by the spend limit; this page had passed"
  },
+ "c0393": {
+  "writer": "sonnet",
+  "batch": "round5-2",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2023-01-07",
+   "people": [
+    "Aaliyah Shapiro",
+    "Sofia Brennan",
+    "Darnell Mahoney"
+   ],
+   "places": [
+    "Erie, PA",
+    "Peoria, IL"
+   ],
+   "name_words": [
+    "Vale",
+    "Lantern"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
  "c0394": {
   "writer": "sonnet",
   "batch": "pilot2-2",
   "runs": 1,
   "batch_seconds": 362.2,
   "written": "2026-10-25"
+ },
+ "c0395": {
+  "writer": "sonnet",
+  "batch": "round6-6",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-27",
+  "particulars": {
+   "date": "2025-05-20",
+   "people": [
+    "Diego Iglesias Marín",
+    "Sergio Garrido León",
+    "Paula García Ortega"
+   ],
+   "places": [
+    "Toledo",
+    "Santander"
+   ],
+   "name_words": [
+    "Nettle",
+    "Marigold"
+   ]
+  },
+  "note": "its writer was stopped by an interrupt before reporting; the page had passed"
+ },
+ "c0396": {
+  "writer": "sonnet",
+  "batch": "round6-3",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-27",
+  "particulars": {
+   "date": "2021-05-20",
+   "people": [
+    "Kayla Brennan",
+    "Aaliyah Lindqvist",
+    "Nadia Adeyemi"
+   ],
+   "places": [
+    "Provo, UT",
+    "Mobile, AL"
+   ],
+   "name_words": [
+    "Cypress",
+    "Stonecrop"
+   ]
+  },
+  "note": "its writer was stopped by an interrupt before reporting; the page had passed"
  },
  "c0398": {
   "writer": "sonnet",
@@ -3943,6 +4807,30 @@
     "Paragon"
    ]
   }
+ },
+ "c0434": {
+  "writer": "sonnet",
+  "batch": "round6-1",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-27",
+  "particulars": {
+   "date": "2019-12-07",
+   "people": [
+    "Wesley Le",
+    "Lauren Nguyen",
+    "Maria Mahoney"
+   ],
+   "places": [
+    "Billings, MT",
+    "Lubbock, TX"
+   ],
+   "name_words": [
+    "Ochre",
+    "Cairn"
+   ]
+  },
+  "note": "its writer was stopped by an interrupt before reporting; the page had passed"
  },
  "c0435": {
   "writer": "sonnet",
@@ -4270,6 +5158,150 @@
     "Cypress"
    ]
   }
+ },
+ "c0452": {
+  "writer": "sonnet",
+  "batch": "round5-3",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2022-09-18",
+   "people": [
+    "Finlay Burrows",
+    "Freya Lindsay",
+    "Ewan Nwosu"
+   ],
+   "places": [
+    "Wrexham",
+    "Truro"
+   ],
+   "name_words": [
+    "Birch",
+    "Curlew"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0453": {
+  "writer": "sonnet",
+  "batch": "round5-2",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2020-03-13",
+   "people": [
+    "Erin Kim",
+    "Nadia Brennan",
+    "Jordan Washington"
+   ],
+   "places": [
+    "Fort Collins, CO",
+    "Ithaca, NY"
+   ],
+   "name_words": [
+    "Birch",
+    "Merlin"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0454": {
+  "writer": "sonnet",
+  "batch": "round5-1",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2019-03-04",
+   "people": [
+    "Arjun Kowalski",
+    "Declan Doherty",
+    "Sophie Lindsay"
+   ],
+   "places": [
+    "Bangor",
+    "Colchester"
+   ],
+   "name_words": [
+    "Nettle",
+    "Siskin"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0455": {
+  "writer": "sonnet",
+  "batch": "round5-5",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2024-04-06",
+   "people": [
+    "Zara Ashworth",
+    "Tom Fairclough",
+    "Stuart Lindsay"
+   ],
+   "places": [
+    "Hereford",
+    "Stockport"
+   ],
+   "name_words": [
+    "Lodestar",
+    "Marigold"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0456": {
+  "writer": "sonnet",
+  "batch": "round6-1",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-27",
+  "particulars": {
+   "date": "2019-10-04",
+   "people": [
+    "Jordan Nguyen",
+    "Tyler Washington",
+    "Wesley Fitzgerald"
+   ],
+   "places": [
+    "Santa Fe, NM",
+    "Fresno, CA"
+   ],
+   "name_words": [
+    "Quarry",
+    "Hawthorn"
+   ]
+  },
+  "note": "its writer was stopped by an interrupt before reporting; the page had passed"
+ },
+ "c0458": {
+  "writer": "sonnet",
+  "batch": "round6-4",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-27",
+  "particulars": {
+   "date": "2020-07-29",
+   "people": [
+    "Aisha Sinclair",
+    "Tom Treloar",
+    "Ellie Mercer"
+   ],
+   "places": [
+    "Kendal",
+    "Colchester"
+   ],
+   "name_words": [
+    "Lark",
+    "Walnut"
+   ]
+  },
+  "note": "its writer was stopped by an interrupt before reporting; the page had passed"
  },
  "c0464": {
   "writer": "sonnet",
@@ -4843,6 +5875,30 @@
   "batch_seconds": 553.9,
   "written": "2026-10-25"
  },
+ "c0512": {
+  "writer": "sonnet",
+  "batch": "round5-1",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2021-01-21",
+   "people": [
+    "Matteo Moretti",
+    "Martina Marino",
+    "Anna Lombardo"
+   ],
+   "places": [
+    "Lecce",
+    "Cosenza"
+   ],
+   "name_words": [
+    "Tern",
+    "Timber"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
  "c0514": {
   "writer": "sonnet",
   "batch": "pilot-2",
@@ -4859,6 +5915,126 @@
     "why": "under the word floor: 77 to 147 words"
    }
   ]
+ },
+ "c0515": {
+  "writer": "sonnet",
+  "batch": "round5-5",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2020-08-12",
+   "people": [
+    "Freya Patel",
+    "Megan Haworth",
+    "Imogen Caldwell"
+   ],
+   "places": [
+    "Wrexham",
+    "Hereford"
+   ],
+   "name_words": [
+    "Walnut",
+    "Flint"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0516": {
+  "writer": "sonnet",
+  "batch": "round5-4",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2025-09-14",
+   "people": [
+    "Brooke Jackson",
+    "Trevor Tillman",
+    "Nadia Adeyemi"
+   ],
+   "places": [
+    "Provo, UT",
+    "Madison, WI"
+   ],
+   "name_words": [
+    "Cypress",
+    "Garnet"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0517": {
+  "writer": "sonnet",
+  "batch": "round5-3",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2021-08-11",
+   "people": [
+    "Trevor Abernathy",
+    "Rachel Shapiro",
+    "Sofia Mahoney"
+   ],
+   "places": [
+    "Lubbock, TX",
+    "Provo, UT"
+   ],
+   "name_words": [
+    "Cobalt",
+    "Bracken"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0518": {
+  "writer": "sonnet",
+  "batch": "round6-3",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-27",
+  "particulars": {
+   "date": "2026-02-16",
+   "people": [
+    "Isla Caldwell",
+    "Priya Haworth",
+    "Kwame Hughes"
+   ],
+   "places": [
+    "Dundee",
+    "Salisbury"
+   ],
+   "name_words": [
+    "Lattice",
+    "Siskin"
+   ]
+  },
+  "note": "its writer was stopped by an interrupt before reporting; the page had passed"
+ },
+ "c0519": {
+  "writer": "sonnet",
+  "batch": "round6-6",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-27",
+  "particulars": {
+   "date": "2025-01-23",
+   "people": [
+    "Rhys Whitaker",
+    "Isla Odell",
+    "Yusuf Kaur"
+   ],
+   "places": [
+    "Swindon",
+    "Kendal"
+   ],
+   "name_words": [
+    "Beacon",
+    "Saffron"
+   ]
+  },
+  "note": "its writer was stopped by an interrupt before reporting; the page had passed"
  },
  "c0520": {
   "writer": "sonnet",
@@ -5454,6 +6630,150 @@
     "Garnet"
    ]
   }
+ },
+ "c0577": {
+  "writer": "sonnet",
+  "batch": "round5-5",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2020-01-10",
+   "people": [
+    "Raj Shapiro",
+    "DeShawn Yamamoto",
+    "Luis Tillman"
+   ],
+   "places": [
+    "Billings, MT",
+    "Tacoma, WA"
+   ],
+   "name_words": [
+    "Hawthorn",
+    "Lark"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0578": {
+  "writer": "sonnet",
+  "batch": "round5-4",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2023-12-17",
+   "people": [
+    "Harry Caldwell",
+    "Oliver Fairclough",
+    "Stuart Ashworth"
+   ],
+   "places": [
+    "Truro",
+    "Aberystwyth"
+   ],
+   "name_words": [
+    "Northgate",
+    "Driftwood"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0579": {
+  "writer": "sonnet",
+  "batch": "round5-3",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2025-11-02",
+   "people": [
+    "Oliver Pritchard",
+    "Imogen Mercer",
+    "Yusuf Bryce"
+   ],
+   "places": [
+    "Dundee",
+    "Bangor"
+   ],
+   "name_words": [
+    "Cinder",
+    "Thistle"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0580": {
+  "writer": "sonnet",
+  "batch": "round5-2",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-26",
+  "particulars": {
+   "date": "2026-04-16",
+   "people": [
+    "Isla Burrows",
+    "Harry Kowalski",
+    "Declan Kaur"
+   ],
+   "places": [
+    "Shrewsbury",
+    "Ipswich"
+   ],
+   "name_words": [
+    "Redstart",
+    "Nuthatch"
+   ]
+  },
+  "note": "its writer stopped at the spend limit before reporting; the page had passed"
+ },
+ "c0581": {
+  "writer": "sonnet",
+  "batch": "round6-2",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-27",
+  "particulars": {
+   "date": "2023-08-06",
+   "people": [
+    "Stefano Serra",
+    "Marco Santoro",
+    "Fabio Ricci"
+   ],
+   "places": [
+    "Perugia",
+    "Bergamo"
+   ],
+   "name_words": [
+    "Obsidian",
+    "Ochre"
+   ]
+  },
+  "note": "its writer was stopped by an interrupt before reporting; the page had passed"
+ },
+ "c0582": {
+  "writer": "sonnet",
+  "batch": "round6-5",
+  "runs": null,
+  "batch_seconds": null,
+  "written": "2026-10-27",
+  "particulars": {
+   "date": "2025-02-13",
+   "people": [
+    "Ewan Thornton",
+    "Isla Nwosu",
+    "Amelia Odell"
+   ],
+   "places": [
+    "Kendal",
+    "Truro"
+   ],
+   "name_words": [
+    "Tern",
+    "Cobalt"
+   ]
+  },
+  "note": "its writer was stopped by an interrupt before reporting; the page had passed"
  },
  "c0586": {
   "writer": "sonnet",

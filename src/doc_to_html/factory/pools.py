@@ -8,7 +8,8 @@ the pilot's 50 go to dev.
 **The deal**, seeded:
 - *stratified by family*: each family's pages split as evenly over the
   three pools as its count allows, so dev, panel and vault share one mix;
-- *PDF pages dealt separately*, the same way, about 33 to a pool;
+- *PDF pages dealt separately*, the same way, a third to a pool (nine
+  since they stopped at 27, Alessandro 2026-10-27);
 - *the pilot fixed in dev*;
 - *then repaired for coverage*: while a feature has fewer than
   `per_pool` pages in a pool, two pages of the same family and origin

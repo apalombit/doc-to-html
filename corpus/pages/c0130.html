@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en-US"><head><meta charset="utf-8"><title>Purchase order</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:40px 48px 44px;width:1000px;font-family:Optima,sans-serif;font-size:13px;line-height:1.45;color:#1b1b1b;background:#fff}
+.top{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:4px double #7a1f2b;padding-bottom:12px;margin-bottom:22px}
+.top h1{margin:0;font-size:30px;font-variant:small-caps;letter-spacing:.1em;font-weight:400;color:#7a1f2b}
+.top .co{font-size:15px;font-variant:small-caps;letter-spacing:.08em}
+.top .co small{display:block;font-size:12px;font-variant:normal;letter-spacing:0;color:#555}
+.wrap{display:flex;gap:30px}
+.side{width:260px;flex:none}
+.main{flex:1}
+h2{font-size:12px;font-variant:small-caps;letter-spacing:.12em;margin:0 0 8px;color:#7a1f2b;border-bottom:1px dotted #7a1f2b;padding-bottom:3px;font-weight:700}
+.box{border:1px solid #333;padding:4px 8px;margin-bottom:8px;min-height:26px}
+.box span{display:block;font-size:10px;font-variant:small-caps;letter-spacing:.08em;color:#666}
+.lead{display:flex;align-items:baseline;margin-bottom:5px}
+.lead i{flex:1;border-bottom:1px dotted #444;margin:0 5px;transform:translateY(-3px)}
+.lead em{font-style:normal;font-weight:700}
+table{width:100%;border-collapse:collapse;margin-bottom:12px}
+th,td{border:1px solid #333;padding:5px 7px;text-align:left}
+th{background:#f1e6e8;font-variant:small-caps;letter-spacing:.06em;font-size:12px}
+td.r,th.r{text-align:right}
+tr.t td{border-top:3px double #333;font-weight:700}
+tr.t td.l{border:0;text-align:right}
+.terms{border-top:1px dashed #555;padding-top:8px;font-size:11px;color:#444;margin-top:14px}
+.sig{display:flex;gap:30px;margin-top:22px}
+.sig div{flex:1;border-top:1px solid #333;padding-top:3px;font-size:11px}
+</style></head><body>
+<div class="top"><h1>Purchase Order</h1><div class="co">Iris Summit Supply Co.<small>41 Cascadilla Street, Ithaca, NY 14850</small></div></div>
+<div class="wrap">
+<aside class="side">
+<h2>Order details</h2>
+<div class="box"><span>PO number</span>PO-231104-088</div>
+<div class="box"><span>Date issued</span>November 4, 2023</div>
+<div class="box"><span>Required by</span>November 20, 2023</div>
+<div class="box"><span>Buyer</span>Brooke Kowalczyk</div>
+<h2 style="margin-top:18px">Vendor</h2>
+<div class="box"><span>Name</span>Darnell Duarte, Cascade Fasteners</div>
+<div class="box"><span>Address</span>1180 Willamette Way, Eugene, OR 97401</div>
+<h2 style="margin-top:18px">Ship to</h2>
+<div class="box"><span>Receiving</span>Diego Morales, Dock 3<br>41 Cascadilla Street<br>Ithaca, NY 14850</div>
+<h2 style="margin-top:18px">Account</h2>
+<div class="lead">Terms<i></i><em>Net 30</em></div>
+<div class="lead">Freight<i></i><em>Prepaid</em></div>
+<div class="lead">Cost center<i></i><em>4410</em></div>
+</aside>
+<div class="main">
+<h2>Items ordered</h2>
+<table>
+<tr><th>Line</th><th>Item no.</th><th>Description</th><th class="r">Qty</th><th class="r">Unit price</th><th class="r">Amount</th></tr>
+<tr><td>1</td><td>HX-2040</td><td>Hex bolt, zinc plated, 3/8 in x 2 in, box of 100</td><td class="r">12</td><td class="r">$18.50</td><td class="r">$222.00</td></tr>
+<tr><td>2</td><td>WS-0310</td><td>Flat washer, stainless, 3/8 in, box of 250</td><td class="r">8</td><td class="r">$11.25</td><td class="r">$90.00</td></tr>
+<tr><td>3</td><td>NT-1175</td><td>Lock nut, nylon insert, 3/8 in, box of 100</td><td class="r">10</td><td class="r">$14.80</td><td class="r">$148.00</td></tr>
+<tr><td>4</td><td>AN-5502</td><td>Wedge anchor, 1/2 in x 4 1/4 in, box of 25</td><td class="r">6</td><td class="r">$32.40</td><td class="r">$194.40</td></tr>
+<tr><td>5</td><td>TH-0907</td><td>Threaded rod, galvanized, 3/8 in x 6 ft</td><td class="r">15</td><td class="r">$9.60</td><td class="r">$144.00</td></tr>
+<tr class="t"><td class="l" colspan="5">Subtotal</td><td class="r">$798.40</td></tr>
+<tr><td class="l" colspan="5" style="border:0;text-align:right">Sales tax (8%)</td><td class="r">$63.87</td></tr>
+<tr><td class="l" colspan="5" style="border:0;text-align:right">Total</td><td class="r" style="font-weight:700;color:#7a1f2b">$862.27</td></tr>
+</table>
+<h2>Instructions</h2>
+<div class="lead">Delivery window<i></i><em>Weekdays, 7:00 to 15:00</em></div>
+<div class="lead">Packing slip<i></i><em>Required with each carton</em></div>
+<div class="lead">Substitutions<i></i><em>Not accepted without written approval</em></div>
+<p class="terms">This order is subject to the buyer’s standard terms. Please acknowledge within two business days, quote the PO number on every invoice and packing slip, and report any shortfall in quantity before shipping.</p>
+<div class="sig"><div>Authorized by Brooke Kowalczyk</div><div>Vendor acknowledgement</div><div>Date</div></div>
+</div>
+</div>
+</body></html>

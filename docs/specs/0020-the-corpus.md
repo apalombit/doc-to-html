@@ -1063,21 +1063,131 @@ Brazil, arXiv CC BY), ten at a time, each ten opened beside its pages.
   (`factory.particulars`, seeded by the card's id). The names the pilot
   overused are on no list. Fragments get half the word floor.
 
-**Two rounds of 50, written by Sonnet, five writers at a time:**
+**Rounds of 50, written by Sonnet, five writers at a time:**
 
 | round | pages | first run passed | batch of ten, seconds |
 |---|---|---|---|
 | 1 | 50 | 27 | 271–388 |
 | 2 | 50 | 26 of 47 reported | 222–394 |
+| 3 | 50 | 33 | 274–338 |
+| 4 | 50 | 26 | 304–407 |
+| 5 | 37 of 50 | not reported | — |
 
-Round 2's first attempt stopped at the spend limit. Its batches were
+Rounds 2 and 5 stopped at the spend limit. Round 2's batches were
 handed out again, and three pages that had already passed (c0009, c0060,
-c0210) kept their pages, their run counts unreported; `tools/corpus_batch.py`
-now takes a card as written by its check record, not by its HTML.
+c0210) kept their pages, their run counts unreported. Round 5's 37
+passing pages are kept the same way, and its 13 open cards went into
+the recast below. `tools/corpus_batch.py` takes a card as written once
+its page has passed. A draft's failed record leaves it open.
 
-**Where it stands:** 200 of 500 generated pages and 10 of 100 PDF pages
-written, every one passing. Median words: 408 dense, 222 medium, 121
-sparse. Heights run from 228 to 1581 px, median 798. 28 MB on disk.
+**Two rules added to the brief after round 2, each from what the first
+150 pages did:**
+- **A line a reader reads as one is one block.** A number and its
+  heading go in one element, never two flex items or two positioned
+  boxes. `pdfpage.split_paragraphs` counts runs of one-line blocks
+  side by side on one row:
+
+  | rounds | runs | pages |
+  |---|---|---|
+  | pilot | 45 | 17 |
+  | 1–2 | 14 | 7 |
+  | 3–4 | 7 | 6 |
+- **Name words are seeds**, to be used in the form a real name takes. A
+  third of the first 150 pages had joined the two into one name with
+  "&". Round 4 has none.
+
+**The checker no longer re-shoots a PDF page.** `corpus_check --all` had
+been treating a PDF page like a generated one, which would have
+overwritten the PDF's own render with the twin's screenshot. It now
+skips them, and refuses a PDF page named on its own: the gate
+(`tools/corpus_pdf.py gate`) is their check.
+
+**PDF pages, the second ten and the third (2026-10-26).** Each document's
+own copyright statement was read before its page was taken, not just
+its source's general licence:
+
+| page | source | kind | rows | worst across | worst down |
+|---|---|---|---|---|---|
+| c0074 | IRS Form 8822, p1 | application form | 58 | 2.3 | 5.3 |
+| c0075 | IRS Form 2441, p1 | numbered-box tax form | 150 | 9.4 | 8.4 |
+| c0076 | HMCTS Form N1, p1 | application form | 36 | 12.5 | 1.6 |
+| c0078 | Istat, survey questionnaire, p31 | questionnaire | 60 | 6.3 | 1.3 |
+| c0083 | BOE-A-2025-12818, p45 | numbered-box tax form | 82 | 4.7 | 3.9 |
+| c0272 | Federal Reserve, FOMC minutes, p2 | minutes | 24 | 0.1 | 3.2 |
+| c0273 | BOE-A-2025-1733, p5 | status report | 127 | 7.5 | 1.8 |
+| c0274 | DOE, FY 2024 performance report, p19 | status report | 68 | 10.4 | 2.7 |
+| c0413 | Istat Working Paper 7/2023, p10 (CC BY 3.0 IT) | paper page | 44 | 0.6 | 2.7 |
+| c0082 | DVLA, form MIS1065, p3 | application form | 15 | 0.3 | 3.5 |
+| c0351 | ESFA, letter to accounting officers, p1 | letter | 38 | 0.3 | 4.9 |
+| c0411 | arXiv:2610.30900, p6 (CC BY 4.0) | paper page | 97 | 10.6 | 14.7 |
+| c0412 | arXiv:2610.29500, p3 (CC BY 4.0) | paper page | 118 | 5.4 | 14.3 |
+| c0472 | Interior Business Center, 2026 payroll calendar, p3 | timetable | 87 | 2.4 | 7.1 |
+| c0474 | NIST SP 250, fee schedule, p36 | price list | 73 | 2.2 | 4.8 |
+| c0196 | GSA/Treasury, SF 1034 public voucher, p1 | invoice | 88 | 1.2 | 5.6 |
+| c0197 | GSA, OF 347 order for supplies, p1 | purchase order | 101 | 0.5 | 6.3 |
+
+Two pages were dropped (`tools/corpus_pdf.py drop`, each recorded in the
+cards' history):
+- **c0271**: an Ofsted report of 2011 that allowed copying "for
+  non-commercial educational purposes" only, despite its source's open
+  licence.
+- **c0077**: IRS Schedule A, whose twin stayed one row short because of
+  a fault in the gate. A word set at the end of a line ("got a benefit
+  for it,"), where the line's other words sit under the row above, is
+  banded into that row. The fault is left unrepaired, since PDF work
+  stopped.
+
+**The gate's rows were rebuilt on the second ten.** It had refused true
+twins. The cause was banding: a browser's line boxes are taller than a
+PDF's, so a twin's rows merged where the PDF's did not. Each attempt
+below was run over the nineteen pages then taken:
+1. cutting both sides at 3 em gaps: 13 of 19 failed;
+2. matching against whole twin bands: 3 failed;
+3. bands with a fixed centre and the stacking rule: 3 failed;
+4. pieces cut at gaps and at jumps to another line, with hard and soft
+   ends: 19 of 19 passed.
+
+§P step 6 states the gate that shipped.
+
+**The twins' type set back to the page's sizes.** To get past the old
+banding, writers had shrunk the type. The nineteen twins' median sizes
+ran 0.84–1.02 of the page's, six under 0.90. Ten twins were reset, and
+they now run 0.91–1.02. The gate's type pointer (`TYPE_SIZE`, 10%) lists
+any run still off.
+
+**A known fault left in.** Some text layers drop the "fi" ligature.
+c0082's spells "specifc" and "ftness", and its twin had to copy them to
+pass. Because PDF work stopped and the set stays as it is, this was not
+repaired: a converter that reads "specific" off that page is marked down
+on three words.
+
+**Alessandro's decision, 2026-10-27:** "keep current set of pdf as is
+and not add further pdf — complete task by focusing on generated pages
+now but prefer to generate a varied mix of small and large pages keeping
+some good doc content variability but liberally use smaller ones now
+(for instance acting like a zoom to specific doc layout item maybe to
+represent more often) because we finish session tokens quickly". The
+PDF set stops at 27 pages. `tools/corpus_cards.py --zoom 130` was run
+once, at seed 20261024 plus the history's length:
+- **The 73 open PDF slots became generated cards**, each keeping its
+  family and language. Its kind is the one its family has fewest cards
+  of.
+- **130 cards became parts** (`cards.zoom`, `Card.scope = "part"`): one
+  part of a document of their own kind, as if zoomed in or cut out,
+  500–800 px wide, carrying three features. They were drawn from the
+  unlocked whole cards of kinds wider than a part, in 8 families and 46
+  kinds. Their word floor is halved, as a fragment's is, and the brief
+  says what a part is ("A part").
+- **No page that passed was touched.** The top-up kept every feature at
+  its minimum, and 144 cards changed in all. The corpus is now 573
+  generated and 27 PDF pages.
+
+Of the 236 cards left after the recast, 130 are parts. Of the 106 whole
+ones, 21 are fragments, 19 receipts and a few nutrition labels; the rest
+are whole pages, kept for range.
+
+**Where it stands, 2026-10-27:** 337 of 573 generated pages and 27 PDF
+pages written, every one passing.
 
 ## Outcome — the corpus
 

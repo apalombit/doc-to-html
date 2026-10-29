@@ -259,6 +259,7 @@ class TestThePieces:
         assert check.word_floor(replace(wide, density="medium", width=500)) == 110
         assert check.word_floor(replace(wide, density="dense", family="fragments",
                                         kind="standalone table")) == 200
+        assert check.word_floor(replace(wide, density="dense", scope="part")) == 200
 
     def test_formats_by_language(self) -> None:
         assert check.FORMATS["fmt.eu_numbers"].search("Totale 1.234,56 €")

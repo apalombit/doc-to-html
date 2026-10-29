@@ -1,0 +1,29 @@
+{
+ "id": "c0455",
+ "passed": true,
+ "failures": {},
+ "checked": "2026-10-26",
+ "seconds": 8.9,
+ "width": 920,
+ "height": 898,
+ "words": 383,
+ "card_features": [
+  "arr.one_column",
+  "type.sans",
+  "fmt.currency",
+  "kv.leaders",
+  "list.ticks",
+  "table.empty_cells",
+  "type.display"
+ ],
+ "detected": [
+  "fmt.currency",
+  "fmt.dates",
+  "table",
+  "table.empty_cells",
+  "type.sans"
+ ],
+ "dhash": "595353c94a4a6666",
+ "html_sha256": "ecf01f25e59a98e1841cd17495e0b6d57e6dece6d75ca33ad3ecc6b6be890d33",
+ "png_sha256": "6e953e4b23f5ee4dfa85b4d6f0721c4ff42f2f77e1c87dd3a02eb6d21f3e3dfe"
+}

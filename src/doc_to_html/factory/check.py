@@ -54,9 +54,9 @@ taken as the screenshot's median luminance; an `<svg>` or `<img>` for any
 `fig.*`; and a pattern in the text for each `fmt.*`. What a page shows of
 these, whatever its card asked, is recorded as its `detected` features.
 Check 8 also holds the card's density to a word floor: `WORD_FLOOR` words
-per 1000 px of width, half that for the `COMPACT_KINDS` and for a
-fragment (a part of a document at its own size), and none for a sparse
-page. Set from the pilot's 50: the 17 pages written by Opus, which
+per 1000 px of width, half that for the `COMPACT_KINDS`, for a
+fragment and for a part (each a part of a document at its own size), and
+none for a sparse page. Set from the pilot's 50: the 17 pages written by Opus, which
 read as their density, all clear it, and 14 of the 33 written by Sonnet,
 about half as wordy at the same density, do not.
 
@@ -119,7 +119,8 @@ COMPACT_KINDS = frozenset({"certificate", "ticket", "invitation", "membership ca
 def word_floor(card: Card) -> int:
     """The fewest words a page of `card`'s density holds at its width."""
     per_1000 = WORD_FLOOR.get(card.density or "", 0)
-    share = 0.5 if card.kind in COMPACT_KINDS or card.family == "fragments" else 1.0
+    share = (0.5 if card.kind in COMPACT_KINDS or card.family == "fragments"
+             or card.scope == "part" else 1.0)
     return round(per_1000 * (card.width or 0) / 1000 * share)
 
 GENERIC_FIRST = {"serif": "serif", "sans-serif": "sans", "monospace": "mono",

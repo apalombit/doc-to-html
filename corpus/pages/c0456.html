@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Service price list</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    width: 1100px;
+    padding: 44px 48px 40px;
+    background: #fff;
+    color: #111;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  :root { --ac: #e8421c; }
+  .top { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 24px; border-top: 3px solid #111; padding-top: 10px; }
+  .brand { grid-column: 1 / span 3; font-size: 11px; font-weight: 700; letter-spacing: 0.02em; }
+  .brand small { display: block; font-weight: 400; color: #666; font-size: 11px; margin-top: 2px; }
+  .title { grid-column: 4 / span 9; }
+  h1 { margin: 0; font-size: 54px; line-height: 1; font-weight: 300; letter-spacing: -0.025em; }
+  h1 em { font-style: normal; color: var(--ac); }
+  .meta { grid-column: 1 / span 12; display: grid; grid-template-columns: repeat(4, 1fr); column-gap: 24px; margin-top: 34px; padding-top: 10px; border-top: 1px solid #111; }
+  .k { display: block; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: #777; margin-bottom: 2px; }
+  .v { display: block; font-size: 13px; font-weight: 500; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 34px 24px; margin-top: 38px; }
+  .card { border-top: 1px solid #111; padding-top: 12px; display: flex; flex-direction: column; min-height: 214px; }
+  .card .row1 { display: flex; justify-content: space-between; align-items: flex-start; }
+  .card svg { width: 30px; height: 30px; display: block; }
+  .no { font-size: 10px; color: #888; letter-spacing: 0.06em; }
+  .card h2 { font-size: 16px; font-weight: 600; margin: 14px 0 4px; letter-spacing: -0.01em; line-height: 1.2; }
+  .card p { margin: 0 0 14px; color: #555; font-size: 11.5px; line-height: 1.42; }
+  .pairs { margin-top: auto; display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 10px; border-top: 1px solid #ddd; padding-top: 8px; }
+  .pairs .v { font-size: 13px; }
+  .pairs .price { color: var(--ac); font-weight: 700; font-size: 16px; line-height: 1.1; }
+  .flag { color: var(--ac); font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+  .notes { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 24px; margin-top: 44px; border-top: 3px solid #111; padding-top: 10px; }
+  .notes h3 { grid-column: 1 / span 3; margin: 0; font-size: 11px; font-weight: 700; }
+  .notes .col { grid-column: span 3; font-size: 11px; color: #333; line-height: 1.5; }
+  .notes .col b { display: block; font-weight: 600; color: #111; margin-bottom: 2px; }
+  .notes .col span { color: var(--ac); font-weight: 600; }
+  .foot { display: flex; justify-content: space-between; margin-top: 30px; padding-top: 8px; border-top: 1px solid #ccc; font-size: 10px; color: #777; }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">Hawthorn Cycle Works<small>214 Quarry Street<br>Santa Fe, NM 87501</small></div>
+  <div class="title"><h1>Workshop service<br>price list<em>.</em></h1></div>
+  <div class="meta">
+    <div><span class="k">Effective</span><span class="v">October 4, 2019</span></div>
+    <div><span class="k">Workshop manager</span><span class="v">Jordan Nguyen</span></div>
+    <div><span class="k">Open</span><span class="v">Tue to Sat, 9:00 am to 6:00 pm</span></div>
+    <div><span class="k">Booking</span><span class="v">(505) 555&#8209;0148</span></div>
+  </div>
+</div>
+
+<div class="grid">
+
+  <div class="card">
+    <div class="row1">
+      <svg viewBox="0 0 30 30" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="15" cy="15" r="12"/><polyline points="9,15.5 13.5,20 21,10.5"/></svg>
+      <span class="no">01</span>
+    </div>
+    <h2>Safety check</h2>
+    <p>Brakes, tires, bolts, chain and quick-release checked and reported in writing. Minor adjustments included.</p>
+    <div class="pairs">
+      <div><span class="k">Time</span><span class="v">20 min</span></div>
+      <div><span class="k">Labor</span><span class="v">Included</span></div>
+      <div><span class="k">Price</span><span class="v price">$25</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row1">
+      <svg viewBox="0 0 30 30" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 25 L16 14"/><path d="M16 14 C13 10 15 4 21 4 L18 8 L20 10 L24 7 C26 13 20 17 16 14 Z"/></svg>
+      <span class="flag">Most booked</span>
+    </div>
+    <h2>Basic tune-up</h2>
+    <p>Gears and brakes indexed, wheels trued to a tolerance of 1 mm, drivetrain cleaned and lubricated, tires inflated.</p>
+    <div class="pairs">
+      <div><span class="k">Time</span><span class="v">1 hr</span></div>
+      <div><span class="k">Labor</span><span class="v">1 hr</span></div>
+      <div><span class="k">Price</span><span class="v price">$79</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row1">
+      <svg viewBox="0 0 30 30" fill="none" stroke="#111" stroke-width="1.6"><circle cx="15" cy="15" r="10.5" stroke-width="4.5" stroke-dasharray="3.4 3.1"/><circle cx="15" cy="15" r="7"/><circle cx="15" cy="15" r="2.5"/></svg>
+      <span class="no">03</span>
+    </div>
+    <h2>Full overhaul</h2>
+    <p>Complete strip-down: bearings repacked in the hubs, headset and bottom bracket, cables and housing replaced, frame cleaned.</p>
+    <div class="pairs">
+      <div><span class="k">Time</span><span class="v">3 days</span></div>
+      <div><span class="k">Labor</span><span class="v">3.5 hrs</span></div>
+      <div><span class="k">Price</span><span class="v price">$189</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row1">
+      <svg viewBox="0 0 30 30" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"><circle cx="15" cy="15" r="12"/><circle cx="15" cy="15" r="3.5"/><circle cx="15" cy="7.5" r="1" fill="#111"/><circle cx="22" cy="17" r="1" fill="#111"/><circle cx="9.5" cy="20.5" r="1" fill="#111"/></svg>
+      <span class="no">04</span>
+    </div>
+    <h2>Brake service</h2>
+    <p>Pads replaced or cleaned, rotors trued, hydraulic lines bled or cable brakes re-centered and tensioned. Per brake.</p>
+    <div class="pairs">
+      <div><span class="k">Time</span><span class="v">30 min</span></div>
+      <div><span class="k">Labor</span><span class="v">0.5 hr</span></div>
+      <div><span class="k">Price</span><span class="v price">$45</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row1">
+      <svg viewBox="0 0 30 30" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"><circle cx="9" cy="17" r="6.5"/><circle cx="23" cy="10" r="3.8"/><line x1="9.5" y1="10.6" x2="21" y2="6.3"/><line x1="12.5" y1="22.4" x2="25.5" y2="13.2"/></svg>
+      <span class="no">05</span>
+    </div>
+    <h2>Drivetrain and gears</h2>
+    <p>Chain, cassette and chainrings measured for wear, derailleurs adjusted, shifting tested under load on the stand.</p>
+    <div class="pairs">
+      <div><span class="k">Time</span><span class="v">45 min</span></div>
+      <div><span class="k">Labor</span><span class="v">0.75 hr</span></div>
+      <div><span class="k">Price</span><span class="v price">$55</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row1">
+      <svg viewBox="0 0 30 30" fill="none" stroke="#111" stroke-width="1.4" stroke-linecap="round"><circle cx="15" cy="15" r="12.5"/><circle cx="15" cy="15" r="1.8"/><path d="M15 2.5 V27.5 M2.5 15 H27.5 M6.2 6.2 L23.8 23.8 M23.8 6.2 L6.2 23.8"/></svg>
+      <span class="no">06</span>
+    </div>
+    <h2>Wheel true</h2>
+    <p>Spokes tensioned and the rim trued for lateral and radial runout. Broken spokes are charged separately.</p>
+    <div class="pairs">
+      <div><span class="k">Time</span><span class="v">25 min</span></div>
+      <div><span class="k">Labor</span><span class="v">Included</span></div>
+      <div><span class="k">Price</span><span class="v price">$30</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row1">
+      <svg viewBox="0 0 30 30" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"><circle cx="15" cy="15" r="12" stroke-dasharray="40 8"/><line x1="15" y1="3" x2="15" y2="14"/><circle cx="15" cy="17" r="2" fill="#111"/></svg>
+      <span class="no">07</span>
+    </div>
+    <h2>Puncture repair</h2>
+    <p>Tube patched or replaced, tire and rim inspected for the cause, pressure set for the rider&rsquo;s weight.</p>
+    <div class="pairs">
+      <div><span class="k">Time</span><span class="v">15 min</span></div>
+      <div><span class="k">Labor</span><span class="v">Included</span></div>
+      <div><span class="k">Price</span><span class="v price">$15</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row1">
+      <svg viewBox="0 0 30 30" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"><circle cx="15" cy="15" r="12.5"/><circle cx="15" cy="15" r="8" stroke-dasharray="2 2.4"/><path d="M12 13 Q15 9 18 13 Q15 20 12 13 Z"/></svg>
+      <span class="flag">New</span>
+    </div>
+    <h2>Tubeless conversion</h2>
+    <p>Rim tape, valves and sealant fitted and the tire seated on the rim. Sealant top-up is free for six months.</p>
+    <div class="pairs">
+      <div><span class="k">Time</span><span class="v">40 min</span></div>
+      <div><span class="k">Labor</span><span class="v">0.6 hr</span></div>
+      <div><span class="k">Price</span><span class="v price">$60</span></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="notes">
+  <h3>Notes on pricing</h3>
+  <div class="col"><b>Parts</b>Parts are extra and quoted before any work starts. The workshop labor rate is <span>$68 per hour</span>, billed in quarter-hours above the times shown.</div>
+  <div class="col"><b>Rush and e-bikes</b>Same-day service is <span>+$20</span>. Electric bikes carry a surcharge of <span>+$15</span> on every service for battery and motor diagnostics.</div>
+  <div class="col"><b>Collection</b>Bikes not collected within 30 days are stored at $2 per day. Our Fresno, CA workshop shares this list; ask there for its pick-up service.</div>
+</div>
+
+<div class="foot"><span>Prices in US dollars, sales tax not included. Subject to change without notice.</span><span>Hawthorn Cycle Works, Santa Fe, NM &middot; Fresno, CA</span></div>
+
+</body>
+</html>

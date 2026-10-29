@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><title>Pump controller manual</title>
+<style>
+body{margin:0;padding:36px 42px 30px;width:756px;font-family:"Times New Roman",Times,serif;font-size:11pt;color:#000}
+p.MsoNormal{margin:0 0 4pt;line-height:1.25}
+.hd{display:flex;align-items:center;gap:12px;border-bottom:2px solid #0b5a8a;padding-bottom:8px;margin-bottom:10px}
+.hd .wm{font-family:Arial,sans-serif;font-size:15pt;font-weight:bold;color:#0b5a8a}
+.hd .r{margin-left:auto;text-align:right;font-size:9pt}
+h1{font-size:15pt;margin:8px 0 4px;color:#0b5a8a}
+h2{font-size:12pt;margin:10px 0 3px;color:#0b5a8a}
+.kv{display:flex;align-items:baseline;font-size:10.5pt;margin:1px 0}
+.kv i{flex:1;border-bottom:1px dotted #333;margin:0 4px;height:0}
+table{border-collapse:collapse;width:100%;font-size:10pt;margin:4px 0}
+th,td{border:1px solid #666;padding:2px 6px;text-align:left}
+th{background:#dbe8f1}
+td.sub{padding-left:22px;font-style:italic}
+ol{list-style:none;margin:2px 0;padding:0}
+ol li{padding-left:24px;text-indent:-24px;margin:2px 0;font-size:10.5pt}
+.warn{border:1px solid #b22;border-left:6px solid #b22;padding:3px 8px;margin:6px 0;font-size:10pt}
+.ft{border-top:1px solid #666;margin-top:12px;padding-top:4px;font-size:8.5pt;display:flex;justify-content:space-between}
+</style></head><body>
+<div class="hd"><svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#0b5a8a"/><path d="M8 24 Q14 12 20 20 T32 16" stroke="#fff" stroke-width="3" fill="none"/><rect x="17" y="24" width="6" height="8" fill="#fff"/></svg><span class="wm">Birch Curlew Pumps</span><div class="r"><span style="font-size:9pt">Service Manual SM-214<br>Revision C, 18 September 2022</span></div></div>
+<h1>Section 4: Installing and commissioning the CP-3 controller</h1>
+<p class="MsoNormal"><span style="font-size:10.5pt">This section covers wiring, parameter set-up and first start of the CP-3 controller. Work must be done by a competent engineer. Isolate the supply before opening the enclosure.</span></p>
+<h2>4.1 Rated data</h2>
+<div class="kv"><span>Supply voltage</span><i></i><span>230 V AC, 50 Hz</span></div>
+<div class="kv"><span>Maximum motor current</span><i></i><span>12.5 A</span></div>
+<div class="kv"><span>Enclosure rating</span><i></i><span>IP54</span></div>
+<div class="kv"><span>Ambient temperature range</span><i></i><span>-10 to 45 °C</span></div>
+<div class="kv"><span>Fuse (slow-blow)</span><i></i><span>16 A</span></div>
+<h2>4.2 Terminal wiring</h2>
+<table><tr><th style="width:70px">Terminal</th><th>Function</th><th style="width:90px">Cable</th><th style="width:80px">Torque (Nm)</th></tr>
+<tr><td>L1</td><td>Mains live</td><td>2.5 mm²</td><td>0.8</td></tr>
+<tr><td class="sub">L1a</td><td class="sub">Live to run relay</td><td>1.5 mm²</td><td>0.5</td></tr>
+<tr><td class="sub">L1b</td><td class="sub">Live to alarm relay</td><td>1.5 mm²</td><td>0.5</td></tr>
+<tr><td>N</td><td>Mains neutral</td><td>2.5 mm²</td><td>0.8</td></tr>
+<tr><td>PE</td><td>Protective earth</td><td>2.5 mm²</td><td>1.2</td></tr>
+<tr><td>S1</td><td>Float switch, low level</td><td>0.75 mm²</td><td>0.4</td></tr>
+<tr><td class="sub">S1a</td><td class="sub">Float common</td><td>0.75 mm²</td><td>0.4</td></tr>
+<tr><td>S2</td><td>Float switch, high level</td><td>0.75 mm²</td><td>0.4</td></tr>
+</table>
+<h2>4.3 Commissioning procedure</h2>
+<ol>
+<li>1.&nbsp; Check that all terminals are tightened to the torque in table 4.2 and that the earth lead is connected first.</li>
+<li>2.&nbsp; Close the enclosure and switch on the supply. The green POWER lamp should light within 3 seconds.</li>
+<li>3.&nbsp; Hold the MENU key for 5 seconds to enter the parameter list, then set P01 to the motor rated current.</li>
+<li>4.&nbsp; Set P02 (dry-run delay) to 20 s and P03 (restart delay) to 90 s for a borehole installation.</li>
+<li>5.&nbsp; Fill the sump to the high-level float and confirm that the pump starts and the RUN lamp lights.</li>
+<li>6.&nbsp; Record the running current in the commissioning sheet and sign it off with the customer.</li>
+</ol>
+<div class="warn"><b>Warning.</b> Never bridge the float terminals to force a start. Running the pump dry for more than 30 seconds will damage the seal.</div>
+<h2>4.4 Parameter defaults</h2>
+<table><tr><th>Code</th><th>Description</th><th>Default</th><th>Range</th></tr>
+<tr><td>P01</td><td>Motor rated current (A)</td><td>6.0</td><td>1.0 to 12.5</td></tr>
+<tr><td>P02</td><td>Dry-run delay (s)</td><td>10</td><td>5 to 60</td></tr>
+<tr><td>P03</td><td>Restart delay (s)</td><td>60</td><td>10 to 300</td></tr>
+<tr><td>P04</td><td>Alarm relay mode</td><td>0</td><td>0 to 2</td></tr>
+</table>
+<div class="ft"><span>Birch Curlew Pumps, Wrexham works and Truro service centre. Prepared by F. Burrows, checked by F. Lindsay.</span><span>Page 14 of 38</span></div>
+</body></html>

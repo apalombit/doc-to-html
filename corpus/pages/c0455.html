@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><title>Technical printout</title>
+<style>
+body{margin:0;padding:10px;box-sizing:border-box;width:920px;background:#fff;color:#000;font-family:Verdana,Geneva,sans-serif;font-size:11px}
+h1{font-family:"Arial Black",Impact,sans-serif;font-weight:400;font-size:26px;margin:0}
+h2{font-size:13px;margin:0;background:#c8d0dc;padding:3px 6px;border:1px solid #556}
+td,th{vertical-align:top}
+th{background:#e4e8ef;text-align:left;font-size:10px}
+.lead{border-bottom:1px dotted #000;width:100%}
+.warn{border:2px solid #b00;background:#fff4f0;padding:6px 8px}
+.mono{font-family:"Courier New",monospace}
+</style></head><body>
+<table border="1" cellpadding="5" cellspacing="0" width="900" bordercolor="#555">
+<tr><td width="620" bgcolor="#eef0f5"><h1>LODESTAR MARIGOLD LM-200</h1><font size="2"><b>Pump Controller &ndash; Installation and Parameter Reference</b></font></td>
+<td width="280"><table border="0" cellpadding="1" cellspacing="0" width="100%"><tr><td>Document:</td><td><b>TM-LM200-04</b></td></tr><tr><td>Printed:</td><td><b>06/04/2024</b></td></tr><tr><td>Revision:</td><td><b>C</b> (Hereford)</td></tr><tr><td>Page:</td><td><b>3 of 14</b></td></tr></table></td></tr></table>
+<br>
+<table border="1" cellpadding="4" cellspacing="0" width="900" bordercolor="#555"><tr><td><h2>3.1 Terminal wiring</h2></td></tr><tr><td>
+<table border="1" cellpadding="3" cellspacing="0" width="100%" bordercolor="#999">
+<tr><th>Terminal</th><th>Signal</th><th>Wire</th><th>Rating</th><th>Notes</th></tr>
+<tr><td class="mono">T1</td><td>Mains live</td><td>Brown</td><td>230 V AC</td><td>Fuse 5 A, time-delay</td></tr>
+<tr><td class="mono">T2</td><td>Mains neutral</td><td>Blue</td><td>230 V AC</td><td></td></tr>
+<tr><td class="mono">T3</td><td>Earth</td><td>Green/yellow</td><td>&ndash;</td><td>Bond to chassis</td></tr>
+<tr><td class="mono">T4</td><td>Pump output</td><td>Black</td><td>10 A</td><td>Relay, normally open</td></tr>
+<tr><td class="mono">T5</td><td>Level probe, low</td><td>Grey</td><td>12 V DC</td><td></td></tr>
+<tr><td class="mono">T6</td><td>Level probe, high</td><td>White</td><td>12 V DC</td><td>Jumper if unused</td></tr>
+<tr><td class="mono">T7</td><td>Alarm contact</td><td>Orange</td><td>1 A</td><td></td></tr>
+<tr><td class="mono">T8</td><td>Remote start input</td><td>Yellow</td><td>24 V DC</td><td>Volt-free contact only</td></tr>
+<tr><td class="mono">T9</td><td>Common return</td><td>Black/white</td><td>&ndash;</td><td>Shared by T5 to T8</td></tr>
+</table></td></tr></table>
+<br>
+<table border="1" cellpadding="4" cellspacing="0" width="900" bordercolor="#555"><tr><td><h2>3.2 Parameters</h2></td></tr><tr><td>
+<table border="1" cellpadding="3" cellspacing="0" width="100%" bordercolor="#999">
+<tr><th>No.</th><th>Name</th><th>Range</th><th>Default</th><th>Unit</th><th>Set on site</th></tr>
+<tr><td class="mono">P01</td><td>Start delay</td><td>0 &ndash; 120</td><td>5</td><td>s</td><td></td></tr>
+<tr><td class="mono">P02</td><td>Run-on time</td><td>0 &ndash; 600</td><td>30</td><td>s</td><td></td></tr>
+<tr><td class="mono">P03</td><td>Dry-run cut-out</td><td>10 &ndash; 900</td><td>120</td><td>s</td><td></td></tr>
+<tr><td class="mono">P04</td><td>Alarm delay</td><td>0 &ndash; 60</td><td>10</td><td>min</td><td></td></tr>
+<tr><td class="mono">P05</td><td>Maximum starts per hour</td><td>1 &ndash; 30</td><td>12</td><td>1/h</td><td></td></tr>
+<tr><td class="mono">P06</td><td>Display contrast</td><td>1 &ndash; 9</td><td>5</td><td>&ndash;</td><td></td></tr>
+<tr><td class="mono">P07</td><td>Probe sensitivity</td><td>1 &ndash; 20</td><td>8</td><td>kohm</td><td></td></tr>
+<tr><td class="mono">P08</td><td>Alarm buzzer volume</td><td>0 &ndash; 5</td><td>3</td><td>&ndash;</td><td></td></tr>
+<tr><td class="mono">P09</td><td>Service interval reminder</td><td>1 &ndash; 36</td><td>12</td><td>months</td><td></td></tr>
+</table>
+<p style="margin:6px 2px 0">Change one parameter at a time. Hold the SET key for three seconds to enter the menu, select the number with the arrows, then press SET again to store the value. The controller returns to the run display after sixty seconds without a key press.</p></td></tr></table>
+<br>
+<table border="0" cellpadding="0" cellspacing="0" width="900"><tr><td width="440" valign="top">
+<table border="1" cellpadding="5" cellspacing="0" width="440" bordercolor="#555"><tr><td><h2>3.3 Commissioning checks</h2>
+<p>&#9745; Supply isolated before opening the cover<br>&#9745; Earth bond measured below 0.1 ohm<br>&#9745; Probe leads kept away from mains cables<br>&#9744; Alarm contact tested with the siren<br>&#9744; Parameters recorded in the site log<br>&#9744; Customer shown the manual reset</p>
+<div class="warn"><b>WARNING.</b> Mains voltage is present on terminals T1 to T4 even when the pump is stopped. Isolate at the consumer unit before any work.</div></td></tr></table>
+</td><td width="20">&nbsp;</td><td width="440" valign="top">
+<table border="1" cellpadding="5" cellspacing="0" width="440" bordercolor="#555"><tr><td><h2>3.4 Spare parts (inc. VAT)</h2>
+<table border="0" cellpadding="3" cellspacing="0" width="100%">
+<tr><td width="60%" class="lead">Replacement fuse, 5 A</td><td align="right" class="lead">&pound;3.40</td></tr>
+<tr><td class="lead">Level probe, stainless</td><td align="right" class="lead">&pound;28.75</td></tr>
+<tr><td class="lead">Relay board LM-R2</td><td align="right" class="lead">&pound;64.00</td></tr>
+<tr><td class="lead">Front panel and display</td><td align="right" class="lead">&pound;41.90</td></tr>
+<tr><td class="lead">Gland set, M20 x 4</td><td align="right" class="lead">&pound;5.20</td></tr>
+</table><p>Order from the Stockport stores quoting the part name and serial number. Approved by Zara Ashworth; checked by Tom Fairclough; issued by Stuart Lindsay.</p></td></tr></table>
+</td></tr></table>
+<p style="margin:8px 0 0;font-size:10px">Rev C &ndash; 06/04/2024 &ndash; supersedes Rev B. Specifications may change without notice. &copy; Lodestar Marigold Controls, Hereford.</p>
+</body></html>

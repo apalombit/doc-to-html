@@ -80,6 +80,9 @@ class Card:
     density: str | None = None
     locale: str | None = None
     pilot: bool = False
+    scope: str | None = None
+    """`None` for a whole page; `"part"` for one part of a document of the
+    card's kind at its own size (`zoom`)."""
 
     def tokens(self) -> set[str]:
         """Everything an exclusion pair can name about this card."""
@@ -102,6 +105,8 @@ class Card:
     def to_json(self) -> dict[str, Any]:
         data = asdict(self)
         data["features"] = list(self.features)
+        if self.scope is None:
+            del data["scope"]
         return data
 
     @staticmethod
@@ -518,6 +523,68 @@ def recast(taxonomy: Taxonomy, cards: list[Card], seed: int, locked: Iterable[st
     return cards
 
 
+PART_WIDTHS = (500, 800)
+"""A part's width, in px: one part of a document at its own size."""
+
+
+def zoom(taxonomy: Taxonomy, cards: list[Card], seed: int, locked: Iterable[str] = (),
+         parts: int = 0) -> list[Card]:
+    """The open PDF slots dealt as generated cards, then `parts` unwritten
+    whole cards made parts of their kind.
+
+    Alessandro, 2026-10-27: PDF pages stop at those taken, the corpus is
+    finished with generated pages, and smaller ones are used liberally,
+    "acting like a zoom to a specific doc layout item". So each open slot
+    becomes a generated card of its family and language, of the kind its
+    family has fewest cards of, drawn as `draw` would draw it. Then
+    `parts` cards, chosen at random among the unlocked whole cards of a
+    kind drawn wider than a part (not a fragment, receipt or other kind
+    already that small), become parts: the same family and kind, the kind
+    a reader still recognises, set `PART_WIDTHS` wide in an arrangement
+    that fits, carrying the fewest features a card may, the kind's
+    `always` first."""
+    rng = random.Random(seed)
+    fixed = set(locked)
+    cards = list(cards)
+    for index, card in enumerate(cards):
+        if card.origin != "pdf" or card.kind is not None or card.id in fixed:
+            continue
+        entries = taxonomy["families"][card.family]["kinds"]
+        kinds = [kind for kind, entry in entries.items()
+                 if "pages" not in entry and not entry.get("recast_only")]
+        dealt = Counter(c.kind for c in cards
+                        if c.family == card.family and c.origin == "generated")
+        least = min(dealt[kind] for kind in kinds)
+        kind = rng.choice(sorted(kind for kind in kinds if dealt[kind] == least))
+        cards[index] = _drawn_as(rng, taxonomy, replace(card, origin="generated", kind=kind),
+                                 with_locale=True)
+    low, high = PART_WIDTHS
+    free = [index for index, card in enumerate(cards)
+            if card.origin == "generated" and card.id not in fixed and card.scope is None
+            and card.family != "fragments" and card.kind
+            and widths(taxonomy, card.family, card.kind)[1] > high]
+    if len(free) < parts:
+        raise ValueError(f"{parts} parts asked, {len(free)} cards free")
+    fewest = taxonomy["features_per_card"][0]
+    for index in sorted(rng.sample(free, parts)):
+        card = cards[index]
+        assert card.kind
+        arrangement = card.arrangement or "arr.one_column"
+        if int(taxonomy["min_width"].get(arrangement, 0)) > high:
+            arrangement = "arr.one_column"
+        least = max(low, int(taxonomy["min_width"].get(arrangement, 0)))
+        most = min(high, widths(taxonomy, card.family, card.kind)[1])
+        always = [fid for fid in kind_entry(taxonomy, card.family, card.kind).get("always", ())
+                  if fid in card.features]
+        others = [fid for fid in card.features if fid not in always]
+        rng.shuffle(others)
+        cards[index] = replace(
+            card, scope="part", arrangement=arrangement,
+            width=least + 20 * rng.randint(0, (most - least) // 20),
+            features=tuple(sorted((always + others)[:max(fewest, len(always))])))
+    return cards
+
+
 def problems(taxonomy: Taxonomy, card: Card) -> list[str]:
     """Everything wrong with one card; empty for a sound one. A PDF slot
     not yet filled is sound with no fields."""
@@ -556,6 +623,10 @@ def problems(taxonomy: Taxonomy, card: Card) -> list[str]:
             if not _allowed(taxonomy, card, fid):
                 found.append(f"{fid} not allowed on a {card.kind}")
         lo, hi = widths(taxonomy, card.family, card.kind)
+        if card.scope == "part":
+            lo, hi = PART_WIDTHS[0], min(PART_WIDTHS[1], hi)
+        elif card.scope is not None:
+            found.append(f"scope {card.scope!r}")
         least = int(taxonomy["min_width"].get(card.arrangement or "", 0))
         if card.width is None or not max(lo, least) <= card.width <= hi:
             found.append(f"width {card.width} outside {max(lo, least)}-{hi}")

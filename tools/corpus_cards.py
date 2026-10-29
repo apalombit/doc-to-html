@@ -37,6 +37,11 @@ def _history(path: Path) -> list[dict[str, object]]:
     return history
 
 
+def _passed(card_id: str) -> bool:
+    record = CORPUS / "checks" / f"{card_id}.json"
+    return record.exists() and bool(json.loads(record.read_text(encoding="utf-8"))["passed"])
+
+
 def _write(drawn: list[cards.Card], seed: int, history: list[dict[str, object]]) -> None:
     cards.write(CARDS, drawn, seed)
     data = json.loads(CARDS.read_text(encoding="utf-8"))
@@ -53,6 +58,9 @@ def main() -> int:
                         help="widen the pilot to N cards, its cards kept")
     parser.add_argument("--recast", action="store_true",
                         help="recast unwritten cards as the taxonomy's 'recasts' plan, then top up")
+    parser.add_argument("--zoom", type=int, metavar="N",
+                        help="deal the open PDF slots as generated cards and make N "
+                             "unwritten cards parts, then top up")
     parser.add_argument("--force", action="store_true", help="overwrite cards.json")
     args = parser.parse_args()
     taxonomy = cards.load_taxonomy(TAXONOMY)
@@ -110,6 +118,37 @@ def main() -> int:
         _write(topped, seed, history)
         print(cards.coverage_table(taxonomy, topped))
         print(f"recast {len(moved)} cards; with the top-up {len(changed)} changed")
+        for problem in [(c.id, p) for c in topped for p in cards.problems(taxonomy, c)]:
+            print(f"PROBLEM {problem}")
+        if short:
+            print(f"COVERAGE NOT MET: {short}")
+            return 1
+        return 0
+
+    if args.zoom is not None:
+        seed, drawn = cards.load(CARDS)
+        history = _history(CARDS)
+        if any(entry["step"] == "zoom" for entry in history):
+            print("cards.json has been zoomed already")
+            return 1
+        # A card is locked by a page that passed: a draft with no passing
+        # record is written afresh whatever its card says.
+        locked = {card.id for card in drawn if _passed(card.id)}
+        step_seed = seed + len(history)
+        zoomed = cards.zoom(taxonomy, drawn, step_seed, locked, args.zoom)
+        topped, short = cards.top_up(taxonomy, zoomed, step_seed, locked)
+        slots = [new.id for old, new in zip(drawn, zoomed) if old.origin != new.origin]
+        parts = [new.id for new in zoomed if new.scope == "part"]
+        changed = [new.id for old, new in zip(drawn, topped) if old != new]
+        history.append({"step": "zoom", "seed": step_seed, "locked": len(locked),
+                        "slots": slots, "parts": parts, "changed": changed,
+                        "why": "Alessandro, 2026-10-27: PDF pages stop at those taken; "
+                               "the rest are generated, smaller ones used liberally, "
+                               "'acting like a zoom to a specific doc layout item'"})
+        _write(topped, seed, history)
+        print(cards.coverage_table(taxonomy, topped))
+        print(f"{len(slots)} PDF slots dealt as generated cards, {len(parts)} parts; "
+              f"with the top-up {len(changed)} changed")
         for problem in [(c.id, p) for c in topped for p in cards.problems(taxonomy, c)]:
             print(f"PROBLEM {problem}")
         if short:

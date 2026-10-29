@@ -1,0 +1,38 @@
+{
+ "id": "c0411",
+ "passed": true,
+ "failures": {},
+ "checked": "2026-10-26",
+ "seconds": 4.2,
+ "width": 1000,
+ "height": 1415,
+ "words": 872,
+ "card_features": [
+  "arr.two_columns",
+  "type.serif",
+  "table.ruled",
+  "table.section_rows",
+  "table.spanning",
+  "text.footnotes",
+  "text.justified",
+  "text.supsub"
+ ],
+ "detected": [
+  "table",
+  "table.empty_cells",
+  "table.spanning",
+  "text.justified",
+  "text.supsub",
+  "type.serif"
+ ],
+ "dhash": "1317271367373327",
+ "html_sha256": "f8d3080b214b69def4bdc330da48b25d38c71284171de5b8a2239152773179e6",
+ "png_sha256": "b5b30a7704a87b4b05c01ef7698d897275fb9a21dd432a1f4b521634dc6ca61e",
+ "gate": {
+  "rows": 97,
+  "worst_left": 10.6,
+  "worst_top": 14.7,
+  "one_line_runs": 0,
+  "type_off": 0
+ }
+}

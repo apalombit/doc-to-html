@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Silicon Samples, page 6</title>
+<style>
+html,body{margin:0;padding:0;background:#fff}
+body{width:1000px;height:1415px;position:relative;font-family:"Times New Roman",Times,serif;font-size:18.3px;line-height:22.7px;color:#000;white-space:nowrap}
+.pg{position:relative;width:1000px;height:1415px}
+.b{position:absolute;margin:0}
+.j{text-align:justify}
+.l{left:119px}.r{left:514px}
+.c{font-size:16.7px;line-height:20.6px}
+.fn{font-size:15.1px;line-height:22.7px}
+a,.ref{color:#00007f}
+h2,h3{margin:0;font-weight:bold;font-size:18.3px;line-height:22.7px}
+h2{font-size:20.1px}
+table{position:absolute;left:126px;top:116px;border-collapse:collapse;font-size:15.1px;line-height:16.5px;table-layout:fixed;width:354px}
+td,th{padding:0;font-weight:normal;text-align:left;height:16.5px;white-space:nowrap;overflow:visible}
+th.g{text-align:center}
+.top td,.top th{border-top:1px solid #000}
+.sp td{height:8px}
+sub{font-size:12px;line-height:0;vertical-align:baseline;position:relative;top:3px}
+</style>
+</head>
+<body>
+<div class="pg">
+<table>
+<colgroup><col style="width:108px"><col style="width:41px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:43px"><col style="width:33px"></colgroup>
+<tr style="border-top:1px solid #000"><td style="border-top:1px solid #000;height:24px"></td><th class="g" colspan="3" style="border-top:1px solid #000">WVS</th><th class="g" colspan="3" style="border-top:1px solid #000">ANES</th></tr>
+<tr><td style="height:24px"></td><td style="padding-left:3px">RCG</td><td style="padding-left:2px">Cal.</td><td style="padding-left:2px">OSR</td><td>RCG</td><td style="padding-left:2px">Cal.</td><td>OSR</td></tr>
+<tr style="border-top:1px solid #000"><td style="border-top:1px solid #000;padding-top:3px">gpt-5.4-nano</td><td style="border-top:1px solid #000;padding-top:3px">1.272</td><td style="border-top:1px solid #000;padding-top:3px">1.150</td><td style="border-top:1px solid #000;padding-top:3px">0.994</td><td style="border-top:1px solid #000;padding-top:3px">1.370</td><td style="border-top:1px solid #000;padding-top:3px">1.232</td><td style="border-top:1px solid #000;padding-top:3px">1.173</td></tr>
+<tr><td>gemini-flash-lite</td><td>1.218</td><td>1.126</td><td>0.840</td><td>1.353</td><td>1.178</td><td>0.838</td></tr>
+<tr><td>Qwen3.5-9B</td><td>1.273</td><td>1.145</td><td>0.992</td><td>1.347</td><td>1.217</td><td>1.213</td></tr>
+<tr><td>gemma-4-12B</td><td>1.199</td><td>1.137</td><td>0.793</td><td>1.332</td><td>1.194</td><td>0.942</td></tr>
+<tr><td>gpt-oss-20b</td><td>1.269</td><td>1.140</td><td>1.013</td><td>1.346</td><td>1.202</td><td>1.144</td></tr>
+<tr><td>Llama-3.3-70B</td><td>1.275</td><td>1.147</td><td>0.722</td><td>1.277</td><td>1.198</td><td>0.853</td></tr>
+<tr><td style="border-top:1px solid #000;padding-top:3px">Marginals</td><td style="border-top:1px solid #000;padding-top:3px">1.158</td><td style="border-top:1px solid #000;padding-top:3px">–</td><td style="border-top:1px solid #000;padding-top:3px">0.989</td><td style="border-top:1px solid #000;padding-top:3px">1.250</td><td style="border-top:1px solid #000;padding-top:3px">–</td><td style="border-top:1px solid #000;padding-top:3px">1.078</td></tr>
+<tr><td>Copula</td><td>1.041</td><td>–</td><td>0.946</td><td>1.091</td><td>–</td><td>0.976</td></tr>
+<tr><td style="border-bottom:1px solid #000">LCA</td><td style="border-bottom:1px solid #000">1.105</td><td style="border-bottom:1px solid #000">–</td><td style="border-bottom:1px solid #000">0.959</td><td style="border-bottom:1px solid #000">1.143</td><td style="border-bottom:1px solid #000">–</td><td style="border-bottom:1px solid #000">0.950</td></tr>
+</table>
+
+<p class="b l c" style="top:348px">Table 1: The respondent coverage gap (RCG) and the<br>off-support ratio (OSR) for each generator on each<br>dataset. Cal. is the RCG after marginal calibration. OSR<br>is reported before calibration.</p>
+
+<p class="b l j" style="top:473px">are coupled through a correlation matrix estimated<br>with Ledoit–Wolf shrinkage (<span class="ref">Ledoit and Wolf,</span><br><span class="ref">2004</span>), as fitting uses fewer respondents than ques-<br>tions in about half of the cells. <i>LCA</i> draws <b><i>u</i></b> from<br>a two-class latent class model (<span class="ref">Goodman, 1974</span>),<br>that is, a mixture of two class-specific Marginals<br>generators, fitted with StepMix (<span class="ref">Morin et al., 2025</span>).<br>Because these baselines are fitted to the same re-<br>spondents against which they are evaluated, they<br>serve as references for what a generator can achieve<br>with access to the cell’s respondents, rather than as<br>direct competitors to the LLMs (fitting details in<br><span class="ref">Appendix I</span>).</p>
+
+<h2 class="b l" style="top:784px">5&nbsp;&nbsp;&nbsp;Results</h2>
+<h3 class="b l" style="top:821px">5.1&nbsp;&nbsp;&nbsp;Main Results</h3>
+
+<p class="b l j" style="top:850px">For each cell, we compute RCG and OSR for 50<br>random draws of 100 human respondents. We first<br>average the scores over draws within each cell, then<br>average the resulting cell-level scores across cells.<br>We also confirm that RCG behaves as intended;<br>in each cell <i>c</i>,<sup class="ref" style="color:#000">9</sup> we replace the generated set <i>G</i><sub><i>c</i></sub><br>with a separate sample of 100 human respondents<br>drawn from <i>H</i><sub><i>c</i></sub>, disjoint from the 100 respondents<br>used for evaluation, and compute RCG exactly as<br>above. The average RCG is 1.001 (WVS) and<br>1.000 (ANES). The same replacement gives an av-<br>erage OSR of 1.001 (WVS) and 1.002 (ANES).<br>Results under the hold-out fit setting are reported<br>in <span class="ref">Appendix I</span>.<br><span style="display:inline-block;width:18px"></span><span class="ref">Table 1</span> shows the RCG and OSR for each gener-<br>ator and dataset (Appendix <span class="ref">K</span> shows RCG on WVS<br>and ANES by the number of conditioning attributes</p>
+
+<div class="b" style="left:119px;top:1247px;width:100px;border-top:1px solid #000"></div>
+<p class="b fn" style="left:119px;top:1250px"><sup style="font-size:11px;position:relative;top:-2px;line-height:0;margin-left:21px">9</sup>We use the cell only if it contains at least 200 human<br>respondents. This leaves 203 of the 730 cells for WVS and<br>196 of the 603 cells for ANES.</p>
+
+<p class="b r j" style="top:120px"><i>L</i>). All uncalibrated LLM RCG values in <span class="ref">Table 1</span><br>exceed 1.0 and the values of all three baselines, in-<br>cluding the simplest baseline, Marginals. For every<br>LLM on both datasets, the 95% confidence interval<br>for the RCG difference from Marginals excludes<br>zero (<span class="ref">Table 8</span> in <span class="ref">Appendix J</span>). Thus no LLM cov-<br>ers the human respondents as well as another hu-<br>man sample does (1.000–1.001), or even as well as<br>Marginals, which ignores all dependence between<br>questions. RCG shows no consistent ordering by<br>model family, weight availability (proprietary vs.<br>open-weight), or model size.</p>
+
+<p class="b r j" style="top:410px"><b>Calibrating marginal distributions.</b> We next<br>ask whether correcting per-question response dis-<br>tributions closes the respondent coverage gap. We<br>use the empirical human marginals in each evalua-<br>tion cell as oracle targets, applying quantile map-<br>ping (<span class="ref">Gudmundsson et al., 2012</span>; <span class="ref">Cannon et al.,</span><br><span class="ref">2015</span>) to ordered responses and minimum-rewrite<br>remapping to nominal responses (Appendix <span class="ref">P</span>). Cal-<br>ibration (Cal. in <span class="ref">Table 1</span>) reduces RCG for all six<br>LLMs on both datasets. The calibrated RCG val-<br>ues range from 1.126 to 1.150 on WVS and from<br>1.178 to 1.232 on ANES. They are lower than those<br>of Marginals but higher than the human reference<br>and those of both Copula and LCA. All differences<br>from the three baselines are statistically significant<br>(<span class="ref">Table 9</span> in <span class="ref">Appendix J</span>). Thus, this item-wise cor-<br>rection improves respondent coverage but does not<br>restore human-level coverage.</p>
+
+<h3 class="b r" style="top:838px">5.2&nbsp;&nbsp;&nbsp;Failure Modes</h3>
+
+<p class="b r j" style="top:870px">Using the uncalibrated OSR column of <span class="ref">Table 1</span>,<br>we next examine how each LLM fails to cover<br>the human respondents. The baselines (Marginals,<br>Copula, and LCA) have OSR at or near one (0.946–<br>1.078) on both datasets. RCG alone does not show<br>how a model fails: on ANES, the six LLMs span<br>1.277–1.370 in RCG but 0.838–1.213 in OSR.<br><span style="display:inline-block;width:19px"></span>In both datasets, OSR splits the six LLMs into<br>two groups: the upper group (gpt-oss-20b, gpt-<br>5.4-nano, and Qwen3.5-9B) and the lower group<br>(gemma-4-12B, gemini-flash-lite, and Llama-3.3-<br>70B). The OSRs of the lower group are below one<br>(0.722–0.840 on WVS and 0.838–0.942 on ANES)<br>and the RCGs are above one. By the definitions in<br><span class="ref">Section 3.2</span>, this combination indicates contraction.<br>In the upper group, the OSRs on ANES are above<br>one (1.144–1.213), which is the off-support pattern.<br>By contrast, on WVS, the OSRs are close to one<br>(0.992–1.013).</p>
+
+<p class="b" style="left:495px;top:1331px">6</p>
+</div>
+</body>
+</html>

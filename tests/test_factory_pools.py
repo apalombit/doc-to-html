@@ -1,7 +1,7 @@
 """The pools and the L3 set — spec 0020, step 6.
 
 Dealt over `corpus/cards.json` as it stands: 200 to a pool, each family
-split evenly, the PDF slots about 33 to a pool, the pilot's 100 in dev,
+split evenly, the PDF pages a third to a pool, the pilot's 100 in dev,
 two pages of every feature in every pool, and an L3 set of 36 panel
 pages covering every family and the structural features.
 """
@@ -40,10 +40,12 @@ def test_each_family_is_split_evenly(drawn: list[cards.Card], dealt: dict[str, s
         assert max(counts.values()) - min(counts.values()) <= 2, family
 
 
-def test_the_pdf_slots_are_about_a_third_each(drawn: list[cards.Card],
-                                              dealt: dict[str, str]) -> None:
-    counts = Counter(dealt[c.id] for c in drawn if c.origin == "pdf")
-    assert all(32 <= n <= 35 for n in counts.values()), counts
+def test_the_pdf_pages_are_a_third_each(drawn: list[cards.Card],
+                                        dealt: dict[str, str]) -> None:
+    """Nine to a pool since PDF pages stopped at 27 (Alessandro, 2026-10-27)."""
+    pdf = [c for c in drawn if c.origin == "pdf"]
+    counts = Counter(dealt[c.id] for c in pdf)
+    assert all(abs(n - len(pdf) / 3) < 1 for n in counts.values()), counts
 
 
 def test_the_pilot_is_in_dev(drawn: list[cards.Card], dealt: dict[str, str]) -> None:

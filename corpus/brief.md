@@ -315,6 +315,22 @@ Two kinds are whole pages and new:
   pin tables, numbered procedures, warnings, a revision line and
   "page x of y". Plain and functional.
 
+**A part** (a card with `"scope": "part"`) is one part of a document of
+the card's kind, as if a reader had zoomed in on it or cut it out: an
+invoice's line items and totals, a letter's head and its first
+paragraphs, a payslip's earnings and deductions, a form's one section, a
+report's results table under its heading, a lab report's panel, a
+menu's one course, a timetable's one route, a certificate's seal and
+signature block, a slide's chart and its caption. Choose the part a
+reader of that kind looks at most, and vary it from card to card. It is
+the kind's own part, in the kind's own look: the reader still recognises
+the kind. Like a fragment, the picture is the part and little else: a few
+pixels of margin, no page furniture unless the part carries it, its
+height what it needs, often 200–700 px. A cut edge may show where the
+document goes on (a row cut by the edge, a rule running off), but every
+word the picture shows is whole. The card's three features are what the
+part shows, and its word floor is half a page's.
+
 ### Locales
 
 | locale | dates | numbers | money |

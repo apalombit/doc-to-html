@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<title>Nota de alta hospitalar</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:18px 20px 20px;background:#ffffff;color:#1b2a2c;font-family:"Source Serif Variable",serif;font-size:13px;line-height:1.4;font-weight:400}
+.head{background:#0f5f66;color:#ffffff;padding:12px 16px;display:flex;justify-content:space-between;align-items:flex-end}
+.head h1{margin:0;font-size:22px;font-weight:700;letter-spacing:0.2px}
+.head .org{font-size:11px;font-weight:300;margin-top:2px}
+.head .doc{text-align:right;font-size:17px;font-weight:600}
+.head .doc small{display:block;font-size:11px;font-weight:300}
+.row{display:grid;gap:12px;margin-top:12px}
+.r2{grid-template-columns:1fr 1fr}
+.r21{grid-template-columns:1fr 2fr}
+.r12{grid-template-columns:2fr 1fr}
+.panel{border:1px solid #8fb3b7;background:#ffffff}
+.panel h2{margin:0;padding:4px 10px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:#d9eaec;color:#0f5f66;border-bottom:1px solid #8fb3b7}
+.panel .in{padding:8px 10px}
+dl{margin:0;display:grid;grid-template-columns:145px 1fr;row-gap:3px}
+dt{font-weight:300;color:#456;font-size:12px}
+dd{margin:0;font-weight:600}
+ul{margin:0;padding-left:18px}
+li{margin-bottom:3px}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th,td{border:1px solid #b7cdd0;padding:3px 6px;text-align:left;vertical-align:top}
+th{background:#eef6f7;font-weight:600}
+td.n,th.n{text-align:right}
+.sec td{background:#f3f7f7;font-weight:700;font-size:11px;letter-spacing:0.5px;text-transform:uppercase;color:#0f5f66}
+p{margin:0 0 6px}
+.sig{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:6px}
+.sig div{border-top:1px solid #1b2a2c;padding-top:3px;font-size:12px;margin-top:26px}
+.sig b{font-weight:700}
+.foot{margin-top:10px;font-size:10px;font-weight:300;color:#456;border-top:1px solid #8fb3b7;padding-top:4px;display:flex;justify-content:space-between}
+</style>
+</head>
+<body>
+<div class="head">
+<div><h1>Hospital Marigold</h1><div class="org">Serviço de Medicina Interna · Avenida da Ria, 112, 3800-123 Aveiro · Tel. 234 000 112</div></div>
+<div class="doc">Nota de alta hospitalar<small>Emitida em 6 de julho de 2025</small></div>
+</div>
+
+<div class="row r2">
+<div class="panel"><h2>Identificação do doente</h2><div class="in">
+<dl>
+<dt>Nome</dt><dd>Diogo Almeida Santos</dd>
+<dt>Data de nascimento</dt><dd>14/03/1957 (68 anos)</dd>
+<dt>N.º de utente</dt><dd>218 744 903</dd>
+<dt>Processo n.º</dt><dd>2025/07-4417</dd>
+<dt>Residência</dt><dd>Bragança</dd>
+</dl></div></div>
+<div class="panel"><h2>Episódio de internamento</h2><div class="in">
+<dl>
+<dt>Admissão</dt><dd>29/06/2025, via urgência</dd>
+<dt>Alta</dt><dd>06/07/2025</dd>
+<dt>Dias de internamento</dt><dd>7</dd>
+<dt>Médica assistente</dt><dd>Dra. Sofia Antunes Faria</dd>
+<dt>Destino</dt><dd>Domicílio</dd>
+</dl></div></div>
+</div>
+
+<div class="row r21">
+<div class="panel"><h2>Diagnósticos</h2><div class="in">
+<p><b>Principal</b></p>
+<ul><li>Pneumonia adquirida na comunidade, lobo inferior direito</li></ul>
+<p style="margin-top:6px"><b>Secundários</b></p>
+<ul><li>Hipertensão arterial</li><li>Diabetes mellitus tipo 2</li><li>Dislipidemia</li></ul>
+</div></div>
+<div class="panel"><h2>Resultados analíticos</h2><div class="in" style="padding:6px">
+<table>
+<tr><th rowspan="2">Parâmetro</th><th colspan="2" style="text-align:center">Valor</th><th rowspan="2">Referência</th></tr>
+<tr><th class="n">Admissão</th><th class="n">Alta</th></tr>
+<tr><td>Hemoglobina (g/dL)</td><td class="n">12,8</td><td class="n">13,1</td><td>13,5 – 17,5</td></tr>
+<tr><td>Leucócitos (/µL)</td><td class="n">14 200</td><td class="n">8 600</td><td>4 000 – 11 000</td></tr>
+<tr><td>Proteína C reativa (mg/L)</td><td class="n">148,6</td><td class="n">21,4</td><td>&lt; 5,0</td></tr>
+<tr><td>Creatinina (mg/dL)</td><td class="n">1,10</td><td class="n">0,98</td><td>0,70 – 1,20</td></tr>
+<tr><td>Glicemia (mg/dL)</td><td class="n">214</td><td class="n">138</td><td>70 – 110</td></tr>
+</table></div></div>
+</div>
+
+<div class="row r12">
+<div class="panel"><h2>Medicação à alta</h2><div class="in" style="padding:6px">
+<table>
+<tr><th>Fármaco</th><th>Dose</th><th>Posologia</th><th>Duração</th></tr>
+<tr class="sec"><td colspan="4">Novo</td></tr>
+<tr><td>Amoxicilina + ácido clavulânico</td><td>875 + 125 mg</td><td>8/8 h</td><td>5 dias</td></tr>
+<tr><td>Paracetamol</td><td>1 g</td><td>se necessário, até 3 x/dia</td><td>7 dias</td></tr>
+<tr class="sec"><td colspan="4">Mantém</td></tr>
+<tr><td>Metformina</td><td>850 mg</td><td>2 x/dia, às refeições</td><td>contínua</td></tr>
+<tr><td>Ramipril</td><td>5 mg</td><td>1 x/dia, de manhã</td><td>contínua</td></tr>
+</table></div></div>
+<div class="panel"><h2>Seguimento</h2><div class="in">
+<ul>
+<li>Consulta de Medicina Interna a 21/07/2025</li>
+<li>Radiografia do tórax em 6 semanas</li>
+<li>Médico de família, em Bragança, na primeira semana</li>
+<li>Regressar à urgência se febre ou falta de ar</li>
+</ul></div></div>
+</div>
+
+<div class="row">
+<div class="panel"><h2>Resumo da evolução</h2><div class="in">
+<p>Doente do sexo masculino, 68 anos, admitido com febre, tosse produtiva e dispneia com três dias de evolução. A radiografia do tórax mostrou consolidação no lobo inferior direito e a proteína C reativa estava elevada (148,6 mg/L).</p>
+<p>Iniciou antibioterapia endovenosa e oxigénio suplementar, suspenso ao quarto dia. Boa resposta clínica e analítica, apirexia desde o quinto dia. A glicemia foi controlada com insulina rápida durante o internamento e a metformina foi retomada à alta. Alta clinicamente estável, com 94 % de saturação em ar ambiente.</p>
+</div></div>
+</div>
+
+<div class="sig">
+<div><b>Dra. Sofia Antunes Faria</b><br>Médica assistente · Cédula n.º 41 207</div>
+<div><b>Enf.ª Inês Marques Teixeira</b><br>Enfermeira responsável · Aveiro, 6 de julho de 2025</div>
+</div>
+<div class="foot"><span>Hospital Marigold · Documento clínico confidencial</span><span>Página 1 de 1</span></div>
+</body>
+</html>
