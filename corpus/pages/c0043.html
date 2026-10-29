@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Patient intake form</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 22px 24px 26px; width: 880px; background: #fff; color: #1d2b2e;
+         font-family: "Source Sans Variable", sans-serif; font-size: 12px; line-height: 1.35; }
+  .head { display: flex; align-items: flex-end; justify-content: space-between; border-bottom: 3px solid #0f6b73; padding-bottom: 8px; }
+  .head h1 { margin: 0; font-family: "Oswald", sans-serif; font-weight: 500; font-size: 34px; letter-spacing: 1.5px; text-transform: uppercase; color: #0f6b73; line-height: 1; }
+  .head .sub { font-size: 11px; color: #4a5c60; margin-top: 4px; }
+  .head .ref { text-align: right; font-size: 11px; color: #4a5c60; }
+  .head .ref b { display: block; font-size: 13px; color: #1d2b2e; }
+  .cols { display: flex; gap: 18px; margin-top: 14px; align-items: flex-start; }
+  .side { width: 206px; flex: none; }
+  .main { flex: 1; min-width: 0; }
+  .side .box { border: 1px solid #9fc3c7; background: #eef6f7; padding: 8px 10px; margin-bottom: 12px; }
+  .side h3 { margin: 0 0 4px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #0f6b73; }
+  .side p { margin: 0 0 4px; font-size: 11px; }
+  .side ul { margin: 0; padding-left: 15px; font-size: 11px; }
+  .side li { margin-bottom: 3px; }
+  .side dl { margin: 0; font-size: 11px; }
+  .side dt { color: #4a5c60; margin-top: 4px; }
+  .side dd { margin: 0; font-weight: 600; }
+  .office .line { border-bottom: 1px solid #5d8c91; height: 17px; margin-bottom: 4px; font-size: 11px; color: #1d2b2e; }
+  .office .lab { font-size: 10px; color: #4a5c60; }
+  h2 { margin: 14px 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #fff; background: #0f6b73; padding: 3px 8px; font-weight: 600; }
+  h2:first-child { margin-top: 0; }
+  .row { display: flex; gap: 8px; margin-bottom: 6px; }
+  .f { flex: 1; min-width: 0; }
+  .f .l { font-size: 10px; color: #4a5c60; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 1px; }
+  .f .v { border: 1px solid #5d8c91; background: #fbfdfd; min-height: 21px; padding: 2px 6px; font-size: 12.5px; font-weight: 600; }
+  .lead { display: flex; align-items: baseline; margin-bottom: 5px; font-size: 12px; }
+  .lead .k { white-space: nowrap; color: #33464a; }
+  .lead .dots { flex: 1; border-bottom: 2px dotted #7a999d; margin: 0 5px; transform: translateY(-3px); }
+  .lead .val { white-space: nowrap; font-weight: 600; }
+  table { border-collapse: collapse; width: 100%; font-size: 11px; }
+  caption { text-align: left; font-size: 11px; color: #4a5c60; padding-bottom: 4px; caption-side: top; }
+  th { background: #d9ecee; text-align: left; font-weight: 600; padding: 3px 6px; border: 1px solid #9fc3c7; font-size: 10.5px; text-transform: uppercase; letter-spacing: .4px; }
+  td { padding: 2px 6px; border: 1px solid #c3dadd; height: 20px; }
+  td.c, th.c { text-align: center; width: 38px; }
+  td.yr { width: 62px; }
+  tr:nth-child(even) td { background: #f6fafa; }
+  .sign { display: flex; gap: 8px; margin-top: 12px; align-items: flex-end; }
+  .small { font-size: 10px; color: #4a5c60; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="head">
+  <div>
+    <h1>Patient intake form</h1>
+    <div class="sub">Linnet Health Centre &middot; 14 Gannet Row, Inverness IV2 3QT &middot; New registration pack, part B</div>
+  </div>
+  <div class="ref"><b>Form PI-2</b>Completed on 09/01/2024</div>
+</div>
+
+<div class="cols">
+  <aside class="side">
+    <div class="box">
+      <h3>Your practice</h3>
+      <p><strong>Linnet Health Centre</strong><br>14 Gannet Row<br>Inverness IV2 3QT</p>
+      <dl>
+        <dt>Reception</dt><dd>01463 555 0142</dd>
+        <dt>Repeat prescriptions</dt><dd>01463 555 0177</dd>
+        <dt>Open</dt><dd>Mon&ndash;Fri 08:00&ndash;18:30</dd>
+        <dt>Registering GP</dt><dd>Dr Aisha Burrows</dd>
+      </dl>
+    </div>
+    <div class="box">
+      <h3>Before you hand it in</h3>
+      <ul>
+        <li>Answer every box in blue capitals or black ink.</li>
+        <li>Tick Yes or No for each condition listed.</li>
+        <li>Bring photo identification and one proof of address.</li>
+        <li>List every medicine, including creams, inhalers and supplements.</li>
+        <li>Sign and date the declaration on the last line.</li>
+      </ul>
+    </div>
+    <div class="box office">
+      <h3>For practice use only</h3>
+      <div class="lab">Received by</div><div class="line">C. Rees</div>
+      <div class="lab">Date received</div><div class="line">09/01/2024</div>
+      <div class="lab">NHS number checked</div><div class="line"></div>
+      <div class="lab">Records requested from</div><div class="line">Salisbury</div>
+      <div class="lab">Registered on system</div><div class="line"></div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <h2>1. About you</h2>
+    <div class="row">
+      <div class="f"><div class="l">Surname</div><div class="v">Thornton</div></div>
+      <div class="f"><div class="l">First name</div><div class="v">Harry</div></div>
+      <div class="f" style="flex:.6"><div class="l">Title</div><div class="v">Mr</div></div>
+    </div>
+    <div class="row">
+      <div class="f"><div class="l">Date of birth</div><div class="v">14/03/1971</div></div>
+      <div class="f"><div class="l">Sex at birth</div><div class="v">Male</div></div>
+      <div class="f"><div class="l">NHS number</div><div class="v">485 220 7316</div></div>
+    </div>
+    <div class="row">
+      <div class="f" style="flex:2"><div class="l">Home address</div><div class="v">7 Culduthel Mains Road, Inverness IV2 6AQ</div></div>
+      <div class="f"><div class="l">Mobile</div><div class="v">07700 900 318</div></div>
+    </div>
+    <div class="row">
+      <div class="f" style="flex:2"><div class="l">Previous address and practice</div><div class="v">Castle Mews, Salisbury SP1 2NR &mdash; Cathedral Close Surgery</div></div>
+      <div class="f"><div class="l">Occupation</div><div class="v">Marine surveyor</div></div>
+    </div>
+
+    <h2>2. Emergency contact and details</h2>
+    <div class="lead"><span class="k">Next of kin</span><span class="dots"></span><span class="val">Callum Rees (brother)</span></div>
+    <div class="lead"><span class="k">Contact telephone</span><span class="dots"></span><span class="val">07700 900 645</span></div>
+    <div class="lead"><span class="k">Known allergies</span><span class="dots"></span><span class="val">Penicillin (rash); latex</span></div>
+    <div class="lead"><span class="k">Smoking status</span><span class="dots"></span><span class="val">Ex-smoker, stopped 2015</span></div>
+    <div class="lead"><span class="k">Alcohol, units per week</span><span class="dots"></span><span class="val">9</span></div>
+    <div class="lead"><span class="k">Preferred contact method</span><span class="dots"></span><span class="val">Text message</span></div>
+
+    <h2>3. Medical history</h2>
+    <table>
+      <caption>Have you ever been told you have, or been treated for, any of the following?</caption>
+      <thead>
+        <tr><th>Condition</th><th class="c">Yes</th><th class="c">No</th><th>Since</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Asthma</td><td class="c">☑</td><td class="c">☐</td><td class="yr">1979</td><td>Mild, reliever inhaler only</td></tr>
+        <tr><td>Diabetes (type 1)</td><td class="c">☐</td><td class="c">☑</td><td class="yr"></td><td></td></tr>
+        <tr><td>Diabetes (type 2)</td><td class="c">☐</td><td class="c">☑</td><td class="yr"></td><td></td></tr>
+        <tr><td>High blood pressure</td><td class="c">☑</td><td class="c">☐</td><td class="yr">2019</td><td>Ramipril 5 mg daily</td></tr>
+        <tr><td>Heart disease or angina</td><td class="c">☐</td><td class="c">☑</td><td class="yr"></td><td></td></tr>
+        <tr><td>Stroke or TIA</td><td class="c">☐</td><td class="c">☑</td><td class="yr"></td><td></td></tr>
+        <tr><td>Epilepsy</td><td class="c">☐</td><td class="c">☑</td><td class="yr"></td><td></td></tr>
+        <tr><td>Migraine</td><td class="c">☐</td><td class="c">☑</td><td class="yr"></td><td></td></tr>
+        <tr><td>Depression or anxiety</td><td class="c">☐</td><td class="c">☑</td><td class="yr"></td><td></td></tr>
+        <tr><td>Thyroid disorder</td><td class="c">☐</td><td class="c">☑</td><td class="yr"></td><td></td></tr>
+        <tr><td>Kidney disease</td><td class="c">☐</td><td class="c">☑</td><td class="yr"></td><td></td></tr>
+        <tr><td>Liver disease</td><td class="c">☐</td><td class="c">☑</td><td class="yr"></td><td></td></tr>
+        <tr><td>Stomach ulcer or reflux</td><td class="c">☑</td><td class="c">☐</td><td class="yr">2016</td><td>Occasional, antacids</td></tr>
+        <tr><td>Irritable bowel</td><td class="c">☐</td><td class="c">☑</td><td class="yr"></td><td></td></tr>
+        <tr><td>Arthritis</td><td class="c">☐</td><td class="c">☑</td><td class="yr"></td><td></td></tr>
+        <tr><td>Osteoporosis</td><td class="c">☐</td><td class="c">☑</td><td class="yr"></td><td></td></tr>
+        <tr><td>Cancer of any kind</td><td class="c">☐</td><td class="c">☑</td><td class="yr"></td><td></td></tr>
+        <tr><td>Anaemia</td><td class="c">☐</td><td class="c">☑</td><td class="yr"></td><td></td></tr>
+        <tr><td>Eczema or psoriasis</td><td class="c">☑</td><td class="c">☐</td><td class="yr">1985</td><td>Left elbow, cream</td></tr>
+        <tr><td>Hay fever</td><td class="c">☑</td><td class="c">☐</td><td class="yr">1990</td><td>Spring and summer</td></tr>
+        <tr><td>Glaucoma</td><td class="c">☐</td><td class="c">☑</td><td class="yr"></td><td></td></tr>
+        <tr><td>Hearing loss</td><td class="c">☐</td><td class="c">☑</td><td class="yr"></td><td></td></tr>
+        <tr><td>Sleep apnoea</td><td class="c">☐</td><td class="c">☑</td><td class="yr"></td><td></td></tr>
+        <tr><td>Hepatitis B or C</td><td class="c">☐</td><td class="c">☑</td><td class="yr"></td><td></td></tr>
+        <tr><td>Blood clot (DVT or PE)</td><td class="c">☐</td><td class="c">☑</td><td class="yr"></td><td></td></tr>
+        <tr><td>Long-term back problems</td><td class="c">☑</td><td class="c">☐</td><td class="yr">2008</td><td>Physiotherapy 2009</td></tr>
+        <tr><td>Operations or hospital stays</td><td class="c">☑</td><td class="c">☐</td><td class="yr">1994</td><td>Appendix removed, Salisbury</td></tr>
+      </tbody>
+    </table>
+
+    <h2>4. Current medicines</h2>
+    <div class="lead"><span class="k">Ramipril 5 mg capsules</span><span class="dots"></span><span class="val">one each morning</span></div>
+    <div class="lead"><span class="k">Salbutamol 100 microgram inhaler</span><span class="dots"></span><span class="val">as needed</span></div>
+    <div class="lead"><span class="k">Emollient cream</span><span class="dots"></span><span class="val">twice daily to elbow</span></div>
+
+    <h2>5. Declaration</h2>
+    <p style="margin:0 0 6px">I confirm that the information given above is correct to the best of my knowledge, and I agree that the practice may request my records from my previous GP.</p>
+    <div class="sign">
+      <div class="f" style="flex:2"><div class="l">Signature</div><div class="v" style="font-weight:400;font-style:italic">H. Thornton</div></div>
+      <div class="f"><div class="l">Date</div><div class="v">09/01/2024</div></div>
+    </div>
+    <p class="small">Your information is held under the practice privacy notice, available at reception. Registration is confirmed by letter within seven working days.</p>
+  </div>
+</div>
+</body>
+</html>

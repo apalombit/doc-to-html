@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Compass Journal plans</title>
+<style>
+html, body { margin: 0; }
+body { width: 780px; box-sizing: border-box; padding: 22px 24px 22px 24px; background: #f6efe1; color: #231d16;
+  font-family: "Gill Sans", sans-serif; font-size: 14px; line-height: 1.4; }
+.top { display: flex; justify-content: space-between; align-items: baseline; border-top: 3px solid #231d16; border-bottom: 1px solid #231d16; padding: 8px 0 7px 0; }
+.top .eyebrow { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; }
+.top .date { font-size: 11px; letter-spacing: 0.08em; color: #6b5d4a; }
+h1 { font-family: "Playfair Display", "Didot", serif; font-weight: 700; font-size: 38px; line-height: 1.05; margin: 16px 0 6px 0; letter-spacing: -0.01em; }
+.dek { font-size: 15px; margin: 0 0 18px 0; color: #4a3f31; max-width: 560px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.card { background: #fffaf0; border: 1px solid #231d16; padding: 16px 18px 16px 18px; position: relative; }
+.card.pick { border: 2px solid #b8651b; }
+.card h2 { font-family: "Playfair Display", "Didot", serif; font-size: 22px; font-weight: 700; margin: 0; line-height: 1.1; display: flex; align-items: center; gap: 8px; }
+.card .who { font-size: 12px; font-style: italic; color: #6b5d4a; margin: 3px 0 10px 0; }
+.price { font-family: "Playfair Display", "Didot", serif; font-size: 34px; font-weight: 700; line-height: 1; border-top: 1px solid #cdbfa5; padding-top: 10px; }
+.price small { font-family: "Gill Sans", sans-serif; font-size: 12px; font-weight: 400; color: #6b5d4a; margin-left: 4px; }
+.alt { font-size: 12px; color: #6b5d4a; margin: 3px 0 10px 0; }
+ul.t { list-style: none; margin: 0 0 12px 0; padding: 0; }
+ul.t li { padding-left: 20px; text-indent: -20px; margin: 0 0 4px 0; font-size: 13px; }
+ul.t li .tk { display: inline-block; width: 20px; text-indent: 0; font-weight: 700; color: #b8651b; }
+ul.t li.no { color: #8d8070; }
+ul.t li.no .tk { color: #8d8070; }
+.fields { display: flex; gap: 8px; }
+.f { flex: 1; border: 1px solid #231d16; background: #fff; padding: 3px 8px 4px 8px; }
+.f .l { display: block; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: #6b5d4a; }
+.f .v { font-size: 13px; font-weight: 600; }
+.chip { position: absolute; top: -10px; right: 14px; background: #b8651b; color: #fff; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border-radius: 10px; }
+.foot { margin-top: 14px; font-size: 11.5px; color: #6b5d4a; border-top: 1px solid #231d16; padding-top: 7px; }
+</style>
+</head>
+<body>
+<div class="top"><span class="eyebrow">Compass Journal &middot; Subscriptions</span><span class="date">Prices from 14 January 2021</span></div>
+<h1>Read as much as you like, whichever way suits you</h1>
+<p class="dek">Four ways to take the Journal from Amber Press, edited in Hereford and Inverness. Change or stop any time.</p>
+
+<div class="grid">
+  <div class="card">
+    <h2><svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 17 C3 8 9 3 17 3 C17 11 12 17 3 17 Z" fill="none" stroke="#231d16" stroke-width="1.6"/><path d="M3 17 L11 9" stroke="#231d16" stroke-width="1.6"/></svg>Reader</h2>
+    <div class="who">For the curious</div>
+    <div class="price">£0<small>always</small></div>
+    <div class="alt">No card needed</div>
+    <ul class="t">
+      <li><span class="tk">✓</span>Three articles a month</li>
+      <li><span class="tk">✓</span>The Saturday letter by e-mail</li>
+      <li class="no"><span class="tk">✗</span>Archive back to 2009</li>
+      <li class="no"><span class="tk">✗</span>Audio editions</li>
+    </ul>
+    <div class="fields"><div class="f"><span class="l">Readers</span><span class="v">1</span></div><div class="f"><span class="l">Billing</span><span class="v">None</span></div></div>
+  </div>
+  <div class="card pick">
+    <span class="chip">Most chosen</span>
+    <h2><svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="none" stroke="#b8651b" stroke-width="1.6"/><path d="M10 3 L12 10 L10 17 L8 10 Z" fill="#b8651b"/></svg>Member</h2>
+    <div class="who">For regular readers</div>
+    <div class="price">£7<small>a month</small></div>
+    <div class="alt">or £70 a year, saving £14</div>
+    <ul class="t">
+      <li><span class="tk">✓</span>Every article, no limit</li>
+      <li><span class="tk">✓</span>Archive back to 2009</li>
+      <li><span class="tk">✓</span>Audio editions each Friday</li>
+      <li class="no"><span class="tk">✗</span>Print supplement</li>
+    </ul>
+    <div class="fields"><div class="f"><span class="l">Readers</span><span class="v">1</span></div><div class="f"><span class="l">Billing</span><span class="v">Monthly</span></div></div>
+  </div>
+  <div class="card">
+    <h2><svg width="20" height="20" viewBox="0 0 20 20"><path d="M2 10 L10 3 L18 10 V17 H2 Z" fill="none" stroke="#231d16" stroke-width="1.6"/><rect x="8" y="11" width="4" height="6" fill="#231d16"/></svg>Household</h2>
+    <div class="who">For shared homes</div>
+    <div class="price">£11<small>a month</small></div>
+    <div class="alt">or £110 a year, saving £22</div>
+    <ul class="t">
+      <li><span class="tk">✓</span>Everything in Member</li>
+      <li><span class="tk">✓</span>Up to four readers</li>
+      <li><span class="tk">✓</span>Print supplement every quarter</li>
+      <li class="no"><span class="tk">✗</span>Invoice billing</li>
+    </ul>
+    <div class="fields"><div class="f"><span class="l">Readers</span><span class="v">4</span></div><div class="f"><span class="l">Billing</span><span class="v">Annual</span></div></div>
+  </div>
+  <div class="card">
+    <h2><svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 4 H9 C10 4 10 5 10 5 V17 C10 17 10 16 9 16 H3 Z M17 4 H11 C10 4 10 5 10 5 V17 C10 17 10 16 11 16 H17 Z" fill="none" stroke="#231d16" stroke-width="1.6"/></svg>Library</h2>
+    <div class="who">For schools and libraries</div>
+    <div class="price">£42<small>a month</small></div>
+    <div class="alt">or £420 a year, saving £84</div>
+    <ul class="t">
+      <li><span class="tk">✓</span>Access across the whole site</li>
+      <li><span class="tk">✓</span>Teaching pack with each issue</li>
+      <li><span class="tk">✓</span>Pay by invoice, 30 days</li>
+      <li><span class="tk">✓</span>Print supplement, five copies</li>
+    </ul>
+    <div class="fields"><div class="f"><span class="l">Readers</span><span class="v">Unlimited</span></div><div class="f"><span class="l">Billing</span><span class="v">Invoice</span></div></div>
+  </div>
+</div>
+<div class="foot">Prices include VAT at 20%. Questions? Write to Niamh Doherty, Reader Services, at help@example.com.</div>
+</body>
+</html>

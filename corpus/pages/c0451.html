@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Faturamento mensal por unidade</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 18px 20px 20px; width: 500px; background: #fff; color: #0b0b0b;
+         font-family: "Galvji", "Helvetica Neue", sans-serif; font-size: 11px; line-height: 1.4; }
+  .kicker { display: grid; grid-template-columns: 1fr auto; font-size: 9.5px; letter-spacing: .6px;
+            text-transform: uppercase; color: #6b6b6b; border-top: 3px solid #0b0b0b; padding-top: 5px; }
+  h1 { margin: 10px 0 2px; font-size: 18px; line-height: 1.15; font-weight: 700; letter-spacing: -.2px; }
+  .sub { margin: 0 0 10px; color: #555; font-size: 11px; }
+  .legend { display: flex; gap: 16px; margin-bottom: 8px; font-size: 10.5px; }
+  .legend span.sw { display: inline-block; width: 9px; height: 9px; margin-right: 5px; vertical-align: -1px; }
+  .plot { position: relative; height: 181px; margin-top: 10px; }
+  .plot svg { position: absolute; left: 40px; top: 0; }
+  .yl { position: absolute; left: 0; width: 34px; text-align: right; font-size: 9.5px; color: #6b6b6b; line-height: 1; }
+  .xl { display: grid; grid-template-columns: repeat(7, 60px); margin: 5px 0 0 40px; font-size: 9.5px; color: #333; text-align: center; }
+  .unit { font-size: 9.5px; color: #6b6b6b; margin: 0 0 2px; }
+  .note { display: grid; grid-template-columns: 52px 1fr; gap: 0 8px; margin-top: 10px; font-size: 10px; color: #333;
+          border-top: 1px solid #0b0b0b; padding-top: 5px; }
+  .note b { font-weight: 700; text-transform: uppercase; font-size: 9px; letter-spacing: .5px; color: #6b6b6b; }
+  .lead { margin: 16px 0 0; border-top: 1px solid #0b0b0b; padding-top: 6px; }
+  .lead .row { display: flex; align-items: baseline; padding: 1.5px 0; }
+  .lead .row .d { flex: 1; border-bottom: 1px dotted #6b6b6b; margin: 0 5px; position: relative; top: -2px; }
+  .lead .row .n { font-weight: 700; }
+  table { border-collapse: collapse; width: 100%; margin-top: 16px; font-size: 10.5px; }
+  caption { text-align: left; font-weight: 700; font-size: 11px; padding-bottom: 4px; }
+  th, td { padding: 3px 0; text-align: right; font-weight: 400; }
+  th:first-child, td:first-child { text-align: left; width: 190px; }
+  thead th { font-size: 9.5px; text-transform: uppercase; letter-spacing: .5px; color: #6b6b6b; border-top: 1px solid #0b0b0b; border-bottom: 1px solid #0b0b0b; padding: 4px 0; }
+  tr.sec th { text-align: left; font-weight: 700; padding-top: 8px; color: #d6231e; font-size: 10px; text-transform: uppercase; letter-spacing: .5px; }
+  td.i { padding-left: 10px; }
+  tr.tot td { font-weight: 700; border-top: 1px solid #0b0b0b; }
+  tr.res td { font-weight: 700; border-top: 2px solid #0b0b0b; border-bottom: 2px solid #0b0b0b; padding: 4px 0; }
+</style>
+</head>
+<body>
+  <div class="kicker"><span>Gráfico 3 &middot; Controladoria</span><span>11/08/2025</span></div>
+  <h1>Faturamento mensal por unidade, jan.&ndash;jul. de 2025</h1>
+  <p class="sub">Dossel Transportes, unidades de Goiânia e Belém</p>
+  <div class="legend">
+    <span><span class="sw" style="background:#0b0b0b"></span>Goiânia</span>
+    <span><span class="sw" style="background:#d6231e"></span>Belém</span>
+  </div>
+  <p class="unit">R$ mil</p>
+  <div class="plot">
+    <span class="yl" style="top:-4px">600</span>
+    <span class="yl" style="top:56px">400</span>
+    <span class="yl" style="top:116px">200</span>
+    <span class="yl" style="top:176px">0</span>
+    <svg width="420" height="181" viewBox="0 0 420 181" xmlns="http://www.w3.org/2000/svg">
+      <g stroke="#c9c9c9" stroke-width="1">
+        <line x1="0" y1="0.5" x2="420" y2="0.5"/>
+        <line x1="0" y1="60.5" x2="420" y2="60.5"/>
+        <line x1="0" y1="120.5" x2="420" y2="120.5"/>
+      </g>
+      <line x1="0" y1="180.5" x2="420" y2="180.5" stroke="#0b0b0b" stroke-width="1"/>
+      <rect x="9" y="56.4" width="19" height="123.6" fill="#0b0b0b"/>
+      <rect x="30" y="94.2" width="19" height="85.8" fill="#d6231e"/>
+      <rect x="69" y="48.6" width="19" height="131.4" fill="#0b0b0b"/>
+      <rect x="90" y="89.7" width="19" height="90.3" fill="#d6231e"/>
+      <rect x="129" y="43.5" width="19" height="136.5" fill="#0b0b0b"/>
+      <rect x="150" y="90.9" width="19" height="89.1" fill="#d6231e"/>
+      <rect x="189" y="53.7" width="19" height="126.3" fill="#0b0b0b"/>
+      <rect x="210" y="83.4" width="19" height="96.6" fill="#d6231e"/>
+      <rect x="249" y="39.6" width="19" height="140.4" fill="#0b0b0b"/>
+      <rect x="270" y="78" width="19" height="102" fill="#d6231e"/>
+      <rect x="309" y="30.9" width="19" height="149.1" fill="#0b0b0b"/>
+      <rect x="330" y="79.2" width="19" height="100.8" fill="#d6231e"/>
+      <rect x="369" y="26.4" width="19" height="153.6" fill="#0b0b0b"/>
+      <rect x="390" y="71.7" width="19" height="108.3" fill="#d6231e"/>
+    </svg>
+  </div>
+  <div class="xl"><span>jan.</span><span>fev.</span><span>mar.</span><span>abr.</span><span>maio</span><span>jun.</span><span>jul.</span></div>
+  <div class="note"><b>Fonte</b><span>Controladoria da Dossel Transportes, posição em 11/08/2025. Elaboração: Vinícius Gomes Araújo. Revisão: Rodrigo Pereira Duarte.</span></div>
+
+  <div class="lead">
+    <div class="row"><span>Receita acumulada no período</span><span class="d"></span><span class="n">R$ 5.446 mil</span></div>
+    <div class="row"><span>Meta do período</span><span class="d"></span><span class="n">R$ 5.200 mil</span></div>
+    <div class="row"><span>Variação sobre a meta</span><span class="d"></span><span class="n">+4,7 %</span></div>
+  </div>
+
+  <table>
+    <caption>Resultado do período, jan.–jul. de 2025</caption>
+    <thead><tr><th>R$ mil</th><th>Goiânia</th><th>Belém</th><th>Total</th></tr></thead>
+    <tbody>
+      <tr class="sec"><th colspan="4">Receitas</th></tr>
+      <tr><td class="i">Fretes rodoviários</td><td>2.104</td><td>1.388</td><td>3.492</td></tr>
+      <tr><td class="i">Armazenagem</td><td>761</td><td>502</td><td>1.263</td></tr>
+      <tr><td class="i">Serviços adicionais</td><td>338</td><td>353</td><td>691</td></tr>
+      <tr class="tot"><td>Total de receitas</td><td>3.203</td><td>2.243</td><td>5.446</td></tr>
+      <tr class="sec"><th colspan="4">Custos</th></tr>
+      <tr><td class="i">Pessoal e frota</td><td>1.986</td><td>1.402</td><td>3.388</td></tr>
+      <tr><td class="i">Combustível e pedágios</td><td>612</td><td>489</td><td>1.101</td></tr>
+      <tr><td class="i">Outros custos</td><td>290</td><td>196</td><td>486</td></tr>
+      <tr class="tot"><td>Total de custos</td><td>2.888</td><td>2.087</td><td>4.975</td></tr>
+      <tr class="res"><td>Resultado do período</td><td>315</td><td>156</td><td>471</td></tr>
+    </tbody>
+  </table>
+  <div class="note"><b>Nota</b><span>Valores em milhares de reais, líquidos de impostos. Belém inclui o centro de distribuição de Ananindeua.</span></div>
+</body>
+</html>

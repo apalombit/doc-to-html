@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Lumen Hall calendar, March 2024</title>
+<style>
+  .m-0 { margin: 0; } .mt-1 { margin-top: 4px; } .mt-2 { margin-top: 8px; } .mt-4 { margin-top: 16px; } .mt-6 { margin-top: 24px; }
+  .p-1 { padding: 4px; } .p-2 { padding: 8px; } .p-4 { padding: 16px; } .px-2 { padding-left: 8px; padding-right: 8px; } .py-1 { padding-top: 4px; padding-bottom: 4px; }
+  .flex { display: flex; } .grid { display: grid; } .grid-cols-2 { grid-template-columns: 1fr 1fr; } .gap-4 { gap: 16px; } .gap-2 { gap: 8px; }
+  .items-end { align-items: flex-end; } .items-baseline { align-items: baseline; } .justify-between { justify-content: space-between; }
+  .flex-1 { flex: 1; }
+  .text-xs { font-size: 11px; } .text-sm { font-size: 12.5px; } .text-base { font-size: 14px; } .text-4xl { font-size: 46px; line-height: 1; }
+  .font-light { font-weight: 300; } .font-semibold { font-weight: 600; } .font-bold { font-weight: 700; }
+  .text-right { text-align: right; } .text-center { text-align: center; }
+  .caps { font-variant: small-caps; letter-spacing: 1.2px; }
+  .text-accent { color: #a4421f; } .text-muted { color: #5f5a52; }
+  .bg-stone-50 { background: #f7f4ee; } .bg-accent { background: #a4421f; }
+  .rounded { border-radius: 6px; }
+  .border-b { border-bottom: 1px solid #d8d1c4; }
+  .rule-dbl { border-top: 3px double #a4421f; }
+  .rule-dash { border-top: 1px dashed #a39b8a; }
+  .leader { flex: 1; border-bottom: 2px dotted #8d8573; margin: 0 5px 3px; }
+
+  body { margin: 0; padding: 26px 30px 28px; background: #ffffff; color: #26231f; font-family: "Gill Sans", "Helvetica Neue", sans-serif; font-size: 13px; line-height: 1.35; }
+  svg.photo { display: block; width: 820px; height: 190px; }
+  table.cal { width: 100%; border-collapse: collapse; table-layout: fixed; margin-top: 12px; }
+  table.cal th { background: #a4421f; color: #fff; font-weight: 600; font-size: 14px; padding: 5px 0; border: 1px solid #a4421f; font-variant: small-caps; letter-spacing: 1.4px; }
+  table.cal td { height: 74px; vertical-align: top; border: 1px solid #cfc7b8; padding: 4px 6px; }
+  table.cal td.off { background: #f1ede4; }
+  table.cal td.we { background: #faf7f1; }
+  .day { font-size: 16px; font-weight: 600; }
+  .ev { font-size: 11px; line-height: 1.25; margin-top: 3px; color: #3a352e; }
+  .hol .day { color: #a4421f; }
+  .hol .ev { color: #a4421f; font-weight: 600; }
+</style>
+</head>
+<body>
+<svg class="photo" viewBox="0 0 820 190" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3c9a0"/><stop offset="0.55" stop-color="#f7e3c6"/><stop offset="1" stop-color="#fbf1de"/></linearGradient>
+    <linearGradient id="loch" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9db7c4"/><stop offset="1" stop-color="#5f8197"/></linearGradient>
+  </defs>
+  <rect width="820" height="190" fill="url(#sky)"/>
+  <circle cx="610" cy="62" r="26" fill="#fff4d8" opacity="0.9"/>
+  <path d="M0 120 L90 62 L160 100 L250 44 L340 108 L420 70 L520 116 L600 84 L700 112 L820 74 L820 190 L0 190 Z" fill="#8f7a78"/>
+  <path d="M0 140 L70 108 L150 134 L260 92 L360 136 L470 100 L580 138 L690 104 L820 130 L820 190 L0 190 Z" fill="#6b5a5a"/>
+  <rect y="146" width="820" height="44" fill="url(#loch)"/>
+  <path d="M0 160 L820 160 M0 172 L820 172" stroke="#d9e6ec" stroke-width="1" opacity="0.6"/>
+  <path d="M0 190 L0 164 L60 152 L130 170 L210 158 L300 190 Z" fill="#3f4a35"/>
+  <path d="M520 190 L600 166 L690 178 L760 158 L820 170 L820 190 Z" fill="#3f4a35"/>
+</svg>
+
+<div class="flex justify-between items-end mt-4">
+  <div>
+    <h1 class="m-0 text-4xl font-light caps text-accent">March</h1>
+    <div class="text-sm text-muted mt-1">Lumen Hall events calendar, Shrewsbury</div>
+  </div>
+  <div class="text-right text-sm text-muted">
+    <div class="caps font-semibold text-base">2024</div>
+    <div>Printed 28 February 2024</div>
+  </div>
+</div>
+<div class="rule-dbl mt-2"></div>
+
+<table class="cal">
+  <thead><tr><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th></tr></thead>
+  <tbody>
+    <tr>
+      <td class="off"></td><td class="off"></td><td class="off"></td><td class="off"></td>
+      <td class="hol"><div class="day">1</div><div class="ev">St David’s Day cake sale, 10:00</div></td>
+      <td class="we"><div class="day">2</div></td>
+      <td class="we"><div class="day">3</div></td>
+    </tr>
+    <tr>
+      <td><div class="day">4</div></td>
+      <td><div class="day">5</div><div class="ev">Toddler group, 09:30</div></td>
+      <td><div class="day">6</div></td>
+      <td><div class="day">7</div><div class="ev">Book club, 19:30</div></td>
+      <td><div class="day">8</div><div class="ev">International Women’s Day talk</div></td>
+      <td class="we"><div class="day">9</div><div class="ev">Repair café, 10:00–13:00</div></td>
+      <td class="we hol"><div class="day">10</div><div class="ev">Mothering Sunday</div></td>
+    </tr>
+    <tr>
+      <td><div class="day">11</div></td>
+      <td><div class="day">12</div><div class="ev">Choir, 18:45</div></td>
+      <td><div class="day">13</div><div class="ev">Lunch club, 12:00</div></td>
+      <td><div class="day">14</div><div class="ev">Quiz night, 19:00</div></td>
+      <td><div class="day">15</div></td>
+      <td class="we"><div class="day">16</div></td>
+      <td class="we"><div class="day">17</div><div class="ev">St Patrick’s Day</div></td>
+    </tr>
+    <tr>
+      <td><div class="day">18</div><div class="ev">Knit and natter, 14:00</div></td>
+      <td><div class="day">19</div></td>
+      <td><div class="day">20</div><div class="ev">Spring equinox</div></td>
+      <td><div class="day">21</div></td>
+      <td><div class="day">22</div><div class="ev">Film night, 19:30</div></td>
+      <td class="we"><div class="day">23</div><div class="ev">Coach to Dundee, 07:30</div></td>
+      <td class="we"><div class="day">24</div></td>
+    </tr>
+    <tr>
+      <td><div class="day">25</div><div class="ev">Committee, 19:00</div></td>
+      <td><div class="day">26</div><div class="ev">Choir, 18:45</div></td>
+      <td><div class="day">27</div><div class="ev">Lunch club, 12:00</div></td>
+      <td><div class="day">28</div></td>
+      <td class="hol"><div class="day">29</div><div class="ev">Good Friday, hall closed</div></td>
+      <td class="we"><div class="day">30</div></td>
+      <td class="we hol"><div class="day">31</div><div class="ev">Easter Sunday; clocks forward</div></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="grid grid-cols-2 gap-4 mt-6">
+  <section class="bg-stone-50 rounded p-4">
+    <h2 class="m-0 text-base font-semibold caps text-accent">Dates for the diary</h2>
+    <div class="rule-dash mt-2"></div>
+    <div class="flex items-baseline text-sm mt-2"><span>Book club</span><span class="leader"></span><span>7 March</span></div>
+    <div class="flex items-baseline text-sm mt-1"><span>Repair café</span><span class="leader"></span><span>9 March</span></div>
+    <div class="flex items-baseline text-sm mt-1"><span>Quiz night</span><span class="leader"></span><span>14 March</span></div>
+    <div class="flex items-baseline text-sm mt-1"><span>Dundee day trip</span><span class="leader"></span><span>23 March</span></div>
+    <div class="flex items-baseline text-sm mt-1"><span>Hall closed</span><span class="leader"></span><span>29 March</span></div>
+  </section>
+  <section class="bg-stone-50 rounded p-4">
+    <h2 class="m-0 text-base font-semibold caps text-accent">Who to ask</h2>
+    <div class="rule-dash mt-2"></div>
+    <div class="flex items-baseline text-sm mt-2"><span>Events, Aisha Patel</span><span class="leader"></span><span>01743 555 0161</span></div>
+    <div class="flex items-baseline text-sm mt-1"><span>Treasurer, Stuart Odell</span><span class="leader"></span><span>01743 555 0178</span></div>
+    <div class="flex items-baseline text-sm mt-1"><span>Secretary, Imogen Fairclough</span><span class="leader"></span><span>01743 555 0190</span></div>
+    <div class="flex items-baseline text-sm mt-1"><span>Hall bookings</span><span class="leader"></span><span>lumenhall@example.org</span></div>
+    <div class="text-xs text-muted mt-2">Hall opening hours: Monday to Friday, 09:00–16:00; Saturday by arrangement. Coach seats for the Dundee trip must be booked by 16 March.</div>
+  </section>
+</div>
+</body>
+</html>

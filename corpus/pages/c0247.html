@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="it-IT">
+<head>
+<meta charset="utf-8">
+<title>Ricetta medica</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 28px 34px 30px; background: #ffffff; color: #1d2b2e; font-family: "Avenir", "Helvetica Neue", sans-serif; font-size: 14px; line-height: 1.45; }
+  header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid #0f7c80; padding-bottom: 10px; }
+  header h1 { margin: 0; font-size: 26px; font-weight: 700; color: #0f7c80; letter-spacing: 0.2px; }
+  header .studio { font-size: 13px; line-height: 1.4; text-align: right; color: #35484c; }
+  header .studio b { display: block; font-size: 15px; color: #1d2b2e; }
+  .rx { display: flex; justify-content: space-between; margin-top: 14px; font-size: 13px; color: #35484c; }
+  .rx strong { color: #1d2b2e; }
+  h2 { margin: 22px 0 8px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: #0f7c80; }
+  table.fields { width: 100%; border-collapse: collapse; }
+  table.fields td { border: 1px solid #b7cfd1; padding: 7px 10px; width: 25%; vertical-align: top; }
+  table.fields td.l { background: #eaf4f4; color: #35484c; font-size: 12px; font-weight: 600; width: 14%; }
+  table.fields td.v { width: 36%; }
+  table.meds { width: 100%; border-collapse: collapse; margin-top: 2px; }
+  table.meds th { background: #0f7c80; color: #fff; text-align: left; font-size: 12px; font-weight: 600; letter-spacing: 0.4px; padding: 7px 10px; border: 1px solid #0f7c80; }
+  table.meds td { border: 1px solid #b7cfd1; padding: 7px 10px; vertical-align: top; }
+  table.meds tr.parent td { background: #f6fbfb; font-weight: 600; }
+  table.meds tr.sub td { font-size: 13px; color: #2b3d40; border-top: 1px dotted #b7cfd1; }
+  table.meds tr.sub td.ind { padding-left: 34px; }
+  table.meds td.num { text-align: right; white-space: nowrap; }
+  table.meds td.c { text-align: center; }
+  p.note { margin: 6px 0 0; text-align: justify; font-size: 13.5px; color: #2b3d40; }
+  .sign { display: flex; justify-content: space-between; margin-top: 26px; gap: 40px; }
+  .sign div { flex: 1; border-top: 1px solid #1d2b2e; padding-top: 5px; font-size: 12px; color: #35484c; }
+  .fine { margin-top: 18px; font-size: 10px; color: #5a6c70; line-height: 1.35; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Ricetta medica</h1>
+  <div class="studio"><b>Poliambulatorio Zafferano</b>Via dei Mille 48, 87100 Cosenza (CS)<br>Tel. 0984 555 0142 · segreteria@zafferano.example.org</div>
+</header>
+<div class="rx">
+  <span>Ricetta n. <strong>0200 4471 8830</strong></span>
+  <span>Data di emissione: <strong>18/12/2020</strong></span>
+  <span>Valida fino al <strong>17/01/2021</strong></span>
+</div>
+
+<h2>Dati dell’assistito</h2>
+<table class="fields">
+  <tr><td class="l">Cognome</td><td class="v">Moretti</td><td class="l">Nome</td><td class="v">Sara</td></tr>
+  <tr><td class="l">Nato/a il</td><td class="v">14/03/1984 (36 anni)</td><td class="l">Luogo</td><td class="v">Matera (MT)</td></tr>
+  <tr><td class="l">Codice fiscale</td><td class="v">MRTSRA84C54F052K</td><td class="l">Tessera sanitaria</td><td class="v">8038 0000 1120 4471 3</td></tr>
+  <tr><td class="l">Residenza</td><td class="v">Via Gramsci 12, Cosenza</td><td class="l">Esenzione</td><td class="v">Nessuna</td></tr>
+</table>
+
+<h2>Prescrizione</h2>
+<table class="meds">
+  <tr><th style="width:5%">N.</th><th>Farmaco e forma farmaceutica</th><th style="width:19%">Dosaggio</th><th style="width:13%; text-align:right">Confezioni</th></tr>
+  <tr class="parent"><td class="c">1</td><td>Amoxicillina e acido clavulanico, compresse rivestite</td><td>875 mg + 125 mg</td><td class="num">1 (12 cpr)</td></tr>
+  <tr class="sub"><td></td><td class="ind" colspan="3">Posologia: 1 compressa ogni 12 ore, a stomaco pieno, per 6 giorni</td></tr>
+  <tr class="sub"><td></td><td class="ind" colspan="3">Avvertenza: sospendere e contattare il medico in caso di eruzioni cutanee</td></tr>
+  <tr class="parent"><td class="c">2</td><td>Paracetamolo, compresse</td><td>1000 mg</td><td class="num">1 (16 cpr)</td></tr>
+  <tr class="sub"><td></td><td class="ind" colspan="3">Posologia: 1 compressa al bisogno, fino a 3 al giorno, distanziate di 6 ore</td></tr>
+  <tr class="parent"><td class="c">3</td><td>Omeprazolo, capsule gastroresistenti</td><td>20 mg</td><td class="num">1 (14 cps)</td></tr>
+  <tr class="sub"><td></td><td class="ind" colspan="3">Posologia: 1 capsula al mattino a digiuno, 30 minuti prima della colazione</td></tr>
+</table>
+
+<h2>Indicazioni del medico</h2>
+<p class="note">Terapia per faringotonsillite batterica confermata dal tampone eseguito in data odierna. Si raccomanda riposo per almeno tre giorni, abbondante idratazione e la sospensione dell’antibiotico solo al termine del ciclo prescritto, anche se i sintomi scompaiono prima. In assenza di miglioramento entro 72 ore, o in presenza di febbre superiore a 38,5 °C, rivolgersi nuovamente allo studio per un controllo.</p>
+
+<div class="sign">
+  <div>Dott.ssa Giulia Orlando, medico di medicina generale<br>Iscr. Ordine dei Medici di Cosenza n. 7741</div>
+  <div>Per ritiro in farmacia: delegato Andrea Gatti<br>Firma del delegato</div>
+</div>
+<p class="fine">La ricetta è valida in tutto il territorio nazionale per trenta giorni dalla data di emissione. I dati personali sono trattati ai sensi della normativa sulla protezione dei dati; senza timbro e firma del medico prescrittore non ha alcun valore.</p>
+</body>
+</html>

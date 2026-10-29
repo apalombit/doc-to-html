@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Litter decay model</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #fff; }
+  body { width: 700px; box-sizing: border-box; padding: 10px 14px 12px; font-family: "PT Sans", sans-serif; font-size: 11px; line-height: 1.38; color: #1a1a1a; }
+  .running { background: #2c3e50; color: #f2f4f6; font-size: 9.5px; letter-spacing: 0.04em; padding: 4px 8px; display: flex; justify-content: space-between; }
+  .strip { background: #e3e8ee; border-top: 1.5px solid #2c3e50; margin: 8px 0 7px; padding: 3px 8px; font-size: 12.5px; font-weight: 700; color: #1f2d3a; }
+  .cols { column-count: 2; column-gap: 22px; column-fill: balance; }
+  h3 { font-size: 11px; font-weight: 700; margin: 8px 0 3px; color: #1f2d3a; }
+  h3:first-child { margin-top: 0; }
+  p { margin: 0 0 5px; text-align: justify; }
+  .eq { margin: 5px 0 6px; text-align: center; font-family: "STIX Two Text", "Times New Roman", serif; font-size: 14px; font-style: italic; break-inside: avoid; }
+  .eq .n { float: right; font-style: normal; font-family: "PT Sans", sans-serif; font-size: 11px; }
+  .eq .u { font-style: normal; }
+  sup, sub { font-size: 0.75em; line-height: 0; }
+  sup sub, sub sub, sup sup { font-size: 0.95em; }
+  .where { font-size: 11px; }
+  .note { margin-top: 6px; border-top: 0.75px solid #8a96a3; padding-top: 3px; font-size: 10px; color: #222c36; }
+  .note sup { font-size: 0.8em; }
+</style>
+</head>
+<body>
+<div class="running"><span>Journal of Moorland Ecology 22 (2)</span><span>Llewellyn, Kaur and MacLeod</span><span>Accepted 29 March 2019</span><span>147</span></div>
+<div class="strip">2 Methods and model</div>
+<div class="cols">
+<h3>2.2 Single-pool litter decay</h3>
+<p>We describe the dry mass of litter remaining in a bag at time <i>t</i> by a single-pool exponential, where <i>m</i><sub>0</sub> is the initial dry mass and <i>k</i> the decay constant in yr<sup>−1</sup>. Following the bag design used on the Vale transect near Durham, each of the 240 bags held 5.00 g of air-dried material from one of four species.</p>
+<div class="eq"><span class="n">(1)</span>m(t) = m<sub>0</sub> e<sup>−kt</sup></div>
+<p>The half-life follows directly as <i>t</i><sub>½</sub> = ln 2 / <i>k</i>. Bags were buried at 5 cm and recovered after 3, 6, 12, 18 and 24 months; recovered material was cleaned of roots, dried at 60 °C for 48 h and weighed to 0.01 g.</p>
+<h3>2.3 Temperature dependence</h3>
+<p>The constant was allowed to vary with soil temperature <i>T</i> (°C) through a <i>Q</i><sub>10</sub> relationship anchored at a reference temperature <i>T</i><sub>ref</sub> of 10 °C, so that a rise of ten degrees multiplies the rate by a factor of <i>Q</i><sub>10</sub>, as equation (2) states.</p>
+<div class="eq"><span class="n">(2)</span>k(T) = k<sub>ref</sub> · Q<sub>10</sub><sup>(T − T<sub>ref</sub>)/10</sup></div>
+<p class="where">Hourly temperatures came from one logger per plot, placed at bag depth, and were averaged over each burial interval before fitting. Where a logger failed, which happened for 11 of the 48 plots, the mean of the two nearest plots was used.<sup>1</sup></p>
+<h3>2.4 Estimation</h3>
+<p>Parameters were estimated for each species by non-linear least squares, minimising the residual sum of squares over all bags of that species,</p>
+<div class="eq"><span class="n">(3)</span>S = Σ<sub>i</sub> ( m<sub>i</sub> − m̂<sub>i</sub> )<sup>2</sup></div>
+<p>where <i>m<sub>i</sub></i> is the observed and <i>m̂<sub>i</sub></i> the fitted mass of bag <i>i</i>. Standard errors were taken from the inverse Hessian at the optimum and checked against 2000 bootstrap resamples drawn by plot rather than by bag, since bags in one plot share a soil and a logger.</p>
+<p>Model comparison used the corrected Akaike criterion, AICc = 2<i>p</i> − 2 ln <i>L</i> + 2<i>p</i>(<i>p</i> + 1)/(<i>n</i> − <i>p</i> − 1), with <i>p</i> parameters and <i>n</i> bags. A two-pool alternative was rejected for every species except bracken, where the Fern Hill plots showed a fast early loss of about 12% in the first three months (Kaur and MacLeod, 2017).</p>
+<p>All fits were made in R 3.5 using code archived with the data; the Colchester field laboratory held the original weighing sheets.<sup>2</sup></p>
+</div>
+<div class="note"><sup>1</sup> Imputed values are flagged in the archived data set. Dropping the 11 plots altogether changed no decay constant by more than 0.02 yr<sup>−1</sup>. &nbsp; <sup>2</sup> Sheets scanned and held at the Colchester laboratory, reference CFL/2018/07</div>
+</body>
+</html>

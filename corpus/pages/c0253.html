@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Office visit note - Kayla Jackson</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 30px 38px 34px; width: 900px; background: #fff; color: #1b2a2e;
+         font-family: "Source Sans Variable", sans-serif; font-size: 14.5px; font-weight: 400; line-height: 1.45; }
+  .head { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 8px; border-bottom: 4px double #0e7c86; }
+  .head .clinic { font-size: 22px; font-weight: 700; color: #0e7c86; letter-spacing: -.2px; }
+  .head .addr { font-size: 12.5px; font-weight: 300; color: #4a5f63; }
+  .head .doc { text-align: right; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.4px; color: #1b2a2e; }
+  .head .doc span { display: block; font-weight: 300; letter-spacing: 0; text-transform: none; color: #4a5f63; font-size: 12.5px; }
+  dl.banner { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 12px 0 0; border: 1px solid #b9cfd2; background: #f3f8f8; }
+  dl.banner div { padding: 7px 12px; border-right: 1px dotted #9bbabd; border-bottom: 1px dotted #9bbabd; }
+  dl.banner div:nth-child(4n) { border-right: 0; }
+  dl.banner div:nth-child(n+5) { border-bottom: 0; }
+  dl.banner dt { font-size: 11.5px; font-weight: 300; text-transform: uppercase; letter-spacing: 1px; color: #4a5f63; }
+  dl.banner dd { margin: 0; font-weight: 600; font-size: 14.5px; }
+  h2 { margin: 18px 0 5px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #0e7c86; }
+  .sec { border-top: 1px dashed #9bbabd; padding-top: 2px; }
+  p { margin: 0 0 6px; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 30px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  th { text-align: left; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .8px; color: #4a5f63;
+       border-bottom: 2px solid #0e7c86; padding: 4px 8px 4px 0; }
+  td { padding: 4px 8px 4px 0; border-bottom: 1px solid #dbe7e8; }
+  td.flag { color: #b42318; font-weight: 700; }
+  td.hi { color: #b42318; font-weight: 600; }
+  .stop { color: #b42318; font-weight: 600; }
+  .new { color: #0e7c86; font-weight: 700; }
+  ol { list-style: none; margin: 0; padding: 0; }
+  ol li { padding-left: 26px; text-indent: -26px; margin-bottom: 8px; }
+  ol li .n { display: inline-block; width: 26px; text-indent: 0; font-weight: 700; color: #0e7c86; }
+  ol li b { font-weight: 600; }
+  .sig { margin-top: 20px; padding-top: 8px; border-top: 4px double #0e7c86; display: flex; justify-content: space-between;
+         font-size: 13px; color: #4a5f63; font-weight: 300; }
+  .sig b { color: #1b2a2e; font-weight: 600; }
+</style>
+</head>
+<body>
+  <div class="head">
+    <div>
+      <div class="clinic">Northgate Family Clinic</div>
+      <div class="addr">412 Pio Nono Avenue, Macon, GA 31204 &middot; (478) 555-0163</div>
+    </div>
+    <div class="doc">Office visit note<span>Established patient &middot; 25 minutes</span></div>
+  </div>
+
+  <dl class="banner">
+    <div><dt>Patient</dt><dd>Kayla Jackson</dd></div>
+    <div><dt>Date of birth</dt><dd>09/02/1981 (41 y, F)</dd></div>
+    <div><dt>MRN</dt><dd>NFC-0048217</dd></div>
+    <div><dt>Visit date</dt><dd>05/18/2023</dd></div>
+    <div><dt>Provider</dt><dd>Grant Holloway, MD</dd></div>
+    <div><dt>Nurse</dt><dd>Erin Nguyen, RN</dd></div>
+    <div><dt>Allergies</dt><dd>Sulfa drugs (rash)</dd></div>
+    <div><dt>Prior records</dt><dd>Sioux Falls, SD, requested</dd></div>
+  </dl>
+
+  <div class="sec"><h2>Chief complaint</h2>
+    <p>Blood pressure follow-up and a dry cough for three weeks.</p>
+  </div>
+
+  <div class="sec"><h2>History of present illness</h2>
+    <p>41-year-old woman with hypertension for two years, taking lisinopril 20 mg daily. She moved from Sioux Falls, SD in 2022 and is new to this clinic since January. She reports a dry, tickling cough that began about three weeks ago, worse at night, without fever, dyspnea, chest pain or wheeze. No sick contacts. Home readings run 140s over 90. Adherent to medication; limits salt but walks only twice a week.</p>
+  </div>
+
+  <div class="cols">
+    <div class="sec"><h2>Vital signs</h2>
+      <table>
+        <thead><tr><th>Measure</th><th>Value</th><th>Flag</th></tr></thead>
+        <tbody>
+          <tr><td>Blood pressure, seated</td><td class="hi">148/92 mmHg</td><td class="flag">H</td></tr>
+          <tr><td>Blood pressure, repeat</td><td class="hi">144/90 mmHg</td><td class="flag">H</td></tr>
+          <tr><td>Heart rate</td><td>76 /min</td><td></td></tr>
+          <tr><td>Temperature</td><td>98.4 &deg;F</td><td></td></tr>
+          <tr><td>SpO<sub>2</sub>, room air</td><td>98 %</td><td></td></tr>
+          <tr><td>Weight / BMI</td><td>178 lb / 28.7</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sec"><h2>Examination</h2>
+      <p><b style="font-weight:600">General:</b> well appearing, no distress.</p>
+      <p><b style="font-weight:600">Throat:</b> clear, no erythema or exudate.</p>
+      <p><b style="font-weight:600">Heart:</b> regular rate and rhythm, no murmur.</p>
+      <p><b style="font-weight:600">Lungs:</b> clear bilaterally, no wheeze or crackles.</p>
+      <p><b style="font-weight:600">Legs:</b> no edema.</p>
+      <p style="color:#4a5f63;font-weight:300">Labs 04/27/2023: Na 140, K 4.4, creatinine 0.9, eGFR 84, HbA1c 5.6 %.</p>
+    </div>
+  </div>
+
+  <div class="sec"><h2>Current medications</h2>
+    <table>
+      <thead><tr><th style="width:230px">Drug</th><th style="width:120px">Dose</th><th style="width:100px">Route</th><th style="width:170px">Frequency</th><th>Plan today</th></tr></thead>
+      <tbody>
+        <tr><td>Lisinopril</td><td>20 mg</td><td>by mouth</td><td>once daily</td><td class="stop">Stop</td></tr>
+        <tr><td>Losartan</td><td>50 mg</td><td>by mouth</td><td>once daily</td><td class="new">Start</td></tr>
+        <tr><td>Cetirizine</td><td>10 mg</td><td>by mouth</td><td>as needed</td><td>Continue</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec"><h2>Assessment and plan</h2>
+    <ol>
+      <li><span class="n">1.</span><b>Essential hypertension, above goal (I10).</b> Stop lisinopril. Start losartan 50 mg once daily. Home blood pressure log twice a day. Basic metabolic panel in one week to check potassium and creatinine.</li>
+      <li><span class="n">2.</span><b>Subacute cough (R05.2), probably from the ACE inhibitor.</b> Expect improvement within two to four weeks after stopping. Chest X-ray if it persists beyond eight weeks.</li>
+      <li><span class="n">3.</span><b>Health maintenance.</b> HbA1c normal. Advised 150 minutes of walking a week and sodium under 2,000 mg a day.</li>
+    </ol>
+    <p><b style="font-weight:600">Return visit:</b> in four weeks, 06/15/2023, sooner if the cough worsens or blood pressure exceeds 180/110.</p>
+  </div>
+
+  <div class="sig">
+    <span>Electronically signed by <b>Grant Holloway, MD</b> on 05/18/2023 at 3:42 pm</span>
+    <span>Northgate Family Clinic, Macon, GA</span>
+  </div>
+</body>
+</html>

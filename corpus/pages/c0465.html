@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<title>Manual de instalação, secção 5</title>
+<style>
+  body { margin: 0; padding: 8px; background: #fff; color: #111; font-family: "Baskerville", serif; font-size: 13px; font-weight: 400; }
+  table, td, th { font-family: "Baskerville", serif; font-size: 13px; font-weight: 400; }
+  td { vertical-align: top; }
+  h3 { margin: 0 0 4px; font-size: 15px; font-weight: 700; }
+  .lbl { font-weight: 600; }
+  .small { font-size: 11px; }
+  ol { list-style: none; margin: 0; padding: 0; }
+  ol li { margin: 0 0 5px; padding-left: 22px; text-indent: -22px; line-height: 1.35; }
+  ol li .n { display: inline-block; width: 22px; text-indent: 0; font-weight: 700; }
+</style>
+</head>
+<body>
+<table width="744" border="0" cellpadding="0" cellspacing="0">
+<tr><td>
+  <table width="100%" border="1" cellpadding="5" cellspacing="0" bordercolor="#555555" bgcolor="#e4e0d3" style="border-collapse:collapse">
+    <tr>
+      <td width="30%"><b>Cipreste Automação, Lda.</b><br><span class="small">Braga &middot; Assistência técnica: Guimarães</span></td>
+      <td width="42%" align="center"><span class="lbl">Controlador de velocidade Cardo CV-200</span><br><span class="small">Manual de instalação e parametrização</span></td>
+      <td width="28%" align="right"><span class="lbl">Secção 5</span><br><span class="small">Página 37 de 112</span></td>
+    </tr>
+  </table>
+</td></tr>
+<tr><td height="10"></td></tr>
+<tr><td>
+  <table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td width="296" style="padding-right:14px">
+        <h3>5.3&nbsp;&nbsp;Procedimento de arranque</h3>
+        <ol>
+          <li><span class="n">1.</span>Desligue a alimentação e aguarde 5 minutos.</li>
+          <li><span class="n">2.</span>Verifique as ligações dos terminais U, V e W ao motor.</li>
+          <li><span class="n">3.</span>Ligue a alimentação; o visor mostra &laquo;rdY&raquo;.</li>
+          <li><span class="n">4.</span>Introduza os dados da chapa de características em P1.05 e P1.06.</li>
+          <li><span class="n">5.</span>Prima RUN para um arranque de teste sem carga.</li>
+          <li><span class="n">6.</span>Confirme o sentido de rotação; se for inverso, troque duas fases.</li>
+        </ol>
+        <table width="100%" border="2" cellpadding="6" cellspacing="0" bordercolor="#222222" bgcolor="#f6e48a" style="border-collapse:collapse;margin-top:8px">
+          <tr><td><b>ATENÇÃO</b><br>Tensão perigosa. Os condensadores do circuito intermédio mantêm carga durante 5 minutos após o corte da alimentação.</td></tr>
+        </table>
+      </td>
+      <td width="448" style="border-left:1px solid #888;padding-left:14px">
+        <h3>5.4&nbsp;&nbsp;Parâmetros do grupo P1</h3>
+        <p style="margin:0 0 6px" class="small"><b>Quadro 5-2</b> &mdash; Parâmetros básicos do motor e da rampa</p>
+        <table width="100%" border="1" cellpadding="3" cellspacing="0" bordercolor="#777777" style="border-collapse:collapse">
+          <tr bgcolor="#c9c3b0"><td><b>N.º</b></td><td><b>Designação</b></td><td align="center"><b>Intervalo</b></td><td align="center"><b>Defeito</b></td><td align="center"><b>Unid.</b></td></tr>
+<tr bgcolor="#ffffff"><td><b>P1.01</b></td><td>Frequência mínima</td><td align="center">0,0 – 50,0</td><td align="center">5,0</td><td align="center">Hz</td></tr>
+<tr bgcolor="#ece7d9"><td><b>P1.02</b></td><td>Frequência máxima</td><td align="center">10,0 – 120,0</td><td align="center">50,0</td><td align="center">Hz</td></tr>
+<tr bgcolor="#ffffff"><td><b>P1.03</b></td><td>Tempo de aceleração</td><td align="center">0,1 – 600,0</td><td align="center">10,0</td><td align="center">s</td></tr>
+<tr bgcolor="#ece7d9"><td><b>P1.04</b></td><td>Tempo de desaceleração</td><td align="center">0,1 – 600,0</td><td align="center">10,0</td><td align="center">s</td></tr>
+<tr bgcolor="#ffffff"><td><b>P1.05</b></td><td>Tensão nominal do motor</td><td align="center">100 – 480</td><td align="center">400</td><td align="center">V</td></tr>
+<tr bgcolor="#ece7d9"><td><b>P1.06</b></td><td>Corrente nominal do motor</td><td align="center">0,1 – 90,0</td><td align="center">7,8</td><td align="center">A</td></tr>
+<tr bgcolor="#ffffff"><td><b>P1.07</b></td><td>Modo de controlo</td><td align="center">0 – 2</td><td align="center">1</td><td align="center"></td></tr>
+<tr bgcolor="#ece7d9"><td><b>P1.08</b></td><td>Reinício automático</td><td align="center">0 – 1</td><td align="center">0</td><td align="center"></td></tr>
+<tr bgcolor="#ffffff"><td><b>P1.09</b></td><td>Número de tentativas</td><td align="center">0 – 10</td><td align="center">3</td><td align="center"></td></tr>
+<tr bgcolor="#ece7d9"><td><b>P1.10</b></td><td>Frequência de comutação</td><td align="center">2 – 16</td><td align="center">4</td><td align="center">kHz</td></tr>
+        </table>
+        <p class="small" style="margin:6px 0 0">P1.07: 0 = V/f linear, 1 = V/f quadrático, 2 = vetorial.</p>
+      </td>
+    </tr>
+  </table>
+</td></tr>
+<tr><td height="10"></td></tr>
+<tr><td>
+  <table width="100%" border="0" cellpadding="4" cellspacing="0" style="border-top:1px solid #333">
+    <tr><td class="small">Revisão 4 &middot; 29/01/2027 &middot; Elaborado por Mariana Pereira Nunes &middot; Verificado por Diogo Sousa Martins &middot; Aprovado por Leonor Ferreira da Costa</td></tr>
+  </table>
+</td></tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Nutrition label sheet</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; padding: 22px 20px 26px; width: 580px; background: #fff; color: #0f172a;
+         font-family: "Helvetica", Arial, sans-serif; font-size: 14px; line-height: 1.35; }
+  .flex { display: flex; }
+  .items-center { align-items: center; }
+  .items-end { align-items: flex-end; }
+  .justify-between { justify-content: space-between; }
+  .grid { display: grid; }
+  .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-cols-2 { grid-template-columns: 1fr 1fr; }
+  .gap-2 { gap: 8px; }
+  .gap-3 { gap: 12px; }
+  .p-2 { padding: 8px; }
+  .p-3 { padding: 12px; }
+  .px-2 { padding-left: 8px; padding-right: 8px; }
+  .py-1 { padding-top: 4px; padding-bottom: 4px; }
+  .mt-2 { margin-top: 8px; }
+  .mt-3 { margin-top: 14px; }
+  .mt-4 { margin-top: 20px; }
+  .mb-1 { margin-bottom: 4px; }
+  .text-xs { font-size: 10.5px; }
+  .text-sm { font-size: 12.5px; }
+  .text-lg { font-size: 19px; }
+  .text-xl { font-size: 26px; }
+  .font-semibold { font-weight: 700; }
+  .uppercase { text-transform: uppercase; }
+  .tracking-wide { letter-spacing: 1.2px; }
+  .text-right { text-align: right; }
+  .text-center { text-align: center; }
+  .text-slate-500 { color: #64748b; }
+  .text-slate-700 { color: #334155; }
+  .text-green { color: #1f6b43; }
+  .bg-slate-50 { background: #f1f5f9; }
+  .border { border: 1px solid #94a3b8; }
+  .border-b { border-bottom: 1px solid #cbd5e1; }
+  .rounded { border-radius: 6px; }
+  .w-full { width: 100%; }
+  .mark { width: 44px; height: 44px; }
+  .panel { width: 372px; margin: 22px auto 0; border: 2px solid #0f172a; padding: 5px 9px 7px; }
+  .panel h1 { margin: 0; font-size: 33px; line-height: 1.05; font-weight: 800; letter-spacing: -0.5px;
+              border-bottom: 1px solid #0f172a; padding-bottom: 3px; }
+  .bar8 { border-bottom: 9px solid #0f172a; }
+  .bar4 { border-bottom: 5px solid #0f172a; }
+  .serv { display: flex; justify-content: space-between; font-weight: 700; font-size: 15px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  td { padding: 3px 4px; }
+  td.dv { text-align: right; font-weight: 700; width: 54px; }
+  tr.zb:nth-child(even) td { background: #eaeef3; }
+  td.ind1 { padding-left: 18px; }
+  td.ind2 { padding-left: 32px; }
+  .calories { display: flex; justify-content: space-between; align-items: flex-end; }
+  .calories .n { font-size: 40px; font-weight: 800; line-height: 1; }
+  .small { font-size: 10.5px; line-height: 1.3; }
+  .field-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #64748b; }
+  .field-value { font-size: 14px; font-weight: 700; color: #0f172a; }
+</style>
+</head>
+<body>
+  <div class="flex items-center justify-between border-b" style="padding-bottom:12px">
+    <div class="flex items-center gap-3">
+      <svg class="mark" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+        <rect width="44" height="44" rx="9" fill="#1f6b43"/>
+        <polygon points="22,6 31,18 26,18 34,28 10,28 18,18 13,18" fill="#e8f3ea"/>
+        <rect x="20" y="28" width="4" height="9" fill="#e8f3ea"/>
+      </svg>
+      <div>
+        <div class="text-lg font-semibold text-green">Timberline Pantry</div>
+        <div class="text-xs uppercase tracking-wide text-slate-500">Cereals and clusters</div>
+      </div>
+    </div>
+    <div class="text-right text-xs text-slate-500">Label sheet<br>Revised 03/26/2026</div>
+  </div>
+
+  <div class="mt-3">
+    <div class="text-xs uppercase tracking-wide text-slate-500">Product</div>
+    <div class="text-xl font-semibold">Rowan Orchard Granola</div>
+    <div class="text-sm text-slate-700">Baked oats with dried apple, tart cherry and almonds</div>
+  </div>
+
+  <div class="grid grid-cols-3 gap-2 mt-3">
+    <div class="border rounded px-2 py-1"><div class="field-label">Net wt</div><div class="field-value">15 oz (425 g)</div></div>
+    <div class="border rounded px-2 py-1"><div class="field-label">Lot</div><div class="field-value">TC-26085-B</div></div>
+    <div class="border rounded px-2 py-1"><div class="field-label">Best by</div><div class="field-value">03/26/2027</div></div>
+  </div>
+
+  <div class="panel mt-4">
+    <h1>Nutrition Facts</h1>
+    <div class="small" style="padding:3px 0 0">8 servings per container</div>
+    <div class="serv bar8" style="padding-bottom:3px"><span>Serving size</span><span>2/3 cup (55g)</span></div>
+    <div class="small font-semibold" style="padding-top:3px">Amount per serving</div>
+    <div class="calories bar4" style="padding-bottom:3px"><span style="font-size:22px;font-weight:800">Calories</span><span class="n">240</span></div>
+    <div class="text-right small font-semibold" style="padding:2px 0; border-bottom:1px solid #0f172a">% Daily Value*</div>
+    <table>
+      <tr class="zb"><td><b>Total Fat</b> 8g</td><td class="dv">10%</td></tr>
+      <tr class="zb"><td class="ind1">Saturated Fat 1g</td><td class="dv">5%</td></tr>
+      <tr class="zb"><td class="ind1"><i>Trans</i> Fat 0g</td><td class="dv"></td></tr>
+      <tr class="zb"><td><b>Cholesterol</b> 0mg</td><td class="dv">0%</td></tr>
+      <tr class="zb"><td><b>Sodium</b> 160mg</td><td class="dv">7%</td></tr>
+      <tr class="zb"><td><b>Total Carbohydrate</b> 37g</td><td class="dv">13%</td></tr>
+      <tr class="zb"><td class="ind1">Dietary Fiber 4g</td><td class="dv">14%</td></tr>
+      <tr class="zb"><td class="ind1">Total Sugars 12g</td><td class="dv"></td></tr>
+      <tr class="zb"><td class="ind2">Includes 10g Added Sugars</td><td class="dv">20%</td></tr>
+      <tr class="zb"><td><b>Protein</b> 5g</td><td class="dv"></td></tr>
+    </table>
+    <div class="bar8" style="height:0"></div>
+    <table>
+      <tr class="zb"><td>Vitamin D 0mcg</td><td class="dv">0%</td></tr>
+      <tr class="zb"><td>Calcium 20mg</td><td class="dv">2%</td></tr>
+      <tr class="zb"><td>Iron 1.8mg</td><td class="dv">10%</td></tr>
+      <tr class="zb"><td>Potassium 240mg</td><td class="dv">5%</td></tr>
+    </table>
+    <div class="small" style="border-top:4px solid #0f172a; margin-top:2px; padding-top:3px">* The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. 2,000 calories a day is used for general nutrition advice.</div>
+  </div>
+
+  <div class="mt-4 text-sm"><b>INGREDIENTS:</b> Whole grain rolled oats, dried apple, cane sugar, sunflower oil, honey, dried tart cherries, sliced almonds, cinnamon, sea salt, natural flavor.</div>
+  <div class="mt-2 text-sm"><b>CONTAINS:</b> Tree nuts (almonds). Made in a facility that also processes peanuts and milk.</div>
+
+  <div class="grid grid-cols-3 gap-2 mt-3">
+    <div class="border rounded px-2 py-1 bg-slate-50"><div class="field-label">Prepared by</div><div class="field-value">Lauren Ramirez</div></div>
+    <div class="border rounded px-2 py-1 bg-slate-50"><div class="field-label">Reviewed by</div><div class="field-value">Grant Duarte</div></div>
+    <div class="border rounded px-2 py-1 bg-slate-50"><div class="field-label">Approved by</div><div class="field-value">Wesley Kowalczyk</div></div>
+  </div>
+
+  <div class="mt-3 text-xs text-slate-500 border-b" style="border-top:1px solid #cbd5e1; padding:6px 0">
+    Packed in Tacoma, WA for Timberline Pantry Co., Chattanooga, TN 37402. Store in a cool, dry place. Questions? Call 1-800-555-0148.
+  </div>
+</body>
+</html>

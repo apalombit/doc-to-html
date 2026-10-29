@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>WT-40 Service Manual, section 6.4</title>
+<style>
+  body { margin: 0; padding: 18px 20px 14px; background: #ffffff; color: #000000; }
+  p.MsoNormal { margin: 0cm; font-size: 10.0pt; font-family: "Times New Roman", serif; line-height: 115%; }
+  p.MsoHeading { margin: 0cm 0cm 4pt 0cm; font-size: 14.0pt; font-family: "Times New Roman", serif; font-weight: bold; }
+  p.MsoSmall { margin: 0cm; font-size: 8.5pt; font-family: "Times New Roman", serif; line-height: 110%; }
+  table.MsoTableGrid { border-collapse: collapse; border: 1px solid #000; }
+  table.MsoTableGrid td, table.MsoTableGrid th { border: 1px solid #000; padding: 2px 5px 2px 5px; vertical-align: top; font-family: "Times New Roman", serif; font-size: 9.0pt; line-height: 112%; text-align: left; }
+  table.MsoTableGrid th { background: #d9d9d9; font-weight: bold; font-size: 9.0pt; }
+  td.grp { background: #f0f0f0; font-weight: bold; }
+  td.sb { padding-left: 18px; }
+  td.c { text-align: center; }
+  .side { width: 190px; vertical-align: top; }
+  .box { border: 1px solid #000; padding: 5px 7px 6px; margin-bottom: 10px; }
+  .warn { border: 2px solid #000; padding: 5px 7px 6px; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+<table width="760" border="0" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+<tr>
+<td class="side" style="width:190px; padding-right:16px;">
+  <div class="box">
+    <p class="MsoNormal"><b><span style="font-size:9.5pt;">In this section</span></b></p>
+    <p class="MsoSmall" style="margin-top:3pt;"><span>6.1&nbsp;&nbsp;&nbsp;Display and keys</span></p>
+    <p class="MsoSmall"><span>6.2&nbsp;&nbsp;&nbsp;Access levels</span></p>
+    <p class="MsoSmall"><span>6.3&nbsp;&nbsp;&nbsp;Start-up checks</span></p>
+    <p class="MsoSmall"><b><span>6.4&nbsp;&nbsp;&nbsp;Parameter list</span></b></p>
+    <p class="MsoSmall"><span>6.5&nbsp;&nbsp;&nbsp;Alarm codes</span></p>
+    <p class="MsoSmall"><span>6.6&nbsp;&nbsp;&nbsp;Factory reset</span></p>
+  </div>
+  <div class="warn">
+    <p class="MsoNormal"><b><span style="font-size:9.5pt;">WARNING</span></b></p>
+    <p class="MsoSmall" style="margin-top:2pt;"><span>Do not change P20.2 while the valve is under line pressure. Isolate and vent the line first.</span></p>
+  </div>
+  <div class="box">
+    <p class="MsoNormal"><b><span style="font-size:9.5pt;">Technical support</span></b></p>
+    <p class="MsoSmall" style="margin-top:2pt;"><span>Oliver MacLeod<br>Wagtail Controls, Lincoln<br>Tel. 01522&nbsp;555&nbsp;0147<br>support@wagtail.example.com</span></p>
+  </div>
+  <p class="MsoSmall"><span>See also: Section 8, Communications module; Section 10, Spare parts.</span></p>
+</td>
+<td style="vertical-align:top;">
+  <p class="MsoHeading"><span>6.4&nbsp;&nbsp;&nbsp;Parameter list</span></p>
+  <p class="MsoNormal" style="margin-bottom:6pt; text-align:justify;"><span>The parameters below apply to the Wagtail WT-40 flow controller, Thistle series. Settings are held in non-volatile memory and are kept through a power failure. Values in bold type are the factory defaults.</span></p>
+  <table class="MsoTableGrid" width="554" border="1" cellspacing="0" cellpadding="0">
+    <tr><th style="width:52px;">No.</th><th style="width:132px;">Name</th><th style="width:78px;">Range</th><th style="width:56px;">Default</th><th style="width:54px;">Unit</th><th>Notes</th></tr>
+    <tr><td class="grp">P10</td><td class="grp" colspan="5">Flow control</td></tr>
+    <tr><td class="sb">P10.1</td><td>Flow setpoint</td><td>0 to 400</td><td class="c"><b>120</b></td><td>L/min</td><td></td></tr>
+    <tr><td class="sb">P10.2</td><td>Ramp time</td><td>0.5 to 60.0</td><td class="c"><b>5.0</b></td><td>s</td><td>Time from closed to setpoint</td></tr>
+    <tr><td class="sb">P10.3</td><td>Deadband</td><td>0 to 5.0</td><td class="c"><b>0.5</b></td><td>%</td><td>See note 1<sup>1</sup></td></tr>
+    <tr><td class="grp">P20</td><td class="grp" colspan="5">Valve drive</td></tr>
+    <tr><td class="sb">P20.1</td><td>Drive mode</td><td>0, 1 or 2</td><td class="c"><b>1</b></td><td></td><td>0 manual, 1 automatic, 2 remote<sup>2</sup></td></tr>
+    <tr><td class="sb">P20.2</td><td>Closing torque</td><td>10 to 80</td><td class="c"><b>45</b></td><td>N·m</td><td>See warning</td></tr>
+    <tr><td class="sb">P20.3</td><td>Stroke time</td><td>8 to 40</td><td class="c"><b>15</b></td><td>s</td><td></td></tr>
+    <tr><td class="grp">P30</td><td class="grp" colspan="5">Alarms</td></tr>
+    <tr><td class="sb">P30.1</td><td>Low-flow limit</td><td>0 to 100</td><td class="c"><b>20</b></td><td>% of P10.1</td><td></td></tr>
+    <tr><td class="sb">P30.2</td><td>High-pressure trip</td><td>1.0 to 16.0</td><td class="c"><b>10.0</b></td><td>bar</td><td>Not above the nameplate rating<sup>3</sup></td></tr>
+    <tr><td class="sb">P30.3</td><td>Alarm delay</td><td>0 to 120</td><td class="c"><b>10</b></td><td>s</td><td></td></tr>
+    <tr><td class="grp">P40</td><td class="grp" colspan="5">Communications</td></tr>
+    <tr><td class="sb">P40.1</td><td>Device address</td><td>1 to 247</td><td class="c"><b>1</b></td><td></td><td></td></tr>
+    <tr><td class="sb">P40.2</td><td>Baud rate</td><td>9600, 19200, 38400</td><td class="c"><b>19200</b></td><td>bit/s</td><td>Needs a restart<sup>4</sup></td></tr>
+  </table>
+  <p class="MsoSmall" style="margin-top:6pt;"><sup>1</sup>&nbsp;Values below 0.2 % can make the valve hunt around the setpoint.</p>
+  <p class="MsoSmall"><sup>2</sup>&nbsp;Remote mode needs the communications module (Section 8) to be fitted.</p>
+  <p class="MsoSmall"><sup>3</sup>&nbsp;The working pressure is printed on the nameplate beside the inlet flange.</p>
+  <p class="MsoSmall"><sup>4</sup>&nbsp;A new baud rate takes effect after the power has been switched off and on.</p>
+</td>
+</tr>
+<tr>
+<td colspan="2" style="padding-top:12px;">
+  <p class="MsoSmall" style="border-top:1px solid #000; padding-top:3pt;"><span>Wagtail WT-40 Service Manual&nbsp;&nbsp;|&nbsp;&nbsp;Rev. C, 10 July 2023, Ipswich&nbsp;&nbsp;|&nbsp;&nbsp;Prepared by Rhys Rahman, approved by Isla Whitaker&nbsp;&nbsp;|&nbsp;&nbsp;Page 14 of 62</span></p>
+</td>
+</tr>
+</table>
+</body>
+</html>

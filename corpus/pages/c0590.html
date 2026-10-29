@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="fr-FR">
+<head>
+<meta charset="utf-8">
+<title>La Loire à vélo, sans se presser</title>
+<style>
+html, body { margin: 0; }
+body { width: 560px; box-sizing: border-box; background: #fffdf6; color: #17231f;
+  font-family: "Lora", Georgia, serif; font-size: 13.5px; line-height: 1.45; }
+.bar { background: #14302a; color: #fffdf6; display: flex; align-items: center; justify-content: space-between; padding: 10px 22px; }
+.brand { display: flex; align-items: center; gap: 9px; }
+.brand b { font-family: "Oswald", sans-serif; font-weight: 400; font-size: 16px; letter-spacing: 0.12em; text-transform: uppercase; }
+.chip { display: inline-block; background: #f2b705; color: #14302a; font-family: "Oswald", sans-serif; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 11px; border-radius: 12px; }
+.chip.dk { background: #14302a; color: #f2b705; }
+.photo { display: block; width: 560px; height: 190px; }
+.pad { padding: 0 24px; }
+.kick { font-family: "Oswald", sans-serif; letter-spacing: 0.14em; text-transform: uppercase; font-size: 12px; color: #b4570f; margin: 16px 0 0 0; }
+h1 { font-family: "Oswald", "Impact", sans-serif; font-weight: 700; font-size: 44px; line-height: 1.0; text-transform: uppercase; margin: 4px 0 10px 0; letter-spacing: 0.01em; }
+.lead { margin: 0 0 14px 0; font-size: 14px; }
+.facts { display: grid; grid-template-columns: 1fr 1fr 1.25fr 1.15fr; border-top: 3px solid #14302a; border-bottom: 1px solid #14302a; }
+.facts div { padding: 8px 10px 8px 0; }
+.facts div + div { padding-left: 10px; border-left: 1px solid #c9c4b0; }
+.facts .l { display: block; font-family: "Oswald", sans-serif; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #6a6a5c; }
+.facts .v { display: block; font-size: 14px; font-weight: 700; line-height: 1.25; }
+.facts .price .v { font-family: "Oswald", sans-serif; font-size: 26px; line-height: 1.1; color: #b4570f; font-weight: 700; }
+h2 { font-family: "Oswald", sans-serif; font-weight: 500; font-size: 15px; letter-spacing: 0.12em; text-transform: uppercase; margin: 18px 0 8px 0; }
+.inc { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 18px; }
+.inc div { display: flex; gap: 9px; align-items: flex-start; font-size: 13px; line-height: 1.3; }
+.inc svg { flex: none; margin-top: 1px; }
+.dates { width: 100%; border-collapse: collapse; font-size: 13px; }
+.dates td { padding: 5px 0; border-bottom: 1px dotted #8a8670; }
+.dates td.r { text-align: right; }
+.quote { margin: 16px 0 0 0; padding: 10px 14px; background: #f6edcf; border-left: 4px solid #f2b705; font-style: italic; }
+.quote span { display: block; font-style: normal; font-size: 12px; margin-top: 4px; color: #4a4a3c; }
+.cta { display: flex; align-items: center; gap: 14px; margin: 16px 0 18px 0; }
+.btn { display: inline-block; background: #b4570f; color: #fff; font-family: "Oswald", sans-serif; letter-spacing: 0.12em; text-transform: uppercase; font-size: 15px; padding: 9px 22px; border-radius: 4px; white-space: nowrap; }
+.foot { background: #14302a; color: #e9e6d6; padding: 14px 24px 16px 24px; font-size: 12px; line-height: 1.5; }
+.foot b { font-family: "Oswald", sans-serif; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #f2b705; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="brand"><svg width="30" height="22" viewBox="0 0 30 22"><path d="M2 14 C6 6 14 3 22 6 L28 4 L25 9 C25 15 19 20 11 19 L9 21 L9 17 C6 17 3 16 2 14 Z" fill="#f2b705"/><circle cx="21" cy="8" r="1.1" fill="#14302a"/></svg><b>Voyages du Pluvier</b></span>
+  <span class="chip">Programme été 2022</span>
+</div>
+<svg class="photo" viewBox="0 0 560 190" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fc3d8"/><stop offset="1" stop-color="#f7e7b4"/></linearGradient>
+    <linearGradient id="riv" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4f93ad"/><stop offset="1" stop-color="#8bc0cf"/></linearGradient>
+  </defs>
+  <rect width="560" height="190" fill="url(#sky)"/>
+  <circle cx="452" cy="52" r="24" fill="#fff3c4"/>
+  <path d="M0 96 C60 70 120 84 180 78 C250 70 300 90 380 74 C450 62 510 80 560 70 V190 H0 Z" fill="#7fa77b"/>
+  <path d="M0 118 C70 100 140 116 220 106 C300 96 400 118 560 100 V190 H0 Z" fill="#5f9159"/>
+  <path d="M0 140 C90 128 170 150 260 140 C360 128 450 150 560 134 V190 H0 Z" fill="#c9b45e"/>
+  <path d="M-10 168 C80 150 150 172 250 160 C350 148 430 170 570 152 V190 H-10 Z" fill="url(#riv)"/>
+  <path d="M70 120 L80 108 L90 120 Z M110 126 L122 110 L134 126 Z M360 112 L370 100 L380 112 Z" fill="#3f6c3d"/>
+  <g stroke="#14302a" stroke-width="2" fill="none"><circle cx="232" cy="150" r="9"/><circle cx="256" cy="150" r="9"/><path d="M232 150 L240 138 L252 138 L256 150 M240 138 L246 150 L252 138 M238 136 H244"/></g>
+  <circle cx="246" cy="128" r="3.4" fill="#14302a"/><path d="M246 132 L246 142 L252 138" stroke="#14302a" stroke-width="2.4" fill="none"/>
+</svg>
+<div class="pad">
+  <p class="kick">Escapade à vélo · au départ de Tours</p>
+  <h1>La Loire à vélo, sans se presser</h1>
+  <p class="lead">Six jours le long du fleuve, de château en vignoble, sur des pistes plates et des chemins de halage. Vos bagages voyagent sans vous, et chaque soir une table de pays vous attend.</p>
+  <div class="facts">
+    <div><span class="l">Durée</span><span class="v">6 jours, 5 nuits</span></div>
+    <div><span class="l">Niveau</span><span class="v">Facile, 35 km par jour</span></div>
+    <div><span class="l">Départs</span><span class="v">juillet à septembre</span></div>
+    <div class="price"><span class="l">Prix par personne</span><span class="v">780&nbsp;€</span></div>
+  </div>
+  <h2>Ce qui est compris</h2>
+  <div class="inc">
+    <div><svg width="22" height="18" viewBox="0 0 22 18"><g stroke="#14302a" stroke-width="1.6" fill="none"><circle cx="5" cy="12" r="4"/><circle cx="17" cy="12" r="4"/><path d="M5 12 L9 5 H14 L17 12 M9 5 L12 12 L14 5"/></g></svg>Un vélo de ville ou électrique, antivol et sacoches</div>
+    <div><svg width="22" height="18" viewBox="0 0 22 18"><g stroke="#14302a" stroke-width="1.6" fill="none"><path d="M2 15 V4 M2 11 H20 V15 M2 11 V8 H10 V11"/></g></svg>Cinq nuits en chambre double, petits déjeuners compris</div>
+    <div><svg width="22" height="18" viewBox="0 0 22 18"><g stroke="#14302a" stroke-width="1.6" fill="none"><path d="M6 2 V16 M3 2 V7 C3 9 9 9 9 7 V2 M16 2 C13 4 13 9 16 11 V16"/></g></svg>Quatre dîners avec les vins de la région</div>
+    <div><svg width="22" height="18" viewBox="0 0 22 18"><g stroke="#14302a" stroke-width="1.6" fill="none"><rect x="4" y="6" width="14" height="10" rx="2"/><path d="M8 6 V3 H14 V6"/></g></svg>Transport des bagages d’étape en étape</div>
+  </div>
+  <h2>Bon à savoir</h2>
+  <p style="margin:0">Accueil à la gare de Tours le premier jour avant 11&nbsp;h, retour le dernier jour vers 17&nbsp;h. Casque et gilet fournis sur demande. Annulation gratuite jusqu’à 30 jours avant le départ.</p>
+  <h2>Prochains départs</h2>
+  <table class="dates">
+    <tr><td>Du 4 au 9 juillet 2022</td><td class="r"><span class="chip dk">Complet</span></td></tr>
+    <tr><td>Du 18 au 23 juillet 2022</td><td class="r">Il reste 4 places</td></tr>
+    <tr><td>Du 8 au 13 août 2022</td><td class="r">Il reste 7 places</td></tr>
+    <tr><td>Du 5 au 10 septembre 2022</td><td class="r"><span class="chip">Dernières places</span></td></tr>
+  </table>
+  <p class="quote">« Un rythme parfait, des étapes courtes et un accueil chaleureux partout. Nous repartons l’an prochain. »<span>Thomas Mercier, voyageur en septembre 2021</span></p>
+  <div class="cta"><span class="btn">Réserver en ligne</span><span>Chambre individuelle&nbsp;: +&nbsp;140&nbsp;€. Autre circuit au départ de Grenoble&nbsp;: le Vercors en liberté, 5 jours, 640&nbsp;€.</span></div>
+</div>
+<div class="foot">
+  <b>Voyages du Pluvier</b><br>
+  12 rue Nationale, 37000 Tours · 02 47 55 01 59 · contact@example.com<br>
+  Élodie Blanchard, conseillère voyages · Yann Renaud, guide · Brochure du 15 juin 2022
+</div>
+</body>
+</html>

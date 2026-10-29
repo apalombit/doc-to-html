@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Osprey plans and prices</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;width:800px;padding:26px 28px 30px;background:#fff;color:#111;font-family:"PT Mono","Courier New",monospace;font-size:12px;line-height:1.55}
+.hd{display:grid;grid-template-columns:1fr 1fr;align-items:end;border-bottom:1px solid #111;padding-bottom:12px;margin-bottom:22px}
+.hd h1{margin:0;font-family:"DIN Condensed",sans-serif;font-weight:700;font-size:64px;line-height:.9;letter-spacing:.02em;text-transform:uppercase}
+.hd p{margin:0;justify-self:end;text-align:right;font-size:11px;line-height:1.5;color:#444}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:26px 26px}
+.card{border-top:3px solid #111;padding-top:10px}
+.card .nm{display:flex;justify-content:space-between;font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.card .nm i{font-style:normal;color:#666}
+.price{font-family:"DIN Condensed",sans-serif;font-weight:700;font-size:56px;line-height:1;margin:14px 0 0}
+.price small{font-family:"PT Mono","Courier New",monospace;font-weight:400;font-size:11px;color:#555;margin-left:6px;letter-spacing:0}
+.desc{margin:6px 0 14px;color:#444;font-size:11.5px}
+ul{list-style:none;margin:0;padding:0;border-top:1px solid #bbb}
+li{display:flex;gap:10px;padding:5px 0;border-bottom:1px solid #ddd}
+li .t{flex:none;width:14px;text-align:center;font-family:"Menlo","PT Mono",monospace}
+li.no{color:#8a8a8a}
+h2{margin:30px 0 8px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:11.5px}
+th,td{border:1px solid #111;padding:6px 9px;text-align:left}
+th{font-weight:700;background:#f0f0f0;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase}
+td.r,th.r{text-align:right}
+.note{margin:10px 0 0;font-size:10.5px;color:#555}
+</style>
+</head>
+<body>
+<div class="hd">
+  <h1>Osprey</h1>
+  <p>Backup and sync by Tamarisk Systems<br>Prices from 10 October 2022<br>per month, billed yearly, VAT excluded</p>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <div class="nm"><span>01 Solo</span><i>personal</i></div>
+    <div class="price">£0<small>free for ever</small></div>
+    <p class="desc">One person, one laptop.</p>
+    <ul>
+      <li><span class="t">✓</span>5 GB of storage</li>
+      <li><span class="t">✓</span>1 device</li>
+      <li><span class="t">✓</span>7 days of file history</li>
+      <li class="no"><span class="t">✗</span>Shared folders</li>
+      <li class="no"><span class="t">✗</span>Priority support</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="nm"><span>02 Team</span><i>2 to 25 people</i></div>
+    <div class="price">£12<small>per user</small></div>
+    <p class="desc">Small offices that share files.</p>
+    <ul>
+      <li><span class="t">✓</span>1 TB of pooled storage</li>
+      <li><span class="t">✓</span>10 devices per user</li>
+      <li><span class="t">✓</span>30 days of file history</li>
+      <li><span class="t">✓</span>Shared folders</li>
+      <li class="no"><span class="t">✗</span>Priority support</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="nm"><span>03 Studio</span><i>most chosen</i></div>
+    <div class="price">£29<small>per user</small></div>
+    <p class="desc">Design and video teams with large files.</p>
+    <ul>
+      <li><span class="t">✓</span>5 TB of pooled storage</li>
+      <li><span class="t">✓</span>Unlimited devices</li>
+      <li><span class="t">✓</span>180 days of file history</li>
+      <li><span class="t">✓</span>Shared folders</li>
+      <li><span class="t">✓</span>Priority support by e-mail</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="nm"><span>04 Campus</span><i>schools, councils</i></div>
+    <div class="price">£75<small>per 10 users</small></div>
+    <p class="desc">Whole organisations, one invoice.</p>
+    <ul>
+      <li><span class="t">✓</span>20 TB of pooled storage</li>
+      <li><span class="t">✓</span>Unlimited devices</li>
+      <li><span class="t">✓</span>1 year of file history</li>
+      <li><span class="t">✓</span>Shared folders and audit log</li>
+      <li><span class="t">✓</span>Priority support by phone</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Add-ons</h2>
+<table>
+  <thead><tr><th>Item</th><th>Unit</th><th class="r">Price</th><th>Plans</th></tr></thead>
+  <tbody>
+    <tr><td>Extra storage</td><td>per 100 GB</td><td class="r">£2.50</td><td>Team, Studio, Campus</td></tr>
+    <tr><td>Extra seat</td><td>per user</td><td class="r">£4.00</td><td>Campus</td></tr>
+    <tr><td>Longer file history</td><td>per 90 days</td><td class="r">£6.00</td><td>All plans</td></tr>
+  </tbody>
+</table>
+<p class="note">Questions about invoices: Ruth Nwosu, Tamarisk Systems Ltd, Kendal. Support desk: Bangor.</p>
+</body>
+</html>

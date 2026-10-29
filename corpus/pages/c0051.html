@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Application for a Mobile Food Vendor Permit</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #fff; }
+  body { width: 940px; box-sizing: border-box; padding: 18px 22px 20px; font-family: "Times New Roman", Times, serif; font-size: 11.5px; line-height: 1.25; color: #000; }
+  table { border-collapse: collapse; }
+  .hdr { width: 100%; border: 1.5px solid #000; border-bottom: 3px solid #a4161a; }
+  .hdr td { padding: 5px 9px; vertical-align: middle; }
+  .hdr .ag { width: 250px; font-size: 10.5px; border-right: 1px solid #000; line-height: 1.3; }
+  .hdr .ag b { font-size: 12px; display: block; text-transform: uppercase; letter-spacing: 0.4px; }
+  .hdr .tt { text-align: center; font-size: 19px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; line-height: 1.12; }
+  .hdr .tt small { display: block; font-size: 10.5px; font-weight: normal; letter-spacing: 0; text-transform: none; margin-top: 2px; }
+  .hdr .fm { width: 150px; border-left: 1px solid #000; font-size: 10.5px; text-align: center; line-height: 1.3; }
+  .hdr .fm b { font-size: 14px; color: #a4161a; display: block; }
+  .instr { font-size: 10.5px; border: 0.75px solid #000; border-top: 0; padding: 3px 9px 4px; line-height: 1.3; }
+  .instr b { color: #a4161a; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; margin-top: 8px; align-items: start; }
+  fieldset { border: 1.25px solid #000; margin: 0 0 8px; padding: 0; min-width: 0; }
+  legend { margin-left: 8px; padding: 0 5px; font-weight: bold; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.4px; color: #a4161a; }
+  fieldset table.f { width: 100%; }
+  table.f td { border: 0.75px solid #000; padding: 1px 5px 3px; vertical-align: top; }
+  table.f tr:first-child td { border-top: 0; }
+  table.f td:first-child { border-left: 0; }
+  table.f td:last-child { border-right: 0; }
+  table.f tr:last-child td { border-bottom: 0; }
+  .no { display: inline-block; background: #000; color: #fff; font-size: 9px; font-weight: bold; padding: 0 3px; margin-right: 4px; line-height: 1.25; }
+  .lb { font-size: 9px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .v { font-size: 12px; font-family: "Courier New", Courier, monospace; font-weight: bold; padding-top: 1px; }
+  .pairs { padding: 3px 8px; border-top: 0.75px solid #000; font-size: 11px; line-height: 1.55; }
+  .pairs .p { display: flex; gap: 20px; }
+  .pairs .p span { flex: 1; }
+  .pairs b { font-weight: normal; text-transform: uppercase; font-size: 9px; letter-spacing: 0.3px; }
+  .pairs i { font-style: normal; font-family: "Courier New", Courier, monospace; font-weight: bold; font-size: 11.5px; }
+  table.fees { width: 100%; font-size: 11px; }
+  table.fees th { background: #000; color: #fff; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.4px; padding: 2px 5px; text-align: left; font-weight: bold; }
+  table.fees td { padding: 2px 5px; border-bottom: 0.5px solid #999; }
+  table.fees td.c { text-align: center; }
+  table.fees td.r, table.fees th.r { text-align: right; }
+  table.fees tr.sec td { background: #fff; border-top: 1px solid #000; border-bottom: 1px solid #000; font-weight: bold; color: #a4161a; text-transform: uppercase; font-size: 10px; letter-spacing: 0.4px; }
+  table.fees tr.z td { background: #ececec; }
+  table.fees tr.tot td { border-top: 1.5px solid #000; border-bottom: 0; font-weight: bold; font-size: 12px; }
+  ol.d { list-style: none; margin: 0; padding: 5px 8px 4px; font-size: 10.5px; }
+  ol.d li { padding-left: 17px; text-indent: -17px; margin-bottom: 3px; }
+  ol.d li span.n { display: inline-block; width: 17px; text-indent: 0; font-weight: bold; }
+  .sign { display: flex; border-top: 0.75px solid #000; }
+  .sign div { padding: 1px 6px 14px; border-right: 0.75px solid #000; flex: 1; }
+  .sign div:last-child { border-right: 0; flex: 0 0 120px; }
+  .off { background: #f4f4f4; }
+  .note { font-size: 9.5px; padding: 3px 8px 4px; border-top: 0.75px solid #000; }
+</style>
+</head>
+<body>
+<table class="hdr">
+  <tr>
+    <td class="ag"><b>Boise Valley Licensing Office</b>Division of Mobile Vendors<br>120 Cedar Row, Boise, ID 83702</td>
+    <td class="tt">Application for a Mobile Food Vendor Permit<small>Type or print in ink. Complete every numbered box. Answer in Parts 1 to 4.</small></td>
+    <td class="fm"><b>Form LV-212</b>Permit year 2027<br>Filed 10/25/2026</td>
+  </tr>
+</table>
+<div class="instr"><b>Who must apply.</b> Anyone who sells food from a vehicle, trailer or cart within Boise Valley limits. Send this form with the fees in Part 3, payable to the Boise Valley Licensing Office. Incomplete forms are returned unprocessed. A permit is issued within 15 working days of a complete application.</div>
+<div class="cols">
+<div>
+  <fieldset>
+    <legend>Part 1 &mdash; Applicant</legend>
+    <table class="f">
+      <tr><td colspan="2" style="width:62%"><span class="no">1</span><span class="lb">Full legal name</span><div class="v">Jasmine Gutierrez</div></td>
+          <td><span class="no">2</span><span class="lb">Date of birth</span><div class="v">03/14/1991</div></td></tr>
+      <tr><td colspan="3"><span class="no">3</span><span class="lb">Home address</span><div class="v">2218 Willow Bend Road, Boise, ID 83706</div></td></tr>
+      <tr><td colspan="2"><span class="no">4</span><span class="lb">Telephone</span><div class="v">(208) 555-0134</div></td>
+          <td><span class="no">5</span><span class="lb">E-mail</span><div class="v" style="font-size:11px">jasmine@example.com</div></td></tr>
+      <tr><td colspan="2"><span class="no">6</span><span class="lb">Driver's license no.</span><div class="v">DL 4421907</div></td>
+          <td><span class="no">7</span><span class="lb">State of issue</span><div class="v">ID</div></td></tr>
+      <tr><td colspan="2"><span class="no">8</span><span class="lb">Second operator, if any</span><div class="v">Ashley Le</div></td>
+          <td><span class="no">9</span><span class="lb">Date of birth</span><div class="v">08/02/1993</div></td></tr>
+      <tr><td colspan="2"><span class="no">10</span><span class="lb">Mailing address, if different</span><div class="v">Same as box 3</div></td>
+          <td><span class="no">11</span><span class="lb">Years at address</span><div class="v">4</div></td></tr>
+    </table>
+    <div class="pairs">
+      <div class="p"><span><b>Permit last held in:</b> <i>Flagstaff, AZ</i></span><span><b>Years held:</b> <i>3</i></span></div>
+      <div class="p"><span><b>Food handler card:</b> <i>FH-882014</i></span><span><b>Expires:</b> <i>05/31/2027</i></span></div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Part 2 &mdash; Business and vehicle</legend>
+    <table class="f">
+      <tr><td colspan="2" style="width:62%"><span class="no">12</span><span class="lb">Business name</span><div class="v">Wagtail Provisions</div></td>
+          <td><span class="no">13</span><span class="lb">Form of business</span><div class="v">Sole proprietor</div></td></tr>
+      <tr><td colspan="3"><span class="no">14</span><span class="lb">Commissary (kitchen base) and address</span><div class="v">Sedge Creek Commissary, 85 Mill Street, Boise, ID 83702</div></td></tr>
+      <tr><td colspan="2"><span class="no">15</span><span class="lb">Commissary manager</span><div class="v">Emily Fitzgerald</div></td>
+          <td><span class="no">16</span><span class="lb">Telephone</span><div class="v">(208) 555-0187</div></td></tr>
+      <tr><td colspan="3"><span class="no">17</span><span class="lb">Sites requested</span><div class="v" style="font-size:11px">Downtown lunch stops, Mon&ndash;Fri; Saturday market lot</div></td></tr>
+    </table>
+    <div class="pairs">
+      <div class="p"><span><b>Vehicle type:</b> <i>Trailer</i></span><span><b>Year:</b> <i>2022</i></span></div>
+      <div class="p"><span><b>Make:</b> <i>Ridgeline</i></span><span><b>Length:</b> <i>14 ft</i></span></div>
+      <div class="p"><span><b>Plate:</b> <i>ID 7K4 218</i></span><span><b>Water tank:</b> <i>40 gal</i></span></div>
+      <div class="p"><span><b>Extinguisher serviced:</b> <i>06/12/2026</i></span><span><b>Propane tanks:</b> <i>2</i></span></div>
+      <div class="p"><span><b>First day of sales:</b> <i>01/04/2027</i></span><span><b>Last day:</b> <i>12/18/2027</i></span></div>
+      <div class="p"><span><b>Hours:</b> <i>10:30 to 15:00</i></span><span><b>Staff on board:</b> <i>2</i></span></div>
+    </div>
+    <div class="note">Attach a current photograph of each side of the vehicle and a copy of the commissary agreement.</div>
+  </fieldset>
+</div>
+
+<div>
+  <fieldset>
+    <legend>Part 3 &mdash; Items to be sold and fees</legend>
+    <table class="fees">
+      <tr><th style="width:34px">Sell</th><th>Item</th><th style="width:56px">Class</th><th class="r" style="width:62px">Fee</th></tr>
+      <tr class="sec"><td colspan="4">A. Prepared on the vehicle</td></tr>
+      <tr><td class="c">&#9745;</td><td>Hot sandwiches and wraps</td><td>Class 2</td><td class="r">$85.00</td></tr>
+      <tr class="z"><td class="c">&#9745;</td><td>Coffee, tea and cocoa</td><td>Class 1</td><td class="r">$45.00</td></tr>
+      <tr><td class="c">&#9744;</td><td>Fried foods</td><td>Class 3</td><td class="r">$120.00</td></tr>
+      <tr class="z"><td class="c">&#9744;</td><td>Frozen desserts</td><td>Class 2</td><td class="r">$85.00</td></tr>
+      <tr class="sec"><td colspan="4">B. Packaged and bakery goods</td></tr>
+      <tr><td class="c">&#9745;</td><td>Pre-packed baked goods</td><td>Class 1</td><td class="r">$45.00</td></tr>
+      <tr class="z"><td class="c">&#9744;</td><td>Bottled drinks</td><td>Class 1</td><td class="r">$45.00</td></tr>
+      <tr><td class="c">&#9744;</td><td>Whole fruit and vegetables</td><td>Class 1</td><td class="r">$45.00</td></tr>
+      <tr class="sec"><td colspan="4">C. Charges payable with this form</td></tr>
+      <tr><td class="c"></td><td colspan="2">Plan review</td><td class="r">$60.00</td></tr>
+      <tr class="z"><td class="c"></td><td colspan="2">Vehicle inspection</td><td class="r">$75.00</td></tr>
+      <tr><td class="c"></td><td colspan="2">Late filing surcharge</td><td class="r">$0.00</td></tr>
+      <tr class="tot"><td colspan="3">Total due with this application</td><td class="r">$310.00</td></tr>
+    </table>
+  </fieldset>
+
+  <fieldset>
+    <legend>Part 4 &mdash; Declaration</legend>
+    <ol class="d">
+      <li><span class="n">1.</span>I certify that the information in this application is true and complete.</li>
+      <li><span class="n">2.</span>Every person who works on the vehicle will hold a current food handler card.</li>
+      <li><span class="n">3.</span>The permit is valid only at the sites on its schedule, and I will not sell within 200 feet of a school during class hours.</li>
+      <li><span class="n">4.</span>I will allow the Office to inspect the vehicle at any reasonable time.</li>
+      <li><span class="n">5.</span>I will report any change of address, vehicle or ownership within 10 days.</li>
+    </ol>
+    <div class="sign">
+      <div><span class="lb">Signature of applicant</span><br><br></div>
+      <div><span class="lb">Printed name</span><div class="v">Jasmine Gutierrez</div></div>
+      <div><span class="lb">Date</span><div class="v">10/25/2026</div></div>
+    </div>
+  </fieldset>
+
+  <fieldset class="off">
+    <legend>For office use only</legend>
+    <table class="f">
+      <tr><td style="width:34%"><span class="lb">Permit no.</span><div class="v">&nbsp;</div></td>
+          <td style="width:33%"><span class="lb">Date received</span><div class="v">&nbsp;</div></td>
+          <td><span class="lb">Receipt no.</span><div class="v">&nbsp;</div></td></tr>
+      <tr><td><span class="lb">Plan reviewed by</span><div class="v">&nbsp;</div></td>
+          <td><span class="lb">Inspection date</span><div class="v">&nbsp;</div></td>
+          <td><span class="lb">Decision</span><div class="v">&nbsp;</div></td></tr>
+    </table>
+  </fieldset>
+</div>
+</div>
+</body>
+</html>

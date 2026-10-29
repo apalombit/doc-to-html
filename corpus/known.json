@@ -1,0 +1,592 @@
+{
+ "about": "The 21 documents of corpus.SOURCES and the ten probe pages of 2026-10-24, carded by hand (spec 0020, step 6). Family and kind by their names; arrangement, main type and style by eye from one sheet of the 31; features as the validator detects them on each page; density from its words per 1000 px. All go to dev. Their files stay where they are. Each page declares a language only (lang=\"en\", and \"el\" for nonlatin_0014, a language no generated card has), so no locale is set.",
+ "cards": [
+  {
+   "id": "invoice_0001",
+   "origin": "corpus",
+   "family": "transactional",
+   "kind": "invoice",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fmt.currency",
+    "fmt.dates",
+    "table.empty_cells",
+    "table.spanning"
+   ],
+   "style": "minimal-swiss",
+   "width": 862,
+   "density": "sparse",
+   "language": "en",
+   "locale": null,
+   "html": "example/invoice.html",
+   "png": "example/invoice.png"
+  },
+  {
+   "id": "invoice_0002",
+   "origin": "corpus",
+   "family": "transactional",
+   "kind": "invoice",
+   "arrangement": "arr.panels_side_by_side",
+   "type": "type.sans",
+   "features": [
+    "fmt.dates",
+    "list.bullets"
+   ],
+   "style": "utility-classes",
+   "width": 1164,
+   "density": "sparse",
+   "language": "en",
+   "locale": null,
+   "html": "example/invoice2.html",
+   "png": "example/invoice2.png"
+  },
+  {
+   "id": "sample_table_0003",
+   "origin": "corpus",
+   "family": "fragments",
+   "kind": "standalone table",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fmt.currency"
+   ],
+   "style": "legacy-table",
+   "width": 960,
+   "density": "sparse",
+   "language": "en",
+   "locale": null,
+   "html": "example/sample-table.html",
+   "png": "example/sample-table.png"
+  },
+  {
+   "id": "sample_css_0004",
+   "origin": "corpus",
+   "family": "publishing",
+   "kind": "magazine page",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [],
+   "style": "utility-classes",
+   "width": 789,
+   "density": "sparse",
+   "language": "en",
+   "locale": null,
+   "html": "example/sample-css.html",
+   "png": "example/sample-css.png"
+  },
+  {
+   "id": "sample_semantic_0005",
+   "origin": "corpus",
+   "family": "publishing",
+   "kind": "manual page",
+   "arrangement": "arr.sidebar",
+   "type": "type.serif",
+   "features": [
+    "fmt.dates",
+    "list.bullets",
+    "text.quote"
+   ],
+   "style": "editorial",
+   "width": 915,
+   "density": "sparse",
+   "language": "en",
+   "locale": null,
+   "html": "example/sample-semantic.html",
+   "png": "example/sample-semantic.png"
+  },
+  {
+   "id": "statement_0006",
+   "origin": "corpus",
+   "family": "transactional",
+   "kind": "bank statement",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fmt.dates",
+    "table.empty_cells",
+    "table.long",
+    "table.spanning"
+   ],
+   "style": "corporate-modern",
+   "width": 900,
+   "density": "dense",
+   "language": "en",
+   "locale": null,
+   "html": "example/statement.html",
+   "png": "example/statement.png"
+  },
+  {
+   "id": "form_0007",
+   "origin": "corpus",
+   "family": "forms",
+   "kind": "application form",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [],
+   "style": "government-form",
+   "width": 820,
+   "density": "sparse",
+   "language": "en",
+   "locale": null,
+   "html": "example/form.html",
+   "png": "example/form.png"
+  },
+  {
+   "id": "newsletter_0008",
+   "origin": "corpus",
+   "family": "publishing",
+   "kind": "newsletter",
+   "arrangement": "arr.three_columns",
+   "type": "type.serif",
+   "features": [
+    "fmt.currency",
+    "fmt.dates",
+    "text.justified",
+    "text.quote"
+   ],
+   "style": "classic-print",
+   "width": 960,
+   "density": "dense",
+   "language": "en",
+   "locale": null,
+   "html": "example/newsletter.html",
+   "png": "example/newsletter.png"
+  },
+  {
+   "id": "darkdeck_0009",
+   "origin": "corpus",
+   "family": "presentation",
+   "kind": "slide",
+   "arrangement": "arr.cards_grid",
+   "type": "type.sans",
+   "features": [
+    "fmt.currency",
+    "list.bullets",
+    "look.dark_ground"
+   ],
+   "style": "corporate-modern",
+   "width": 1000,
+   "density": "medium",
+   "language": "en",
+   "locale": null,
+   "html": "example/darkdeck.html",
+   "png": "example/darkdeck.png"
+  },
+  {
+   "id": "receipt_0010",
+   "origin": "corpus",
+   "family": "transactional",
+   "kind": "receipt",
+   "arrangement": "arr.one_column",
+   "type": "type.mono",
+   "features": [
+    "fmt.dates",
+    "table.empty_cells"
+   ],
+   "style": "retail-receipt",
+   "width": 500,
+   "density": "sparse",
+   "language": "en",
+   "locale": null,
+   "html": "example/receipt.html",
+   "png": "example/receipt.png"
+  },
+  {
+   "id": "report_0011",
+   "origin": "corpus",
+   "family": "reports",
+   "kind": "corporate report page",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fmt.currency",
+    "fmt.dates",
+    "list.numbers",
+    "text.justified",
+    "text.supsub"
+   ],
+   "style": "corporate-modern",
+   "width": 820,
+   "density": "dense",
+   "language": "en",
+   "locale": null,
+   "html": "example/report.html",
+   "png": "example/report.png"
+  },
+  {
+   "id": "menu_0012",
+   "origin": "corpus",
+   "family": "reference",
+   "kind": "menu",
+   "arrangement": "arr.two_columns",
+   "type": "type.serif",
+   "features": [],
+   "style": "classic-print",
+   "width": 760,
+   "density": "sparse",
+   "language": "en",
+   "locale": null,
+   "html": "example/menu.html",
+   "png": "example/menu.png"
+  },
+  {
+   "id": "cv_0013",
+   "origin": "corpus",
+   "family": "credentials",
+   "kind": "CV",
+   "arrangement": "arr.sidebar",
+   "type": "type.sans",
+   "features": [
+    "list.bullets"
+   ],
+   "style": "corporate-modern",
+   "width": 900,
+   "density": "medium",
+   "language": "en",
+   "locale": null,
+   "html": "example/cv.html",
+   "png": "example/cv.png"
+  },
+  {
+   "id": "nonlatin_0014",
+   "origin": "corpus",
+   "family": "transactional",
+   "kind": "invoice",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fmt.dates",
+    "fmt.eu_numbers",
+    "table.spanning"
+   ],
+   "style": "corporate-modern",
+   "width": 940,
+   "density": "sparse",
+   "language": "el",
+   "locale": null,
+   "html": "example/nonlatin.html",
+   "png": "example/nonlatin.png"
+  },
+  {
+   "id": "catalogue_0015",
+   "origin": "corpus",
+   "family": "reference",
+   "kind": "catalogue",
+   "arrangement": "arr.cards_grid",
+   "type": "type.sans",
+   "features": [
+    "fmt.currency"
+   ],
+   "style": "corporate-modern",
+   "width": 900,
+   "density": "sparse",
+   "language": "en",
+   "locale": null,
+   "html": "example/catalogue.html",
+   "png": "example/catalogue.png"
+  },
+  {
+   "id": "letter_0016",
+   "origin": "corpus",
+   "family": "correspondence and legal",
+   "kind": "letter",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fmt.dates",
+    "text.justified"
+   ],
+   "style": "corporate-modern",
+   "width": 820,
+   "density": "medium",
+   "language": "en",
+   "locale": null,
+   "html": "example/letter.html",
+   "png": "example/letter.png"
+  },
+  {
+   "id": "pricing_0017",
+   "origin": "corpus",
+   "family": "presentation",
+   "kind": "pricing page",
+   "arrangement": "arr.cards_grid",
+   "type": "type.sans",
+   "features": [
+    "fmt.currency",
+    "list.bullets"
+   ],
+   "style": "bold-marketing",
+   "width": 1000,
+   "density": "sparse",
+   "language": "en",
+   "locale": null,
+   "html": "example/pricing.html",
+   "png": "example/pricing.png"
+  },
+  {
+   "id": "paper_0018",
+   "origin": "corpus",
+   "family": "publishing",
+   "kind": "paper page",
+   "arrangement": "arr.two_columns",
+   "type": "type.serif",
+   "features": [
+    "text.justified",
+    "text.supsub"
+   ],
+   "style": "academic",
+   "width": 900,
+   "density": "dense",
+   "language": "en",
+   "locale": null,
+   "html": "example/paper.html",
+   "png": "example/paper.png"
+  },
+  {
+   "id": "timetable_0019",
+   "origin": "corpus",
+   "family": "reference",
+   "kind": "timetable",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "table.spanning"
+   ],
+   "style": "minimal-swiss",
+   "width": 960,
+   "density": "sparse",
+   "language": "en",
+   "locale": null,
+   "html": "example/timetable.html",
+   "png": "example/timetable.png"
+  },
+  {
+   "id": "ticket_0020",
+   "origin": "corpus",
+   "family": "credentials",
+   "kind": "ticket",
+   "arrangement": "arr.panels_side_by_side",
+   "type": "type.sans",
+   "features": [
+    "fmt.dates"
+   ],
+   "style": "bold-marketing",
+   "width": 900,
+   "density": "sparse",
+   "language": "en",
+   "locale": null,
+   "html": "example/ticket.html",
+   "png": "example/ticket.png"
+  },
+  {
+   "id": "certificate_0021",
+   "origin": "corpus",
+   "family": "credentials",
+   "kind": "certificate",
+   "arrangement": "arr.centred",
+   "type": "type.serif",
+   "features": [],
+   "style": "classic-print",
+   "width": 1000,
+   "density": "sparse",
+   "language": "en",
+   "locale": null,
+   "html": "example/certificate.html",
+   "png": "example/certificate.png"
+  },
+  {
+   "id": "probe_contract",
+   "origin": "probe",
+   "family": "correspondence and legal",
+   "kind": "contract",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "fmt.currency",
+    "fmt.dates",
+    "text.justified"
+   ],
+   "style": "print-export",
+   "width": 820,
+   "density": "medium",
+   "language": "en",
+   "locale": null,
+   "html": "docs/level-up-probe/src/contract.html",
+   "png": "docs/level-up-probe/src/contract.png"
+  },
+  {
+   "id": "probe_datasheet",
+   "origin": "probe",
+   "family": "reference",
+   "kind": "datasheet",
+   "arrangement": "arr.two_columns",
+   "type": "type.sans",
+   "features": [
+    "list.bullets",
+    "table.spanning"
+   ],
+   "style": "corporate-modern",
+   "width": 940,
+   "density": "sparse",
+   "language": "en",
+   "locale": null,
+   "html": "docs/level-up-probe/src/datasheet.html",
+   "png": "docs/level-up-probe/src/datasheet.png"
+  },
+  {
+   "id": "probe_email",
+   "origin": "probe",
+   "family": "correspondence and legal",
+   "kind": "email printout",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fmt.dates",
+    "list.bullets",
+    "text.quote"
+   ],
+   "style": "print-export",
+   "width": 820,
+   "density": "medium",
+   "language": "en",
+   "locale": null,
+   "html": "docs/level-up-probe/src/email.html",
+   "png": "docs/level-up-probe/src/email.png"
+  },
+  {
+   "id": "probe_flyer",
+   "origin": "probe",
+   "family": "presentation",
+   "kind": "flyer",
+   "arrangement": "arr.centred",
+   "type": "type.serif",
+   "features": [
+    "fmt.dates",
+    "look.dark_ground"
+   ],
+   "style": "bold-marketing",
+   "width": 800,
+   "density": "sparse",
+   "language": "en",
+   "locale": null,
+   "html": "docs/level-up-probe/src/flyer.html",
+   "png": "docs/level-up-probe/src/flyer.png"
+  },
+  {
+   "id": "probe_labreport",
+   "origin": "probe",
+   "family": "reports",
+   "kind": "lab report",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fmt.dates",
+    "table.empty_cells",
+    "table.spanning"
+   ],
+   "style": "clinical-plain",
+   "width": 860,
+   "density": "sparse",
+   "language": "en",
+   "locale": null,
+   "html": "docs/level-up-probe/src/labreport.html",
+   "png": "docs/level-up-probe/src/labreport.png"
+  },
+  {
+   "id": "probe_minutes",
+   "origin": "probe",
+   "family": "reports",
+   "kind": "minutes",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [
+    "fmt.currency",
+    "fmt.dates",
+    "list.bullets",
+    "table.spanning",
+    "text.justified"
+   ],
+   "style": "print-export",
+   "width": 820,
+   "density": "medium",
+   "language": "en",
+   "locale": null,
+   "html": "docs/level-up-probe/src/minutes.html",
+   "png": "docs/level-up-probe/src/minutes.png"
+  },
+  {
+   "id": "probe_nutrition",
+   "origin": "probe",
+   "family": "reference",
+   "kind": "nutrition label",
+   "arrangement": "arr.one_column",
+   "type": "type.sans",
+   "features": [],
+   "style": "government-form",
+   "width": 500,
+   "density": "medium",
+   "language": "en",
+   "locale": null,
+   "html": "docs/level-up-probe/src/nutrition.html",
+   "png": "docs/level-up-probe/src/nutrition.png"
+  },
+  {
+   "id": "probe_payslip",
+   "origin": "probe",
+   "family": "transactional",
+   "kind": "payslip",
+   "arrangement": "arr.panels_side_by_side",
+   "type": "type.sans",
+   "features": [
+    "fmt.currency",
+    "fmt.dates",
+    "table.empty_cells"
+   ],
+   "style": "corporate-modern",
+   "width": 900,
+   "density": "sparse",
+   "language": "en",
+   "locale": null,
+   "html": "docs/level-up-probe/src/payslip.html",
+   "png": "docs/level-up-probe/src/payslip.png"
+  },
+  {
+   "id": "probe_quiz",
+   "origin": "probe",
+   "family": "forms",
+   "kind": "exam sheet",
+   "arrangement": "arr.one_column",
+   "type": "type.serif",
+   "features": [
+    "table.empty_cells"
+   ],
+   "style": "academic",
+   "width": 860,
+   "density": "sparse",
+   "language": "en",
+   "locale": null,
+   "html": "docs/level-up-probe/src/quiz.html",
+   "png": "docs/level-up-probe/src/quiz.png"
+  },
+  {
+   "id": "probe_recipe",
+   "origin": "probe",
+   "family": "publishing",
+   "kind": "recipe",
+   "arrangement": "arr.two_columns",
+   "type": "type.serif",
+   "features": [
+    "list.bullets",
+    "list.numbers"
+   ],
+   "style": "editorial",
+   "width": 900,
+   "density": "medium",
+   "language": "en",
+   "locale": null,
+   "html": "docs/level-up-probe/src/recipe.html",
+   "png": "docs/level-up-probe/src/recipe.png"
+  }
+ ]
+}

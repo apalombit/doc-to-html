@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Membership card</title>
+<style>
+  * { box-sizing: border-box; }
+  body { width: 760px; margin: 0; padding: 36px 50px 40px; background: #e6ebe9; color: #12332f; font-family: "Open Sans", sans-serif; text-align: center; }
+  .card { width: 660px; margin: 0 auto; background: #fff; border-radius: 18px; overflow: hidden; box-shadow: 0 6px 18px rgba(18,51,47,.22); text-align: left; }
+  .top { display: flex; align-items: center; justify-content: space-between; background: #12433e; color: #fff; padding: 16px 26px; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand .wm { font-size: 22px; font-weight: 700; letter-spacing: .3px; line-height: 1.1; }
+  .brand .wm small { display: block; font-size: 10.5px; font-weight: 400; letter-spacing: 2.4px; text-transform: uppercase; color: #f6c75a; margin-top: 3px; }
+  .tier { background: #f2a30f; color: #12332f; font-weight: 700; font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; padding: 5px 14px; border-radius: 99px; }
+  .mid { display: flex; gap: 28px; padding: 24px 28px 18px; }
+  .photo { width: 170px; flex: none; }
+  .photo svg { display: block; border-radius: 12px; }
+  .info { flex: 1; }
+  .lab { font-size: 10.5px; letter-spacing: 2px; text-transform: uppercase; color: #5f7a75; }
+  .nm { font-size: 31px; font-weight: 700; line-height: 1.1; margin: 2px 0 16px; }
+  .ld { display: flex; align-items: baseline; font-size: 14px; margin-bottom: 9px; }
+  .ld .k { color: #44625c; white-space: nowrap; }
+  .ld .d { flex: 1; border-bottom: 2px dotted #9db3ae; margin: 0 6px; }
+  .ld .v { font-weight: 600; white-space: nowrap; }
+  .bot { display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid #dbe4e1; margin: 0 28px; padding: 10px 0 14px; }
+  .bot .f { font-size: 10px; color: #6a827d; line-height: 1.5; max-width: 330px; }
+  .bot .s { text-align: right; font-size: 11px; }
+  .bot .s svg { display: block; margin-left: auto; }
+  .bot .s b { display: block; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="top">
+    <div class="brand">
+      <svg width="46" height="46" viewBox="0 0 46 46"><g transform="translate(23 23)" fill="#f2a30f"><ellipse rx="5" ry="12" cy="-11"/><ellipse rx="5" ry="12" cy="-11" transform="rotate(45)"/><ellipse rx="5" ry="12" cy="-11" transform="rotate(90)"/><ellipse rx="5" ry="12" cy="-11" transform="rotate(135)"/><ellipse rx="5" ry="12" cy="-11" transform="rotate(180)"/><ellipse rx="5" ry="12" cy="-11" transform="rotate(225)"/><ellipse rx="5" ry="12" cy="-11" transform="rotate(270)"/><ellipse rx="5" ry="12" cy="-11" transform="rotate(315)"/></g><circle cx="23" cy="23" r="7" fill="#12433e"/><path d="M19 27 L23 18 L27 27" fill="none" stroke="#f6c75a" stroke-width="2" stroke-linejoin="round"/></svg>
+      <div class="wm">Marigold Climbing Club<small>Flagstaff, Arizona</small></div>
+    </div>
+    <div class="tier">Teasel annual</div>
+  </div>
+  <div class="mid">
+    <div class="photo">
+      <svg width="170" height="208" viewBox="0 0 170 208"><defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9d3d0"/><stop offset="1" stop-color="#7fa59f"/></linearGradient></defs><rect width="170" height="208" fill="url(#bg)"/><path d="M0 150 L50 110 L95 140 L135 100 L170 130 V208 H0 Z" fill="#9dbdb7" opacity=".7"/><circle cx="85" cy="82" r="31" fill="#c98f66"/><path d="M52 76 Q55 44 86 44 Q116 44 119 78 Q110 60 86 60 Q64 60 52 76 Z" fill="#3a2a21"/><path d="M18 208 Q22 134 85 128 Q148 134 152 208 Z" fill="#12433e"/><path d="M70 130 L85 156 L100 130" fill="#f6efe2"/></svg>
+    </div>
+    <div class="info">
+      <div class="lab">Member</div>
+      <div class="nm">Jordan Holloway</div>
+      <div class="ld"><span class="k">Member number</span><span class="d"></span><span class="v">MC-40-2217</span></div>
+      <div class="ld"><span class="k">Member since</span><span class="d"></span><span class="v">10/02/2023</span></div>
+      <div class="ld"><span class="k">Valid through</span><span class="d"></span><span class="v">10/01/2024</span></div>
+      <div class="ld"><span class="k">Home gym</span><span class="d"></span><span class="v">Flagstaff, AZ</span></div>
+      <div class="ld"><span class="k">Guest passes</span><span class="d"></span><span class="v">4 per year</span></div>
+    </div>
+  </div>
+  <div class="bot">
+    <div class="f">Show this card at the front desk. Not transferable. Also valid at our Mobile, AL gym. Sponsored by Luis Shapiro.</div>
+    <div class="s">
+      <svg width="104" height="30" viewBox="0 0 104 30" fill="none" stroke="#1d2f78" stroke-width="1.8" stroke-linecap="round"><path d="M4 22 C10 4 16 4 17 16 C18 26 24 24 30 12 C34 6 36 22 44 20 C54 18 58 8 64 16 C70 24 82 20 100 14"/></svg>
+      <b>Keisha Schultz</b>General Manager
+    </div>
+  </div>
+</div>
+</body>
+</html>

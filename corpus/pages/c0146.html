@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="it-IT">
+<head>
+<meta charset="utf-8">
+<title>Sterna Energia, dettaglio dei consumi</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;width:760px;padding:14px;background:#fff;color:#1c1a17;font-family:Baskerville,Georgia,serif;font-size:13px;line-height:1.45}
+.wrap{display:flex;gap:14px;align-items:stretch}
+.panel{border:1px solid #1c1a17;padding:3px;flex:none}
+.panel{display:flex}
+.panel>.in{border:1px solid #1c1a17;padding:12px 14px 14px;flex:1}
+.p1{width:452px}
+.p2{width:266px}
+h2{margin:0;font-weight:400;font-variant:small-caps;letter-spacing:.06em;font-size:17px;line-height:1.2;text-align:center}
+.rule{height:5px;border-top:1px solid #1c1a17;border-bottom:2px solid #1c1a17;margin:7px 0 9px}
+.who{font-size:12px;line-height:1.55;margin-bottom:10px}
+.who div{display:flex;gap:8px}
+.who span.l{width:74px;flex:none}
+.who span.l{font-variant:small-caps;letter-spacing:.04em}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{font-variant:small-caps;letter-spacing:.04em;font-weight:400;text-align:left;border-bottom:1px solid #1c1a17;padding:0 4px 4px;font-size:12.5px}
+td{padding:4px 4px;border-bottom:1px dotted #8a857c;vertical-align:top}
+th.r,td.r{text-align:right}
+tr.sec td{font-style:italic;border-bottom:1px solid #8a857c;padding-top:8px;color:#3b372f}
+tr.tot td{border-top:1px solid #1c1a17;border-bottom:0;font-weight:700}
+tr.fin td{border-top:2px solid #1c1a17;border-bottom:3px double #1c1a17;font-weight:700;font-size:13.5px;padding:5px 4px}
+ol{list-style:none;margin:0;padding:0}
+ol li{margin:0 0 7px;padding-left:30px;text-indent:-30px;text-align:left;font-size:12.5px;line-height:1.42}
+ol li span.n{display:inline-block;width:30px;text-indent:0;font-weight:700}
+.sm{font-size:11.5px;color:#3b372f;margin-top:10px;border-top:1px solid #8a857c;padding-top:7px;line-height:1.45}
+sup{font-size:.68em;line-height:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="panel p1"><div class="in">
+    <h2>Dettaglio dei consumi</h2>
+    <div class="rule"></div>
+    <div class="who">
+      <div><span class="l">Intestatario</span><span>Stefano De Luca</span></div>
+      <div><span class="l">Fornitura</span><span>Via Borgo Palazzo 120, Bergamo</span></div>
+      <div><span class="l">Periodo</span><span>01/11/2025 &ndash; 31/12/2025</span></div>
+      <div><span class="l">Fattura</span><span>2026/00418 del 25 gennaio 2026</span></div>
+    </div>
+    <table>
+      <thead><tr><th>Voce</th><th class="r">Quantità</th><th class="r">Prezzo</th><th class="r">Importo (€)</th></tr></thead>
+      <tbody>
+        <tr class="sec"><td colspan="4">Spesa per la materia gas naturale</td></tr>
+        <tr><td>Quota energia, per m<sup>3</sup></td><td class="r">214 m<sup>3</sup></td><td class="r">0,5120 €/m<sup>3</sup></td><td class="r">109,57</td></tr>
+        <tr><td>Quota fissa di commercializzazione</td><td class="r">2 mesi</td><td class="r">9,5000 €/mese</td><td class="r">19,00</td></tr>
+        <tr class="sec"><td colspan="4">Trasporto e gestione del contatore</td></tr>
+        <tr><td>Quota fissa</td><td class="r">2 mesi</td><td class="r">5,2500 €/mese</td><td class="r">10,50</td></tr>
+        <tr><td>Quota variabile, per m<sup>3</sup></td><td class="r">214 m<sup>3</sup></td><td class="r">0,0980 €/m<sup>3</sup></td><td class="r">20,97</td></tr>
+        <tr class="sec"><td colspan="4">Oneri di sistema e imposte</td></tr>
+        <tr><td>Oneri di sistema</td><td class="r">214 m<sup>3</sup></td><td class="r">0,0310 €/m<sup>3</sup></td><td class="r">6,63</td></tr>
+        <tr><td>Accisa sul gas naturale</td><td class="r">214 m<sup>3</sup></td><td class="r">0,1750 €/m<sup>3</sup></td><td class="r">37,45</td></tr>
+        <tr class="tot"><td>Totale imponibile</td><td></td><td></td><td class="r">204,12</td></tr>
+        <tr><td>IVA 10%</td><td></td><td></td><td class="r">20,41</td></tr>
+        <tr class="fin"><td>Totale da pagare</td><td></td><td></td><td class="r">224,53</td></tr>
+      </tbody>
+    </table>
+    <div class="sm">Lettura al 31/10/2025: 3.412 m<sup>3</sup> (stimata) &middot; lettura al 31/12/2025: 3.626 m<sup>3</sup> (effettiva, rilevata il 2 gennaio 2026 dal tecnico Alessio Santoro).</div>
+  </div></div>
+
+  <div class="panel p2"><div class="in">
+    <h2>Note e avvertenze</h2>
+    <div class="rule"></div>
+    <ol>
+      <li><span class="n">1.1</span>Il consumo è la differenza tra due letture, in metri cubi standard (m<sup>3</sup>) con coefficiente di conversione 1,0213.</li>
+      <li><span class="n">1.2</span>Una lettura stimata è conguagliata alla prima lettura effettiva successiva.</li>
+      <li><span class="n">1.3</span>Il pagamento entro il 20 febbraio 2026 evita gli interessi di mora.</li>
+      <li><span class="n">1.4</span>Si può pagare con bonifico, domiciliazione bancaria o presso gli sportelli convenzionati.</li>
+      <li><span class="n">1.5</span>I reclami scritti ricevono risposta entro 30 giorni.</li>
+    </ol>
+    <div class="sm">Sterna Energia S.p.A., Pescara. Referente commerciale: Valentina Colombo, tel. 085 555 0162.</div>
+  </div></div>
+</div>
+</body>
+</html>
