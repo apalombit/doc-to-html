@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Discharge summary, hospital course and medications</title>
+<style>
+  body { margin: 0; padding: 10px; width: 480px; background: #fff; color: #15292e; font-family: "PT Sans", Arial, sans-serif; font-size: 12px; line-height: 1.4; }
+  .head { background: #0f6e78; color: #fff; padding: 7px 10px; display: flex; justify-content: space-between; align-items: baseline; }
+  .head b { font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .head span { font-size: 11px; opacity: 0.95; }
+  dl.pt { margin: 0; display: grid; grid-template-columns: 1fr 1fr 1fr; border: 1px solid #b9d3d6; border-top: none; }
+  dl.pt div { padding: 4px 8px; border-right: 1px solid #d3e4e6; border-bottom: 1px solid #d3e4e6; }
+  dl.pt div:nth-child(3n) { border-right: none; }
+  dl.pt dt { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.07em; color: #4b7a80; margin: 0; }
+  dl.pt dd { margin: 0; font-weight: 700; font-size: 12px; }
+  h2 { margin: 12px 0 5px; background: #dcebed; color: #0b5a63; font-size: 11px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; padding: 3px 8px; border-left: 4px solid #0f6e78; }
+  p { margin: 0 0 6px; }
+  table { border-collapse: collapse; width: 100%; font-size: 11.5px; }
+  th { text-align: left; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.06em; color: #4b7a80; border-bottom: 2px solid #0f6e78; padding: 3px 5px; }
+  td { padding: 4px 5px; border-bottom: 1px solid #d3e4e6; vertical-align: top; }
+  .flag { display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: 0.05em; padding: 0 5px; border-radius: 2px; color: #fff; }
+  .new { background: #0f6e78; }
+  .chg { background: #b7791f; }
+  .stop { background: #b3392f; }
+  .cont { background: #6b8a8f; }
+  .abn { color: #b3392f; font-weight: 700; }
+  .small { font-size: 10px; color: #4b6468; margin-top: 8px; border-top: 1px solid #b9d3d6; padding-top: 4px; }
+  sup, sub { font-size: 0.75em; line-height: 0; }
+</style>
+</head>
+<body>
+  <div class="head"><b>Discharge Summary</b><span>Copper Hill Medical Center &middot; Madison, WI</span></div>
+  <dl class="pt">
+    <div><dt>Patient</dt><dd>Ashley Morales</dd></div>
+    <div><dt>DOB / Age</dt><dd>03/14/1961 &middot; 64 y</dd></div>
+    <div><dt>MRN</dt><dd>CH-0472913</dd></div>
+    <div><dt>Admitted</dt><dd>06/26/2025</dd></div>
+    <div><dt>Discharged</dt><dd>07/01/2025</dd></div>
+    <div><dt>Attending</dt><dd>K. Holloway, MD</dd></div>
+  </dl>
+
+  <h2>Hospital course</h2>
+  <p>64-year-old woman from Ithaca, NY, visiting family in Madison, admitted on 06/26/2025 with 4 days of fever, productive cough and pleuritic chest pain. Chest film showed a right lower lobe consolidation; admission SpO<sub>2</sub> 89% on room air, WBC 15.8 &times; 10<sup>9</sup>/L. Treated with IV ceftriaxone and azithromycin, oxygen weaned by hospital day 3. Afebrile since 06/29. Discharge SpO<sub>2</sub> 95% on room air; <span class="abn">creatinine 1.3 mg/dL (H)</span>, down from 1.6 on admission.</p>
+
+  <h2>Discharge medications</h2>
+  <table>
+    <thead><tr><th>Medication</th><th>Dose and route</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Amoxicillin-clavulanate 875/125 mg</td><td>1 tab PO BID &times; 5 days</td><td><span class="flag new">NEW</span></td></tr>
+      <tr><td>Albuterol HFA 90 mcg</td><td>2 puffs inhaled q4&ndash;6h PRN</td><td><span class="flag new">NEW</span></td></tr>
+      <tr><td>Atorvastatin</td><td>40 mg PO nightly (was 20 mg)</td><td><span class="flag chg">CHANGED</span></td></tr>
+      <tr><td>Lisinopril 10 mg</td><td>1 tab PO daily</td><td><span class="flag cont">CONTINUE</span></td></tr>
+      <tr><td>Metformin 500 mg</td><td>1 tab PO BID with meals</td><td><span class="flag cont">CONTINUE</span></td></tr>
+      <tr><td>Prednisone 40 mg</td><td>Course completed in hospital</td><td><span class="flag stop">STOP</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Follow-up</h2>
+  <p>Repeat chest film in 6 weeks. Recheck creatinine and potassium within 1 week with Luis Hendricks, MD, at Granite Street Family Medicine, Ithaca, NY. Return for fever above 101 &deg;F, worsening dyspnea or SpO<sub>2</sub> below 92% on a home oximeter.</p>
+  <div class="small">Dictated by K. Holloway, MD, 07/01/2025 &middot; Copies to Granite Street Family Medicine, Ithaca, and to the patient.</div>
+</body>
+</html>

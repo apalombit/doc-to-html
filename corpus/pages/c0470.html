@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es-ES">
+<head>
+<meta charset="utf-8">
+<title>Tabla 7-3. Parámetros del menú P3</title>
+<style>
+  body { margin: 0; padding: 6px; width: 668px; background: #ffffff; font-family: Verdana, sans-serif; font-size: 10px; color: #000000; }
+  table { border-collapse: separate; }
+  td, th { font-family: Verdana, sans-serif; font-size: 10px; line-height: 1.35; }
+  .ttl { font-size: 13px; font-weight: bold; color: #ffffff; line-height: 1.3; }
+  .sub { font-size: 10px; color: #cfe0f5; }
+  .hd th { background: #d8d8c8; border: 1px solid #666655; padding: 4px 5px; text-align: left; font-size: 10px; }
+  .sec td { background: #1d4f91; color: #ffffff; font-weight: bold; padding: 4px 6px; border: 1px solid #1d4f91; letter-spacing: 0.3px; }
+  .row td { border: 1px solid #99998a; padding: 3px 5px; vertical-align: top; }
+  .row td.c { font-family: "Courier New", monospace; font-size: 10px; white-space: nowrap; }
+  .row td.n { text-align: center; white-space: nowrap; }
+  .alt td { background: #f2f2e6; }
+  .foot td { font-size: 9px; line-height: 1.4; }
+  sup { font-size: 8px; line-height: 0; }
+</style>
+</head>
+<body>
+<table width="668" cellpadding="0" cellspacing="0" border="1" bordercolor="#1d4f91" bgcolor="#ffffff">
+  <tr>
+    <td bgcolor="#1d4f91" style="padding: 6px 8px;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="ttl">Tabla 7-3. Parámetros del menú P3: ciclo de secado</td>
+          <td class="sub" align="right" width="235" style="white-space: nowrap;">Manual de servicio SD-240, capítulo 7</td>
+        </tr>
+        <tr>
+          <td class="sub" colspan="2">Maderas Cardo, S.L. · Secadero de cámara SD-240 · Controlador CT-5, versión de programa 4.2</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding: 8px;">
+      <p style="margin: 0 0 7px 0; line-height: 1.4;">Los parámetros del grupo P3 se editan con el teclado del cuadro eléctrico, y solo cuando la cámara está parada y la puerta cerrada. Los cambios se aplican en el ciclo siguiente, y no durante el que está en marcha. Los valores de fábrica se recuperan con P9.99 = 1.<sup>1</sup></p>
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr class="hd">
+          <th width="48">Código</th>
+          <th>Parámetro</th>
+          <th width="46" align="center">Unidad</th>
+          <th width="74" align="center">Rango</th>
+          <th width="52" align="center">Fábrica</th>
+        </tr>
+        <tr class="sec"><td colspan="5">A. Temperaturas de la cámara</td></tr>
+        <tr class="row"><td class="c">P3.01</td><td>Consigna de temperatura, fase de secado</td><td class="n">°C</td><td class="n">30 – 80</td><td class="n">55</td></tr>
+        <tr class="row alt"><td class="c">P3.02</td><td>Consigna de temperatura, fase de acondicionado<sup>2</sup></td><td class="n">°C</td><td class="n">40 – 90</td><td class="n">70</td></tr>
+        <tr class="row"><td class="c">P3.03</td><td>Rampa máxima de calentamiento</td><td class="n">°C/h</td><td class="n">1 – 15</td><td class="n">6</td></tr>
+        <tr class="row alt"><td class="c">P3.04</td><td>Histéresis de calefacción</td><td class="n">°C</td><td class="n">0,5 – 5,0</td><td class="n">1,5</td></tr>
+        <tr class="sec"><td colspan="5">B. Humedad de la madera</td></tr>
+        <tr class="row"><td class="c">P3.10</td><td>Humedad inicial de la carga</td><td class="n">%</td><td class="n">20 – 120</td><td class="n">60</td></tr>
+        <tr class="row alt"><td class="c">P3.11</td><td>Humedad final objetivo<sup>3</sup></td><td class="n">%</td><td class="n">6 – 20</td><td class="n">12</td></tr>
+        <tr class="row"><td class="c">P3.12</td><td>Tolerancia de humedad final</td><td class="n">%</td><td class="n">0,5 – 3,0</td><td class="n">1,0</td></tr>
+        <tr class="row alt"><td class="c">P3.13</td><td>Intervalo de lectura de las sondas</td><td class="n">min</td><td class="n">1 – 60</td><td class="n">10</td></tr>
+        <tr class="sec"><td colspan="5">C. Ventilación y alarmas</td></tr>
+        <tr class="row"><td class="c">P3.20</td><td>Velocidad de los ventiladores, fase 1</td><td class="n">%</td><td class="n">20 – 100</td><td class="n">80</td></tr>
+        <tr class="row alt"><td class="c">P3.21</td><td>Periodo de inversión del sentido de giro<sup>4</sup></td><td class="n">min</td><td class="n">0 – 240</td><td class="n">120</td></tr>
+        <tr class="row"><td class="c">P3.22</td><td>Apertura de las compuertas de ventilación</td><td class="n">%</td><td class="n">0 – 100</td><td class="n">35</td></tr>
+        <tr class="row alt"><td class="c">P3.23</td><td>Alarma de temperatura alta</td><td class="n">°C</td><td class="n">60 – 95</td><td class="n">85</td></tr>
+        <tr class="row"><td class="c">P3.24</td><td>Retardo de la alarma</td><td class="n">s</td><td class="n">0 – 600</td><td class="n">90</td></tr>
+      </table>
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 8px;">
+        <tr class="foot"><td><sup>1</sup> Con P9.99 = 1 se pierden también las curvas de secado que ha guardado el usuario.</td></tr>
+        <tr class="foot"><td><sup>2</sup> No debe superar la consigna de P3.23 menos 10 °C.</td></tr>
+        <tr class="foot"><td><sup>3</sup> Es el valor medio de las cuatro sondas; para las frondosas que se secan en Almería y en Alicante se recomienda no bajar de 10 %.</td></tr>
+        <tr class="foot"><td><sup>4</sup> Con 0 la inversión queda desactivada y los ventiladores giran siempre en el mismo sentido, el de la carga.</td></tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td bgcolor="#d8d8c8" style="padding: 4px 8px; font-size: 9px;">Rev. D, 09/06/2024 · Redactó: Jorge Garrido León · Revisó: Pablo Romero Gil · Aprobó: Adrián Nieto Ibáñez · Página 47 de 112</td>
+  </tr>
+</table>
+</body>
+</html>

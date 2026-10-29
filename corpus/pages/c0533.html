@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="it-IT">
+<head>
+<meta charset="utf-8">
+<title>Vendite di ortofrutta nei mercati coperti</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0}
+body{width:740px;padding:10px 16px 14px;background:#fff;color:#0f172a;font-family:"Avenir Next","Helvetica Neue",sans-serif;font-size:14px;line-height:1.4}
+.flex{display:flex}
+.items-center{align-items:center}
+.items-end{align-items:flex-end}
+.justify-between{justify-content:space-between}
+.gap-2{gap:8px}
+.gap-3{gap:12px}
+.relative{position:relative}
+.absolute{position:absolute}
+.w-full{width:100%}
+.p-2{padding:8px}
+.p-3{padding:12px}
+.px-2{padding-left:8px;padding-right:8px}
+.px-3{padding-left:12px;padding-right:12px}
+.py-1{padding-top:4px;padding-bottom:4px}
+.mb-1{margin-bottom:4px}
+.mb-2{margin-bottom:8px}
+.mb-3{margin-bottom:12px}
+.mt-2{margin-top:8px}
+.mt-3{margin-top:12px}
+.text-xs{font-size:11.5px}
+.text-sm{font-size:13px}
+.text-lg{font-size:19px;line-height:1.25}
+.font-semibold{font-weight:600}
+.font-bold{font-weight:700}
+.text-right{text-align:right}
+.text-center{text-align:center}
+.text-slate-500{color:#64748b}
+.text-slate-600{color:#475569}
+.border{border:1px solid #cbd5e1}
+.border-b{border-bottom:1px solid #cbd5e1}
+.border-t{border-top:1px solid #cbd5e1}
+.bg-slate-50{background:#f1f5f9}
+.rounded{border-radius:6px}
+.rounded-full{border-radius:999px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;font-size:12px;font-weight:600;line-height:1.5}
+.bg-green-100{background:#d7ece0;color:#1d4d36}
+.bg-amber-100{background:#f8e6c8;color:#7a4a0a}
+.bg-slate-200{background:#e2e8f0;color:#334155}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%}
+.chart{height:218px;margin-top:6px}
+.ytick{position:absolute;left:0;width:46px;text-align:right;font-size:11.5px;color:#64748b;line-height:14px}
+.xlab{margin-left:56px;display:flex}
+.xlab div{width:107px;text-align:center;font-size:12px;color:#334155}
+.yaxis{font-size:11.5px;color:#64748b}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid #cbd5e1;padding:5px 10px}
+th{background:#e2e8f0;font-weight:600;text-align:left;font-size:12.5px}
+td.num,th.num{text-align:right}
+ol{list-style:none;margin:0;padding:0}
+ol li{padding-left:22px;text-indent:-22px;margin-bottom:3px}
+ol li .no{display:inline-block;width:22px;text-indent:0;font-weight:600;color:#475569}
+</style>
+</head>
+<body>
+<div class="flex items-center justify-between mb-1">
+  <div class="text-xs font-semibold text-slate-500">Osservatorio Trifoglio · Indagine sui mercati coperti</div>
+  <span class="chip rounded-full bg-amber-100">Dati provvisori</span>
+</div>
+<div class="text-lg font-bold">Vendite settimanali di ortofrutta nei mercati coperti di Siena e Udine</div>
+<div class="text-sm text-slate-600 mb-2">Media mensile in tonnellate, gennaio–giugno 2019</div>
+
+<div class="flex items-center gap-3 mb-1">
+  <span class="chip rounded-full bg-green-100"><span class="dot" style="background:#2f6f4f"></span>Siena</span>
+  <span class="chip rounded-full bg-amber-100"><span class="dot" style="background:#d08a2e"></span>Udine</span>
+  <span class="yaxis" style="margin-left:auto">Asse verticale: tonnellate a settimana</span>
+</div>
+
+<div class="relative chart">
+  <span class="ytick" style="top:3px">200</span>
+  <span class="ytick" style="top:48px">150</span>
+  <span class="ytick" style="top:93px">100</span>
+  <span class="ytick" style="top:138px">50</span>
+  <span class="ytick" style="top:183px">0</span>
+  <svg width="700" height="200" viewBox="0 0 700 200" style="display:block">
+    <g stroke="#e2e8f0" stroke-width="1">
+      <line x1="56" y1="10" x2="698" y2="10"/><line x1="56" y1="55" x2="698" y2="55"/><line x1="56" y1="100" x2="698" y2="100"/><line x1="56" y1="145" x2="698" y2="145"/>
+    </g>
+    <line x1="56" y1="190" x2="698" y2="190" stroke="#64748b" stroke-width="1.2"/>
+    <rect x="70" y="74.4" width="34" height="115.6" fill="#2f6f4f"/>
+    <rect x="110" y="102.9" width="34" height="87.1" fill="#d08a2e"/>
+    <rect x="177" y="81.1" width="34" height="108.9" fill="#2f6f4f"/>
+    <rect x="217" y="105.3" width="34" height="84.7" fill="#d08a2e"/>
+    <rect x="284" y="64.4" width="34" height="125.6" fill="#2f6f4f"/>
+    <rect x="324" y="92.2" width="34" height="97.8" fill="#d08a2e"/>
+    <rect x="391" y="52.9" width="34" height="137.1" fill="#2f6f4f"/>
+    <rect x="431" y="80.6" width="34" height="109.4" fill="#d08a2e"/>
+    <rect x="498" y="38" width="34" height="152" fill="#2f6f4f"/>
+    <rect x="538" y="64.9" width="34" height="125.1" fill="#d08a2e"/>
+    <rect x="605" y="33.2" width="34" height="156.8" fill="#2f6f4f"/>
+    <rect x="645" y="57.2" width="34" height="132.8" fill="#d08a2e"/>
+  </svg>
+  <div class="xlab" style="margin-top:3px">
+    <div>Gen</div><div>Feb</div><div>Mar</div><div>Apr</div><div>Mag</div><div>Giu</div>
+  </div>
+</div>
+
+<div class="text-sm mt-2 mb-3"><span class="font-semibold">Figura 3.</span> Nei sei mesi le vendite crescono in entrambe le città, ma a Udine più in fretta: il divario con Siena si riduce dal 24,6% al 15,3%.</div>
+
+<table class="text-sm mb-3">
+  <thead>
+    <tr><th>Mese</th><th class="num">Siena (t)</th><th class="num">Udine (t)</th><th class="num">Udine rispetto a Siena</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Gennaio</td><td class="num">128,4</td><td class="num">96,8</td><td class="num">−24,6%</td></tr>
+    <tr class="bg-slate-50"><td>Febbraio</td><td class="num">121,0</td><td class="num">94,1</td><td class="num">−22,2%</td></tr>
+    <tr><td>Marzo</td><td class="num">139,6</td><td class="num">108,7</td><td class="num">−22,1%</td></tr>
+    <tr class="bg-slate-50"><td>Aprile</td><td class="num">152,3</td><td class="num">121,5</td><td class="num">−20,2%</td></tr>
+    <tr><td>Maggio</td><td class="num">168,9</td><td class="num">139,0</td><td class="num">−17,7%</td></tr>
+    <tr class="bg-slate-50"><td>Giugno</td><td class="num">174,2</td><td class="num">147,6</td><td class="num">−15,3%</td></tr>
+  </tbody>
+</table>
+
+<div class="text-xs font-semibold text-slate-500 mb-1">Note</div>
+<ol class="text-xs text-slate-600">
+  <li><span class="no">1.</span>Pesi netti rilevati ai banchi all’ingrosso; sono esclusi gli agrumi venduti a cassa.</li>
+  <li><span class="no">2.</span>I dati di giugno sono provvisori e aggiornati al 30 giugno 2019.</li>
+  <li><span class="no">3.</span>La variazione è calcolata sui valori non arrotondati.</li>
+</ol>
+<div class="text-xs text-slate-500 mt-2 border-t" style="padding-top:5px">Fonte: elaborazione di Anna Conti su dati dei gestori dei mercati di Siena e Udine, rivista da Matteo Mancini.</div>
+</body>
+</html>

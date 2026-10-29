@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Keystone pricing</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 0 48px 40px; background: #0e1621; color: #e6ecf5; font-family: "Open Sans", sans-serif; font-size: 13px; line-height: 1.5; }
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; border-bottom: 1px solid #223049; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo .wm { font-size: 20px; font-weight: 700; letter-spacing: 0.3px; }
+  .links { display: flex; align-items: center; gap: 26px; font-size: 13px; color: #b4c0d2; }
+  .btn { display: inline-block; border-radius: 8px; padding: 9px 18px; font-weight: 600; font-size: 13px; }
+  .btn.pri { background: #f2b84b; color: #1b1405; }
+  .btn.sec { border: 1px solid #3a4c69; color: #e6ecf5; }
+  .hero { text-align: center; padding: 44px 0 26px; }
+  .hero h1 { margin: 0 0 10px; font-size: 38px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.15; }
+  .hero p { margin: 0 auto 18px; max-width: 560px; color: #9fb0c6; font-size: 15px; }
+  .toggle { display: inline-flex; border: 1px solid #2b3c57; border-radius: 999px; padding: 3px; }
+  .toggle span { padding: 5px 16px; border-radius: 999px; font-size: 12px; font-weight: 600; color: #9fb0c6; }
+  .toggle span.on { background: #223049; color: #fff; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 26px; }
+  .card { background: #152033; border: 1px solid #243450; border-radius: 12px; padding: 22px 20px 22px; position: relative; }
+  .card.hot { border-color: #f2b84b; background: #182540; }
+  .tag { position: absolute; top: -11px; left: 20px; background: #f2b84b; color: #1b1405; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; }
+  .card h3 { margin: 0 0 4px; font-size: 18px; font-weight: 700; }
+  .card .tl { color: #9fb0c6; font-size: 12px; min-height: 36px; margin: 0 0 14px; }
+  .lab { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: #7f92ad; }
+  .val { font-size: 34px; font-weight: 700; line-height: 1.15; margin-bottom: 14px; }
+  .val small { font-size: 13px; font-weight: 400; color: #9fb0c6; }
+  .card .btn { display: block; text-align: center; margin-bottom: 16px; }
+  ul { margin: 0; padding-left: 18px; color: #cfd9e8; font-size: 12.5px; }
+  li { margin-bottom: 6px; }
+  li::marker { color: #f2b84b; }
+  h2 { margin: 46px 0 0; font-size: 22px; font-weight: 700; }
+  .sub { margin: 4px 0 0; color: #9fb0c6; font-size: 13px; }
+  .addon .val { font-size: 24px; margin-bottom: 8px; }
+  .addon p { margin: 0; color: #b4c0d2; font-size: 12.5px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
+  .quote p { margin: 0 0 14px; font-size: 14px; line-height: 1.55; color: #e6ecf5; }
+  .quote .who { font-size: 12px; font-weight: 600; }
+  .quote .role { font-size: 11.5px; color: #8ea0b9; }
+  .faq { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 40px; margin-top: 20px; }
+  .faq h4 { margin: 0 0 3px; font-size: 14px; font-weight: 600; color: #f2d9a0; }
+  .faq p { margin: 0; color: #b4c0d2; font-size: 12.5px; }
+  .inc { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 26px; padding: 18px 4px 0; border-top: 1px solid #223049; }
+  .inc h4 { margin: 0 0 3px; font-size: 13px; font-weight: 600; }
+  .inc p { margin: 0; font-size: 12px; color: #9fb0c6; }
+  footer { margin-top: 44px; padding-top: 18px; border-top: 1px solid #223049; display: flex; justify-content: space-between; color: #8ea0b9; font-size: 11.5px; line-height: 1.7; }
+  footer .fl { display: flex; gap: 22px; color: #b4c0d2; }
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">
+    <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+      <path d="M3 26 V16 C3 8 9 3 15 3 C21 3 27 8 27 16 V26 Z" fill="#f2b84b"/>
+      <path d="M10 26 V17 C10 13 12 11 15 11 C18 11 20 13 20 17 V26 Z" fill="#0e1621"/>
+      <rect x="12.5" y="3" width="5" height="7" fill="#fff3d6"/>
+    </svg>
+    <span class="wm">Keystone</span>
+  </div>
+  <div class="links"><span>Product</span><span>Pricing</span><span>Docs</span><span>Security</span><span>Customers</span><span class="btn sec">Sign in</span><span class="btn pri">Start free</span></div>
+</nav>
+
+<section class="hero">
+  <h1>Simple pricing for every stage of your team</h1>
+  <p>Start free. Move up when you need more people, more history or tighter controls. Every paid plan includes a 14-day trial.</p>
+  <div class="toggle"><span>Monthly</span><span class="on">Annual · save 20%</span></div>
+</section>
+
+<div class="grid4">
+  <div class="card">
+    <h3>Starter</h3>
+    <p class="tl">For individuals and small experiments.</p>
+    <div class="lab">Per member, per month</div>
+    <div class="val">$0</div>
+    <span class="btn sec">Create account</span>
+    <ul>
+      <li>Up to 3 members</li>
+      <li>2 active projects</li>
+      <li>1 GB of storage</li>
+      <li>7-day history</li>
+      <li>Community support</li>
+    </ul>
+  </div>
+  <div class="card hot">
+    <span class="tag">Most popular</span>
+    <h3>Team</h3>
+    <p class="tl">For product groups shipping every week.</p>
+    <div class="lab">Per member, billed annually</div>
+    <div class="val">$12 <small>/ month</small></div>
+    <span class="btn pri">Start 14-day trial</span>
+    <ul>
+      <li>Up to 25 members</li>
+      <li>Unlimited projects</li>
+      <li>50 GB of storage</li>
+      <li>Release calendar</li>
+      <li>90-day history</li>
+      <li>Email support in one business day</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Business</h3>
+    <p class="tl">For departments that need control and reporting.</p>
+    <div class="lab">Per member, billed annually</div>
+    <div class="val">$24 <small>/ month</small></div>
+    <span class="btn sec">Start 14-day trial</span>
+    <ul>
+      <li>Up to 250 members</li>
+      <li>Roadmaps and dependencies</li>
+      <li>1 TB of storage</li>
+      <li>Single sign-on</li>
+      <li>One-year history</li>
+      <li>Audit log export</li>
+      <li>Priority chat support</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Enterprise</h3>
+    <p class="tl">For organisations with security reviews to pass.</p>
+    <div class="lab">Annual contract</div>
+    <div class="val">Custom</div>
+    <span class="btn sec">Talk to sales</span>
+    <ul>
+      <li>Unlimited members</li>
+      <li>Dedicated cloud region</li>
+      <li>Custom data retention</li>
+      <li>SAML and SCIM provisioning</li>
+      <li>99.95% uptime commitment</li>
+      <li>Named success manager</li>
+    </ul>
+  </div>
+</div>
+
+<div class="inc">
+  <div><h4>Unlimited guests</h4><p>Invite clients and contractors to read and comment at no charge.</p></div>
+  <div><h4>Integrations</h4><p>Connect your repositories, chat tools and calendar in a few minutes.</p></div>
+  <div><h4>Encrypted at rest</h4><p>Every workspace is encrypted, backed up nightly and restorable on request.</p></div>
+  <div><h4>Import in one click</h4><p>Bring over projects, labels and comments from a spreadsheet or another tracker.</p></div>
+</div>
+
+<h2>Add-ons</h2>
+<p class="sub">Available on Team and Business. Billed monthly, cancel any time.</p>
+<div class="grid4" style="margin-top:18px">
+  <div class="card addon">
+    <h3>Extra storage</h3>
+    <div class="lab">Per 100 GB, monthly</div>
+    <div class="val">$8</div>
+    <p>Add room for attachments and build artefacts without changing plan.</p>
+  </div>
+  <div class="card addon">
+    <h3>Priority support</h3>
+    <div class="lab">Per workspace, monthly</div>
+    <div class="val">$99</div>
+    <p>A four-hour weekday response and a shared channel with our engineers.</p>
+  </div>
+  <div class="card addon">
+    <h3>Sandboxes</h3>
+    <div class="lab">Per environment, monthly</div>
+    <div class="val">$29</div>
+    <p>Rehearse a release against a copy of your production data.</p>
+  </div>
+  <div class="card addon">
+    <h3>Onboarding</h3>
+    <div class="lab">One-off fee</div>
+    <div class="val">$1,200</div>
+    <p>Two half-day sessions with a Keystone specialist, remote or on site.</p>
+  </div>
+</div>
+
+<h2>What teams say</h2>
+<div class="grid3">
+  <div class="card quote">
+    <p>“We moved release tracking out of spreadsheets in a week, and nobody asked to go back.”</p>
+    <div class="who">Mei Delgado</div>
+    <div class="role">Head of Operations, Penobscot Freight, Bangor, ME</div>
+  </div>
+  <div class="card quote">
+    <p>“The audit log export saves our compliance team a full day every quarter.”</p>
+    <div class="who">Hiro Castillo</div>
+    <div class="role">Compliance Lead, Zumbro Clinics, Rochester, MN</div>
+  </div>
+  <div class="card quote">
+    <p>“Sandbox runs caught three bad migrations before launch. It paid for itself in a month.”</p>
+    <div class="who">Jordan Schultz</div>
+    <div class="role">Platform Engineer, Granite Bay Credit Union</div>
+  </div>
+</div>
+
+<h2>Billing questions</h2>
+<div class="faq">
+  <div><h4>Can I change plan later?</h4><p>Yes. Upgrades apply at once and are prorated. Downgrades take effect at the next renewal date.</p></div>
+  <div><h4>What counts as a member?</h4><p>Anyone who can create or edit work. Guests who only read and comment are always free.</p></div>
+  <div><h4>Do you offer discounts?</h4><p>Registered non-profits and schools receive 30% off Team and Business plans on request.</p></div>
+  <div><h4>How do I pay?</h4><p>By card, or by invoice on annual Business and Enterprise contracts, with net 30 terms.</p></div>
+</div>
+
+<footer>
+  <div>Prices in US dollars, effective August 27, 2025. Taxes may apply.<br>© 2025 Tamarisk Labs, Inc. · Offices in Bangor, ME and Rochester, MN</div>
+  <div class="fl"><span>Terms</span><span>Privacy</span><span>Status</span><span>Contact sales</span></div>
+</footer>
+</body>
+</html>

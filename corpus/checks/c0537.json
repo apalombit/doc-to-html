@@ -1,0 +1,28 @@
+{
+ "id": "c0537",
+ "passed": true,
+ "failures": {},
+ "checked": "2026-10-29",
+ "seconds": 7.7,
+ "width": 820,
+ "height": 936,
+ "words": 109,
+ "card_features": [
+  "arr.centred",
+  "type.sans",
+  "fig.photo",
+  "kv.over",
+  "list.bullets",
+  "look.chips",
+  "type.weights"
+ ],
+ "detected": [
+  "figure",
+  "fmt.dates",
+  "list.bullets",
+  "type.sans"
+ ],
+ "dhash": "0f0d332b2f281f0e",
+ "html_sha256": "1fbbcf3833f528b68402e6225a5ab6a8483f375c16965a56bf5fafe15622dc09",
+ "png_sha256": "e1aa56648eb90ad55c79e26d0e15b05cdf1fb6bb99fd5c1805078034c4bd1607"
+}

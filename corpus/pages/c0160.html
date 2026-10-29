@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="it-IT">
+<head>
+<meta charset="utf-8">
+<title>Scontrino fiscale Trattoria Zefiro</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 22px 80px 26px 80px; width: 540px; background: #dcdad4; font-family: "PT Mono", monospace; font-size: 12px; line-height: 1.35; color: #1d1d1d; }
+  .slip { width: 380px; background: #fdfcf8; padding: 22px 20px 22px 20px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.25); }
+  .logo { display: block; margin: 0 auto 6px auto; }
+  .wm { font-size: 17px; font-weight: 700; letter-spacing: 3px; line-height: 1.1; }
+  .sub { font-size: 11px; letter-spacing: 1px; margin-bottom: 8px; }
+  .dash { border-top: 1px dashed #1d1d1d; margin: 8px 0; }
+  .meta { font-size: 11px; line-height: 1.45; }
+  .tt { font-weight: 700; letter-spacing: 2px; margin: 2px 0 0 0; }
+  table { width: 100%; border-collapse: collapse; margin: 4px 0; font-size: 12px; text-align: left; }
+  th { font-weight: 700; font-size: 11px; padding: 3px 3px; border-top: 1px dashed #1d1d1d; border-bottom: 1px dashed #1d1d1d; }
+  th + th, td + td { border-left: 1px dashed #1d1d1d; }
+  td { padding: 3px 4px; border-bottom: 1px dashed #b9b6ae; vertical-align: top; }
+  td.q { width: 34px; text-align: center; }
+  td.p, th.p { text-align: right; width: 88px; white-space: nowrap; }
+  tr.sec td { text-align: center; font-weight: 700; letter-spacing: 3px; font-size: 11px; background: #eeece5; border-left: 0; border-top: 1px dashed #1d1d1d; border-bottom: 1px dashed #1d1d1d; padding: 2px 4px; }
+  tfoot td { border-bottom: 0; padding: 2px 4px; }
+  tfoot tr.tot td { font-weight: 700; font-size: 15px; border-top: 2px solid #1d1d1d; border-bottom: 2px solid #1d1d1d; padding: 5px 4px; }
+  tfoot td.l { text-align: left; border-left: 0; }
+  .pay { font-size: 11px; line-height: 1.5; }
+  .thx { font-weight: 700; letter-spacing: 1px; margin-top: 6px; }
+  .ft { font-size: 10px; line-height: 1.4; margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="slip">
+  <svg class="logo" width="46" height="46" viewBox="0 0 46 46" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="23" cy="23" r="21" fill="none" stroke="#1d1d1d" stroke-width="2.4"/>
+    <path d="M8 17 H28 a5 5 0 1 0 -5 -5" fill="none" stroke="#1d1d1d" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M8 24 H34 a5 5 0 1 1 -5 5" fill="none" stroke="#1d1d1d" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M12 31 H22 a4 4 0 1 1 -4 4" fill="none" stroke="#1d1d1d" stroke-width="2.4" stroke-linecap="round"/>
+  </svg>
+  <div class="wm">ZEFIRO</div>
+  <div class="sub">TRATTORIA &middot; MATERA</div>
+  <div class="meta">Via Lucana 24, 75100 Matera<br>P.IVA 01234567890 &middot; Tel. 0835 555 0129</div>
+  <div class="dash"></div>
+  <div class="tt">SCONTRINO FISCALE</div>
+  <div class="meta">N. 0412 del 15/12/2019 ore 14:07<br>Cassa 2 &middot; Operatore: Simone Serra<br>Tavolo 7 &middot; Cameriera: Valentina Fontana<br>Prenotazione a nome Barbieri</div>
+  <table>
+    <thead><tr><th class="q">Q.tà</th><th>Descrizione</th><th class="p">Importo</th></tr></thead>
+    <tbody>
+      <tr class="sec"><td colspan="3">ANTIPASTI</td></tr>
+      <tr><td class="q">1</td><td>Peperoni cruschi e pecorino</td><td class="p">8,00</td></tr>
+      <tr><td class="q">1</td><td>Tagliere di salumi lucani</td><td class="p">12,00</td></tr>
+      <tr class="sec"><td colspan="3">PRIMI</td></tr>
+      <tr><td class="q">2</td><td>Orecchiette alle cime di rapa</td><td class="p">19,00</td></tr>
+      <tr><td class="q">1</td><td>Cavatelli ai cardoncelli</td><td class="p">11,00</td></tr>
+      <tr class="sec"><td colspan="3">SECONDI</td></tr>
+      <tr><td class="q">1</td><td>Agnello al forno con patate</td><td class="p">16,00</td></tr>
+      <tr class="sec"><td colspan="3">BEVANDE E DOLCI</td></tr>
+      <tr><td class="q">1</td><td>Vino rosso della casa, 0,5 l</td><td class="p">8,00</td></tr>
+      <tr><td class="q">2</td><td>Acqua minerale, 1 l</td><td class="p">4,00</td></tr>
+      <tr><td class="q">2</td><td>Torta di ricotta e pere</td><td class="p">9,00</td></tr>
+      <tr class="sec"><td colspan="3">SERVIZIO</td></tr>
+      <tr><td class="q">4</td><td>Coperto</td><td class="p">8,00</td></tr>
+    </tbody>
+    <tfoot>
+      <tr><td class="l" colspan="2">Imponibile</td><td class="p">86,36</td></tr>
+      <tr><td class="l" colspan="2">IVA 10%</td><td class="p">8,64</td></tr>
+      <tr class="tot"><td class="l" colspan="2">TOTALE EURO</td><td class="p">€ 95,00</td></tr>
+      <tr><td class="l" colspan="2">Contanti</td><td class="p">€ 100,00</td></tr>
+      <tr><td class="l" colspan="2">Resto</td><td class="p">€ 5,00</td></tr>
+    </tfoot>
+  </table>
+  <div class="dash"></div>
+  <div class="thx">GRAZIE E ARRIVEDERCI</div>
+  <div class="ft">Documento valido ai fini fiscali.<br>Conservare fino al 31/12/2019.</div>
+</div>
+</body>
+</html>

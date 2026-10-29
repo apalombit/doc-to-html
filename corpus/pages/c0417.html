@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Section 6.2, Sampling a watershed</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 10px 8px 14px 8px; width: 560px; font-family: Palatino, serif; font-size: 14px; line-height: 1.5; color: #1c1a17; background: #ffffff; }
+  h2 { margin: 6px 6px 10px 6px; font-size: 20px; font-weight: 700; line-height: 1.2; }
+  h2 .no { display: inline-block; width: 42px; color: #8a5a12; }
+  .band { margin: 0 -8px; background: #d9a441; color: #20180a; padding: 6px 14px; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; font-family: Palatino, serif; }
+  .band.pale { background: #f1e2bf; }
+  .pad { padding: 0 6px; }
+  ol { list-style: none; margin: 10px 0 12px 0; padding: 0; }
+  ol > li { margin: 0 0 6px 0; padding-left: 28px; text-indent: -28px; }
+  ol > li > .n { display: inline-block; width: 28px; text-indent: 0; font-weight: 700; color: #8a5a12; }
+  ol ol { margin: 4px 0 4px 0; }
+  ol ol > li { margin: 0 0 3px 0; padding-left: 26px; text-indent: -26px; font-size: 13.5px; }
+  ol ol > li > .n { width: 26px; font-weight: 400; color: #1c1a17; font-style: italic; }
+  p { margin: 0 0 9px 0; }
+  .eg { margin: 10px 0 12px 0; padding: 8px 12px; border-left: 4px solid #d9a441; background: #faf6ec; }
+  .eg b { font-variant: small-caps; letter-spacing: 0.6px; }
+  .formula { text-align: center; font-style: italic; margin: 4px 0 6px 0; font-size: 15px; }
+  .formula span.num { float: right; font-style: normal; }
+  sup { font-size: 9.5px; line-height: 0; }
+  .small { font-size: 12px; color: #4a443a; }
+</style>
+</head>
+<body>
+<h2><span class="no">6.2</span>Sampling a watershed</h2>
+<div class="band">Learning objectives</div>
+<div class="pad">
+<ol>
+  <li><span class="n">1.</span>Describe how a sampling plan is designed for a stream reach.
+    <ol>
+      <li><span class="n">(a)</span>Choose sites above and below each suspected source.</li>
+      <li><span class="n">(b)</span>Fix the sampling interval before the first visit.</li>
+    </ol>
+  </li>
+  <li><span class="n">2.</span>Explain why replicate samples are taken at every site.</li>
+  <li><span class="n">3.</span>Calculate a stream&rsquo;s discharge from its width, depth and velocity.
+    <ol>
+      <li><span class="n">(a)</span>Measure depth at five points across the channel.</li>
+      <li><span class="n">(b)</span>Time a float over a marked 10 m run.</li>
+    </ol>
+  </li>
+</ol>
+
+<p>Discharge is the volume of water passing a cross-section each second. For a channel of roughly rectangular section it is the product of three measurements:</p>
+<div class="formula">Q = w &times; d &times; v <span class="num">(6.1)</span></div>
+
+<div class="eg"><b>Worked example 6.2.</b> On April 17, 2022, Jordan Pruitt&rsquo;s field class measured Ochre Creek near Macon, GA. Jasmine Brennan found w = 4.2 m and Aaliyah Brandt found a mean depth d = 0.35 m; the float time gave v = 0.6 m/s. So Q = 4.2 &times; 0.35 &times; 0.6 = 0.88 m<sup>3</sup>/s.</div>
+</div>
+<div class="band pale">Check your understanding</div>
+<div class="pad small" style="padding-top:8px">A second class at a creek near Sioux Falls, SD, measured w = 3.0 m, d = 0.5 m and v = 0.4 m/s. Is its discharge larger or smaller than Ochre Creek&rsquo;s?</div>
+</body>
+</html>

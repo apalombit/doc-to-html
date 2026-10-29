@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<title>Receita médica</title>
+<style>
+  :root { --acc: #1f6b52; --ink: #1c2a26; --mute: #66756f; }
+  html { background: #fff; }
+  body { margin: 0; padding: 28px 28px 32px; width: 444px; background: #fff; color: var(--ink);
+         font-family: "Avenir Next", "Avenir", "Helvetica Neue", Arial, sans-serif; font-size: 13px; line-height: 1.45; }
+  .top { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid var(--acc); padding-bottom: 10px; }
+  .top .clinic { font-size: 15px; font-weight: 700; color: var(--acc); line-height: 1.15; }
+  .top .clinic span { display: block; font-size: 11px; font-weight: 400; color: var(--mute); margin-top: 2px; }
+  .top .doc { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; text-align: right; color: var(--ink); }
+  .top .doc span { display: block; font-size: 11px; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--mute); }
+  .pairs { display: grid; grid-template-columns: 1fr 1fr; column-gap: 18px; margin-top: 16px; }
+  .pair { padding: 5px 0; border-bottom: 1px solid #e1e8e5; }
+  .pair .k { color: var(--mute); font-size: 11.5px; margin-right: 4px; }
+  .pair .v { font-weight: 600; }
+  h2 { margin: 26px 0 8px; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--acc); }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th { text-align: left; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--acc); background: #eaf4ef; padding: 7px 8px; border: 1px solid #b9d3c8; }
+  td { padding: 9px 8px; border: 1px solid #c9d8d2; vertical-align: top; }
+  td.n { text-align: center; }
+  td b { font-weight: 700; }
+  td small { display: block; color: var(--mute); font-size: 11px; margin-top: 1px; }
+  .sign { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; }
+  .sign .l { font-size: 12px; color: var(--mute); }
+  .sign .l b { color: var(--ink); font-weight: 600; }
+  .sig { text-align: center; width: 170px; }
+  .sig svg { display: block; margin: 0 auto -6px; }
+  .sig .line { border-top: 1px solid var(--ink); padding-top: 4px; font-size: 11.5px; }
+  .sig .line b { display: block; font-weight: 600; }
+  .note { margin-top: 18px; padding: 8px 10px; border-left: 3px solid var(--acc); background: #f3f8f6; font-size: 11.5px; color: #3a4a44; }
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="clinic">Clínica Musgo<span>Rua dos Combatentes, 38, Aveiro</span></div>
+  <div class="doc">Receita médica<span>N.º 21 120 3047 / 2</span></div>
+</div>
+
+<div class="pairs">
+  <div class="pair"><span class="k">Utente</span><span class="v">Marta Pereira Nunes</span></div>
+  <div class="pair"><span class="k">Data de nascimento</span><span class="v">14/05/1982</span></div>
+  <div class="pair"><span class="k">N.º de utente</span><span class="v">214 880 351</span></div>
+  <div class="pair"><span class="k">Data da receita</span><span class="v">03/12/2021</span></div>
+</div>
+
+<h2>Medicamentos prescritos</h2>
+<table>
+  <thead><tr><th style="width:150px;">Medicamento</th><th style="width:56px;">Dose</th><th>Posologia</th><th style="width:38px;">Qt.</th></tr></thead>
+  <tbody>
+    <tr><td><b>Amoxicilina</b><small>cápsulas</small></td><td>500 mg</td><td>1 cápsula de 8 em 8 horas, durante 7 dias</td><td class="n">1</td></tr>
+    <tr><td><b>Ibuprofeno</b><small>comprimidos</small></td><td>400 mg</td><td>1 comprimido após as refeições, se dor (máx. 3 por dia)</td><td class="n">1</td></tr>
+    <tr><td><b>Omeprazol</b><small>cápsulas gastrorresistentes</small></td><td>20 mg</td><td>1 cápsula em jejum, durante 14 dias</td><td class="n">1</td></tr>
+  </tbody>
+</table>
+
+<div class="note">Válida até 02/01/2022. Dispensa na farmácia em Covilhã ou Aveiro.</div>
+
+<div class="sign">
+  <div class="l">Aviado por<br><b>Tiago Rodrigues Lopes</b>, farmacêutico</div>
+  <div class="sig">
+    <svg width="120" height="34" viewBox="0 0 120 34" aria-hidden="true"><path d="M6 24 C 16 4, 24 4, 22 20 C 21 28, 34 10, 42 14 C 50 18, 38 28, 56 18 C 70 10, 78 24, 94 14 C 100 10, 106 12, 112 8" fill="none" stroke="#1f3b66" stroke-width="1.6" stroke-linecap="round"/></svg>
+    <div class="line"><b>Dra. Inês Ferreira da Costa</b>Cédula profissional 41872</div>
+  </div>
+</div>
+</body>
+</html>

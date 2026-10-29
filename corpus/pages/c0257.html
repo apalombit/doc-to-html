@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Condition survey: findings by element</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 8px; width: 600px; font-family: Charter, Georgia, serif; font-size: 13px; line-height: 1.45; color: #151515; background: #ffffff; }
+  .band { background: #161616; color: #ffffff; padding: 18px 22px 20px 22px; }
+  .band .kick { font-family: Charter, Georgia, serif; font-size: 11px; letter-spacing: 2.4px; text-transform: uppercase; color: #ffb400; font-weight: 700; }
+  .band h1 { margin: 6px 0 8px 0; font-size: 36px; line-height: 1.02; font-weight: 700; letter-spacing: -0.5px; }
+  .band h1 em { font-style: normal; color: #ffb400; }
+  .band .meta { font-size: 12px; color: #d4d4d4; }
+  .chips { margin-top: 12px; display: flex; gap: 8px; }
+  .chip { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; }
+  .chip.u { background: #ffb400; color: #161616; }
+  .chip.r { background: #ffffff; color: #161616; }
+  .body { padding: 16px 22px 6px 22px; }
+  .body p { margin: 0 0 10px 0; }
+  sup { font-size: 9px; line-height: 0; font-weight: 700; color: #b87600; }
+  h2 { margin: 14px 0 2px 0; font-size: 17px; font-weight: 700; }
+  .legend { display: flex; gap: 16px; font-size: 11px; margin: 4px 0 8px 0; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+  .legend span.sw { display: inline-block; width: 11px; height: 11px; vertical-align: -1px; margin-right: 5px; }
+  .chart { position: relative; }
+  .row { display: grid; grid-template-columns: 124px 1fr 26px; align-items: center; height: 27px; }
+  .row .lab { font-size: 12.5px; }
+  .row .tot { text-align: right; font-weight: 700; font-size: 13px; }
+  .row svg { display: block; }
+  .axis { display: grid; grid-template-columns: 124px 1fr 26px; margin-top: 2px; }
+  .axis .ticks { position: relative; height: 16px; font-size: 10.5px; color: #555; }
+  .axis .ticks span { position: absolute; top: 0; transform: translateX(-50%); }
+  .axtitle { font-size: 11px; color: #555; text-align: center; margin: 0 0 8px 0; font-style: italic; }
+  .cap { font-size: 12px; border-top: 3px solid #161616; padding-top: 6px; margin-top: 4px; }
+  .cap b { font-weight: 700; }
+  .notes { margin: 12px 22px 14px 22px; padding-top: 8px; border-top: 1px solid #999; font-size: 10.5px; line-height: 1.4; color: #333; }
+  .notes p { margin: 0 0 3px 0; padding-left: 12px; text-indent: -12px; }
+</style>
+</head>
+<body>
+<div class="band">
+  <div class="kick">Willow Court, Kendal &middot; 30 May 2021</div>
+  <h1>36 defects. <em>9 can&rsquo;t wait.</em></h1>
+  <div class="meta">Condition survey by Heron Surveyors for Harry Mensah, lead inspector Yusuf Hughes</div>
+  <div class="chips"><span class="chip u">9 urgent</span><span class="chip r">27 routine</span></div>
+</div>
+
+<div class="body">
+  <p>The roof coverings and the windows and doors account for nearly half of everything we recorded<sup>1</sup>. Five of the nine urgent items are on the roof or in the drains, where water is already finding its way in<sup>2</sup>.</p>
+
+  <h2>Defects recorded by building element</h2>
+  <div class="legend"><span><span class="sw" style="background:#ffb400"></span>Urgent</span><span><span class="sw" style="background:#161616"></span>Routine</span></div>
+
+  <div class="chart">
+    <div class="row"><div class="lab">Roof coverings</div>
+      <svg width="100%" height="18"><rect x="0" y="0" width="100%" height="18" fill="#f4f4f1"/><rect x="0" y="0" width="30%" height="18" fill="#ffb400"/><rect x="30%" y="0" width="40%" height="18" fill="#161616"/></svg><div class="tot">7</div></div>
+    <div class="row"><div class="lab">External walls</div>
+      <svg width="100%" height="18"><rect x="0" y="0" width="100%" height="18" fill="#f4f4f1"/><rect x="0" y="0" width="10%" height="18" fill="#ffb400"/><rect x="10%" y="0" width="30%" height="18" fill="#161616"/></svg><div class="tot">4</div></div>
+    <div class="row"><div class="lab">Windows and doors</div>
+      <svg width="100%" height="18"><rect x="0" y="0" width="100%" height="18" fill="#f4f4f1"/><rect x="0" y="0" width="20%" height="18" fill="#ffb400"/><rect x="20%" y="0" width="70%" height="18" fill="#161616"/></svg><div class="tot">9</div></div>
+    <div class="row"><div class="lab">Drainage</div>
+      <svg width="100%" height="18"><rect x="0" y="0" width="100%" height="18" fill="#f4f4f1"/><rect x="0" y="0" width="20%" height="18" fill="#ffb400"/><rect x="20%" y="0" width="10%" height="18" fill="#161616"/></svg><div class="tot">3</div></div>
+    <div class="row"><div class="lab">Electrics</div>
+      <svg width="100%" height="18"><rect x="0" y="0" width="100%" height="18" fill="#f4f4f1"/><rect x="0" y="0" width="10%" height="18" fill="#ffb400"/><rect x="10%" y="0" width="40%" height="18" fill="#161616"/></svg><div class="tot">5</div></div>
+    <div class="row"><div class="lab">Heating</div>
+      <svg width="100%" height="18"><rect x="0" y="0" width="100%" height="18" fill="#f4f4f1"/><rect x="0" y="0" width="20%" height="18" fill="#161616"/></svg><div class="tot">2</div></div>
+    <div class="row"><div class="lab">Internal finishes</div>
+      <svg width="100%" height="18"><rect x="0" y="0" width="100%" height="18" fill="#f4f4f1"/><rect x="0" y="0" width="60%" height="18" fill="#161616"/></svg><div class="tot">6</div></div>
+    <div class="axis"><div></div><div class="ticks">
+      <span style="left:0%;transform:none">0</span><span style="left:20%">2</span><span style="left:40%">4</span><span style="left:60%">6</span><span style="left:80%">8</span><span style="left:100%;transform:translateX(-100%)">10</span>
+    </div><div></div></div>
+  </div>
+  <div class="axtitle">Number of defects recorded</div>
+
+  <div class="cap"><b>Figure 2.</b> Defects by building element, Willow Court, Kendal, inspected 30 May 2021. Amber is the share needing action within three months<sup>3</sup>.</div>
+</div>
+
+<div class="notes">
+  <p><sup>1</sup> 16 of 36: 7 roof and 9 windows and doors. Each defect is counted once per element, however many rooms it appears in.</p>
+  <p><sup>2</sup> Three on the roof coverings and two in the drainage.</p>
+  <p><sup>3</sup> Urgent means before the end of August 2021; routine means within the next planned maintenance cycle. Checked by Hannah Chowdhury, 14 June 2021.</p>
+</div>
+</body>
+</html>

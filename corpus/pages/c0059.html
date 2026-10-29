@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Member Experience Questionnaire</title>
+<style>
+  :root { --ind: #3b3f9e; --ind-soft: #eceefa; --ink: #20223a; --grey: #6b6f85; }
+  html { background: #fff; }
+  body { margin: 0; width: 800px; background: #fff; color: var(--ink);
+         font-family: "Avenir Next", "Avenir", "Helvetica Neue", sans-serif; font-size: 13px; line-height: 1.45; }
+  .head { background: var(--ind); color: #fff; padding: 22px 36px; display: flex; align-items: center; gap: 16px; }
+  .head .brand { font-size: 17px; font-weight: 700; letter-spacing: 0.01em; line-height: 1.1; }
+  .head .brand small { display: block; font-size: 11px; font-weight: 400; opacity: 0.85; margin-top: 3px; letter-spacing: 0.04em; }
+  .head .title { margin-left: auto; text-align: right; }
+  .head .title h1 { margin: 0; font-size: 21px; font-weight: 600; letter-spacing: -0.005em; }
+  .head .title div { font-size: 11px; opacity: 0.85; margin-top: 2px; }
+  .intro { padding: 16px 36px 4px; color: var(--grey); font-size: 12.5px; }
+  .cols { display: grid; grid-template-columns: 330px 1fr; column-gap: 34px; padding: 10px 36px 22px; }
+  h2 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--ind); margin: 18px 0 8px; padding-bottom: 5px; border-bottom: 2px solid var(--ind); }
+  h2:first-child { margin-top: 6px; }
+  h2 .n { display: inline-block; width: 22px; }
+  .row { display: flex; align-items: baseline; padding: 3px 0; }
+  .row .k { color: var(--grey); }
+  .row .dots { flex: 1; border-bottom: 1px dotted #9a9db5; margin: 0 6px; position: relative; top: -3px; }
+  .row .v { font-weight: 600; }
+  ul.ticks { list-style: none; margin: 0; padding: 0; }
+  ul.ticks li { padding: 3px 0; display: flex; gap: 8px; }
+  ul.ticks .box { width: 16px; font-size: 15px; line-height: 1.2; color: var(--ind); }
+  ul.ticks.two { display: grid; grid-template-columns: 1fr 1fr; column-gap: 10px; }
+  table.rate { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table.rate th, table.rate td { padding: 6px 6px; border-bottom: 1px solid #dcdeef; }
+  table.rate thead th { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--grey); text-align: center; font-weight: 600; border-bottom: 2px solid var(--ind); }
+  table.rate thead th:first-child { text-align: left; }
+  table.rate td.c { text-align: center; width: 54px; color: var(--ind); font-size: 15px; line-height: 1.1; }
+  table.rate tr.sec th { background: var(--ind-soft); color: var(--ind); text-align: left; font-size: 11.5px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 700; padding: 6px 8px; border-bottom: 0; }
+  .comment { border: 1px solid #c4c7e2; border-radius: 6px; padding: 10px 12px; min-height: 40px; background: #fbfbff; font-size: 12.5px; }
+  .foot { background: var(--ind-soft); padding: 14px 36px; display: flex; justify-content: space-between; font-size: 11.5px; color: #3c3f5c; }
+  .foot b { font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="head">
+  <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true">
+    <circle cx="20" cy="20" r="19" fill="#fff" opacity="0.18"/>
+    <path d="M20 6 C 30 12, 31 24, 20 35 C 9 24, 10 12, 20 6 Z" fill="#fff"/>
+    <path d="M20 10 V35" stroke="#3b3f9e" stroke-width="1.6"/>
+    <path d="M20 19 L14 15 M20 25 L26 21 M20 29 L15 26" stroke="#3b3f9e" stroke-width="1.3" fill="none"/>
+  </svg>
+  <div class="brand">Willow Credit Union<small>Member Experience Team</small></div>
+  <div class="title"><h1>Member Experience Questionnaire</h1><div>Annual survey, February 2021</div></div>
+</div>
+<div class="intro">Thank you for taking five minutes to tell us how we are doing. Tick one box per line unless the question says otherwise.</div>
+
+<div class="cols">
+  <div>
+    <h2><span class="n">1</span>About you</h2>
+    <div class="row"><span class="k">Name</span><span class="dots"></span><span class="v">Mei Fitzgerald</span></div>
+    <div class="row"><span class="k">Member since</span><span class="dots"></span><span class="v">2014</span></div>
+    <div class="row"><span class="k">Home branch</span><span class="dots"></span><span class="v">Tulsa, OK</span></div>
+    <div class="row"><span class="k">Date completed</span><span class="dots"></span><span class="v">02/09/2021</span></div>
+    <div class="row"><span class="k">Preferred contact</span><span class="dots"></span><span class="v">Email</span></div>
+
+    <h2><span class="n">2</span>Which services do you use?</h2>
+    <ul class="ticks two">
+      <li><span class="box">☑</span>Checking</li>
+      <li><span class="box">☑</span>Savings</li>
+      <li><span class="box">☐</span>Auto loan</li>
+      <li><span class="box">☐</span>Mortgage</li>
+      <li><span class="box">☑</span>Mobile app</li>
+      <li><span class="box">☑</span>ATM network</li>
+      <li><span class="box">☐</span>Business account</li>
+      <li><span class="box">☐</span>Safe deposit box</li>
+    </ul>
+
+    <h2><span class="n">3</span>How often do you visit a branch?</h2>
+    <ul class="ticks">
+      <li><span class="box">☐</span>Every week</li>
+      <li><span class="box">☑</span>About once a month</li>
+      <li><span class="box">☐</span>A few times a year</li>
+      <li><span class="box">☐</span>Never</li>
+    </ul>
+
+    <h2><span class="n">4</span>Would you recommend Willow?</h2>
+    <ul class="ticks">
+      <li><span class="box">☑</span>Yes, to friends and family</li>
+      <li><span class="box">☐</span>Maybe, with changes</li>
+      <li><span class="box">☐</span>No</li>
+    </ul>
+  </div>
+
+  <div>
+    <h2><span class="n">5</span>How far do you agree?</h2>
+    <table class="rate">
+      <thead><tr><th>Statement</th><th>Agree</th><th>Neutral</th><th>Disagree</th></tr></thead>
+      <tbody>
+        <tr class="sec"><th colspan="4">Branch service</th></tr>
+        <tr><td>Staff were friendly and helpful</td><td class="c">☑</td><td class="c">☐</td><td class="c">☐</td></tr>
+        <tr><td>Waiting time was reasonable</td><td class="c">☐</td><td class="c">☑</td><td class="c">☐</td></tr>
+        <tr><td>Opening hours suit me</td><td class="c">☐</td><td class="c">☐</td><td class="c">☑</td></tr>
+        <tr class="sec"><th colspan="4">Digital banking</th></tr>
+        <tr><td>The app is easy to use</td><td class="c">☑</td><td class="c">☐</td><td class="c">☐</td></tr>
+        <tr><td>I can find what I need online</td><td class="c">☑</td><td class="c">☐</td><td class="c">☐</td></tr>
+        <tr><td>Transfers arrive when promised</td><td class="c">☐</td><td class="c">☑</td><td class="c">☐</td></tr>
+        <tr class="sec"><th colspan="4">Fees and rates</th></tr>
+        <tr><td>Fees are clear to me</td><td class="c">☑</td><td class="c">☐</td><td class="c">☐</td></tr>
+        <tr><td>Rates are competitive</td><td class="c">☐</td><td class="c">☑</td><td class="c">☐</td></tr>
+      </tbody>
+    </table>
+
+    <h2><span class="n">6</span>Anything else?</h2>
+    <div class="comment">When I visit family in Peoria, IL, the branch there closes at noon on Saturdays. Later hours would help.</div>
+  </div>
+</div>
+
+<div class="foot">
+  <span>Return to <b>Tyler Mahoney</b>, Member Experience Team, or drop in any branch box.</span>
+  <span>Reviewed by <b>Raj Gutierrez</b></span>
+</div>
+</body>
+</html>

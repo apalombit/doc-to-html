@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Project Slate: status report, week 22</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; padding: 14px; width: 920px; background: #f1f5f9; font-family: "Open Sans", sans-serif; font-size: 11.5px; line-height: 1.4; color: #334155; }
+  .flex { display: flex; }
+  .grid { display: grid; }
+  .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .gap-2 { gap: 8px; }
+  .gap-3 { gap: 12px; }
+  .gap-6 { gap: 24px; }
+  .items-center { align-items: center; }
+  .items-start { align-items: flex-start; }
+  .justify-between { justify-content: space-between; }
+  .p-2 { padding: 8px; }
+  .p-3 { padding: 12px; }
+  .p-4 { padding: 16px; }
+  .px-2 { padding-left: 8px; padding-right: 8px; }
+  .py-1 { padding-top: 2px; padding-bottom: 2px; }
+  .mb-1 { margin-bottom: 4px; }
+  .mb-2 { margin-bottom: 8px; }
+  .mb-3 { margin-bottom: 12px; }
+  .mt-2 { margin-top: 8px; }
+  .m-0 { margin: 0; }
+  .pl-4 { padding-left: 16px; }
+  .text-xs { font-size: 10px; }
+  .text-sm { font-size: 12px; }
+  .text-base { font-size: 13px; }
+  .text-xl { font-size: 22px; line-height: 1.2; }
+  .font-semibold { font-weight: 600; }
+  .font-bold { font-weight: 700; }
+  .uppercase { text-transform: uppercase; }
+  .tracking-wide { letter-spacing: 0.8px; }
+  .leading-snug { line-height: 1.35; }
+  .text-right { text-align: right; }
+  .text-slate-500 { color: #64748b; }
+  .text-slate-700 { color: #334155; }
+  .text-slate-900 { color: #0f172a; }
+  .text-amber-700 { color: #b45309; }
+  .text-green-700 { color: #15803d; }
+  .text-red-700 { color: #b91c1c; }
+  .bg-white { background: #ffffff; }
+  .bg-slate-50 { background: #f8fafc; }
+  .bg-slate-800 { background: #1e293b; }
+  .bg-amber-100 { background: #fef3c7; }
+  .bg-green-100 { background: #dcfce7; }
+  .bg-red-100 { background: #fee2e2; }
+  .text-white { color: #ffffff; }
+  .border { border: 1px solid #cbd5e1; }
+  .border-b { border-bottom: 1px solid #e2e8f0; }
+  .border-t { border-top: 1px solid #e2e8f0; }
+  .rounded { border-radius: 4px; }
+  .rounded-lg { border-radius: 8px; }
+  .rounded-full { border-radius: 999px; }
+  .list-disc { list-style-type: disc; }
+  .w-full { width: 100%; }
+  .span-2 { grid-column: span 2; }
+  .kv { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px dotted #cbd5e1; }
+  .kv:last-of-type { border-bottom: 0; }
+  ul { margin: 0; }
+  li { margin-bottom: 2px; }
+</style>
+</head>
+<body>
+<div class="flex justify-between items-center bg-slate-800 text-white p-4 rounded-lg mb-3">
+  <div>
+    <div class="text-xs uppercase tracking-wide mb-1" style="color:#94a3b8;">Umber Logistics &middot; Programme office</div>
+    <div class="text-xl font-bold">Project Slate: warehouse system rollout</div>
+    <div class="text-sm mt-2" style="color:#cbd5e1;">Status report, week 22 &middot; period 18 to 29 May 2020</div>
+  </div>
+  <div class="flex items-center gap-6">
+    <div class="text-sm leading-snug" style="width:230px;">
+      <div class="kv" style="border-color:#475569;"><span>Report date:</span><span class="font-semibold">29/05/2020</span></div>
+      <div class="kv" style="border-color:#475569;"><span>Prepared by:</span><span class="font-semibold">Finlay Fairclough</span></div>
+      <div class="kv" style="border-color:#475569;"><span>Next report:</span><span class="font-semibold">12/06/2020</span></div>
+      <div class="kv" style="border-color:#475569;"><span>Overall:</span><span class="px-2 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-bold uppercase">Amber</span></div>
+    </div>
+    <div class="bg-white p-2 rounded"><svg width="75" height="75" viewBox="0 0 75 75" xmlns="http://www.w3.org/2000/svg" fill="#0f172a" shape-rendering="crispEdges"><rect width="75" height="75" fill="#ffffff"/><rect x="0" y="0" width="3" height="3"/><rect x="3" y="0" width="3" height="3"/><rect x="6" y="0" width="3" height="3"/><rect x="9" y="0" width="3" height="3"/><rect x="12" y="0" width="3" height="3"/><rect x="15" y="0" width="3" height="3"/><rect x="18" y="0" width="3" height="3"/><rect x="24" y="0" width="3" height="3"/><rect x="27" y="0" width="3" height="3"/><rect x="30" y="0" width="3" height="3"/><rect x="33" y="0" width="3" height="3"/><rect x="36" y="0" width="3" height="3"/><rect x="42" y="0" width="3" height="3"/><rect x="45" y="0" width="3" height="3"/><rect x="54" y="0" width="3" height="3"/><rect x="57" y="0" width="3" height="3"/><rect x="60" y="0" width="3" height="3"/><rect x="63" y="0" width="3" height="3"/><rect x="66" y="0" width="3" height="3"/><rect x="69" y="0" width="3" height="3"/><rect x="72" y="0" width="3" height="3"/><rect x="0" y="3" width="3" height="3"/><rect x="18" y="3" width="3" height="3"/><rect x="24" y="3" width="3" height="3"/><rect x="27" y="3" width="3" height="3"/><rect x="30" y="3" width="3" height="3"/><rect x="36" y="3" width="3" height="3"/><rect x="39" y="3" width="3" height="3"/><rect x="45" y="3" width="3" height="3"/><rect x="48" y="3" width="3" height="3"/><rect x="54" y="3" width="3" height="3"/><rect x="72" y="3" width="3" height="3"/><rect x="0" y="6" width="3" height="3"/><rect x="6" y="6" width="3" height="3"/><rect x="9" y="6" width="3" height="3"/><rect x="12" y="6" width="3" height="3"/><rect x="18" y="6" width="3" height="3"/><rect x="33" y="6" width="3" height="3"/><rect x="45" y="6" width="3" height="3"/><rect x="54" y="6" width="3" height="3"/><rect x="60" y="6" width="3" height="3"/><rect x="63" y="6" width="3" height="3"/><rect x="66" y="6" width="3" height="3"/><rect x="72" y="6" width="3" height="3"/><rect x="0" y="9" width="3" height="3"/><rect x="6" y="9" width="3" height="3"/><rect x="9" y="9" width="3" height="3"/><rect x="12" y="9" width="3" height="3"/><rect x="18" y="9" width="3" height="3"/><rect x="27" y="9" width="3" height="3"/><rect x="30" y="9" width="3" height="3"/><rect x="33" y="9" width="3" height="3"/><rect x="39" y="9" width="3" height="3"/><rect x="42" y="9" width="3" height="3"/><rect x="54" y="9" width="3" height="3"/><rect x="60" y="9" width="3" height="3"/><rect x="63" y="9" width="3" height="3"/><rect x="66" y="9" width="3" height="3"/><rect x="72" y="9" width="3" height="3"/><rect x="0" y="12" width="3" height="3"/><rect x="6" y="12" width="3" height="3"/><rect x="9" y="12" width="3" height="3"/><rect x="12" y="12" width="3" height="3"/><rect x="18" y="12" width="3" height="3"/><rect x="24" y="12" width="3" height="3"/><rect x="45" y="12" width="3" height="3"/><rect x="54" y="12" width="3" height="3"/><rect x="60" y="12" width="3" height="3"/><rect x="63" y="12" width="3" height="3"/><rect x="66" y="12" width="3" height="3"/><rect x="72" y="12" width="3" height="3"/><rect x="0" y="15" width="3" height="3"/><rect x="18" y="15" width="3" height="3"/><rect x="24" y="15" width="3" height="3"/><rect x="27" y="15" width="3" height="3"/><rect x="36" y="15" width="3" height="3"/><rect x="39" y="15" width="3" height="3"/><rect x="42" y="15" width="3" height="3"/><rect x="45" y="15" width="3" height="3"/><rect x="48" y="15" width="3" height="3"/><rect x="54" y="15" width="3" height="3"/><rect x="72" y="15" width="3" height="3"/><rect x="0" y="18" width="3" height="3"/><rect x="3" y="18" width="3" height="3"/><rect x="6" y="18" width="3" height="3"/><rect x="9" y="18" width="3" height="3"/><rect x="12" y="18" width="3" height="3"/><rect x="15" y="18" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/><rect x="24" y="18" width="3" height="3"/><rect x="30" y="18" width="3" height="3"/><rect x="36" y="18" width="3" height="3"/><rect x="42" y="18" width="3" height="3"/><rect x="48" y="18" width="3" height="3"/><rect x="54" y="18" width="3" height="3"/><rect x="57" y="18" width="3" height="3"/><rect x="60" y="18" width="3" height="3"/><rect x="63" y="18" width="3" height="3"/><rect x="66" y="18" width="3" height="3"/><rect x="69" y="18" width="3" height="3"/><rect x="72" y="18" width="3" height="3"/><rect x="30" y="21" width="3" height="3"/><rect x="42" y="21" width="3" height="3"/><rect x="45" y="21" width="3" height="3"/><rect x="48" y="21" width="3" height="3"/><rect x="0" y="24" width="3" height="3"/><rect x="15" y="24" width="3" height="3"/><rect x="18" y="24" width="3" height="3"/><rect x="24" y="24" width="3" height="3"/><rect x="33" y="24" width="3" height="3"/><rect x="36" y="24" width="3" height="3"/><rect x="45" y="24" width="3" height="3"/><rect x="48" y="24" width="3" height="3"/><rect x="51" y="24" width="3" height="3"/><rect x="60" y="24" width="3" height="3"/><rect x="72" y="24" width="3" height="3"/><rect x="3" y="27" width="3" height="3"/><rect x="6" y="27" width="3" height="3"/><rect x="21" y="27" width="3" height="3"/><rect x="30" y="27" width="3" height="3"/><rect x="33" y="27" width="3" height="3"/><rect x="36" y="27" width="3" height="3"/><rect x="39" y="27" width="3" height="3"/><rect x="45" y="27" width="3" height="3"/><rect x="48" y="27" width="3" height="3"/><rect x="51" y="27" width="3" height="3"/><rect x="57" y="27" width="3" height="3"/><rect x="60" y="27" width="3" height="3"/><rect x="69" y="27" width="3" height="3"/><rect x="9" y="30" width="3" height="3"/><rect x="12" y="30" width="3" height="3"/><rect x="15" y="30" width="3" height="3"/><rect x="18" y="30" width="3" height="3"/><rect x="24" y="30" width="3" height="3"/><rect x="27" y="30" width="3" height="3"/><rect x="36" y="30" width="3" height="3"/><rect x="48" y="30" width="3" height="3"/><rect x="54" y="30" width="3" height="3"/><rect x="57" y="30" width="3" height="3"/><rect x="0" y="33" width="3" height="3"/><rect x="15" y="33" width="3" height="3"/><rect x="21" y="33" width="3" height="3"/><rect x="36" y="33" width="3" height="3"/><rect x="48" y="33" width="3" height="3"/><rect x="51" y="33" width="3" height="3"/><rect x="54" y="33" width="3" height="3"/><rect x="57" y="33" width="3" height="3"/><rect x="60" y="33" width="3" height="3"/><rect x="63" y="33" width="3" height="3"/><rect x="0" y="36" width="3" height="3"/><rect x="9" y="36" width="3" height="3"/><rect x="18" y="36" width="3" height="3"/><rect x="24" y="36" width="3" height="3"/><rect x="36" y="36" width="3" height="3"/><rect x="39" y="36" width="3" height="3"/><rect x="45" y="36" width="3" height="3"/><rect x="48" y="36" width="3" height="3"/><rect x="51" y="36" width="3" height="3"/><rect x="57" y="36" width="3" height="3"/><rect x="63" y="36" width="3" height="3"/><rect x="66" y="36" width="3" height="3"/><rect x="69" y="36" width="3" height="3"/><rect x="3" y="39" width="3" height="3"/><rect x="15" y="39" width="3" height="3"/><rect x="21" y="39" width="3" height="3"/><rect x="27" y="39" width="3" height="3"/><rect x="30" y="39" width="3" height="3"/><rect x="33" y="39" width="3" height="3"/><rect x="42" y="39" width="3" height="3"/><rect x="45" y="39" width="3" height="3"/><rect x="57" y="39" width="3" height="3"/><rect x="60" y="39" width="3" height="3"/><rect x="66" y="39" width="3" height="3"/><rect x="69" y="39" width="3" height="3"/><rect x="6" y="42" width="3" height="3"/><rect x="12" y="42" width="3" height="3"/><rect x="18" y="42" width="3" height="3"/><rect x="21" y="42" width="3" height="3"/><rect x="30" y="42" width="3" height="3"/><rect x="33" y="42" width="3" height="3"/><rect x="39" y="42" width="3" height="3"/><rect x="42" y="42" width="3" height="3"/><rect x="45" y="42" width="3" height="3"/><rect x="48" y="42" width="3" height="3"/><rect x="51" y="42" width="3" height="3"/><rect x="54" y="42" width="3" height="3"/><rect x="57" y="42" width="3" height="3"/><rect x="63" y="42" width="3" height="3"/><rect x="69" y="42" width="3" height="3"/><rect x="72" y="42" width="3" height="3"/><rect x="0" y="45" width="3" height="3"/><rect x="3" y="45" width="3" height="3"/><rect x="6" y="45" width="3" height="3"/><rect x="15" y="45" width="3" height="3"/><rect x="24" y="45" width="3" height="3"/><rect x="30" y="45" width="3" height="3"/><rect x="39" y="45" width="3" height="3"/><rect x="51" y="45" width="3" height="3"/><rect x="63" y="45" width="3" height="3"/><rect x="66" y="45" width="3" height="3"/><rect x="69" y="45" width="3" height="3"/><rect x="72" y="45" width="3" height="3"/><rect x="0" y="48" width="3" height="3"/><rect x="6" y="48" width="3" height="3"/><rect x="9" y="48" width="3" height="3"/><rect x="12" y="48" width="3" height="3"/><rect x="18" y="48" width="3" height="3"/><rect x="24" y="48" width="3" height="3"/><rect x="27" y="48" width="3" height="3"/><rect x="30" y="48" width="3" height="3"/><rect x="33" y="48" width="3" height="3"/><rect x="36" y="48" width="3" height="3"/><rect x="39" y="48" width="3" height="3"/><rect x="42" y="48" width="3" height="3"/><rect x="54" y="48" width="3" height="3"/><rect x="60" y="48" width="3" height="3"/><rect x="63" y="48" width="3" height="3"/><rect x="66" y="48" width="3" height="3"/><rect x="69" y="48" width="3" height="3"/><rect x="72" y="48" width="3" height="3"/><rect x="24" y="51" width="3" height="3"/><rect x="27" y="51" width="3" height="3"/><rect x="30" y="51" width="3" height="3"/><rect x="51" y="51" width="3" height="3"/><rect x="54" y="51" width="3" height="3"/><rect x="60" y="51" width="3" height="3"/><rect x="69" y="51" width="3" height="3"/><rect x="0" y="54" width="3" height="3"/><rect x="3" y="54" width="3" height="3"/><rect x="6" y="54" width="3" height="3"/><rect x="9" y="54" width="3" height="3"/><rect x="12" y="54" width="3" height="3"/><rect x="15" y="54" width="3" height="3"/><rect x="18" y="54" width="3" height="3"/><rect x="42" y="54" width="3" height="3"/><rect x="45" y="54" width="3" height="3"/><rect x="48" y="54" width="3" height="3"/><rect x="51" y="54" width="3" height="3"/><rect x="54" y="54" width="3" height="3"/><rect x="0" y="57" width="3" height="3"/><rect x="18" y="57" width="3" height="3"/><rect x="24" y="57" width="3" height="3"/><rect x="27" y="57" width="3" height="3"/><rect x="30" y="57" width="3" height="3"/><rect x="36" y="57" width="3" height="3"/><rect x="48" y="57" width="3" height="3"/><rect x="51" y="57" width="3" height="3"/><rect x="66" y="57" width="3" height="3"/><rect x="69" y="57" width="3" height="3"/><rect x="72" y="57" width="3" height="3"/><rect x="0" y="60" width="3" height="3"/><rect x="6" y="60" width="3" height="3"/><rect x="9" y="60" width="3" height="3"/><rect x="12" y="60" width="3" height="3"/><rect x="18" y="60" width="3" height="3"/><rect x="27" y="60" width="3" height="3"/><rect x="33" y="60" width="3" height="3"/><rect x="36" y="60" width="3" height="3"/><rect x="39" y="60" width="3" height="3"/><rect x="45" y="60" width="3" height="3"/><rect x="54" y="60" width="3" height="3"/><rect x="57" y="60" width="3" height="3"/><rect x="66" y="60" width="3" height="3"/><rect x="69" y="60" width="3" height="3"/><rect x="72" y="60" width="3" height="3"/><rect x="0" y="63" width="3" height="3"/><rect x="6" y="63" width="3" height="3"/><rect x="9" y="63" width="3" height="3"/><rect x="12" y="63" width="3" height="3"/><rect x="18" y="63" width="3" height="3"/><rect x="33" y="63" width="3" height="3"/><rect x="42" y="63" width="3" height="3"/><rect x="45" y="63" width="3" height="3"/><rect x="51" y="63" width="3" height="3"/><rect x="54" y="63" width="3" height="3"/><rect x="57" y="63" width="3" height="3"/><rect x="60" y="63" width="3" height="3"/><rect x="63" y="63" width="3" height="3"/><rect x="69" y="63" width="3" height="3"/><rect x="0" y="66" width="3" height="3"/><rect x="6" y="66" width="3" height="3"/><rect x="9" y="66" width="3" height="3"/><rect x="12" y="66" width="3" height="3"/><rect x="18" y="66" width="3" height="3"/><rect x="30" y="66" width="3" height="3"/><rect x="33" y="66" width="3" height="3"/><rect x="36" y="66" width="3" height="3"/><rect x="39" y="66" width="3" height="3"/><rect x="42" y="66" width="3" height="3"/><rect x="48" y="66" width="3" height="3"/><rect x="54" y="66" width="3" height="3"/><rect x="57" y="66" width="3" height="3"/><rect x="63" y="66" width="3" height="3"/><rect x="66" y="66" width="3" height="3"/><rect x="0" y="69" width="3" height="3"/><rect x="18" y="69" width="3" height="3"/><rect x="24" y="69" width="3" height="3"/><rect x="33" y="69" width="3" height="3"/><rect x="36" y="69" width="3" height="3"/><rect x="42" y="69" width="3" height="3"/><rect x="45" y="69" width="3" height="3"/><rect x="48" y="69" width="3" height="3"/><rect x="51" y="69" width="3" height="3"/><rect x="60" y="69" width="3" height="3"/><rect x="66" y="69" width="3" height="3"/><rect x="72" y="69" width="3" height="3"/><rect x="0" y="72" width="3" height="3"/><rect x="3" y="72" width="3" height="3"/><rect x="6" y="72" width="3" height="3"/><rect x="9" y="72" width="3" height="3"/><rect x="12" y="72" width="3" height="3"/><rect x="15" y="72" width="3" height="3"/><rect x="18" y="72" width="3" height="3"/><rect x="24" y="72" width="3" height="3"/><rect x="27" y="72" width="3" height="3"/><rect x="30" y="72" width="3" height="3"/><rect x="33" y="72" width="3" height="3"/><rect x="36" y="72" width="3" height="3"/><rect x="39" y="72" width="3" height="3"/><rect x="42" y="72" width="3" height="3"/><rect x="45" y="72" width="3" height="3"/><rect x="57" y="72" width="3" height="3"/><rect x="60" y="72" width="3" height="3"/><rect x="66" y="72" width="3" height="3"/><rect x="69" y="72" width="3" height="3"/><rect x="72" y="72" width="3" height="3"/></svg></div>
+  </div>
+</div>
+
+<div class="grid grid-cols-3 gap-3">
+  <div class="bg-white border rounded-lg p-3">
+    <div class="text-xs uppercase tracking-wide text-slate-500 mb-2 border-b">Summary</div>
+    <p class="m-0 mb-2 leading-snug">Stockport remains on track for go-live. Norwich is a week behind on pick-path design because the racking survey was delayed. No change to the approved budget.</p>
+    <div class="kv"><span>Schedule:</span><span class="font-semibold text-amber-700">Amber</span></div>
+    <div class="kv"><span>Budget:</span><span class="font-semibold text-green-700">Green</span></div>
+    <div class="kv"><span>Scope:</span><span class="font-semibold text-green-700">Green</span></div>
+    <div class="kv"><span>Resources:</span><span class="font-semibold text-amber-700">Amber</span></div>
+  </div>
+
+  <div class="bg-white border rounded-lg p-3">
+    <div class="text-xs uppercase tracking-wide text-slate-500 mb-2 border-b">Milestones</div>
+    <ul class="list-disc pl-4 leading-snug">
+      <li>M3, Stockport go-live: 15/06/2020, on track</li>
+      <li>M4, Norwich pick-path design signed off: 05/06/2020, at risk</li>
+      <li>M5, handheld scanners delivered to both sites: 22/06/2020, on track</li>
+      <li>M6, Norwich go-live: 20/07/2020, not yet baselined</li>
+      <li>M7, old system switched off: 31/08/2020</li>
+    </ul>
+  </div>
+
+  <div class="bg-white border rounded-lg p-3">
+    <div class="text-xs uppercase tracking-wide text-slate-500 mb-2 border-b">Budget</div>
+    <div class="kv"><span>Approved:</span><span class="font-semibold">£412,000</span></div>
+    <div class="kv"><span>Spent to date:</span><span class="font-semibold">£268,350</span></div>
+    <div class="kv"><span>Committed:</span><span class="font-semibold">£97,200</span></div>
+    <div class="kv"><span>Forecast at completion:</span><span class="font-semibold">£405,900</span></div>
+    <div class="kv"><span>Variance:</span><span class="font-semibold text-green-700">£6,100 under</span></div>
+    <p class="m-0 mt-2 text-xs text-slate-500 leading-snug">Spend is 65% of budget at 71% of the timeline. Scanner invoices land in June.</p>
+  </div>
+
+  <div class="bg-white border rounded-lg p-3">
+    <div class="text-xs uppercase tracking-wide text-slate-500 mb-2 border-b">Stockport site</div>
+    <div class="kv"><span>Site lead:</span><span class="font-semibold">Yusuf MacLeod</span></div>
+    <div class="kv"><span>Staff trained:</span><span class="font-semibold">38 of 52</span></div>
+    <div class="kv"><span>Open defects:</span><span class="font-semibold">14 (3 high)</span></div>
+    <div class="kv"><span>Dress rehearsal:</span><span class="font-semibold">08/06/2020</span></div>
+    <ul class="list-disc pl-4 mt-2 leading-snug">
+      <li>Two night-shift groups still to be trained</li>
+      <li>Label printer driver fix due Tuesday</li>
+    </ul>
+  </div>
+
+  <div class="bg-white border rounded-lg p-3">
+    <div class="text-xs uppercase tracking-wide text-slate-500 mb-2 border-b">Norwich site</div>
+    <div class="kv"><span>Site lead:</span><span class="font-semibold">Bethan Odell</span></div>
+    <div class="kv"><span>Staff trained:</span><span class="font-semibold">11 of 40</span></div>
+    <div class="kv"><span>Open defects:</span><span class="font-semibold">9 (1 high)</span></div>
+    <div class="kv"><span>Racking survey:</span><span class="font-semibold text-red-700">Overdue</span></div>
+    <ul class="list-disc pl-4 mt-2 leading-snug">
+      <li>Survey rebooked for 02/06/2020</li>
+      <li>Training starts once the layout is fixed</li>
+    </ul>
+  </div>
+
+  <div class="bg-white border rounded-lg p-3">
+    <div class="text-xs uppercase tracking-wide text-slate-500 mb-2 border-b">Risks and decisions</div>
+    <ul class="list-disc pl-4 leading-snug">
+      <li><span class="font-semibold text-red-700">R4:</span> Norwich survey slips again, pushing M6 past July</li>
+      <li><span class="font-semibold text-amber-700">R7:</span> Scanner supplier lead time has risen to 14 days</li>
+      <li><span class="font-semibold text-amber-700">R9:</span> Holiday cover in the Stockport super-user group</li>
+    </ul>
+    <p class="m-0 mt-2 text-sm leading-snug"><span class="font-semibold text-slate-900">Decision needed by 03/06/2020:</span> approve two temporary contractors for Norwich.</p>
+  </div>
+
+  <div class="bg-white border rounded-lg p-3">
+    <div class="text-xs uppercase tracking-wide text-slate-500 mb-2 border-b">Actions from last report</div>
+    <ul class="list-disc pl-4 leading-snug">
+      <li>A12, Finlay Fairclough: confirm contractor day rates with procurement. <span class="font-semibold text-green-700">Done</span></li>
+      <li>A13, Yusuf MacLeod: book the night-shift training slots. <span class="font-semibold text-amber-700">In progress</span></li>
+      <li>A14, Bethan Odell: chase the racking contractor for a survey date. <span class="font-semibold text-red-700">Overdue</span></li>
+      <li>A15, Finlay Fairclough: re-baseline M6 once the survey is done. <span class="font-semibold">Open</span></li>
+    </ul>
+  </div>
+
+  <div class="bg-white border rounded-lg p-3">
+    <div class="text-xs uppercase tracking-wide text-slate-500 mb-2 border-b">Change requests</div>
+    <div class="kv"><span>CR-11, pallet label printing:</span><span class="font-semibold text-green-700">Approved</span></div>
+    <div class="kv"><span>CR-12, second scanner per aisle:</span><span class="font-semibold text-amber-700">Pending</span></div>
+    <div class="kv"><span>CR-13, weekend support rota:</span><span class="font-semibold text-red-700">Rejected</span></div>
+    <div class="kv"><span>CR-14, returns bay screen:</span><span class="font-semibold text-amber-700">Pending</span></div>
+    <p class="m-0 mt-2 text-xs text-slate-500 leading-snug">Net effect of approved changes on budget: £3,400, absorbed in contingency.</p>
+  </div>
+
+  <div class="bg-white border rounded-lg p-3">
+    <div class="text-xs uppercase tracking-wide text-slate-500 mb-2 border-b">Next two weeks</div>
+    <ul class="list-disc pl-4 leading-snug">
+      <li>Norwich racking survey on 02/06/2020</li>
+      <li>Stockport dress rehearsal on 08/06/2020</li>
+      <li>Steering group with the sponsor on 11/06/2020</li>
+      <li>Defect triage every Tuesday and Thursday at 10:00</li>
+      <li>Hypercare rota for Stockport agreed by Friday</li>
+    </ul>
+  </div>
+</div>
+
+<div class="flex justify-between items-center text-xs text-slate-500 mt-2 px-2">
+  <span>Live dashboard: slate.umber-logistics.example.com &middot; scan the code for the current figures</span>
+  <span>Umber Logistics, Stockport and Norwich &middot; internal</span>
+</div>
+</body>
+</html>

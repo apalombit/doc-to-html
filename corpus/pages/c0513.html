@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Equipment lease application, section 4</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 14px; font-family: "Avenir Next", Avenir, sans-serif; color: #1f2a28; background: #fff; font-size: 13px; line-height: 1.4; }
+  .panel { border: 1px solid #c9d6d1; border-radius: 8px; overflow: hidden; }
+  .bar { background: #24574a; color: #fff; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; }
+  .bar .k { font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase; opacity: .85; }
+  .bar h1 { margin: 1px 0 0; font-size: 18px; font-weight: 600; }
+  .chip { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; line-height: 1.5; }
+  .chip.draft { background: #e8f3ef; color: #24574a; }
+  .chip.paid { background: #d6efe2; color: #1b6b41; }
+  .chip.due { background: #fde9c4; color: #8a5a00; }
+  .chip.sched { background: #e6eaf2; color: #44506b; }
+  .grid { display: grid; grid-template-columns: 1fr 1.18fr; gap: 22px; padding: 18px; }
+  h2 { margin: 0 0 10px; font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; color: #24574a; font-weight: 700; }
+  .f { margin-bottom: 10px; }
+  .f .l { font-size: 10.5px; color: #5c6b67; margin-bottom: 2px; }
+  .f .v { border: 1px solid #aebdb8; border-radius: 4px; background: #f8fbfa; padding: 5px 8px; min-height: 28px; font-size: 13px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th, td { border: 1px solid #cfdad6; padding: 6px 7px; text-align: left; }
+  th { background: #eef4f2; font-size: 10.5px; text-transform: uppercase; letter-spacing: .6px; color: #3d4f4a; }
+  td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  tr.tot td { font-weight: 700; background: #f3f7f5; }
+  .note { margin-top: 10px; font-size: 11px; color: #5c6b67; }
+  .foot { background: #eef4f2; border-top: 1px solid #c9d6d1; padding: 9px 18px; display: flex; justify-content: space-between; font-size: 11px; color: #3d4f4a; }
+  .foot b { font-weight: 700; color: #24574a; }
+</style>
+</head>
+<body>
+<div class="panel">
+  <div class="bar">
+    <div>
+      <div class="k">Juniper Equipment Leasing · Application 4 of 6</div>
+      <h1>Payment and billing</h1>
+    </div>
+    <span class="chip draft">Draft saved Dec 9, 2023</span>
+  </div>
+
+  <div class="grid">
+    <div>
+      <h2>Billing details</h2>
+      <div class="f"><div class="l">Account holder</div><div class="v">DeShawn Lindqvist</div></div>
+      <div class="f"><div class="l">Company</div><div class="v">Tamarisk Milling Co.</div></div>
+      <div class="f"><div class="l">Billing address</div><div class="v">2140 Pio Nono Avenue, Macon, GA 31204</div></div>
+      <div class="row2">
+        <div class="f"><div class="l">Billing contact</div><div class="v">Diego Pruitt</div></div>
+        <div class="f"><div class="l">Phone</div><div class="v">(478) 555-0191</div></div>
+      </div>
+      <div class="f"><div class="l">Equipment delivered to</div><div class="v">Duluth, MN yard, bay 3</div></div>
+      <div class="row2">
+        <div class="f"><div class="l">PO number</div><div class="v">PO-20931</div></div>
+        <div class="f"><div class="l">Preferred day</div><div class="v">9th of month</div></div>
+      </div>
+    </div>
+
+    <div>
+      <h2>Payment schedule</h2>
+      <table>
+        <thead>
+          <tr><th>Payment</th><th>Due date</th><th class="n">Amount</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Deposit</td><td>Dec 9, 2023</td><td class="n">$2,400.00</td><td><span class="chip paid">Paid</span></td></tr>
+          <tr><td>Instalment 1</td><td>Jan 9, 2024</td><td class="n">$1,185.50</td><td><span class="chip due">Due</span></td></tr>
+          <tr><td>Instalment 2</td><td>Feb 9, 2024</td><td class="n">$1,185.50</td><td><span class="chip sched">Scheduled</span></td></tr>
+          <tr><td>Instalment 3</td><td>Mar 9, 2024</td><td class="n">$1,185.50</td><td><span class="chip sched">Scheduled</span></td></tr>
+          <tr><td>Instalment 4</td><td>Apr 9, 2024</td><td class="n">$1,185.50</td><td><span class="chip sched">Scheduled</span></td></tr>
+          <tr class="tot"><td colspan="2">Total financed</td><td class="n">$7,142.00</td><td></td></tr>
+        </tbody>
+      </table>
+      <p class="note">Payments are drawn by ACH on the due date. A late fee of $35.00 applies after 10 days.</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>Reviewed by <b>Raj Washington</b>, credit officer</span>
+    <span>Office use only · Ref LJ-7741</span>
+  </div>
+</div>
+</body>
+</html>

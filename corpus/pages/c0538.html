@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Membership card</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { background: #e8ecee; }
+  body { margin: 0; padding: 28px 30px; width: 620px; background: #e8ecee; color: #0b2e38;
+         font-family: "Avenir Next", "Avenir", "Helvetica Neue", Arial, sans-serif; }
+  .flex { display: flex; }
+  .flex-col { flex-direction: column; }
+  .items-center { align-items: center; }
+  .justify-center { justify-content: center; }
+  .gap-2 { gap: 8px; }
+  .gap-6 { gap: 36px; }
+  .text-center { text-align: center; }
+  .p-6 { padding: 28px 30px 24px; }
+  .px-3 { padding-left: 14px; padding-right: 14px; }
+  .py-1 { padding-top: 4px; padding-bottom: 4px; }
+  .pt-3 { padding-top: 14px; }
+  .mt-1 { margin-top: 4px; }
+  .mt-2 { margin-top: 10px; }
+  .mt-4 { margin-top: 20px; }
+  .rounded-xl { border-radius: 18px; }
+  .rounded-full { border-radius: 999px; }
+  .text-xs { font-size: 11px; line-height: 1.4; }
+  .text-sm { font-size: 13px; line-height: 1.4; }
+  .text-base { font-size: 16px; line-height: 1.3; }
+  .text-3xl { font-size: 36px; line-height: 1.1; }
+  .font-light { font-weight: 300; }
+  .font-normal { font-weight: 400; }
+  .font-semibold { font-weight: 600; }
+  .font-bold { font-weight: 700; }
+  .uppercase { text-transform: uppercase; }
+  .tracking-wide { letter-spacing: 0.08em; }
+  .tracking-widest { letter-spacing: 0.22em; }
+  .bg-teal-900 { background: #0d4452; }
+  .bg-amber-300 { background: #f3c969; }
+  .bg-sky-200 { background: #b7dcea; }
+  .bg-white-10 { background: rgba(255,255,255,0.14); }
+  .text-white { color: #fff; }
+  .text-teal-900 { color: #0d4452; }
+  .text-teal-100 { color: #cfe6ec; }
+  .border-t { border-top: 1px solid rgba(255,255,255,0.3); }
+  .w-full { width: 100%; }
+</style>
+</head>
+<body>
+<div class="bg-teal-900 text-white rounded-xl p-6 flex flex-col items-center text-center">
+  <div class="flex items-center gap-2">
+    <svg width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
+      <circle cx="23" cy="23" r="22" fill="#f3c969"/>
+      <path d="M7 29 C 12 25, 16 25, 21 29 S 31 33, 39 27" fill="none" stroke="#0d4452" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M9 35 C 14 31, 18 31, 23 35 S 33 39, 38 34" fill="none" stroke="#0d4452" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M14 21 C 18 11, 28 10, 33 16 L38 14 L34 20 C 32 24, 22 26, 14 21 Z" fill="#0d4452"/>
+      <circle cx="30" cy="16" r="1.3" fill="#f3c969"/>
+    </svg>
+    <div class="text-center" style="text-align:left; margin-left:6px;">
+      <div class="text-base font-bold tracking-wide">Vale Wild Swimming Club</div>
+      <div class="text-xs font-light text-teal-100">Kendal, Cumbria</div>
+    </div>
+  </div>
+
+  <div class="text-xs font-semibold uppercase tracking-widest text-teal-100 mt-4">Membership card</div>
+  <div class="text-3xl font-semibold mt-2">Ewan Mercer</div>
+  <div class="text-sm font-light text-teal-100 mt-1">Member no. VWS 004172</div>
+
+  <div class="flex items-center justify-center gap-2 mt-4">
+    <span class="bg-amber-300 text-teal-900 text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full">Full member</span>
+    <span class="bg-sky-200 text-teal-900 text-xs font-semibold uppercase tracking-wide px-3 py-1 rounded-full">Lakeside key</span>
+    <span class="bg-white-10 text-white text-xs font-normal uppercase tracking-wide px-3 py-1 rounded-full">Winter swims</span>
+  </div>
+
+  <div class="flex justify-center gap-6 border-t w-full mt-4 pt-3">
+    <div>
+      <div class="text-xs font-light text-teal-100 uppercase tracking-wide">Member since</div>
+      <div class="text-base font-semibold mt-1">14 March 2019</div>
+    </div>
+    <div>
+      <div class="text-xs font-light text-teal-100 uppercase tracking-wide">Valid until</div>
+      <div class="text-base font-semibold mt-1">31 January 2028</div>
+    </div>
+  </div>
+
+  <div class="text-xs font-light text-teal-100 mt-4">Issued 26 January 2027 by Ellie Ashworth, Membership Secretary. Reciprocal entry at Truro Open Water Club on presentation of this card with photo ID.</div>
+  <div class="text-xs font-normal text-teal-100 mt-1">Treasurer: Zara Haworth</div>
+</div>
+</body>
+</html>

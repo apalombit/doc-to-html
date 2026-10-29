@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Halcyon Kitchen, small plates</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 20px 22px 22px 22px; width: 780px; font-family: Helvetica, Arial, sans-serif; font-size: 12px; line-height: 1.45; color: #161616; background: #ffffff; }
+  header { display: grid; grid-template-columns: 1fr auto; align-items: end; border-bottom: 2px solid #161616; padding-bottom: 10px; }
+  header h1 { margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.8px; line-height: 1; }
+  header .kick { font-size: 10.5px; letter-spacing: 1.6px; text-transform: uppercase; color: #d4351c; font-weight: 700; margin-bottom: 6px; }
+  header .when { text-align: right; font-size: 11px; line-height: 1.5; }
+  .pairs { display: flex; gap: 28px; margin: 8px 0 18px 0; font-size: 11px; }
+  .k { color: #7a7a7a; margin-right: 4px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 22px; row-gap: 22px; }
+  .card { border-top: 1px solid #161616; padding-top: 8px; display: flex; flex-direction: column; min-height: 168px; }
+  .card .no { font-size: 10.5px; color: #d4351c; font-weight: 700; letter-spacing: 1px; }
+  .card h2 { margin: 2px 0 4px 0; font-size: 15px; font-weight: 700; line-height: 1.2; }
+  .card p { margin: 0 0 8px 0; color: #3a3a3a; }
+  .chips { display: flex; gap: 5px; margin-bottom: 8px; }
+  .chip { display: inline-block; padding: 1px 8px; border-radius: 999px; background: #fbe3de; color: #a5240f; font-size: 10px; font-weight: 700; letter-spacing: 0.6px; }
+  .chip.sp { background: #d4351c; color: #ffffff; }
+  .card .pr { margin-top: auto; display: flex; gap: 18px; font-size: 12px; border-top: 1px solid #dcdcdc; padding-top: 6px; }
+  .card .pr b { font-weight: 700; }
+  footer { margin-top: 22px; border-top: 1px solid #161616; padding-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 22px; font-size: 10.5px; color: #555555; }
+  footer .chip { margin-right: 3px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="kick">Winter menu &middot; from January 13, 2020</div>
+    <h1>Small plates</h1>
+  </div>
+  <div class="when">Tuesday to Saturday<br>5:00 to 9:00 pm</div>
+</header>
+<div class="pairs"><span><span class="k">Chef</span>Lauren Sullivan</span><span><span class="k">Sous chef</span>Hiro Nguyen</span><span><span class="k">Desserts</span>Travis Castillo</span></div>
+
+<div class="grid">
+  <div class="card"><div class="no">01</div><h2>Charred carrots</h2><p>Whipped feta, hazelnut dukkah and wildflower honey.</p>
+    <div class="chips"><span class="chip">V</span><span class="chip">GF</span></div>
+    <div class="pr"><span><span class="k">Serves</span><b>2</b></span><span><span class="k">Price</span><b>$11</b></span></div></div>
+  <div class="card"><div class="no">02</div><h2>Bracken Creek lamb meatballs</h2><p>Slow tomato, sheep&rsquo;s-milk ricotta and fresh mint.</p>
+    <div class="chips"><span class="chip">DF</span></div>
+    <div class="pr"><span><span class="k">Serves</span><b>2</b></span><span><span class="k">Price</span><b>$15</b></span></div></div>
+  <div class="card"><div class="no">03</div><h2>Smoked trout toast</h2><p>Cr&egrave;me fra&icirc;che, pickled shallot and dill on grilled sourdough.</p>
+    <div class="chips"><span class="chip">DF</span></div>
+    <div class="pr"><span><span class="k">Serves</span><b>1</b></span><span><span class="k">Price</span><b>$13</b></span></div></div>
+  <div class="card"><div class="no">04</div><h2>Wild mushroom arancini</h2><p>Crisp risotto balls with truffle aioli and shaved parmesan.</p>
+    <div class="chips"><span class="chip">V</span></div>
+    <div class="pr"><span><span class="k">Serves</span><b>2</b></span><span><span class="k">Price</span><b>$12</b></span></div></div>
+  <div class="card"><div class="no">05</div><h2>Beet and burrata</h2><p>Roasted beets, blood orange, pistachio and basil oil.</p>
+    <div class="chips"><span class="chip">V</span><span class="chip">GF</span></div>
+    <div class="pr"><span><span class="k">Serves</span><b>2</b></span><span><span class="k">Price</span><b>$14</b></span></div></div>
+  <div class="card"><div class="no">06</div><h2>Crispy cauliflower</h2><p>Gochujang glaze, scallion and toasted sesame.</p>
+    <div class="chips"><span class="chip">V</span><span class="chip">DF</span><span class="chip sp">Spicy</span></div>
+    <div class="pr"><span><span class="k">Serves</span><b>2</b></span><span><span class="k">Price</span><b>$10</b></span></div></div>
+</div>
+
+<footer>
+  <div><span class="chip">V</span> vegetarian <span class="chip">GF</span> gluten-free <span class="chip">DF</span> dairy-free<br>Please tell us about any allergy before you order.</div>
+  <div>Halcyon Kitchen, Billings, MT, and Halcyon Counter, Wichita, KS. Parties of six or more: a 20% service charge is added.</div>
+</footer>
+</body>
+</html>
