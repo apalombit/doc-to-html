@@ -14,8 +14,12 @@ file is the command line and nothing else.
     # ...a few documents only
     python tools/visual_review.py debug/runs/<label> --documents cv_0013,menu_0012
 
-    # tally a filled findings.json and name what no scored axis caught
+    # tally a filled findings.json: the classes ranked, the pages to spot-check
     python tools/visual_review.py debug/runs/<label> --check
+
+`tools/measure_run.py` is the one command over a run (spec 0021): the
+checks first, then this module's sheets for the pages the sampling opens,
+each fault boxed, and the form filled in with the checks' faults.
 
     # one arbitrary page against one arbitrary picture
     python tools/visual_review.py --pair example/invoice.png /tmp/mine.html \
@@ -45,28 +49,29 @@ def _short(path: Path) -> str:
         return str(path)
 
 
-def _check(run: Path, out: Path, previous: Path | None) -> int:
+def _check(run: Path, out: Path) -> int:
     findings = out / "findings.json"
     if not findings.exists():
         print(f"no {_short(findings)} — build the review first")
         return 1
     record = json.loads(findings.read_text())
-    scores = review._scores_file(run)
-    older = review._scores_file(previous) if previous else None
-    summary = review.summarise(record, scores=scores, previous_scores=older)
+    try:
+        summary = review.summarise(record, scores=review._scores_file(run))
+    except ValueError as error:
+        print(f"refused: {error}")
+        return 1
     (out / "review.md").write_text(review.report_md(record, summary))
-    print(f"{summary.answered} axes answered across {summary.documents} "
-          f"document(s) — {_short(out / 'review.md')}")
-    if not summary.cross_checked:
-        print("no scores.json for these documents — nothing was cross-checked")
-    elif summary.unreported:
-        print("\nFaults no scored axis reported (every ratio at 1.000):")
-        for finding in summary.unreported:
-            print(f"  {finding.document}  {finding.axis}: {finding.note}")
-    if summary.missing_axes:
-        print(f"\nAxes that never fired: {', '.join(summary.missing_axes)}")
-    if summary.unknown_axes:
-        print(f"Trial axes kept: {', '.join(summary.unknown_axes)}")
+    print(f"{summary.opened} of {summary.pages} page(s) opened — {_short(out / 'review.md')}")
+    print(f"\nFault classes, {'ranked by the review' if summary.ranked_by == 'review' else 'counted'}:")
+    for item in summary.classes[:12]:
+        print(f"  {item.severity:9s} {item.name:40s} {len(item.pages):3d} pages")
+    if summary.overturned:
+        print(f"\nWhere the review overturns a check: {', '.join(summary.overturned)}")
+    if summary.worse:
+        print(f"\nWorse: {', '.join(name for name, _ in summary.worse)}")
+    if summary.unanswered or summary.unstaged:
+        print(f"\nStill to answer: {len(summary.unanswered)} call(s), "
+              f"{len(summary.unstaged)} major(s) with no stage")
     return 0
 
 
@@ -100,7 +105,7 @@ def main() -> int:
     out = (args.out or run / "_review").resolve()
 
     if args.check:
-        return _check(run, out, args.previous.resolve() if args.previous else None)
+        return _check(run, out)
 
     sheets, out = review.build(
         run, model=args.model,

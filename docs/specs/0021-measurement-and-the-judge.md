@@ -277,6 +277,51 @@ to count as ordered, ink inside a column) are set on the 31 known pages,
 each histogram in its docstring. The strict spelling comparison is run on
 the 31 here, and Alessandro decides its severity from what it found.
 
+**Done 2026-10-30.** `checks.py`, `corpus/twin-spellings.json`,
+`tests/test_checks.py`. Measured on this code:
+- **Identity: 231 of 231 dev pages clean.** No fault, and every token
+  matched, in 945 s (4.1 s a page).
+- **The three known faults, each found by its own class.** The lab
+  report: `wrong column` on exactly `231`, `6.4`, `84`, `92`, each under
+  `Flag`. The quiz: `cells merged as drawn` (4 of the 17 rules between
+  cells missing) and `frame missing` (11 of 14). The recipe: `numbers as
+  bullets`, `numbers lost`, `interleaved` and `under another heading`.
+- **Mutations**, each on pages drawn by seed: two cells swapped, a rule
+  removed, bullets for numbers, an item moved into another list, two
+  lines joined, a centred line set left, serif set sans, bold set regular,
+  a word dropped, doubled or merged, the page made taller. Each is found
+  by its class, and no check outside its allowed set fires. A mutation
+  the reader cannot see (same word boxes, same height) is skipped, not
+  passed.
+- **Thresholds, each from an empty band on the 31.** `SIZE_MARGIN` 0.05:
+  blocks over the body size, none at 0.94–0.95 or 1.05–1.06. `GLUE`
+  1 px: 83 word pairs touch at 0 px and 7,985 sit ≥ 2 px apart. Each
+  histogram is in its constant's docstring.
+- **Over the 31, against s14-result and the probe's renders**
+  (8.4 s a page beside a running conversion): `invoice_0001` alone has
+  no major. Pages touched, by class: height 30 (11 major, past 10%),
+  sizes out of proportion 28, lines 21, alignment 21, bold lost 19,
+  weight added 16, heading not kept 10, words changed 9, invented 8, wrong
+  face 7, italics 7, lost 6, list not kept 5, marker changed 5,
+  interleaved 4, mark lost 3, frame missing 3, wrong column 3, spelling 2,
+  split 2, cells merged as drawn 2, under another heading 2, table not
+  kept 2, numbers as bullets 1, numbers lost 1.
+- **Spelling, for Alessandro (step 6):** two on the 31, `CSS → css`
+  (sample_css) and `VG → vg` (menu). Both are a case change.
+- **Inferred, for Alessandro (step 6):** a tick-box glyph lost (`MARKS`)
+  is major. It fires on form_0007 (`✕`), pricing_0017 (`✓`, `✕`) and
+  the datasheet (`✓`).
+- **False alarms found on the 31 and removed**, each by a rule rather than
+  a page list:
+  - a superscript in its own text node read as a split word (`GLUE`);
+  - a list's drawn numbers read as invented (ordinal tokens);
+  - an indented first line read as right-aligned (text-align in the
+    block's own box);
+  - CSS counters and `::after` glyphs read as lost (generated content
+    is read);
+  - a heading cascade (fires only where the source heading stays one);
+  - one fault per kind of change per page, with its places.
+
 ### Step 3 — the batch runner and the four tools
 
 `tools/batch.py <label> --pages dev | l3 | <ids>`:
@@ -303,6 +348,20 @@ works: `bakeoff.load_corpus`, `report.build`, `review.build`,
 restarted, every page converted exactly once. **Then one real page**,
 about 8 minutes, to prove it end to end.
 
+**Done 2026-10-30, proved on c0544** (run `L2-3-proof`): 638 s, 19 calls,
+converted, with its dump, `pages.jsonl`, `done.txt` and the residency
+split recorded. **The first page tried, c0004 (35 Zones), was stopped
+after 90 minutes.** One prose call on a crop under 1 KB ran to the token
+limit (2,888 s, `reason=length`, 25,560 characters). The pipeline retried
+it at twice the context (16,384), on the same crop, at under a character a
+second, with 64% of the model on the CPU. That is the shipped
+conversion's behaviour, which L2 does not change. It means one page can
+take hours, so dev's 27 hours is a floor, not an estimate. **Fixed
+alongside**: `batch.py` read the environment itself, which
+`TestNothingElseReadsTheEnvironment` forbids. The host and the exported
+`DTH_*` now come from `config.load()`, and the resident models from the
+Ollama client.
+
 ### Step 4 — one command
 
 `tools/measure_run.py <run> [--previous <run>]`:
@@ -315,6 +374,18 @@ about 8 minutes, to prove it end to end.
 - writes the findings form with the checks' faults filled in, for Claude
   to confirm, reject or add to;
 - writes the review page's data.
+
+**Done 2026-10-30.** `doc_to_html/measure.py`, `tools/measure_run.py`,
+`tests/test_measure_run.py`. A page's checks are kept until its output or
+the checks' code (`CHECKS_CODE`, hashed) changes. A page whose checks
+raise is recorded and the rest go on. With `--previous`, a page whose HTML
+is byte-identical is unmoved and needs no screenshot. `--all` opens every
+page (step 7). The review page's data is the filled `findings.json`, read
+at step 6. Over the three known-fault probe pages, each is opened for the
+class naming its fault, and the form arrives with the lab report's four
+results numbered and waiting for a call. On the batch runner's proof page
+(c0544, dev, never converted before) the checks find the "3.1–3.3"
+numbers drawn as bullets, by eye correctly.
 
 ### Step 5 — the skill evolved
 
@@ -355,6 +426,30 @@ about 8 minutes, to prove it end to end.
 - **Retired**: `owner`, and the rule about deferred faults. **Fixed**:
   `numbers.md`'s table.
 - `docs/agents/visual-review.md` is rewritten as the record.
+
+**Done 2026-10-30.** `review.py` at rubric 2:
+- **`AREAS`**, the criteria's six rows; a check's fault maps to its area
+  (a rule missing is a look).
+- **`page_entry` and `blank_findings`**: the form, each fault numbered as
+  on the sheet, with a call, a stage and a why.
+- **`summarise`**: refuses another rubric; ranks the classes by Claude's
+  `ranked` with why, else majors first by pages touched; names the pages
+  where the review overturns a check, every worse page, and what is still
+  unanswered.
+- **The sheets**:
+  - each fault is a numbered magenta box on both panels, its tag
+    see-through and to the left of the box, so a marker under it still
+    shows;
+  - with a previous run, `-diff.png`: this render faded, red where it
+    differs, with the share of pixels;
+  - a dense page gets tiles, each strip of the render found through the
+    checks' word anchors (`PageCheck.anchors`), never by height.
+
+  `LEGIBLE_PX` is set at step 7 by opening the 31's sheets.
+- **`numbers.md`'s table** has one rule row. `owner` is gone.
+
+The skill and `docs/agents/visual-review.md` are rewritten for rubric 2.
+`tools/visual_review.py --check` tallies a rubric-2 form.
 
 ### Step 6 — the review page — ask first
 
@@ -411,6 +506,10 @@ detached, while steps 4–7 are built. The checks then run over all 231,
 and the review samples them by step 5's rule. It shakes the checks down on
 200 pages nobody has converted before L3 meets the panel, and gives P1 its
 control arm on dev.
+
+**Started 2026-10-30 22:57**, run `L2-dev`, on `e6fb494`'s conversion code:
+`tools/batch.py L2-dev --pages dev --skip-known`, its log
+`debug/L2-dev.log`, `--status` for where it is.
 
 ---
 

@@ -210,8 +210,7 @@ def test_the_run_label_and_the_date_reach_every_output(tmp_path: Path) -> None:
     assert json.loads((out / "findings.json").read_text())["stamp"] == stamp
 
 
-def test_a_previous_run_becomes_a_third_panel_and_the_changed_axis(
-        tmp_path: Path) -> None:
+def test_a_previous_run_becomes_a_third_panel_and_a_diff(tmp_path: Path) -> None:
     """The comparison the ratchet is built on, and the one this workflow could
     not make: whether the render *moved*, not how far it sits from its source."""
     older = a_run(tmp_path, "98-older", {"invoice_0001": "<p>old</p>"})
@@ -222,17 +221,18 @@ def test_a_previous_run_becomes_a_third_panel_and_the_changed_axis(
     assert [html.parent.parent.parent.parent.name for html, _ in chrome.calls] \
         == ["98-older", "99-test"]
     assert Image.open(sheets[0].parts[0]).width == 862 * 3 + review.GUTTER * 4
+    assert sheets[0].diff is not None and sheets[0].diff.exists()
+    assert sheets[0].moved == 0.0, "FakeChrome draws both renders alike"
     record = json.loads((out / "findings.json").read_text())
     assert record["previous"] == "98-older"
-    assert "changed" in record["rubric"]
-    assert "changed" in record["documents"][0]["axes"]
+    assert "**changed**" in (out / "review.md").read_text()
 
 
-def test_without_a_previous_run_there_is_no_changed_axis(tmp_path: Path) -> None:
+def test_without_a_previous_run_there_is_no_diff(tmp_path: Path) -> None:
     run = a_run(tmp_path, "99-test", {"invoice_0001": "<p>hi</p>"})
-    _, out = review.build(run, render=FakeChrome())
-    record = json.loads((out / "findings.json").read_text())
-    assert "changed" not in record["rubric"]
+    sheets, out = review.build(run, render=FakeChrome())
+    assert sheets[0].diff is None and sheets[0].moved is None
+    assert "**changed**" not in (out / "review.md").read_text()
 
 
 def test_a_filled_findings_file_is_never_overwritten(tmp_path: Path) -> None:
@@ -263,76 +263,168 @@ def a_scores(name: str = "invoice_0001", **ratios: float) -> dict[str, Any]:
     }]}
 
 
-def answered(**axes: tuple[str, str]) -> dict[str, Any]:
-    record = review.blank_findings(["invoice_0001"], stamp="99-test · today",
-                                   run="99-test", previous=None,
-                                   model="qwen3-vl:4b")
-    for axis, (verdict, note) in axes.items():
-        record["documents"][0]["axes"][axis] = {"verdict": verdict, "note": note}
-    record["documents"][0]["owner"] = "A0"
-    return record
+CELL = {"check": "cells", "fault": "wrong column", "severity": "major",
+        "element": "6.4", "note": "under 'Flag'", "features": ["table.ruled_grid"]}
+
+
+def a_form(*added: dict[str, Any], call: str | None = "confirmed", stage: str | None = "extract",
+           opened: bool = True, changed: str | None = None) -> dict[str, Any]:
+    """One page with one check's fault, called; `added` are Claude's own."""
+    entry = review.page_entry("invoice_0001", family="transactional", opened=opened,
+                              why=["a major to confirm"], faults=[CELL])
+    entry["faults"][0].update(call=call, stage=stage)
+    for n, fault in enumerate(added, start=2):
+        entry["faults"].append({"n": n, "from": "review", "features": [], "note": "",
+                                "stage": "render", "call": None, "why": "", **fault})
+    if changed:
+        entry.update(changed=changed, changed_note="the totals row is gone")
+    return review.blank_findings([entry], stamp="99-test · today", run="99-test",
+                                 previous=None, model="qwen3-vl:4b")
+
+
+def test_the_form_arrives_with_the_checks_faults_numbered() -> None:
+    entry = review.page_entry("invoice_0001", faults=[CELL, {**CELL, "element": "84"}])
+    assert [(f["n"], f["from"], f["call"], f["stage"]) for f in entry["faults"]] \
+        == [(1, "check", None, None), (2, "check", None, None)]
+    assert entry["faults"][1]["element"] == "84"
+    record = review.blank_findings([entry], stamp="s", run="r", previous=None, model="m")
+    assert record["rubric_version"] == review.RUBRIC_VERSION == 2
+
+
+def test_another_rubric_is_refused() -> None:
+    """Two rubrics are not one table."""
+    record = a_form()
+    record["rubric_version"] = 1
+    with pytest.raises(ValueError, match="rubric 1"):
+        review.summarise(record)
 
 
 def test_a_major_beside_perfect_ratios_is_named_unreported() -> None:
     """`sample_table_0003` scored a full match having deleted every column
     header of its only table. One is not a threshold somebody chose; it is the
     ceiling."""
-    summary = review.summarise(
-        answered(content=("major", "the table has no header row")),
-        scores=a_scores())
-    assert [(f.document, f.axis) for f in summary.unreported] \
-        == [("invoice_0001", "content")]
+    summary = review.summarise(a_form(), scores=a_scores())
+    assert [(f.page, f.n) for f in summary.unreported] == [("invoice_0001", 1)]
 
 
 def test_a_major_the_numbers_did_notice_is_not_unreported() -> None:
-    summary = review.summarise(
-        answered(content=("major", "the sidebar is gone")),
-        scores=a_scores(recall=0.57))
+    summary = review.summarise(a_form(), scores=a_scores(recall=0.57))
     assert summary.unreported == ()
 
 
-def test_a_minor_is_not_unreported() -> None:
-    summary = review.summarise(answered(chrome=("minor", "bar is pale")),
-                               scores=a_scores())
+def test_a_rejected_fault_stops_counting_and_overturns_the_check() -> None:
+    """Decision 2: every page where Claude's call overturns a check is one
+    Alessandro looks at."""
+    summary = review.summarise(a_form(call="rejected"), scores=a_scores())
+    (cells,) = summary.classes
+    assert (cells.pages, cells.rejected, cells.occurrences) == ((), 1, 0)
+    assert summary.overturned == ("invoice_0001",)
     assert summary.unreported == ()
 
 
-def test_the_tally_says_which_axes_fired_and_which_never_did() -> None:
-    """The rubric is a guess with two passes behind it. This is the evidence a
-    later session needs before anyone freezes seven axes."""
-    summary = review.summarise(
-        answered(content=("major", "x"), colour=("match", "y")))
-    assert summary.axis_tally["content"]["major"] == 1
-    assert summary.axis_tally["colour"]["match"] == 1
-    assert "rhythm" in summary.missing_axes
-    assert summary.owner_tally["A0"] == 1
+def test_an_added_major_overturns_and_an_added_minor_does_not() -> None:
+    beside = {"check": "layout", "fault": "beside", "severity": "major",
+              "element": "the two address blocks", "note": "stacked"}
+    italic = {"check": "type", "fault": "italics", "severity": "minor", "element": "Note"}
+    assert review.summarise(a_form(beside)).overturned == ("invoice_0001",)
+    assert review.summarise(a_form(italic)).overturned == ()
 
 
-def test_a_trial_axis_is_kept_not_rejected() -> None:
-    """Trialling an eighth axis must not require editing the module that
-    declares the seven."""
-    record = answered(content=("major", "x"))
-    record["documents"][0]["axes"]["figures"] = {"verdict": "major",
-                                                 "note": "placeholder"}
-    summary = review.summarise(record)
-    assert summary.unknown_axes == ("figures",)
-    assert summary.axis_tally["figures"]["major"] == 1
+def test_classes_rank_majors_first_unless_the_review_ranked_them() -> None:
+    italic = {"check": "type", "fault": "italics", "severity": "minor", "element": "Note"}
+    counted = review.summarise(a_form(italic))
+    assert [c.name for c in counted.classes] == ["cells: wrong column", "type: italics"]
+    assert counted.ranked_by == "count"
+
+    record = a_form(italic)
+    record["ranked"] = [{"check": "type", "fault": "italics", "why": "one rule fixes every page"}]
+    ranked = review.summarise(record)
+    assert [c.name for c in ranked.classes] == ["type: italics", "cells: wrong column"]
+    assert ranked.classes[0].why == "one rule fixes every page" and ranked.ranked_by == "review"
 
 
-def test_deltas_are_only_reported_against_a_previous_run() -> None:
-    summary = review.summarise(answered(), scores=a_scores(recall=0.8),
-                               previous_scores=a_scores(recall=0.6))
-    assert summary.deltas["invoice_0001"]["recall"] == pytest.approx(0.2)
-    assert review.summarise(answered(), scores=a_scores()).deltas \
-        == {"invoice_0001": {}}
+def test_what_is_still_to_answer_is_named() -> None:
+    assert review.summarise(a_form(call=None)).unanswered == (("invoice_0001", 1),)
+    assert review.summarise(a_form(stage=None)).unstaged == (("invoice_0001", 1),)
+    unopened = review.summarise(a_form(call=None, stage=None, opened=False))
+    assert unopened.unanswered == () and unopened.unstaged == ()
 
 
-def test_the_written_report_names_the_unreported_fault() -> None:
-    record = answered(content=("major", "the table has no header row"))
-    summary = review.summarise(record, scores=a_scores())
-    text = review.report_md(record, summary)
-    assert "the table has no header row" in text
+def test_a_worse_page_is_named_with_what_it_lost() -> None:
+    summary = review.summarise(a_form(changed="worse"))
+    assert summary.worse == (("invoice_0001", "the totals row is gone"),)
+    assert summary.changed["worse"] == 1
+
+
+def test_the_written_report_names_the_class_and_the_overturned_page() -> None:
+    beside = {"check": "layout", "fault": "beside", "severity": "major",
+              "element": "the two address blocks", "note": "stacked"}
+    record = a_form(beside)
+    text = review.report_md(record, review.summarise(record, scores=a_scores()))
+    assert "| 1 | cells: wrong column | major | 1 |" in text
+    assert "layout: beside" in text and "the two address blocks" in text
+    assert "- invoice_0001" in text.split("overturns a check")[1]
     assert "99-test · today" in text
+
+
+def test_the_numbers_table_has_one_rule_row(tmp_path: Path) -> None:
+    """Two adjacent string literals once glued the header's end to the rule
+    row before `*` repeated the pair: nine headers, nine rule rows."""
+    run = a_run(tmp_path, "99-test", {"invoice_0001": "<p>hi</p>"})
+    _, out = review.build(run, render=FakeChrome())
+    lines = (out / "numbers.md").read_text().splitlines()
+    header = next(index for index, line in enumerate(lines) if line.startswith("| document"))
+    assert lines[header + 1] == "|---" * 9 + "|"
+    assert lines[header + 2].startswith("| `invoice_0001`")
+
+
+# --- marks, the renders' difference, tiles ----------------------------------
+
+
+def test_a_fault_is_drawn_as_a_numbered_box_on_both_panels(tmp_path: Path) -> None:
+    run = a_run(tmp_path, "99-test", {"invoice_0001": "<p>hi</p>"})
+    marks = {"invoice_0001": [review.Mark(1, source=((100, 100, 200, 130),),
+                                          output=((120, 300, 220, 330),))]}
+    sheets, _ = review.build(run, render=FakeChrome(), marks=marks)
+    sheet = np.asarray(Image.open(sheets[0].parts[0]).convert("RGB"))
+    magenta = np.all(sheet == review.MARK_INK, axis=2)
+    left, right = magenta[:, :862 + review.GUTTER], magenta[:, 862 + review.GUTTER:]
+    assert left.any() and right.any()
+    rows = np.nonzero(right.any(axis=1))[0]
+    assert rows.min() >= review.LABEL_BAR + 300 - 22, "the output box is drawn where it is"
+
+
+def test_the_difference_is_nothing_for_one_render_and_red_where_it_moved() -> None:
+    before = a_page(200, [(20, 40)])
+    picture, share = review.difference(before, before)
+    assert share == 0.0 and not np.any(np.asarray(picture)[..., 1] == 0)
+    after = a_page(240, [(20, 40), (100, 120)])
+    picture, share = review.difference(before, after)
+    red = np.all(np.asarray(picture) == (220, 0, 0), axis=2)
+    assert share > 0 and red[100:120].all() and not red[20:40].any()
+
+
+def test_a_dense_page_gains_tiles_and_a_legible_one_does_not(tmp_path: Path) -> None:
+    run = a_run(tmp_path, "99-test", {"invoice_0001": "<p>hi</p>"})
+    sheets, _ = review.build(run, render=FakeChrome(), body_px={"invoice_0001": 30.0})
+    assert sheets[0].tiles == ()
+    sheets, _ = review.build(run, render=FakeChrome(), body_px={"invoice_0001": 6.0})
+    assert sheets[0].tiles and all(path.exists() for path in sheets[0].tiles)
+    tile = Image.open(sheets[0].tiles[0])
+    assert tile.width == 862 + 2 * review.GUTTER, "a tile is at full scale"
+
+
+def test_tile_rows_follow_the_words_not_the_height() -> None:
+    """A render twice as tall in its lower half: the second strip of the
+    source finds its words where they landed, not at twice its rows."""
+    rows = review.tile_rows(1400, 2100, [(700.0, 700.0)], strip=700)
+    assert rows[0][:2] == (0, 700) and rows[0][3] == 700 + 12
+    assert rows[1][:2] == (700, 1400) and rows[1][2:] == (700 - 12, 2100)
+
+
+def test_a_block_moved_up_does_not_pull_a_strip_back() -> None:
+    xs, ys = review._monotone([(100.0, 500.0), (200.0, 150.0)], 300, 600)
+    assert ys == sorted(ys)
 
 
 # --- the general case -------------------------------------------------------
@@ -368,7 +460,7 @@ def test_no_scores_is_not_reported_as_the_numbers_having_noticed() -> None:
     """An empty `unreported` means two very different things, and a summary
     that cannot tell them apart is the same quiet lie this workflow exists to
     catch."""
-    record = answered(content=("major", "the table has no header row"))
+    record = a_form()
     summary = review.summarise(record)
     assert summary.unreported == () and summary.cross_checked == ()
     assert "Not checked" in review.report_md(record, summary)
@@ -452,4 +544,5 @@ def test_a_photographed_page_gains_a_second_row(tmp_path: Path) -> None:
     invoice = Image.open(by_name["invoice_0001"].parts[0])
     assert invoice.height == 563 + review.LABEL_BAR + review.GUTTER, "one row"
     assert sorted(p.name for p in out.iterdir() if p.suffix == ".png") == [
-        "00-invoice_0001.png", "01-ticket_0020.png"], "scratch panels are removed"
+        "00-invoice_0001.png", "01-ticket_0020-diff.png", "01-ticket_0020.png"], \
+        "scratch panels are removed; the renders' difference is kept"

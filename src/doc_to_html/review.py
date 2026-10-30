@@ -12,6 +12,9 @@ evidence and the rationale; this module is the instrument.
 
     00-invoice_0001.png       source | (previous render) | render, matched width
     00-invoice_0001-p2.png    ...part 2 of a tall document
+    00-invoice_0001-tile1.png a dense page's strip of the source over the
+                              same strip of the render, at full scale
+    00-invoice_0001-diff.png  with a previous run: where the two renders differ
 
 On a photographed page — one whose picture `rectify` warps — the sheet has a
 second row: each render re-photographed into the picture's frame, and its
@@ -19,6 +22,9 @@ overlay on the source (spec 0018, 0a; `rephotograph`).
     findings.json             the machine-readable form, filled in by looking
     review.md                 the same form for a person; regenerated on --check
     numbers.md                the scored axes, to quote in a note
+
+Each fault the checks found (`checks.py`, spec 0021) is drawn on the sheet
+as a numbered box, keyed to the form; `measure.py` passes them in.
 
 **Three rules are built in and all three are load-bearing.**
 
@@ -39,11 +45,14 @@ every sheet and every form is stamped with its run label and date, the rubric
 asks for *differences*, which are observations, rather than a score out of ten,
 which is not — and `summarise()` refuses to merge findings from two stamps.
 
-**The rubric is not frozen.** `RUBRIC` is a guess with two passes behind it.
-`axis_tally()` exists so a later session can see which axes ever fire before
-anyone freezes them, and an unknown axis in a findings file is accepted and
-reported rather than rejected — trialling an axis must not require editing this
-module.
+**Rubric 2: faults, not axes** (spec 0021, from the criteria agreed
+2026-10-24). Rubric 1 asked seven axes a verdict each. The checks now find
+what the source HTML settles, and the form arrives with their faults filled
+in, numbered as on the sheet; Claude calls each by looking, names its stage,
+and adds what the HTML cannot settle under one of `AREAS`. `summarise`
+ranks the classes and names the pages where the review overturns a check.
+A class the checks do not know is accepted under its area, never bent into
+one that does not fit.
 """
 
 from __future__ import annotations
@@ -146,38 +155,55 @@ of magnitude taller than its page — and twelve sheets is already past the poin
 where a reviewer reads them all.
 """
 
-RUBRIC: tuple[tuple[str, str], ...] = (
-    ("content", "Anything in the source missing from the render, or anything in "
-                "the render that is not in the source"),
-    ("order", "Reading order and grouping — same things, in the same sequence, "
-              "bound to the same headings"),
-    ("columns", "What sits beside what. A source column rendered as a stack is a "
-                "major, not a minor"),
-    ("chrome", "Borders, cards, rules, fills — drawn where the source draws them "
-               "and nowhere else"),
-    ("type", "Relative size and weight. Is the hierarchy the same shape, even if "
-             "the absolute sizes differ"),
-    ("colour", "Ground, ink, accent, shaded bands"),
-    ("rhythm", "Spacing and density — how much taller or tighter the render is "
-               "than the page"),
+AREAS: tuple[tuple[str, str], ...] = (
+    ("words", "a word or number lost, invented, changed or merged"),
+    ("structure", "cells in their row and column, numbered steps as numbers, "
+                  "content under its own heading, groups not interleaved; the "
+                  "right look from the wrong HTML is a minor"),
+    ("layout", "every line breaking where the page breaks it, the page's "
+               "height, alignment, what sits beside what"),
+    ("type", "the face class, sizes in proportion, bold as printed; italics, "
+             "letterspacing and small caps are minors"),
+    ("looks", "the ground, a colour that carries meaning, fills, bands, frames "
+              "and rules"),
+    ("figures", "logos, barcodes, icons, signatures, photos: a minor, for now"),
 )
-"""One entry per axis: the name, and the question it asks.
+"""The criteria's six rows (`docs/agents/review-criteria.md`), each with what
+it asks. **Rubric 2 reports faults, not axes**: the seven axes of rubric 1
+asked for a verdict on each of a page's aspects, and the criteria ask for
+each fault, its class and its severity. A fault the checks cannot find is
+added under the area it belongs to."""
 
-Provisional — see the module docstring. Two passes is not enough evidence to
-say an axis earns its context.
-"""
+AREA_OF_CHECK: dict[str, str] = {
+    "words": "words", "cells": "structure", "structure": "structure",
+    "order": "structure", "rules": "looks", "lines": "layout",
+    "height": "layout", "alignment": "layout", "type": "type",
+}
+"""Which area each of `checks`'s checks reports under: a rule missing is a
+look ("a frame or rule missing"), a cell out of place is structure."""
 
-VERDICTS = ("match", "minor", "major")
-"""What an axis may be answered with. Deliberately not a number out of ten."""
+SEVERITIES = ("major", "minor", "unsettled")
+"""`unsettled` is a class whose severity Alessandro has not decided (the
+strict spelling comparison, spec 0021 step 2)."""
+
+CALLS = ("confirmed", "rejected")
+"""Claude's call on a fault a check found, made by looking: markup can still
+fool a check. A fault Claude adds is a call in itself."""
+
+STAGES = ("rectify", "layout", "caption", "classify", "extract", "inline runs",
+          "re-read", "third reading", "wire", "locate", "render")
+"""Where a fault was made, `level-up.md` §1.2. A CV pass is named as
+`cv:<pass>` (`cv:furniture`, `cv:rhythm`). Named by reading the page's IR and
+trace, never guessed from the picture."""
 
 CHANGED_VERDICTS = ("better", "same", "worse")
-"""What the `changed` axis may be answered with, and it only exists when a
-previous render is on the sheet. This is the ratchet's own question — *did any
-content that converted before stop converting* — asked of the pixels."""
+"""A page against the previous run's render, when one is on the sheet."""
 
-RUBRIC_VERSION = 1
-"""Bumped whenever `RUBRIC` changes, so a findings file says which rubric it was
-answered against. Two files at different versions are not one table."""
+RUBRIC_VERSION = 2
+"""Bumped whenever the form changes, so a findings file says which form it
+was answered on. Version 1 was seven axes and a verdict each; version 2 is
+faults. Two files at different versions are not one table, and `summarise`
+refuses a file of another version."""
 
 
 # --- cutting a tall page into readable parts -------------------------------
@@ -448,89 +474,310 @@ def photographed_panels(source: Path, render: Path, label: str, scratch: Path
                   laid)]
 
 
+# --- marks, the renders' difference, zoomed tiles (spec 0021, step 5) -----
+
+
+Box = tuple[float, float, float, float]
+
+
+@dataclass(frozen=True)
+class Mark:
+    """One fault drawn on a sheet: its number in the form, and its boxes on
+    the source and on the render, in CSS pixels at the source's width, which
+    are the screenshots' pixels."""
+
+    n: int
+    source: tuple[Box, ...] = ()
+    output: tuple[Box, ...] = ()
+
+
+MARK_INK = (225, 0, 125)
+"""Magenta: no corpus page's palette, and it reads on light and dark alike."""
+
+
+def marked(image: Path, boxes: Sequence[tuple[int, Box]], target: Path) -> Path:
+    """`image` with each box drawn and numbered, saved to `target`. A box is
+    padded by two pixels so the outline never sits on the ink it names, and
+    its number stands to its left, in the margin or the gutter before it,
+    where it covers no line above (to its right where the page's edge is)."""
+    picture = Image.open(image).convert("RGBA")
+    layer = Image.new("RGBA", picture.size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(layer)
+    font = _tag_font()
+    for n, (left, top, right, bottom) in boxes:
+        frame = (left - 2, top - 2, right + 2, bottom + 2)
+        draw.rectangle(frame, outline=(*MARK_INK, 255), width=2)
+        label = str(n)
+        width = draw.textlength(label, font=font) + 4
+        tag_left = frame[0] - width if frame[0] - width >= 0 else frame[2]
+        draw.rectangle((tag_left, frame[1], tag_left + width, frame[1] + 15),
+                       fill=(*MARK_INK, TAG_ALPHA))
+        draw.text((tag_left + 2, frame[1]), label, fill=(*LABEL_INK, 255), font=font)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    Image.alpha_composite(picture, layer).convert("RGB").save(target)
+    return target
+
+
+TAG_ALPHA = 150
+"""A number's tag is see-through, so a glyph it stands on — an answer's
+circle, a list's marker, which are often the fault — still shows."""
+
+
+def _tag_font() -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+    try:
+        return ImageFont.load_default(size=13)
+    except TypeError:  # Pillow older than 10.1
+        return ImageFont.load_default()
+
+
+DIFF_DELTA = 30
+"""Summed channel difference past which two renders' pixels differ: the
+level the re-render measurements in spec 0021 used. Anti-aliasing on one
+machine, one Chrome, moves no pixel at all, so any real change clears it."""
+
+
+def difference(before: Image.Image, after: Image.Image) -> tuple[Image.Image, float]:
+    """Where two renders at one width differ, pixel for pixel: `after`
+    faded, and every differing pixel red. Returns it and the share of pixels
+    that differ, 0.0 for a render that did not move. The shorter is padded
+    with white, so a render that grew shows its new rows as changed."""
+    width = max(before.width, after.width)
+    height = max(before.height, after.height)
+    pads = []
+    for image in (before, after):
+        ground = Image.new("RGB", (width, height), (255, 255, 255))
+        ground.paste(image.convert("RGB"), (0, 0))
+        pads.append(np.asarray(ground, dtype=np.int16))
+    changed = np.abs(pads[0] - pads[1]).sum(axis=2) > DIFF_DELTA
+    faded = (255 - (255 - pads[1].mean(axis=2)) * 0.3).astype(np.uint8)
+    picture = np.dstack([faded, faded, faded])
+    picture[changed] = (220, 0, 0)
+    return Image.fromarray(picture), float(changed.mean())
+
+
+READER_EDGE = 1568
+"""The long edge an image reaches the reviewer at, in pixels: anything
+larger is scaled down to it (`MAX_SHEET_PX`'s docstring)."""
+
+LEGIBLE_PX = 8.0
+"""The smallest body type, in pixels as it reaches the reviewer, that is read
+rather than guessed at. Below it a sheet gains zoomed tiles (`dense`).
+Set on the 31 known pages' sheets, spec 0021 step 7, by opening them: the
+value and the pages either side of it are recorded there."""
+
+TILE_STRIP = 700
+"""A tile's source strip, in pixels. A tile holds the strip over the same
+strip of the render, so two strips and their bars stay inside
+`READER_EDGE` on a page up to that wide."""
+
+
+def reader_scale(size: tuple[int, int]) -> float:
+    """How much a sheet of this size is shrunk on its way to the reviewer."""
+    return min(1.0, READER_EDGE / max(size)) if max(size) > 0 else 1.0
+
+
+def dense(body_px: float, sheet_size: tuple[int, int]) -> bool:
+    """A sheet whose body type reaches the reviewer below `LEGIBLE_PX`."""
+    return body_px > 0 and body_px * reader_scale(sheet_size) < LEGIBLE_PX
+
+
+def _monotone(anchors: Sequence[tuple[float, float]], source_height: int,
+              output_height: int) -> tuple[list[float], list[float]]:
+    """The anchors as a map that only goes down the page: a block the render
+    moved up does not pull a strip back over what it already showed."""
+    points = sorted([(0.0, 0.0), *anchors, (float(source_height), float(output_height))])
+    xs: list[float] = []
+    ys: list[float] = []
+    for x, y in points:
+        y = max(y, ys[-1]) if ys else y
+        if xs and x == xs[-1]:
+            ys[-1] = max(ys[-1], y)
+            continue
+        xs.append(x)
+        ys.append(y)
+    return xs, ys
+
+
+def tile_rows(source_height: int, output_height: int,
+              anchors: Sequence[tuple[float, float]], strip: int = TILE_STRIP
+              ) -> list[tuple[int, int, int, int]]:
+    """Each tile's (source top, bottom, render top, bottom): the source cut
+    into strips, each matched to where its words landed in the render, through
+    the checks' anchors (`checks.PageCheck.anchors`)."""
+    xs, ys = _monotone(anchors, source_height, output_height)
+    rows = []
+    for top in range(0, max(source_height, 1), strip):
+        bottom = min(top + strip, source_height)
+        out_top = int(max(0.0, float(np.interp(top, xs, ys)) - 12))
+        out_bottom = int(min(float(output_height), float(np.interp(bottom, xs, ys)) + 12))
+        rows.append((top, bottom, out_top, max(out_bottom, out_top + 1)))
+    return rows
+
+
+def tiles(source: Path, render: Path, stem: Path, *, stamp: str,
+          anchors: Sequence[tuple[float, float]], strip: int = TILE_STRIP) -> list[Path]:
+    """Zoomed tiles for a dense page: one file per strip, the source's strip
+    over the render's, both at full scale."""
+    mine = Image.open(source).convert("RGB")
+    theirs = Image.open(render).convert("RGB")
+    rows = tile_rows(mine.height, theirs.height, anchors, strip)
+    font = _font()
+    written = []
+    for k, (top, bottom, out_top, out_bottom) in enumerate(rows, start=1):
+        width = max(mine.width, theirs.width) + 2 * GUTTER
+        height = (bottom - top) + (out_bottom - out_top) + 2 * LABEL_BAR + 3 * GUTTER
+        sheet = Image.new("RGB", (width, height), SHEET_GROUND)
+        draw = ImageDraw.Draw(sheet)
+        draw.text((GUTTER, GUTTER // 2 + 4),
+                  f"SOURCE · tile {k} of {len(rows)} · rows {top}-{bottom}   ·   {stamp}",
+                  fill=LABEL_INK, font=font)
+        sheet.paste(mine.crop((0, top, mine.width, bottom)), (GUTTER, GUTTER // 2 + LABEL_BAR))
+        y = GUTTER // 2 + LABEL_BAR + (bottom - top) + GUTTER
+        draw.text((GUTTER, y + 4), f"RENDER · rows {out_top}-{out_bottom}",
+                  fill=LABEL_INK, font=font)
+        sheet.paste(theirs.crop((0, out_top, theirs.width, out_bottom)), (GUTTER, y + LABEL_BAR))
+        target = stem.with_name(f"{stem.name}-tile{k}.png")
+        sheet.save(target)
+        written.append(target)
+    return written
+
+
 # --- findings ---------------------------------------------------------------
+
+
+FAULT_FIELDS = ("check", "fault", "severity", "element", "note", "features")
+"""What a check's fault brings into the form. Its boxes stay in
+`<run>/checks/<page>.json` and reach the sheet as numbered marks."""
+
+
+def page_entry(name: str, *, family: str = "", kind: str = "", opened: bool = True,
+               why: Sequence[str] = (), faults: Sequence[dict[str, Any]] = ()) -> dict[str, Any]:
+    """One page of the form: the checks' faults, numbered as on the sheet,
+    each waiting for Claude's call and its stage."""
+    return {
+        "name": name, "family": family, "kind": kind, "opened": opened,
+        "why": list(why),
+        "faults": [{"n": n, "from": "check",
+                    **{key: fault.get(key) for key in FAULT_FIELDS},
+                    "stage": None, "call": None, "why": ""}
+                   for n, fault in enumerate(faults, start=1)],
+        "changed": None, "changed_note": "", "worst": None,
+    }
+
+
+def blank_findings(pages: Sequence[dict[str, Any]], *, stamp: str, run: str,
+                   previous: str | None, model: str) -> dict[str, Any]:
+    """The form, unanswered: every page checked, the opened ones to review.
+
+    Claude, on each opened page: a **call** on each check's fault
+    (`CALLS`) and its **stage**; every fault the checks cannot see added
+    with `"from": "review"`, an area for its `check`, a class, a severity,
+    the element and a note; with a previous run, `changed`. Across the run:
+    `ranked`, the fault classes in the order to fix them, each with why.
+    """
+    return {
+        "run": run, "previous": previous, "model": model, "stamp": stamp,
+        "taken": date.today().isoformat(), "rubric_version": RUBRIC_VERSION,
+        "areas": [area for area, _ in AREAS], "stages": list(STAGES),
+        "pages": list(pages), "ranked": [],
+    }
 
 
 @dataclass(frozen=True)
 class Finding:
-    """One axis of one document, answered by looking."""
+    """One fault on one page, as the form holds it."""
 
-    document: str
-    axis: str
-    verdict: str
+    page: str
+    n: int
+    origin: str
+    check: str
+    fault: str
+    severity: str
+    call: str | None
+    stage: str | None
+    features: tuple[str, ...]
+    element: str
     note: str
+    opened: bool
+
+    @property
+    def standing(self) -> bool:
+        """A fault the review keeps: added by Claude, or a check's not rejected."""
+        return self.origin == "review" or self.call != "rejected"
+
+    @property
+    def key(self) -> tuple[str, str]:
+        return (self.check, self.fault)
+
+
+def findings_of(record: dict[str, Any]) -> tuple[Finding, ...]:
+    """Every fault in a findings file, as flat records."""
+    out = []
+    for page in record.get("pages", ()):
+        for fault in page.get("faults", ()):
+            out.append(Finding(
+                page=str(page.get("name", "")), n=int(fault.get("n", 0)),
+                origin=str(fault.get("from", "check")), check=str(fault.get("check", "")),
+                fault=str(fault.get("fault", "")), severity=str(fault.get("severity", "")),
+                call=fault.get("call"), stage=fault.get("stage"),
+                features=tuple(fault.get("features") or ()),
+                element=str(fault.get("element", "")), note=str(fault.get("note", "")),
+                opened=bool(page.get("opened"))))
+    return tuple(out)
+
+
+@dataclass(frozen=True)
+class FaultClass:
+    """One class of fault across a run: what the ranked roll-up ranks."""
+
+    check: str
+    fault: str
+    severity: str
+    pages: tuple[str, ...]
+    occurrences: int
+    features: Counter[str]
+    stages: Counter[str]
+    confirmed: int
+    rejected: int
+    added: int
+    why: str = ""
+
+    @property
+    def name(self) -> str:
+        return f"{self.check}: {self.fault}"
 
 
 @dataclass(frozen=True)
 class Summary:
     """What a filled findings file adds up to.
 
-    `unreported` is the reason the whole workflow exists, and it is computed
-    **without inventing a quality threshold**: a document is unreported when a
-    human-visible `major` sits beside scored ratios that are all at 1.000. One
-    is not a bar somebody chose; it is the ceiling, and `sample_table_0003`
-    stood there having deleted every column header of its only table.
-
-    `cross_checked` names the documents that actually had scores to check
-    against. An empty `unreported` means two very different things — the
-    numbers noticed, or there were no numbers — and a summary that could not
-    tell them apart would be the same quiet lie this workflow exists to catch.
+    `overturned` is decision 2 of spec 0021: the pages where Claude's call
+    overturns a check, a check's fault rejected or a major added, which
+    Alessandro spot-checks. `unreported` keeps rubric 1's catch: a major
+    standing beside scored ratios all at 1.000, computed without a chosen
+    threshold, since one is the ceiling.
     """
 
     stamp: str
-    documents: int
-    answered: int
-    axis_tally: dict[str, Counter[str]]
-    owner_tally: Counter[str]
+    pages: int
+    opened: int
+    classes: tuple[FaultClass, ...]
+    ranked_by: str
+    overturned: tuple[str, ...]
+    unanswered: tuple[tuple[str, int], ...]
+    unstaged: tuple[tuple[str, int], ...]
+    changed: Counter[str]
+    worse: tuple[tuple[str, str], ...]
     unreported: tuple[Finding, ...]
     cross_checked: tuple[str, ...]
-    unknown_axes: tuple[str, ...]
-    missing_axes: tuple[str, ...]
-    deltas: dict[str, dict[str, float]] = field(default_factory=dict)
 
 
 PERFECT = ("recall", "precision", "join_recall", "tau")
 """The scored ratios whose ceiling is exactly 1.000, so "did not notice" can be
 stated as a fact rather than as a threshold somebody picked."""
 
-
-def blank_findings(names: Sequence[str], *, stamp: str, run: str,
-                   previous: str | None, model: str) -> dict[str, Any]:
-    """The form, unanswered. One block per document, one entry per axis."""
-    axes = [axis for axis, _ in RUBRIC]
-    if previous:
-        axes = [*axes, "changed"]
-    return {
-        "run": run,
-        "previous": previous,
-        "model": model,
-        "stamp": stamp,
-        "taken": date.today().isoformat(),
-        "rubric_version": RUBRIC_VERSION,
-        "rubric": axes,
-        "documents": [
-            {
-                "name": name,
-                "axes": {axis: {"verdict": None, "note": ""} for axis in axes},
-                "worst": None,
-                "owner": None,
-            }
-            for name in names
-        ],
-    }
-
-
-def findings_of(record: dict[str, Any]) -> tuple[Finding, ...]:
-    """Every answered axis in a findings file, as flat records."""
-    out: list[Finding] = []
-    for document in record.get("documents", ()):
-        name = str(document.get("name", ""))
-        for axis, answer in (document.get("axes") or {}).items():
-            verdict = (answer or {}).get("verdict")
-            if verdict:
-                out.append(Finding(name, str(axis), str(verdict),
-                                   str((answer or {}).get("note", ""))))
-    return tuple(out)
+SEVERITY_RANK = {"major": 0, "unsettled": 1, "minor": 2}
+"""Majors first: the order every roll-up sorts by."""
 
 
 def _scored(scores: dict[str, Any] | None) -> dict[str, dict[str, float]]:
@@ -550,52 +797,69 @@ def _scored(scores: dict[str, Any] | None) -> dict[str, dict[str, float]]:
     return flat
 
 
-def summarise(record: dict[str, Any], *, scores: dict[str, Any] | None = None,
-              previous_scores: dict[str, Any] | None = None) -> Summary:
-    """Count a filled findings file, and name the faults no number reported."""
+def summarise(record: dict[str, Any], *, scores: dict[str, Any] | None = None) -> Summary:
+    """Count a filled findings file: the classes ranked, the pages to
+    spot-check, and what is still unanswered. Refuses another rubric."""
+    version = record.get("rubric_version")
+    if version != RUBRIC_VERSION:
+        raise ValueError(f"a findings file of rubric {version}, not {RUBRIC_VERSION}: "
+                         "two rubrics are not one table")
     findings = findings_of(record)
-    declared = list(record.get("rubric") or [axis for axis, _ in RUBRIC])
-    seen = {finding.axis for finding in findings}
+    standing = [finding for finding in findings if finding.standing]
 
-    tally: dict[str, Counter[str]] = {axis: Counter() for axis in declared}
+    grouped: dict[tuple[str, str], list[Finding]] = {}
     for finding in findings:
-        tally.setdefault(finding.axis, Counter())[finding.verdict] += 1
+        grouped.setdefault(finding.key, []).append(finding)
+    whys = {(str(entry.get("check")), str(entry.get("fault"))): str(entry.get("why", ""))
+            for entry in record.get("ranked") or ()}
+    classes = []
+    for key, members in grouped.items():
+        kept = [finding for finding in members if finding.standing]
+        if not kept and not any(finding.call == "rejected" for finding in members):
+            continue
+        severity = min((finding.severity for finding in kept or members),
+                       key=lambda value: SEVERITY_RANK.get(value, 3))
+        classes.append(FaultClass(
+            check=key[0], fault=key[1], severity=severity,
+            pages=tuple(sorted({finding.page for finding in kept})),
+            occurrences=len(kept),
+            features=Counter(feature for finding in kept for feature in finding.features),
+            stages=Counter(finding.stage for finding in kept if finding.stage),
+            confirmed=sum(1 for finding in members if finding.call == "confirmed"),
+            rejected=sum(1 for finding in members if finding.call == "rejected"),
+            added=sum(1 for finding in members if finding.origin == "review"),
+            why=whys.get(key, "")))
+    order = {key: index for index, key in enumerate(whys)}
+    classes.sort(key=lambda c: (order.get((c.check, c.fault), len(order)),
+                                SEVERITY_RANK.get(c.severity, 3), -len(c.pages), -c.occurrences,
+                                c.name))
 
-    owners: Counter[str] = Counter(
-        str(document.get("owner")) for document in record.get("documents", ())
-        if document.get("owner")
-    )
+    overturned = sorted({finding.page for finding in findings
+                         if (finding.origin == "check" and finding.call == "rejected")
+                         or (finding.origin == "review" and finding.severity == "major")})
+    unanswered = tuple((f.page, f.n) for f in findings
+                       if f.opened and f.origin == "check" and f.call not in CALLS)
+    unstaged = tuple((f.page, f.n) for f in standing
+                     if f.opened and f.severity == "major" and not f.stage)
 
-    now, before = _scored(scores), _scored(previous_scores)
-    deltas = {
-        name: {key: value - before[name][key] for key, value in axes.items()
-               if key in before.get(name, {})}
-        for name, axes in now.items()
-    }
+    pages = list(record.get("pages", ()))
+    changed: Counter[str] = Counter(str(page["changed"]) for page in pages if page.get("changed"))
+    worse = tuple((str(page["name"]), str(page.get("changed_note", "")))
+                  for page in pages if page.get("changed") == "worse")
 
+    now = _scored(scores)
     unreported = tuple(
-        finding for finding in findings
-        if finding.verdict == "major" and finding.axis != "changed"
-        and finding.document in now
-        and all(now[finding.document][key] == 1.0 for key in PERFECT)
-    )
-
-    answered = len({(f.document, f.axis) for f in findings})
-    checked = tuple(str(document.get("name"))
-                    for document in record.get("documents", ())
-                    if str(document.get("name")) in now)
+        finding for finding in standing
+        if finding.severity == "major" and finding.page in now
+        and all(now[finding.page][key] == 1.0 for key in PERFECT))
     return Summary(
-        stamp=str(record.get("stamp", "")),
-        documents=len(record.get("documents", ())),
-        answered=answered,
-        axis_tally=tally,
-        owner_tally=owners,
-        unreported=unreported,
-        cross_checked=checked,
-        unknown_axes=tuple(sorted(seen - set(declared))),
-        missing_axes=tuple(axis for axis in declared if axis not in seen),
-        deltas=deltas,
-    )
+        stamp=str(record.get("stamp", "")), pages=len(pages),
+        opened=sum(1 for page in pages if page.get("opened")),
+        classes=tuple(classes), ranked_by="review" if whys else "count",
+        overturned=tuple(overturned), unanswered=unanswered, unstaged=unstaged,
+        changed=changed, worse=worse, unreported=unreported,
+        cross_checked=tuple(str(page.get("name")) for page in pages
+                            if str(page.get("name")) in now))
 
 
 # --- building a review off a run -------------------------------------------
@@ -603,12 +867,16 @@ def summarise(record: dict[str, Any], *, scores: dict[str, Any] | None = None,
 
 @dataclass(frozen=True)
 class Sheet:
-    """One document's comparison: the panels that went in, the files that came
-    out, and the width they were all laid out at."""
+    """One page's comparison: the files that came out, the width they were
+    all laid out at, and what was added for a dense or a moved page."""
 
     document: str
     width: int
     parts: tuple[Path, ...]
+    tiles: tuple[Path, ...] = ()
+    diff: Path | None = None
+    moved: float | None = None
+    """The share of pixels that differ from the previous run's render."""
 
 
 def _dump(run: Path, model: str) -> Path:
@@ -636,14 +904,22 @@ def build(run: Path, *, model: str = "qwen3-vl:4b",
           previous: Path | None = None,
           out: Path | None = None,
           cap: int = MAX_SHEET_PX,
-          render: Any = None) -> tuple[list[Sheet], Path]:
+          render: Any = None,
+          marks: dict[str, Sequence[Mark]] | None = None,
+          body_px: dict[str, float] | None = None,
+          anchors: dict[str, Sequence[tuple[float, float]]] | None = None,
+          pages: Sequence[dict[str, Any]] | None = None) -> tuple[list[Sheet], Path]:
     """Build every sheet and the two forms for one run.
 
     `previous` is another run directory; when given, each sheet carries three
-    panels — source, that run's render, this run's render — and the form gains
-    the `changed` axis. **That is the comparison the ratchet is built on**, and
-    the one this workflow could not make until now: it could say how far a
-    render sits from its source, never whether it moved.
+    panels — source, that run's render, this run's render — beside a file
+    showing where the two renders differ, and the form asks `changed`.
+
+    `marks` draws each page's faults, numbered as in the form, on the source
+    and on this run's render. A page whose body type would reach the reviewer
+    below `LEGIBLE_PX` (`body_px`) gains zoomed tiles, cut along `anchors`.
+    `pages` is the form's entries (`page_entry`), every page checked, the
+    opened ones among them; without it, each sheet gets an empty entry.
 
     `render` is the screenshot function, injected so the sheet builder can be
     tested without a browser; it defaults to `projection.screenshot`.
@@ -669,40 +945,68 @@ def build(run: Path, *, model: str = "qwen3-vl:4b",
         if not html.exists():
             skipped.append(f"{name}: no document.html in {run.name}")
             continue
+        stem = out / f"{index:02d}-{name}"
+        mine = (marks or {}).get(name, ())
 
-        panels = [Panel("SOURCE (the page)", source)]
-        below: list[Panel] = []
+        shown_source = source
         scratch: list[Path] = []
+        if mine:
+            shown_source = marked(source, [(m.n, box) for m in mine for box in m.source],
+                                  stem.with_name(f"{stem.name}-source.png"))
+            scratch.append(shown_source)
+        panels = [Panel("SOURCE (the page)", shown_source)]
+        below: list[Panel] = []
+        older_shot: Path | None = None
         if previous:
             older = _dump(previous, model) / name / "document.html"
             if older.exists():
-                shot = out / f"{index:02d}-{name}-previous.png"
-                render(older, shot, width=width)
-                scratch.append(shot)
-                panels.append(Panel(f"RENDER {previous.name}", shot))
-                below += photographed_panels(source, shot, f"RENDER {previous.name}",
-                                             shot.with_suffix(""))
+                older_shot = out / f"{index:02d}-{name}-previous.png"
+                render(older, older_shot, width=width)
+                scratch.append(older_shot)
+                panels.append(Panel(f"RENDER {previous.name}", older_shot))
+                below += photographed_panels(source, older_shot, f"RENDER {previous.name}",
+                                             older_shot.with_suffix(""))
             else:
                 skipped.append(f"{name}: no document.html in {previous.name}, "
                                "compared against the source only")
         shot = out / f"{index:02d}-{name}-render.png"
         render(html, shot, width=width)
         scratch.append(shot)
-        panels.append(Panel(f"RENDER {run.name}", shot))
+        diff: Path | None = None
+        moved: float | None = None
+        if older_shot is not None:
+            picture, moved = difference(Image.open(older_shot), Image.open(shot))
+            diff = stem.with_name(f"{stem.name}-diff.png")
+            picture.save(diff)
+        shown_render = shot
+        if mine:
+            shown_render = marked(shot, [(m.n, box) for m in mine for box in m.output],
+                                  stem.with_name(f"{stem.name}-render-marked.png"))
+            scratch.append(shown_render)
+        panels.append(Panel(f"RENDER {run.name}", shown_render))
         below += photographed_panels(source, shot, f"RENDER {run.name}",
                                      shot.with_suffix(""))
         scratch += [panel.image for panel in below]
 
-        parts = contact_sheet(panels, out / f"{index:02d}-{name}", stamp=stamp,
-                              cap=cap, below=below)
+        parts = contact_sheet(panels, stem, stamp=stamp, cap=cap, below=below)
+        zoomed: list[Path] = []
+        size = Image.open(parts[0]).size
+        if dense((body_px or {}).get(name, 0.0), size):
+            zoomed = tiles(shown_source, shown_render, stem, stamp=stamp,
+                           anchors=(anchors or {}).get(name, ()))
         for path in scratch:
-            path.unlink()
-        sheets.append(Sheet(name, width, tuple(parts)))
+            path.unlink(missing_ok=True)
+        sheets.append(Sheet(name, width, tuple(parts), tuple(zoomed), diff, moved))
 
-    record = blank_findings([sheet.document for sheet in sheets], stamp=stamp,
-                            run=run.name,
-                            previous=previous.name if previous else None,
-                            model=model)
+    built = {sheet.document for sheet in sheets}
+    entries = list(pages) if pages is not None else [page_entry(sheet.document)
+                                                     for sheet in sheets]
+    for entry in entries:
+        if entry.get("opened") and entry["name"] not in built:
+            entry["opened"] = False
+            entry["why"] = [*entry.get("why", ()), "no sheet: no document.html"]
+    record = blank_findings(entries, stamp=stamp, run=run.name,
+                            previous=previous.name if previous else None, model=model)
     findings = out / "findings.json"
     if findings.exists():
         record["note"] = (f"{findings.name} already existed and was left alone; "
@@ -731,103 +1035,117 @@ def _numbers_md(stamp: str, sheets: Sequence[Sheet],
             "the review, and a finding that could have been written from this "
             "table has not done the job.\n\n"
             "| document | width | " + " | ".join(keys) + " |\n"
-            "|---" * (len(keys) + 2) + "|\n" + "\n".join(rows) + "\n")
+            + "|---" * (len(keys) + 2) + "|\n" + "\n".join(rows) + "\n")
+
+
+def _fault_line(fault: dict[str, Any]) -> str:
+    call = fault.get("call") or ("added" if fault.get("from") == "review" else "—")
+    stage = fault.get("stage") or "—"
+    return (f"- **{fault.get('n')}** `{fault.get('check')}: {fault.get('fault')}` "
+            f"· {fault.get('severity')} · call {call} · stage {stage} — "
+            f"{fault.get('element')}" + (f" ({fault['note']})" if fault.get("note") else "")
+            + (f" — {fault['why']}" if fault.get("why") else ""))
 
 
 def _form_md(stamp: str, sheets: Sequence[Sheet], record: dict[str, Any],
              skipped: Sequence[str]) -> str:
-    axes = dict(RUBRIC)
-    axes["changed"] = ("Against the PREVIOUS render on the same sheet: "
-                       f"{' / '.join(CHANGED_VERDICTS)}, and what moved")
     lines = [
         f"# Visual review — {stamp}",
         "",
-        "**Filled in by opening each PNG**, one at a time. A note that could "
-        "have been written from `numbers.md` alone has not done the job this "
-        "file exists for.",
+        "**Filled in by opening each PNG**, one at a time. Rubric "
+        f"{RUBRIC_VERSION}: faults, not axes. Answers go in `findings.json`; "
+        "`--check` rewrites this file from it.",
         "",
-        "**Answers go in `findings.json`**, which is the form this file "
-        "mirrors; `--check` rewrites this file from it, with the tally and the "
-        "faults no scored axis reported.",
+        "**Each fault a check found is numbered on the sheet.** Call it "
+        f"`{' / '.join(CALLS)}` by looking, and name its stage "
+        f"({', '.join(STAGES)}, or `cv:<pass>`) from the page's IR and trace. "
+        "Add every fault the checks cannot see, under its area: "
+        + "; ".join(f"**{area}** — {text}" for area, text in AREAS) + ".",
         "",
         "**Pairwise and in-session only.** These readings are not comparable "
-        "with a review from another session — see CLAUDE.md, *How runs are "
-        "used here*. Every sheet carries this stamp for that reason.",
-        "",
-        f"Each axis: `{' / '.join(VERDICTS)}`, and one concrete sentence "
-        "naming the element, not the impression.",
+        "with a review from another session.",
         "",
     ]
     if skipped:
         lines += ["**Skipped:**", *(f"- {line}" for line in skipped), ""]
+    entries = {entry["name"]: entry for entry in record.get("pages", ())}
     for sheet in sheets:
+        entry = entries.get(sheet.document, {})
         lines += [f"## {sheet.document}  ({sheet.width}px)", ""]
+        if entry.get("why"):
+            lines += [f"_Opened: {'; '.join(entry['why'])}._", ""]
         lines += [f"![{sheet.document}]({part.name})" for part in sheet.parts]
+        lines += [f"![{sheet.document} tile]({tile.name})" for tile in sheet.tiles]
+        if sheet.diff is not None:
+            lines += [f"![where the renders differ]({sheet.diff.name}) "
+                      f"— {100 * (sheet.moved or 0):.2f}% of pixels"]
         lines += [""]
-        for axis in record["rubric"]:
-            lines.append(f"- **{axis}** — _{axes.get(axis, '')}_")
-        lines += ["- **worst fault** —",
-                  "- **owner** — (which thread or phase this belongs to, or "
-                  "`new`)", ""]
+        lines += [_fault_line(fault) for fault in entry.get("faults", ())] or [
+            "- no fault found by a check"]
+        if record.get("previous"):
+            lines.append(f"- **changed** — _{' / '.join(CHANGED_VERDICTS)}, and what moved_")
+        lines += [""]
     return "\n".join(lines) + "\n"
 
 
 def report_md(record: dict[str, Any], summary: Summary) -> str:
-    """The filled form, rendered back out with its tally. Written by `--check`."""
+    """The filled form, rendered back out with the roll-up. Written by `--check`."""
     lines = [
         f"# Visual review — {summary.stamp}",
         "",
-        f"{summary.answered} axes answered across {summary.documents} "
-        f"document(s), rubric version {record.get('rubric_version')}.",
+        f"{summary.opened} of {summary.pages} page(s) opened, rubric "
+        f"{record.get('rubric_version')}. **Pairwise and in-session only.**",
         "",
-        "**Pairwise and in-session only.** Not comparable with any other "
-        "session's reading.",
+        "## The fault classes, ranked",
         "",
-        "## Faults no scored axis reported",
+        ("In Claude's order, each with why: majors first, then the biggest "
+         "visible gain for the effort." if summary.ranked_by == "review" else
+         "**Not yet ranked by the review**: counted order, majors first, then "
+         "pages touched."),
         "",
+        "| # | class | severity | pages | times | features | stages | confirmed / rejected / added | why |",
+        "|---|---|---|---|---|---|---|---|---|",
     ]
+    for rank, item in enumerate(summary.classes, start=1):
+        features = ", ".join(f"{name} {count}" for name, count in item.features.most_common(3))
+        stages = ", ".join(f"{name} {count}" for name, count in item.stages.most_common(3))
+        lines.append(f"| {rank} | {item.name} | {item.severity} | {len(item.pages)} | "
+                     f"{item.occurrences} | {features or '—'} | {stages or '—'} | "
+                     f"{item.confirmed} / {item.rejected} / {item.added} | {item.why or '—'} |")
+    lines += ["", "## Where the review overturns a check", "",
+              "A check's fault rejected, or a major added: each is a page "
+              "Alessandro checks (spec 0021, decision 2).", ""]
+    lines += [f"- {name}" for name in summary.overturned] or ["None."]
+    if summary.changed or record.get("previous"):
+        lines += ["", "## Against the previous run", "",
+                  ", ".join(f"{verdict} {summary.changed.get(verdict, 0)}"
+                            for verdict in CHANGED_VERDICTS), ""]
+        lines += [f"- **worse: {name}** — {note}" for name, note in summary.worse]
+    lines += ["", "## Majors beside scores all at 1.000", ""]
     if not summary.cross_checked:
-        lines += ["**Not checked.** No `scores.json` was found for these "
-                  "documents, so nothing could be cross-checked — which is not "
-                  "the same as nothing being found."]
-    elif summary.unreported:
-        lines += ["Every scored ratio at 1.000, and a `major` visible in the "
-                  "picture:", ""]
-        lines += [f"- **{f.document}** · `{f.axis}` — {f.note}"
-                  for f in summary.unreported]
+        lines += ["**Not checked.** No `scores.json` was found for these pages, "
+                  "so nothing could be cross-checked — which is not the same as "
+                  "nothing being found."]
     else:
-        lines += [f"None across {len(summary.cross_checked)} scored "
-                  "document(s): every `major` sits beside at least one scored "
-                  "ratio below 1.000."]
-    lines += ["", "## Which axes fired", "",
-              "Evidence for whether the rubric earns its seven axes. **Not to "
-              "be added to another session's table.**", "",
-              "| axis | " + " | ".join(VERDICTS) + " | changed |", "|---|---|---|---|---|"]
-    for axis, counts in summary.axis_tally.items():
-        lines.append(f"| `{axis}` | " + " | ".join(
-            str(counts.get(verdict, 0)) for verdict in VERDICTS) + " | "
-            + str(sum(counts.get(v, 0) for v in CHANGED_VERDICTS)) + " |")
-    if summary.unknown_axes:
-        lines += ["", f"Axes answered that the rubric does not declare: "
-                  f"{', '.join('`' + a + '`' for a in summary.unknown_axes)} — "
-                  "a trial axis, kept."]
-    if summary.missing_axes:
-        lines += ["", f"Axes that never fired: "
-                  f"{', '.join('`' + a + '`' for a in summary.missing_axes)}."]
-    if summary.owner_tally:
-        lines += ["", "## Owners", ""]
-        lines += [f"- {owner}: {count}"
-                  for owner, count in summary.owner_tally.most_common()]
-    lines += ["", "## Every finding", ""]
-    for document in record.get("documents", ()):
-        name = document.get("name")
-        lines += [f"### {name}", ""]
-        for axis, answer in (document.get("axes") or {}).items():
-            verdict = (answer or {}).get("verdict") or "—"
-            lines.append(f"- **{axis}** · `{verdict}` — "
-                         f"{(answer or {}).get('note', '')}")
-        lines += [f"- **worst fault** — {document.get('worst') or '—'}",
-                  f"- **owner** — {document.get('owner') or '—'}", ""]
+        lines += [f"- **{f.page}** {f.n} `{f.check}: {f.fault}` — {f.element}"
+                  for f in summary.unreported] or ["None."]
+    if summary.unanswered or summary.unstaged:
+        lines += ["", "## Still to answer", ""]
+        lines += [f"- {name} {n}: no call" for name, n in summary.unanswered]
+        lines += [f"- {name} {n}: a major with no stage" for name, n in summary.unstaged]
+    lines += ["", "## Every opened page", ""]
+    for entry in record.get("pages", ()):
+        if not entry.get("opened"):
+            continue
+        lines += [f"### {entry.get('name')}", ""]
+        if entry.get("why"):
+            lines += [f"_Opened: {'; '.join(entry['why'])}._", ""]
+        lines += [_fault_line(fault) for fault in entry.get("faults", ())] or ["- no fault"]
+        if entry.get("changed"):
+            lines.append(f"- **changed** · {entry['changed']} — {entry.get('changed_note', '')}")
+        if entry.get("worst"):
+            lines.append(f"- **worst** — {entry['worst']}")
+        lines += [""]
     return "\n".join(lines) + "\n"
 
 

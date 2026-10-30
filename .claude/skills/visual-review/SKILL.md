@@ -1,216 +1,182 @@
 ---
 name: visual-review
-description: Review a conversion run by looking at the rendered pages beside the source documents, and report findings per document on a fixed rubric. Use when asked to review a run's output, to check whether a change improved or damaged the pages, to compare a run against the previous one, or before accepting a change that has only been judged on scores.
+description: Review a conversion run by looking at the rendered pages beside the source documents. The exact checks run first and arrive filled in; Claude confirms each by looking, names its stage, adds what the HTML cannot settle, and ranks the fault classes. Use when asked to review a run's output, to check whether a change improved or damaged the pages, to compare a run against the previous one, or before accepting a change judged only on scores.
 ---
 
 # Visual review
 
-Compare each rendered page against the document it was made from, and report
-what differs, per document, on a fixed rubric.
+Open each rendered page beside the document it was made from, and report
+its **faults**, each with its class, severity, element and stage. The
+criteria are `docs/agents/review-criteria.md` (agreed with Alessandro,
+2026-10-24): **the render must look like the page.** Every severity below
+comes from there.
 
-This exists because the numbers cannot see everything. A run once scored a
-document a **full match** while its only table had lost all five column
-headers, because the scorer compared row *roles* and never row *content*. The
-first time anyone ran this review over all fifteen documents it found nine
-faults that no scored axis had reported. So: a score is not a review, and this
-is the step that opens the pictures.
+The numbers cannot see everything. A document once scored a full match
+after its only table lost all five column headers. The first review over
+all fifteen documents found nine faults no scored axis had reported. A
+score is not a review: this is the step that opens the pictures.
 
 ---
 
 ## Before you start
 
 - **Chrome is required.** `python -c "from doc_to_html.projection import available; print(available())"` must print `True`.
-- **A run directory is required**: `debug/runs/<label>/`, containing
-  `dump/<model>/<document>/document.html`. A run produces one.
-- **Know which previous run to compare against**, if any. `ls debug/runs/`.
+- **A run directory is required**: `debug/runs/<label>/`, holding
+  `dump/<model>/<page>/document.html`. A sweep or `tools/batch.py` makes
+  one.
+- **Know the previous run**, if any (`ls debug/runs/`). Pairwise is the
+  stronger review.
 
 ---
 
-## Step 1 — Build the sheets
+## Step 1 — One command
 
 ```bash
-# against the source only
-python tools/visual_review.py debug/runs/94-borders-baseline
-
-# against the source AND the previous run's render  <- prefer this
-python tools/visual_review.py debug/runs/95-borders \
-    --previous debug/runs/94-borders-baseline
-
-# a few documents while iterating
-python tools/visual_review.py debug/runs/95-borders --documents cv_0013,menu_0012
-
-# two arbitrary files, outside any run
-python tools/visual_review.py --pair example/invoice.png /tmp/mine.html --out /tmp/rev
+python tools/measure_run.py debug/runs/<label>                       # against the source
+python tools/measure_run.py debug/runs/<label> --previous debug/runs/<older>
+python tools/measure_run.py debug/runs/<label> --all                 # open every page
 ```
 
-**Pass `--previous` whenever a previous run exists.** Source-against-render
-tells you how far the output is from the page. Render-against-render tells you
-whether your change *moved* it, which is the only thing that answers "did this
-help".
-
-Everything lands in `<run>/_review/`:
+It runs the exact checks on every page (`doc_to_html.checks`, spec 0021).
+They need no model: both sides are read from the HTML at the source's
+width. A page's checks are kept until its output or the checks' code
+changes. Then it picks the pages to open, builds their sheets and writes
+the form.
 
 | file | what it is |
 |---|---|
-| `NN-<document>.png` | the sheet to look at |
-| `NN-<document>-p1.png`, `-p2.png` … | a tall document, cut into parts |
-| `findings.json` | the form **you** fill in |
-| `review.md` | the same form for a person to read |
-| `numbers.md` | the scored axes, for quoting only |
+| `checks/report.md` | what the checks found: by class, family and feature, words lost and invented, pages opened and why |
+| `checks/<page>.json` | one page's faults, with their boxes |
+| `_review/NN-<page>.png` (`-p2` …) | the sheet: source, previous render, this render |
+| `_review/NN-<page>-tileK.png` | a dense page's strip of the source over the same strip of the render, full scale |
+| `_review/NN-<page>-diff.png` | with `--previous`: this render faded, red where it differs from the previous one |
+| `_review/findings.json` | **the form you answer**, the checks' faults filled in |
+| `_review/review.md` | the same form for a person |
+
+**Which pages are opened**:
+- every page where a check finds a major in **cells, rules, structure or
+  order**, which a reader must confirm;
+- every page a change **moved** (its render differs from the previous
+  run's);
+- **two more per family**, drawn by seed.
+
+A page flagged only by words, lines, height, alignment or type is counted
+in the report, not opened. Those checks read the HTML exactly.
 
 ---
 
-## Step 2 — Open every sheet
+## Step 2 — Read the report, then open every sheet
 
-Read each PNG with the Read tool, one at a time. **This is the only step that
-finds anything.** Do not skip a document because its numbers look fine — the
-worst document in the corpus once had the corpus's *best* height ratio.
-
-### What you are looking at
-
-Each sheet is one document, panels side by side, every panel at the **source's
-width** so line wrapping and column behaviour are comparable:
+`checks/report.md` first: it says what to expect. Then read each opened
+page's PNGs with the Read tool, one at a time, tiles and diff included.
+**This is the step that finds anything.**
 
 ```
-┌─ SOURCE (the page) ─┬─ RENDER 94-baseline ─┬─ RENDER 95-borders ─┐
-│                     │                      │                     │
-│  the screenshot of  │  the previous run's  │  this run's output  │
-│  the real document  │  output (--previous) │                     │
-│                     │                      │                     │
-└─────────────────────┴──────────────────────┴─────────────────────┘
+┌─ SOURCE (the page) ─┬─ RENDER <older> ─┬─ RENDER <label> ─┐
+│  the screenshot:    │  --previous only │  this run        │
+│  the truth          │                  │                  │
+└─────────────────────┴──────────────────┴──────────────────┘
 ```
 
-- **Left is always the source.** It is the screenshot the model was shown, and
-  it is the truth. Never treat the render as the reference.
-- **The middle panel only appears with `--previous`.**
-- A grey bar across the top of every panel names it and stamps the run and
-  date. If you cannot see that bar, you are looking at the wrong file.
-- **Tall documents arrive as several parts.** Part 2 of the source is paired
-  with part 2 of each render by content, not by height, so the parts line up
-  approximately even when a render is five times taller. Read all the parts.
+- **Left is always the source**, the picture the model was shown.
+- **Each fault a check found is a numbered magenta box** on the source and
+  on this render. The number is its `n` in the form. Its tag stands left
+  of the box and is see-through, so a marker under it still shows.
+- A grey bar names each panel and stamps the run and date. No bar means
+  the wrong file.
+- **Tall pages arrive in parts**, paired by content. Read them all.
+- **Tiles** come with a page whose body type would reach you too small to
+  read (`review.LEGIBLE_PX`). Each strip of the render is found by where
+  the source's words landed, not by height.
 
 ---
 
-## Step 3 — Diagnose before you write
+## Step 3 — Answer `findings.json`
 
-- **Trace a fault to its cause.** "The page looks grey", "the cards are
-  missing" and "the page is tinted" were once reported as three faults. They
-  were two bugs, and reporting them separately would have produced three wrong
-  fixes.
-- **A uniform result across every document is a broken instrument, not a
-  finding about the corpus.** `boxed` came back `False` on all fifteen
-  documents; the detector was looking in the wrong place. Suspect the tool
-  before the subject.
-- **Check what the render itself admits.** A render may print its own caveats
-  ("18.5% of ink unread"). Where the picture agrees with the caveat, that is
-  the honesty machinery working, not a new fault.
+One entry per page; `opened: true` are yours. For each **fault a check
+found** (`"from": "check"`):
+
+- `call`: **`confirmed`** if the picture shows it, **`rejected`** if it
+  does not. Markup can still fool a check. A rejection needs `why`: one
+  sentence on what the picture shows instead.
+- `stage`: where it was made. Use one of `rectify, layout, caption,
+  classify, extract, inline runs, re-read, third reading, wire, locate,
+  render`, or `cv:<pass>` for a CV pass (`cv:furniture`). **Read it from
+  the page, never guess it from the picture.** The IR is
+  `document.html`'s `<script id="doc-ir">`, and `trace.json` sits beside it.
+  `python tools/inspect_run.py <run>/dump/<model>/<page> --source <png>`
+  draws each step. Which Zone holds the words? What did the model answer
+  for that crop? What did the wire make of it?
+
+**Add every fault the checks cannot see**, with `"from": "review"`, the
+next `n`, and `check` set to one of these areas:
+
+| area | major | minor |
+|---|---|---|
+| `words` | a word or number lost, invented, changed or merged | — |
+| `structure` | a cell in the wrong row or column; a label over its value flattened; numbered steps as bullets; content under the wrong heading; two blocks interleaved | the right look from the wrong HTML |
+| `layout` | a line breaking at another word; height off by more than 10%; alignment changed; **what sits beside what** (a source column drawn as a stack) | height off by up to 10% |
+| `type` | the wrong face class; sizes out of proportion; bold printed regular | italics, letterspacing, small caps |
+| `looks` | the wrong ground; a colour that carries meaning lost; a fill, band, frame or rule missing | a colour off within its family; chips as plain text; a legend's swatches missing |
+| `figures` | — | any figure missing or imperfect: logos, barcodes, icons, signatures, photos |
+
+Each added fault takes `fault` (its class, a few words: `beside`,
+`fill missing`), `severity`, `element` (the words, quoted), `note`,
+`features` (the page's card features it bears on, from the manifest),
+`stage`.
+
+**A note names the element, quotes the text, and says where.**
+
+```
+✗  "the table looks wrong"
+✓  "the four results 6.4, 231, 84, 92 sit under Flag, one column right of Result"
+```
+
+With `--previous`, each page also takes `changed`, `better / same /
+worse`, and `changed_note` saying what moved. A `worse` says exactly what
+was there before and is not now. `worst` is the `n` of the page's worst
+fault.
+
+**Across the run, `ranked`**: the fault classes in the order to fix them,
+each `{"check", "fault", "why"}`. Majors first, then the biggest visible
+gain for the effort. The reasoning goes in `why`.
 
 ---
 
-## Step 4 — Fill in `findings.json`
-
-One block per document. Every axis gets a **verdict** and a **note**.
-
-### The severity ladder
-
-| verdict | means |
-|---|---|
-| `match` | a reader comparing the two would not remark on this axis |
-| `minor` | a visible difference that does not change what the document says or how it is read |
-| `major` | content is missing or invented, **or** the difference changes how the document reads |
-
-### The axes, with what each verdict looks like
-
-| axis | the question | `minor` looks like | `major` looks like |
-|---|---|---|---|
-| `content` | is anything in the source missing from the render, or anything in the render not in the source | the footer's copyright line is gone | the whole dark sidebar is absent, including the name |
-| `order` | same things, same sequence, bound to the same headings | two label/value pairs in the header are swapped | the last two bullets of the Benefits list appear under the *next* heading |
-| `columns` | what sits beside what | the aside is half the width where the source gives it a third | the source's two columns render as one stack |
-| `chrome` | borders, cards, rules, fills — drawn where the source draws them **and nowhere else** | a card's rule is drawn but its fill is missing | every titled section is drawn as a bordered card; the source draws two |
-| `type` | is the size and weight hierarchy the same shape | `h2` and `h3` render at the same size | body type is 2–3× the source, so the page runs three times the height |
-| `colour` | ground, ink, accent, shaded bands | ink is `#555` where the source is `#1a1a1a` | the whole page is rendered on the *card's* colour |
-| `rhythm` | spacing and density | paragraph spacing is roughly doubled | forty-one near-identical lines fill the page |
-| `changed` | **only with `--previous`**: `better` / `same` / `worse` against the middle panel | — | a `worse` is a ratchet event: say exactly what was there before and is not now |
-
-### Writing a note that is worth reading
-
-**Name the element. Quote the text. Say where on the page.** One sentence.
-
-```
-✗  "content — major — a lot of text is missing."
-✗  "chrome — minor — the styling looks off."
-✗  "type — major — the typography is wrong."
-
-✓  "content — major — the whole dark left sidebar is absent: the name
-    'Ines Halloran', the contact block and the skills list."
-✓  "chrome — major — all six sections are drawn as bordered grey cards;
-    the source draws no border anywhere on this page."
-✓  "type — major — body copy renders at roughly 24px against the source's
-    10px, which is what makes the page run to five screens."
-```
-
-A note that could have been written from `numbers.md` without opening the
-picture has not done the job.
-
-### `worst` and `owner`
-
-- `worst` — the axis carrying the worst fault on that document.
-- `owner` — where the fault was last worked on, or `new` when nothing has
-  touched it. Every phase is closed and nothing is queued since 2026-10-10, so
-  `owner` no longer means *already scheduled*. The areas, for reference:
-  doubled titles and content loss → `A0`; column collapse and alignment →
-  `A2`; heading and label sizes, including a bold body line drawn as `h1` →
-  the type scale, `2/B`; figures → `A3`. Figures are drawn from their pixels
-  since A3 and repeated caveat lines are one line since 2026-09-26, so either
-  one coming back is a regression.
-
-`owner` separates *a known fault, already worked on* from *nobody knew about
-this* — what gets fixed next is Alessandro's decision.
-
-**An axis the rubric does not declare is accepted and counted as a trial
-axis.** If a fault has no home, add one rather than bending it into an axis
-that does not fit.
-
----
-
-## Step 5 — Tally and report
+## Step 4 — Tally and report
 
 ```bash
-python tools/visual_review.py debug/runs/95-borders --check
+python tools/visual_review.py debug/runs/<label> --check
 ```
 
-This rewrites `review.md` from your answers and prints:
+It rewrites `review.md` with the ranked classes, the pages where the
+review **overturns a check** (a fault rejected, or a major added), every
+`worse`, and what is still unanswered (a call missing, a major with no
+stage). It refuses a form of another rubric.
 
-- **faults no scored axis reported** — a `major` sitting beside scored ratios
-  that are all at 1.000, which is the "full match with the headers deleted"
-  failure, caught;
-- **which axes fired**, and which never did;
-- **the owner tally**.
-
-Then report in the conversation, and nowhere else:
-
-1. the worst fault per document, one line each;
-2. every `worse` on the `changed` axis, with what was lost;
-3. the faults no scored axis reported;
-4. the owner tally.
+Then report in the conversation:
+1. the ranked fault classes, with pages touched and why;
+2. the pages where you overturn a check, for Alessandro to spot-check,
+   with the three known-fault pages and two at random (spec 0021,
+   decision 2); in a pairwise review, every page called worse, plus two
+   at random;
+3. every `worse`, with what was lost.
 
 ---
 
 ## Rules that bind every run of this skill
 
-- **The left panel is the truth.** It is the screenshot the model was shown.
-  Never compare against a re-rendered source HTML — several corpus documents
-  re-render 7–14% different from their own screenshots on this machine, and
-  one wants a CDN this machine does not fetch.
-- **Every panel is laid out at the source's width.** A page compared against
-  itself at two widths is two different pages.
-- **Judge pairwise and in-session.** A verdict from another session is not
-  comparable with yours and must never be put in the same table. Both images
-  go in front of you now, or the comparison is not made. Every sheet is
+- **The left panel is the truth**: the screenshot, never the re-rendered
+  source HTML.
+- **Every panel is laid out at the source's width.**
+- **Pairwise and in-session.** A call from another session is not
+  comparable with yours and never goes in one table with it. Every sheet is
   stamped with its run and date for this reason.
-- **No scores out of ten.** The output is observations, not a grade.
-- **Do not report the deliberately deferred as new faults**: column collapse,
-  the type scale and `Zone.align`. Record them with their owner and move on.
-- **The rubric is provisional.** Seven axes with a handful of passes behind
-  them. `--check` reports which never fired so it can be cut down later. Do
-  not treat the current seven as settled.
+- **No scores out of ten.** Faults, with the criteria's severities.
+- **Never guess a stage.** If the IR and the trace do not say, write
+  `null` and say why in the note.
+- **A uniform result is a broken instrument.** A check firing on every
+  page, or never, is suspected before the pages are.
+- **Every disagreement with Alessandro changes the checklist**: this skill,
+  or a check, re-tested on all his past calls
+  (`docs/agents/review-calls/`).
