@@ -47,7 +47,7 @@ from .corpus import REPO, manifest, names, page
 
 MEASUREMENT = (
     "projection.py", "scoring.py", "report.py", "review.py", "checks.py",
-    "corpus.py", "batch.py", "geometry_score.py", "factory/",
+    "corpus.py", "batch.py", "measure.py", "geometry_score.py", "factory/",
 )
 """The modules under `src/doc_to_html/` that measure rather than convert.
 
@@ -159,9 +159,10 @@ def _record_start(run: Path, wanted: Sequence[str], model: str) -> None:
     (run / "fixtures.txt").write_text("\n".join(wanted) + "\n")
     (run / "commit.txt").write_text(_git("rev-parse", "HEAD") + "\n")
     (run / "model.txt").write_text(model + "\n")
+    from .config import ENVIRONMENT, load
     (run / "dth_env.txt").write_text("".join(
-        f"{key}={value}\n" for key, value in sorted(os.environ.items())
-        if key.startswith("DTH_")))
+        f"{name}={setting.value}\n" for name, setting in sorted(load().origins.items())
+        if name.startswith("DTH_") and setting.source == ENVIRONMENT))
     from .engines.ollama import CLASSIFY_PROMPT
     (run / "classify_prompt_sent.txt").write_text(CLASSIFY_PROMPT)
     (run / "started.txt").write_text(datetime.now().isoformat(timespec="seconds") + "\n")
@@ -240,10 +241,24 @@ def run_batch(run: Path, wanted: Sequence[str], *, model: str, convert: Converte
 
 
 def resident_models(host: str) -> list[str]:
-    """Models Ollama has loaded, by name, from `ollama ps`."""
-    shown = subprocess.run(["ollama", "ps"], capture_output=True, text=True,
-                           env={**os.environ, "OLLAMA_HOST": host}).stdout
-    return [line.split()[0] for line in shown.splitlines()[1:] if line.strip()]
+    """Models Ollama has loaded at `host`, by name."""
+    import ollama
+
+    return [str(loaded.model) for loaded in ollama.Client(host=host).ps().models]
+
+
+def resident_split(host: str) -> str:
+    """What `ollama ps` shows of each loaded model: its size, its context and
+    how much of it sits on the GPU, which is what moves a run's timings."""
+    import ollama
+
+    lines = []
+    for loaded in ollama.Client(host=host).ps().models:
+        size, vram = int(loaded.size or 0), int(loaded.size_vram or 0)
+        gpu = round(100 * vram / size) if size else 0
+        lines.append(f"{loaded.model}  {size / 1e9:.1f} GB  {100 - gpu}%/{gpu}% CPU/GPU  "
+                     f"context {loaded.context_length}")
+    return "\n".join(lines) + "\n"
 
 
 def guard_residency(model: str, host: str, *, fresh: bool,
@@ -304,19 +319,18 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
     try:
         wanted = pages_for(args.pages, skip_known=args.skip_known)
-        host = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
+        from .config import load
+        host = load().ollama_host
         guard_residency(args.model, host, fresh=not (run / "fixtures.txt").exists())
         fresh = not (run / "ollama_ps_before.txt").exists()
         run.mkdir(parents=True, exist_ok=True)
         if fresh:
             (run / "host.txt").write_text(host + "\n")
-            (run / "ollama_ps_before.txt").write_text("\n".join(resident_models(host)) + "\n")
+            (run / "ollama_ps_before.txt").write_text(resident_split(host))
         result = run_batch(run, wanted, model=args.model,
                            convert=ollama_converter(args.model),
                            say=lambda line: print(line, flush=True))
-        shown = subprocess.run(["ollama", "ps"], capture_output=True, text=True,
-                               env={**os.environ, "OLLAMA_HOST": host}).stdout
-        (run / "ollama_ps_after.txt").write_text(shown)
+        (run / "ollama_ps_after.txt").write_text(resident_split(host))
     except (BatchError, KeyError, PermissionError) as error:
         print(f"refused: {error}", file=sys.stderr)
         return 2

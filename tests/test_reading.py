@@ -80,7 +80,7 @@ class TestWords:
         assert [word.weight for word in detail.words][3] >= 600
 
     @needs_chrome
-    @pytest.mark.parametrize("page_id", ["c0001", "probe_labreport", "nonlatin_0014"])
+    @pytest.mark.parametrize("page_id", ["c0008", "probe_labreport", "nonlatin_0014"])
     def test_words_hold_the_runs_tokens_exactly(self, page_id: str) -> None:
         """A word is cut on white space inside a text node, so its tokens are
         the scorer's tokens, one for one."""

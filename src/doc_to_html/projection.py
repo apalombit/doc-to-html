@@ -531,6 +531,15 @@ MEASURE = r"""
       }
       return text.trim() ? 'other' : 'none';
     };
+    // A marker the list style draws, which no text node and no `::before`
+    // holds: its number is the item's ordinal. A `::before`'s text is read
+    // as words below (`generated`), numbers included.
+    const styled = (item) => {
+      const style = getComputedStyle(item);
+      return style.display === 'list-item' && style.listStyleType !== 'none'
+        && NUMBERED.test(style.listStyleType)
+        && !(style.listStyleImage && style.listStyleImage !== 'none');
+    };
     const markerOf = (item) => {
       const style = getComputedStyle(item);
       if (style.display === 'list-item') {
@@ -565,6 +574,14 @@ MEASURE = r"""
         child.tagName === 'LI' || getComputedStyle(child).display === 'list-item');
       if (!items.length) continue;
       const index = lists.length;
+      // An `<ol>` item's number: `li.value` is 0 unless the markup sets it,
+      // so it is counted from `start`, taking any `value` an item sets.
+      let next = list.tagName === 'OL' ? list.start : null;
+      const ordinals = items.map((item) => {
+        if (next === null) return null;
+        if (item.hasAttribute('value')) next = parseInt(item.getAttribute('value'), 10);
+        return next++;
+      });
       lists.push({index, tag: list.tagName.toLowerCase(), items: items.map((item, k) => {
         itemIds.set(item, [index, k]);
         const text = collapse(item.textContent);
@@ -573,9 +590,124 @@ MEASURE = r"""
         // span straight before a word (`1What is…`, c0011). A letter needs its
         // stop, or every item opening with `a` would be numbered.
         return {text, box: box(item.getBoundingClientRect()), marker: markerOf(item),
+                ordinal: styled(item) ? ordinals[k] : null,
+                list_style: getComputedStyle(item).listStyleType,
                 numbered_text: /^\(?(\d{1,3}([.)]|(?=[^\W\d_]))|[a-z][.)]|[ivxlc]{1,4}[.)])/iu.test(text),
                 ticked_text: /^[☐-☒✓-✘□■▢▣]/u.test(text)};
       })});
+    }
+
+    // Generated content: what a `::before` or `::after` prints, which no
+    // text node holds. report_0011 numbers its headings with CSS counters
+    // and form_0007 draws a ticked box's cross with `::after`; a reader sees
+    // both. Counters are followed through the page in document order, each
+    // reset scoped to its element's parent — CSS's scoping, simplified to
+    // what the corpus uses. Read as words placed beside the text they sit
+    // next to, their boxes estimated from the font.
+    const counters = new Map();
+    const pairs = (value, fallback) => {
+      // A computed `counter-reset` or `counter-increment`: names, each with
+      // an optional number after it.
+      const found = [];
+      if (!value || value === 'none') return found;
+      const parts = value.trim().split(/\s+/);
+      for (let i = 0; i < parts.length; i += 1) {
+        if (/^-?\d+$/.test(parts[i])) continue;
+        const next = parts[i + 1];
+        found.push([parts[i], next !== undefined && /^-?\d+$/.test(next)
+          ? parseInt(next, 10) : fallback]);
+      }
+      return found;
+    };
+    const live = (name, element) => {
+      const stack = (counters.get(name) || []).filter((at) => at.scope.contains(element));
+      counters.set(name, stack);
+      return stack;
+    };
+    const reset = (style, element) => {
+      for (const [name, value] of pairs(style.counterReset, 0)) {
+        const stack = live(name, element);
+        const top = stack[stack.length - 1];
+        const scope = element.parentElement || document.documentElement;
+        if (top && top.scope === scope) top.value = value;
+        else stack.push({scope, value});
+      }
+    };
+    const increment = (style, element) => {
+      for (const [name, step] of pairs(style.counterIncrement, 1)) {
+        const stack = live(name, element);
+        if (!stack.length) stack.push({scope: document.documentElement, value: 0});
+        stack[stack.length - 1].value += step;
+      }
+    };
+    const ROMAN = [[1000, 'm'], [900, 'cm'], [500, 'd'], [400, 'cd'], [100, 'c'], [90, 'xc'],
+                   [50, 'l'], [40, 'xl'], [10, 'x'], [9, 'ix'], [5, 'v'], [4, 'iv'], [1, 'i']];
+    const styledNumber = (value, kind) => {
+      if (/roman/.test(kind || '')) {
+        let left = value, out = '';
+        for (const [size, glyph] of ROMAN) while (left >= size) { out += glyph; left -= size; }
+        return /upper/.test(kind) ? out.toUpperCase() : out;
+      }
+      if (/alpha|latin/.test(kind || '')) {
+        const letter = String.fromCharCode(96 + ((value - 1) % 26) + 1);
+        return /upper/.test(kind) ? letter.toUpperCase() : letter;
+      }
+      return String(value);
+    };
+    const printedBy = (content, element) => {
+      let out = '';
+      const pattern = /"((?:[^"\\]|\\.)*)"|counters?\(([^)]*)\)/g;
+      for (const match of content.matchAll(pattern)) {
+        if (match[1] !== undefined) { out += match[1].replace(/\\(.)/g, '$1'); continue; }
+        const args = match[2].split(',').map((part) => part.trim().replace(/^["']|["']$/g, ''));
+        const stack = live(args[0], element);
+        if (match[0].startsWith('counters(')) {
+          out += stack.map((at) => styledNumber(at.value, args[2])).join(args[1] || '');
+        } else {
+          out += styledNumber(stack.length ? stack[stack.length - 1].value : 0, args[1]);
+        }
+      }
+      return out;
+    };
+    const textNodes = (root) => {
+      const found = [];
+      const walk = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      let at;
+      while ((at = walk.nextNode())) if (at.textContent.trim()) found.push(at);
+      return found;
+    };
+    const before = new Map();
+    const after = new Map();
+    const placed = new Set(nodes.map(([node]) => node));
+    const following = (element) => {
+      const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      walk.currentNode = element;
+      let at;
+      while ((at = walk.nextNode())) if (placed.has(at)) return at;
+      return null;
+    };
+    for (const element of document.body.querySelectorAll('*')) {
+      if (skipped.has(element) || SKIP.has(element.tagName)) continue;
+      const style = getComputedStyle(element);
+      if (style.display === 'none') continue;
+      reset(style, element);
+      increment(style, element);
+      for (const which of ['::before', '::after']) {
+        const pseudo = getComputedStyle(element, which);
+        const content = pseudo.content;
+        if (!content || content === 'none' || content === 'normal') continue;
+        reset(pseudo, element);
+        increment(pseudo, element);
+        const text = printedBy(content, element);
+        if (!text.trim() || pseudo.display === 'none' || pseudo.visibility === 'hidden') continue;
+        const inside = textNodes(element).filter((node) => placed.has(node));
+        const anchor = which === '::before' ? (inside[0] || following(element))
+          : (inside[inside.length - 1] || following(element));
+        if (!anchor) continue;
+        const into = which === '::after' && inside.length ? after : before;
+        if (!into.has(anchor)) into.set(anchor, []);
+        into.get(anchor).push({text, style: pseudo, element, which, inside: inside.length > 0});
+      }
     }
 
     // Every printed word: a run of non-space in one text node, so a word the
@@ -583,7 +715,48 @@ MEASURE = r"""
     // scorer.
     const range = document.createRange();
     const words = [];
+    const generatedWords = (made, block, near) => {
+      for (const {text, style, element} of made) {
+        const face = faceOf(style.fontFamily);
+        canvas.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+        const cell = element.closest('td, th');
+        let item = null;
+        for (let at = element; at && at !== document.body; at = at.parentElement) {
+          if (itemIds.has(at)) { item = itemIds.get(at); break; }
+        }
+        for (const match of text.matchAll(/\S+/g)) {
+          const width = canvas.measureText(match[0]).width;
+          const [left, top, bottom] = near(width);
+          words.push({text: match[0], rect: [left, top, left + width, bottom], block, lines: 1,
+                      weight: parseInt(style.fontWeight, 10) || 400,
+                      italic: style.fontStyle === 'italic', family: face.family,
+                      mono: face.mono, font_px: px(style.fontSize), color: style.color,
+                      transform: style.textTransform,
+                      small_caps: /small-caps/.test(style.fontVariantCaps || ''),
+                      cell: cell && cellIds.has(cell) ? cellIds.get(cell) : null,
+                      item, generated: true});
+        }
+      }
+    };
     for (const [node, block] of nodes) {
+      const first = (() => {
+        range.selectNodeContents(node);
+        const rects = [...range.getClientRects()].filter((r) => r.width > 0 || r.height > 0);
+        return rects.length ? [rects[0], rects[rects.length - 1]] : null;
+      })();
+      if (before.has(node) && first) {
+        let edge = first[0].left;
+        const made = before.get(node);
+        const total = made.reduce((sum, {text, style}) => {
+          canvas.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+          return sum + canvas.measureText(text).width;
+        }, 0);
+        edge -= total;
+        generatedWords(made, block, (width) => {
+          const left = edge; edge += width + 3;
+          return [left, first[0].top, first[0].bottom];
+        });
+      }
       const parent = node.parentElement;
       const style = getComputedStyle(parent);
       const face = faceOf(style.fontFamily);
@@ -602,7 +775,7 @@ MEASURE = r"""
           l = Math.min(l, x0); t = Math.min(t, y0);
           r = Math.max(r, x1); b = Math.max(b, y1);
         }
-        words.push({text: match[0], rect: [l, t, r, b], block, lines: lines.length,
+        words.push({text: match[0], rect: [l, t, r, b], block, lines: lines.length, generated: false,
                     weight: parseInt(style.fontWeight, 10) || 400,
                     italic: style.fontStyle === 'italic',
                     family: face.family, mono: face.mono, font_px: px(style.fontSize),
@@ -610,6 +783,13 @@ MEASURE = r"""
                     small_caps: /small-caps/.test(style.fontVariantCaps || ''),
                     cell: cell && cellIds.has(cell) ? cellIds.get(cell) : null,
                     item});
+      }
+      if (after.has(node) && first) {
+        let edge = first[1].right + 3;
+        generatedWords(after.get(node), block, (width) => {
+          const left = edge; edge += width + 3;
+          return [left, first[1].top, first[1].bottom];
+        });
       }
     }
 
@@ -819,6 +999,9 @@ class Word:
     small_caps: bool
     cell: tuple[int, int] | None = None
     item: tuple[int, int] | None = None
+    generated: bool = False
+    """Printed by a `::before` or `::after`, not a text node: a counter's
+    number, a ticked box's cross. Its box is estimated from the font."""
 
 
 @dataclass(frozen=True)
@@ -979,6 +1162,12 @@ class ListItem:
     with numbers printed as text, 32 read as numbered. The 33rd, c0039,
     opens each item with a tick box."""
     ticked_text: bool = False
+    ordinal: int | None = None
+    """An `<ol>` item's number, which its marker draws and no text node
+    holds: counted from the list's `start`, taking any `value` an item
+    sets."""
+    list_style: str = ""
+    """The item's computed `list-style-type`."""
     """Whether the item's own text opens with a tick, a cross or a box:
     `☑ Full forum pass`. Measured on dev's 32 pages carrying `list.ticks`,
     2026-10-30: none draws a tick as a marker, and 24 open list items with
@@ -1211,7 +1400,7 @@ def _detail(payload: dict[str, Any]) -> Detail:
              mono=bool(item["mono"]), font_px=float(item["font_px"]),
              color=str(item["color"]), transform=str(item["transform"]),
              small_caps=bool(item["small_caps"]), cell=_pair(item["cell"]),
-             item=_pair(item["item"]))
+             item=_pair(item["item"]), generated=bool(item.get("generated", False)))
         for item in payload["words"]
     )
     tables = tuple(
@@ -1237,7 +1426,10 @@ def _detail(payload: dict[str, Any]) -> Detail:
                   items=tuple(ListItem(text=str(item["text"]), box=_rect(item["box"]),
                                        marker=str(item["marker"]),
                                        numbered_text=bool(item["numbered_text"]),
-                                       ticked_text=bool(item["ticked_text"]))
+                                       ticked_text=bool(item["ticked_text"]),
+                                       ordinal=(None if item["ordinal"] is None
+                                                else int(item["ordinal"])),
+                                       list_style=str(item["list_style"]))
                               for item in group["items"]))
         for group in payload["lists"]
     )

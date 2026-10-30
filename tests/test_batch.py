@@ -21,8 +21,8 @@ from doc_to_html.batch import BatchError, guard_residency, pages_for, run_batch,
 
 REAL_CHANGED = batch.conversion_changed
 
-PAGES = ("c0001", "c0002", "probe_quiz", "invoice_0001")
-"""Four pages of the manifest, two generated, one probe, one of the 21."""
+PAGES = ("c0008", "c0009", "probe_quiz", "invoice_0001")
+"""Four dev pages of the manifest, two generated, one probe, one of the 21."""
 
 
 class Stop(Exception):
@@ -61,7 +61,7 @@ class TestWhichPages:
         with pytest.raises(corpus.SealedError):
             pages_for("vault")
         with pytest.raises(corpus.SealedError):
-            pages_for(f"c0001,{sealed}")
+            pages_for(f"c0008,{sealed}")
 
     def test_a_list_of_manifest_ids(self) -> None:
         assert pages_for(",".join(PAGES)) == PAGES
@@ -108,11 +108,11 @@ class TestResuming:
     def test_a_page_that_raises_is_recorded_and_the_run_goes_on(self, tmp_path: Path) -> None:
         calls: list[str] = []
         run = tmp_path / "L2-batch"
-        result = run_batch(run, PAGES, model="m:1", convert=converter(calls, error_on="c0002"),
+        result = run_batch(run, PAGES, model="m:1", convert=converter(calls, error_on="c0009"),
                            say=lambda line: None)
         assert (result.done, result.errors) == (4, 1)
-        assert (run / "dump" / "m_1" / "c0002" / "00_classify.json").exists()
-        assert not (run / "dump" / "m_1" / "c0002" / "document.html").exists()
+        assert (run / "dump" / "m_1" / "c0009" / "00_classify.json").exists()
+        assert not (run / "dump" / "m_1" / "c0009" / "document.html").exists()
 
     def test_another_list_is_refused(self, tmp_path: Path) -> None:
         run = tmp_path / "L2-batch"
