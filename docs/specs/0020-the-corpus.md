@@ -1,7 +1,9 @@
 # The corpus: 600 pages, chosen by their variability
 
-**Status: in progress, issue #43. Steps 0–2 done 2026-10-24; step 3, the pilot of 100, awaiting review ("Outcome —
-the steps").**
+**Status: done 2026-10-30, issue #43 closed.** 631 pages, every one
+passing: 573 generated (130 of them parts), 27 real PDF pages, and the
+31 we had. "Outcome — the corpus" is the record. **Next is L2, spec
+0021**, from the handover prompt at the end.
 - **This is step L1b** of the level-up plan
   ([`../level-up.md`](../level-up.md) §6), on branch `level-up`.
 - **It is written to be run in a fresh chat.** Everything it needs is here
@@ -1186,16 +1188,345 @@ Of the 236 cards left after the recast, 130 are parts. Of the 106 whole
 ones, 21 are fragments, 19 receipts and a few nutrition labels; the rest
 are whole pages, kept for range.
 
-**Where it stands, 2026-10-27:** 337 of 573 generated pages and 27 PDF
-pages written, every one passing.
+**The last five rounds, 2026-10-27 to 2026-10-30**, written by a
+`corpus-writer` agent (Sonnet, its brief built in) per batch of ten, up
+to eight at a time:
+
+| round | pages | first run passed | batch of ten, seconds |
+|---|---|---|---|
+| 6 | 18 of 60 | not reported | — |
+| 7 | 60 | 24 | 553–675 |
+| 8 | 80 | 45 | 457–599 |
+| 9 | 9 of 78 | not reported | — |
+| 10 | 69 | 26 | 507–633 |
+
+Round 6 was stopped by an interrupt and round 9 by the spend limit. The
+pages each had passed were kept, and its other cards went to the next
+round. A batch of ten cost its writer 103,000–137,000 tokens.
+
+**Two pages had been edited after their last validator run**: c0042
+(round 6) and c0268 (round 9), each left by a writer stopped mid-loop.
+Their records named another file. The manifest test's re-shoot found
+c0042, and a hash comparison over all 600 records found both. Both were
+run again and passed. `tests/test_corpus_manifest.py` now holds every
+record to the files the manifest names.
+
+**Done 2026-10-30:** all 600 cards have a passed page: 573 generated
+and 27 PDF.
+
+### Step 6 — done 2026-10-30
+
+- **The 31 carded by hand** in `corpus/known.json`:
+  - family and kind come from each page's name;
+  - arrangement, main face and style were judged by eye from one sheet of
+    the 31;
+  - features are what the validator detects on each page;
+  - density is set from words per 1000 px;
+  - no locale is set, because the pages declare a language only
+    (nonlatin_0014 declares `el`).
+
+  All 31 go to dev, and their files stay where they are.
+- **The deal** is `pools.deal`, seeded with the cards' seed:
+  - 200 to each pool: 191 generated and 9 PDF pages each;
+  - each family split within two pages;
+  - the pilot in dev;
+  - every feature on at least two pages in every pool.
+- **The L3 set** is 36 panel pages, four from each of the nine families,
+  nine of them parts. It holds no PDF page. Nine of the panel's 200 are
+  PDF pages, with as many features as the rest (median 4), and the
+  cover, which takes whatever page adds most, took none of them. Whether
+  L3 should carry a real PDF page is a question for its spec.
+- **`tools/corpus_manifest.py`** writes `corpus/manifest.json` (631
+  pages: pool, card, files and their sha256) and `corpus/l3-subset.txt`.
+  It refuses while any card lacks a passed page.
+- **`doc_to_html.corpus`** gains three calls; `SOURCES` and the old splits
+  are unchanged:
+  - `names("dev" | "panel" | "l3")` returns a pool's pages;
+  - `names("vault")` raises `SealedError` unless called with
+    `unseal=True`;
+  - `page(id)` returns any corpus page as a `Source`.
+- **`tests/test_corpus_manifest.py`** checks:
+  - every file's hash;
+  - every record against its files;
+  - the deal and the L3 set reproduced;
+  - the vault refusing;
+  - 60 fixed generated pictures re-shot and equal to the pixel, about a
+    second each.
+
+  `tools/corpus_check.py --all --dry` re-checks every page; it is too
+  slow for the suite.
 
 ## Outcome — the corpus
 
-*To be written at step 7.*
+Done 2026-10-30, on branch `level-up`. **631 pages, every one passing**:
+600 from the cards, plus the 21 and the ten probe pages. Nobody has
+converted a page, and nobody has opened a vault page since the deal. The
+manifest (`corpus/manifest.json`) is the inventory.
+
+**Checked together at the end, 2026-10-30:**
+- `tools/corpus_check.py --all --dry` passed 573 of 573 generated pages,
+  in 2155 s;
+- `tools/corpus_pdf.py gate` passed 27 of 27 PDF twins.
+
+### What it holds
+
+| origin | pages | what |
+|---|---|---|
+| generated, whole | 393 | a whole page of its kind |
+| generated, part | 130 | one part of a document of its kind, zoomed in or cut out, 500–800 px wide (Alessandro, 2026-10-27) |
+| generated, fragment | 50 | a table, chart, map, form section or diagram on its own |
+| PDF | 27 | a real PDF page; its picture is the PDF's render, its ground truth an HTML twin that passed the gate |
+| corpus and probe | 31 | the 21 and the ten probe pages, carded by hand |
+
+**Families and kinds** (the 600 cards): reports 96, transactional 94,
+forms 91, publishing 55, correspondence and legal 54, reference 54,
+credentials 53, presentation 53, fragments 50: **60 kinds**. Receipts
+are 40, and the three clinical kinds 40 together, as §4.7 asked.
+
+**Languages**: English 449 (en-US 229, en-GB 220), French 50, Italian 50,
+Portuguese 26 (pt-PT 17, pt-BR 9), Spanish 25.
+
+**Size.** Generated pages are 228–1803 px tall, median 729.
+- Whole pages: median 860 px wide, 809 tall, 237 words.
+- Parts: median 740 px wide, 593 tall, 200 words.
+- Fragments: median 519 tall.
+- By density, the median words are 357 dense, 214 medium and 138 sparse.
+
+The corpus is 83 MB on disk.
+
+**Pools**:
+
+| pool | pages | generated | PDF | known |
+|---|---|---|---|---|
+| dev | 231 | 191 | 9 | 31 |
+| panel | 200 | 191 | 9 | — |
+| vault | 200 | 191 | 9 | — |
+
+Each family is split within two pages across the pools. The L3 set is 36
+panel pages, four per family.
+
+### Coverage
+
+The rule was every feature on at least 9 pages in at least 3 kinds, and
+2 pages in every pool. **It is met for all 54 feature ids**:
+- the fewest pages: `text.drop_cap` on 11 pages in 7 kinds, then
+  `list.big_steps` on 12 and `fmt.eu_numbers` and `look.buttons` on 13;
+- the fewest in a pool: 2, for `fmt.eu_numbers`, `look.buttons` and
+  `text.drop_cap`.
+
+Pages per feature, family by family (`tools/corpus_cards.py --table`):
+
+```
+feature                pages kinds  frm trn rep cor pub ref crd prs frag
+------------------------------------------------------------------------
+arr.one_column           259    54   44  46  35  33  16  26   8  13  38
+arr.two_columns           91    42   19   6  21  12  14   6   3   6   4
+arr.three_columns         22    15    4   0   4   0   6   8   0   0   0
+arr.sidebar               83    39   11   5  14   9  13   6  16   3   6
+arr.cards_grid            36    17    0   0   7   0   6   8   0  15   0
+arr.panels_side_by_side    54    25   13  13  15   0   0   0   4   9   0
+arr.centred               55     8    0  24   0   0   0   0  22   7   2
+type.serif               201    55   30  23  30  17  30  15  22  13  21
+type.sans                355    60   54  48  64  36  24  38  31  35  25
+type.mono                 44    19    7  23   2   1   1   1   0   5   4
+table.ruled              114    45   13  20  26   5  10  16   4   3  17
+table.spanning            51    32    9   1  12   0   2   9   6   5   7
+table.section_rows        43    25    6   4   9   0   6  11   0   0   7
+table.totals              43    31    6  16   4   3   5   4   0   0   5
+table.empty_cells         68    32   18  15  13   0   0  12   0   3   7
+table.zebra               49    32    6  17   8   0   4   4   0   2   8
+table.subrows             33    21    4   2  11   0   3  12   0   0   1
+table.long                22    15    6   9   2   0   0   5   0   0   0
+kv.inline                 86    42    9  22  13  11   2   7  14   4   4
+kv.over                   96    41   18   8  16   5   4   9  20   9   7
+kv.two_per_line           56    34   14  12   6   3   2   5   7   1   6
+kv.leaders                52    31   11   9   8   6   2   6   4   0   6
+kv.boxed                  67    32   20  19  12   2   1   2   6   2   3
+list.bullets              95    43    5   8  21  16   5   9   9  11  11
+list.numbers              85    39   11  10  14   9   9   4   0  11  17
+list.nested               37    23    5   0  13   5   5   1   4   4   0
+list.ticks                77    33   25  11  16   6   1   3   0  10   5
+list.clauses              40    21   13   6   5  16   0   0   0   0   0
+list.big_steps            12    10    3   0   0   0   4   0   0   5   0
+text.justified            50    24    9   0  10  17  12   1   1   0   0
+text.footnotes            72    35    6  13  12  12   3   9   0   2  15
+text.supsub               58    32    3   6  20   2   7   6   0   3  11
+text.formula              16    10    1   0   3   0   9   0   0   0   3
+text.quote                31    15    0   0   2   5   9   0   5  10   0
+text.drop_cap             11     7    0   0   0   4   7   0   0   0   0
+type.display              64    37    9   5   5   4   6   6  14  12   3
+type.script               30    19    5   0   0   5   3   2  10   5   0
+type.small_caps           66    37   10   7   7  10   5   5  13   5   4
+type.weights              82    44    7  11  11   6   7   9  15   8   8
+look.accent              110    53   11  17  17  11   6  10  13  12  13
+look.dark_ground          21    15    0   1   1   0   4   0   6   7   2
+look.bands                98    47   17  22  16   8   9   4   6   7   9
+look.chips                44    25    3   4   2   0   2   7  11  11   4
+look.buttons              13    10    5   3   0   0   0   0   0   5   0
+look.rules                91    43   10  26   9  11   5  10   9   4   7
+fig.logo                  77    41   12  17   8  12   5   8   6   8   1
+fig.chart                 43    18    0   5   8   0  15   0   0   5  10
+fig.code                  63    30    9  22  10   0   6   4   7   5   0
+fig.signature             54    26   11   9  10  14   0   0   9   0   1
+fig.photo                 24    14    3   0   0   0   5   1   6   9   0
+fig.icons                 67    38    5   5   3   6   8   6  13  12   9
+fmt.eu_numbers            13    11    0   3   5   1   1   0   0   1   2
+fmt.dates                102    47   13   9  21  13   7   4  18   7  10
+fmt.currency              66    34    4  16   2   5   4  11   0  11  13
+families: frm = forms, trn = transactional, rep = reports, cor = correspondence and legal, pub = publishing, ref = reference, crd = credentials, prs = presentation, frag = fragments
+```
+
+### Time and cost
+
+- **Writing.** The batch times recorded add up to 21,297 writer-seconds,
+  about 5.9 hours. Rounds 5, 6 and 9 and the PDF twins are not in that
+  total, because their reports were lost. A round ran five to eight
+  writers at once, so each round took the wall-clock time of its slowest
+  batch, 5 to 11 minutes. In rounds 7 to 10, a batch of ten pages cost
+  its writer 103,000–137,000 tokens.
+- **Validator runs.** Of the 493 pages whose run counts were reported:
+  - 259 (53%) passed on the first run;
+  - 188 took two runs;
+  - 35 took three;
+  - 11 took four or five.
+- **Whose writing.** The ledger (`corpus/written.json`) records all
+  573 generated pages: 559 written by Sonnet and 14 by Opus, the Opus
+  ones in the pilot. Its one other entry is c0471's twin.
+- **Spend limits.** Rounds 2, 5 and 9 stopped at the monthly spend limit,
+  and round 6 at an interrupt. Each was resumed from what had passed.
+
+### Dropped, and why
+
+- **c0271** (PDF): an Ofsted report of 2011 that allowed copying for
+  non-commercial educational purposes only.
+- **c0077** (PDF): IRS Schedule A, whose twin stayed one row short
+  through a gate banding fault (step 5), left unrepaired once PDF work
+  stopped.
+- **No generated page was dropped.** c0042 and c0268 were re-validated
+  after edits their writers made after passing.
+
+### The PDF pages by source
+
+Every page's own copyright statement was read before it was taken.
+`corpus/pdf/ATTRIBUTION.md` names each one:
+
+| source | licence | pages |
+|---|---|---|
+| US federal agencies: IRS, GSA, Federal Reserve, DOE, NIST, Interior | public domain (17 U.S.C. 105) | 10 |
+| UK government (HMRC, HMCTS, DVLA, ESFA), GOV.UK | Open Government Licence v3.0 | 4 |
+| Istat | CC BY 4.0 (three); CC BY 3.0 IT, as the paper states (one) | 4 |
+| BOE | reuse for any purpose, with the source named | 3 |
+| arXiv | CC BY 4.0, paper by paper | 3 |
+| INSEE | Licence Ouverte 2.0 | 2 |
+| Receita Federal, via the State of Acre | a blank form, not protected (Lei 9.610/98 art. 8 IV) | 1 |
+
+By language: English 17, Italian 4, Spanish 3, French 2, Portuguese 1.
+By family:
+- forms 9;
+- reports 6;
+- publishing 5;
+- reference 3;
+- transactional 2;
+- correspondence and legal 2.
+
+### The contact sheets
+
+- **The pilot's 100** (step 3) were reviewed by Alessandro and kept.
+- **The PDF pilot's ten** (step 4) were reviewed by him: "pdf choice and
+  conversion 10 cases are good".
+- **Every PDF twin** was opened beside its page by Claude. Three faults
+  were found:
+  - c0073 drew its selected radios empty. Fixed.
+  - c0412 squeezed a display fraction into its bar. Fixed 2026-10-30.
+  - c0196 draws two rules through their labels. Left as it is: the
+    picture converted is the PDF's own, and the twin's words and their
+    places are right.
+- **48 pages drawn at random from those written since the recast**
+  (`debug/corpus-sheets/since-recast-*.png`, seed 20261030) were
+  judged by Claude:
+  - every one reads as a document of its kind;
+  - each part reads as a section cut out of a larger document;
+  - no two pages share a look.
+
+### Where it differs from the plan
+
+- **27 PDF pages, not about 100.** Alessandro, 2026-10-27: "keep current
+  set of pdf as is and not add further pdf". Their 73 slots became
+  generated cards of the same family and language.
+- **130 parts and 50 fragments.** Both were Alessandro's choice:
+  fragments after the pilot, parts on 2026-10-27. So 180 of the 573
+  generated pages are smaller than a page.
+- **The known faults.**
+  - c0082's twin copies the PDF's "specifc" and "ftness", where the
+    picture prints "specific" and "fitness": the text layer drops the
+    ligature, and the gate counts characters.
+  - The gate bands a line-end word into the row above when the line's
+    other words are stacked under that row (c0077).
+
+  Both are recorded and not repaired.
 
 ---
 
-## Handover prompt
+## Handover prompt — L2, spec 0021
+
+Written 2026-10-30, when this spec closed. Paste it into a fresh chat.
+
+> Plan, then build, **L2 of the level-up plan: measurement and the
+> judge**, as spec 0021, on branch `level-up`. Its outline is spec
+> 0020's "What comes after this spec", L2.
+>
+> **Read first, in order:**
+> 1. `CLAUDE.md`'s READ THIS FIRST;
+> 2. `docs/status.md`;
+> 3. `docs/level-up.md`: the Gist, §4.9, §6, §7 and §8;
+> 4. `docs/agents/review-criteria.md`;
+> 5. `docs/specs/0020-the-corpus.md`: "Outcome — the corpus" and "What
+>    comes after this spec";
+> 6. `docs/agents/visual-review.md` and `.claude/skills/visual-review/`,
+>    the skill L2 evolves.
+>
+> **The corpus is built and sealed.**
+> - It holds 631 pages in `corpus/manifest.json`.
+> - `doc_to_html.corpus.names("dev" | "panel" | "l3")` returns a pool's
+>   ids, and `page(id)` returns any page as a `Source`.
+> - The vault raises `SealedError`. Never pass `unseal=True`: only
+>   Alessandro opens it, at a milestone.
+> - Three kinds of page need care in a check:
+>   - **A PDF page**: its picture is the PDF's render and its HTML a
+>     twin, so measure height against the PNG.
+>   - **A part**: one section of a document, cut at its edges.
+>   - **c0082**: its twin spells "specifc" and "ftness" as the text
+>     layer does, where the picture prints "specific" and "fitness".
+>
+> **Order:**
+> 1. Write the spec (`docs/specs/0021-…md`) from the outline, with
+>    every fact in it re-measured, and open its issue.
+> 2. Ask Alessandro to approve the plan before building.
+> 3. Build it, each step its own commit with its tests.
+> 4. Prove it on the 31 known dev pages first. It must catch the faults
+>    already known there: the lab report's shifted results, the recipe's
+>    interleaved steps, the quiz's merged cells.
+>
+> **L2 changes no conversion code** (`level-up.md` §6: L1–L3 change none).
+> It measures and reviews.
+>
+> **Stop and ask Alessandro:**
+> - at the plan;
+> - before any conversion run longer than two hours. The probe took about
+>   8 minutes a page, so dev's 231 pages are about 31 hours; the batch
+>   runner must be detached and resumable;
+> - before building the review page (an Artifact with a database; load
+>   the `artifact-capabilities` skill first);
+> - whenever his calls on the review page disagree with the checks.
+>
+> **At the end:**
+> - write the outcome;
+> - update `docs/status.md`, `CLAUDE.md` and `level-up.md` §6;
+> - close the issue;
+> - write a handover prompt for L3, the honest baseline on
+>   `corpus/l3-subset.txt`.
+
+## Handover prompt — this spec, as it was given
 
 > Implement spec 0020, `docs/specs/0020-the-corpus.md` (issue #43), in
 > this fresh session: the corpus of 600 pages, step L1b of the level-up

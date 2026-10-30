@@ -1,11 +1,12 @@
-# Status — 2026-10-24 (**the baseline is `tests/frozen/s14-result/`; the level-up plan is decided: the corpus first, then the GLM-OCR PoC**)
+# Status — 2026-10-30 (**the baseline is `tests/frozen/s14-result/`; the corpus is built (spec 0020, done); next is L2, measurement and the judge (spec 0021)**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-23,
 when Alessandro took spec 0019's sweep `S14-sweep` as the baseline,
 frozen as `s14-result/` (issue #42 closed), and cleared every open item.
 Updated 2026-10-24, when he decided the level-up plan
-([`level-up.md`](level-up.md) §8).
+([`level-up.md`](level-up.md) §8), and 2026-10-30, when spec 0020 built
+the corpus (issue #43 closed).
 
 Reading order for a fresh session:
 1. `CLAUDE.md`'s **READ THIS FIRST**;
@@ -14,7 +15,9 @@ Reading order for a fresh session:
 3. this file;
 4. [`level-up.md`](level-up.md)'s Gist, §6 and §8: the plan from
    2026-10-24, and what comes next;
-5. [`specs/0019-steady-checked-structured-styled.md`](specs/0019-steady-checked-structured-styled.md)'s
+5. [`specs/0020-the-corpus.md`](specs/0020-the-corpus.md)'s "Outcome —
+   the corpus" and its last handover prompt, which starts L2;
+6. [`specs/0019-steady-checked-structured-styled.md`](specs/0019-steady-checked-structured-styled.md)'s
    "Outcome — the steps" and "Outcome — the sweep", the last conversion
    work done.
 
@@ -23,8 +26,10 @@ If you are going to look at output — and you should — use the
 
 Branches `main`, `develop` and `level-up`, all on the remote since
 2026-10-24; work continues on `level-up`, and `scaffold` is retired into
-`develop`. **1394 tests pass (1 skipped), `mypy src/` clean**: measured
-2026-10-24 on `level-up`, whose code is `a0d73c9`'s, the sweep's commit.
+`develop`. **1567 tests pass (1 skipped), `mypy src/` clean**: measured
+2026-10-30 on `level-up`, at the end of spec 0020. The conversion code
+is still `a0d73c9`'s, the sweep's commit: spec 0020 added the corpus
+factory and changed no conversion code.
 
 **How work is judged — Alessandro, 2026-10-12, for spec 0011; carried
 over by specs 0012 to 0019.**
@@ -110,6 +115,13 @@ Spec 0019   One grouping however the page is pictured, the structure the
               DECIDED 2026-10-23: S14-sweep the baseline, frozen as s14-result/
 Reset       2026-10-23, Alessandro: every open item cleared, spec 0019's
               four directions included. Nothing is open.
+LEVEL-UP    2026-10-24, Alessandro: docs/level-up.md, branch level-up.
+              L1a the variability                     AGREED 2026-10-24
+Spec 0020   The corpus, L1b — issue #43: 631 pages, every one passing;
+              573 generated (130 parts of a document), 27 real PDF
+              pages, the 31 in dev; pools dev / panel / vault sealed
+              DONE 2026-10-30
+              L2 measurement and the judge, spec 0021  NEXT
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -284,18 +296,29 @@ In order (`level-up.md` §6):
    eight families, tilted toward forms, receipts and doctors' notes;
    English, Italian, French and the other Latin languages; one page per
    document; figures in.
-2. **L1b — the corpus. This is next:
-   [spec 0020](specs/0020-the-corpus.md), issue #43**, run in a fresh
-   chat from its handover prompt. 600 pages, 200 each for dev, panel
-   and vault, from cards drawn at random inside those bounds. Claude
-   writes most; about 100 are real PDFs, admitted only where their HTML
-   redraws the PDF's own picture. The 21 and the ten probe pages join
-   dev.
-3. **L2 — measurement**: derived checks (the cell check, tables, lists,
-   order), and the review skill evolved to the criteria agreed on
-   2026-10-24 ([`agents/review-criteria.md`](agents/review-criteria.md)).
-   Claude is the judge; he checks every page called worse plus two at
-   random.
+2. **L1b — the corpus, done 2026-10-30**
+   ([spec 0020](specs/0020-the-corpus.md), issue #43 closed). 631 pages,
+   every one passing its validator:
+   - 573 written by Claude from cards drawn inside the agreed bounds.
+     130 of them are parts of a document and 50 are fragments
+     (Alessandro, 2026-10-25 and 2026-10-27).
+   - 27 real PDF pages, each with an HTML twin admitted by a gate. He
+     stopped them there on 2026-10-27.
+   - The 21 and the ten probe pages, carded by hand.
+
+   They are dealt into dev (231), panel (200) and vault (200), and the
+   L3 set is 36 panel pages. `doc_to_html.corpus.names("dev" | "panel" |
+   "l3")` returns a pool, and the vault refuses unless unsealed.
+3. **L2 — measurement and the judge. This is next: spec 0021**, run in
+   a fresh chat from spec 0020's last handover prompt. It builds:
+   - the derived checks: the cell check, tables, lists, lines and order;
+   - a batch runner;
+   - the review skill evolved to the criteria agreed on 2026-10-24
+     ([`agents/review-criteria.md`](agents/review-criteria.md));
+   - a review page with agree buttons.
+
+   Claude is the judge, and he checks every page called worse plus two
+   at random.
 4. **L3 — an honest baseline**, a task on a limited set (30–40 pages).
 5. **P1 — the parser-first PoC**, after L1, on its own branch: GLM-OCR's
    latest, whole pipeline (its layout model and its reader), then an
