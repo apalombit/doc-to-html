@@ -1,7 +1,7 @@
 # Measurement and the judge: checks from the HTML, a batch runner, the review evolved
 
-**Status: planned 2026-10-30, issue #44. Waiting for Alessandro's
-approval before anything is built.**
+**Status: approved 2026-10-30, issue #44; being built.** The decisions
+are at the end.
 - **This is step L2** of the level-up plan
   ([`../level-up.md`](../level-up.md) §6), on branch `level-up`. Its
   outline is spec 0020's "What comes after this spec", L2.
@@ -365,8 +365,9 @@ about 8 minutes, to prove it end to end.
   checks' calls and Claude's.
 - **He ticks agree or disagree on each page and adds a note**:
   - pairwise: every page called worse, plus two at random;
-  - source-only (this spec's proof, L3's baseline): the rule decided at
-    this plan (decision 2).
+  - source-only (this spec's proof, L3's baseline): every page where
+    Claude's call overturns a check, the three known-fault pages, and two
+    at random (decision 2).
 - **Claude reads his calls back** with `ArtifactData` and keeps them in
   the repository, `docs/agents/review-calls/<run>.json`.
 - **Every disagreement changes the checklist**: the skill, or a check.
@@ -402,9 +403,9 @@ The outcome; `docs/status.md`, `CLAUDE.md` and `level-up.md` §6 updated;
 issue #44 closed; a handover prompt for L3, the honest baseline on
 `corpus/l3-subset.txt`.
 
-### Optional — dev converted (decision 1)
+### Alongside — dev converted (decision 1)
 
-If Alessandro says yes: once step 3's runner is proven, dev's 200 pages
+Decided yes. Once step 3's runner is proven, dev's 200 pages
 not yet converted are converted with the shipped defaults, about 27 hours
 detached, while steps 4–7 are built. The checks then run over all 231,
 and the review samples them by step 5's rule. It shakes the checks down on
@@ -437,17 +438,10 @@ tests/test_checks.py, test_batch.py, test_measure_run.py
 
 ---
 
-## Decisions to take at the plan
+## Decisions — Alessandro, 2026-10-30
 
-1. **Convert dev in L2?** About 27 hours, detached and resumable, started
-   once the runner is proven, while the rest is built. *Recommended: yes.*
-   The checks meet 200 unconverted pages before L3, and P1 needs today's
-   dev conversion as its control anyway.
-2. **In a source-only review, which pages does Alessandro check?** With
-   no previous run there is no "worse", and nearly every page carries a
-   major while the render reflows printed lines. *Recommended:* every page
-   where Claude overturns a check, the three known-fault pages, and two at
-   random.
-3. **This plan as a whole**: steps 1–8 in order, the checks in §C, their
-   severities as `review-criteria.md` gives them, and the two marked
-   *inferred* (regular drawn bold, a bullet added: both minor).
+| # | asked | decided |
+|---|---|---|
+| 1 | convert dev in L2? | **Yes, once the runner is proven** (step 3): dev's 200 pages not yet converted, about 27 hours, detached and resumable, while steps 4–7 are built. Claude says when it starts |
+| 2 | in a source-only review, which pages does he check? | **Every page where Claude's call overturns a check, the three known-fault pages, and two at random** |
+| 3 | the plan | **Approved as written**: steps 1–8 in order, §C's checks, the criteria's severities, and the two *inferred* ones as minor (regular drawn bold; a bullet added, or a tick drawn as a bullet) |
