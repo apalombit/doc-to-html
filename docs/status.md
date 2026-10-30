@@ -306,6 +306,9 @@ In order (`level-up.md` §6):
      stopped them there on 2026-10-27.
    - The 21 and the ten probe pages, carded by hand.
 
+   The fewer PDF pages and the parts differ from the plan. He accepted
+   both on 2026-10-30, and `level-up.md` §8 records it as decision 7.
+
    They are dealt into dev (231), panel (200) and vault (200), and the
    L3 set is 36 panel pages. `doc_to_html.corpus.names("dev" | "panel" |
    "l3")` returns a pool, and the vault refuses unless unsealed.

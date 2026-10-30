@@ -21,7 +21,8 @@ sealed exam.
   different kinds, English and the Latin languages (§4.7).
 - A first batch of 600, about 100 of them real PDFs, in three pools of
   200: **dev** to look at, a **panel** to decide on, and a **vault**
-  nobody opens until a milestone.
+  nobody opens until a milestone. *Built 2026-10-30 with 27 real PDFs,
+  and 130 pages that are parts of a document (§8, decision 7).*
 - **The judge is Claude**, with the review skill held to criteria agreed
   with you (§4.9, `agents/review-criteria.md`).
 
@@ -332,6 +333,8 @@ the generator's pages look varied enough. The 21 existing pages and the
 ten probe pages join the dev pool. Keep clean screenshots, as
 you said; picture-level difficulty stays a separate preprocessing track.
 
+**As built, 2026-10-30** (spec 0020): 27 real PDF pages, not about 100, and 130 of the 573 generated pages are parts of a document. Both are Alessandro's choices, accepted 2026-10-30 (§8, decision 7).
+
 ### 4.2 Why 5–10 more pages does not help
 
 **The arithmetic.** Say a step is judged by the share of pages it makes
@@ -518,7 +521,7 @@ wrong on 14 of the 31 pages that have one" is a fault class with evidence.
 | 2 | **Languages** | English, Italian, French and the other Latin languages (Spanish, Portuguese). No Greek, Cyrillic, CJK or right-to-left for now. Share proposed: English about three quarters; Italian and French about 50 pages each; Spanish and Portuguese about 25 each |
 | 3 | **Figures** | In, as pictures carried over (logo, chart, barcode, signature, photo). The words inside a chart are not asked for |
 | 4 | **Pages** | One page per document. Multi-page later |
-| 5 | **Real PDFs** | About 100 of the 600, about 33 per pool: public pages with a text layer (government forms, annual-report pages, manuals, papers). Each one admitted only through the §4.6 gate, so none misleads development. They count toward their family's quota |
+| 5 | **Real PDFs** | *As built: 27, nine per pool (§8, decision 7).* Planned: about 100 of the 600, about 33 per pool: public pages with a text layer (government forms, annual-report pages, manuals, papers). Each one admitted only through the §4.6 gate, so none misleads development. They count toward their family's quota |
 | 6 | **First batch** | 600 pages: 200 dev, 200 panel, 200 vault, cards drawn at random inside the quotas |
 
 ### 4.8 Picture-level difficulty stays out — agreed
@@ -789,6 +792,7 @@ nobody has tuned on.
 | 4 | the 21? | **They join the corpus as dev pages**, with the ten probe pages, all with a known render and HTML; the corpus grows from there |
 | 5 | models? | **Local only, for now** |
 | 6 | backup? | **Push, and tidy git** with every result and this review: done 2026-10-24. `main`, `develop` and `level-up` are on the remote; `scaffold` is retired into `develop` |
+| 7 | the corpus as built (L1b), 2026-10-25 to 2026-10-30 | **Smaller pages, fewer PDFs, accepted.** After the pilot, 50 fragments: a table, chart, map, form section or diagram on its own (2026-10-25). PDF pages stopped at **27** ("keep current set of pdf as is and not add further pdf", 2026-10-27); their 73 slots became generated cards of the same family and language. **130 cards made parts of a document**, a zoom on one part of a page of their kind ("liberally use smaller ones", 2026-10-27). On 2026-10-30: "deviations are fine". Spec 0020's outcome is the record |
 
 **The variability, agreed the same day** (§4.7, table 3): the eight
 families, tilted toward forms, receipts and doctors' notes laid out like

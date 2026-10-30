@@ -11,7 +11,9 @@ passing: 573 generated (130 of them parts), 27 real PDF pages, and the
 - **It builds** 600 new pages, each an HTML file and the picture converted
   from it, in three pools of 200: dev, panel and vault. About 100 of them
   are real PDF pages. It also writes cards for the 31 pages we already
-  have, which join dev.
+  have, which join dev. *As built: 27 real PDF pages, and 130 of the 573
+  generated pages are parts of a document, both Alessandro's choices,
+  accepted 2026-10-30 ("Outcome — the corpus").*
 - **It touches no conversion code and runs no conversion.** The converter
   meets these pages after this spec, in L2 and L3.
 
@@ -68,6 +70,11 @@ review skill, the honest baseline and the GLM-OCR PoC.
 
 The PDF column is a proposal. The real sources decide it (§P), and a
 family's PDF pages count toward its quota.
+
+*As built, 2026-10-30:* 27 PDF pages (forms 9, reports 6, publishing 5,
+reference 3, transactional 2, correspondence and legal 2). The family
+totals held, because each unused PDF slot became a generated card of its
+family. "Outcome — the corpus" has the counts.
 
 | language | pages, about |
 |---|---|
@@ -1448,7 +1455,9 @@ By family:
   - each part reads as a section cut out of a larger document;
   - no two pages share a look.
 
-### Where it differs from the plan
+### Where it differs from the plan — accepted by Alessandro, 2026-10-30
+
+"Deviations are fine." `level-up.md` §8, decision 7, records it.
 
 - **27 PDF pages, not about 100.** Alessandro, 2026-10-27: "keep current
   set of pdf as is and not add further pdf". Their 73 slots became
