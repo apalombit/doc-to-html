@@ -44,6 +44,19 @@ def test_every_page_s_files_are_there_and_unchanged() -> None:
             assert digest == entry["sha256"][kind], f"{page_id}: {path} changed"
 
 
+def test_every_page_passed_the_validator_as_it_now_is() -> None:
+    """A page edited after its last validator run has a record about
+    another file. Two writers stopped mid-loop left one each (c0042,
+    c0268), found by the re-shoot below; both were re-run and passed."""
+    for page_id, entry in PAGES.items():
+        if entry["origin"] not in ("generated", "pdf"):
+            continue
+        record = json.loads((REPO / "corpus" / "checks" / f"{page_id}.json").read_text())
+        assert record["passed"], page_id
+        assert record["html_sha256"] == entry["sha256"]["html"], page_id
+        assert record["png_sha256"] == entry["sha256"]["png"], page_id
+
+
 def test_the_pools_are_the_seeded_deal_with_the_known_pages_in_dev() -> None:
     seed, drawn = cards.load(REPO / "corpus" / "cards.json")
     dealt = pools.deal(TAXONOMY, drawn, seed)

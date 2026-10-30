@@ -2,8 +2,8 @@
  "id": "c0412",
  "passed": true,
  "failures": {},
- "checked": "2026-10-26",
- "seconds": 6.4,
+ "checked": "2026-10-30",
+ "seconds": 1.9,
  "width": 1000,
  "height": 1415,
  "words": 721,
@@ -22,12 +22,12 @@
   "type.serif"
  ],
  "dhash": "3337173733373737",
- "html_sha256": "b11b5e00b2ec48d7966136725c26e92e448d4036437f4f2aaf8625aa488cbdc0",
+ "html_sha256": "64062b6683cb23b78a14cac93d97ed1d24c67d600fc87a6dc71c842b2ba855b5",
  "png_sha256": "d6380f9cf988b8f5fc8506e3e6003ff16bd7fb460f367752f7a9b414a99788a2",
  "gate": {
   "rows": 118,
   "worst_left": 5.4,
-  "worst_top": 14.3,
+  "worst_top": 9.6,
   "one_line_runs": 0,
   "type_off": 0
  }
