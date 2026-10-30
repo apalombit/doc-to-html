@@ -648,7 +648,7 @@ def build(run: Path, *, model: str = "qwen3-vl:4b",
     `render` is the screenshot function, injected so the sheet builder can be
     tested without a browser; it defaults to `projection.screenshot`.
     """
-    from doc_to_html.corpus import SOURCES
+    from doc_to_html.corpus import page
 
     if render is None:
         from doc_to_html.projection import screenshot as render
@@ -663,7 +663,7 @@ def build(run: Path, *, model: str = "qwen3-vl:4b",
     sheets: list[Sheet] = []
     skipped: list[str] = []
     for index, name in enumerate(names):
-        source = REPO / SOURCES[name].png
+        source = page(name).png_path(REPO)
         width = Image.open(source).width
         html = _dump(run, model) / name / "document.html"
         if not html.exists():

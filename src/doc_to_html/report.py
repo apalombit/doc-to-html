@@ -42,7 +42,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
-from .corpus import SOURCES, Source, split_of
+from .corpus import Source, split_of
+from .corpus import page as corpus_page
 from .honesty import Accounting, account, document_in, loss_findings
 from .ir import Document, Unclaimed
 from .projection import available, screenshot
@@ -950,8 +951,9 @@ def build(run: Path, *, model: str, documents: Iterable[str],
     accounts: list[Accounting] = []
     unsnapped: list[tuple[str, str]] = []
     for name in documents:
-        source = SOURCES.get(name)
-        if source is None:
+        try:
+            source = corpus_page(name)
+        except KeyError:
             continue
         output = dump / name / "document.html"
         if not output.is_file():

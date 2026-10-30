@@ -137,7 +137,7 @@ sys.path.insert(0, str(TOOLS))
 
 from doc_to_html import (display, dropcap, fields, furniture, locate, looks,  # noqa: E402
                          probes, raised, rhythm, separator, spans)
-from doc_to_html.corpus import SOURCES  # noqa: E402
+from doc_to_html.corpus import page  # noqa: E402
 from doc_to_html.ir import Caveat, Document, Kind  # noqa: E402
 from doc_to_html.orchestrator import gaps, shortfall  # noqa: E402
 from doc_to_html.preprocess import rectify  # noqa: E402
@@ -256,14 +256,16 @@ def main() -> int:
         f"model re-derived by tools/rederive.py\n")
 
     for name, html in found:
-        if name not in SOURCES:
+        try:
+            picture = page(name).png_path(REPO)
+        except KeyError:
             print(f"{name:<22} skipped (not in the corpus)")
             continue
         document = ir_of(html.read_text(encoding="utf-8"))
         if document is None:
             print(f"{name:<22} skipped (no embedded IR)")
             continue
-        rederive(document, REPO / SOURCES[name].png)
+        rederive(document, picture)
         out = target / "dump" / slug / name / "document.html"
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(render(document), encoding="utf-8")

@@ -81,7 +81,7 @@ sys.path.insert(0, str(REPO / "tests"))
 
 from doc_to_html import bakeoff  # noqa: E402
 from doc_to_html.config import load  # noqa: E402
-from doc_to_html.corpus import SOURCES  # noqa: E402
+from doc_to_html.corpus import page  # noqa: E402
 from doc_to_html.engines.transport import Response  # noqa: E402
 from replay import ReplayTransport, reasoning_channel  # noqa: E402
 
@@ -296,7 +296,7 @@ def main() -> int:
                                        swaps.get(name, {})))
         for name in names
     }
-    corpus = {name: SOURCES[name].png_path(REPO) for name in names}
+    corpus = {name: page(name).png_path(REPO) for name in names}
     attempts = bakeoff.run(
         [args.model], corpus, load(),
         transport_for=lambda model, name: transports[name],

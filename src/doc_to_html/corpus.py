@@ -176,7 +176,9 @@ def names(split: str, *, unseal: bool = False) -> tuple[str, ...]:
     `FIXTURE=invoice_0001,cv_0013` all mean something, and a typo names itself
     rather than silently measuring a smaller corpus than was asked for. A
     pool of spec 0020's corpus (`dev`, `panel`, `l3`, and the sealed
-    `vault`) is `pool`'s.
+    `vault`) is `pool`'s. A list may name the manifest's pages too
+    (`c0001,probe_quiz`); one in the vault raises `SealedError` unless
+    `unseal`, as the vault itself does (spec 0021, step 3).
     """
     wanted = split.strip()
     if wanted in (*POOLS, "vault"):
@@ -186,12 +188,18 @@ def names(split: str, *, unseal: bool = False) -> tuple[str, ...]:
     if wanted in SPLITS:
         return SPLITS[wanted]
     asked = tuple(part.strip() for part in wanted.split(",") if part.strip())
-    unknown = [name for name in asked if name not in SOURCES]
+    pages = manifest() if any(name not in SOURCES for name in asked) else {}
+    unknown = [name for name in asked if name not in SOURCES and name not in pages]
     if unknown:
         raise KeyError(
             f"unknown document(s): {', '.join(unknown)}. "
-            f"Known: {', '.join(SOURCES)}"
+            f"Known: {', '.join(SOURCES)}, and the manifest's pages"
         )
+    sealed = [name for name in asked
+              if name not in SOURCES and pages[name]["pool"] == "vault"]
+    if sealed and not unseal:
+        raise SealedError(f"{', '.join(sealed)}: in the vault, sealed until a milestone; "
+                          "pass unseal=True only when Alessandro has opened it")
     return asked
 
 

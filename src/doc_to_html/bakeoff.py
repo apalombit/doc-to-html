@@ -54,7 +54,7 @@ from pathlib import Path
 from typing import Any, Callable, Iterable
 
 from .config import Settings, configure_logging, load
-from .corpus import SOURCES, names
+from .corpus import names, page
 from .engines.base import LayoutEngine
 from .engines.ollama import OllamaEngine
 from .engines.transport import OllamaTransport, Response, Transport
@@ -255,7 +255,7 @@ def load_corpus(root: Path, wanted: Iterable[str]) -> dict[str, Path]:
     """
     found = {}
     for name in wanted:
-        source = SOURCES[name]
+        source = page(name)
         png = source.png_path(root)
         if not png.is_file():
             raise SystemExit(
