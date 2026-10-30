@@ -254,6 +254,7 @@ MEASURE = r"""
 
   const runs = [];
   const blocks = new Map();
+  const detailNodes = [];
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   let node;
   let order = 0;
@@ -316,6 +317,7 @@ MEASURE = r"""
       lines: measured.lines,
       font_px: px(style.fontSize),
     });
+    if (window.__dthDetail) detailNodes.push([node, record.index]);
   }
 
   const blockList = [...blocks.values()].map((record) => {
@@ -404,6 +406,239 @@ MEASURE = r"""
         || element.scrollWidth > element.clientWidth + 2) clipped += 1;
   }
 
+  // Spec 0021, step 1: what the checks need and the scorer does not. Each
+  // printed word and its box, each table's cells with the rules drawn round
+  // them, each list's markers, and the boxes each block's lines can sit in.
+  // Computed only when asked (`project(..., detail=True)`), so the payload
+  // every score is read from is the same with or without it.
+  function detailOf(nodes, blockMap, skipped) {
+    const shown = (element) => {
+      const style = getComputedStyle(element);
+      return style.display !== 'none' && style.visibility !== 'hidden';
+    };
+    const box = (rect) => [rect.left, rect.top, rect.right, rect.bottom];
+    const collapse = (text) => text.replace(/\s+/g, ' ').trim();
+    const side = (style, name) => [px(style[`border${name}Width`]),
+                                   style[`border${name}Style`],
+                                   style[`border${name}Color`]];
+    const sides = (element) => {
+      const style = getComputedStyle(element);
+      return ['Top', 'Right', 'Bottom', 'Left'].map((name) => side(style, name));
+    };
+    const groundOf = (element) => {
+      for (let at = element; at; at = at.parentElement) {
+        const colour = getComputedStyle(at).backgroundColor;
+        if (colour && colour !== 'rgba(0, 0, 0, 0)' && colour !== 'transparent') return colour;
+      }
+      return 'rgb(255, 255, 255)';
+    };
+    const ordered = (elements) => [...elements].sort((a, b) =>
+      (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1);
+
+    // The face a stack draws: its first family that resolves. A family this
+    // machine lacks falls through to `monospace` in one probe and `serif` in
+    // the other, and the two widths differ — `factory.fonts`' own test.
+    const GENERICS = new Set(['serif', 'sans-serif', 'monospace', 'cursive', 'fantasy',
+      'system-ui', 'ui-serif', 'ui-sans-serif', 'ui-monospace', 'ui-rounded',
+      '-apple-system', 'blinkmacsystemfont', 'math', 'emoji']);
+    const canvas = document.createElement('canvas').getContext('2d');
+    const faces = new Map();
+    const named = (family) => (/^[-\w]+$/.test(family) ? family : `"${family}"`);
+    const faceOf = (stack) => {
+      if (faces.has(stack)) return faces.get(stack);
+      const families = stack.split(',').map((f) => f.trim().replace(/^["']|["']$/g, ''))
+                            .filter(Boolean);
+      let drawn = families[families.length - 1] || 'serif';
+      for (const family of families) {
+        if (GENERICS.has(family.toLowerCase())) { drawn = family; break; }
+        canvas.font = `48px ${named(family)}, monospace`;
+        const one = canvas.measureText('Hamburgefonstiv 0123456789').width;
+        canvas.font = `48px ${named(family)}, serif`;
+        if (canvas.measureText('Hamburgefonstiv 0123456789').width === one) {
+          drawn = family;
+          break;
+        }
+      }
+      canvas.font = `48px ${stack}`;
+      const face = {family: drawn,
+                    mono: Math.abs(canvas.measureText('iiiii').width
+                                   - canvas.measureText('MMMMM').width) < 0.5};
+      faces.set(stack, face);
+      return face;
+    };
+
+    // Tables, by slot: a cell spanning two columns fills two slots. Each
+    // cell's own four borders, its row's and its row group's, and the
+    // table's, are kept raw; which of them draws a rule is `Table.drawn`'s
+    // question, since `border-collapse` decides whose border shows.
+    const cellIds = new Map();
+    const tables = [];
+    for (const table of document.querySelectorAll('table')) {
+      if (skipped.has(table) || !shown(table)) continue;
+      const index = tables.length;
+      const rows = [...table.rows];
+      const grid = [];
+      const cells = [];
+      const rowSides = [];
+      rows.forEach((row, r) => {
+        const style = getComputedStyle(row);
+        rowSides.push([side(style, 'Top'), side(style, 'Bottom')]);
+        grid[r] = grid[r] || [];
+        let c = 0;
+        for (const cell of row.cells) {
+          while (grid[r][c] !== undefined) c += 1;
+          const down = Math.min(cell.rowSpan > 0 ? cell.rowSpan : rows.length - r, rows.length - r);
+          const across = Math.max(1, cell.colSpan || 1);
+          for (let i = r; i < r + down; i += 1) {
+            grid[i] = grid[i] || [];
+            for (let j = c; j < c + across; j += 1) grid[i][j] = cells.length;
+          }
+          cellIds.set(cell, [index, cells.length]);
+          cells.push({row: r, col: c, rowspan: down, colspan: across,
+                      header: cell.tagName === 'TH', text: collapse(cell.textContent),
+                      box: box(cell.getBoundingClientRect()), sides: sides(cell),
+                      ground: groundOf(cell)});
+          c += across;
+        }
+      });
+      const groups = [];
+      for (const group of table.querySelectorAll(':scope > thead, :scope > tbody, :scope > tfoot')) {
+        const inside = [...group.rows].map((row) => rows.indexOf(row)).filter((at) => at >= 0);
+        if (!inside.length) continue;
+        const style = getComputedStyle(group);
+        groups.push({first: Math.min(...inside), last: Math.max(...inside),
+                     top: side(style, 'Top'), bottom: side(style, 'Bottom')});
+      }
+      const style = getComputedStyle(table);
+      tables.push({index, rows: rows.length,
+                   cols: Math.max(0, ...grid.map((row) => (row ? row.length : 0))),
+                   collapse: style.borderCollapse === 'collapse',
+                   box: box(table.getBoundingClientRect()), sides: sides(table),
+                   ground: groundOf(table), row_sides: rowSides, groups, cells});
+    }
+
+    // Lists, and what each item is marked with: its list-style, a `::marker`
+    // standing in for it, or a `::before` — the text node walk sees none of
+    // them, which is how a numbered step drawn as a bullet stayed invisible.
+    const NUMBERED = /decimal|roman|alpha|latin|greek|armenian|georgian|hebrew|cjk|hiragana|katakana/;
+    const BULLETED = /disc|circle|square|disclosure/;
+    const markOf = (text) => {
+      if (/counter\(/.test(text)) return 'number';
+      if (/[✓✔☑☒✗✘☐□✅❌]/.test(text)) return 'tick';
+      if (/\d/.test(text)) return 'number';
+      if (/[•·▪▫●○◦‣⁃–—\-*►▸»>]/.test(text)) {
+        return 'bullet';
+      }
+      return text.trim() ? 'other' : 'none';
+    };
+    const markerOf = (item) => {
+      const style = getComputedStyle(item);
+      if (style.display === 'list-item') {
+        if (style.listStyleImage && style.listStyleImage !== 'none') return 'bullet';
+        const type = style.listStyleType;
+        if (type && type !== 'none') {
+          if (NUMBERED.test(type)) return 'number';
+          if (BULLETED.test(type)) return 'bullet';
+          if (/^["']/.test(type)) return markOf(type.slice(1, -1));
+          return 'other';
+        }
+      }
+      const before = getComputedStyle(item, '::before');
+      const content = before.content;
+      if (!content || content === 'none' || content === 'normal') return 'none';
+      const text = content.replace(/^["']|["']$/g, '');
+      if (text.trim()) return markOf(text);
+      // An empty `::before` with a size and a fill or a border is a drawn dot.
+      const drawn = px(before.width) > 0 && px(before.height) > 0
+        && ((before.backgroundColor !== 'rgba(0, 0, 0, 0)') || px(before.borderTopWidth) > 0);
+      return drawn ? 'bullet' : 'none';
+    };
+    const itemIds = new Map();
+    const lists = [];
+    const listy = new Set(document.querySelectorAll('ul, ol, menu'));
+    for (const item of document.querySelectorAll('li')) {
+      if (item.parentElement) listy.add(item.parentElement);
+    }
+    for (const list of ordered(listy)) {
+      if (skipped.has(list) || !shown(list)) continue;
+      const items = [...list.children].filter((child) =>
+        child.tagName === 'LI' || getComputedStyle(child).display === 'list-item');
+      if (!items.length) continue;
+      const index = lists.length;
+      lists.push({index, tag: list.tagName.toLowerCase(), items: items.map((item, k) => {
+        itemIds.set(item, [index, k]);
+        const text = collapse(item.textContent);
+        // A number printed as the item's own text, as most of the corpus's
+        // numbered lists do: `1.`, `2)`, `(a)`, or a number set in its own
+        // span straight before a word (`1What is…`, c0011). A letter needs its
+        // stop, or every item opening with `a` would be numbered.
+        return {text, box: box(item.getBoundingClientRect()), marker: markerOf(item),
+                numbered_text: /^\(?(\d{1,3}([.)]|(?=[^\W\d_]))|[a-z][.)]|[ivxlc]{1,4}[.)])/iu.test(text),
+                ticked_text: /^[☐-☒✓-✘□■▢▣]/u.test(text)};
+      })});
+    }
+
+    // Every printed word: a run of non-space in one text node, so a word the
+    // markup cuts in two is two words here exactly as it is two runs to the
+    // scorer.
+    const range = document.createRange();
+    const words = [];
+    for (const [node, block] of nodes) {
+      const parent = node.parentElement;
+      const style = getComputedStyle(parent);
+      const face = faceOf(style.fontFamily);
+      const cell = parent.closest('td, th');
+      let item = null;
+      for (let at = parent; at && at !== document.body; at = at.parentElement) {
+        if (itemIds.has(at)) { item = itemIds.get(at); break; }
+      }
+      for (const match of node.textContent.matchAll(/\S+/g)) {
+        range.setStart(node, match.index);
+        range.setEnd(node, match.index + match[0].length);
+        const lines = linesFrom(range.getClientRects());
+        if (!lines.length) continue;
+        let l = Infinity, t = Infinity, r = -Infinity, b = -Infinity;
+        for (const [x0, y0, x1, y1] of lines) {
+          l = Math.min(l, x0); t = Math.min(t, y0);
+          r = Math.max(r, x1); b = Math.max(b, y1);
+        }
+        words.push({text: match[0], rect: [l, t, r, b], block, lines: lines.length,
+                    weight: parseInt(style.fontWeight, 10) || 400,
+                    italic: style.fontStyle === 'italic',
+                    family: face.family, mono: face.mono, font_px: px(style.fontSize),
+                    color: style.color, transform: style.textTransform,
+                    small_caps: /small-caps/.test(style.fontVariantCaps || ''),
+                    cell: cell && cellIds.has(cell) ? cellIds.get(cell) : null,
+                    item});
+      }
+    }
+
+    // The boxes a block's lines can be aligned in: its own content box and
+    // each block ancestor's, innermost first. A box no wider than the line
+    // cannot say where the line sits in it; `Detail.frame` picks the first
+    // one that can.
+    const frames = [];
+    for (const [element, record] of blockMap) {
+      const chain = [];
+      for (let at = element; at && at !== document.documentElement; at = at.parentElement) {
+        const style = getComputedStyle(at);
+        if (isInline(style)) continue;
+        const rect = at.getBoundingClientRect();
+        chain.push([rect.left + px(style.borderLeftWidth) + px(style.paddingLeft),
+                    rect.top + px(style.borderTopWidth) + px(style.paddingTop),
+                    rect.right - px(style.borderRightWidth) - px(style.paddingRight),
+                    rect.bottom - px(style.borderBottomWidth) - px(style.paddingBottom)]);
+      }
+      frames.push({block: record.index, chain, align: getComputedStyle(element).textAlign});
+    }
+
+    let unread = 0;
+    for (const element of document.querySelectorAll('.disputed, .unread, [data-unread]')) {
+      if (!skipped.has(element)) unread += 1;
+    }
+    return {words, tables, lists, frames, unread};
+  }
+
   const payload = {
     clipped: clipped,
     width: document.documentElement.scrollWidth,
@@ -416,6 +651,7 @@ MEASURE = r"""
     blocks: blockList,
     figures: figures,
   };
+  if (window.__dthDetail) payload.detail = detailOf(detailNodes, blocks, chrome);
 
   // In chunks: spreading every byte as an argument fails on a payload
   // over about 100 KB, a table of 40 rows by 8 columns (spec 0020).
@@ -551,6 +787,237 @@ class Figure:
     drawn: bool
 
 
+Rect = tuple[float, float, float, float]
+
+
+@dataclass(frozen=True)
+class Word:
+    """One printed word: a run of non-space inside one text node, and where it
+    landed. Spec 0021, step 1.
+
+    The word is the text node's, not the scorer's token: `NP-2291` is one
+    word here and two tokens to `scoring.tokens`, which the checks take
+    each word's tokens from. `cell` is (table, cell) and `item` is (list,
+    item), indexes into `Detail.tables` and `Detail.lists`.
+    """
+
+    text: str
+    rect: Rect
+    block: int
+    lines: int
+    weight: int
+    italic: bool
+    family: str
+    """The face the word's stack draws: its first family that resolves."""
+    mono: bool
+    """Whether that stack draws `iiiii` and `MMMMM` the same width."""
+    font_px: float
+    color: str
+    transform: str
+    """The computed `text-transform`: the page prints `PATIENT` where its
+    text node holds `Patient`."""
+    small_caps: bool
+    cell: tuple[int, int] | None = None
+    item: tuple[int, int] | None = None
+
+
+@dataclass(frozen=True)
+class Side:
+    """One border as computed: width in pixels, style, colour."""
+
+    width: float
+    style: str
+    color: str
+
+    def drawn(self, ground: str) -> bool:
+        """Whether a reader sees it: some width, a style that draws, and ink
+        that differs from what it is drawn on."""
+        if self.width <= 0 or self.style in ("none", "hidden"):
+            return False
+        ink, under = parse_rgba(self.color), parse_rgba(ground)
+        if ink is None or ink[3] <= 0:
+            return False
+        if under is None:
+            return True
+        return max(abs(ink[i] - under[i]) for i in range(3)) > INK_FROM_GROUND
+
+
+INK_FROM_GROUND = 8
+"""How far a border's colour must sit from its ground to be seen, per channel.
+A white rule on a white page is not a rule; anything darker by more than a
+rounding step is."""
+
+
+def parse_rgba(value: str) -> tuple[float, float, float, float] | None:
+    """`rgb(1, 2, 3)` or `rgba(1, 2, 3, 0.5)` as four numbers, else None."""
+    if not value or "(" not in value:
+        return None
+    try:
+        numbers = [float(part) for part in
+                   value[value.index("(") + 1:value.rindex(")")].replace("/", ",").split(",")
+                   if part.strip()]
+    except ValueError:
+        return None
+    if len(numbers) < 3:
+        return None
+    return (numbers[0], numbers[1], numbers[2], numbers[3] if len(numbers) > 3 else 1.0)
+
+
+@dataclass(frozen=True)
+class TableCell:
+    """One cell of a table, by slot: `row`, `col` and its spans."""
+
+    row: int
+    col: int
+    rowspan: int
+    colspan: int
+    header: bool
+    text: str
+    box: Rect
+    sides: tuple[Side, Side, Side, Side]
+    """Top, right, bottom, left — the cell's own borders, as computed."""
+    ground: str
+
+
+@dataclass(frozen=True)
+class RowGroup:
+    """A `thead`, `tbody` or `tfoot`: its first and last row and its borders."""
+
+    first: int
+    last: int
+    top: Side
+    bottom: Side
+
+
+@dataclass(frozen=True)
+class Table:
+    """One `<table>` as drawn: its cells by slot, and every border that could
+    draw a rule between them."""
+
+    index: int
+    rows: int
+    cols: int
+    collapse: bool
+    box: Rect
+    sides: tuple[Side, Side, Side, Side]
+    ground: str
+    row_sides: tuple[tuple[Side, Side], ...]
+    """Each row's top and bottom border. Drawn only under `border-collapse`."""
+    groups: tuple[RowGroup, ...]
+    cells: tuple[TableCell, ...]
+
+    def slot(self, row: int, col: int) -> int | None:
+        """The index of the cell covering a slot, or None for a hole."""
+        for index, cell in enumerate(self.cells):
+            if cell.row <= row < cell.row + cell.rowspan and \
+                    cell.col <= col < cell.col + cell.colspan:
+                return index
+        return None
+
+    def vertical_rule(self, row: int, col: int) -> bool:
+        """Whether a rule is drawn on row `row` between columns `col - 1` and
+        `col` — `col` 0 is the left edge, `cols` the right.
+
+        Inside one cell that spans the edge there is no edge. Otherwise the
+        right side of the cell on the left or the left side of the one on the
+        right draws it; at the table's edge, the table's own side too.
+        """
+        left = self.slot(row, col - 1) if col > 0 else None
+        right = self.slot(row, col) if col < self.cols else None
+        if left is not None and left == right:
+            return False
+        sides: list[tuple[Side, str]] = []
+        if left is not None:
+            sides.append((self.cells[left].sides[1], self.cells[left].ground))
+        if right is not None:
+            sides.append((self.cells[right].sides[3], self.cells[right].ground))
+        if col in (0, self.cols):
+            sides.append((self.sides[3 if col == 0 else 1], self.ground))
+        return any(side.drawn(ground) for side, ground in sides)
+
+    def horizontal_rule(self, row: int, col: int) -> bool:
+        """Whether a rule is drawn in column `col` between rows `row - 1` and
+        `row` — `row` 0 is the top edge, `rows` the bottom.
+
+        Rows and row groups draw borders only when borders collapse.
+        """
+        above = self.slot(row - 1, col) if row > 0 else None
+        below = self.slot(row, col) if row < self.rows else None
+        if above is not None and above == below:
+            return False
+        sides: list[tuple[Side, str]] = []
+        if above is not None:
+            sides.append((self.cells[above].sides[2], self.cells[above].ground))
+        if below is not None:
+            sides.append((self.cells[below].sides[0], self.cells[below].ground))
+        if self.collapse:
+            if row > 0:
+                sides.append((self.row_sides[row - 1][1], self.ground))
+            if row < self.rows:
+                sides.append((self.row_sides[row][0], self.ground))
+            for group in self.groups:
+                if group.last == row - 1:
+                    sides.append((group.bottom, self.ground))
+                if group.first == row:
+                    sides.append((group.top, self.ground))
+        if row in (0, self.rows):
+            sides.append((self.sides[0 if row == 0 else 2], self.ground))
+        return any(side.drawn(ground) for side, ground in sides)
+
+
+@dataclass(frozen=True)
+class ListItem:
+    text: str
+    box: Rect
+    marker: str
+    """`number`, `bullet`, `tick`, `other` or `none` — what is drawn before
+    the item, read from its list-style, an image, or a `::before`."""
+    numbered_text: bool
+    """Whether the item's own text opens with a number: `1.`, `2)`, `(a)`, or
+    a number straight before a word (`1What is…`, c0011). Measured on dev's
+    33 pages carrying `list.numbers`, 2026-10-30: 13 draw a number marker;
+    with numbers printed as text, 32 read as numbered. The 33rd, c0039,
+    opens each item with a tick box."""
+    ticked_text: bool = False
+    """Whether the item's own text opens with a tick, a cross or a box:
+    `☑ Full forum pass`. Measured on dev's 32 pages carrying `list.ticks`,
+    2026-10-30: none draws a tick as a marker, and 24 open list items with
+    one printed as text. Of the other eight, four set tick glyphs outside
+    any list, three draw their boxes in CSS, and one prints its ticks
+    inside the item's text."""
+
+
+@dataclass(frozen=True)
+class ListGroup:
+    index: int
+    tag: str
+    items: tuple[ListItem, ...]
+
+
+@dataclass(frozen=True)
+class Frames:
+    """The boxes a block's lines can be aligned in, innermost first: its own
+    content box, then each block ancestor's."""
+
+    block: int
+    chain: tuple[Rect, ...]
+    align: str
+    """The block's computed `text-align`."""
+
+
+@dataclass(frozen=True)
+class Detail:
+    """What `project(..., detail=True)` adds: spec 0021's reading."""
+
+    words: tuple[Word, ...]
+    tables: tuple[Table, ...]
+    lists: tuple[ListGroup, ...]
+    frames: tuple[Frames, ...]
+    unread: int
+    """Elements drawn as unread or disputed (`.disputed`, `.unread`,
+    `[data-unread]`)."""
+
+
 @dataclass(frozen=True)
 class Projection:
     """One page as a reader perceives it. The only thing the scorer compares."""
@@ -575,6 +1042,8 @@ class Projection:
     figures: tuple[Figure, ...]
     label: str = ""
     notes: tuple[str, ...] = field(default_factory=tuple)
+    detail: Detail | None = None
+    """Spec 0021's reading, only when asked for: `project(..., detail=True)`."""
 
     @property
     def text(self) -> str:
@@ -590,9 +1059,9 @@ class ProjectionError(RuntimeError):
     """The browser did not answer, so there is nothing to compare."""
 
 
-def _run_chrome(html: str, width: int, height: int, *, flat: bool = False
-                ) -> dict[str, Any]:
-    injected = _inject(html, flat=flat)
+def _run_chrome(html: str, width: int, height: int, *, flat: bool = False,
+                detail: bool = False) -> dict[str, Any]:
+    injected = _inject(html, flat=flat, detail=detail)
     with tempfile.TemporaryDirectory() as work:
         target = Path(work) / "measured.html"
         target.write_text(injected, encoding="utf-8")
@@ -615,15 +1084,17 @@ def _run_chrome(html: str, width: int, height: int, *, flat: bool = False
     return payload
 
 
-def _inject(html: str, *, flat: bool = False) -> str:
+def _inject(html: str, *, flat: bool = False, detail: bool = False) -> str:
     """Put the measuring script in, wherever the document lets us.
 
     Appended to `</body>` when there is one and to the end otherwise, because
     `render.py` always writes one and a hand-authored page might not. With
-    `flat`, `FLATTEN` runs first.
+    `flat`, `FLATTEN` runs first; with `detail`, `MEASURE` adds spec 0021's
+    reading to its payload.
     """
     script = (
         "<script>window.addEventListener('load', () => {"
+        + ("window.__dthDetail = true;" if detail else "")
         + (FLATTEN if flat else "") + MEASURE + "});</script>"
     )
     if "</body>" in html:
@@ -632,7 +1103,8 @@ def _inject(html: str, *, flat: bool = False) -> str:
 
 
 def project(html: Path | str, *, width: int, height: int = 3000,
-            label: str = "", flat: bool = False) -> Projection:
+            label: str = "", flat: bool = False,
+            detail: bool = False) -> Projection:
     """Read one page the way a reader sees it, at a stated width.
 
     `width` is always the **source document's** width, on both sides. A page
@@ -649,6 +1121,11 @@ def project(html: Path | str, *, width: int, height: int = 3000,
     source side only: the corpus's ground truth is its HTML, and a render is
     drawn level, so a turn the source sets on itself would otherwise be
     scored as the conversion's fault.
+
+    `detail` adds spec 0021's reading (`Detail`): every word's box, the
+    tables by slot with their borders, the lists and their markers, and
+    each block's frames. It is computed in the same pass, after everything
+    else, and the rest of the payload is the same with or without it.
     """
     if not available():
         raise ProjectionError(f"no headless Chrome at {CHROME}")
@@ -660,7 +1137,7 @@ def project(html: Path | str, *, width: int, height: int = 3000,
             f"{MIN_WIDTH}px; measured at {MIN_WIDTH}px"
         )
         width = MIN_WIDTH
-    payload = _run_chrome(text, width, height, flat=flat)
+    payload = _run_chrome(text, width, height, flat=flat, detail=detail)
 
     def rect(values: Any) -> tuple[float, float, float, float]:
         left, top, right, bottom = (float(value) for value in values)
@@ -699,7 +1176,79 @@ def project(html: Path | str, *, width: int, height: int = 3000,
         clipped=int(payload.get("clipped", 0)),
         runs=runs, blocks=blocks, figures=figures, label=label,
         notes=tuple(notes),
+        detail=_detail(payload["detail"]) if "detail" in payload else None,
     )
+
+
+def _side(values: Any) -> Side:
+    width, style, color = values
+    return Side(float(width), str(style), str(color))
+
+
+def _sides(values: Any) -> tuple[Side, Side, Side, Side]:
+    top, right, bottom, left = (_side(value) for value in values)
+    return top, right, bottom, left
+
+
+def _rect(values: Any) -> Rect:
+    left, top, right, bottom = (float(value) for value in values)
+    return left, top, right, bottom
+
+
+def _pair(values: Any) -> tuple[int, int] | None:
+    if values is None:
+        return None
+    first, second = values
+    return int(first), int(second)
+
+
+def _detail(payload: dict[str, Any]) -> Detail:
+    """`MEASURE`'s `detailOf`, as dataclasses."""
+    words = tuple(
+        Word(text=str(item["text"]), rect=_rect(item["rect"]), block=int(item["block"]),
+             lines=int(item["lines"]), weight=int(item["weight"]),
+             italic=bool(item["italic"]), family=str(item["family"]),
+             mono=bool(item["mono"]), font_px=float(item["font_px"]),
+             color=str(item["color"]), transform=str(item["transform"]),
+             small_caps=bool(item["small_caps"]), cell=_pair(item["cell"]),
+             item=_pair(item["item"]))
+        for item in payload["words"]
+    )
+    tables = tuple(
+        Table(index=int(table["index"]), rows=int(table["rows"]), cols=int(table["cols"]),
+              collapse=bool(table["collapse"]), box=_rect(table["box"]),
+              sides=_sides(table["sides"]), ground=str(table["ground"]),
+              row_sides=tuple((_side(top), _side(bottom))
+                              for top, bottom in table["row_sides"]),
+              groups=tuple(RowGroup(int(group["first"]), int(group["last"]),
+                                    _side(group["top"]), _side(group["bottom"]))
+                           for group in table["groups"]),
+              cells=tuple(TableCell(row=int(cell["row"]), col=int(cell["col"]),
+                                    rowspan=int(cell["rowspan"]),
+                                    colspan=int(cell["colspan"]),
+                                    header=bool(cell["header"]), text=str(cell["text"]),
+                                    box=_rect(cell["box"]), sides=_sides(cell["sides"]),
+                                    ground=str(cell["ground"]))
+                          for cell in table["cells"]))
+        for table in payload["tables"]
+    )
+    lists = tuple(
+        ListGroup(index=int(group["index"]), tag=str(group["tag"]),
+                  items=tuple(ListItem(text=str(item["text"]), box=_rect(item["box"]),
+                                       marker=str(item["marker"]),
+                                       numbered_text=bool(item["numbered_text"]),
+                                       ticked_text=bool(item["ticked_text"]))
+                              for item in group["items"]))
+        for group in payload["lists"]
+    )
+    frames = tuple(
+        Frames(block=int(frame["block"]),
+               chain=tuple(_rect(box) for box in frame["chain"]),
+               align=str(frame["align"]))
+        for frame in payload["frames"]
+    )
+    return Detail(words=words, tables=tables, lists=lists, frames=frames,
+                  unread=int(payload["unread"]))
 
 
 SHOT_SLACK = 120
