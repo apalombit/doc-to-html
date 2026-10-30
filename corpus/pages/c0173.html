@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Utility bill</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0}
+body{width:780px;padding:12px 14px 14px;background:#fff;color:#1c2733;font-family:"Helvetica Neue",Helvetica,sans-serif;font-size:12px;line-height:1.35}
+.wrap{display:flex;gap:16px;align-items:flex-start}
+.main{flex:1;min-width:0}
+.side{width:238px;flex:none;background:#f3f5f8;border-top:4px solid #c58b00;padding:12px 12px 12px}
+.eyebrow{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#c58b00;font-weight:700}
+h1{margin:2px 0 3px;font-size:18px;line-height:1.15;color:#1d3557;font-weight:700}
+.sub{color:#5a6978;font-size:11.5px;margin-bottom:10px}
+h2{margin:12px 0 4px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#1d3557;font-weight:700}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid #c3ccd6;padding:4px 7px;text-align:left;vertical-align:top}
+th{background:#1d3557;color:#fff;font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;border-color:#1d3557}
+.r{text-align:right;white-space:nowrap}
+tr.st td{background:#eef1f5;font-weight:600}
+tr.tot td{background:#fbf3dc;font-weight:700;font-size:13px;color:#1d3557}
+td small{display:block;color:#5a6978;font-size:10.5px}
+.due-l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#5a6978;font-weight:700}
+.due{font-size:30px;font-weight:700;color:#1d3557;line-height:1.1;margin:1px 0 2px}
+.dl{margin:10px 0 0;padding:0}
+.dl div{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px solid #d3dae2}
+.dl dt{color:#5a6978}
+.dl dd{margin:0;font-weight:600;text-align:right}
+.stub{margin-top:14px;border-top:2px dashed #7d8a99;padding-top:8px}
+.stub p{margin:0 0 2px;font-size:10.5px;color:#3d4b5a}
+.codes{font-family:"Menlo",monospace;font-size:10px;letter-spacing:.06em;margin-top:3px;color:#1c2733}
+svg{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="main">
+    <div class="eyebrow">Goldcrest Energy · Electric service</div>
+    <h1>Charges for February 9 to March 10, 2023</h1>
+    <div class="sub">Service address 1427 Larch Street, Erie, PA 16508 · Rate plan: Bracken Fixed 12 · 29 days</div>
+
+    <h2>Meter readings</h2>
+    <table>
+      <thead><tr><th>Meter</th><th>Previous (Feb 9)</th><th>Current (Mar 10)</th><th class="r">Used</th><th>Read type</th></tr></thead>
+      <tbody><tr><td>Meter 6402-117</td><td>48,212 kWh</td><td>49,087 kWh</td><td class="r">875 kWh</td><td>Actual</td></tr></tbody>
+    </table>
+
+    <h2>Itemized charges</h2>
+    <table>
+      <thead><tr><th>Description</th><th class="r">Quantity</th><th class="r">Rate</th><th class="r">Amount</th></tr></thead>
+      <tbody>
+        <tr><td>Customer charge<small>Fixed daily service fee</small></td><td class="r">29 days</td><td class="r">$0.4110</td><td class="r">$11.92</td></tr>
+        <tr><td>Energy, first 500 kWh</td><td class="r">500 kWh</td><td class="r">$0.0945</td><td class="r">$47.25</td></tr>
+        <tr><td>Energy, over 500 kWh</td><td class="r">375 kWh</td><td class="r">$0.0812</td><td class="r">$30.45</td></tr>
+        <tr><td>Delivery charge<small>Poles, wires and line crews</small></td><td class="r">875 kWh</td><td class="r">$0.0388</td><td class="r">$33.95</td></tr>
+        <tr><td>Fuel cost adjustment</td><td class="r">875 kWh</td><td class="r">$0.0061</td><td class="r">$5.34</td></tr>
+        <tr><td>Bracken Fixed 12 plan credit</td><td class="r">1</td><td class="r">−$4.0000</td><td class="r">−$4.00</td></tr>
+        <tr class="st"><td colspan="3">Current charges before tax</td><td class="r">$124.91</td></tr>
+        <tr><td>Gross receipts tax</td><td class="r"></td><td class="r">5.9%</td><td class="r">$7.37</td></tr>
+        <tr class="tot"><td colspan="3">Total current charges</td><td class="r">$132.28</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Your use</h2>
+    <table>
+      <tbody>
+        <tr><td>Average daily use</td><td class="r">30.2 kWh</td><td>Same period last year</td><td class="r">902 kWh</td></tr>
+        <tr><td>Average daily cost</td><td class="r">$4.56</td><td>Change from last year</td><td class="r">−3.0%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="side">
+    <div class="due-l">Amount due by April 3, 2023</div>
+    <div class="due">$132.28</div>
+    <dl class="dl">
+      <div><dt>Account holder</dt><dd>Nadia Duarte</dd></div>
+      <div><dt>Joint holder</dt><dd>Wesley Park</dd></div>
+      <div><dt>Account no.</dt><dd>4417 2209 88</dd></div>
+      <div><dt>Statement date</dt><dd>March 12, 2023</dd></div>
+      <div><dt>Previous balance</dt><dd>$118.64</dd></div>
+      <div><dt>Payment, Feb 20</dt><dd>−$118.64</dd></div>
+      <div><dt>Balance forward</dt><dd>$0.00</dd></div>
+      <div><dt>New charges</dt><dd>$132.28</dd></div>
+    </dl>
+    <div class="stub">
+      <p>Detach and return with your payment, or pay at the Goldcrest Energy kiosk.</p>
+      <p>Make checks payable to Goldcrest Energy, PO Box 7714, Sioux Falls, SD 57117.</p>
+      <div style="margin-top:6px"><svg width="212" height="46" viewBox="0 0 212 46" fill="#1c2733"><rect x="0" y="0" width="3" height="46"/><rect x="5" y="0" width="1" height="46"/><rect x="8" y="0" width="3" height="46"/><rect x="14" y="0" width="1" height="46"/><rect x="17" y="0" width="3" height="46"/><rect x="22" y="0" width="1" height="46"/><rect x="25" y="0" width="1" height="46"/><rect x="28" y="0" width="3" height="46"/><rect x="32" y="0" width="1" height="46"/><rect x="35" y="0" width="1" height="46"/><rect x="39" y="0" width="3" height="46"/><rect x="45" y="0" width="1" height="46"/><rect x="48" y="0" width="1" height="46"/><rect x="50" y="0" width="3" height="46"/><rect x="56" y="0" width="3" height="46"/><rect x="60" y="0" width="1" height="46"/><rect x="63" y="0" width="2" height="46"/><rect x="68" y="0" width="2" height="46"/><rect x="72" y="0" width="2" height="46"/><rect x="76" y="0" width="1" height="46"/><rect x="80" y="0" width="1" height="46"/><rect x="83" y="0" width="3" height="46"/><rect x="88" y="0" width="1" height="46"/><rect x="91" y="0" width="1" height="46"/><rect x="94" y="0" width="1" height="46"/><rect x="98" y="0" width="2" height="46"/><rect x="101" y="0" width="3" height="46"/><rect x="106" y="0" width="2" height="46"/><rect x="111" y="0" width="1" height="46"/><rect x="114" y="0" width="3" height="46"/><rect x="119" y="0" width="1" height="46"/><rect x="122" y="0" width="1" height="46"/><rect x="125" y="0" width="1" height="46"/><rect x="127" y="0" width="1" height="46"/><rect x="129" y="0" width="2" height="46"/><rect x="133" y="0" width="1" height="46"/><rect x="136" y="0" width="1" height="46"/><rect x="140" y="0" width="3" height="46"/><rect x="145" y="0" width="3" height="46"/><rect x="150" y="0" width="3" height="46"/><rect x="154" y="0" width="2" height="46"/><rect x="159" y="0" width="1" height="46"/><rect x="162" y="0" width="1" height="46"/><rect x="164" y="0" width="1" height="46"/><rect x="167" y="0" width="3" height="46"/><rect x="172" y="0" width="3" height="46"/><rect x="176" y="0" width="2" height="46"/><rect x="181" y="0" width="3" height="46"/><rect x="187" y="0" width="1" height="46"/><rect x="190" y="0" width="2" height="46"/><rect x="195" y="0" width="1" height="46"/><rect x="198" y="0" width="1" height="46"/><rect x="200" y="0" width="3" height="46"/></svg></div>
+      <div class="codes">4417220988 0013228 0403</div>
+      <p style="margin-top:6px">Billing questions: Rachel Brandt, customer care, 1-800-555-0143</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

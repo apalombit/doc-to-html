@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Receipt</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0}
+body{width:520px;padding:22px 0 26px;background:#e9e9e6;color:#111;font-family:Helvetica,Arial,sans-serif;font-size:11px;line-height:1.4;text-align:center}
+.slip{width:372px;margin:0 auto;background:#fff;padding:0 0 18px;text-align:center}
+.band{background:#111;color:#fff;padding:16px 20px 13px}
+.band .name{font-size:22px;font-weight:700;letter-spacing:.2em;text-transform:uppercase}
+.band .tag{font-size:9px;letter-spacing:.18em;text-transform:uppercase;margin-top:3px;color:#c9c9c4}
+.addr{padding:11px 20px 0;color:#333}
+.pad{padding:0 20px}
+.dash{border:0;border-top:1px dashed #555;margin:10px 20px}
+.dbl{border:0;border-top:3px double #111;margin:10px 20px}
+.kv{display:flex;justify-content:space-between;padding:1px 20px}
+.kv span:first-child{color:#555}
+.kv span:last-child{font-weight:700}
+table{width:332px;margin:0 20px;border-collapse:collapse;text-align:left}
+th{font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:400;color:#555;padding:0 0 3px;border-bottom:1px solid #111}
+td{padding:3px 0 1px;vertical-align:top}
+td.r,th.r{text-align:right}
+td.c,th.c{text-align:center;width:30px}
+td small{display:block;color:#666;font-size:9.5px;margin-top:-1px}
+.tot{display:flex;justify-content:space-between;padding:0 20px;font-size:17px;font-weight:700;margin:4px 0 2px}
+.band2{background:#111;color:#fff;padding:7px 20px;margin:12px 0 0;font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+.vat{font-size:10px}
+.vat th,.vat td{padding:1px 0}
+.fine{padding:0 28px;font-size:9.5px;color:#555;line-height:1.45}
+svg{display:block;margin:8px auto 2px}
+.code{font-size:10px;letter-spacing:.2em}
+</style>
+</head>
+<body>
+<div class="slip">
+  <div class="band">
+    <div class="name">Lantern Books</div>
+    <div class="tag">Independent booksellers since 1987</div>
+  </div>
+  <div class="addr">14 Steep Hill, Lincoln LN2 1LU<br>Tel 01522 555 0198 · VAT no. GB 318 4402 71<br>Also at Mardol Quay, Shrewsbury</div>
+  <hr class="dash">
+  <div class="kv"><span>Date:</span><span>30/01/2023 14:42</span></div>
+  <div class="kv"><span>Receipt:</span><span>0041-7716</span></div>
+  <div class="kv"><span>Till 2, served by:</span><span>Isla Rees</span></div>
+  <div class="kv"><span>Member:</span><span>Amelia Stirling</span></div>
+  <div class="kv"><span>Manager on duty:</span><span>Arjun Whitaker</span></div>
+  <div class="kv"><span>Special order:</span><span>SO-2291, collected</span></div>
+  <hr class="dash">
+  <table>
+    <thead><tr><th>Item</th><th class="c">Qty</th><th class="r">Price</th><th class="r">Total</th><th class="c">VAT</th></tr></thead>
+    <tbody>
+      <tr><td>The Salt Roads, hardback<small>Granite Press</small></td><td class="c">1</td><td class="r">18.99</td><td class="r">18.99</td><td class="c">Z</td></tr>
+      <tr><td>Atlas of British Lighthouses</td><td class="c">1</td><td class="r">24.00</td><td class="r">24.00</td><td class="c">Z</td></tr>
+      <tr><td>Field Notes notebook, A5 ruled</td><td class="c">2</td><td class="r">4.50</td><td class="r">9.00</td><td class="c">A</td></tr>
+      <tr><td>Pen cartridges, box of 10</td><td class="c">1</td><td class="r">3.25</td><td class="r">3.25</td><td class="c">A</td></tr>
+      <tr><td>Pencils, HB set of 6</td><td class="c">1</td><td class="r">3.40</td><td class="r">3.40</td><td class="c">A</td></tr>
+      <tr><td>Linen bookmark</td><td class="c">2</td><td class="r">2.95</td><td class="r">5.90</td><td class="c">A</td></tr>
+      <tr><td>Gift wrap</td><td class="c">1</td><td class="r">1.50</td><td class="r">1.50</td><td class="c">A</td></tr>
+    </tbody>
+  </table>
+  <hr class="dash">
+  <div class="kv"><span>Items:</span><span>9</span></div>
+  <div class="kv"><span>Subtotal:</span><span>£66.04</span></div>
+  <hr class="dbl" style="margin-bottom:6px">
+  <div class="tot"><span>TOTAL</span><span>£66.04</span></div>
+  <hr class="dbl" style="margin-top:6px">
+  <div class="kv"><span>Lantern points (500 pts):</span><span>−£5.00</span></div>
+  <div class="kv"><span>Visa debit ending 4417:</span><span>£61.04</span></div>
+  <div class="kv"><span>Change:</span><span>£0.00</span></div>
+  <div class="kv"><span>Contactless, auth code:</span><span>884213</span></div>
+  <div class="kv"><span>Terminal:</span><span>7714-02</span></div>
+  <hr class="dash">
+  <table class="vat">
+    <thead><tr><th>VAT</th><th class="r">Net</th><th class="r">VAT</th><th class="r">Gross</th></tr></thead>
+    <tbody>
+      <tr><td>A, 20%</td><td class="r">19.21</td><td class="r">3.84</td><td class="r">23.05</td></tr>
+      <tr><td>Z, 0%</td><td class="r">42.99</td><td class="r">0.00</td><td class="r">42.99</td></tr>
+    </tbody>
+  </table>
+  <hr class="dash">
+  <div class="kv"><span>Points earned today:</span><span>66</span></div>
+  <div class="kv"><span>Points balance:</span><span>1,048</span></div>
+  <div class="band2">Thank you for shopping local</div>
+  <p class="fine" style="margin:10px 0 0">Books and unused stationery may be returned within 28 days with this receipt. Gift receipts are available on request. Faulty items are refunded in full. Statutory rights unaffected.</p>
+  <p class="fine" style="margin:8px 0 0">Open Monday to Saturday 9:00 to 17:30, Sunday 11:00 to 16:00<br>Tell us how we did at lanternbooks.example.com/feedback and enter our monthly £25 voucher draw.</p>
+  <svg width="262" height="44" viewBox="0 0 262 44" fill="#111"><rect x="0" y="0" width="2" height="44"/><rect x="3" y="0" width="1" height="44"/><rect x="6" y="0" width="2" height="44"/><rect x="10" y="0" width="4" height="44"/><rect x="16" y="0" width="2" height="44"/><rect x="19" y="0" width="1" height="44"/><rect x="22" y="0" width="2" height="44"/><rect x="26" y="0" width="2" height="44"/><rect x="30" y="0" width="1" height="44"/><rect x="33" y="0" width="1" height="44"/><rect x="35" y="0" width="3" height="44"/><rect x="39" y="0" width="3" height="44"/><rect x="44" y="0" width="1" height="44"/><rect x="47" y="0" width="2" height="44"/><rect x="50" y="0" width="4" height="44"/><rect x="56" y="0" width="3" height="44"/><rect x="60" y="0" width="2" height="44"/><rect x="64" y="0" width="3" height="44"/><rect x="70" y="0" width="3" height="44"/><rect x="74" y="0" width="4" height="44"/><rect x="80" y="0" width="4" height="44"/><rect x="86" y="0" width="4" height="44"/><rect x="92" y="0" width="1" height="44"/><rect x="95" y="0" width="1" height="44"/><rect x="98" y="0" width="2" height="44"/><rect x="103" y="0" width="2" height="44"/><rect x="108" y="0" width="3" height="44"/><rect x="113" y="0" width="1" height="44"/><rect x="115" y="0" width="4" height="44"/><rect x="122" y="0" width="1" height="44"/><rect x="126" y="0" width="4" height="44"/><rect x="133" y="0" width="2" height="44"/><rect x="138" y="0" width="4" height="44"/><rect x="144" y="0" width="2" height="44"/><rect x="149" y="0" width="1" height="44"/><rect x="151" y="0" width="2" height="44"/><rect x="155" y="0" width="1" height="44"/><rect x="158" y="0" width="3" height="44"/><rect x="162" y="0" width="4" height="44"/><rect x="168" y="0" width="1" height="44"/><rect x="170" y="0" width="1" height="44"/><rect x="172" y="0" width="2" height="44"/><rect x="177" y="0" width="1" height="44"/><rect x="179" y="0" width="1" height="44"/><rect x="183" y="0" width="2" height="44"/><rect x="188" y="0" width="4" height="44"/><rect x="194" y="0" width="1" height="44"/><rect x="197" y="0" width="2" height="44"/><rect x="200" y="0" width="1" height="44"/><rect x="203" y="0" width="1" height="44"/><rect x="207" y="0" width="1" height="44"/><rect x="210" y="0" width="2" height="44"/><rect x="214" y="0" width="2" height="44"/><rect x="218" y="0" width="2" height="44"/><rect x="223" y="0" width="4" height="44"/><rect x="228" y="0" width="4" height="44"/><rect x="233" y="0" width="2" height="44"/><rect x="236" y="0" width="2" height="44"/><rect x="241" y="0" width="1" height="44"/><rect x="244" y="0" width="2" height="44"/><rect x="247" y="0" width="2" height="44"/><rect x="251" y="0" width="2" height="44"/><rect x="256" y="0" width="2" height="44"/></svg>
+  <div class="code">0041 7716 3001 2023</div>
+</div>
+</body>
+</html>

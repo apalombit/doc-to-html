@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Water quality results</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { background: #fff; }
+  body { margin: 0; width: 800px; padding: 8px; background: #fff; color: #1e293b; font-family: Charter, Georgia, serif; font-size: 14px; line-height: 1.45; }
+  .flex { display: flex; }
+  .grid { display: grid; }
+  .grid-cols-sidebar { grid-template-columns: 210px 1fr; }
+  .gap-2 { gap: 8px; }
+  .gap-4 { gap: 16px; }
+  .p-2 { padding: 8px; }
+  .p-3 { padding: 12px; }
+  .p-4 { padding: 16px; }
+  .px-2 { padding-left: 8px; padding-right: 8px; }
+  .py-1 { padding-top: 4px; padding-bottom: 4px; }
+  .m-0 { margin: 0; }
+  .mb-1 { margin-bottom: 4px; }
+  .mb-2 { margin-bottom: 8px; }
+  .mb-4 { margin-bottom: 16px; }
+  .mt-2 { margin-top: 8px; }
+  .text-xs { font-size: 11.5px; }
+  .text-sm { font-size: 13px; }
+  .text-lg { font-size: 19px; line-height: 1.2; }
+  .font-semibold { font-weight: 700; }
+  .uppercase { text-transform: uppercase; letter-spacing: .06em; }
+  .text-right { text-align: right; }
+  .text-center { text-align: center; }
+  .text-slate-500 { color: #64748b; }
+  .text-slate-700 { color: #334155; }
+  .text-teal-800 { color: #115e59; }
+  .border-b { border-bottom: 1px solid #cbd5e1; }
+  .border-t { border-top: 1px solid #cbd5e1; }
+  .border-l-4 { border-left: 4px solid #0f766e; }
+  .bg-slate-50 { background: #f8fafc; }
+  .bg-slate-100 { background: #f1f5f9; }
+  .bg-teal-700 { background: #0f766e; }
+  .text-white { color: #fff; }
+  .rounded { border-radius: 6px; }
+  .w-full { width: 100%; }
+  .justify-between { justify-content: space-between; }
+  .items-center { align-items: center; }
+  .relative { position: relative; }
+  .abs { position: absolute; }
+  table { border-collapse: collapse; }
+  tbody tr:nth-child(even) { background: #f1f5f9; }
+  sup, sub { line-height: 0; font-size: 70%; }
+  .kv { display: block; padding: 5px 0; border-bottom: 1px solid #e2e8f0; }
+  .kv .k { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: #64748b; }
+  .kv .v { display: block; font-size: 13px; font-weight: 700; }
+  .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+</style>
+</head>
+<body>
+<div class="grid grid-cols-sidebar gap-4">
+  <aside class="p-3 bg-slate-50 rounded border-l-4">
+    <p class="m-0 mb-2 text-xs font-semibold uppercase text-teal-800">Sample record</p>
+    <div class="kv"><span class="k">Lab reference</span><span class="v">LA-24-1129-07</span></div>
+    <div class="kv"><span class="k">Matrix</span><span class="v">Surface water, 5 sites</span></div>
+    <div class="kv"><span class="k">Collected</span><span class="v">November 19, 2024</span></div>
+    <div class="kv"><span class="k">Received</span><span class="v">November 21, 2024</span></div>
+    <div class="kv"><span class="k">Project</span><span class="v">Plover Creek Study, Billings, MT</span></div>
+    <div class="kv"><span class="k">Analyst</span><span class="v">Diego Park</span></div>
+    <div class="kv"><span class="k">Reviewed by</span><span class="v">Nadia Nguyen</span></div>
+    <div class="kv"><span class="k">Client contact</span><span class="v">Rachel Mahoney</span></div>
+    <div class="kv"><span class="k">Report date</span><span class="v">November 29, 2024</span></div>
+  </aside>
+
+  <main>
+    <div class="flex justify-between items-center mb-2 border-b py-1">
+      <h2 class="m-0 text-lg font-semibold text-teal-800">3. Results</h2>
+      <span class="text-xs text-slate-500">Lantern Analytical, Duluth, MN</span>
+    </div>
+    <p class="m-0 mb-2 text-sm text-slate-700">Nitrate was highest at the outfall, where it exceeded the screening level. Dissolved oxygen stayed above 6.0&nbsp;mg&nbsp;L<sup>&minus;1</sup> at every site.<sup>a</sup></p>
+
+    <table class="w-full text-sm mb-2">
+      <thead>
+        <tr class="bg-teal-700 text-white">
+          <th class="px-2 py-1 text-xs" style="text-align:left">Site</th>
+          <th class="px-2 py-1 text-xs text-right">O<sub>2</sub> (mg L<sup>&minus;1</sup>)</th>
+          <th class="px-2 py-1 text-xs text-right">NO<sub>3</sub><sup>&minus;</sup>-N (mg L<sup>&minus;1</sup>)</th>
+          <th class="px-2 py-1 text-xs text-right">pH</th>
+          <th class="px-2 py-1 text-xs text-right">Cond. (&micro;S cm<sup>&minus;1</sup>)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="px-2 py-1">S1 Upstream of bridge</td><td class="px-2 py-1 text-right">9.4</td><td class="px-2 py-1 text-right">0.21</td><td class="px-2 py-1 text-right">7.9</td><td class="px-2 py-1 text-right">412</td></tr>
+        <tr><td class="px-2 py-1">S2 Pump station</td><td class="px-2 py-1 text-right">8.8</td><td class="px-2 py-1 text-right">0.35</td><td class="px-2 py-1 text-right">7.8</td><td class="px-2 py-1 text-right">436</td></tr>
+        <tr><td class="px-2 py-1">S3 Outfall A</td><td class="px-2 py-1 text-right">7.6</td><td class="px-2 py-1 text-right font-semibold">0.92</td><td class="px-2 py-1 text-right">7.6</td><td class="px-2 py-1 text-right">518</td></tr>
+        <tr><td class="px-2 py-1">S4 Below confluence</td><td class="px-2 py-1 text-right">8.3</td><td class="px-2 py-1 text-right">0.64</td><td class="px-2 py-1 text-right">7.7</td><td class="px-2 py-1 text-right">487</td></tr>
+        <tr><td class="px-2 py-1">S5 Reference pool</td><td class="px-2 py-1 text-right">9.7</td><td class="px-2 py-1 text-right">0.12</td><td class="px-2 py-1 text-right">8.0</td><td class="px-2 py-1 text-right">395</td></tr>
+      </tbody>
+    </table>
+
+    <div class="p-3 bg-slate-50 rounded">
+      <p class="m-0 mb-1 text-sm font-semibold">Nitrate nitrogen by site, NO<sub>3</sub><sup>&minus;</sup>-N (mg L<sup>&minus;1</sup>)</p>
+      <div class="relative" style="width:520px;height:196px">
+        <svg class="abs" style="left:40px;top:6px" width="470" height="160" viewBox="0 0 470 160" aria-hidden="true">
+          <g stroke="#cbd5e1" stroke-width="1">
+            <line x1="0" y1="0.5" x2="470" y2="0.5"/><line x1="0" y1="40.5" x2="470" y2="40.5"/><line x1="0" y1="80.5" x2="470" y2="80.5"/><line x1="0" y1="120.5" x2="470" y2="120.5"/><line x1="0" y1="159.5" x2="470" y2="159.5" stroke="#64748b"/>
+          </g>
+          <rect x="30" y="126.4" width="58" height="33.6" fill="#0f766e"/>
+          <rect x="125" y="104" width="58" height="56" fill="#0f766e"/>
+          <rect x="220" y="12.8" width="58" height="147.2" fill="#c2410c"/>
+          <rect x="315" y="57.6" width="58" height="102.4" fill="#0f766e"/>
+          <rect x="410" y="140.8" width="58" height="19.2" fill="#0f766e"/>
+          <line x1="0" y1="32" x2="470" y2="32" stroke="#1e293b" stroke-width="1.5" stroke-dasharray="6 4"/>
+        </svg>
+        <span class="abs text-xs text-slate-500 text-right" style="left:0;top:-2px;width:34px">1.00</span>
+        <span class="abs text-xs text-slate-500 text-right" style="left:0;top:38px;width:34px">0.75</span>
+        <span class="abs text-xs text-slate-500 text-right" style="left:0;top:78px;width:34px">0.50</span>
+        <span class="abs text-xs text-slate-500 text-right" style="left:0;top:118px;width:34px">0.25</span>
+        <span class="abs text-xs text-slate-500 text-right" style="left:0;top:157px;width:34px">0</span>
+        <span class="abs text-xs text-center" style="left:69px;top:170px;width:40px">S1</span>
+        <span class="abs text-xs text-center" style="left:164px;top:170px;width:40px">S2</span>
+        <span class="abs text-xs text-center" style="left:259px;top:170px;width:40px">S3</span>
+        <span class="abs text-xs text-center" style="left:354px;top:170px;width:40px">S4</span>
+        <span class="abs text-xs text-center" style="left:449px;top:170px;width:40px">S5</span>
+      </div>
+      <p class="m-0 mt-2 text-xs text-slate-700"><span class="swatch" style="background:#0f766e"></span>Below screening level &nbsp; <span class="swatch" style="background:#c2410c"></span>Above screening level &nbsp; <span class="swatch" style="background:#fff;border:1.5px dashed #1e293b"></span>Screening level, 0.80 mg L<sup>&minus;1</sup></p>
+    </div>
+    <p class="m-0 mt-2 text-xs text-slate-700"><span class="font-semibold">Figure 3.2.</span> Nitrate nitrogen at the five Plover Creek sites.</p>
+    <p class="m-0 mt-2 text-xs text-slate-500"><sup>a</sup> Dissolved oxygen by luminescent probe, nitrate by ion chromatography.</p>
+  </main>
+</div>
+</body>
+</html>

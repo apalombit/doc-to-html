@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Lab report</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0}
+body{width:840px;padding:16px 18px 18px;background:#fff;color:#1a2230;font-family:Arial,sans-serif;font-size:12px;line-height:1.35}
+.p-2{padding:6px}.p-3{padding:10px 12px}.px-3{padding-left:12px;padding-right:12px}.py-1{padding-top:3px;padding-bottom:3px}
+.mt-2{margin-top:8px}.mt-3{margin-top:12px}.mb-1{margin-bottom:4px}
+.flex{display:flex}.grid{display:grid}.grid-cols-4{grid-template-columns:repeat(4,1fr)}.grid-cols-2{grid-template-columns:1fr 1fr}
+.col-3-2{grid-template-columns:1.55fr 1fr}.col-2-3{grid-template-columns:1.25fr 1fr}
+.gap-2{gap:8px}.gap-3{gap:12px}.justify-between{justify-content:space-between}.items-end{align-items:flex-end}
+.text-xs{font-size:10px}.text-sm{font-size:11.5px}.text-lg{font-size:20px;line-height:1.1}
+.font-semibold{font-weight:700}.uppercase{text-transform:uppercase}.tracking-wide{letter-spacing:.07em}
+.text-slate-500{color:#5b6677}.text-red-700{color:#b42318}
+.border{border:1px solid #aab4c3}.border-b{border-bottom:1px solid #aab4c3}.rounded{border-radius:4px}
+.bg-slate-50{background:#f4f6f9}.bg-slate-100{background:#e8ecf2}.bg-slate-800{background:#26324a;color:#fff}
+.text-right{text-align:right}.text-center{text-align:center}
+h1,h2,p,ul,dl,dd{margin:0}
+.kv .l{display:block;font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:#5b6677}
+.kv .v{display:block;font-size:13px;font-weight:700;margin-top:1px}
+.panel{border:1px solid #aab4c3;border-radius:4px;overflow:hidden;background:#fff}
+.panel h2{background:#26324a;color:#fff;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;font-weight:700}
+.panel .body{padding:8px 10px 10px}
+table{width:100%;border-collapse:collapse}
+th{font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:#5b6677;text-align:left;padding:3px 4px;border-bottom:1px solid #aab4c3;font-weight:700}
+td{padding:4px 4px;border-bottom:1px solid #e1e6ee}
+th.r,td.r{text-align:right}
+td.f{width:22px;text-align:center;font-weight:700;color:#b42318}
+tfoot td{border-top:2px solid #26324a;border-bottom:0;font-weight:700;padding-top:5px}
+ul.chk{list-style:none;padding:0}
+ul.chk li{padding:4px 0;border-bottom:1px solid #e1e6ee}
+ul.chk li b{display:inline-block;width:18px;font-size:13px}
+.ok{color:#18794e}.no{color:#b42318}
+</style>
+</head>
+<body>
+<div class="flex justify-between items-end border-b" style="padding-bottom:8px;border-bottom:3px solid #26324a">
+  <div>
+    <div class="text-xs uppercase tracking-wide font-semibold text-slate-500">Atlas Pathology Services · Swindon laboratory</div>
+    <h1 class="text-lg font-semibold" style="margin-top:3px">Laboratory report: blood count and biochemistry</h1>
+  </div>
+  <div class="text-sm text-right"><span class="text-slate-500">Lab no.</span> <b>SW-24-118304</b><br><span class="text-slate-500">Report status</span> <b>Final</b></div>
+</div>
+
+<div class="grid grid-cols-4 gap-3 p-3 mt-2 border rounded bg-slate-50 kv">
+  <div><span class="l">Patient</span><span class="v">Oliver Hughes</span></div>
+  <div><span class="l">Date of birth</span><span class="v">14/03/1971 (53 y)</span></div>
+  <div><span class="l">NHS number</span><span class="v">482 117 6035</span></div>
+  <div><span class="l">Sex</span><span class="v">Male</span></div>
+  <div><span class="l">Requested by</span><span class="v">Dr Zara Lindsay</span></div>
+  <div><span class="l">Practice</span><span class="v">Lattice Lane Surgery, Barnsley</span></div>
+  <div><span class="l">Specimen</span><span class="v">EDTA and serum</span></div>
+  <div><span class="l">Clinical details</span><span class="v">Fatigue, recurrent chest infection</span></div>
+</div>
+<div class="flex justify-between text-sm mt-2 px-3" style="margin-bottom:10px">
+  <span><span class="text-slate-500">Collected:</span> <b>28/10/2024 08:35</b></span>
+  <span><span class="text-slate-500">Received:</span> <b>28/10/2024 12:15</b></span>
+  <span><span class="text-slate-500">Reported:</span> <b>28/10/2024 16:12</b></span>
+</div>
+
+<div class="grid col-3-2 gap-3">
+  <div class="panel">
+    <h2>Full blood count</h2>
+    <div class="body">
+      <table>
+        <thead><tr><th>Test</th><th class="r">Result</th><th>Units</th><th>Reference</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>Haemoglobin</td><td class="r">142</td><td>g/L</td><td>130–170</td><td class="f"></td></tr>
+          <tr><td>Red cell count</td><td class="r">4.81</td><td>×10<sup>12</sup>/L</td><td>4.50–5.70</td><td class="f"></td></tr>
+          <tr><td>Haematocrit</td><td class="r">0.43</td><td>L/L</td><td>0.40–0.50</td><td class="f"></td></tr>
+          <tr><td>MCV</td><td class="r">89</td><td>fL</td><td>83–101</td><td class="f"></td></tr>
+          <tr><td>MCH</td><td class="r">29.5</td><td>pg</td><td>27.0–32.0</td><td class="f"></td></tr>
+          <tr><td>White cell count</td><td class="r"><b>11.2</b></td><td>×10<sup>9</sup>/L</td><td>4.0–11.0</td><td class="f">H</td></tr>
+          <tr><td>Platelets</td><td class="r"><b>412</b></td><td>×10<sup>9</sup>/L</td><td>150–400</td><td class="f">H</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="panel">
+    <h2>White cell differential</h2>
+    <div class="body">
+      <table>
+        <thead><tr><th>Cell type</th><th class="r">%</th><th class="r">×10<sup>9</sup>/L</th></tr></thead>
+        <tbody>
+          <tr><td>Neutrophils</td><td class="r">62</td><td class="r">6.9</td></tr>
+          <tr><td>Lymphocytes</td><td class="r">26</td><td class="r">2.9</td></tr>
+          <tr><td>Monocytes</td><td class="r">7</td><td class="r">0.8</td></tr>
+          <tr><td>Eosinophils</td><td class="r">4</td><td class="r">0.5</td></tr>
+          <tr><td>Basophils</td><td class="r">1</td><td class="r">0.1</td></tr>
+        </tbody>
+        <tfoot><tr><td>Total</td><td class="r">100</td><td class="r">11.2</td></tr></tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="grid col-2-3 gap-3 mt-3">
+  <div class="panel">
+    <h2>Biochemistry</h2>
+    <div class="body">
+      <table>
+        <thead><tr><th>Test</th><th class="r">Result</th><th>Units</th><th>Reference</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>Sodium</td><td class="r">139</td><td>mmol/L</td><td>133–146</td><td class="f"></td></tr>
+          <tr><td>Potassium</td><td class="r">4.4</td><td>mmol/L</td><td>3.5–5.3</td><td class="f"></td></tr>
+          <tr><td>Urea</td><td class="r">5.8</td><td>mmol/L</td><td>2.5–7.8</td><td class="f"></td></tr>
+          <tr><td>Creatinine</td><td class="r">88</td><td>µmol/L</td><td>59–104</td><td class="f"></td></tr>
+          <tr><td>ALT</td><td class="r">31</td><td>U/L</td><td>&lt;50</td><td class="f"></td></tr>
+          <tr><td>C-reactive protein</td><td class="r"><b>14</b></td><td>mg/L</td><td>&lt;5</td><td class="f">H</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="panel">
+    <h2>Sample checks</h2>
+    <div class="body">
+      <p class="text-xs text-slate-500 mb-1">✓ satisfied · ✗ not satisfied</p>
+      <ul class="chk text-sm">
+        <li><b class="ok">✓</b>Two identifiers match the request</li>
+        <li><b class="ok">✓</b>Received within 6 hours of collection</li>
+        <li><b class="ok">✓</b>Analyser quality control in range</li>
+        <li><b class="no">✗</b>Repeat sample needed</li>
+      </ul>
+      <p class="text-sm" style="margin-top:8px"><span class="text-slate-500">Authorised by</span> <b>Megan Rahman</b>, Biomedical Scientist</p>
+    </div>
+  </div>
+</div>
+<p class="text-xs text-slate-500 mt-3">H = above the adult male reference range. This report relates only to the sample received. Please repeat the white cell count and C-reactive protein in 2 weeks if symptoms persist.</p>
+</body>
+</html>

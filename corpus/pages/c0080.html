@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Application for Land Use Permit, Parts 3 and 4</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 14px 16px 18px; width: 780px; background: #fff; color: #111;
+         font-family: Arial, Helvetica, sans-serif; font-size: 12px; line-height: 1.35; }
+  .sec { display: flex; align-items: stretch; border: 1.5px solid #111; margin: 0; }
+  .sec .num { background: #111; color: #fff; font-weight: 700; font-size: 18px; width: 38px;
+              display: flex; align-items: center; justify-content: center; }
+  .sec h2 { margin: 0; padding: 6px 10px; font-size: 12.5px; letter-spacing: 0.6px; text-transform: uppercase; }
+  .sec .note { margin-left: auto; padding: 7px 10px; font-size: 10px; color: #333; align-self: center; }
+  .fields { border: 1.5px solid #111; border-top: 0; padding: 6px 14px 8px; }
+  .lead { display: flex; align-items: baseline; margin: 11px 0; }
+  .lead .lab { white-space: nowrap; font-size: 11.5px; }
+  .lead .no { display: inline-block; width: 30px; font-weight: 700; font-size: 10.5px; }
+  .lead .dots { flex: 1; border-bottom: 2px dotted #444; margin: 0 6px; position: relative; top: -2px; }
+  .lead .val { font-weight: 700; font-size: 12.5px; white-space: nowrap; font-family: "Courier New", Courier, monospace; }
+  .lead .val.plain { font-family: Arial, Helvetica, sans-serif; }
+  h3 { margin: 22px 0 0; }
+  ol.clauses { list-style: none; margin: 0; padding: 8px 14px 6px; border: 1.5px solid #111; border-top: 0; }
+  ol.clauses li { margin: 0 0 8px; padding-left: 36px; text-indent: -36px; font-size: 11.5px; }
+  ol.clauses li .c { display: inline-block; width: 36px; text-indent: 0; font-weight: 700; }
+  ol.clauses ol { list-style: none; margin: 4px 0 0; padding: 0 0 0 36px; }
+  ol.clauses ol li { margin: 0 0 3px; padding-left: 26px; text-indent: -26px; }
+  ol.clauses ol li .c { width: 26px; font-weight: 400; }
+  .office { display: flex; margin-top: 22px; border: 1.5px solid #111; }
+  .office .code { width: 236px; padding: 10px 14px 8px; border-right: 1.5px solid #111; text-align: center; }
+  .office .code .t { font-size: 9.5px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; text-align: left; }
+  .office .code svg { display: block; margin: 8px auto 3px; }
+  .office .code .digits { font-family: "Courier New", Courier, monospace; font-size: 11px; letter-spacing: 1.5px; }
+  .office .rest { flex: 1; padding: 10px 14px 6px; background: #f0f0f0; }
+  .office .rest .t { font-size: 9.5px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; }
+  .office .rest .lead { margin: 12px 0; }
+  .sign { display: flex; margin-top: 22px; gap: 24px; }
+  .sign div { flex: 1; border-top: 1.5px solid #111; padding-top: 3px; font-size: 10px; color: #333; }
+</style>
+</head>
+<body>
+<div class="sec"><div class="num">3</div><h2>Applicant and parcel</h2><div class="note">Print in capitals or type. Use black ink.</div></div>
+<div class="fields">
+  <div class="lead"><span class="lab"><span class="no">3.1</span>Applicant name</span><span class="dots"></span><span class="val">TYLER HOLLOWAY</span></div>
+  <div class="lead"><span class="lab"><span class="no">3.2</span>Mailing address</span><span class="dots"></span><span class="val">418 SWITZER CANYON RD, FLAGSTAFF, AZ 86001</span></div>
+  <div class="lead"><span class="lab"><span class="no">3.3</span>Co-applicant</span><span class="dots"></span><span class="val">AALIYAH SCHULTZ</span></div>
+  <div class="lead"><span class="lab"><span class="no">3.4</span>Parcel number</span><span class="dots"></span><span class="val">104-27-063B</span></div>
+  <div class="lead"><span class="lab"><span class="no">3.5</span>Authorized agent</span><span class="dots"></span><span class="val plain">Raj Sullivan, Atlas Surveying, Provo, UT</span></div>
+  <div class="lead"><span class="lab"><span class="no">3.6</span>Filing fee paid</span><span class="dots"></span><span class="val">$185.00</span></div>
+</div>
+
+<div class="sec" style="margin-top:22px"><div class="num">4</div><h2>Declaration of the applicant</h2></div>
+<ol class="clauses">
+  <li><span class="c">4.1</span>I declare that the information given in Parts 1 to 3 is true and complete to the best of my knowledge.</li>
+  <li><span class="c">4.2</span>I understand that the Nuthatch County Land Use Office may:
+    <ol>
+      <li><span class="c">(a)</span>enter the parcel at a reasonable hour to inspect the work described;</li>
+      <li><span class="c">(b)</span>refuse or withdraw a permit where a statement made here proves to be false.</li>
+    </ol>
+  </li>
+  <li><span class="c">4.3</span>I agree to display the permit notice at the road frontage until the final inspection is signed off.</li>
+</ol>
+
+<div class="sign"><div>Signature of applicant</div><div>Signature of co-applicant</div><div>Date signed (MM/DD/YYYY)</div></div>
+
+<div class="office">
+  <div class="code">
+    <div class="t">Office use only</div>
+    <svg width="190" height="52" viewBox="0 0 190 52" aria-hidden="true">
+      <g fill="#111">
+        <rect x="0" y="0" width="3" height="52"/><rect x="5" y="0" width="1.5" height="52"/><rect x="9" y="0" width="4" height="52"/>
+        <rect x="15" y="0" width="1.5" height="52"/><rect x="19" y="0" width="2.5" height="52"/><rect x="24" y="0" width="5" height="52"/>
+        <rect x="31" y="0" width="1.5" height="52"/><rect x="35" y="0" width="3" height="52"/><rect x="40" y="0" width="1.5" height="52"/>
+        <rect x="44" y="0" width="4" height="52"/><rect x="50" y="0" width="2" height="52"/><rect x="55" y="0" width="1.5" height="52"/>
+        <rect x="59" y="0" width="5" height="52"/><rect x="66" y="0" width="2" height="52"/><rect x="70" y="0" width="3" height="52"/>
+        <rect x="75" y="0" width="1.5" height="52"/><rect x="79" y="0" width="4" height="52"/><rect x="85" y="0" width="2" height="52"/>
+        <rect x="90" y="0" width="1.5" height="52"/><rect x="94" y="0" width="3" height="52"/><rect x="99" y="0" width="5" height="52"/>
+        <rect x="106" y="0" width="1.5" height="52"/><rect x="110" y="0" width="2.5" height="52"/><rect x="115" y="0" width="4" height="52"/>
+        <rect x="121" y="0" width="1.5" height="52"/><rect x="125" y="0" width="3" height="52"/><rect x="130" y="0" width="2" height="52"/>
+        <rect x="135" y="0" width="5" height="52"/><rect x="142" y="0" width="1.5" height="52"/><rect x="146" y="0" width="3" height="52"/>
+        <rect x="151" y="0" width="1.5" height="52"/><rect x="155" y="0" width="4" height="52"/><rect x="161" y="0" width="2" height="52"/>
+        <rect x="165" y="0" width="1.5" height="52"/><rect x="169" y="0" width="5" height="52"/><rect x="176" y="0" width="2" height="52"/>
+        <rect x="180" y="0" width="1.5" height="52"/><rect x="184" y="0" width="3" height="52"/><rect x="188.5" y="0" width="1.5" height="52"/>
+      </g>
+    </svg>
+    <div class="digits">NLU 21 0219 0463</div>
+  </div>
+  <div class="rest">
+    <div class="t">Intake record</div>
+    <div class="lead"><span class="lab">Received</span><span class="dots"></span><span class="val">02/19/2021</span></div>
+    <div class="lead"><span class="lab">Permit no.</span><span class="dots"></span><span class="val">LU-21-0463</span></div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Bank statement</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0}
+body{width:680px;padding:20px 24px 22px;background:#fff;color:#111;font-family:Galvji,sans-serif;font-size:11px;line-height:1.4}
+.head{display:grid;grid-template-columns:repeat(12,1fr);column-gap:12px;align-items:end;padding-bottom:10px;border-bottom:1px solid #111}
+.head .b{grid-column:1 / span 7}
+.head .s{grid-column:8 / span 5;text-align:right}
+.wm{font-size:18px;font-weight:700;letter-spacing:-.01em;line-height:1}
+.mini{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#666}
+.head .s b{display:block;font-size:13px}
+.boxes{display:grid;grid-template-columns:repeat(12,1fr);gap:8px 12px;margin-top:16px}
+.bx{grid-column:span 4}
+.bx.w{grid-column:span 8}
+.bx .l{display:block;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#666;margin-bottom:2px}
+.bx .v{display:block;border:1px solid #111;padding:4px 7px;font-size:12px;font-weight:700;min-height:25px}
+.bx .v.n{font-variant-numeric:tabular-nums}
+h2{margin:20px 0 6px;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+table{width:100%;border-collapse:collapse}
+th{font-size:9px;letter-spacing:.08em;text-transform:uppercase;font-weight:400;color:#666;text-align:left;padding:0 0 4px;border-bottom:1px solid #111}
+td{padding:4px 0;border-bottom:1px solid #ddd;vertical-align:top}
+th.r,td.r{text-align:right;font-variant-numeric:tabular-nums}
+td.d{width:84px}
+td.r{width:92px}
+tr.open td{border-bottom:1px solid #111;font-weight:700}
+ul{margin:0;padding-left:15px}
+li{margin:0 0 3px;padding-right:60px}
+.cont{margin-top:10px;font-size:9px;color:#666;display:flex;justify-content:space-between}
+</style>
+</head>
+<body>
+<div class="head">
+  <div class="b"><div class="wm">Yarrow Credit Union</div><div class="mini">Driftwood Branch · Chattanooga, TN</div></div>
+  <div class="s"><span class="mini">Statement date</span><b>August 12, 2025</b></div>
+</div>
+
+<div class="boxes">
+  <div class="bx w"><span class="l">Account holders</span><span class="v">Luis Gutierrez and Camila Tillman</span></div>
+  <div class="bx"><span class="l">Account</span><span class="v">Driftwood Checking ••4417</span></div>
+  <div class="bx"><span class="l">Statement period</span><span class="v">07/13/2025 to 08/12/2025</span></div>
+  <div class="bx"><span class="l">Opening balance</span><span class="v n">$4,812.37</span></div>
+  <div class="bx"><span class="l">Closing balance</span><span class="v n">$7,932.23</span></div>
+</div>
+
+<h2>Account notices</h2>
+<ul>
+  <li>Your overdraft link to Driftwood Savings ending 0912 was not used this period.</li>
+  <li>Paper statements cost $2.00 a month. Switch to e-statements in online banking.</li>
+  <li>Report any error within 60 days of the statement date shown above.</li>
+</ul>
+
+<h2>Activity</h2>
+<table>
+  <thead><tr><th>Date</th><th>Description</th><th class="r">Amount</th><th class="r">Balance</th></tr></thead>
+  <tbody>
+    <tr class="open"><td class="d">07/13/2025</td><td>Opening balance</td><td class="r"></td><td class="r">4,812.37</td></tr>
+    <tr><td class="d">07/14/2025</td><td>Payroll deposit, Cedar Ridge Dental</td><td class="r">2,184.50</td><td class="r">6,996.87</td></tr>
+    <tr><td class="d">07/15/2025</td><td>Debit card, Fort Collins Market</td><td class="r">−86.42</td><td class="r">6,910.45</td></tr>
+    <tr><td class="d">07/18/2025</td><td>Check no. 1204, Emily Schultz</td><td class="r">−450.00</td><td class="r">6,460.45</td></tr>
+    <tr><td class="d">07/21/2025</td><td>Transfer to Driftwood Savings</td><td class="r">−500.00</td><td class="r">5,960.45</td></tr>
+    <tr><td class="d">07/25/2025</td><td>AutoPay, Ridgeline Gas</td><td class="r">−74.10</td><td class="r">5,886.35</td></tr>
+    <tr><td class="d">08/01/2025</td><td>Payroll deposit, Cedar Ridge Dental</td><td class="r">2,184.50</td><td class="r">8,070.85</td></tr>
+    <tr><td class="d">08/04/2025</td><td>Debit card, Fort Collins Hardware</td><td class="r">−132.18</td><td class="r">7,938.67</td></tr>
+    <tr><td class="d">08/09/2025</td><td>Debit card, Poudre Coffee</td><td class="r">−6.85</td><td class="r">7,931.82</td></tr>
+    <tr><td class="d">08/11/2025</td><td>Interest paid</td><td class="r">0.41</td><td class="r">7,932.23</td></tr>
+  </tbody>
+</table>
+<div class="cont"><span>Deposits $4,369.41 · Withdrawals $1,249.55</span><span>Page 1 of 2</span></div>
+</body>
+</html>

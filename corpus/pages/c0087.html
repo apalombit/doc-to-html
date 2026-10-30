@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="it-IT">
+<head>
+<meta charset="utf-8">
+<title>Scheda di accoglienza del paziente</title>
+<style>
+  html { background: #fff; }
+  body { margin: 0; width: 780px; box-sizing: border-box; padding: 16px 18px 18px; background: #fff; color: #17302f; font-family: Georgia, "Times New Roman", serif; font-size: 11px; line-height: 1.35; }
+  header.top { background: #0e6b6a; color: #fff; display: flex; align-items: center; gap: 12px; padding: 10px 14px; }
+  header.top svg { flex: none; }
+  header.top .org { flex: 1; }
+  header.top .org h1 { margin: 0; font-size: 19px; font-weight: 700; letter-spacing: .3px; line-height: 1.1; }
+  header.top .org p { margin: 2px 0 0; font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; opacity: .95; }
+  header.top .ref { text-align: right; font-size: 10.5px; line-height: 1.45; }
+  .title { display: flex; justify-content: space-between; align-items: baseline; margin: 0; padding: 7px 2px 5px; border-bottom: 3px double #0e6b6a; }
+  .title h2 { margin: 0; font-size: 15px; letter-spacing: .6px; text-transform: uppercase; color: #0e6b6a; }
+  .title p { margin: 0; font-size: 10px; }
+  .row { display: flex; gap: 14px; margin-top: 12px; align-items: stretch; }
+  .panel { flex: 1; border: 1px solid #0e6b6a; min-width: 0; }
+  .panel h3 { margin: 0; background: #d5ebe9; color: #0b4f4e; font-size: 11.5px; letter-spacing: .5px; text-transform: uppercase; padding: 4px 9px; border-bottom: 1px solid #0e6b6a; }
+  .panel .in { padding: 6px 9px 8px; }
+  dl { margin: 0; }
+  dl > div { display: flex; gap: 6px; padding: 3px 0; border-bottom: 1px dotted #6c8a89; }
+  dl > div:last-child { border-bottom: 0; }
+  dt { width: 112px; flex: none; color: #3a5857; font-size: 10px; text-transform: uppercase; letter-spacing: .3px; padding-top: 1px; }
+  dd { margin: 0; flex: 1; font-weight: 700; }
+  dd.l { font-weight: 400; }
+  table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+  th { text-align: left; font-size: 9.5px; text-transform: uppercase; letter-spacing: .4px; color: #3a5857; padding: 3px 6px 3px 0; border-bottom: 1px solid #0e6b6a; }
+  td { padding: 2px 6px 2px 0; border-bottom: 1px dotted #9db4b3; vertical-align: top; }
+  tr.p td { font-weight: 700; border-bottom-color: #6c8a89; padding-top: 4px; }
+  tr.s td:first-child { padding-left: 14px; font-weight: 400; }
+  td.c, th.c { text-align: center; white-space: nowrap; }
+  .consent { margin-top: 12px; border: 1px solid #0e6b6a; }
+  .consent .in { padding: 6px 9px 8px; }
+  .consent p { margin: 0 0 4px; text-align: justify; font-size: 10.5px; }
+  .sigs { display: flex; gap: 24px; margin-top: 10px; }
+  .sigs > div { flex: 1; border-top: 1px solid #17302f; padding-top: 2px; font-size: 10px; }
+  .foot { margin-top: 8px; border-top: 3px double #0e6b6a; padding-top: 4px; display: flex; justify-content: space-between; font-size: 9.5px; color: #3a5857; }
+</style>
+</head>
+<body>
+<header class="top">
+  <svg width="38" height="38" viewBox="0 0 38 38" aria-hidden="true">
+    <circle cx="19" cy="19" r="18" fill="#fff"/>
+    <path d="M19 31 C19 20 12 14 7 10 C14 9 18 13 19 19 C20 13 24 9 31 10 C26 14 19 20 19 31 Z" fill="#0e6b6a"/>
+    <rect x="18" y="19" width="2" height="13" fill="#0e6b6a"/>
+  </svg>
+  <div class="org">
+    <h1>Centro Medico Ambra</h1>
+    <p>Poliambulatorio Felce &middot; Via Mazzini 42, 43121 Parma</p>
+  </div>
+  <div class="ref">Tel. 0521 555 0138<br>segreteria@ambramedico.example.com<br>P.IVA 02847560347</div>
+</header>
+<div class="title">
+  <h2>Scheda di accoglienza del paziente</h2>
+  <p>Scheda n. 2026/0911-47 &nbsp;&middot;&nbsp; Parma, 11/09/2026</p>
+</div>
+
+<div class="row">
+  <section class="panel">
+    <h3>1. Dati anagrafici</h3>
+    <div class="in">
+      <dl>
+        <div><dt>Cognome e nome</dt><dd>Pellegrini Francesca</dd></div>
+        <div><dt>Data di nascita</dt><dd>14/03/1984 (42 anni)</dd></div>
+        <div><dt>Luogo di nascita</dt><dd>Cagliari (CA)</dd></div>
+        <div><dt>Codice fiscale</dt><dd>PLLFNC84C54B354K</dd></div>
+        <div><dt>Residenza</dt><dd>Via Garibaldi 17, 43121 Parma (PR)</dd></div>
+        <div><dt>Telefono</dt><dd>339 555 0116</dd></div>
+        <div><dt>Professione</dt><dd class="l">Insegnante di scuola primaria</dd></div>
+        <div><dt>Tessera sanitaria</dt><dd>80380 0012 4471 9035 6</dd></div>
+        <div><dt>Stato civile</dt><dd class="l">coniugata, un figlio</dd></div>
+        <div><dt>E-mail</dt><dd>f.pellegrini@example.org</dd></div>
+        <div><dt>Gruppo sanguigno</dt><dd>A positivo</dd></div>
+      </dl>
+    </div>
+  </section>
+  <section class="panel">
+    <h3>2. Medico curante e contatti</h3>
+    <div class="in">
+      <dl>
+        <div><dt>Medico di base</dt><dd>Dott. Lorenzo Barbieri</dd></div>
+        <div><dt>Studio</dt><dd class="l">Via Bixio 9, Parma &middot; 0521 555 0184</dd></div>
+        <div><dt>Motivo della visita</dt><dd class="l">Controllo ginecologico di routine e referti degli esami del sangue</dd></div>
+        <div><dt>Contatto di emergenza</dt><dd>Martina Galli (sorella)</dd></div>
+        <div><dt>Telefono contatto</dt><dd>347 555 0129</dd></div>
+        <div><dt>Prima visita</dt><dd class="l">&#9744; S&igrave; &nbsp; &#9745; No &nbsp; ultima: 12/02/2025</dd></div>
+        <div><dt>Prenotazione</dt><dd class="l">ore 09:30 &middot; ambulatorio 4</dd></div>
+        <div><dt>Esenzione ticket</dt><dd class="l">&#9744; S&igrave; &nbsp; &#9745; No &nbsp; codice: &ndash;</dd></div>
+        <div><dt>Invio referti</dt><dd class="l">via e-mail e ritiro in segreteria</dd></div>
+      </dl>
+    </div>
+  </section>
+</div>
+
+<div class="row">
+  <section class="panel">
+    <h3>3. Anamnesi patologica</h3>
+    <div class="in">
+      <table>
+        <thead><tr><th>Condizione</th><th class="c">S&igrave;</th><th class="c">No</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr class="p"><td>Malattie cardiovascolari</td><td class="c">&#9744;</td><td class="c">&#9745;</td><td></td></tr>
+          <tr class="s"><td>Ipertensione</td><td class="c">&#9744;</td><td class="c">&#9745;</td><td></td></tr>
+          <tr class="s"><td>Aritmie</td><td class="c">&#9744;</td><td class="c">&#9745;</td><td></td></tr>
+          <tr class="p"><td>Malattie endocrine</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td></td></tr>
+          <tr class="s"><td>Ipotiroidismo</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td>dal 2019</td></tr>
+          <tr class="s"><td>Diabete</td><td class="c">&#9744;</td><td class="c">&#9745;</td><td></td></tr>
+          <tr class="p"><td>Malattie respiratorie</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td></td></tr>
+          <tr class="s"><td>Asma</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td>lieve, stagionale</td></tr>
+          <tr class="p"><td>Interventi chirurgici</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td></td></tr>
+          <tr class="s"><td>Appendicectomia</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td>2001</td></tr>
+          <tr class="p"><td>Gravidanze</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td></td></tr>
+          <tr class="s"><td>Parto a termine</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td>2014</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section class="panel">
+    <h3>4. Allergie e terapia in corso</h3>
+    <div class="in">
+      <table>
+        <thead><tr><th>Voce</th><th>Dose e frequenza</th></tr></thead>
+        <tbody>
+          <tr class="p"><td>Allergie note</td><td></td></tr>
+          <tr class="s"><td>Penicillina</td><td>eruzione cutanea</td></tr>
+          <tr class="s"><td>Polline di graminacee</td><td>rinite, da aprile</td></tr>
+          <tr class="s"><td>Lattice</td><td>nessuna reazione</td></tr>
+          <tr class="p"><td>Farmaci assunti</td><td></td></tr>
+          <tr class="s"><td>Levotiroxina 75 mcg</td><td>1 cp al mattino, a digiuno</td></tr>
+          <tr class="s"><td>Salbutamolo spray</td><td>al bisogno</td></tr>
+          <tr class="s"><td>Cetirizina 10 mg</td><td>1 cp la sera, in primavera</td></tr>
+          <tr class="p"><td>Abitudini</td><td></td></tr>
+          <tr class="s"><td>Fumo</td><td>no, ex fumatrice dal 2015</td></tr>
+          <tr class="s"><td>Alcol</td><td>occasionale</td></tr>
+          <tr class="p"><td>Vaccinazioni</td><td></td></tr>
+          <tr class="s"><td>Antinfluenzale</td><td>ottobre 2025</td></tr>
+          <tr class="s"><td>Antitetanica</td><td>richiamo nel 2021</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<section class="consent">
+  <h3 style="margin:0;background:#d5ebe9;color:#0b4f4e;font-size:11.5px;letter-spacing:.5px;text-transform:uppercase;padding:4px 9px;border-bottom:1px solid #0e6b6a">5. Informativa e consenso</h3>
+  <div class="in">
+    <p>La sottoscritta dichiara di aver ricevuto l&rsquo;informativa sul trattamento dei dati personali ai sensi del Regolamento (UE) 2016/679 e di acconsentire al trattamento dei propri dati sanitari per le finalit&agrave; di cura, di prenotazione e di refertazione. Dichiara inoltre che le informazioni riportate in questa scheda sono complete e veritiere, e si impegna a comunicare ogni variazione al personale del Centro.</p>
+    <div class="sigs">
+      <div>Firma della paziente</div>
+      <div>Data: 11/09/2026</div>
+      <div>Firma dell&rsquo;operatore di accoglienza</div>
+    </div>
+  </div>
+</section>
+<div class="foot"><span>Mod. ACC-03 rev. 4 &middot; Conservare in cartella clinica</span><span>Pagina 1 di 1</span></div>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="fr-FR">
+<head>
+<meta charset="utf-8">
+<title>Ticket de caisse</title>
+<style>
+  html { background: #fff; }
+  body { margin: 0; width: 520px; box-sizing: border-box; padding: 0 0 34px; background: #fff; color: #161616; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 12px; line-height: 1.4; }
+  .band { background: #e2401c; color: #fff; padding: 22px 36px 20px; display: grid; grid-template-columns: 1fr auto; align-items: end; }
+  .band .name { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
+  .band .sub { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; margin-top: 8px; font-weight: 500; }
+  .band .no { text-align: right; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.5; }
+  .band .no b { display: block; font-size: 18px; letter-spacing: 0; font-weight: 700; }
+  .main { padding: 26px 36px 0; }
+  .meta { display: grid; grid-template-columns: 96px 1fr; row-gap: 7px; padding-bottom: 20px; border-bottom: 1px solid #161616; }
+  .k { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #777; padding-top: 2px; }
+  .v { font-size: 12px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 18px; }
+  th { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #777; font-weight: 500; text-align: left; padding: 0 0 6px; }
+  td { padding: 6px 0; border-top: 1px solid #e4e4e4; vertical-align: baseline; }
+  .n { text-align: right; font-variant-numeric: tabular-nums; }
+  th.n { text-align: right; }
+  th.q, td.q { width: 40px; text-align: center; }
+  th.p, td.p { width: 70px; text-align: right; }
+  th.m, td.m { width: 80px; text-align: right; }
+  .sum { align-items: baseline; display: grid;grid-template-columns: 96px 1fr 80px; row-gap: 5px; margin-top: 14px; padding-top: 14px; border-top: 1px solid #161616; }
+  .sum .r { text-align: right; }
+  .tot { align-items: baseline; font-size: 20px; font-weight: 700; margin-top: 4px; }
+  .tot-k { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #e2401c; font-weight: 700; }
+  .chips { margin-top: 20px; display: flex; gap: 6px; }
+  .chip { display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; background: #efefef; color: #333; }
+  .chip.acc { background: #e2401c; color: #fff; }
+  .code { margin-top: 28px; display: block; }
+  .digits { font-size: 10px; letter-spacing: 0.22em; margin-top: 6px; color: #444; }
+  .foot { margin-top: 22px; display: grid; grid-template-columns: 96px 1fr; row-gap: 3px; font-size: 10px; color: #555; }
+  .foot .k { color: #999; }
+</style>
+</head>
+<body>
+<div class="band">
+  <div>
+    <div class="name">Le Phare</div>
+    <div class="sub">Boulangerie · pâtisserie · Caen</div>
+  </div>
+  <div class="no">Ticket n°<b>0417</b></div>
+</div>
+
+<div class="main">
+  <div class="meta">
+    <span class="k">Date</span><span class="v">31/05/2025, 11 h 42</span>
+    <span class="k">Servi par</span><span class="v">Chloé Renaud</span>
+    <span class="k">Client</span><span class="v">Hugo Lefèvre, carte fidélité n° 2210 8841</span>
+  </div>
+
+  <table>
+    <thead><tr><th>Article</th><th class="q">Qté</th><th class="p">Prix</th><th class="m">Montant</th></tr></thead>
+    <tbody>
+      <tr><td>Pain aux céréales</td><td class="q">1</td><td class="p">3,20 €</td><td class="m">3,20 €</td></tr>
+      <tr><td>Baguette tradition</td><td class="q">2</td><td class="p">1,35 €</td><td class="m">2,70 €</td></tr>
+      <tr><td>Éclair au café</td><td class="q">2</td><td class="p">3,10 €</td><td class="m">6,20 €</td></tr>
+      <tr><td>Tarte aux pommes, part</td><td class="q">1</td><td class="p">2,90 €</td><td class="m">2,90 €</td></tr>
+    </tbody>
+  </table>
+
+  <div class="sum">
+    <span class="k">Total HT</span><span></span><span class="r">14,22 €</span>
+    <span class="k">TVA 5,5 %</span><span></span><span class="r">0,78 €</span>
+    <span class="tot-k tot">À payer</span><span></span><span class="r tot">15,00 €</span>
+  </div>
+
+  <div class="chips">
+    <span class="chip acc">Payé</span>
+    <span class="chip">Carte sans contact</span>
+    <span class="chip">À emporter</span>
+  </div>
+
+  <svg class="code" width="250" height="44" viewBox="0 0 250 44" xmlns="http://www.w3.org/2000/svg" fill="#161616">
+    <rect x="0" y="0" width="2" height="44"/><rect x="5" y="0" width="4" height="44"/><rect x="12" y="0" width="1.5" height="44"/><rect x="16" y="0" width="3" height="44"/><rect x="22" y="0" width="1.5" height="44"/><rect x="26" y="0" width="1.5" height="44"/><rect x="30" y="0" width="4" height="44"/><rect x="37" y="0" width="2" height="44"/><rect x="42" y="0" width="3" height="44"/><rect x="48" y="0" width="1.5" height="44"/><rect x="52" y="0" width="4" height="44"/><rect x="59" y="0" width="1.5" height="44"/><rect x="63" y="0" width="3" height="44"/><rect x="69" y="0" width="2" height="44"/><rect x="74" y="0" width="1.5" height="44"/><rect x="78" y="0" width="4" height="44"/><rect x="85" y="0" width="1.5" height="44"/><rect x="89" y="0" width="3" height="44"/><rect x="95" y="0" width="1.5" height="44"/><rect x="99" y="0" width="4" height="44"/><rect x="106" y="0" width="2" height="44"/><rect x="111" y="0" width="1.5" height="44"/><rect x="115" y="0" width="3" height="44"/><rect x="121" y="0" width="4" height="44"/><rect x="128" y="0" width="1.5" height="44"/><rect x="132" y="0" width="2" height="44"/><rect x="137" y="0" width="3" height="44"/><rect x="143" y="0" width="1.5" height="44"/><rect x="147" y="0" width="4" height="44"/><rect x="154" y="0" width="1.5" height="44"/><rect x="158" y="0" width="3" height="44"/><rect x="164" y="0" width="2" height="44"/><rect x="169" y="0" width="4" height="44"/><rect x="176" y="0" width="1.5" height="44"/><rect x="180" y="0" width="1.5" height="44"/><rect x="184" y="0" width="3" height="44"/><rect x="190" y="0" width="4" height="44"/><rect x="197" y="0" width="2" height="44"/><rect x="202" y="0" width="1.5" height="44"/><rect x="206" y="0" width="3" height="44"/><rect x="212" y="0" width="1.5" height="44"/><rect x="216" y="0" width="4" height="44"/><rect x="223" y="0" width="2" height="44"/><rect x="228" y="0" width="3" height="44"/><rect x="234" y="0" width="1.5" height="44"/><rect x="238" y="0" width="4" height="44"/><rect x="246" y="0" width="3" height="44"/>
+  </svg>
+  <div class="digits">0417 3105 2025 0742</div>
+
+  <div class="foot">
+    <span class="k">Adresse</span><span>12 rue Saint-Pierre, 14000 Caen</span>
+    <span class="k">Aussi à</span><span>Tours, 8 rue Colbert</span>
+    <span class="k">SIRET</span><span>512 304 778 00021</span>
+    <span class="k">Gérant</span><span>Baptiste Brunet</span>
+    <span class="k">Merci</span><span>de votre visite, à bientôt</span>
+  </div>
+</div>
+</body>
+</html>

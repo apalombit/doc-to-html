@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Till receipt</title>
+<style>
+  html { background: #dedbd3; }
+  body { margin: 0; width: 560px; box-sizing: border-box; padding: 26px 0 30px; background: #dedbd3; font-family: Tahoma, Verdana, sans-serif; color: #1c1c1c; }
+  .slip { width: 392px; margin: 0 auto; background: #fbfbf9; padding: 24px 24px 22px; box-sizing: border-box; font-size: 12px; line-height: 1.45; box-shadow: 0 1px 3px rgba(0,0,0,0.25); }
+  .head { text-align: center; }
+  .head .shop { font-size: 17px; font-weight: bold; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1.2; margin-bottom: 4px; }
+  .head p { margin: 0; font-size: 11px; }
+  .dash { border: 0; border-top: 1px dashed #555; margin: 10px 0; }
+  .two { display: flex; justify-content: space-between; margin: 1px 0; }
+  .two span:last-child { text-align: right; }
+  table.items { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+  table.items th, table.items td { border: 1px dotted #777; padding: 3px 4px; vertical-align: top; }
+  table.items th { font-weight: bold; text-transform: uppercase; font-size: 10px; letter-spacing: 0.04em; text-align: left; background: #efeee9; }
+  table.items td.n, table.items th.n { text-align: right; white-space: nowrap; }
+  table.items td.q { text-align: center; width: 22px; }
+  table.items td.v { text-align: center; width: 20px; }
+  .lead { display: flex; align-items: baseline; margin: 2px 0; }
+  .lead .l { white-space: nowrap; }
+  .lead .d { flex: 1; border-bottom: 1px dotted #444; margin: 0 5px; position: relative; top: -3px; }
+  .lead .r { white-space: nowrap; }
+  .lead.big { font-size: 15px; font-weight: bold; margin: 6px 0; }
+  .vat { font-size: 10.5px; margin-top: 6px; }
+  .vat table { width: 100%; border-collapse: collapse; }
+  .vat td, .vat th { padding: 1px 2px; text-align: right; font-weight: normal; }
+  .vat th:first-child, .vat td:first-child { text-align: left; }
+  ul.ticks { list-style: none; margin: 0; padding: 0; }
+  ul.ticks li { margin: 2px 0; }
+  ul.ticks li b { display: inline-block; width: 18px; }
+  .foot { text-align: center; font-size: 10.5px; margin-top: 4px; }
+  .foot p { margin: 2px 0; }
+  .foot .thanks { font-size: 13px; font-weight: bold; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<div class="slip">
+  <div class="head">
+    <div class="shop">Russet Orchard Farm Shop</div>
+    <p>Unit 4, Brisco Lane, Carlisle CA4 8HL</p>
+    <p>Tel 01228 555 0143 · VAT Reg GB 318 2204 71</p>
+  </div>
+  <hr class="dash">
+  <div class="two"><span>Date: 28/04/2022</span><span>Time: 14:12</span></div>
+  <div class="two"><span>Till: 02</span><span>Served by: Sophie B.</span></div>
+  <div class="two"><span>Receipt: 004 1187</span><span>Club: R. Sinclair</span></div>
+  <hr class="dash">
+
+  <table class="items">
+    <thead>
+      <tr><th class="q">Qty</th><th>Description</th><th class="n">Price</th><th class="n">Amount</th><th class="v">V</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="q">1</td><td>Bramley apples, loose 1.2 kg @ 2.50/kg</td><td class="n">2.50</td><td class="n">3.00</td><td class="v">A</td></tr>
+      <tr><td class="q">2</td><td>Heron Valley rapeseed oil 500 ml</td><td class="n">4.20</td><td class="n">8.40</td><td class="v">A</td></tr>
+      <tr><td class="q">1</td><td>Hereford cider vinegar 250 ml</td><td class="n">3.15</td><td class="n">3.15</td><td class="v">A</td></tr>
+      <tr><td class="q">3</td><td>Free-range eggs, half dozen</td><td class="n">2.10</td><td class="n">6.30</td><td class="v">A</td></tr>
+      <tr><td class="q">1</td><td>Cumberland sausage ring 450 g</td><td class="n">4.75</td><td class="n">4.75</td><td class="v">A</td></tr>
+      <tr><td class="q">2</td><td>Sourdough loaf, sliced</td><td class="n">3.60</td><td class="n">7.20</td><td class="v">A</td></tr>
+      <tr><td class="q">1</td><td>Damson jam 340 g</td><td class="n">3.95</td><td class="n">3.95</td><td class="v">A</td></tr>
+      <tr><td class="q">1</td><td>Carrier bag</td><td class="n">0.10</td><td class="n">0.10</td><td class="v">B</td></tr>
+    </tbody>
+  </table>
+
+  <div style="height:10px"></div>
+  <div class="lead"><span class="l">Subtotal (12 items)</span><span class="d"></span><span class="r">36.85</span></div>
+  <div class="lead"><span class="l">Russet Club saving</span><span class="d"></span><span class="r">-2.00</span></div>
+  <div class="lead big"><span class="l">TOTAL TO PAY</span><span class="d"></span><span class="r">£34.85</span></div>
+  <div class="lead"><span class="l">Debit card ****4417</span><span class="d"></span><span class="r">34.85</span></div>
+  <div class="lead"><span class="l">Change due</span><span class="d"></span><span class="r">0.00</span></div>
+
+  <div class="vat">
+    <table>
+      <tr><th>VAT code</th><th>Rate</th><th>Net</th><th>VAT</th></tr>
+      <tr><td>A</td><td>0%</td><td>34.75</td><td>0.00</td></tr>
+      <tr><td>B</td><td>20%</td><td>0.08</td><td>0.02</td></tr>
+    </table>
+  </div>
+
+  <hr class="dash">
+  <ul class="ticks">
+    <li><b>✓</b>Contactless payment approved</li>
+    <li><b>✓</b>Russet Club card scanned</li>
+    <li><b>✓</b>34 points added, balance 412</li>
+    <li><b>✗</b>Bag for life not purchased</li>
+  </ul>
+  <hr class="dash">
+  <div class="foot">
+    <p class="thanks">Thank you for shopping local</p>
+    <p>Returns within 14 days with this receipt.</p>
+    <p>Tell us how we did: Gareth Gallagher, Manager</p>
+    <p>carlisle@example.com</p>
+  </div>
+</div>
+</body>
+</html>

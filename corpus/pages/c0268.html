@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr-FR">
+<head>
+<meta charset="utf-8">
+<title>Ordonnance</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0}
+body{width:720px;padding:14px 16px 16px;background:#fff;color:#1c2a2e;font-family:"Hind","Helvetica Neue",sans-serif;font-size:13px;line-height:1.4}
+.sheet{display:flex;border-top:4px solid #12808a;border-bottom:1px solid #c5d9db}
+aside{width:196px;flex:none;background:#eef6f6;padding:14px 14px 10px;border-right:1px solid #bcd6d8}
+aside h2{margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#0d6670}
+dl{margin:0}
+dl div{margin-bottom:9px}
+dt{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#587176}
+dd{margin:1px 0 0;font-size:13px;font-weight:500;color:#13262b}
+main{flex:1;padding:14px 4px 12px 20px}
+.head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.head h1{margin:0;font-size:24px;font-weight:700;letter-spacing:.04em;color:#0d6670;line-height:1}
+.head p{margin:0;text-align:right;font-size:11px;color:#46605f;line-height:1.35}
+h3{margin:14px 0 5px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#0d6670}
+table{border-collapse:collapse;width:100%}
+th{text-align:left;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#587176;padding:4px 6px;border-bottom:1.5px solid #12808a}
+td{padding:5px 6px;vertical-align:top;border-bottom:1px solid #d6e4e5}
+tr.parent td{font-weight:600;padding-top:8px;border-bottom:0}
+tr.sub td{padding-top:1px;padding-bottom:4px;font-size:12px;color:#34494d;border-bottom:0}
+tr.sub td:first-child{padding-left:22px}
+tr.sub.last td{border-bottom:1px solid #d6e4e5}
+ol{list-style:none;margin:0;padding:0}
+ol li{padding-left:34px;text-indent:-34px;margin:0 0 4px;font-size:12.5px}
+ol li .n{display:inline-block;width:34px;text-indent:0;font-weight:600;color:#0d6670}
+ol ol{margin:4px 0 2px 0}
+ol ol li{padding-left:30px;text-indent:-30px;margin-left:4px}
+ol ol li .n{width:30px;color:#587176;font-weight:500}
+.cut{margin-top:10px;font-size:10px;color:#7d9295;letter-spacing:.04em}
+</style>
+</head>
+<body>
+<div class="sheet">
+<aside>
+<h2>Patiente</h2>
+<dl>
+<div><dt>Nom et prénom</dt><dd>RENAUD Léa</dd></div>
+<div><dt>Née le</dt><dd>14/09/1986 (34 ans)</dd></div>
+<div><dt>Taille / poids</dt><dd>1,66 m / 61 kg</dd></div>
+<div><dt>N° de sécurité sociale</dt><dd>2 86 09 44 109 123 56</dd></div>
+<div><dt>Caisse</dt><dd>Assurance maladie de Loire-Atlantique</dd></div>
+<div><dt>Prescriptrice</dt><dd>Dr Chloé Garnier</dd></div>
+<div><dt>N° RPPS</dt><dd>10 00 123 456 7</dd></div>
+</dl>
+</aside>
+<main>
+<div class="head">
+<h1>Ordonnance</h1>
+<p>Maison de santé Canopy<br>12 rue des Arts, 44000 Nantes<br>Nantes, le 21 mars 2021</p>
+</div>
+<h3>Traitement prescrit</h3>
+<table>
+<thead><tr><th style="width:56%">Médicament</th><th>Présentation</th><th>Durée</th></tr></thead>
+<tbody>
+<tr class="parent"><td>Amoxicilline 500 mg, gélule</td><td>1 boîte de 24</td><td>8 jours</td></tr>
+<tr class="sub"><td>1 gélule matin, midi et soir, au cours des repas</td><td></td><td></td></tr>
+<tr class="sub last"><td>Poursuivre jusqu’à la fin de la boîte</td><td></td><td></td></tr>
+<tr class="parent"><td>Paracétamol 1 g, comprimé</td><td>1 boîte de 8</td><td>3 jours</td></tr>
+<tr class="sub last"><td>1 comprimé si fièvre ou douleur, 3 fois par jour au maximum, espacés de 6 heures</td><td></td><td></td></tr>
+<tr class="parent"><td>Sérum physiologique, unidoses</td><td>1 boîte de 40</td><td>si besoin</td></tr>
+<tr class="sub last"><td>Lavage du nez, matin et soir</td><td></td><td></td></tr>
+</tbody>
+</table>
+<h3>Mentions</h3>
+<ol>
+<li><span class="n">1.1</span>À délivrer en une seule fois ; ne pas renouveler.</li>
+<li><span class="n">1.2</span>Substitution par un générique autorisée, sauf mention contraire du prescripteur.</li>
+<li><span class="n">1.3</span>Consulter de nouveau si les symptômes persistent&nbsp;:
+<ol>
+<li><span class="n">(a)</span>fièvre supérieure à 39 °C au-delà de 48 heures&nbsp;;</li>
+<li><span class="n">(b)</span>éruption cutanée ou gêne respiratoire.</li>
+</ol></li>
+</ol>
+<div class="cut">Original remis à la patiente · duplicata conservé au cabinet</div>
+</main>
+</div>
+</body>
+</html>

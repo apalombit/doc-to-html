@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Patient Intake Form</title>
+<style>
+  html { background: #fff; }
+  body { margin: 0; width: 820px; box-sizing: border-box; padding: 22px 30px 24px; background: #fff; color: #1d2b33; font-family: "Open Sans", Arial, sans-serif; font-size: 12px; line-height: 1.4; }
+  .head { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid #0f6f86; padding-bottom: 10px; }
+  .clinic h2 { margin: 0; font-size: 15px; font-weight: 700; color: #0f6f86; }
+  .clinic p { margin: 1px 0 0; font-size: 11px; color: #4b5d66; }
+  .head h1 { margin: 0; font-family: "Playfair Display", Georgia, serif; font-weight: 700; font-size: 34px; line-height: 1; color: #0c4c5c; text-align: right; }
+  .head .vd { margin: 4px 0 0; font-size: 11px; text-align: right; color: #4b5d66; }
+  h3 { margin: 14px 0 6px; padding: 3px 8px; background: #e2f1f4; border-left: 4px solid #0f6f86; font-size: 12px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: #0c4c5c; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 26px; }
+  .kv { display: flex; gap: 8px; align-items: baseline; border-bottom: 1px solid #b9c9cf; padding: 3px 0 2px; }
+  .kv .l { flex: none; width: 112px; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .3px; color: #4b5d66; }
+  .kv .v { flex: 1; font-weight: 600; }
+  .note { margin: 4px 0; }
+  ul { margin: 2px 0 0; padding-left: 18px; }
+  ul ul { margin: 1px 0 3px; padding-left: 18px; list-style: circle; }
+  li { margin: 1px 0; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; column-gap: 26px; }
+  table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+  th { text-align: left; background: #0f6f86; color: #fff; font-weight: 600; font-size: 10.5px; letter-spacing: .4px; text-transform: uppercase; padding: 4px 8px; }
+  td { padding: 4px 8px; }
+  tbody tr:nth-child(even) td { background: #eef6f8; }
+  .consent { margin: 4px 0 0; font-size: 11px; }
+  .sig { display: flex; gap: 30px; margin-top: 18px; }
+  .sig div { flex: 1; border-top: 1px solid #1d2b33; padding-top: 2px; font-size: 10.5px; color: #4b5d66; }
+  .foot { margin-top: 12px; border-top: 1px solid #b9c9cf; padding-top: 4px; font-size: 10px; color: #4b5d66; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+<div class="head">
+  <div class="clinic">
+    <h2>Larch Family Medicine</h2>
+    <p>Basalt Medical Plaza, Suite 210, 480 University Ave, Provo, UT 84601</p>
+    <p>Phone (801) 555-0176 &middot; Fax (801) 555-0177</p>
+  </div>
+  <div>
+    <h1>Patient Intake Form</h1>
+    <p class="vd">Date of visit: October 19, 2022 &middot; Form 2B, new patients</p>
+  </div>
+</div>
+
+<h3>Patient information</h3>
+<div class="grid">
+  <div class="kv"><span class="l">Name</span><span class="v">Diego Castillo</span></div>
+  <div class="kv"><span class="l">Date of birth</span><span class="v">06/22/1979 (age 43)</span></div>
+  <div class="kv"><span class="l">Sex</span><span class="v">Male</span></div>
+  <div class="kv"><span class="l">Phone</span><span class="v">(801) 555-0142</span></div>
+  <div class="kv"><span class="l">Address</span><span class="v">712 Oak Hollow Dr, Provo, UT 84604</span></div>
+  <div class="kv"><span class="l">E-mail</span><span class="v">d.castillo@example.com</span></div>
+  <div class="kv"><span class="l">Emergency contact</span><span class="v">Nadia Fitzgerald (spouse)</span></div>
+  <div class="kv"><span class="l">Contact phone</span><span class="v">(801) 555-0159</span></div>
+  <div class="kv"><span class="l">Primary physician</span><span class="v">Grant Washington, MD</span></div>
+  <div class="kv"><span class="l">Previous clinic</span><span class="v">Cedar Ridge Family Clinic, Tulsa, OK</span></div>
+  <div class="kv"><span class="l">Insurance</span><span class="v">Summit Mutual PPO</span></div>
+  <div class="kv"><span class="l">Member ID</span><span class="v">SMP 4471 90235</span></div>
+</div>
+
+<h3>Reason for today&rsquo;s visit</h3>
+<p class="note">Establishing care after moving from Tulsa, OK. Blood pressure check and refill of current prescriptions. Occasional low back pain, worse after long drives, for about six months.</p>
+
+<h3>Medical history</h3>
+<div class="cols">
+  <ul>
+    <li>Heart and circulation
+      <ul>
+        <li>High blood pressure, diagnosed 2016</li>
+        <li>High cholesterol, diagnosed 2019</li>
+      </ul>
+    </li>
+    <li>Respiratory
+      <ul>
+        <li>Seasonal asthma in childhood, none since 1995</li>
+      </ul>
+    </li>
+  </ul>
+  <ul>
+    <li>Muscles and joints
+      <ul>
+        <li>Lower back pain, since spring 2022</li>
+        <li>Right knee sprain, 2018, treated with physical therapy</li>
+      </ul>
+    </li>
+    <li>Surgeries
+      <ul>
+        <li>Tonsillectomy, 1987</li>
+        <li>Wisdom teeth removed, 1999</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<h3>Current medications</h3>
+<table>
+  <thead><tr><th>Medication</th><th>Dose</th><th>How often</th><th>Prescribed by</th><th>Since</th></tr></thead>
+  <tbody>
+    <tr><td>Lisinopril</td><td>10 mg</td><td>Once daily, morning</td><td>Grant Washington, MD</td><td>2016</td></tr>
+    <tr><td>Atorvastatin</td><td>20 mg</td><td>Once daily, bedtime</td><td>Grant Washington, MD</td><td>2019</td></tr>
+    <tr><td>Ibuprofen</td><td>400 mg</td><td>As needed, with food</td><td>Over the counter</td><td>2022</td></tr>
+    <tr><td>Vitamin D3</td><td>2,000 IU</td><td>Once daily</td><td>Over the counter</td><td>2020</td></tr>
+  </tbody>
+</table>
+
+<h3>Family history</h3>
+<table>
+  <thead><tr><th>Relative</th><th>Condition</th><th>Age at diagnosis</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Father</td><td>Type 2 diabetes</td><td>58</td><td>Managed with diet and metformin</td></tr>
+    <tr><td>Father</td><td>High blood pressure</td><td>49</td><td>Living</td></tr>
+    <tr><td>Mother</td><td>Hypothyroidism</td><td>52</td><td>Living, on levothyroxine</td></tr>
+    <tr><td>Brother</td><td>Asthma</td><td>7</td><td>Living</td></tr>
+  </tbody>
+</table>
+
+<h3>Allergies and habits</h3>
+<div class="grid">
+  <div class="kv"><span class="l">Drug allergies</span><span class="v">Sulfa drugs (rash)</span></div>
+  <div class="kv"><span class="l">Food allergies</span><span class="v">None known</span></div>
+  <div class="kv"><span class="l">Tobacco</span><span class="v">Never smoked</span></div>
+  <div class="kv"><span class="l">Alcohol</span><span class="v">1&ndash;2 drinks per week</span></div>
+  <div class="kv"><span class="l">Exercise</span><span class="v">Walks 30 minutes, 3 days</span></div>
+  <div class="kv"><span class="l">Occupation</span><span class="v">Civil engineer</span></div>
+  <div class="kv"><span class="l">Pharmacy</span><span class="v">Larkspur Pharmacy, 55 Center St, Provo</span></div>
+  <div class="kv"><span class="l">Leave message</span><span class="v">Yes, on mobile phone</span></div>
+</div>
+
+<h3>Consent</h3>
+<p class="consent">I confirm that the information above is complete and correct to the best of my knowledge. I authorize Larch Family Medicine to request my records from my previous providers and to bill my insurance for services rendered.</p>
+<div class="sig">
+  <div>Patient signature</div>
+  <div>Date: 10/19/2022</div>
+  <div>Reviewed by (staff initials)</div>
+</div>
+<div class="foot"><span>Confidential patient information</span><span>Page 1 of 1</span></div>
+</body>
+</html>

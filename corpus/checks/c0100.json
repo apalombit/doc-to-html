@@ -1,0 +1,26 @@
+{
+ "id": "c0100",
+ "passed": true,
+ "failures": {},
+ "checked": "2026-10-30",
+ "seconds": 4.2,
+ "width": 520,
+ "height": 547,
+ "words": 193,
+ "card_features": [
+  "arr.one_column",
+  "type.sans",
+  "fig.signature",
+  "list.numbers",
+  "look.rules"
+ ],
+ "detected": [
+  "figure",
+  "fmt.dates",
+  "list.numbers",
+  "type.sans"
+ ],
+ "dhash": "ff1b536f5959594d",
+ "html_sha256": "49cba4d953967b99f1a0f5506a73fc365b482b124130848ebfc19660b10fff84",
+ "png_sha256": "b9aa2aa4d14dd6dc3a1bd3f7670e93d37f09f8b71f25a7f5040a89c834b8b1df"
+}

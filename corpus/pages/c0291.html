@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Status report</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0}
+body{width:800px;padding:12px 14px 14px;background:#fff;color:#000;font-family:Tahoma,sans-serif;font-size:11.5px;line-height:1.35}
+.sec{display:flex;align-items:stretch;border:2px solid #000}
+.sec .tag{background:#000;color:#fff;font-weight:700;font-size:15px;padding:4px 11px;display:flex;align-items:center}
+.sec .ttl{padding:4px 10px;flex:1}
+.sec .ttl b{display:block;font-size:13px;letter-spacing:.04em;text-transform:uppercase}
+.sec .ttl span{font-size:10px}
+.sec .rp{padding:4px 10px;border-left:2px solid #000;font-size:10px;text-align:right;white-space:nowrap}
+.meta{display:grid;grid-template-columns:1.5fr 1.2fr 1fr 1fr;border:1px solid #000;border-top:0}
+.meta div{padding:3px 7px 5px;border-left:1px solid #000}
+.meta div:first-child{border-left:0}
+.meta small{display:block;font-size:8.5px;text-transform:uppercase;letter-spacing:.05em;color:#333}
+.meta b{font-size:11.5px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.card{border:1px solid #000}
+.card .h{display:flex;align-items:stretch;border-bottom:1px solid #000;background:#f1f1f1}
+.card .n{width:34px;flex:none;border-right:1px solid #000;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center}
+.card .t{padding:4px 8px;flex:1;font-weight:700;font-size:12px}
+.card .t small{display:block;font-weight:400;font-size:9.5px;color:#333}
+.card .s{padding:4px 8px;border-left:1px solid #000;font-weight:700;font-size:10px;letter-spacing:.05em;display:flex;align-items:center;white-space:nowrap}
+.card .s.flag{background:#b3261e;color:#fff;border-left-color:#b3261e}
+.card .b{padding:7px 9px 8px}
+ul{margin:0;padding:0;list-style:none}
+ul ul{margin:2px 0 3px 20px}
+li{padding:1.5px 0}
+li .m{display:inline-block;width:16px;font-size:12px}
+.fl{color:#b3261e;font-weight:700}
+.note{margin:6px 0 0;padding-top:4px;border-top:1px dotted #555;font-size:10px}
+.ft{margin-top:9px;font-size:9.5px;display:flex;justify-content:space-between;border-top:1px solid #000;padding-top:3px}
+</style>
+</head>
+<body>
+<div class="sec">
+  <div class="tag">B</div>
+  <div class="ttl"><b>Workstream status</b><span>Sandpiper Road Corridor Resurfacing · Duluth, MN</span></div>
+  <div class="rp">Marks: ✓ done · ☐ open · ✗ blocked</div>
+</div>
+<div class="meta">
+  <div><small>Contractor</small><b>Umber Paving Co., Lexington, KY</b></div>
+  <div><small>Reporting period</small><b>08/01/2025 to 08/31/2025</b></div>
+  <div><small>Report date</small><b>09/05/2025</b></div>
+  <div><small>Prepared by</small><b>Brooke Hendricks</b></div>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <div class="h"><div class="n">B-1</div><div class="t">Roadway resurfacing<small>Lead: Travis Ramirez, field engineer</small></div><div class="s">ON TRACK</div></div>
+    <div class="b"><ul>
+      <li><span class="m">✓</span>Segment 1, Superior St to 4th Ave
+        <ul><li><span class="m">✓</span>Milling complete, 08/06</li><li><span class="m">✓</span>Base course placed, 08/14</li></ul></li>
+      <li><span class="m">☐</span>Segment 2, 4th Ave to Lake Ave
+        <ul><li><span class="m">✓</span>Milling complete, 08/27</li><li><span class="m">☐</span>Final lift, scheduled 09/18</li><li><span class="m">☐</span>Striping and markings</li></ul></li>
+    </ul></div>
+  </div>
+  <div class="card">
+    <div class="h"><div class="n">B-2</div><div class="t">Utility relocation<small>Lead: Jasmine Le, utilities coordinator</small></div><div class="s flag">AT RISK</div></div>
+    <div class="b"><ul>
+      <li><span class="m">☐</span>Water main crossing at 12th Ave
+        <ul><li><span class="m">✓</span>Permit received 08/22</li><li><span class="m">✗</span><span class="fl">Crew release not yet confirmed</span></li></ul></li>
+      <li><span class="m">✓</span>Gas service lines moved, Segment 1</li>
+      <li><span class="m">☐</span>Signal cabinet relocation
+        <ul><li><span class="m">☐</span>Utility board approval, due 09/12</li></ul></li>
+    </ul>
+    <p class="note">Delay of 9 working days expected if the crew release slips past 09/10.</p></div>
+  </div>
+  <div class="card">
+    <div class="h"><div class="n">B-3</div><div class="t">Public notice<small>Lead: Brooke Hendricks</small></div><div class="s">ON TRACK</div></div>
+    <div class="b"><ul>
+      <li><span class="m">✓</span>Door hangers delivered, 412 addresses</li>
+      <li><span class="m">✓</span>Business meeting held 08/20
+        <ul><li><span class="m">✓</span>Eleven owners attended</li><li><span class="m">☐</span>Minutes posted to the project page</li></ul></li>
+      <li><span class="m">☐</span>Detour signs for the Lake Ave closure</li>
+    </ul></div>
+  </div>
+  <div class="card">
+    <div class="h"><div class="n">B-4</div><div class="t">Budget and payments<small>Contract value $2,480,000.00</small></div><div class="s">65% SPENT</div></div>
+    <div class="b"><ul>
+      <li><span class="m">✓</span>Pay applications approved
+        <ul><li><span class="m">✓</span>No. 6 for $214,880.00</li><li><span class="m">✓</span>No. 7 for $302,415.00</li></ul></li>
+      <li><span class="m">☐</span>Pay application no. 8
+        <ul><li><span class="m">☐</span>Quantities check, due 09/09</li></ul></li>
+    </ul>
+    <p class="note">Paid to date $1,612,000.00. Remaining $868,000.00.</p></div>
+  </div>
+</div>
+<div class="ft"><span>Project file SRC-25-014</span><span>Continued in Section C, schedule outlook</span></div>
+</body>
+</html>

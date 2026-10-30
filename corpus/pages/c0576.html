@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Nuthatch visits, indexed</title>
+<style>
+  html { background: #11151c; }
+  body { margin: 0; width: 840px; box-sizing: border-box; padding: 30px 28px 30px; background: #11151c; color: #e6e1d3; font-family: Georgia, "Times New Roman", serif; }
+  .kicker { font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: #e0a84a; margin: 0 0 10px; }
+  h1 { font-family: "Playfair Display", Georgia, serif; font-weight: 700; font-size: 34px; line-height: 1.14; margin: 0 0 12px; color: #f6f1e2; }
+  .stand { font-size: 16px; line-height: 1.5; font-style: italic; color: #bdb8a8; margin: 0 0 20px; max-width: 700px; }
+  .rule { border: 0; border-top: 1px solid #3a4150; margin: 0 0 14px; }
+  .legend { display: flex; align-items: center; gap: 26px; font-size: 14px; margin: 0 0 14px 52px; }
+  .legend span.k { display: inline-flex; align-items: center; gap: 8px; }
+  .legend svg { display: block; }
+  .legend .base { margin-left: auto; color: #8f93a0; font-style: italic; font-size: 13px; }
+  .chart { position: relative; width: 792px; height: 340px; }
+  .ylab { position: absolute; left: 0; width: 38px; text-align: right; font-size: 12px; color: #8f93a0; line-height: 14px; }
+  .plot { position: absolute; left: 52px; top: 0; width: 740px; height: 300px; }
+  .val { position: absolute; width: 28px; margin-left: 8px; background: #11151c; text-align: center; font-size: 13px; line-height: 16px; }
+  .xlab { position: absolute; top: 310px; width: 148px; text-align: center; font-size: 14px; color: #cfc9b8; }
+  .formula { text-align: center; font-size: 18px; font-style: italic; margin: 18px 0 6px; color: #f0e9d4; letter-spacing: 0.01em; }
+  .where { text-align: center; font-size: 13px; color: #9a9eab; margin: 0 0 18px; }
+  .cap { font-size: 14px; line-height: 1.55; color: #cfc9b8; margin: 0 0 12px; }
+  .cap b { color: #f6f1e2; }
+  .src { font-size: 11px; line-height: 1.5; color: #8f93a0; display: flex; align-items: center; gap: 8px; }
+</style>
+</head>
+<body>
+<p class="kicker">Backyard birds · Chart of the month</p>
+<h1>Fresno&rsquo;s nuthatches are thinning out while Mobile&rsquo;s hold steady</h1>
+<p class="stand">Feeder visits per observer-hour, indexed to the first season of the Dovetail count, 2015 to 2019.</p>
+<hr class="rule">
+
+<div class="legend">
+  <span class="k"><svg width="22" height="18" viewBox="0 0 22 18"><path d="M2 12 C3 6 8 3 13 5 L19 4 L16 8 C17 13 12 17 7 16 L4 17 Z" fill="#e0a84a"/><circle cx="14" cy="7" r="1" fill="#11151c"/></svg>Fresno, CA</span>
+  <span class="k"><svg width="22" height="18" viewBox="0 0 22 18"><path d="M2 12 C3 6 8 3 13 5 L19 4 L16 8 C17 13 12 17 7 16 L4 17 Z" fill="#5fb3a8"/><circle cx="14" cy="7" r="1" fill="#11151c"/></svg>Mobile, AL</span>
+  <span class="base">2015 season = 100</span>
+</div>
+
+<div class="chart">
+  <span class="ylab" style="top:293px">0</span>
+  <span class="ylab" style="top:218px">30</span>
+  <span class="ylab" style="top:143px">60</span>
+  <span class="ylab" style="top:68px">90</span>
+  <span class="ylab" style="top:-7px">120</span>
+  <div class="plot">
+    <svg width="740" height="300" viewBox="0 0 740 300" xmlns="http://www.w3.org/2000/svg">
+      <g stroke="#2c3340" stroke-width="1">
+        <line x1="0" y1="0.5" x2="740" y2="0.5"/>
+        <line x1="0" y1="75.5" x2="740" y2="75.5"/>
+        <line x1="0" y1="150.5" x2="740" y2="150.5"/>
+        <line x1="0" y1="225.5" x2="740" y2="225.5"/>
+      </g>
+      <line x1="0" y1="299.5" x2="740" y2="299.5" stroke="#6b7180" stroke-width="1.5"/>
+      <line x1="0" y1="50" x2="740" y2="50" stroke="#d9d3c0" stroke-width="1" stroke-dasharray="5 4"/>
+      <g fill="#e0a84a">
+        <rect x="26" y="50" width="44" height="250"/>
+        <rect x="174" y="25" width="44" height="275"/>
+        <rect x="322" y="65" width="44" height="235"/>
+        <rect x="470" y="90" width="44" height="210"/>
+        <rect x="618" y="122.5" width="44" height="177.5"/>
+      </g>
+      <g fill="#5fb3a8">
+        <rect x="78" y="50" width="44" height="250"/>
+        <rect x="226" y="62.5" width="44" height="237.5"/>
+        <rect x="374" y="37.5" width="44" height="262.5"/>
+        <rect x="522" y="55" width="44" height="245"/>
+        <rect x="670" y="32.5" width="44" height="267.5"/>
+      </g>
+    </svg>
+    <span class="val" style="left:26px; top:30px; color:#e0a84a">100</span>
+    <span class="val" style="left:78px; top:30px; color:#5fb3a8">100</span>
+    <span class="val" style="left:174px; top:5px; color:#e0a84a">110</span>
+    <span class="val" style="left:226px; top:42px; color:#5fb3a8">95</span>
+    <span class="val" style="left:322px; top:45px; color:#e0a84a">94</span>
+    <span class="val" style="left:374px; top:17px; color:#5fb3a8">105</span>
+    <span class="val" style="left:470px; top:70px; color:#e0a84a">84</span>
+    <span class="val" style="left:522px; top:35px; color:#5fb3a8">98</span>
+    <span class="val" style="left:618px; top:102px; color:#e0a84a">71</span>
+    <span class="val" style="left:670px; top:12px; color:#5fb3a8">107</span>
+  </div>
+  <span class="xlab" style="left:52px">2015</span>
+  <span class="xlab" style="left:200px">2016</span>
+  <span class="xlab" style="left:348px">2017</span>
+  <span class="xlab" style="left:496px">2018</span>
+  <span class="xlab" style="left:644px">2019 to July</span>
+</div>
+
+<p class="formula">Index<sub>t</sub> = 100 &times; (V<sub>t</sub> &divide; H<sub>t</sub>) &divide; (V<sub>2015</sub> &divide; H<sub>2015</sub>)</p>
+<p class="where">V = nuthatch visits logged, H = observer-hours at the feeder, t = season</p>
+
+<p class="cap"><b>Figure 1.</b> Raw rates in Fresno fell from 3.1 visits an hour in 2015 to 2.2 this summer, while Mobile moved between 4.0 and 4.5. Volunteer Mei Nguyen, who has logged the Fresno yard since the first season, puts the drop down to the loss of two old oaks on the next block.</p>
+
+<div class="src">
+  <svg width="14" height="16" viewBox="0 0 14 16"><path d="M7 1 C3.5 1 1.5 3.5 1.5 6 C1.5 9.5 7 15 7 15 C7 15 12.5 9.5 12.5 6 C12.5 3.5 10.5 1 7 1 Z" fill="none" stroke="#8f93a0" stroke-width="1.2"/><circle cx="7" cy="6" r="2" fill="#8f93a0"/></svg>
+  <span>Source: Dovetail Bird Count, volunteer logs, Fresno, CA and Mobile, AL. Data retrieved August 16, 2019. Chart by Sofia Fitzgerald.</span>
+</div>
+</body>
+</html>

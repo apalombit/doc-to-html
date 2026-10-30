@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Pre-trip vehicle inspection checklist</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; padding: 16px 18px 18px; background: #fff; color: #1c1917; font-family: 'PT Mono', 'Courier New', monospace; font-size: 11.5px; line-height: 1.45; }
+  .flex { display: flex; }
+  .items-center { align-items: center; }
+  .justify-between { justify-content: space-between; }
+  .gap-3 { gap: 12px; }
+  .gap-2 { gap: 8px; }
+  .grid { display: grid; }
+  .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .p-2 { padding: 6px; }
+  .px-2 { padding-left: 8px; padding-right: 8px; }
+  .py-1 { padding-top: 3px; padding-bottom: 3px; }
+  .mt-2 { margin-top: 8px; }
+  .mt-3 { margin-top: 12px; }
+  .mb-2 { margin-bottom: 8px; }
+  .text-xs { font-size: 10px; }
+  .text-sm { font-size: 11.5px; }
+  .text-xl { font-size: 20px; line-height: 1.2; }
+  .font-bold { font-weight: 700; }
+  .uppercase { text-transform: uppercase; letter-spacing: 0.06em; }
+  .text-orange { color: #c2410c; }
+  .text-stone { color: #78716c; }
+  .text-center { text-align: center; }
+  .text-right { text-align: right; }
+  .border { border: 1px solid #a8a29e; }
+  .border-b-2 { border-bottom: 2px solid #c2410c; }
+  .bg-stone { background: #f5f5f4; }
+  .bg-orange { background: #fff1e6; }
+  .justify { text-align: justify; }
+  .box { border: 1px solid #78716c; padding: 3px 6px; background: #fff; }
+  .lbl { display: block; font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em; color: #78716c; }
+  table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+  th, td { border: 1px solid #a8a29e; padding: 3px 6px; text-align: left; vertical-align: top; font-size: 11px; }
+  th { background: #1c1917; color: #fff; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+  td.c, th.c { text-align: center; width: 44px; }
+  td.no { width: 32px; text-align: right; color: #78716c; }
+  tr.sec td { background: #ffedd5; font-weight: 700; color: #9a3412; text-transform: uppercase; letter-spacing: 0.05em; font-size: 10.5px; }
+  .fail { color: #c2410c; font-weight: 700; }
+  p { margin: 0; }
+</style>
+</head>
+<body>
+<div class="flex items-center justify-between border-b-2" style="padding-bottom:8px">
+  <div class="flex items-center gap-3">
+    <svg width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
+      <circle cx="23" cy="23" r="22" fill="#c2410c"/>
+      <path d="M9 17 C 18 9, 30 11, 31 18 C 32 24, 24 25, 24 21" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <path d="M8 26 C 16 22, 28 24, 35 29 C 38 31, 36 35, 31 34" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <path d="M14 34 C 20 32, 26 34, 30 38" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+    <div>
+      <div class="text-xl font-bold uppercase">Zephyr Fleet</div>
+      <div class="text-xs uppercase text-stone">Birch Street Yard &middot; Boise, ID</div>
+    </div>
+  </div>
+  <div class="text-right">
+    <div class="font-bold uppercase text-orange">Pre-trip vehicle inspection checklist</div>
+    <div class="text-xs text-stone">Form ZF-114 &middot; Rev. C &middot; keep in cab for 30 days</div>
+  </div>
+</div>
+
+<div class="grid grid-cols-4 gap-2 mt-3">
+  <div class="box"><span class="lbl">Date</span>January 11, 2020</div>
+  <div class="box"><span class="lbl">Unit no.</span>Box truck 14</div>
+  <div class="box"><span class="lbl">Odometer (mi)</span>88,417</div>
+  <div class="box"><span class="lbl">Depot</span>Boise, ID</div>
+  <div class="box"><span class="lbl">Inspector</span>Malik Mahoney</div>
+  <div class="box"><span class="lbl">Driver</span>Carlos Brennan</div>
+  <div class="box"><span class="lbl">Shift start</span>05:40 AM</div>
+  <div class="box"><span class="lbl">Reviewed by</span>Raj Sullivan</div>
+</div>
+
+<p class="justify mt-3 text-sm">Complete this checklist before every shift and before a unit leaves the yard. Mark each item passed (&#9745;) or failed (&#9746;) and write the defect in the notes column. Any failure in section B or C must be reported to the shop supervisor before the unit moves. Do not drive a unit with an open brake, steering or tire defect. Units transferred to the Ithaca, NY depot are inspected again on arrival and the form is attached to the transfer slip.</p>
+
+<table>
+  <thead>
+    <tr><th class="c">No.</th><th>Inspection item</th><th>Standard</th><th class="c">Pass</th><th class="c">Fail</th><th>Notes</th></tr>
+  </thead>
+  <tbody>
+    <tr class="sec"><td colspan="6">A. Exterior and lights</td></tr>
+    <tr><td class="no">1</td><td>Tires, sidewalls and inflation</td><td>4/32 in tread min.</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td>Front 95 psi, rear 90 psi</td></tr>
+    <tr><td class="no">2</td><td>Wheel lug nuts, torque marks aligned</td><td>None loose</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td></td></tr>
+    <tr><td class="no">3</td><td>Headlamps, high and low beam</td><td>Both working</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td></td></tr>
+    <tr><td class="no">4</td><td>Tail, brake and turn lamps</td><td>All working</td><td class="c">&#9744;</td><td class="c fail">&#9746;</td><td class="fail">Left rear turn lamp out; bulb replaced 01/11</td></tr>
+    <tr><td class="no">5</td><td>Windshield, wipers and washer fluid</td><td>No cracks in view</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td>Washer topped up</td></tr>
+    <tr><td class="no">6</td><td>Mirrors, both sides, adjusted</td><td>Secure</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td></td></tr>
+    <tr><td class="no">7</td><td>Body panels, bumper and license plate</td><td>No hanging parts</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td>Dent, rear bumper, old</td></tr>
+    <tr class="sec"><td colspan="6">B. Engine bay and fluids</td></tr>
+    <tr><td class="no">8</td><td>Engine oil level</td><td>Between marks</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td></td></tr>
+    <tr><td class="no">9</td><td>Coolant level and hoses</td><td>At cold line</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td></td></tr>
+    <tr><td class="no">10</td><td>Brake fluid and power steering fluid</td><td>At full mark</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td></td></tr>
+    <tr><td class="no">11</td><td>Drive belts and battery terminals</td><td>No fraying</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td>Terminals cleaned</td></tr>
+    <tr class="sec"><td colspan="6">C. Cab, brakes and safety kit</td></tr>
+    <tr><td class="no">12</td><td>Service brake, pedal reserve</td><td>Firm, no drift</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td></td></tr>
+    <tr><td class="no">13</td><td>Parking brake holds on grade</td><td>Holds at 15%</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td></td></tr>
+    <tr><td class="no">14</td><td>Seat belts and horn</td><td>Latch and sound</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td></td></tr>
+    <tr><td class="no">15</td><td>Fire extinguisher, charged, tag current</td><td>Green zone</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td>Tag valid to 06/2021</td></tr>
+    <tr><td class="no">16</td><td>Warning triangles (3) and first aid kit</td><td>Complete</td><td class="c">&#9745;</td><td class="c">&#9744;</td><td></td></tr>
+  </tbody>
+</table>
+
+<div class="grid grid-cols-3 gap-2 mt-3">
+  <div class="box" style="height:46px"><span class="lbl">Inspector signature</span>M. Mahoney</div>
+  <div class="box" style="height:46px"><span class="lbl">Supervisor signature</span>R. Sullivan</div>
+  <div class="box bg-orange" style="height:46px"><span class="lbl">Unit released</span>&#9745; Yes &nbsp; &#9744; No &nbsp; 05:58 AM</div>
+</div>
+<p class="text-xs text-stone mt-2">White copy to the shop office. Yellow copy stays with the unit. Defects found after release go on form ZF-115.</p>
+</body>
+</html>

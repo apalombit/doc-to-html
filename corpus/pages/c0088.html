@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Unit Test 3, Section B</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{width:660px;background:#fff;color:#000;font-family:Arial,"Helvetica",sans-serif;font-size:11px;line-height:1.35;padding:12px 14px 14px}
+  .top{display:flex;align-items:stretch;border:2px solid #000}
+  .brand{display:flex;align-items:center;gap:9px;padding:8px 12px;flex:1;border-right:2px solid #000}
+  .brand .w{font-weight:700;font-size:12px;letter-spacing:.06em;line-height:1.15;text-transform:uppercase}
+  .brand .w small{display:block;font-weight:400;font-size:9px;letter-spacing:.04em;text-transform:none;margin-top:2px}
+  .ttl{width:238px;background:#000;color:#fff;padding:7px 12px 8px;text-align:left}
+  .ttl .d{font-family:"DIN Condensed","Oswald",sans-serif;font-size:31px;line-height:1;letter-spacing:.04em;text-transform:uppercase;display:block}
+  .ttl .u{font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;display:block;margin-top:3px}
+  table.boxes{width:100%;border-collapse:collapse;margin-top:-2px}
+  table.boxes td{border:1.5px solid #000;padding:2px 6px 5px;vertical-align:top;height:36px}
+  .n{display:block;font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+  .n i{font-style:normal;display:inline-block;background:#000;color:#fff;width:13px;height:13px;text-align:center;margin-right:4px;line-height:13px}
+  .fill{font-size:13px;font-family:"Arial Narrow",Arial,sans-serif}
+  .sec{margin-top:12px;display:flex;align-items:baseline;gap:10px;border-bottom:2px solid #000;padding-bottom:3px}
+  .sec .d{font-family:"DIN Condensed","Oswald",sans-serif;font-size:21px;letter-spacing:.04em;text-transform:uppercase;line-height:1}
+  .sec span.i{font-size:10px}
+  table.q{width:100%;border-collapse:collapse}
+  table.q th{font-size:8.5px;text-transform:uppercase;letter-spacing:.04em;text-align:left;background:#e4e4e4;border:1px solid #000;padding:3px 6px}
+  table.q td{border:1px solid #000;padding:6px 7px 6px;vertical-align:top}
+  td.no{width:34px;font-weight:700;font-size:13px;text-align:center}
+  td.mk{width:50px;text-align:center}
+  td.ex{width:62px;text-align:center;font-size:17px}
+  .stem{font-weight:700;font-size:11.5px;margin-bottom:5px}
+  .opts{display:flex;flex-wrap:wrap;gap:3px 22px}
+  .opts span{font-size:11px;white-space:nowrap}
+  .opts b{font-size:15px;font-weight:400;vertical-align:-1px;margin-right:2px}
+  .tf{font-size:11px}
+  .ok{color:#000}
+  tr.tot td{background:#e4e4e4;font-weight:700;border-top:2px solid #000}
+  .note{font-size:9px;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="brand">
+    <svg width="40" height="36" viewBox="0 0 40 36" aria-hidden="true"><path d="M2 34 L14 8 L21 20 L26 12 L38 34Z" fill="#000"/><path d="M14 8 L17 14 L11 14Z" fill="#fff"/><path d="M26 12 L29 18 L23 18Z" fill="#fff"/></svg>
+    <div class="w">Granite Ridge Academy<small>Lexington, KY · Department of Science</small></div>
+  </div>
+  <div class="ttl"><span class="d">Unit Test 3</span><span class="u">Introductory Biology · Form B</span></div>
+</div>
+<table class="boxes">
+  <tr>
+    <td style="width:230px"><span class="n"><i>1</i>Candidate name</span><span class="fill">Camila Park</span></td>
+    <td style="width:110px"><span class="n"><i>2</i>Student ID</span><span class="fill">GRA 20-4471</span></td>
+    <td style="width:112px"><span class="n"><i>3</i>Date</span><span class="fill">03/01/2021</span></td>
+    <td><span class="n"><i>4</i>Room</span><span class="fill">B-214</span></td>
+  </tr>
+  <tr>
+    <td><span class="n"><i>5</i>Examiner</span><span class="fill">Darnell Jackson</span></td>
+    <td colspan="2"><span class="n"><i>6</i>Invigilator</span><span class="fill">Malik Le</span></td>
+    <td><span class="n"><i>7</i>Time allowed</span><span class="fill">20 min</span></td>
+  </tr>
+</table>
+
+<div class="sec"><span class="d">Section B</span><span class="i">Multiple choice. Mark <b>one</b> box for each question with ☒. Questions 7 to 11. Marks are shown beside each.</span></div>
+<table class="q">
+  <thead><tr><th>No.</th><th>Question</th><th>Marks</th><th>Examiner</th></tr></thead>
+  <tbody>
+    <tr><td class="no">7</td><td><div class="stem">Which organelle is the main site of ATP production in a eukaryotic cell?</div>
+      <div class="opts"><span><b>☐</b> A. Ribosome</span><span><b>☒</b> B. Mitochondrion</span><span><b>☐</b> C. Golgi body</span><span><b>☐</b> D. Lysosome</span></div></td><td class="mk">2</td><td class="ex">✓</td></tr>
+    <tr><td class="no">8</td><td><div class="stem">During which phase of mitosis do the sister chromatids separate?</div>
+      <div class="opts"><span><b>☐</b> A. Prophase</span><span><b>☐</b> B. Metaphase</span><span><b>☒</b> C. Anaphase</span><span><b>☐</b> D. Telophase</span></div></td><td class="mk">2</td><td class="ex">✓</td></tr>
+    <tr><td class="no">9</td><td><div class="stem">Which molecule carries the genetic code from the nucleus to a ribosome?</div>
+      <div class="opts"><span><b>☒</b> A. mRNA</span><span><b>☐</b> B. tRNA</span><span><b>☐</b> C. rRNA</span><span><b>☐</b> D. DNA polymerase</span></div></td><td class="mk">2</td><td class="ex">✓</td></tr>
+    <tr><td class="no">10</td><td><div class="stem">Two heterozygous parents (Aa × Aa) are crossed. What share of offspring is expected to be homozygous recessive?</div>
+      <div class="opts"><span><b>☐</b> A. None</span><span><b>☐</b> B. One quarter</span><span><b>☒</b> C. One half</span><span><b>☐</b> D. Three quarters</span></div></td><td class="mk">2</td><td class="ex">✗</td></tr>
+    <tr><td class="no">11</td><td><div class="stem">Enzymes are used up in the reactions they catalyze.</div>
+      <div class="opts tf"><span><b>☐</b> True</span><span><b>☒</b> False</span></div></td><td class="mk">1</td><td class="ex">✓</td></tr>
+    <tr class="tot"><td colspan="2" style="text-align:right">Section B total, for the examiner</td><td class="mk">9</td><td class="ex" style="font-size:12px">7 / 9</td></tr>
+  </tbody>
+</table>
+<div class="note">Score Section B on this sheet only. Carry the total to the box on the front cover. Copies from the Santa Fe, NM test center are returned by 03/12/2021.</div>
+</body>
+</html>

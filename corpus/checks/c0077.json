@@ -1,0 +1,27 @@
+{
+ "id": "c0077",
+ "passed": true,
+ "failures": {},
+ "checked": "2026-10-29",
+ "seconds": 4.1,
+ "width": 700,
+ "height": 544,
+ "words": 315,
+ "card_features": [
+  "arr.two_columns",
+  "type.sans",
+  "fig.signature",
+  "kv.leaders",
+  "list.ticks"
+ ],
+ "detected": [
+  "figure",
+  "fmt.dates",
+  "list.bullets",
+  "table",
+  "type.sans"
+ ],
+ "dhash": "71a5c6cccc64cb69",
+ "html_sha256": "207724c3212e7ba6faef8c01080ecd7a5adfdf30369d26455cf2dafea62d10d1",
+ "png_sha256": "43c040d32906ad668a7bfe705bb80593477e1682a0c21a517b5cbb79199dd45e"
+}

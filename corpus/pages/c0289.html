@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es-ES">
+<head>
+<meta charset="utf-8">
+<title>Informe de inspección - Residencial Canopy</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; width: 780px; padding: 30px 38px 34px 38px; background: #fff; font-family: Baskerville, "Libre Baskerville", Georgia, serif; font-size: 14px; color: #1c1a17; }
+  header { text-align: center; border-top: 3px double #1c1a17; border-bottom: 1px solid #1c1a17; padding: 10px 0 9px 0; }
+  header .firm { font-variant: small-caps; letter-spacing: 2px; font-size: 13px; }
+  header h1 { margin: 4px 0 2px 0; font-size: 24px; font-weight: normal; }
+  header .sub { font-style: italic; font-size: 13px; }
+  .boxes { display: grid; grid-template-columns: 1fr 1fr 1.4fr 1.4fr; gap: 8px; margin: 14px 0 18px 0; }
+  .box { border: 1px solid #1c1a17; padding: 4px 8px 6px 8px; }
+  .box small { display: block; font-variant: small-caps; letter-spacing: 1px; font-size: 11px; color: #5b554c; }
+  .box span { font-size: 13.5px; }
+  .cols { display: grid; grid-template-columns: 1fr 1.25fr; column-gap: 0; }
+  .cols > div:first-child { padding-right: 24px; border-right: 1px solid #1c1a17; }
+  .cols > div:last-child { padding-left: 24px; }
+  h2 { font-variant: small-caps; letter-spacing: 1.2px; font-weight: normal; font-size: 16px; margin: 0 0 8px 0; border-bottom: 1px solid #1c1a17; padding-bottom: 3px; }
+  h2 span { font-style: italic; letter-spacing: 0; margin-right: 6px; }
+  ul.chk { list-style: none; margin: 0; padding: 0; }
+  ul.chk li { padding: 6px 0 6px 26px; text-indent: -26px; border-bottom: 1px dotted #8f887c; line-height: 1.3; }
+  ul.chk li b { display: inline-block; width: 26px; text-indent: 0; font-weight: normal; font-size: 16px; }
+  ul.chk li b.no { color: #8a1c1c; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+  th, td { border: 1px solid #1c1a17; padding: 5px 7px; font-size: 12.5px; text-align: left; vertical-align: top; }
+  th { font-variant: small-caps; letter-spacing: .8px; font-weight: normal; background: #efece4; font-size: 12.5px; }
+  p { margin: 0 0 8px 0; line-height: 1.4; font-size: 13px; }
+  .cierre { margin-top: 20px; border-top: 1px solid #1c1a17; padding-top: 8px; font-size: 12.5px; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+<header>
+  <div class="firm">Sorrel Ingeniería &middot; Cáceres</div>
+  <h1>Informe de inspección técnica</h1>
+  <div class="sub">Residencial Canopy, Pamplona</div>
+</header>
+<div class="boxes">
+  <div class="box"><small>Expediente</small><span>ITE-2023/0148</span></div>
+  <div class="box"><small>Fecha</small><span>26/01/2023</span></div>
+  <div class="box"><small>Inspector</small><span>Álvaro Gallego Peña</span></div>
+  <div class="box"><small>Presente en la visita</small><span>Pablo Martínez Ruiz</span></div>
+</div>
+<div class="cols">
+  <div>
+    <h2><span>3.1</span>Puntos de comprobación</h2>
+    <ul class="chk">
+      <li><b>✓</b>Bajantes pluviales despejadas</li>
+      <li><b>✓</b>Impermeabilización de la cubierta plana</li>
+      <li><b class="no">✗</b>Juntas de dilatación de la azotea</li>
+      <li><b>✓</b>Anclajes de la línea de vida</li>
+      <li><b class="no">✗</b>Revestimiento de la fachada norte</li>
+      <li><b>✓</b>Barandillas de las terrazas</li>
+    </ul>
+    <p style="margin-top:12px">La comprobación se ha hecho a pie, por el interior y por el exterior del edificio, y con ayuda de un dron en la fachada norte. No se han abierto catas en el pavimento.</p>
+  </div>
+  <div>
+    <h2><span>3.2</span>Deficiencias observadas</h2>
+    <table>
+      <tr><th>Ref.</th><th>Elemento</th><th>Gravedad</th><th>Plazo</th></tr>
+      <tr><td>D-1</td><td>Juntas de dilatación, azotea</td><td>Moderada</td><td>90 días</td></tr>
+      <tr><td>D-2</td><td>Fachada norte, plantas 2.ª a 4.ª</td><td>Leve</td><td>6 meses</td></tr>
+    </table>
+    <p>El estado general es aceptable, y las deficiencias no afectan a la seguridad de los vecinos. Se recomienda sellar las juntas antes de la primavera y revisar el revestimiento de la fachada norte una vez que esté limpia.</p>
+    <p>Recibe una copia de este informe Alberto Castro Lozano, administrador de la comunidad.</p>
+  </div>
+</div>
+<div class="cierre"><span>Pamplona, 26 de enero de 2023</span><span>Fdo.: Álvaro Gallego Peña, ingeniero</span></div>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Receipt</title>
+<style>
+  html { background: #d9d6cf; }
+  body { margin: 0; width: 500px; box-sizing: border-box; padding: 28px 80px 34px; background: #d9d6cf; font-family: "Arial Narrow", Arial, sans-serif; color: #1c1c1c; }
+  .slip { width: 340px; background: #fcfcfa; padding: 22px 20px 22px; box-sizing: border-box; text-align: center; font-size: 13px; line-height: 1.4; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+  .mark { display: block; margin: 0 auto 6px; }
+  h1 { font-size: 22px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin: 0; line-height: 1.1; }
+  .sub { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; margin: 2px 0 6px; }
+  p { margin: 0; }
+  .dash { border: 0; border-top: 1px dashed #333; margin: 10px 0; }
+  .dbl { border: 0; border-top: 3px double #333; margin: 10px 0; }
+  .meta { text-align: left; font-size: 12.5px; }
+  .meta p { margin: 1px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 4px 0 2px; font-size: 12.5px; }
+  th, td { border: 1px solid #777; padding: 3px 5px; text-align: right; }
+  th { font-weight: 700; text-transform: uppercase; font-size: 11px; letter-spacing: .5px; background: #fcfcfa; }
+  th:first-child, td:first-child { text-align: left; }
+  td.q, th.q { text-align: center; width: 28px; }
+  tbody tr:nth-child(even) td { background: #ebe9e2; }
+  .tot { text-align: left; margin: 0; }
+  .tot p { display: flex; justify-content: space-between; margin: 1px 0; }
+  .tot p.big { font-size: 19px; font-weight: 700; margin: 4px 0; }
+  .ticks { list-style: none; margin: 0; padding: 0; text-align: left; font-size: 12.5px; }
+  .ticks li { margin: 2px 0; }
+  .sig { margin: 8px 0 0; text-align: left; font-size: 12px; }
+  .sigbox { border-bottom: 1px solid #333; height: 40px; margin: 2px 0 2px; }
+  .code { margin: 8px auto 2px; display: block; }
+  .digits { letter-spacing: 3px; font-size: 12px; }
+  .small { font-size: 11px; line-height: 1.35; }
+  .edge { display: block; }
+</style>
+</head>
+<body>
+<div class="slip">
+  <svg class="mark" width="46" height="34" viewBox="0 0 46 34" aria-hidden="true">
+    <path d="M6 30 L12 14 L18 24 L23 6 L28 24 L34 14 L40 30 Z" fill="#1c1c1c"/>
+    <rect x="4" y="30" width="38" height="3" fill="#1c1c1c"/>
+  </svg>
+  <h1>Heron Hardware</h1>
+  <p class="sub">Trade &amp; Home</p>
+  <p>14 Chester Street, Wrexham LL13 8BD</p>
+  <p>Tel: 01978 555 0143</p>
+  <p>VAT No: GB 214 8890 36</p>
+  <hr class="dash">
+  <div class="meta">
+    <p>Date: 01/10/2021 &nbsp; Time: 14:36</p>
+    <p>Till: 03 &nbsp; Cashier: Finlay Doherty</p>
+    <p>Receipt No: 0071 4482</p>
+    <p>Account: Ewan Kowalski</p>
+  </div>
+  <hr class="dash">
+  <table>
+    <thead>
+      <tr><th>Item</th><th class="q">Qty</th><th>Price</th><th>Amount</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Claw hammer 16oz</td><td class="q">1</td><td>12.99</td><td>12.99</td></tr>
+      <tr><td>Wood screws 4x40</td><td class="q">2</td><td>3.49</td><td>6.98</td></tr>
+      <tr><td>Masking tape 48mm</td><td class="q">3</td><td>2.25</td><td>6.75</td></tr>
+      <tr><td>Paint brush set</td><td class="q">1</td><td>8.29</td><td>8.29</td></tr>
+      <tr><td>Cinder LED torch</td><td class="q">1</td><td>9.99</td><td>9.99</td></tr>
+    </tbody>
+  </table>
+  <hr class="dash">
+  <div class="tot">
+    <p><span>Items sold</span><span>8</span></p>
+    <p><span>Net</span><span>£37.50</span></p>
+    <p><span>VAT 20%</span><span>£7.50</span></p>
+    <p class="big"><span>TOTAL</span><span>£45.00</span></p>
+    <p><span>Card (contactless)</span><span>£45.00</span></p>
+    <p><span>Change</span><span>£0.00</span></p>
+  </div>
+  <hr class="dbl">
+  <ul class="ticks">
+    <li>✓ Payment authorised</li>
+    <li>✓ Loyalty points added: 45</li>
+    <li>✗ No receipt e-mailed</li>
+  </ul>
+  <hr class="dash">
+  <div class="sig">
+    <p>Order collected by: Ewan Kowalski</p>
+    <div class="sigbox">
+      <svg width="150" height="40" viewBox="0 0 150 40" aria-hidden="true">
+        <path d="M6 28 C14 6 22 4 24 18 C26 32 30 30 36 14 C40 4 46 26 54 24 C62 22 66 12 74 20 C84 30 100 10 118 22" fill="none" stroke="#1b2a5c" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M40 34 C70 30 100 32 132 30" fill="none" stroke="#1b2a5c" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <p class="small">Signature</p>
+  </div>
+  <svg class="code" width="250" height="46" viewBox="0 0 250 46" aria-hidden="true">
+    <g fill="#111">
+      <rect x="0" y="0" width="2" height="46"/><rect x="5" y="0" width="1" height="46"/><rect x="8" y="0" width="3" height="46"/>
+      <rect x="14" y="0" width="1" height="46"/><rect x="17" y="0" width="2" height="46"/><rect x="22" y="0" width="4" height="46"/>
+      <rect x="28" y="0" width="1" height="46"/><rect x="31" y="0" width="2" height="46"/><rect x="36" y="0" width="1" height="46"/>
+      <rect x="39" y="0" width="3" height="46"/><rect x="45" y="0" width="2" height="46"/><rect x="49" y="0" width="1" height="46"/>
+      <rect x="53" y="0" width="4" height="46"/><rect x="59" y="0" width="1" height="46"/><rect x="63" y="0" width="2" height="46"/>
+      <rect x="68" y="0" width="1" height="46"/><rect x="71" y="0" width="3" height="46"/><rect x="77" y="0" width="2" height="46"/>
+      <rect x="82" y="0" width="1" height="46"/><rect x="85" y="0" width="1" height="46"/><rect x="89" y="0" width="4" height="46"/>
+      <rect x="95" y="0" width="2" height="46"/><rect x="100" y="0" width="1" height="46"/><rect x="103" y="0" width="3" height="46"/>
+      <rect x="109" y="0" width="1" height="46"/><rect x="112" y="0" width="2" height="46"/><rect x="117" y="0" width="4" height="46"/>
+      <rect x="123" y="0" width="1" height="46"/><rect x="127" y="0" width="2" height="46"/><rect x="131" y="0" width="1" height="46"/>
+      <rect x="134" y="0" width="3" height="46"/><rect x="140" y="0" width="1" height="46"/><rect x="143" y="0" width="2" height="46"/>
+      <rect x="148" y="0" width="4" height="46"/><rect x="154" y="0" width="1" height="46"/><rect x="158" y="0" width="2" height="46"/>
+      <rect x="162" y="0" width="1" height="46"/><rect x="165" y="0" width="3" height="46"/><rect x="171" y="0" width="2" height="46"/>
+      <rect x="176" y="0" width="1" height="46"/><rect x="180" y="0" width="4" height="46"/><rect x="186" y="0" width="1" height="46"/>
+      <rect x="189" y="0" width="2" height="46"/><rect x="194" y="0" width="3" height="46"/><rect x="200" y="0" width="1" height="46"/>
+      <rect x="204" y="0" width="2" height="46"/><rect x="209" y="0" width="1" height="46"/><rect x="212" y="0" width="4" height="46"/>
+      <rect x="218" y="0" width="2" height="46"/><rect x="223" y="0" width="1" height="46"/><rect x="227" y="0" width="3" height="46"/>
+      <rect x="233" y="0" width="1" height="46"/><rect x="236" y="0" width="2" height="46"/><rect x="241" y="0" width="1" height="46"/>
+      <rect x="245" y="0" width="3" height="46"/>
+    </g>
+  </svg>
+  <p class="digits">5 012345 678900</p>
+  <hr class="dash">
+  <p>Thank you for shopping at Heron Hardware</p>
+  <p class="small">Returns within 28 days with this receipt.</p>
+  <p class="small">Your statutory rights are not affected.</p>
+  <p class="small">Stockport branch: 0161 555 0172</p>
+</div>
+</body>
+</html>

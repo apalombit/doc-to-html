@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Receipt</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{width:500px;background:#d9d6cf;padding:18px 0 22px;font-family:"PT Mono","Menlo",monospace;font-size:12px;line-height:1.35;color:#1d1d1d}
+  .slip{width:392px;margin:0 auto;background:#fbfaf6;padding:18px 20px 20px;box-shadow:0 0 0 1px #c9c5bb}
+  .tw{font-family:"American Typewriter","PT Mono",monospace}
+  .w3{font-weight:300}.w4{font-weight:400}.w7{font-weight:700}
+  .text-center{text-align:center}.text-right{text-align:right}.text-left{text-align:left}
+  .text-xs{font-size:10px}.text-sm{font-size:11px}.text-lg{font-size:15px}.text-xl{font-size:23px}
+  .uppercase{text-transform:uppercase}
+  .tracking{letter-spacing:.12em}
+  .flex{display:flex}.justify-between{justify-content:space-between}
+  .grid{display:grid}.grid-cols-2{grid-template-columns:1fr 1fr}.gap-2{gap:8px}
+  .mt-1{margin-top:4px}.mt-2{margin-top:8px}.mt-3{margin-top:12px}.mb-1{margin-bottom:4px}
+  .py-1{padding-top:4px;padding-bottom:4px}.py-2{padding-top:8px;padding-bottom:8px}
+  .border-t{border-top:1px solid #1d1d1d}
+  .border-dashed-t{border-top:1px dashed #555}
+  .border-dashed-b{border-bottom:1px dashed #555}
+  .border-double-t{border-top:3px double #1d1d1d}
+  .muted{color:#555}
+  .w-full{width:100%}
+  table{border-collapse:collapse;width:100%}
+  th{font-weight:400;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em;padding:3px 0;border-bottom:1px solid #1d1d1d;border-top:1px solid #1d1d1d}
+  td{padding:2px 0;vertical-align:top}
+  td.q{width:26px}
+  td.p,th.p{text-align:right;width:62px}
+  td.v,th.v{text-align:center;width:22px}
+  tr.sub td{font-size:10px;color:#555;padding-top:0}
+  tfoot td{padding:2px 0}
+  tfoot tr.first td{border-top:1px dashed #555;padding-top:5px}
+  tfoot tr.grand td{border-top:3px double #1d1d1d;padding-top:5px;font-size:17px}
+  .bars{display:block;margin:10px auto 0}
+</style>
+</head>
+<body>
+<div class="slip">
+  <div class="text-center">
+    <svg width="46" height="40" viewBox="0 0 46 40" style="display:block;margin:0 auto 4px" aria-hidden="true"><path d="M23 38 C23 26 23 18 23 8" stroke="#1d1d1d" stroke-width="2" fill="none"/><path d="M23 8 C13 10 9 18 15 24 C19 22 22 16 23 8Z" fill="#1d1d1d"/><path d="M23 12 C33 12 38 20 31 27 C27 24 24 19 23 12Z" fill="#555"/><circle cx="23" cy="5" r="3" fill="#1d1d1d"/></svg>
+    <div class="tw w7 text-xl uppercase tracking">Goldcrest</div>
+    <div class="tw w4 text-lg">Garden Centre</div>
+    <div class="tw w3 text-sm mt-1">14 Tay Street, Perth PH1 5LQ</div>
+    <div class="tw w3 text-sm">Tel 01738 555 0142 · goldcrest.example.com</div>
+    <div class="tw w3 text-xs mt-1">VAT Reg No GB 318 4402 71</div>
+  </div>
+
+  <div class="border-dashed-t border-dashed-b py-2 mt-3 text-sm">
+    <div class="grid grid-cols-2 gap-2"><div>DATE 07/08/2019</div><div>TIME 11:42</div></div>
+    <div class="grid grid-cols-2 gap-2"><div>TILL 04</div><div>TRANS 018346</div></div>
+    <div class="grid grid-cols-2 gap-2"><div>SERVED BY Megan W.</div><div>MGR Declan P.</div></div>
+    <div class="grid grid-cols-2 gap-2"><div>MEMBER I. BURROWS</div><div>IRIS CLUB Y</div></div>
+  </div>
+
+  <table class="mt-3">
+    <thead><tr><th class="q">Qty</th><th>Description</th><th class="v">V</th><th class="p">£</th></tr></thead>
+    <tbody>
+      <tr><td class="q">2</td><td>LAVENDER HIDCOTE 2L</td><td class="v">A</td><td class="p">13.98</td></tr>
+      <tr class="sub"><td></td><td colspan="3">2 @ 6.99</td></tr>
+      <tr><td class="q">1</td><td>MULTI PURPOSE COMPOST 50L</td><td class="v">A</td><td class="p">8.50</td></tr>
+      <tr><td class="q">2</td><td>IRIS GERMANICA RHIZOME 3PK</td><td class="v">A</td><td class="p">8.50</td></tr>
+      <tr class="sub"><td></td><td colspan="3">2 @ 4.25</td></tr>
+      <tr><td class="q">1</td><td>ALLIUM PURPLE SENS 10PK</td><td class="v">A</td><td class="p">5.49</td></tr>
+      <tr><td class="q">1</td><td>HAND TROWEL STAINLESS</td><td class="v">A</td><td class="p">7.99</td></tr>
+      <tr><td class="q">1</td><td>SECATEURS BYPASS 8IN</td><td class="v">A</td><td class="p">12.95</td></tr>
+      <tr><td class="q">1</td><td>PLANT LABELS WHITE 50PK</td><td class="v">A</td><td class="p">2.20</td></tr>
+      <tr><td class="q">1</td><td>JUTE TWINE 100M</td><td class="v">A</td><td class="p">1.85</td></tr>
+      <tr><td class="q">1</td><td>SLUG BARRIER TAPE 4M</td><td class="v">A</td><td class="p">4.99</td></tr>
+      <tr><td class="q">2</td><td>BASKET LINER COCO 14IN</td><td class="v">A</td><td class="p">3.20</td></tr>
+      <tr class="sub"><td></td><td colspan="3">2 @ 1.60</td></tr>
+      <tr><td class="q">2</td><td>TERRACOTTA POT 30CM</td><td class="v">A</td><td class="p">19.50</td></tr>
+      <tr class="sub"><td></td><td colspan="3">2 @ 9.75</td></tr>
+      <tr><td class="q">1</td><td>WILD BIRD SEED MIX 2KG</td><td class="v">Z</td><td class="p">5.60</td></tr>
+      <tr><td class="q">1</td><td>FAT BALLS 50PK</td><td class="v">Z</td><td class="p">7.45</td></tr>
+      <tr><td class="q">1</td><td>GARDEN GLOVES MEDIUM</td><td class="v">A</td><td class="p">3.99</td></tr>
+    </tbody>
+    <tfoot>
+      <tr class="first"><td colspan="3">SUBTOTAL (18 items)</td><td class="p">106.19</td></tr>
+      <tr><td colspan="3" class="muted text-sm">Net goods A (20%)</td><td class="p muted text-sm">77.62</td></tr>
+      <tr><td colspan="3" class="muted text-sm">VAT A @ 20.00%</td><td class="p muted text-sm">15.52</td></tr>
+      <tr><td colspan="3" class="muted text-sm">Zero rated Z @ 0.00%</td><td class="p muted text-sm">13.05</td></tr>
+      <tr class="grand"><td colspan="3" class="tw w7">TOTAL DUE</td><td class="p tw w7">£106.19</td></tr>
+      <tr><td colspan="3">CASH TENDERED</td><td class="p">120.00</td></tr>
+      <tr><td colspan="3">CHANGE</td><td class="p">13.81</td></tr>
+    </tfoot>
+  </table>
+
+  <div class="border-dashed-t mt-3 py-1 text-sm">
+    <div class="grid grid-cols-2 gap-2"><div>POINTS EARNED 106</div><div>BALANCE 1,284</div></div>
+    <div class="grid grid-cols-2 gap-2"><div>IRIS CLUB CARD</div><div>**** 7730</div></div>
+  </div>
+
+  <div class="text-center mt-3">
+    <div class="tw w4 text-lg">Thank you for shopping</div>
+    <div class="tw w3 text-sm">Bring this receipt for exchange within 30 days</div>
+    <div class="tw w3 text-sm">Live plants: 14 day growing guarantee</div>
+    <svg class="bars" width="250" height="38" viewBox="0 0 250 38" aria-hidden="true"><g fill="#1d1d1d"><rect x="0" y="0" width="3" height="38"/><rect x="6" y="0" width="1.5" height="38"/><rect x="10" y="0" width="4" height="38"/><rect x="17" y="0" width="2" height="38"/><rect x="22" y="0" width="1.5" height="38"/><rect x="27" y="0" width="5" height="38"/><rect x="35" y="0" width="2" height="38"/><rect x="40" y="0" width="3" height="38"/><rect x="46" y="0" width="1.5" height="38"/><rect x="51" y="0" width="4" height="38"/><rect x="58" y="0" width="2" height="38"/><rect x="63" y="0" width="1.5" height="38"/><rect x="68" y="0" width="5" height="38"/><rect x="76" y="0" width="2" height="38"/><rect x="81" y="0" width="3" height="38"/><rect x="87" y="0" width="1.5" height="38"/><rect x="92" y="0" width="4" height="38"/><rect x="99" y="0" width="2" height="38"/><rect x="104" y="0" width="3" height="38"/><rect x="110" y="0" width="1.5" height="38"/><rect x="115" y="0" width="5" height="38"/><rect x="123" y="0" width="2" height="38"/><rect x="128" y="0" width="1.5" height="38"/><rect x="133" y="0" width="4" height="38"/><rect x="140" y="0" width="3" height="38"/><rect x="146" y="0" width="2" height="38"/><rect x="151" y="0" width="1.5" height="38"/><rect x="156" y="0" width="5" height="38"/><rect x="164" y="0" width="2" height="38"/><rect x="169" y="0" width="3" height="38"/><rect x="175" y="0" width="1.5" height="38"/><rect x="180" y="0" width="4" height="38"/><rect x="187" y="0" width="2" height="38"/><rect x="192" y="0" width="1.5" height="38"/><rect x="197" y="0" width="5" height="38"/><rect x="205" y="0" width="2" height="38"/><rect x="210" y="0" width="3" height="38"/><rect x="216" y="0" width="1.5" height="38"/><rect x="221" y="0" width="4" height="38"/><rect x="228" y="0" width="2" height="38"/><rect x="233" y="0" width="3" height="38"/><rect x="239" y="0" width="1.5" height="38"/><rect x="244" y="0" width="3" height="38"/></g></svg>
+    <div class="text-xs mt-1 muted">018346 0407 190807 1142</div>
+  </div>
+</div>
+</body>
+</html>

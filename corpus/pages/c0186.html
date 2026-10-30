@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<title>Canopy Everyday Checking statement</title>
+<style>
+  :root { --accent: #12715b; --ink: #1b2b27; --muted: #5d6f69; --line: #d7e0dc; --tint: #eef6f3; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 36px 40px 40px; background: #fff; color: var(--ink); font-family: 'Avenir Next', Avenir, sans-serif; font-size: 14px; line-height: 1.5; }
+  header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand .name { font-size: 24px; font-weight: 700; color: var(--accent); letter-spacing: -0.01em; line-height: 1; }
+  .brand .sub { font-size: 12px; color: var(--muted); }
+  .meta { text-align: right; font-size: 13px; color: var(--muted); line-height: 1.55; }
+  .meta strong { color: var(--ink); font-weight: 600; }
+  h1 { margin: 28px 0 2px; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; }
+  .period { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+  .holder { display: flex; justify-content: space-between; gap: 24px; margin-bottom: 22px; font-size: 13px; }
+  .holder .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 30px; }
+  .card { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; background: #fff; }
+  .card.hi { background: var(--tint); border-color: #bcdcd1; }
+  .card .k { font-size: 12px; color: var(--muted); }
+  .card .v { font-size: 20px; font-weight: 600; margin-top: 4px; }
+  .card.hi .v { color: var(--accent); }
+  h2 { font-size: 17px; font-weight: 600; margin: 0 0 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); padding: 8px 10px; border-bottom: 2px solid var(--accent); }
+  td { padding: 8px 10px; vertical-align: top; }
+  tbody tr:nth-child(even) td { background: #f3f8f6; }
+  th.r, td.r { text-align: right; font-variant-numeric: tabular-nums; }
+  td.neg { color: #8a2f2f; }
+  td.pos { color: var(--accent); font-weight: 600; }
+  tfoot td { border-top: 2px solid var(--accent); font-weight: 600; background: #fff; }
+  sup { font-size: 10px; line-height: 0; }
+  .notes { margin-top: 30px; display: grid; grid-template-columns: 1fr; gap: 0; }
+  .notes ol { list-style: none; margin: 0; padding: 0; }
+  .notes li { padding-left: 26px; text-indent: -26px; margin-bottom: 7px; font-size: 13px; color: #2d3f3a; }
+  .notes li .num { display: inline-block; width: 26px; text-indent: 0; font-weight: 600; color: var(--accent); }
+  .foot { margin-top: 26px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 11.5px; color: var(--muted); line-height: 1.55; }
+  .foot p { margin: 0 0 3px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true">
+      <circle cx="20" cy="20" r="20" fill="#12715b"/>
+      <path d="M20 8 C 11 9, 7 19, 12 27 C 15 31, 25 31, 28 27 C 33 19, 29 9, 20 8 Z" fill="#bfe6d8"/>
+      <path d="M20 12 V 30 M20 18 L14 14 M20 23 L26 18" stroke="#12715b" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </svg>
+    <div>
+      <div class="name">Canopy</div>
+      <div class="sub">Savings Bank &middot; Fort Collins branch</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div><strong>Statement date</strong> October 5, 2020</div>
+    <div><strong>Account</strong> Everyday Checking &middot; ending 4410</div>
+    <div><strong>Page</strong> 1 of 2</div>
+  </div>
+</header>
+
+<h1>Your monthly statement</h1>
+<div class="period">September 5, 2020 &ndash; October 5, 2020</div>
+
+<div class="holder">
+  <div>
+    <div class="lbl">Account holder</div>
+    <div>Jordan Vasquez<br>2290 Larkspur Court<br>Fort Collins, CO 80526</div>
+  </div>
+  <div>
+    <div class="lbl">Your banker</div>
+    <div>Brooke Yamamoto<br>Phone (970) 555-0132<br>Mon&ndash;Fri 9:00 AM &ndash; 5:00 PM</div>
+  </div>
+</div>
+
+<div class="cards">
+  <div class="card"><div class="k">Opening balance</div><div class="v">$3,284.17</div></div>
+  <div class="card"><div class="k">Deposits</div><div class="v">$4,952.62</div></div>
+  <div class="card"><div class="k">Withdrawals</div><div class="v">$3,716.82</div></div>
+  <div class="card hi"><div class="k">Closing balance</div><div class="v">$4,519.97</div></div>
+</div>
+
+<h2>Activity</h2>
+<table>
+  <thead>
+    <tr><th>Date</th><th>Description</th><th class="r">Withdrawals</th><th class="r">Deposits</th><th class="r">Balance</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>09/08</td><td>Payroll deposit, Greenville Regional Schools</td><td class="r"></td><td class="r pos">2,415.60</td><td class="r">5,699.77</td></tr>
+    <tr><td>09/09</td><td>Check 1042, Birch Court Property Management</td><td class="r neg">1,450.00</td><td class="r"></td><td class="r">4,249.77</td></tr>
+    <tr><td>09/11</td><td>Debit card purchase<sup>1</sup>, Pinecone Grocers, Fort Collins</td><td class="r neg">86.42</td><td class="r"></td><td class="r">4,163.35</td></tr>
+    <tr><td>09/14</td><td>Online transfer to Camila Park</td><td class="r neg">150.00</td><td class="r"></td><td class="r">4,013.35</td></tr>
+    <tr><td>09/16</td><td>Debit card purchase<sup>1</sup>, Foothills Fuel</td><td class="r neg">41.20</td><td class="r"></td><td class="r">3,972.15</td></tr>
+    <tr><td>09/18</td><td>Autopay, Poudre Valley Power</td><td class="r neg">93.77</td><td class="r"></td><td class="r">3,878.38</td></tr>
+    <tr><td>09/21</td><td>Mobile check deposit</td><td class="r"></td><td class="r pos">120.00</td><td class="r">3,998.38</td></tr>
+    <tr><td>09/22</td><td>Payroll deposit, Greenville Regional Schools</td><td class="r"></td><td class="r pos">2,415.60</td><td class="r">6,413.98</td></tr>
+    <tr><td>09/23</td><td>ATM withdrawal, Fort Collins</td><td class="r neg">100.00</td><td class="r"></td><td class="r">6,313.98</td></tr>
+    <tr><td>09/25</td><td>Debit card purchase<sup>1</sup>, Cedar Table</td><td class="r neg">58.90</td><td class="r"></td><td class="r">6,255.08</td></tr>
+    <tr><td>09/30</td><td>Interest paid<sup>2</sup></td><td class="r"></td><td class="r pos">1.42</td><td class="r">6,256.50</td></tr>
+    <tr><td>10/01</td><td>Bill pay, Birch Court Property Management</td><td class="r neg">1,450.00</td><td class="r"></td><td class="r">4,806.50</td></tr>
+    <tr><td>10/02</td><td>Debit card purchase<sup>1</sup>, Upstate Car Rental, Greenville, SC</td><td class="r neg">212.35</td><td class="r"></td><td class="r">4,594.15</td></tr>
+    <tr><td>10/03</td><td>Debit card purchase<sup>1</sup>, Pinecone Grocers, Fort Collins</td><td class="r neg">74.18</td><td class="r"></td><td class="r">4,519.97</td></tr>
+  </tbody>
+  <tfoot>
+    <tr><td></td><td>Totals for the period</td><td class="r">3,716.82</td><td class="r">4,952.62</td><td class="r">4,519.97</td></tr>
+  </tfoot>
+</table>
+
+<div class="notes">
+  <h2 style="margin-top:0">Things to know</h2>
+  <ol>
+    <li><span class="num">1.</span>Tell us within 60 days of the statement date if you see a transaction you do not recognize.</li>
+    <li><span class="num">2.</span>Your monthly service fee is waived while your daily balance stays above $1,500.</li>
+    <li><span class="num">3.</span>Paper statements are replaced by e-statements from the next cycle unless you ask us to keep them.</li>
+  </ol>
+</div>
+
+<div class="foot">
+  <p><sup>1</sup> Card purchases show the date the merchant presented them, which can be one or two business days after the purchase.</p>
+  <p><sup>2</sup> Interest is paid at 0.05% annual percentage yield on the portion of the balance above $1,000.</p>
+</div>
+</body>
+</html>

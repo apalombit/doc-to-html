@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="it-IT">
+<head>
+<meta charset="utf-8">
+<title>Fattura 14/2027</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{width:920px;background:#fff;color:#1a1a1a;font-family:"Avenir Next","Avenir",sans-serif;font-size:13px;line-height:1.5;padding:58px 66px 64px}
+  .row{display:grid;grid-template-columns:repeat(12,1fr);column-gap:20px}
+  header{align-items:end;margin-bottom:46px}
+  h1{grid-column:1 / span 8;margin:0;font-family:"Arial Black","Helvetica",sans-serif;font-weight:900;font-size:68px;line-height:.95;letter-spacing:-.02em}
+  .state{grid-column:9 / span 4;justify-self:end;align-self:end}
+  .chip{display:inline-block;border-radius:20px;padding:4px 14px 5px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+  .chip.due{background:#e8472c;color:#fff}
+  .chip.ok{background:#e9efe5;color:#33502b}
+  .chip.neutral{background:#eeeeee;color:#333}
+  .lbl{display:block;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#8a8a8a;margin-bottom:5px}
+  .boxes{margin-bottom:44px}
+  .boxes>div{grid-column:span 3}
+  .field{border:1px solid #1a1a1a;padding:9px 12px 10px;font-size:15px;font-weight:500;min-height:42px}
+  .parties{margin-bottom:46px}
+  .parties>div{grid-column:span 4}
+  .parties>div.mid{grid-column:span 4}
+  .parties p{margin:0}
+  .parties strong{font-weight:600}
+  table{width:100%;border-collapse:collapse;margin-bottom:32px}
+  th{text-align:left;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#8a8a8a;padding:0 0 9px;border-bottom:2px solid #1a1a1a}
+  th.n,td.n{text-align:right}
+  td{padding:15px 0 15px;border-bottom:1px solid #d6d6d6;vertical-align:top}
+  td.d small{display:block;color:#8a8a8a;font-size:11.5px;margin-top:1px}
+  .sum{grid-template-columns:repeat(12,1fr)}
+  .tot{grid-column:8 / span 5}
+  .tot .l{display:flex;justify-content:space-between;padding:5px 0}
+  .tot .l span:first-child{color:#666}
+  .tot .grand{border-top:2px solid #1a1a1a;margin-top:7px;padding-top:11px;font-size:20px;font-weight:700}
+  .tot .grand span:first-child{color:#1a1a1a}
+  .tot .bal{font-weight:600}
+  .pay{grid-column:1 / span 6;align-self:end;font-size:12px;color:#444}
+  .pay p{margin:0 0 3px}
+  sup{font-size:.7em;line-height:0}
+  footer{margin-top:60px;padding-top:12px;border-top:1px solid #d6d6d6;font-size:10.5px;color:#8a8a8a;display:flex;justify-content:space-between}
+</style>
+</head>
+<body>
+<header class="row">
+  <h1>Fattura</h1>
+  <div class="state"><span class="chip due">Da saldare</span></div>
+</header>
+
+<section class="row boxes">
+  <div><span class="lbl">Numero</span><div class="field">14/2027</div></div>
+  <div><span class="lbl">Data</span><div class="field">25/01/2027</div></div>
+  <div><span class="lbl">Scadenza</span><div class="field">24/02/2027</div></div>
+  <div><span class="lbl">Consegna</span><div class="field">22/01/2027</div></div>
+</section>
+
+<section class="row parties">
+  <div>
+    <span class="lbl">Emittente</span>
+    <p><strong>Falegnameria Larch</strong></p>
+    <p>di Nicola Pellegrini</p>
+    <p>Via dei Tigli 18, 28100 Novara</p>
+    <p>P. IVA 01946530031</p>
+  </div>
+  <div class="mid">
+    <span class="lbl">Cliente</span>
+    <p><strong>Martina Bianchi</strong></p>
+    <p>Corso Garibaldi 52, 60121 Ancona</p>
+    <p>C.F. BNCMTN85T52A271Q</p>
+    <p>Cod. destinatario 0000000</p>
+  </div>
+  <div>
+    <span class="lbl">Referente</span>
+    <p><strong>Beatrice Marino</strong></p>
+    <p>Ufficio commerciale</p>
+    <p>ordini@larch-falegnameria.example.com</p>
+    <p>Tel. 0321 555 0187</p>
+  </div>
+</section>
+
+<table>
+  <thead><tr><th style="width:52%">Descrizione</th><th class="n">Quantità</th><th class="n">Prezzo</th><th class="n">Importo</th></tr></thead>
+  <tbody>
+    <tr><td class="d">Libreria su misura, serie Thistle, rovere oliato<small>Superficie frontale 5,04 m<sup>2</sup>, altezza 2,10 m</small></td><td class="n">1</td><td class="n">2.150,00 €</td><td class="n">2.150,00 €</td></tr>
+    <tr><td class="d">Ripiani aggiuntivi in rovere, profondità 30 cm</td><td class="n">6</td><td class="n">38,00 €</td><td class="n">228,00 €</td></tr>
+    <tr><td class="d">Finitura anti-UV<small>Per metro quadro</small></td><td class="n">5,04 m<sup>2</sup></td><td class="n">12,50 €</td><td class="n">63,00 €</td></tr>
+    <tr><td class="d">Trasporto e montaggio ad Ancona</td><td class="n">1</td><td class="n">260,00 €</td><td class="n">260,00 €</td></tr>
+  </tbody>
+</table>
+
+<section class="row sum">
+  <div class="pay">
+    <span class="lbl">Pagamento</span>
+    <p>Bonifico bancario, saldo entro 24/02/2027</p>
+    <p>IBAN IT60 X054 2811 1010 0000 0123 456</p>
+    <p style="margin-top:12px"><span class="chip ok">Acconto ricevuto</span></p>
+  </div>
+  <div class="tot">
+    <div class="l"><span>Imponibile</span><span>2.701,00 €</span></div>
+    <div class="l"><span>IVA 22 %</span><span>594,22 €</span></div>
+    <div class="l grand"><span>Totale</span><span>3.295,22 €</span></div>
+    <div class="l" style="margin-top:6px"><span>Acconto del 10/12/2026</span><span>−1.000,00 €</span></div>
+    <div class="l bal"><span style="color:#1a1a1a">Saldo da pagare</span><span>2.295,22 €</span></div>
+  </div>
+</section>
+
+<footer>
+  <span>Falegnameria Larch · Novara</span>
+  <span>Fattura 14/2027 · pagina 1 di 1</span>
+</footer>
+</body>
+</html>
