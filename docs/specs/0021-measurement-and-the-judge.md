@@ -510,9 +510,15 @@ and the review samples them by step 5's rule. It shakes the checks down on
 200 pages nobody has converted before L3 meets the panel, and gives P1 its
 control arm on dev.
 
-**Started 2026-10-30 22:57**, run `L2-dev`, on `e6fb494`'s conversion code:
-`tools/batch.py L2-dev --pages dev --skip-known`, its log
-`debug/L2-dev.log`, `--status` for where it is.
+**Started 2026-10-30 22:57**, run `L2-dev`, and **stopped 2026-10-31 07:13
+on its first page** (decision 7). c0004's 101st call, a prose read of a crop
+under 1 KB, ran to the token limit (794 s). The retry at 16,384 context made
+the model 7.6 GB on the 8 GB machine, with swap at 5.5 of 6 GB, and it ran
+7.7 hours at a character every few seconds. Chrome jobs running beside it
+made it worse. The first 100 calls had run at S14's speed (median 8.6 s
+against 11.8 s). **Restarted after every Chrome job** (decision 8), as a
+new run, with each page stopped at 20 minutes (decision 9): `tools/batch.py
+<label> --pages dev --skip-known --page-minutes 20`.
 
 ---
 
@@ -555,3 +561,11 @@ tests/test_checks.py, test_batch.py, test_measure_run.py
 | 4 | the review page as planned: one agree or disagree per checked page? | **Agree or disagree per fault**, on the pages he checks, each with a note |
 | 5 | a tick-box glyph lost or changed, inferred major | **Major** |
 | 6 | the strict spelling comparison: a word's case or inner mark changed | **Major**, as a changed word is |
+
+**Alessandro, 2026-10-31, after the dev run stalled on c0004:**
+
+| # | asked | decided |
+|---|---|---|
+| 7 | the dev run, 8 hours on its first page | **Stopped.** A check first: invoice_0001 converted alone in 183 s, byte-identical to `s14-result/`, so the model and the pipeline work as before |
+| 8 | how to avoid the hardware limit | **Every Chrome job first, then the model conversion on its own**, nothing else running beside it |
+| 9 | a page that will not finish | **Stopped at 20 minutes** and recorded as a timeout, with the reason, not retried |

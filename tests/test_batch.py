@@ -130,6 +130,77 @@ class TestResuming:
             run_batch(run, PAGES[:2], model="m:1", convert=converter([]), say=lambda line: None)
 
 
+def test_a_stop_file_ends_the_run_between_two_pages_and_a_start_resumes(
+        tmp_path: Path) -> None:
+    run = tmp_path / "L2-batch"
+    calls: list[str] = []
+
+    def stop_after_second(name: str) -> None:
+        if name == PAGES[1]:
+            (run / "stop.txt").touch()
+
+    lines: list[str] = []
+    result = run_batch(run, PAGES, model="m:1", convert=converter(calls),
+                       after_page=stop_after_second, say=lines.append)
+    assert calls == list(PAGES[:2]) and result.done == 2 and not result.running
+    assert "stopped by stop.txt with 2 of 4 done" in lines[-1]
+    assert not (run / "done.txt").exists()
+    result = run_batch(run, PAGES, model="m:1", convert=converter(calls), say=lambda line: None)
+    assert calls == list(PAGES) and result.done == 4
+    assert (run / "done.txt").exists() and not (run / "stop.txt").exists()
+
+
+class TestThePageLimit:
+    def test_a_page_past_its_limit_is_recorded_as_timed_out_and_not_retried(
+            self, tmp_path: Path) -> None:
+        calls: list[str] = []
+        plain = converter(calls)
+
+        def slow_on_second(name: str, png: Path) -> Attempt:
+            if name == PAGES[1]:
+                calls.append(name)
+                raise batch.PageTimeout(1200)
+            return plain(name, png)
+
+        run = tmp_path / "L2-batch"
+        result = run_batch(run, PAGES, model="m:1", convert=slow_on_second,
+                           say=lambda line: None, page_minutes=20)
+        assert (result.done, result.timeouts, result.errors) == (4, 1, 0)
+        stopped = run / "dump" / "m_1" / PAGES[1]
+        assert (stopped / "timeout.txt").read_text().startswith(
+            "timeout: not converted within 20 minutes")
+        assert not (stopped / "document.html").exists()
+        logged = [json.loads(line) for line in (run / "pages.jsonl").read_text().splitlines()]
+        assert [entry["verdict"] for entry in logged][1] == "timeout"
+        run_batch(run, PAGES, model="m:1", convert=slow_on_second,
+                  say=lambda line: None, page_minutes=20)
+        assert calls.count(PAGES[1]) == 1, "a timed-out page is not tried again"
+        assert "1 timed out" in status(run).line()
+
+    def test_a_resume_with_another_limit_is_refused(self, tmp_path: Path) -> None:
+        run = tmp_path / "L2-batch"
+        run_batch(run, PAGES[:2], model="m:1", convert=converter([]), say=lambda line: None,
+                  page_minutes=20)
+        with pytest.raises(BatchError, match="page limit of 20"):
+            run_batch(run, PAGES[:2], model="m:1", convert=converter([]),
+                      say=lambda line: None, page_minutes=10)
+
+    def test_bounded_stops_a_child_at_its_limit(self) -> None:
+        import time
+
+        started = time.perf_counter()
+        with pytest.raises(batch.PageTimeout):
+            batch.bounded(time.sleep, (30,), 1.0)
+        assert time.perf_counter() - started < 15
+
+    def test_bounded_returns_the_childs_answer_and_raises_its_error(self) -> None:
+        import math
+
+        assert batch.bounded(math.sqrt, (16.0,), 30) == 4.0
+        with pytest.raises(ValueError):
+            batch.bounded(math.sqrt, (-1.0,), 30)
+
+
 def test_only_conversion_files_count_as_changed(monkeypatch: pytest.MonkeyPatch) -> None:
     """Measurement code may move under a running batch, which is how this
     spec builds its checks while dev converts; conversion code may not."""

@@ -22,7 +22,15 @@ closed by mistake. So this runner:
   here passes `unseal`;
 - refuses to **resume on other conversion code**: a run is one pipeline,
   and a page converted by yesterday's code beside one converted by
-  today's measures neither.
+  today's measures neither;
+- gives **each page a time limit** (`PAGE_MINUTES`): the page converts in a
+  child process, which is stopped at the limit, and the page is recorded as
+  timed out, with the reason in its dump, and not tried again;
+- **stops between two pages** when `stop.txt` is in the run directory: the
+  page in flight finishes and is recorded, the run ends without
+  `done.txt`, and the next start removes the file and resumes. Killing a
+  detached run instead would cut the page in flight, or leave its child
+  converting with no parent.
 
 It writes `debug/runs/<label>/` as a sweep does, so `report`, the replay,
 the rederive and the visual review all read it.
@@ -31,6 +39,7 @@ the rederive and the visual review all read it.
 from __future__ import annotations
 
 import json
+import multiprocessing
 import os
 import shutil
 import subprocess
@@ -59,6 +68,22 @@ how spec 0021 builds its checks while dev converts."""
 Converter = Callable[[str, Path], Attempt]
 """Converts one page: its id and its picture, to the bake-off's Attempt."""
 
+PAGE_MINUTES = 20.0
+"""How long one page may take before it is stopped and recorded as timed
+out. Alessandro, 2026-10-31, after c0004 ran for 8 hours: one call on a
+near-empty crop ran to the token limit, and its retry at twice the context
+pushed the 8 GB machine into swap. On a quiet machine the S14 sweep took
+130-1,036 s a page; at 20 minutes none of its 21 pages would have stopped,
+at 10 minutes four would (darkdeck, newsletter, pricing, cv)."""
+
+
+class PageTimeout(Exception):
+    """A page did not convert within its run's limit."""
+
+    def __init__(self, seconds: float) -> None:
+        super().__init__(f"timeout: not converted within {seconds / 60:.0f} minutes; stopped")
+        self.seconds = seconds
+
 
 class BatchError(RuntimeError):
     """The run cannot start or resume as asked; the message says why."""
@@ -74,6 +99,7 @@ class Status:
     errors: int
     mean_seconds: float | None
     running: bool
+    timeouts: int = 0
 
     @property
     def left_hours(self) -> float | None:
@@ -86,8 +112,9 @@ class Status:
             and self.done < self.total else ""
         mean = f", mean {self.mean_seconds:.0f} s a page" if self.mean_seconds else ""
         state = "running" if self.running else "not running"
+        stopped = f", {self.timeouts} timed out" if self.timeouts else ""
         return (f"{self.label}: {self.done} of {self.total} pages done, {self.errors} "
-                f"raised{mean}{left}; {state}")
+                f"raised{stopped}{mean}{left}; {state}")
 
 
 def pages_for(spec: str, *, skip_known: bool = False) -> tuple[str, ...]:
@@ -133,19 +160,20 @@ def _alive(pid: int) -> bool:
 def status(run: Path) -> Status:
     listing = run / "fixtures.txt"
     total = len(listing.read_text().split()) if listing.exists() else 0
-    done = errors = 0
+    done = errors = timeouts = 0
     seconds: list[float] = []
     log = run / "pages.jsonl"
     if log.exists():
         for line in log.read_text().splitlines():
             entry = json.loads(line)
             done += 1
-            errors += bool(entry.get("error"))
+            timeouts += entry.get("verdict") == "timeout"
+            errors += bool(entry.get("error")) and entry.get("verdict") != "timeout"
             seconds.append(float(entry["seconds"]))
     pid_file = run / "batch.pid"
     running = pid_file.exists() and _alive(int(pid_file.read_text().strip() or 0))
     return Status(run.name, total, done, errors,
-                  sum(seconds) / len(seconds) if seconds else None, running)
+                  sum(seconds) / len(seconds) if seconds else None, running, timeouts)
 
 
 def done_pages(run: Path, model: str) -> set[str]:
@@ -170,14 +198,17 @@ def _record_start(run: Path, wanted: Sequence[str], model: str) -> None:
 
 def run_batch(run: Path, wanted: Sequence[str], *, model: str, convert: Converter,
               after_page: Callable[[str], None] | None = None,
-              say: Callable[[str], None] = print) -> Status:
+              say: Callable[[str], None] = print,
+              page_minutes: float | None = None) -> Status:
     """Convert every page of `wanted` not yet in the run's dump.
 
     A fresh directory records the run (`_record_start`); an existing one is
-    resumed, after checking it is the same list and that no conversion code
-    has changed since it started. `convert` is injected so the resuming can
-    be tested without a model; `after_page` is called after each page is
-    recorded, and a test raises from it to stop the run.
+    resumed, after checking it is the same list, the same page limit, and
+    that no conversion code has changed since it started. `convert` is
+    injected so the resuming can be tested without a model; `after_page` is
+    called after each page is recorded, and a test raises from it to stop
+    the run. A `convert` that raises `PageTimeout` records the page as timed
+    out: a `timeout.txt` in its dump says why, and a resume skips it.
     """
     run.mkdir(parents=True, exist_ok=True)
     pid_file = run / "batch.pid"
@@ -197,12 +228,21 @@ def run_batch(run: Path, wanted: Sequence[str], *, model: str, convert: Converte
             raise BatchError(f"conversion code changed since {run.name} started at "
                              f"{commit[:7]}: {', '.join(changed)}. A run is one "
                              "pipeline; pick a new label")
+        limit = run / "page_limit.txt"
+        recorded_limit = limit.read_text().strip() if limit.exists() else "none"
+        if recorded_limit != _limit_text(page_minutes):
+            raise BatchError(f"{run.name} was started with a page limit of {recorded_limit} "
+                             f"minutes, not {_limit_text(page_minutes)}; the limit decides "
+                             "which pages are dropped, so pick a new label")
         with (run / "resumes.txt").open("a") as resumes:
             resumes.write(f"{datetime.now().isoformat(timespec='seconds')} "
                           f"{_git('rev-parse', 'HEAD')}\n")
     else:
         _record_start(run, wanted, model)
+        (run / "page_limit.txt").write_text(_limit_text(page_minutes) + "\n")
     pid_file.write_text(f"{os.getpid()}\n")
+    stop = run / "stop.txt"
+    stop.unlink(missing_ok=True)
 
     partial = run / ".partial"
     if partial.exists():
@@ -214,13 +254,36 @@ def run_batch(run: Path, wanted: Sequence[str], *, model: str, convert: Converte
         todo = [name for name in wanted if name not in finished]
         say(f"{run.name}: {len(wanted) - len(todo)} of {len(wanted)} already done, "
             f"{len(todo)} to convert")
+        stopped_early = False
         for name in todo:
+            if stop.exists():
+                stopped_early = True
+                say(f"{run.name}: stopped by stop.txt with {status(run).done} of "
+                    f"{len(wanted)} done; start it again to go on")
+                break
             started = time.perf_counter()
-            attempt = convert(name, page(name).png_path())
+            entry: dict[str, Any]
+            try:
+                attempt = convert(name, page(name).png_path())
+            except PageTimeout as stopped:
+                seconds = time.perf_counter() - started
+                folder = partial / _slug(model) / name
+                folder.mkdir(parents=True)
+                (folder / "timeout.txt").write_text(f"{stopped}\n")
+                folder.rename(dump / name)
+                entry = {"page": name, "seconds": round(seconds, 1), "model_seconds": None,
+                         "calls": None, "verdict": "timeout", "error": str(stopped),
+                         "finished": datetime.now().isoformat(timespec="seconds")}
+                with (run / "pages.jsonl").open("a") as log:
+                    log.write(json.dumps(entry) + "\n")
+                say(f"{name}: {seconds:.0f} s, {stopped}")
+                if after_page is not None:
+                    after_page(name)
+                continue
             seconds = time.perf_counter() - started
             write_dump([attempt], partial)
             (partial / _slug(model) / name).rename(dump / name)
-            entry: dict[str, Any] = {
+            entry = {
                 "page": name, "seconds": round(seconds, 1),
                 "model_seconds": round(attempt.seconds, 1),
                 "calls": len(attempt.answers), "verdict": attempt.verdict,
@@ -232,12 +295,77 @@ def run_batch(run: Path, wanted: Sequence[str], *, model: str, convert: Converte
             say(f"{name}: {seconds:.0f} s, {entry['calls']} calls, {attempt.verdict}")
             if after_page is not None:
                 after_page(name)
-        (run / "done.txt").write_text(datetime.now().isoformat(timespec="seconds") + "\n")
+        if not stopped_early:
+            (run / "done.txt").write_text(datetime.now().isoformat(timespec="seconds") + "\n")
     finally:
         pid_file.unlink(missing_ok=True)
         if partial.exists():
             shutil.rmtree(partial)
     return status(run)
+
+
+def _limit_text(page_minutes: float | None) -> str:
+    return "none" if not page_minutes else f"{page_minutes:g}"
+
+
+def bounded(target: Callable[..., Any], args: tuple[Any, ...], seconds: float) -> Any:
+    """`target(*args)` in a child process, stopped after `seconds`.
+
+    A child, not a thread, so a call blocked in the model's stream can be
+    stopped at all; stopping it closes its connection, and Ollama drops a
+    request whose client has gone. Raises `PageTimeout` at the limit, and
+    re-raises what the child raised.
+    """
+    context = multiprocessing.get_context("spawn")
+    receive, send = context.Pipe(duplex=False)
+    child = context.Process(target=_relay, args=(send, target, args), daemon=True)
+    child.start()
+    send.close()
+    try:
+        if not receive.poll(seconds):
+            raise PageTimeout(seconds)
+        try:
+            ok, value = receive.recv()
+        except EOFError:
+            raise RuntimeError(f"the conversion process died (exit {child.exitcode})") from None
+    finally:
+        if child.is_alive():
+            child.terminate()
+            child.join(10)
+        if child.is_alive():
+            child.kill()
+        child.join()
+    if not ok:
+        raise value
+    return value
+
+
+def _relay(send: Any, target: Callable[..., Any], args: tuple[Any, ...]) -> None:
+    try:
+        send.send((True, target(*args)))
+    except BaseException as error:  # noqa: BLE001 — carried to the parent
+        try:
+            send.send((False, error))
+        except Exception:  # noqa: BLE001 — an exception that will not pickle
+            send.send((False, RuntimeError(f"{type(error).__name__}: {error}")))
+
+
+def convert_page(model: str, name: str, png: Path) -> Attempt:
+    """One page through `bakeoff.run`, in whichever process calls it."""
+    return ollama_converter(model)(name, png)
+
+
+def bounded_converter(model: str, page_minutes: float | None) -> Converter:
+    """The real converter, each page in a child process stopped at the limit
+    (`PAGE_MINUTES`); with no limit, in this process."""
+    if not page_minutes:
+        return ollama_converter(model)
+
+    def convert(name: str, png: Path) -> Attempt:
+        attempt: Attempt = bounded(convert_page, (model, name, png), page_minutes * 60)
+        return attempt
+
+    return convert
 
 
 def resident_models(host: str) -> list[str]:
@@ -303,13 +431,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="tools/batch.py",
         description="Convert a pool of the corpus, one page at a time, resumable. "
-                    "Start it detached: nohup … & disown; --status says where it is.")
+                    "Start it detached: nohup … & disown; --status says where it is; "
+                    "touch debug/runs/<label>/stop.txt to stop it after the page in flight.")
     parser.add_argument("label", help="debug/runs/<label>")
     parser.add_argument("--pages", default="dev",
                         help="a pool (dev, l3) or a comma list of page ids; never the vault")
     parser.add_argument("--skip-known", action="store_true",
                         help="leave out the 31 pages already converted (dev's 200 left)")
     parser.add_argument("--model", default="qwen3-vl:4b")
+    parser.add_argument("--page-minutes", type=float, default=PAGE_MINUTES,
+                        help="stop a page after this long and record it as timed out; 0 for no limit")
     parser.add_argument("--status", action="store_true", help="say where the run is and stop")
     args = parser.parse_args(argv)
 
@@ -328,8 +459,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             (run / "host.txt").write_text(host + "\n")
             (run / "ollama_ps_before.txt").write_text(resident_split(host))
         result = run_batch(run, wanted, model=args.model,
-                           convert=ollama_converter(args.model),
-                           say=lambda line: print(line, flush=True))
+                           convert=bounded_converter(args.model, args.page_minutes),
+                           say=lambda line: print(line, flush=True),
+                           page_minutes=args.page_minutes)
         (run / "ollama_ps_after.txt").write_text(resident_split(host))
     except (BatchError, KeyError, PermissionError) as error:
         print(f"refused: {error}", file=sys.stderr)
