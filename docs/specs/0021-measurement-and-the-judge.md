@@ -517,8 +517,44 @@ the model 7.6 GB on the 8 GB machine, with swap at 5.5 of 6 GB, and it ran
 7.7 hours at a character every few seconds. Chrome jobs running beside it
 made it worse. The first 100 calls had run at S14's speed (median 8.6 s
 against 11.8 s). **Restarted after every Chrome job** (decision 8), as a
-new run, with each page stopped at 20 minutes (decision 9): `tools/batch.py
-<label> --pages dev --skip-known --page-minutes 20`.
+new run, with each page stopped at 20 minutes (decision 9).
+
+**The limit proved, 2026-10-31**, on c0028, alone:
+- **with a 1-minute limit** the page was stopped at 60 s mid-call. Ollama
+  logged the client gone and cancelled the task (`stop: cancel task`),
+  finished the image batch it was decoding (about 10 s), and went idle
+  without generating; no child process was left;
+- **with the 20-minute limit** the page ran away exactly as c0004 had: a
+  prose read of a crop under 1 KB (`image=0KB`) streamed for 12 minutes
+  with nothing finished, and the page was stopped at 1,200 s and recorded
+  as timed out.
+
+**Restarted 2026-10-31 08:57 as `L2-dev-mixed`** (decision 10): dev's 200
+in an order that alternates family, density and kind, one page at a time,
+stopped by `stop.txt` after page 20 for Alessandro's look before it goes
+on. `tools/batch.py L2-dev-mixed --pages <the 200, in order>`; the order is
+the run's `fixtures.txt`.
+
+**The first 20, 08:57 to 12:54**: 14 converted (median 518 s, 90 to
+1,001 s), 6 timed out, none raised. The timeouts have two causes, three
+pages each, c0004 both:
+- **big pages**: c0427, c0312 and c0072, all dense, had 86 to 99 calls
+  behind them at medians of 15 s, every one normal. c0153 converted with
+  105 calls in 1,001 s, so a page of about 100 calls sits at the limit;
+  4 of the 7 dense pages timed out, 2 of 10 medium, 0 of 3 sparse;
+- **runaways**: one call streams on and never finishes — a 48 KB table
+  crop on c0008 (35,000 characters at 621 s), a 14 KB prose crop on c0493
+  (19,500 at 497 s), and c0004's call 101, the one that ran away the night
+  before. **It is not a near-empty crop**: 19 calls of the 20 pages had
+  crops under 1 KB and answered. The characters arrive on the reasoning
+  channel, where `qwen3-vl` puts its constrained answer, so it is most
+  likely an answer repeating itself; the text was lost with the page.
+  Every real answer on disk is under 5,600 characters.
+
+`DTH_TIMEOUT_S` (180 s) does not bound a call: it is the client's limit
+on each read of the stream, and c0008's call ran ten minutes under it.
+**Decision 11**: a limit on each call's whole time, 3 minutes, the page
+limit kept at 20.
 
 ---
 
@@ -569,3 +605,5 @@ tests/test_checks.py, test_batch.py, test_measure_run.py
 | 7 | the dev run, 8 hours on its first page | **Stopped.** A check first: invoice_0001 converted alone in 183 s, byte-identical to `s14-result/`, so the model and the pipeline work as before |
 | 8 | how to avoid the hardware limit | **Every Chrome job first, then the model conversion on its own**, nothing else running beside it |
 | 9 | a page that will not finish | **Stopped at 20 minutes** and recorded as a timeout, with the reason, not retried |
+| 10 | how to start the 200 | **Prove the limit on one page first, then the 200 in a mixed order, stopping after page 20** to look at the times and the timeouts; one conversion at a time |
+| 11 | after the first 20: 3 big pages, 2 runaways, c0004 both | **A limit of 3 minutes on each model call**, conversion code (L2's one change to it); **the page limit stays 20 minutes**, so the biggest dense pages stay timeouts |

@@ -20,6 +20,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from ..config import (
+    DEFAULT_CALL_LIMIT_S,
     DEFAULT_EXTRACT_MODEL,
     DEFAULT_NUM_CTX,
     DEFAULT_OLLAMA_HOST,
@@ -536,6 +537,9 @@ class OllamaEngine:
     api_key: str = ""
     num_ctx: int = DEFAULT_NUM_CTX
     timeout_s: float = DEFAULT_TIMEOUT_S
+    call_limit_s: float = DEFAULT_CALL_LIMIT_S
+    """How long one call may run, whole; see `config.DEFAULT_CALL_LIMIT_S`."""
+
     transport: Transport | None = None
     """Injected by the suite. `None` means talk to a real Ollama."""
 
@@ -571,6 +575,7 @@ class OllamaEngine:
             api_key=settings.ollama_api_key,
             num_ctx=settings.num_ctx,
             timeout_s=settings.timeout_s,
+            call_limit_s=settings.call_limit_s,
             transport=transport,
             lenient=settings.lenient_decoding,
             table_grid_hint=settings.table_grid_hint,
@@ -612,7 +617,8 @@ class OllamaEngine:
         The single retry raises the token budget; a second truncation is a real
         failure and says so rather than returning a plausible fragment.
         """
-        transport = self.transport or OllamaTransport(self.client_kwargs())
+        transport = self.transport or OllamaTransport(self.client_kwargs(),
+                                                      limit_s=self.call_limit_s)
         if self.lenient:
             transport = LenientTransport(transport)
         page = to_png(resize_long_edge(image, long_edge))

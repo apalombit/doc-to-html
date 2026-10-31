@@ -55,6 +55,11 @@ class Response:
         return self.content or self.thinking
 
 
+class CallTooLong(RuntimeError):
+    """A call stopped at its limit (`config.DEFAULT_CALL_LIMIT_S`) before it
+    finished. Not retried: at `temperature: 0` it would run on again."""
+
+
 class Transport(Protocol):
     """One call to a vision model."""
 
@@ -97,6 +102,9 @@ class OllamaTransport:
     """
 
     client_kwargs: dict[str, Any]
+    limit_s: float = 0.0
+    """How long the call may run, whole; 0 for no limit. The client's own
+    timeout cannot be this: it is reset by every piece of the stream."""
 
     def __call__(
         self,
@@ -128,19 +136,32 @@ class OllamaTransport:
         done_reason: str | None = None
         spoke_at = started
 
-        for chunk in self._stream(client, request):
-            message = chunk.get("message") or {}
-            parts.append(message.get("content") or "")
-            thoughts.append(message.get("thinking") or "")
-            if chunk.get("done"):
-                done_reason = chunk.get("done_reason")
+        stream = self._stream(client, request)
+        try:
+            for chunk in stream:
+                message = chunk.get("message") or {}
+                parts.append(message.get("content") or "")
+                thoughts.append(message.get("thinking") or "")
+                if chunk.get("done"):
+                    done_reason = chunk.get("done_reason")
 
-            now = time.perf_counter()
-            if now - spoke_at >= PROGRESS_EVERY_S:
-                log.info("%s: %s still going, %.0fs, %d chars answered, %d reasoning",
-                         pass_name, model, now - started,
-                         sum(map(len, parts)), sum(map(len, thoughts)))
-                spoke_at = now
+                now = time.perf_counter()
+                if self.limit_s and now - started > self.limit_s and not chunk.get("done"):
+                    written = sum(map(len, parts)) + sum(map(len, thoughts))
+                    log.info("%s: %s stopped at its limit, %.0fs, %d chars",
+                             pass_name, model, now - started, written)
+                    raise CallTooLong(
+                        f"{pass_name}: {model} had not finished after {self.limit_s:.0f} s "
+                        f"({written} characters); stopped")
+                if now - spoke_at >= PROGRESS_EVERY_S:
+                    log.info("%s: %s still going, %.0fs, %d chars answered, %d reasoning",
+                             pass_name, model, now - started,
+                             sum(map(len, parts)), sum(map(len, thoughts)))
+                    spoke_at = now
+        finally:
+            # Closing the stream closes the connection, and Ollama cancels
+            # the generation when its client goes (spec 0021's limit proof).
+            stream.close()
 
         content, thinking = "".join(parts), "".join(thoughts)
         log.info("%s: %s done in %.1fs, reason=%s, %d chars on %s",

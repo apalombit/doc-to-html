@@ -74,6 +74,25 @@ models per step — and combinations across steps — is configuration rather th
 code. That evaluation is issue #19."""
 DEFAULT_NUM_CTX = 8192
 DEFAULT_TIMEOUT_S = 180.0
+"""How long the client waits for the next piece of a streamed answer.
+
+**Not how long a call may take**: the answer is streamed, and each piece
+restarts the wait, so a call that never finishes is never stopped by it.
+`DEFAULT_CALL_LIMIT_S` is that limit."""
+
+DEFAULT_CALL_LIMIT_S = 180.0
+"""How long one model call may run, whole, before it is stopped; 0 for none.
+
+A call stopped here raises `transport.CallTooLong`, and its Zone fails the
+way any failed call's does: recorded, and the page goes on. Spec 0021's
+first 20 dev pages, 2026-10-31: two calls streamed on without finishing,
+a table crop on c0008 (35,000 characters at 621 s) and a prose crop on
+c0493 (19,500 at 497 s), and each cost its page the whole 20 minutes. Of
+1,309 answered calls on disk the longest took 138 s, and the same call
+246 s on a machine busy with other work, so 180 s stops every runaway
+seen and every answer seen on a quiet machine; it was Alessandro's call
+(spec 0021, decision 11). A busy machine can cut a real answer, which is
+one more reason a conversion runs alone."""
 DEFAULT_LOG_LEVEL = "INFO"
 
 DEFAULT_LENIENT_DECODING = False
@@ -584,6 +603,7 @@ class Settings:
     audit_model: str = DEFAULT_AUDIT_MODEL
     num_ctx: int = DEFAULT_NUM_CTX
     timeout_s: float = DEFAULT_TIMEOUT_S
+    call_limit_s: float = DEFAULT_CALL_LIMIT_S
     log_level: str = DEFAULT_LOG_LEVEL
     lenient_decoding: bool = DEFAULT_LENIENT_DECODING
     snap_zones: bool = DEFAULT_SNAP_ZONES
@@ -711,6 +731,7 @@ def load(
             resolve("DTH_AUDIT_MODEL", DEFAULT_AUDIT_MODEL),
             resolve("DTH_NUM_CTX", DEFAULT_NUM_CTX),
             resolve("DTH_TIMEOUT_S", DEFAULT_TIMEOUT_S),
+            resolve("DTH_CALL_LIMIT_S", DEFAULT_CALL_LIMIT_S),
             resolve("DTH_LOG_LEVEL", DEFAULT_LOG_LEVEL),
             resolve("DTH_LENIENT_DECODING", DEFAULT_LENIENT_DECODING),
             resolve("DTH_SNAP_ZONES", DEFAULT_SNAP_ZONES),
@@ -734,6 +755,7 @@ def load(
         audit_model=origins["DTH_AUDIT_MODEL"].value,
         num_ctx=_number(origins["DTH_NUM_CTX"], int),
         timeout_s=_number(origins["DTH_TIMEOUT_S"], float),
+        call_limit_s=_number(origins["DTH_CALL_LIMIT_S"], float),
         log_level=origins["DTH_LOG_LEVEL"].value,
         lenient_decoding=_flag(origins["DTH_LENIENT_DECODING"]),
         snap_zones=_flag(origins["DTH_SNAP_ZONES"]),

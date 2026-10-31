@@ -36,6 +36,7 @@ class TestDefaults:
         assert settings.audit_model == config.DEFAULT_AUDIT_MODEL
         assert settings.num_ctx == config.DEFAULT_NUM_CTX
         assert settings.timeout_s == config.DEFAULT_TIMEOUT_S
+        assert settings.call_limit_s == config.DEFAULT_CALL_LIMIT_S == 180.0
         assert settings.log_level == config.DEFAULT_LOG_LEVEL
         assert settings.ollama_api_key == ""
 
@@ -91,9 +92,10 @@ class TestPrecedence:
 
 class TestNumbers:
     def test_numeric_variables_are_parsed(self) -> None:
-        settings = resolve(DTH_NUM_CTX="4096", DTH_TIMEOUT_S="30")
+        settings = resolve(DTH_NUM_CTX="4096", DTH_TIMEOUT_S="30", DTH_CALL_LIMIT_S="0")
         assert settings.num_ctx == 4096
         assert settings.timeout_s == 30.0
+        assert settings.call_limit_s == 0.0
 
     def test_a_non_numeric_value_names_the_variable(self) -> None:
         with pytest.raises(config.ConfigError, match="DTH_NUM_CTX"):
@@ -244,11 +246,12 @@ class TestEngineSet:
         and has no context window or timeout to set.
         """
         engine = default_engines(resolve(
-            DTH_NUM_CTX="2048", DTH_TIMEOUT_S="9",
+            DTH_NUM_CTX="2048", DTH_TIMEOUT_S="9", DTH_CALL_LIMIT_S="60",
         )).extract
         assert isinstance(engine, OllamaEngine)
         assert engine.num_ctx == 2048
         assert engine.timeout_s == 9.0
+        assert engine.call_limit_s == 60.0
 
 
 class TestNothingElseReadsTheEnvironment:
