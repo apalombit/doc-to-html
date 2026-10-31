@@ -18,11 +18,11 @@ a source word up through it. The words check alone needs no alignment: it
 is a multiset, so a word printed elsewhere is not lost, and a word printed
 once where the source prints it twice is.
 
-**Every severity is `docs/agents/review-criteria.md`'s**, except three
-marked *inferred* in spec 0021: regular drawn bold, a list marker changed
-(both minor, approved 2026-10-30), and a tick-box glyph lost or changed
-(major, see `MARKS`). A strict spelling comparison inside words reports
-with severity `unsettled` until Alessandro decides it on the 31's evidence.
+**Every severity is `docs/agents/review-criteria.md`'s**, and three more
+decided by Alessandro for spec 0021: regular drawn bold and a list marker
+changed are minor (2026-10-30); a tick-box glyph lost or changed (`MARKS`)
+and a word's case or inner mark changed (the strict spelling comparison)
+are major (2026-10-31), as a changed word is.
 
 **Thresholds** are set from the 31 known pages' distributions, each
 histogram in its constant's docstring.
@@ -56,8 +56,8 @@ MARKS = frozenset("☐☑☒✓✔✕✖✗✘□■▢▣")
 """Tick-box glyphs: ☐ ☑ ☒ ✓ ✔ ✕ ✖ ✗ ✘ □ ■ ▢ ▣. The scorer's tokens drop
 them, so a box drawn empty where the page ticks it is invisible to every
 number. Counted here as content: 24 of dev's 32 `list.ticks` pages print
-their ticks as text (`projection.ListItem.ticked_text`). Major, *inferred*:
-a ticked box read as empty changes what the form says."""
+their ticks as text (`projection.ListItem.ticked_text`). Major, Alessandro,
+2026-10-31: a ticked box read as empty changes what the form says."""
 
 FACE_CLASS: dict[str, str] = {
     **{name: kind for name, (kind, _) in CANDIDATES.items()},
@@ -438,7 +438,7 @@ def _check_spelling(source: _Side, output: _Side, alignment: Alignment) -> list[
             continue
         printed = _printed(was, source.text(first)), _printed(now, output.text(second))
         if printed[0] != printed[1]:
-            faults.append(Fault("words", "spelling", "unsettled",
+            faults.append(Fault("words", "spelling", "major",
                                 f"{printed[0]} → {printed[1]}",
                                 source_box=source.box(first), output_box=output.box(second)))
     return faults

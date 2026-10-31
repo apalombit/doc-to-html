@@ -205,7 +205,7 @@ def report_md(run: Path, checks: Mapping[str, Mapping[str, Any]],
             entry["times"] += _occurrences(fault)
 
     def worst(counter: Counter[str]) -> str:
-        return min(counter, key=lambda value: review.SEVERITY_RANK.get(value, 3))
+        return min(counter, key=lambda value: review.SEVERITY_RANK.get(value, 2))
 
     lines = [
         f"# Checks — {stamp}",
@@ -223,7 +223,7 @@ def report_md(run: Path, checks: Mapping[str, Mapping[str, Any]],
         "|---|---|---|---|---|",
     ]
     ordered = sorted(classes.items(), key=lambda item: (
-        review.SEVERITY_RANK.get(worst(item[1]["severity"]), 3), -len(item[1]["pages"]), item[0]))
+        review.SEVERITY_RANK.get(worst(item[1]["severity"]), 2), -len(item[1]["pages"]), item[0]))
     for (check, fault), entry in ordered:
         severity = " / ".join(f"{value} {count}" for value, count in entry["severity"].items()) \
             if len(entry["severity"]) > 1 else worst(entry["severity"])

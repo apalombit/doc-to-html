@@ -176,6 +176,8 @@ looks a source word up through the alignment.
 | **words** | a source word is missing, counted as a multiset (the recipe's `4` in `SERVES 4` is printed elsewhere, so the set misses it) | lost | major |
 | | the output prints a word the source does not | invented | major |
 | | a lost word and an invented one sit at one aligned place: `2291` → `229 I`, `g salt` → `gsalt` | changed, merged, split | major |
+| | a tick-box glyph (☐ ☑ ✓ ✗ □ ■ …) lost or changed | mark lost, mark invented | major (decision 5) |
+| | a matched word's case or inner mark changed: `CSS` → `css` | spelling | major (decision 6) |
 | **cells** | a source cell's words do not sit in the output column holding its header, read by where the ink falls (the lab report's `6.4` under Flag) | wrong column | major |
 | | they do not sit on their row's band | wrong row | major |
 | | they share one output cell with a neighbour's words | merged | major |
@@ -206,6 +208,7 @@ punctuation between words, as the scorer does, so `AQ7-MB-W` read as
 of each aligned pair reports a changed case or inner mark, after the
 source's `text-transform` is applied, small capitals excepted. Whether it
 counts as a major is decided on the 31's evidence (step 2), not here.
+**Decided: major** (decision 6).
 
 ### Pages that need care
 
@@ -306,11 +309,10 @@ the 31 here, and Alessandro decides its severity from what it found.
   interleaved 4, mark lost 3, frame missing 3, wrong column 3, spelling 2,
   split 2, cells merged as drawn 2, under another heading 2, table not
   kept 2, numbers as bullets 1, numbers lost 1.
-- **Spelling, for Alessandro (step 6):** two on the 31, `CSS → css`
-  (sample_css) and `VG → vg` (menu). Both are a case change.
-- **Inferred, for Alessandro (step 6):** a tick-box glyph lost (`MARKS`)
-  is major. It fires on form_0007 (`✕`), pricing_0017 (`✓`, `✕`) and
-  the datasheet (`✓`).
+- **Spelling:** two on the 31, `CSS → css` (sample_css) and `VG → vg`
+  (menu), both a case change. Major (decision 6).
+- **A tick-box glyph lost** (`MARKS`) fires on form_0007 (`✕`),
+  pricing_0017 (`✓`, `✕`) and the datasheet (`✓`). Major (decision 5).
 - **False alarms found on the 31 and removed**, each by a rule rather than
   a page list:
   - a superscript in its own text node read as a split word (`GLUE`);
@@ -458,7 +460,8 @@ The skill and `docs/agents/visual-review.md` are rewritten for rubric 2.
 - **One private Artifact page with a database.** On top, the ranked fault
   classes, each with an example sheet. Then every reviewed page, with the
   checks' calls and Claude's.
-- **He ticks agree or disagree on each page and adds a note**:
+- **He ticks agree or disagree on each fault and adds a note**
+  (decision 4), on these pages:
   - pairwise: every page called worse, plus two at random;
   - source-only (this spec's proof, L3's baseline): every page where
     Claude's call overturns a check, the three known-fault pages, and two
@@ -544,3 +547,11 @@ tests/test_checks.py, test_batch.py, test_measure_run.py
 | 1 | convert dev in L2? | **Yes, once the runner is proven** (step 3): dev's 200 pages not yet converted, about 27 hours, detached and resumable, while steps 4–7 are built. Claude says when it starts |
 | 2 | in a source-only review, which pages does he check? | **Every page where Claude's call overturns a check, the three known-fault pages, and two at random** |
 | 3 | the plan | **Approved as written**: steps 1–8 in order, §C's checks, the criteria's severities, and the two *inferred* ones as minor (regular drawn bold; a bullet added, or a tick drawn as a bullet) |
+
+**Alessandro, 2026-10-31, at step 6:**
+
+| # | asked | decided |
+|---|---|---|
+| 4 | the review page as planned: one agree or disagree per checked page? | **Agree or disagree per fault**, on the pages he checks, each with a note |
+| 5 | a tick-box glyph lost or changed, inferred major | **Major** |
+| 6 | the strict spelling comparison: a word's case or inner mark changed | **Major**, as a changed word is |

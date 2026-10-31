@@ -182,9 +182,8 @@ AREA_OF_CHECK: dict[str, str] = {
 """Which area each of `checks`'s checks reports under: a rule missing is a
 look ("a frame or rule missing"), a cell out of place is structure."""
 
-SEVERITIES = ("major", "minor", "unsettled")
-"""`unsettled` is a class whose severity Alessandro has not decided (the
-strict spelling comparison, spec 0021 step 2)."""
+SEVERITIES = ("major", "minor")
+"""The criteria's two. Every class a check reports has one, decided."""
 
 CALLS = ("confirmed", "rejected")
 """Claude's call on a fault a check found, made by looking: markup can still
@@ -776,7 +775,7 @@ PERFECT = ("recall", "precision", "join_recall", "tau")
 """The scored ratios whose ceiling is exactly 1.000, so "did not notice" can be
 stated as a fact rather than as a threshold somebody picked."""
 
-SEVERITY_RANK = {"major": 0, "unsettled": 1, "minor": 2}
+SEVERITY_RANK = {"major": 0, "minor": 1}
 """Majors first: the order every roll-up sorts by."""
 
 
@@ -818,7 +817,7 @@ def summarise(record: dict[str, Any], *, scores: dict[str, Any] | None = None) -
         if not kept and not any(finding.call == "rejected" for finding in members):
             continue
         severity = min((finding.severity for finding in kept or members),
-                       key=lambda value: SEVERITY_RANK.get(value, 3))
+                       key=lambda value: SEVERITY_RANK.get(value, 2))
         classes.append(FaultClass(
             check=key[0], fault=key[1], severity=severity,
             pages=tuple(sorted({finding.page for finding in kept})),
@@ -831,7 +830,7 @@ def summarise(record: dict[str, Any], *, scores: dict[str, Any] | None = None) -
             why=whys.get(key, "")))
     order = {key: index for index, key in enumerate(whys)}
     classes.sort(key=lambda c: (order.get((c.check, c.fault), len(order)),
-                                SEVERITY_RANK.get(c.severity, 3), -len(c.pages), -c.occurrences,
+                                SEVERITY_RANK.get(c.severity, 2), -len(c.pages), -c.occurrences,
                                 c.name))
 
     overturned = sorted({finding.page for finding in findings
