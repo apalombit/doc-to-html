@@ -346,6 +346,78 @@ class TestEachMutationIsFoundByItsCheck:
         _applied(None, 2, make_it_taller, ("height", "height"), {"height"})
 
 
+# --- what the review rejected, 2026-10-31 ----------------------------------------
+
+
+S14 = REPO / "tests" / "frozen" / "s14-result" / "documents"
+
+
+@needs_chrome
+class TestWhatTheReviewOfTheThirtyOneRejected:
+    """False alarms found by opening every sheet of the 31 known pages
+    (spec 0021, the review of K0-known31), each pinned on its page, with the
+    true fault beside it kept."""
+
+    def test_the_body_is_what_the_render_does_with_the_pages_body(self) -> None:
+        """form_0007: labels the page's body, values the render's commonest
+        size; every block of both was reported."""
+        result = check_page("form_0007", S14 / "form_0007.html")
+        sizes = [f for f in result.faults if f.fault == "sizes out of proportion"]
+        assert not [f for f in sizes if "Whitlock" in f.element or "Family name" in f.element]
+
+    def test_a_generated_step_number_is_not_its_steps_weight(self) -> None:
+        result = check_page("probe_recipe", PROBE / "recipe" / "render.html")
+        assert not [f for f in result.faults if f.fault == "bold lost" and "Heat the oven" in f.element]
+        assert [f for f in result.faults if f.fault == "numbers as bullets"], "the true fault stays"
+
+    def test_a_pair_drawn_side_by_side_is_not_a_broken_line(self) -> None:
+        result = check_page("probe_minutes", PROBE / "minutes" / "render.html")
+        (lines,) = [f for f in result.faults if f.fault == "broken differently"]
+        assert "Present" not in lines.element and "Next meeting" in lines.element
+
+    def test_two_groups_drawn_side_by_side_as_printed_interleave_only_in_the_html(self) -> None:
+        result = check_page("cv_0013", S14 / "cv_0013.html")
+        education = [f for f in result.faults if f.fault == "interleaved" and "MEng" in f.element]
+        assert education and all(f.severity == "minor" for f in education)
+
+    def test_a_page_that_does_not_register_keeps_its_words_not_its_layout(self) -> None:
+        result = check_page("invoice_0002", S14 / "invoice_0002.html")
+        assert result.registered < 0.8
+        assert not [f for f in result.faults if f.check in ("lines", "alignment", "type")]
+        assert [f for f in result.faults if f.fault == "changed"], "its misread words stay"
+        assert any("withheld" in note for note in result.notes)
+
+    def test_a_justified_paragraph_drawn_ragged_is_found(self) -> None:
+        result = check_page("letter_0016", S14 / "letter_0016.html")
+        assert [f for f in result.faults if f.check == "alignment"
+                and "printed justified, drawn left" in f.note and "Thank you" in f.element]
+
+    def test_a_paragraphs_last_line_drawn_mid_paragraph_is_not_an_alignment_fault(self) -> None:
+        """All three print justified and draw justified; the page's last line
+        is ragged, and the output's paragraph goes on past it. Where a
+        paragraph ends is not alignment. paper_0018's 'This paper reports',
+        kept line for line and drawn ragged, is."""
+        for page, html in (("newsletter_0008", S14 / "newsletter_0008.html"),
+                           ("paper_0018", S14 / "paper_0018.html"),
+                           ("probe_contract", PROBE / "contract" / "render.html")):
+            result = check_page(page, html)
+            assert not [f for f in result.faults if "printed left, drawn justified" in f.note], page
+        result = check_page("paper_0018", S14 / "paper_0018.html")
+        assert [f for f in result.faults if "printed justified, drawn left" in f.note
+                and "This paper reports" in f.element]
+
+    def test_a_cell_printed_as_a_dash_and_drawn_blank_is_a_word_lost(self) -> None:
+        """Found by eye, missed by every check: tokens drop punctuation."""
+        result = check_page("nonlatin_0014", S14 / "nonlatin_0014.html")
+        (dash,) = [f for f in result.faults if f.fault == "lost" and f.element == "—"]
+        assert dash.note.startswith("2 cells")
+
+    def test_an_inverted_size_names_the_heading_it_is_inverted_against(self) -> None:
+        result = check_page("probe_flyer", PROBE / "flyer" / "render.html")
+        (inverted,) = [f for f in result.faults if "drawn smaller" in f.note and "Free entry" in f.element]
+        assert "'Ferry Wharf" in inverted.note
+
+
 # --- identity -----------------------------------------------------------------
 
 

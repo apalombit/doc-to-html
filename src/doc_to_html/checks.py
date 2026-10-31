@@ -130,6 +130,15 @@ crop of the picture spans 64 grey levels: sample_table_0003 0.022 and
 invoice_0002 0.326 (whose HTML wants a CDN), then nothing until pricing
 0.917 and timetable 0.922, and the other 27 from 0.963 to 1.000."""
 
+LAYOUT_CHECKS = ("lines", "alignment", "type")
+"""The checks that read where the source's HTML lays its words out, and how
+large: withheld on a page whose HTML does not register with its picture
+(`REGISTERED`). Its words, its tables, lists and order are the DOM's and
+hold; its line breaks, alignment and type are another layout's. Five of
+invoice_0002's faults were this, rejected in review 2026-10-31.
+
+"""
+
 RUN_TOKENS = 2
 """Tokens a stretch of one group must hold to count when two groups are
 tested for interleaving. A single token out of place is an alignment
@@ -420,8 +429,26 @@ def _check_words(source: _Side, output: _Side, alignment: Alignment) -> list[Fau
     for mark, count in sorted((_marks(output.words) - _marks(source.words)).items()):
         faults.append(Fault("words", "mark invented", "major", mark,
                             f"{count} drawn and not printed"))
+    lost_dashes = _cell_dashes(source) - _cell_dashes(output, anywhere=True)
+    if lost_dashes > 0:
+        faults.append(Fault("words", "lost", "major", "—",
+                            f"{lost_dashes} cell{'s' if lost_dashes > 1 else ''} printed "
+                            "with a dash for none, drawn blank"))
     faults += _check_spelling(source, output, alignment)
     return faults
+
+
+DASHES = frozenset("—–-")
+"""A cell printed as one dash says there is none, and a tokenizer that drops
+punctuation cannot see it go: nonlatin_0014's travel row, two dashes drawn
+as two blank cells, found by eye 2026-10-31."""
+
+
+def _cell_dashes(side: _Side, *, anywhere: bool = False) -> int:
+    """Words that are one dash alone: in a table cell on the source; on the
+    output anywhere, where a table may be drawn some other way."""
+    return sum(1 for word in side.words if word.text.strip() in DASHES
+               and (anywhere or word.cell is not None))
 
 
 _EDGE = re.compile(r"^[\W_]+|[\W_]+$", re.UNICODE)
@@ -867,12 +894,29 @@ def _check_order(source: _Side, output: _Side, alignment: Alignment) -> list[Fau
             theirs = [(alignment.pairs[i], "a") for i in held_a if i in alignment.strong] + \
                      [(alignment.pairs[i], "b") for i in held_b if i in alignment.strong]
             if _interleaves(theirs):
+                beside = _beside(*(_union(source.words[source.owner[i]].rect for i in held)
+                                   for held in (held_a, held_b))) and _beside(*(
+                    _union(output.words[output.owner[j]].rect for j, label in theirs if label == side)
+                    for side in ("a", "b")))
                 faults.append(Fault(
-                    "order", "interleaved", "major", f"{name_a} and {name_b}",
-                    "their words alternate in the output's reading order",
+                    "order", "interleaved", "minor" if beside else "major", f"{name_a} and {name_b}",
+                    "their words alternate in the output's HTML, drawn side by side as printed"
+                    if beside else "their words alternate in the output's reading order",
                     source_box=_union(source.words[source.owner[i]].rect for i in held_a + held_b)))
     faults += _check_headings_over(source, output, alignment)
     return faults
+
+
+def _beside(first: Rect, second: Rect) -> bool:
+    """Two regions side by side: they share most of the shorter's height and
+    none of their width. Two groups drawn so, as the page prints them, read
+    right to the eye whatever order the HTML holds them in — the right look
+    from the wrong HTML, which the criteria call minor (cv_0013's education,
+    reviewed 2026-10-31)."""
+    overlap = min(first[3], second[3]) - max(first[1], second[1])
+    shorter = min(first[3] - first[1], second[3] - second[1])
+    apart = first[2] <= second[0] + ALIGN_SLACK or second[2] <= first[0] + ALIGN_SLACK
+    return shorter > 0 and overlap > 0.5 * shorter and apart
 
 
 def _check_headings_over(source: _Side, output: _Side, alignment: Alignment) -> list[Fault]:
@@ -949,7 +993,10 @@ def _check_lines(source: _Side, output: _Side, alignment: Alignment) -> list[Fau
             continue
         x, y = output.owner[j], output.owner[k]
         out_same = output.line_of[x] == output.line_of[y]
-        if same_block and same_line and not out_same:
+        if same_block and same_line and not out_same \
+                and not _same_row(output.words[x].rect, output.words[y].rect):
+            # Two cells side by side are two lines of two blocks, one row
+            # to the eye: a pair drawn label | value (probe_minutes' Present).
             added[block] += 1
         elif same_block and not same_line and out_same:
             lost[block] += 1
@@ -987,15 +1034,17 @@ def _check_height(output: _Side, picture_height: int) -> tuple[list[Fault], floa
     return [], ratio
 
 
-TEXT_ALIGN = {"left": "left", "start": "left", "justify": "left", "-webkit-left": "left",
+TEXT_ALIGN = {"left": "left", "start": "left", "justify": "justified", "-webkit-left": "left",
               "center": "centre", "-webkit-center": "centre",
               "right": "right", "end": "right", "-webkit-right": "right"}
 """A block's computed `text-align`, as the line's alignment when the line
-sits in the block's own box. Justified reads as left: its full lines fill
-the box and its last line is set left."""
+sits in the block's own box. Justified is its own: a justified paragraph
+drawn ragged was found by eye on five of the 31 (the letter, the minutes,
+the CV's publications, the report, the paper), 2026-10-31, and read as left
+it could not be seen. A justified block's last line is set left."""
 
 
-def alignment_of(line: Rect, frames: Frames | None) -> str | None:
+def alignment_of(line: Rect, frames: Frames | None, *, last: bool = False) -> str | None:
     """Where a line sits in the first frame wider than it: `left`, `centre`,
     `right`, or `full` when it fills it. None with no frame to judge by.
 
@@ -1005,6 +1054,11 @@ def alignment_of(line: Rect, frames: Frames | None) -> str | None:
     ink sits in it."""
     if frames is None:
         return None
+    if TEXT_ALIGN.get(frames.align) == "justified":
+        # Before the box test: a justified line fills its block's box, so the
+        # test would pass over it to an ancestor and read it by its ink, as
+        # set right (probe_minutes' items 2 and 3).
+        return "left" if last else "justified"
     width = line[2] - line[0]
     for at, box in enumerate(frames.chain):
         if box[2] - box[0] >= width + FRAME_SLACK:
@@ -1019,12 +1073,27 @@ def alignment_of(line: Rect, frames: Frames | None) -> str | None:
     return None
 
 
+def _justified(frames: Frames | None) -> bool:
+    return frames is not None and TEXT_ALIGN.get(frames.align) == "justified"
+
+
+def _last_lines(side: _Side) -> dict[int, int]:
+    """Each block's last line, which a justified block sets left."""
+    last: dict[int, int] = {}
+    for block, line in side.line_words:
+        last[block] = max(last.get(block, line), line)
+    return last
+
+
 def _frames(side: _Side) -> dict[int, Frames]:
     return {frames.block: frames for frames in side.detail.frames}
 
 
 def _check_alignment(source: _Side, output: _Side, alignment: Alignment) -> list[Fault]:
     mine, theirs = _frames(source), _frames(output)
+    last_mine = _last_lines(source)
+    last_theirs = _last_lines(output)
+    on_line = Counter(output.line_of[owner] for owner in output.owner)
     changed: dict[int, Counter[str]] = defaultdict(Counter)
     for line, indexes in source.line_words.items():
         held = [i for i, owner in enumerate(source.owner) if owner in indexes]
@@ -1032,10 +1101,24 @@ def _check_alignment(source: _Side, output: _Side, alignment: Alignment) -> list
                             for i in held if i in alignment.pairs)
         if not out_lines:
             continue
-        was = alignment_of(source.line_box(line), mine.get(line[0]))
-        out_line = out_lines.most_common(1)[0][0]
-        now = alignment_of(output.line_box(out_line), theirs.get(out_line[0]))
+        was_last = last_mine.get(line[0]) == line[1]
+        was = alignment_of(source.line_box(line), mine.get(line[0]), last=was_last)
+        out_line, there = out_lines.most_common(1)[0]
+        now_last = last_theirs.get(out_line[0]) == out_line[1]
+        now = alignment_of(output.line_box(out_line), theirs.get(out_line[0]), last=now_last)
         if was in (None, "full") or now in (None, "full") or was == now:
+            continue
+        kept = there >= len(held) - 1 and on_line[out_line] <= there + 1
+        if {was, now} == {"left", "justified"} and (
+                (was == "left" and was_last and _justified(mine.get(line[0])))
+                or (now == "left" and now_last and _justified(theirs.get(out_line[0]))
+                    and not kept)):
+            # A justified block's last line is set left. A paragraph's last
+            # line drawn mid-paragraph, or a line drawn last because the
+            # output wraps otherwise, is where the paragraph or the line
+            # ends: the lines and structure checks' fault, not this one's
+            # (newsletter_0008, paper_0018, probe_contract). A line kept as
+            # printed and drawn ragged is this one's (paper_0018's abstract).
             continue
         changed[line[0]][f"{was} → {now}"] += 1
     texts = {block.index: block for block in source.projection.blocks}
@@ -1068,7 +1151,7 @@ def _relation(size: float, body: float) -> str:
 
 def _check_type(source: _Side, output: _Side, alignment: Alignment) -> list[Fault]:
     body_mine = _mode(word.font_px for word in source.words)
-    body_theirs = _mode(word.font_px for word in output.words)
+    body_theirs = _drawn_body(source, output, alignment, body_mine)
     texts = {block.index: block for block in source.projection.blocks}
     pairs_by_block: dict[int, list[tuple[Word, Word]]] = defaultdict(list)
     seen: set[tuple[int, int]] = set()
@@ -1078,6 +1161,10 @@ def _check_type(source: _Side, output: _Side, alignment: Alignment) -> list[Faul
             continue
         seen.add((first, second))
         word = source.words[first]
+        if word.generated or output.words[second].generated:
+            # A CSS counter's look is its marker's, not its item's: the
+            # recipe's bold step numbers made every step 'bold lost'.
+            continue
         pairs_by_block[word.block].append((word, output.words[second]))
     faces, sizes, bold, heavy, slant = [], [], [], [], []
     for block, pairs in sorted(pairs_by_block.items()):
@@ -1106,6 +1193,18 @@ def _check_type(source: _Side, output: _Side, alignment: Alignment) -> list[Faul
     return faults
 
 
+def _drawn_body(source: _Side, output: _Side, alignment: Alignment, body: float) -> float:
+    """The size the output gives the words the page prints at its body size.
+
+    Not the output's own commonest size: where two classes come near in
+    count — a form's labels and its values — that mode can land on either,
+    and every block of both is reported. form_0007, 2026-10-31: the labels
+    the page's body, the values the render's, three faults rejected."""
+    drawn = [output.words[output.owner[j]].font_px for i, j in alignment.pairs.items()
+             if round(source.words[source.owner[i]].font_px, 1) == body]
+    return _mode(drawn) if drawn else _mode(word.font_px for word in output.words)
+
+
 def _said(relation: str) -> str:
     return {"larger": "larger than the body", "smaller": "smaller than the body",
             "body": "at the body's size"}[relation]
@@ -1120,9 +1219,10 @@ def _hierarchy(pairs_by_block: dict[int, list[tuple[Word, Word]]], body: float,
     large = [block for block, (mine, _) in sizes.items() if mine > body * (1 + SIZE_MARGIN)]
     found = []
     for block in large:
-        if any(sizes[block][0] > sizes[other][0] * (1 + SIZE_MARGIN)
-               and sizes[block][1] < sizes[other][1] for other in large):
-            found.append(("printed larger than a heading drawn larger than it",
+        over = [other for other in large if sizes[block][0] > sizes[other][0] * (1 + SIZE_MARGIN)
+                and sizes[block][1] < sizes[other][1]]
+        if over:
+            found.append((f"printed larger than {texts[over[0]].text[:30]!r}, drawn smaller",
                           texts[block].text[:40], texts[block].ink))
     return found
 
@@ -1211,7 +1311,14 @@ def check_page(page: str, output_html: Path | str, *, root: Path | None = None) 
     theirs = project(output, width=width, detail=True, label=f"{page}/output")
     found = check(mine, theirs, picture_height=height, page=page,
                   features=page_features(page), spellings=spellings_for(page))
-    return replace(found, registered=registration(source.png_path(root), mine))
+    registered = registration(source.png_path(root), mine)
+    if registered < REGISTERED:
+        return replace(found, registered=registered,
+                       faults=tuple(f for f in found.faults if f.check not in LAYOUT_CHECKS),
+                       notes=found.notes + (
+                           f"{', '.join(LAYOUT_CHECKS)} withheld: the HTML does not lay out "
+                           f"as its picture (registration {registered:.2f})",))
+    return replace(found, registered=registered)
 
 
 def registration(picture: Path, source: Projection) -> float:
