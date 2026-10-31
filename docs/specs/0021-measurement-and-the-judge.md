@@ -556,6 +556,50 @@ on each read of the stream, and c0008's call ran ten minutes under it.
 **Decision 11**: a limit on each call's whole time, 3 minutes, the page
 limit kept at 20.
 
+**Ninety pages, not the other 180 (decision 12).** At the first stretch's
+pace the other 180 take about 33 hours. Neither reason to convert dev
+needs all of them: the checks are shaken down by eye, on a sample, and
+need to meet every kind of page the corpus varies on rather than many of
+each; and P2 decides on L3's 36 panel pages, so P1's control arm on dev
+needs only the pages P1 also converts, which a later run can add with the
+same code. **PDFs are left out** (Alessandro). What a set buys was
+measured over dev's 103 variability values without PDFs (family ×
+density, page or part, arrangement, language, style, type, width in three
+bins, each feature), a dense page counting as 3/7 of a sighting, the share
+of dense pages the first stretch converted inside 20 minutes:
+
+| pages | hours | dev converted, with the first 14 | values seen 2× / 3× / 5× | fewest per family |
+|---|---|---|---|---|
+| 55 | about 10 | about 59 | 90 / 82 / 55 | 6 |
+| 75 | about 13.5 | about 75 | 96 / 87 / 72 | 7 |
+| **90** | **about 16** | **about 87** | **97 / 91 / 81** | **10** |
+| 100 | about 18 | about 95 | 97 / 92 / 86 | 11 |
+
+Breadth is nearly whole by 55; 90 buys depth — about five pages for most
+kinds of page, enough to state a rate rather than an anecdote — and runs
+overnight like 55 does. 100 adds two hours for eight pages and little
+coverage. **What it gives up**: rates rest on about 87 dev pages rather
+than about 160, and the dense family cells stay thin whatever the size,
+because the biggest dense pages time out at 20 minutes.
+
+**The set**: `corpus/l2-dev-90.txt`, in the order converted, picked by
+`tools/pick_dev_set.py` over `corpus/l2-dev-mixed.txt` (the 200 in the
+first stretch's mixed order), whose docstring is the rule. c0008 and c0493
+first, the test of the call limit; then by density in dev's proportions
+(36 medium, 30 dense, 24 sparse), the stratum furthest behind its share
+next, so a run stopped early leaves a balanced set; within a stratum the
+page adding the most sightings, up to five per value. No first-stretch
+page is picked again but those two. 80 pages and 10 parts, all nine
+families, 7 to 13 a family.
+
+**Started 2026-10-31 as `L2-dev-90`**, one page at a time, 20-minute page
+limit, 3-minute call limit, nothing else running; the first stretch's 14
+converted pages stay in `L2-dev-mixed`, which the limit would not have
+changed (no call of theirs reached 3 minutes). Track it with
+`python tools/batch.py L2-dev-90 --status` and `debug/L2-dev-90.log`;
+`touch debug/runs/L2-dev-90/stop.txt` stops it after the page in hand, and
+the same command resumes it.
+
 ---
 
 ## On disk
@@ -607,3 +651,4 @@ tests/test_checks.py, test_batch.py, test_measure_run.py
 | 9 | a page that will not finish | **Stopped at 20 minutes** and recorded as a timeout, with the reason, not retried |
 | 10 | how to start the 200 | **Prove the limit on one page first, then the 200 in a mixed order, stopping after page 20** to look at the times and the timeouts; one conversion at a time |
 | 11 | after the first 20: 3 big pages, 2 runaways, c0004 both | **A limit of 3 minutes on each model call**, conversion code (L2's one change to it); **the page limit stays 20 minutes**, so the biggest dense pages stay timeouts |
+| 12 | the other 180 take about 33 hours | **Ninety, no PDF**, picked for variety by `tools/pick_dev_set.py` (`corpus/l2-dev-90.txt`), about 16 hours overnight; decision 1's "all 200" narrowed |
