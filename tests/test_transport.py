@@ -87,3 +87,16 @@ def test_a_stopped_call_is_not_retried() -> None:
     with pytest.raises(CallTooLong):
         engine.ask("table", "p", np.zeros((8, 8, 3), dtype=np.uint8), {})
     assert asked == [engine.num_ctx]
+
+
+def test_the_bake_off_builds_its_transport_with_the_call_limit() -> None:
+    """The batch converts through the bake-off, which builds its own
+    transport. It once left the limit out, and c0008 ran a table call 665 s
+    with the limit shipped (spec 0021): a setting that does not arrive looks
+    exactly like one that does nothing."""
+    from doc_to_html.bakeoff import ollama_transport_for
+    from doc_to_html.config import Settings
+
+    transport = ollama_transport_for(Settings(call_limit_s=42.0))("m", "c0008")
+    assert isinstance(transport, OllamaTransport) and transport.limit_s == 42.0
+    assert ollama_transport_for(Settings())("m", "c0008").limit_s == 180.0  # type: ignore[attr-defined]

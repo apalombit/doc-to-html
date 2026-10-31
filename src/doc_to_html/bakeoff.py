@@ -57,7 +57,7 @@ from .config import Settings, configure_logging, load
 from .corpus import names, page
 from .engines.base import LayoutEngine
 from .engines.ollama import OllamaEngine
-from .engines.transport import OllamaTransport, Response, Transport
+from .engines.transport import Response, Transport
 from .orchestrator import Conversion, EngineSet, _layout_engine
 from .render import render
 from .trace import Call, Trace, asked_of
@@ -357,9 +357,7 @@ TransportFor = Callable[[str, str], Transport]
 
 def ollama_transport_for(settings: Settings) -> TransportFor:
     def build(model: str, fixture: str) -> Transport:
-        return OllamaTransport(
-            OllamaEngine.from_settings(settings, model).client_kwargs()
-        )
+        return OllamaEngine.from_settings(settings, model).ollama_transport()
 
     return build
 

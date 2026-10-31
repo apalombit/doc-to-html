@@ -593,6 +593,15 @@ class OllamaEngine:
             kwargs["headers"] = {"Authorization": f"Bearer {self.api_key}"}
         return kwargs
 
+    def ollama_transport(self) -> OllamaTransport:
+        """The real call, with this Engine's client settings and call limit.
+
+        The bake-off builds its transports here too, so the two paths cannot
+        drift apart: the call limit shipped once with `ask` alone applying
+        it, and the batch, which converts through the bake-off, ran a page
+        without it (spec 0021, c0008)."""
+        return OllamaTransport(self.client_kwargs(), limit_s=self.call_limit_s)
+
     def reading(self, text: str) -> Reading:
         """One account of a value, carrying what produced it.
 
@@ -617,8 +626,7 @@ class OllamaEngine:
         The single retry raises the token budget; a second truncation is a real
         failure and says so rather than returning a plausible fragment.
         """
-        transport = self.transport or OllamaTransport(self.client_kwargs(),
-                                                      limit_s=self.call_limit_s)
+        transport = self.transport or self.ollama_transport()
         if self.lenient:
             transport = LenientTransport(transport)
         page = to_png(resize_long_edge(image, long_edge))

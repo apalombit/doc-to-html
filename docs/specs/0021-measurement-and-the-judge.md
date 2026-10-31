@@ -592,6 +592,17 @@ page adding the most sightings, up to five per value. No first-stretch
 page is picked again but those two. 80 pages and 10 parts, all nine
 families, 7 to 13 a family.
 
+**First started 14:34 without the limit, unseen**: the batch converts
+through the bake-off, which built its own transport from the client's
+settings and never passed the limit, and the limit's proof had called the
+engine directly. c0008 ran its table call 665 s and timed out again. The
+run was stopped, the real transport is now built in one place
+(`OllamaEngine.ollama_transport`, pinned by
+`test_the_bake_off_builds_its_transport_with_the_call_limit`), and the
+limit proven on the batch's own path: c0014 with a 5-second limit had 4
+calls stopped and converted with 2 Zones unread. CLAUDE.md's lesson about
+a flag that does not arrive, again.
+
 **Started 2026-10-31 as `L2-dev-90`**, one page at a time, 20-minute page
 limit, 3-minute call limit, nothing else running; the first stretch's 14
 converted pages stay in `L2-dev-mixed`, which the limit would not have
