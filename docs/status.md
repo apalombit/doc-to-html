@@ -1,4 +1,4 @@
-# Status — 2026-10-30 (**the baseline is `tests/frozen/s14-result/`; the corpus is built (spec 0020, done); next is L2, measurement and the judge (spec 0021)**)
+# Status — 2026-10-31 (**the baseline is `tests/frozen/s14-result/`; the corpus is built (spec 0020, done); L2, measurement and the judge (spec 0021, issue #44), is in progress: dev's 90 converting as `L2-dev-90`**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-23,
@@ -121,7 +121,10 @@ Spec 0020   The corpus, L1b — issue #43: 631 pages, every one passing;
               573 generated (130 parts of a document), 27 real PDF
               pages, the 31 in dev; pools dev / panel / vault sealed
               DONE 2026-10-30
-              L2 measurement and the judge, spec 0021  NEXT
+              L2 measurement and the judge, spec 0021  IN PROGRESS:
+                the checks built and proven on the 31; a 3-minute
+                call limit; dev's 90 converting (spec 0021,
+                "Where L2 stands")
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -312,8 +315,9 @@ In order (`level-up.md` §6):
    They are dealt into dev (231), panel (200) and vault (200), and the
    L3 set is 36 panel pages. `doc_to_html.corpus.names("dev" | "panel" |
    "l3")` returns a pool, and the vault refuses unless unsealed.
-3. **L2 — measurement and the judge. This is next: spec 0021**, run in
-   a fresh chat from spec 0020's last handover prompt. It builds:
+3. **L2 — measurement and the judge. In progress: spec 0021**, issue
+   #44; its "Where L2 stands" section is the state and the prompt for a
+   fresh chat. It builds:
    - the derived checks: the cell check, tables, lists, lines and order;
    - a batch runner;
    - the review skill evolved to the criteria agreed on 2026-10-24

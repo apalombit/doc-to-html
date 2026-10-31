@@ -613,6 +613,77 @@ the same command resumes it.
 
 ---
 
+## Where L2 stands, 2026-10-31 15:45 — and the prompt for a fresh chat
+
+**Done.** Steps 0–5 (above). Step 7's run `K0-known31` reviewed in full by
+Claude at rubric 2: 300 check faults confirmed, 30 rejected, 61 added by
+the review, 0 unanswered, 6 majors with no stage, each with its reason —
+`docs/agents/review-calls/K0-known31.json` (Claude's calls; Alessandro's
+come through step 6's page). The review turned into check fixes
+(`52b5ca2`): over the 31, 11 rejected faults gone, every confirmed one
+kept or carried as review-added; identity over the 231 clean. The call
+limit (decision 11) and the dev set (decision 12) are above. 1665 tests
+pass (1 skipped), measured 14:27.
+
+**Running.** `L2-dev-90`, detached, started 15:06 on `8bb13b8`; about 16
+hours, so about 07:00 on 2026-11-01, give or take two. c0008 converted
+this time (1,180 s, 83 calls, its runaway table stopped at 180 s and
+left unread).
+
+**Check issues still open**, from the review of the 31 (the rest fixed in
+`52b5ca2`):
+
+| id | check | what the picture shows |
+|---|---|---|
+| A | alignment | a hanging clause number's indent read as right alignment (contract) |
+| B | words | multi-token words skipped by the spelling list |
+| D, K | alignment | a badge or size inside a chip, short lines in a flex row, read as lines aligned or moved (email, catalogue) |
+| F | cells, type | a repeated phrase whose copy moved matched crosswise to the other copy (payslip, 6 false alarms) |
+| L | cells | the moved cell named is the neighbour of the one that moved (minutes) |
+| N | words | a mark drawn as a look-alike letter (✕ as X in a drawn box) counted lost and invented: Alessandro's judgement |
+| — | alignment | probe_contract's clauses, justified beside a hanging number, still read "printed justified, drawn left" (rejected) |
+
+**The prompt for the next chat:**
+
+> Continue L2 of the level-up plan: spec 0021,
+> `docs/specs/0021-measurement-and-the-judge.md`, issue #44, branch
+> `level-up`. Read the spec's "Read first" list, then its "Alongside —
+> dev converted", "Where L2 stands" and decisions 7–12.
+>
+> First, the dev run. `python tools/batch.py L2-dev-90 --status` and
+> `debug/L2-dev-90.log`. **While it runs, run no Chrome job and no test
+> beside it** (decision 8): wait. When it has ended, record its outcome
+> in the spec — converted, timed out and why (a big page or a call
+> stopped at its limit: `grep "stopped at its limit"`), times by
+> density — beside the first stretch's.
+>
+> Then, in order:
+> 1. The checks over dev's converted pages, `tools/measure_run.py` over
+>    `debug/runs/L2-dev-90` and `debug/runs/L2-dev-mixed` (its 14
+>    converted pages); then the review by step 5's sampling rule,
+>    Claude's calls, by looking at every opened sheet.
+> 2. Step 7's two leftovers: would the sampling rule alone have found
+>    what the full review of the 31 found
+>    (`docs/agents/review-calls/K0-known31.json`)? And the pairwise
+>    exercise, `s13-result/` against `s14-result/`.
+> 3. The open check issues in "Where L2 stands", each fixed in the check
+>    that raised it and pinned on its page with the true fault kept; N is
+>    Alessandro's call, ask him.
+> 4. Step 6, the review page: **stop and ask Alessandro before building
+>    it**, with the `artifact-capabilities` skill loaded first.
+> 5. Step 8, close: the outcome, `docs/status.md`, `CLAUDE.md`,
+>    `level-up.md` §6, issue #44, and a handover prompt for L3 on
+>    `corpus/l3-subset.txt`.
+>
+> Rules: never pass `unseal=True`. L2 converts no panel page, and panel
+> pages c0001 and c0002 are never used in tests. One conversion at a
+> time with nothing beside it; every Chrome job finished before a
+> conversion starts. Stop and ask before any conversion longer than two
+> hours, and wherever his calls disagree with the checks. Judge by eye
+> (`docs/agents/review-criteria.md`); a number is a pointer to a page.
+
+---
+
 ## On disk
 
 ```
