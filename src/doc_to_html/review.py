@@ -59,6 +59,7 @@ from __future__ import annotations
 
 import json
 import math
+import subprocess
 from collections import Counter
 from dataclasses import dataclass, field
 from datetime import date
@@ -907,7 +908,8 @@ def build(run: Path, *, model: str = "qwen3-vl:4b",
           marks: dict[str, Sequence[Mark]] | None = None,
           body_px: dict[str, float] | None = None,
           anchors: dict[str, Sequence[tuple[float, float]]] | None = None,
-          pages: Sequence[dict[str, Any]] | None = None) -> tuple[list[Sheet], Path]:
+          pages: Sequence[dict[str, Any]] | None = None,
+          source_notes: dict[str, str] | None = None) -> tuple[list[Sheet], Path]:
     """Build every sheet and the two forms for one run.
 
     `previous` is another run directory; when given, each sheet carries three
@@ -919,6 +921,7 @@ def build(run: Path, *, model: str = "qwen3-vl:4b",
     below `LEGIBLE_PX` (`body_px`) gains zoomed tiles, cut along `anchors`.
     `pages` is the form's entries (`page_entry`), every page checked, the
     opened ones among them; without it, each sheet gets an empty entry.
+    `source_notes` adds a word to a page's source label: why it has no boxes.
 
     `render` is the screenshot function, injected so the sheet builder can be
     tested without a browser; it defaults to `projection.screenshot`.
@@ -945,56 +948,66 @@ def build(run: Path, *, model: str = "qwen3-vl:4b",
             skipped.append(f"{name}: no document.html in {run.name}")
             continue
         stem = out / f"{index:02d}-{name}"
-        mine = (marks or {}).get(name, ())
-
-        shown_source = source
         scratch: list[Path] = []
-        if mine:
-            shown_source = marked(source, [(m.n, box) for m in mine for box in m.source],
-                                  stem.with_name(f"{stem.name}-source.png"))
-            scratch.append(shown_source)
-        panels = [Panel("SOURCE (the page)", shown_source)]
-        below: list[Panel] = []
-        older_shot: Path | None = None
-        if previous:
-            older = _dump(previous, model) / name / "document.html"
-            if older.exists():
-                older_shot = out / f"{index:02d}-{name}-previous.png"
-                render(older, older_shot, width=width)
-                scratch.append(older_shot)
-                panels.append(Panel(f"RENDER {previous.name}", older_shot))
-                below += photographed_panels(source, older_shot, f"RENDER {previous.name}",
-                                             older_shot.with_suffix(""))
-            else:
-                skipped.append(f"{name}: no document.html in {previous.name}, "
-                               "compared against the source only")
-        shot = out / f"{index:02d}-{name}-render.png"
-        render(html, shot, width=width)
-        scratch.append(shot)
-        diff: Path | None = None
-        moved: float | None = None
-        if older_shot is not None:
-            picture, moved = difference(Image.open(older_shot), Image.open(shot))
-            diff = stem.with_name(f"{stem.name}-diff.png")
-            picture.save(diff)
-        shown_render = shot
-        if mine:
-            shown_render = marked(shot, [(m.n, box) for m in mine for box in m.output],
-                                  stem.with_name(f"{stem.name}-render-marked.png"))
-            scratch.append(shown_render)
-        panels.append(Panel(f"RENDER {run.name}", shown_render))
-        below += photographed_panels(source, shot, f"RENDER {run.name}",
-                                     shot.with_suffix(""))
-        scratch += [panel.image for panel in below]
+        try:
+            mine = (marks or {}).get(name, ())
 
-        parts = contact_sheet(panels, stem, stamp=stamp, cap=cap, below=below)
-        zoomed: list[Path] = []
-        size = Image.open(parts[0]).size
-        if dense((body_px or {}).get(name, 0.0), size):
-            zoomed = tiles(shown_source, shown_render, stem, stamp=stamp,
-                           anchors=(anchors or {}).get(name, ()))
-        for path in scratch:
-            path.unlink(missing_ok=True)
+            shown_source = source
+            if mine:
+                shown_source = marked(source, [(m.n, box) for m in mine for box in m.source],
+                                      stem.with_name(f"{stem.name}-source.png"))
+                scratch.append(shown_source)
+            note = (source_notes or {}).get(name)
+            panels = [Panel("SOURCE (the page)" + (f" · {note}" if note else ""), shown_source)]
+            below: list[Panel] = []
+            older_shot: Path | None = None
+            if previous:
+                older = _dump(previous, model) / name / "document.html"
+                if older.exists():
+                    older_shot = out / f"{index:02d}-{name}-previous.png"
+                    render(older, older_shot, width=width)
+                    scratch.append(older_shot)
+                    panels.append(Panel(f"RENDER {previous.name}", older_shot))
+                    below += photographed_panels(source, older_shot, f"RENDER {previous.name}",
+                                                 older_shot.with_suffix(""))
+                else:
+                    skipped.append(f"{name}: no document.html in {previous.name}, "
+                                   "compared against the source only")
+            shot = out / f"{index:02d}-{name}-render.png"
+            render(html, shot, width=width)
+            scratch.append(shot)
+            diff: Path | None = None
+            moved: float | None = None
+            if older_shot is not None:
+                picture, moved = difference(Image.open(older_shot), Image.open(shot))
+                diff = stem.with_name(f"{stem.name}-diff.png")
+                picture.save(diff)
+            shown_render = shot
+            if mine:
+                shown_render = marked(shot, [(m.n, box) for m in mine for box in m.output],
+                                      stem.with_name(f"{stem.name}-render-marked.png"))
+                scratch.append(shown_render)
+            panels.append(Panel(f"RENDER {run.name}", shown_render))
+            below += photographed_panels(source, shot, f"RENDER {run.name}",
+                                         shot.with_suffix(""))
+            scratch += [panel.image for panel in below]
+
+            parts = contact_sheet(panels, stem, stamp=stamp, cap=cap, below=below)
+            zoomed: list[Path] = []
+            size = Image.open(parts[0]).size
+            if dense((body_px or {}).get(name, 0.0), size):
+                zoomed = tiles(shown_source, shown_render, stem, stamp=stamp,
+                               anchors=(anchors or {}).get(name, ()))
+        except (OSError, RuntimeError, subprocess.SubprocessError) as error:
+            # One page's screenshot timing out under load must not cost the
+            # review every other page: it is named among the skipped.
+            skipped.append(f"{name}: no sheet, {type(error).__name__}: {str(error)[:120]}")
+            for path in out.glob(f"{stem.name}*.png"):
+                path.unlink(missing_ok=True)
+            continue
+        finally:
+            for path in scratch:
+                path.unlink(missing_ok=True)
         sheets.append(Sheet(name, width, tuple(parts), tuple(zoomed), diff, moved))
 
     built = {sheet.document for sheet in sheets}

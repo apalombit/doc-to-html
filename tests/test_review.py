@@ -198,6 +198,27 @@ def test_a_document_with_no_render_is_skipped_and_said_so(tmp_path: Path) -> Non
     assert "statement_0006: no document.html" in (out / "review.md").read_text()
 
 
+def test_a_screenshot_that_times_out_skips_its_page_not_the_review(tmp_path: Path) -> None:
+    """Under load one tall render can outlast Chrome's timeout; the other
+    pages' sheets are still built, and the page is named, not lost."""
+    import subprocess
+
+    run = a_run(tmp_path, "99-test", {"invoice_0001": "<p>hi</p>", "statement_0006": "<p>x</p>"})
+    chrome = FakeChrome()
+
+    def slow(html: Path, destination: Path, *, width: int, height: int | None = None) -> Path:
+        if "statement_0006" in str(html):
+            raise subprocess.TimeoutExpired("chrome", 120)
+        return chrome(html, destination, width=width)
+
+    sheets, out = review.build(run, render=slow)
+    assert [sheet.document for sheet in sheets] == ["invoice_0001"]
+    assert "statement_0006: no sheet, TimeoutExpired" in (out / "review.md").read_text()
+    assert not list(out.glob("01-statement_0006*.png")), "no scratch left behind"
+    record = json.loads((out / "findings.json").read_text())
+    assert [page["name"] for page in record["pages"]] == ["invoice_0001"]
+
+
 def test_the_run_label_and_the_date_reach_every_output(tmp_path: Path) -> None:
     """A reading from one session and one from another are not comparable, so
     nothing this produces may travel without saying which sitting it came

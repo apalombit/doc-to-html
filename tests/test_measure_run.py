@@ -83,6 +83,31 @@ def test_a_faults_boxes_become_its_numbered_mark() -> None:
     assert second == review.Mark(2)
 
 
+def test_a_page_whose_html_is_not_its_picture_has_no_source_boxes() -> None:
+    """A box drawn from the HTML would mark blank paper on its picture."""
+    result = {"registered": 0.33, "faults": [fault("cells", "wrong column", source_box=[1, 2, 3, 4],
+                                                   output_box=[5, 6, 7, 8])]}
+    (mark,) = measure.marks_of(result)
+    assert mark == review.Mark(1, (), ((5, 6, 7, 8),))
+
+
+@needs_chrome
+def test_registration_tells_a_picture_its_html_draws_from_one_it_does_not() -> None:
+    """invoice_0002's HTML wants a CDN this machine does not fetch, so it no
+    longer lays out as its picture; invoice_0001's does."""
+    from doc_to_html.checks import REGISTERED, registration
+    from doc_to_html.corpus import page
+    from doc_to_html.projection import project
+
+    def measured(name: str) -> float:
+        source = page(name)
+        width = Image.open(source.png_path()).width
+        return registration(source.png_path(), project(source.html_path(), width=width,
+                                                       flat=True, detail=True))
+
+    assert measured("invoice_0001") >= REGISTERED > measured("invoice_0002")
+
+
 class Result:
     def __init__(self, page: str) -> None:
         self.page = page

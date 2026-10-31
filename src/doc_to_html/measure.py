@@ -85,7 +85,9 @@ def run_checks(run: Path, *, model: str, fresh: bool = False,
         html = _output(run, model, name)
         target = folder / f"{name}.json"
         if not html.exists():
-            results[name] = {"page": name, "error": "no document.html", "faults": []}
+            stopped = html.parent / "timeout.txt"
+            reason = stopped.read_text().strip() if stopped.exists() else "no document.html"
+            results[name] = {"page": name, "error": reason, "faults": []}
             continue
         if not fresh and target.exists() and target.stat().st_mtime >= html.stat().st_mtime:
             kept: dict[str, Any] = json.loads(target.read_text())
@@ -168,14 +170,24 @@ def sample(checks: Mapping[str, Mapping[str, Any]], *, families: Mapping[str, st
 
 
 def marks_of(result: Mapping[str, Any]) -> list[review.Mark]:
-    """A page's faults as numbered boxes, in the order the form numbers them."""
+    """A page's faults as numbered boxes, in the order the form numbers them.
+    On a page whose HTML no longer lays out as its picture does
+    (`checks.REGISTERED`), the source boxes are left off: they would mark
+    blank paper."""
+    drawn = _registered(result)
     out = []
     for n, fault in enumerate(result.get("faults", ()), start=1):
         source = [_box(box) for box in (fault.get("source_box"), *fault.get("places", ()))
-                  if box]
+                  if box and drawn]
         output = [_box(fault["output_box"])] if fault.get("output_box") else []
         out.append(review.Mark(n, tuple(dict.fromkeys(source)), tuple(output)))
     return out
+
+
+def _registered(result: Mapping[str, Any]) -> bool:
+    from .checks import REGISTERED
+
+    return float(result.get("registered", 1.0)) >= REGISTERED
 
 
 def _box(values: Sequence[float]) -> review.Box:
@@ -335,6 +347,8 @@ def measure(run: Path, *, model: str = "qwen3-vl:4b", previous: Path | None = No
         body_px={name: float(checks[name].get("body_px") or 0) for name in opened},
         anchors={name: [(float(a[0]), float(a[1])) for a in checks[name].get("anchors") or ()]
                  for name in opened},
+        source_notes={name: "no boxes: its HTML does not lay out as this picture"
+                      for name in opened if not _registered(checks[name])},
         pages=pages)
     say(f"{len(checks)} page(s) checked, {len(sheets)} opened: "
         f"{run.name}/checks/report.md, {out.relative_to(run.parent)}/review.md")

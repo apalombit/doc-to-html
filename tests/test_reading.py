@@ -124,6 +124,19 @@ class TestTables:
         assert not table.vertical_rule(0, 1)
 
     @needs_chrome
+    def test_a_box_hugging_the_table_draws_its_frame(self) -> None:
+        """The quiz's render frames its table with the Zone's border, two
+        wrappers up; a bordered box far from the table is not its frame."""
+        body = "<section style='{0}'><div><table><tr><td>a</td><td>b</td></tr></table></div></section>"
+        hugged = read(page(body.format("border:1px solid #111"), "table{width:100%}")).tables[0]
+        assert hugged.vertical_rule(0, 0) and hugged.vertical_rule(0, 2)
+        assert hugged.horizontal_rule(0, 0) and hugged.horizontal_rule(1, 1)
+        assert not hugged.vertical_rule(0, 1)
+        distant = read(page(body.format("border:1px solid #111;padding:30px"),
+                            "table{width:100%}")).tables[0]
+        assert not distant.vertical_rule(0, 0) and not distant.horizontal_rule(1, 1)
+
+    @needs_chrome
     def test_a_spanning_cell_has_no_rule_inside_it(self) -> None:
         table = read(page("<table><tr><td colspan=2>wide</td></tr><tr><td>a</td><td>b</td></tr></table>",
                           "table{border-collapse:collapse} td{border:1px solid #000}")).tables[0]

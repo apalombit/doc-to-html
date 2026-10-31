@@ -35,7 +35,7 @@ import re
 import unicodedata
 from collections import Counter, defaultdict
 from collections.abc import Iterable, Sequence
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any
@@ -111,11 +111,24 @@ an ancestor's box: the two margins differ by 0 px on 15 lines, 1 on 9, 2 on
 GLUE = 1.0
 """Pixels between two words' ink below which they are one printed word: a
 superscript in its own element (`10<sup>9</sup>`), a bold first syllable
-(`<b>con</b>firmed`).
+(`<b>con</b>firmed`). Never a generated word (`::before`, a counter): its
+box is estimated beside the text it precedes, not measured, so the recipe's
+step number in its own 34 px column read as glued to "Heat" (spec 0021,
+step 7's review).
 
 Measured on the 31 known pages, both sides, 2026-10-30: two words next to
 each other on one line stand 0 px apart (83 pairs) or 2 px and more (7,985
 pairs), never between."""
+
+REGISTERED = 0.8
+"""Share of the source's word boxes that must hold ink in the picture for
+its boxes to be drawn on it (`PageCheck.registered`). Below it the HTML no
+longer lays out as its picture does, and a box would mark blank paper.
+
+Measured on the 31 known pages, 2026-10-31, a word box holding ink when its
+crop of the picture spans 64 grey levels: sample_table_0003 0.022 and
+invoice_0002 0.326 (whose HTML wants a CDN), then nothing until pricing
+0.917 and timetable 0.922, and the other 27 from 0.963 to 1.000."""
 
 RUN_TOKENS = 2
 """Tokens a stretch of one group must hold to count when two groups are
@@ -173,6 +186,10 @@ class PageCheck:
     """(source y, output y) of matched words, top to bottom, one per source
     line: how a strip of the source finds the same strip of the render, where
     the two run to different heights (`review.tiles`)."""
+    registered: float = 1.0
+    """Share of the source's word boxes holding ink in the picture: whether
+    the HTML lays out as its picture does, so its boxes can be drawn on it
+    (`REGISTERED`)."""
 
     @property
     def majors(self) -> tuple[Fault, ...]:
@@ -261,7 +278,7 @@ def _side(projection: Projection, spellings: dict[str, str] | None = None) -> _S
             last = detail.words[groups[-1][-1]]
             gap = word.rect[0] - last.rect[2]
             if last.block == word.block and _same_row(last.rect, word.rect) \
-                    and -1.0 <= gap < GLUE:
+                    and not (last.generated or word.generated) and -1.0 <= gap < GLUE:
                 groups[-1].append(index)
                 continue
         groups.append([index])
@@ -1192,5 +1209,25 @@ def check_page(page: str, output_html: Path | str, *, root: Path | None = None) 
                    label=f"{page}/source")
     output = output_html if isinstance(output_html, str) else output_html.read_text(encoding="utf-8")
     theirs = project(output, width=width, detail=True, label=f"{page}/output")
-    return check(mine, theirs, picture_height=height, page=page,
-                 features=page_features(page), spellings=spellings_for(page))
+    found = check(mine, theirs, picture_height=height, page=page,
+                  features=page_features(page), spellings=spellings_for(page))
+    return replace(found, registered=registration(source.png_path(root), mine))
+
+
+def registration(picture: Path, source: Projection) -> float:
+    """Share of the source's word boxes whose crop of the picture spans 64
+    grey levels or more: ink, where a word drawn there would have put it."""
+    import numpy as np
+    from PIL import Image
+
+    grey = np.asarray(Image.open(picture).convert("L"), dtype=np.int16)
+    held = counted = 0
+    for word in source.detail.words if source.detail else ():
+        left, top, right, bottom = (int(round(value)) for value in word.rect)
+        if right - left < 2 or bottom - top < 2:
+            continue
+        counted += 1
+        crop = grey[max(top, 0):min(bottom, grey.shape[0]), max(left, 0):min(right, grey.shape[1])]
+        if crop.size and int(crop.max()) - int(crop.min()) >= 64:
+            held += 1
+    return held / counted if counted else 1.0

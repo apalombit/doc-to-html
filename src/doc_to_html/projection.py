@@ -510,11 +510,28 @@ MEASURE = r"""
                      top: side(style, 'Top'), bottom: side(style, 'Bottom')});
       }
       const style = getComputedStyle(table);
+      // A frame drawn by what wraps the table: on each side, the nearest of
+      // four ancestors whose edge lies within 6px of the table's and that
+      // draws a border there.
+      const own = table.getBoundingClientRect();
+      const wrap = [null, null, null, null];
+      let up = table.parentElement;
+      for (let depth = 0; up && up !== document.body && depth < 4; depth += 1, up = up.parentElement) {
+        const edge = up.getBoundingClientRect();
+        const gaps = [own.top - edge.top, edge.right - own.right,
+                      edge.bottom - own.bottom, own.left - edge.left];
+        const theirs = sides(up);
+        gaps.forEach((gap, k) => {
+          const [width, kind] = theirs[k];
+          if (wrap[k] === null && gap >= -1 && gap <= 6 && width > 0
+              && kind !== 'none' && kind !== 'hidden') wrap[k] = [theirs[k], groundOf(up)];
+        });
+      }
       tables.push({index, rows: rows.length,
                    cols: Math.max(0, ...grid.map((row) => (row ? row.length : 0))),
                    collapse: style.borderCollapse === 'collapse',
                    box: box(table.getBoundingClientRect()), sides: sides(table),
-                   ground: groundOf(table), row_sides: rowSides, groups, cells});
+                   ground: groundOf(table), row_sides: rowSides, groups, cells, wrap});
     }
 
     // Lists, and what each item is marked with: its list-style, a `::marker`
@@ -1088,6 +1105,12 @@ class Table:
     """Each row's top and bottom border. Drawn only under `border-collapse`."""
     groups: tuple[RowGroup, ...]
     cells: tuple[TableCell, ...]
+    wrap: tuple[tuple[Side, str] | None, ...] = (None, None, None, None)
+    """Top, right, bottom, left: the border of the nearest of four ancestors
+    whose edge lies within 6px of the table's and that draws one there, and
+    its ground. A frame drawn by
+    a box hugging the table reads as the table's frame: spec 0021's review
+    found the quiz's render framed this way, called "frame missing"."""
 
     def slot(self, row: int, col: int) -> int | None:
         """The index of the cell covering a slot, or None for a hole."""
@@ -1116,6 +1139,9 @@ class Table:
             sides.append((self.cells[right].sides[3], self.cells[right].ground))
         if col in (0, self.cols):
             sides.append((self.sides[3 if col == 0 else 1], self.ground))
+            wrapped = self.wrap[3 if col == 0 else 1]
+            if wrapped is not None:
+                sides.append(wrapped)
         return any(side.drawn(ground) for side, ground in sides)
 
     def horizontal_rule(self, row: int, col: int) -> bool:
@@ -1145,6 +1171,9 @@ class Table:
                     sides.append((group.top, self.ground))
         if row in (0, self.rows):
             sides.append((self.sides[0 if row == 0 else 2], self.ground))
+            wrapped = self.wrap[0 if row == 0 else 2]
+            if wrapped is not None:
+                sides.append(wrapped)
         return any(side.drawn(ground) for side, ground in sides)
 
 
@@ -1412,6 +1441,8 @@ def _detail(payload: dict[str, Any]) -> Detail:
               groups=tuple(RowGroup(int(group["first"]), int(group["last"]),
                                     _side(group["top"]), _side(group["bottom"]))
                            for group in table["groups"]),
+              wrap=tuple(None if edge is None else (_side(edge[0]), str(edge[1]))
+                         for edge in table.get("wrap") or (None,) * 4),
               cells=tuple(TableCell(row=int(cell["row"]), col=int(cell["col"]),
                                     rowspan=int(cell["rowspan"]),
                                     colspan=int(cell["colspan"]),
