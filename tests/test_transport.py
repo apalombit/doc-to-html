@@ -9,8 +9,10 @@ whole, and a stopped call is not retried.
 
 from __future__ import annotations
 
+import sys
 import time
 from collections.abc import Iterator
+from types import SimpleNamespace
 from typing import Any
 
 import numpy as np
@@ -43,9 +45,10 @@ class Stream:
 
 
 def call(stream: Stream, monkeypatch: pytest.MonkeyPatch, limit_s: float) -> Response:
-    import ollama
-
-    monkeypatch.setattr(ollama, "Client", stream)
+    # A stand-in module, not the real package: the suite never imports
+    # `ollama` (test_tracer_bullet's check that the seam is the one route).
+    monkeypatch.setitem(sys.modules, "ollama",
+                        SimpleNamespace(Client=stream, ResponseError=RuntimeError))
     transport = OllamaTransport({"host": "http://localhost:11434"}, limit_s=limit_s)
     return transport(model="m", pass_name="table", prompt="p", images=[b"png"],
                      schema={}, num_ctx=8192)
@@ -97,6 +100,6 @@ def test_the_bake_off_builds_its_transport_with_the_call_limit() -> None:
     from doc_to_html.bakeoff import ollama_transport_for
     from doc_to_html.config import Settings
 
-    transport = ollama_transport_for(Settings(call_limit_s=42.0))("m", "c0008")
-    assert isinstance(transport, OllamaTransport) and transport.limit_s == 42.0
-    assert ollama_transport_for(Settings())("m", "c0008").limit_s == 180.0  # type: ignore[attr-defined]
+    for settings, limit in ((Settings(call_limit_s=42.0), 42.0), (Settings(), 180.0)):
+        transport = ollama_transport_for(settings)("m", "c0008")
+        assert isinstance(transport, OllamaTransport) and transport.limit_s == limit
