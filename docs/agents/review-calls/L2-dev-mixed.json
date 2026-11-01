@@ -838,9 +838,9 @@
       "table.ruled",
       "table.subrows"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "drawn bold, as printed"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 4,
@@ -854,9 +854,9 @@
       "table.ruled",
       "table.subrows"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "drawn bold and large; too large is #9"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 5,
@@ -1614,9 +1614,9 @@
       "list.bullets",
       "table.subrows"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "drawn bold, as printed"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 7,
@@ -1886,9 +1886,9 @@
      "element": "Ricetta medica",
      "note": "drawn as body text; the type checks say whether it looks so",
      "features": [],
-     "stage": null,
-     "call": "rejected",
-     "why": "drawn as bold teal caps on its tinted band, as printed"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 10,
@@ -1899,9 +1899,9 @@
      "element": "Paziente",
      "note": "drawn as body text; the type checks say whether it looks so",
      "features": [],
-     "stage": null,
-     "call": "rejected",
-     "why": "drawn as small teal caps under a rule, as printed"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 11,
@@ -1912,9 +1912,9 @@
      "element": "Prescrizione",
      "note": "drawn as body text; the type checks say whether it looks so",
      "features": [],
-     "stage": null,
-     "call": "rejected",
-     "why": "drawn as small teal caps under a rule, as printed"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 12,
@@ -2598,9 +2598,9 @@
      "features": [
       "table.section_rows"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "drawn red and bold, as printed"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 9,
@@ -2912,9 +2912,9 @@
      "element": "Thèmes",
      "note": "drawn as body text; the type checks say whether it looks so",
      "features": [],
-     "stage": null,
-     "call": "rejected",
-     "why": "drawn as orange caps, as printed"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 17,
@@ -2925,9 +2925,9 @@
      "element": "Comment fonctionne un panier hebdomadaire ?",
      "note": "drawn as body text; the type checks say whether it looks so",
      "features": [],
-     "stage": null,
-     "call": "rejected",
-     "why": "drawn as an orange bold question, as printed"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 18,
@@ -3459,9 +3459,9 @@
       "table.ruled",
       "table.spanning"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "drawn as small bold caps, as printed"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 17,
@@ -4167,9 +4167,9 @@
      "features": [
       "table.empty_cells"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the price is drawn large, as printed"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 27,

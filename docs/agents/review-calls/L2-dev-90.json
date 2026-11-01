@@ -38714,9 +38714,9 @@
      "features": [
       "table.spanning"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the name is drawn large in its script face, as printed"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 20,
@@ -39474,9 +39474,9 @@
      "element": "Tagliando di controllo",
      "note": "drawn as body text; the type checks say whether it looks so",
      "features": [],
-     "stage": null,
-     "call": "rejected",
-     "why": "drawn as small teal caps, as printed"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 15,
@@ -39915,9 +39915,9 @@
      "features": [
       "list.nested"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "a value under its label, drawn there as printed; its lost weight is #27"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 13,
@@ -39930,9 +39930,9 @@
      "features": [
       "list.nested"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "a value under its label, drawn there as printed; its lost weight is #27"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 14,
@@ -39945,9 +39945,9 @@
      "features": [
       "list.nested"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "a value under its label, drawn there as printed; its lost weight is #27"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 15,
@@ -39960,9 +39960,9 @@
      "features": [
       "list.nested"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "a value under its label, drawn there as printed; its lost weight is #27"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 16,
@@ -39975,9 +39975,9 @@
      "features": [
       "list.nested"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "a value under its label, drawn there as printed; its lost weight is #27"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 17,
@@ -39990,9 +39990,9 @@
      "features": [
       "list.nested"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "a value under its label, drawn there as printed; its lost weight is #27"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 18,
@@ -40005,9 +40005,9 @@
      "features": [
       "list.nested"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "a value under its label, drawn there as printed; its lost weight is #27"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 19,
@@ -40020,9 +40020,9 @@
      "features": [
       "list.nested"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "a value under its label, drawn there as printed; its lost weight is #27"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 20,
@@ -40035,9 +40035,9 @@
      "features": [
       "list.nested"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "a value under its label, drawn there as printed; its lost weight is #27"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 21,
@@ -40515,9 +40515,9 @@
      "features": [
       "list.nested"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "drawn large and bold, as printed; its line breaks are #29"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 22,
@@ -40545,9 +40545,9 @@
      "features": [
       "list.nested"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the price is drawn large, as printed"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 24,
@@ -40575,9 +40575,9 @@
      "features": [
       "list.nested"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the price is drawn large, as printed"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 26,
@@ -40590,9 +40590,9 @@
      "features": [
       "list.nested"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the card's title is drawn large and bold; the small copy is the echo under words/invented"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 27,
@@ -40605,9 +40605,9 @@
      "features": [
       "list.nested"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the price is drawn large, as printed"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 28,
@@ -43779,9 +43779,9 @@
      "features": [
       "list.ticks"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "drawn large and bold, as printed"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 26,
@@ -43824,9 +43824,9 @@
      "features": [
       "list.ticks"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the price is drawn large, as printed"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 29,
@@ -43839,9 +43839,9 @@
      "features": [
       "list.ticks"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the card's title is drawn large and bold; the small copy is the echo under words/invented"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 30,
@@ -43854,9 +43854,9 @@
      "features": [
       "list.ticks"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the price is drawn large, as printed"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn with the heading's look, not as a heading"
     },
     {
      "n": 31,
