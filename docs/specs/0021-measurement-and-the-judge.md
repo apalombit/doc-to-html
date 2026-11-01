@@ -652,8 +652,8 @@ calls are `docs/agents/review-calls/L2-dev-90.json` and
 | | `L2-dev-90` | `L2-dev-mixed` |
 |---|---|---|
 | pages opened | 69 of 84 | 14 of 14 |
-| check faults confirmed | 2,189 | 215 |
-| check faults rejected | 214 | 78 |
+| check faults confirmed | 2,202 | 217 |
+| check faults rejected | 201 | 76 |
 | faults added by the review | 105, 79 of them major | 12, 7 major |
 | unanswered; majors with no stage | 0; 0 | 0; 0 |
 
@@ -694,7 +694,7 @@ Each one is a check issue for the next step:
 | id | check | what the picture shows | pages |
 |---|---|---|---|
 | T | words | text inside a figure Zone, drawn in the figure's pixels, is called lost (chart axes, logos, map labels, barcodes) | 13 |
-| I | order | columns drawn side by side as printed are read in DOM order: interleaved, under another heading | 12, and 6 more under another heading |
+| I | order | columns drawn side by side as printed, called major: interleaved in reading order, or under another heading. They are the right look from the wrong HTML, which the criteria call minor. The 15 that the check already called minor are confirmed as minor, as K0 confirmed cv_0013's | 12, and 6 more under another heading |
 | H | structure | a heading drawn as large and bold as printed is called "not kept" | 12 |
 | A | alignment | a short line read as justified, a name centred in its half read as left | 11 |
 | P | rules | a frame or rule that is drawn (on a wrapper, or as the table's own border) is read as missing | 8 |

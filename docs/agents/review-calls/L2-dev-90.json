@@ -15564,9 +15564,9 @@
       "arr.three_columns",
       "list.clauses"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the three sections are drawn in their own columns, side by side as printed, but for 4.4 (added); the check reads the DOM's row order — check issue I"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn side by side as printed, the render's DOM reads the bands row by row"
     },
     {
      "n": 23,
@@ -15596,9 +15596,9 @@
       "arr.three_columns",
       "list.clauses"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the three sections are drawn in their own columns, side by side as printed, but for 4.4 (added); the check reads the DOM's row order — check issue I"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn side by side as printed, the render's DOM reads the bands row by row"
     },
     {
      "n": 25,
@@ -15724,9 +15724,9 @@
       "arr.three_columns",
       "list.clauses"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the three sections are drawn in their own columns, side by side as printed, but for 4.4 (added); the check reads the DOM's row order — check issue I"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn side by side as printed, the render's DOM reads the bands row by row"
     },
     {
      "n": 33,
@@ -15804,9 +15804,9 @@
       "arr.three_columns",
       "list.clauses"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the three sections are drawn in their own columns, side by side as printed, but for 4.4 (added); the check reads the DOM's row order — check issue I"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn side by side as printed, the render's DOM reads the bands row by row"
     },
     {
      "n": 38,
@@ -15820,9 +15820,9 @@
       "arr.three_columns",
       "list.clauses"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the three sections are drawn in their own columns, side by side as printed, but for 4.4 (added); the check reads the DOM's row order — check issue I"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn side by side as printed, the render's DOM reads the bands row by row"
     },
     {
      "n": 39,
@@ -23886,9 +23886,9 @@
       "list.big_steps",
       "list.bullets"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "each question is drawn in its own column, side by side as printed — check issue I"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn side by side as printed, the render's DOM reads the bands row by row"
     },
     {
      "n": 11,
@@ -35406,9 +35406,9 @@
      "features": [
       "arr.cards_grid"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "Features and Ordering information are drawn in their own columns, side by side as printed; the tiny copies are the words' fault — check issue I"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn side by side as printed, the render's DOM reads the bands row by row"
     },
     {
      "n": 68,
@@ -35436,9 +35436,9 @@
      "features": [
       "arr.cards_grid"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "Features and Ordering information are drawn in their own columns, side by side as printed; the tiny copies are the words' fault — check issue I"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn side by side as printed, the render's DOM reads the bands row by row"
     },
     {
      "n": 70,
@@ -42086,9 +42086,9 @@
      "features": [
       "arr.two_columns"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the sections are drawn in their own columns, side by side as printed — check issue I"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn side by side as printed, the render's DOM reads the bands row by row"
     },
     {
      "n": 6,
@@ -42101,9 +42101,9 @@
      "features": [
       "arr.two_columns"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the sections are drawn in their own columns, side by side as printed — check issue I"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn side by side as printed, the render's DOM reads the bands row by row"
     },
     {
      "n": 7,
@@ -42131,9 +42131,9 @@
      "features": [
       "arr.two_columns"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the sections are drawn in their own columns, side by side as printed — check issue I"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn side by side as printed, the render's DOM reads the bands row by row"
     },
     {
      "n": 9,
@@ -42146,9 +42146,9 @@
      "features": [
       "arr.two_columns"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the sections are drawn in their own columns, side by side as printed — check issue I"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn side by side as printed, the render's DOM reads the bands row by row"
     },
     {
      "n": 10,
@@ -42161,9 +42161,9 @@
      "features": [
       "arr.two_columns"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the sections are drawn in their own columns, side by side as printed — check issue I"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn side by side as printed, the render's DOM reads the bands row by row"
     },
     {
      "n": 11,

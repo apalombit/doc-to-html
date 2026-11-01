@@ -3015,9 +3015,9 @@
      "features": [
       "arr.sidebar"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "drawn side by side as printed — check issue I"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn side by side as printed, the render's DOM reads the bands row by row"
     },
     {
      "n": 24,
@@ -3030,9 +3030,9 @@
      "features": [
       "arr.sidebar"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "drawn side by side as printed — check issue I"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right look from the wrong HTML, a minor by the criteria: drawn side by side as printed, the render's DOM reads the bands row by row"
     },
     {
      "n": 25,
