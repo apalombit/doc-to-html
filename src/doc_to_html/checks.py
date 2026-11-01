@@ -31,17 +31,18 @@ histogram in its constant's docstring.
 from __future__ import annotations
 
 import json
+import math
 import re
 import unicodedata
 from collections import Counter, defaultdict
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Iterator, Sequence
 from dataclasses import asdict, dataclass, field, replace
 from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any
 
 from .factory.fonts import CANDIDATES, GENERIC
-from .projection import Detail, Frames, Projection, Rect, Table, Word, project
+from .projection import Detail, Frames, Projection, Rect, Table, TableCell, Word, project
 from .scoring import normalise, tokens
 
 REPO = Path(__file__).resolve().parent.parent.parent
@@ -525,25 +526,66 @@ def _printed(word: Word, text: str) -> str:
 def _check_spelling(source: _Side, output: _Side, alignment: Alignment) -> list[Fault]:
     """A word matched one for one whose printed form differs inside it: case,
     after the source's `text-transform`, or a mark between its letters
-    (`AQ7-MB-W` read `AQ7–MB–w`). Small capitals are not judged."""
-    count_source = Counter(source.owner)
+    (`AQ7-MB-W` read `AQ7–MB–w`). Small capitals are not judged.
+
+    One for one by the whole word: every token of it paired, all into one
+    output word that no other word's tokens reach and that has no others.
+    A word of three tokens is judged like a word of one (issue B, the
+    review of the 31: `AQ7-MB-W` skipped once words were counted by
+    token)."""
+    held: dict[int, list[int]] = defaultdict(list)
+    for index, owner in enumerate(source.owner):
+        held[owner].append(index)
+    reached: dict[int, set[int]] = defaultdict(set)
+    for i, j in alignment.pairs.items():
+        reached[output.owner[j]].add(source.owner[i])
     count_output = Counter(output.owner)
-    seen: set[tuple[int, int]] = set()
     faults: list[Fault] = []
-    for i, j in sorted(alignment.pairs.items()):
-        first, second = source.owner[i], output.owner[j]
-        if (first, second) in seen or count_source[first] != 1 or count_output[second] != 1:
+    for first, indexes in sorted(held.items()):
+        if not all(i in alignment.pairs for i in indexes):
             continue
-        seen.add((first, second))
+        landed = {output.owner[alignment.pairs[i]] for i in indexes}
+        if len(landed) != 1:
+            continue
+        second = landed.pop()
+        if reached[second] != {first} or count_output[second] != len(indexes):
+            continue
         was, now = source.words[first], output.words[second]
         if was.small_caps or now.small_caps:
             continue
         printed = _printed(was, source.text(first)), _printed(now, output.text(second))
-        if printed[0] != printed[1]:
+        if printed[0] == printed[1]:
+            continue
+        if _LETTERS.sub("", printed[0]) == _LETTERS.sub("", printed[1]):
+            # The same letters with another mark between them: a curly
+            # apostrophe drawn straight, an en dash drawn as a hyphen
+            # (`l’11` as `l'11`, dev's French and Italian pages). A minor
+            # until Alessandro decides look-alike marks (issue N).
+            faults.append(Fault("words", "mark changed", "minor",
+                                f"{printed[0]} → {printed[1]}",
+                                source_box=source.box(first), output_box=output.box(second)))
+        else:
             faults.append(Fault("words", "spelling", "major",
                                 f"{printed[0]} → {printed[1]}",
                                 source_box=source.box(first), output_box=output.box(second)))
-    return faults
+    return _grouped_marks(faults)
+
+
+_LETTERS = re.compile(r"[\W_]", re.UNICODE)
+
+
+def _grouped_marks(faults: list[Fault]) -> list[Fault]:
+    """Mark changes as one fault a page: dev's French pages draw every
+    apostrophe straight, one word in ten."""
+    marks = [f for f in faults if f.fault == "mark changed"]
+    if len(marks) <= 1:
+        return faults
+    rest = [f for f in faults if f.fault != "mark changed"]
+    shown = sorted(set(f.element for f in marks))
+    return rest + [Fault("words", "mark changed", "minor",
+                         "; ".join(shown[:3]) + (f"; and {len(shown) - 3} more" if len(shown) > 3 else ""),
+                         f"{len(marks)} words drawn with another mark between their letters",
+                         source_box=marks[0].source_box, output_box=marks[0].output_box)]
 
 
 # --- tables: cells and rules ------------------------------------------------
@@ -700,82 +742,99 @@ def _check_rules(table: Table, source: _Side, output: _Side, alignment: Alignmen
     """Every rule the source draws between two cells, or round its table,
     drawn at the same place in the output: the quiz's cells merged by rules
     the output leaves out."""
-    landed: Counter[int] = Counter()
-    rows: list[tuple[int, int]] = []
-    cols: list[tuple[int, int]] = []
+    landing: list[tuple[TableCell, tuple[int, int]]] = []
     for index, tokens_ in held.items():
-        cell = table.cells[index]
         for i in tokens_:
             if i not in alignment.pairs:
                 continue
             out_cell = output.words[output.owner[alignment.pairs[i]]].cell
-            if out_cell is None:
-                continue
-            landed[out_cell[0]] += 1
-            out = output.detail.tables[out_cell[0]].cells[out_cell[1]]
-            if cell.rowspan == 1:
-                rows.append((cell.row, out.row))
-            if cell.colspan == 1:
-                cols.append((cell.col, out.col))
-    if not landed:
+            if out_cell is not None:
+                landing.append((table.cells[index], out_cell))
+    if not landing:
         return []
-    other = output.detail.tables[landed.most_common(1)[0][0]]
-    row_map = _fill(_majority_map(rows), table.rows)
-    col_map = _fill(_majority_map(cols), table.cols)
-
-    def out_row_edge(row: int) -> int | None:
-        if row == table.rows:
-            last = row_map.get(row - 1)
-            return None if last is None else max(
-                (c.row + c.rowspan for c in other.cells if c.row <= last < c.row + c.rowspan),
-                default=last + 1)
-        return row_map.get(row)
-
-    def out_col_edge(col: int) -> int | None:
-        if col == table.cols:
-            last = col_map.get(col - 1)
-            return None if last is None else max(
-                (c.col + c.colspan for c in other.cells if c.col <= last < c.col + c.colspan),
-                default=last + 1)
-        return col_map.get(col)
-
-    missing: dict[str, list[str]] = defaultdict(list)
-    drawn: Counter[str] = Counter()
+    # Each output table the source's cells landed in is judged on the rows
+    # and columns that landed in it, and a rule is drawn if any of them
+    # draws it: a total row drawn as a table of its own has no row in the
+    # main one (c0309's Total HT), and a table drawn as five boxes is five
+    # tables (c0439's specification, reviewed 2026-11-01).
+    drawn_at: dict[tuple[str, int, int], bool] = {}
+    for at in sorted({out_cell[0] for _, out_cell in landing}):
+        for key, here in _rules_in(table, output.detail.tables[at],
+                                   [(cell, out_cell[1]) for cell, out_cell in landing
+                                    if out_cell[0] == at]):
+            drawn_at[key] = drawn_at.get(key, False) or here
 
     def where(row: int, col: int) -> str:
         index = table.slot(row, col)
         return table.cells[index].text[:24] if index is not None else ""
 
-    for row in range(table.rows):
-        for col in range(table.cols + 1):
-            if not table.vertical_rule(row, col) or row not in row_map:
-                continue
-            edge, out_row = out_col_edge(col), row_map[row]
-            if edge is None:
-                continue
+    missing: dict[str, list[str]] = defaultdict(list)
+    drawn: Counter[str] = Counter()
+    for (axis, row, col), here in sorted(drawn_at.items(), key=lambda kv: (kv[0][0] != "|", kv[0][1:])):
+        if axis == "|":
             kind = "frame" if col in (0, table.cols) else "between cells"
-            drawn[kind] += 1
-            if not other.vertical_rule(out_row, edge):
-                missing[kind].append(f"{where(row, col - 1)} | {where(row, col)}".strip(" |"))
-    for row in range(table.rows + 1):
-        for col in range(table.cols):
-            if not table.horizontal_rule(row, col) or col not in col_map:
-                continue
-            edge, out_col = out_row_edge(row), col_map[col]
-            if edge is None:
-                continue
+            label = f"{where(row, col - 1)} | {where(row, col)}".strip(" |")
+        else:
             kind = "frame" if row in (0, table.rows) else "between cells"
-            drawn[kind] += 1
-            if not other.horizontal_rule(edge, out_col):
-                missing[kind].append(f"{where(row - 1, col)} / {where(row, col)}".strip(" /"))
+            label = f"{where(row - 1, col)} / {where(row, col)}".strip(" /")
+        drawn[kind] += 1
+        if not here:
+            missing[kind].append(label)
+    most = Counter(out_cell[0] for _, out_cell in landing).most_common(1)[0][0]
     faults = []
     for kind, examples in missing.items():
         faults.append(Fault(
             "rules", "cells merged as drawn" if kind == "between cells" else "frame missing",
             "major", "; ".join(examples[:3]),
             f"{len(examples)} of the {drawn[kind]} rules the page draws {kind} are not drawn",
-            source_box=table.box, output_box=other.box))
+            source_box=table.box, output_box=output.detail.tables[most].box))
     return faults
+
+
+def _rules_in(table: Table, other: Table, landed: Sequence[tuple[TableCell, int]]
+              ) -> Iterator[tuple[tuple[str, int, int], bool]]:
+    """Each rule the source table draws whose place the output table `other`
+    holds, keyed `("|", row, col)` or `("-", row, col)`, and whether `other`
+    draws it there. `landed`: the source cells whose words landed in
+    `other`, with the output cell they landed in."""
+    rows = [(cell.row, other.cells[index].row) for cell, index in landed if cell.rowspan == 1]
+    cols = [(cell.col, other.cells[index].col) for cell, index in landed if cell.colspan == 1]
+    row_map = _fill(_majority_map(rows), table.rows)
+    col_map = _fill(_majority_map(cols), table.cols)
+
+    def out_row_edge(row: int) -> int | None:
+        """The output edge under source row `row - 1`: its row's top, or,
+        at the table's foot or where the row below left the table, under
+        the row above."""
+        if row < table.rows and row in row_map:
+            return row_map[row]
+        last = row_map.get(row - 1)
+        return None if last is None else max(
+            (c.row + c.rowspan for c in other.cells if c.row <= last < c.row + c.rowspan),
+            default=last + 1)
+
+    def out_col_edge(col: int) -> int | None:
+        if col < table.cols and col in col_map:
+            return col_map[col]
+        last = col_map.get(col - 1)
+        return None if last is None else max(
+            (c.col + c.colspan for c in other.cells if c.col <= last < c.col + c.colspan),
+            default=last + 1)
+
+    for row in range(table.rows):
+        for col in range(table.cols + 1):
+            if not table.vertical_rule(row, col) or row not in row_map:
+                continue
+            edge = out_col_edge(col)
+            if edge is not None:
+                yield ("|", row, col), other.vertical_rule(row_map[row], edge)
+    for row in range(table.rows + 1):
+        for col in range(table.cols):
+            if not table.horizontal_rule(row, col) or col not in col_map:
+                continue
+            edge = out_row_edge(row)
+            if edge is not None:
+                yield ("-", row, col), other.horizontal_rule(edge, col_map[col])
 
 
 # --- structure: lists and headings -------------------------------------------
@@ -1350,15 +1409,23 @@ def _check_type(source: _Side, output: _Side, alignment: Alignment) -> list[Faul
         drawn = Counter(face_class(w) for _, w in pairs).most_common(1)[0][0]
         if printed in JUDGED_FACES and drawn in JUDGED_FACES and printed != drawn:
             faces.append((f"{printed} printed, {drawn} drawn", text, ink))
-        was = _relation(_mode(w.font_px for w, _ in pairs), body_mine)
-        now = _relation(_mode(w.font_px for _, w in pairs), body_theirs)
-        if was != now:
+        size_mine = _mode(w.font_px for w, _ in pairs) / body_mine
+        size_theirs = _mode(w.font_px for _, w in pairs) / body_theirs
+        was, now = _relation(size_mine, 1.0), _relation(size_theirs, 1.0)
+        if was != now and abs(math.log(size_theirs / size_mine)) > math.log(1 + SIZE_MARGIN):
+            # Moved across the margin and by more than it: 1.04 of the body
+            # drawn at 1.05 crosses the line and changes nothing a reader
+            # sees (cv_0013's job titles, reviewed 2026-11-01).
             sizes.append((f"printed {_said(was)}, drawn {_said(now)}", text, ink))
         if any(w.weight >= 600 and other.weight < 600 for w, other in pairs):
             bold.append(("bold printed, regular drawn", text, ink))
         if any(w.weight < 600 and other.weight >= 600 for w, other in pairs):
             heavy.append(("regular printed, bold drawn", text, ink))
-        if sum(w.italic != other.italic for w, other in pairs) > len(pairs) / 2:
+        if "script" not in (printed, drawn) and \
+                sum(w.italic != other.italic for w, other in pairs) > len(pairs) / 2:
+            # A script face carries its own slant: a signature set italic in
+            # a script face looks as printed (letter_0016, certificate_0021,
+            # c0020, c0518, reviewed 2026-11-01).
             slant.append(("italic printed upright" if pairs[0][0].italic
                           else "upright printed italic", text, ink))
     faults = _grouped("type", "wrong face", "major", faces)

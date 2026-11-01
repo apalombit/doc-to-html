@@ -5796,9 +5796,9 @@
      "features": [
       "table.section_rows"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the rules the check names (Salaires | 38 420,00 € | 41 150,00 € | 79 570,00 €) are drawn, grey and 1 px, at full scale; a false alarm, check issue P"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the render draws the column rules in the header row only: no body row draws a rule between the amounts, and the right frame is not drawn; re-opened at 2× on 2026-11-01, the first call misread the sheet"
     },
     {
      "n": 43,
@@ -12339,9 +12339,9 @@
       "table.ruled",
       "table.zebra"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "at full scale the table's frame is drawn on all four sides, thin and grey; a false alarm, check issue P"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the render draws no frame: no rule above the header, at the left or at the right; a dotted separator runs above the table; re-opened at 2× on 2026-11-01, the first call misread the sheet"
     },
     {
      "n": 18,
@@ -26962,9 +26962,9 @@
       "table.section_rows",
       "table.subrows"
      ],
-     "stage": "render",
-     "call": "confirmed",
-     "why": "the measurement rows draw no rules between their cells"
+     "stage": null,
+     "call": "rejected",
+     "why": "the render draws the rules between the rows, light grey, in each of the three tables it splits the table into; the page draws none between the columns. The check mixed the three tables' rows (check issue P); re-opened at 2× on 2026-11-01, the first call misread the sheet"
     },
     {
      "n": 14,
@@ -28231,9 +28231,9 @@
       "table.ruled",
       "table.totals"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the table's light frame is drawn on both sides, as printed — check issue P"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the render draws no frame at the sides and no rules between the columns; the page draws both, light; re-opened at 2× on 2026-11-01, the first call misread the sheet"
     },
     {
      "n": 12,
@@ -29681,9 +29681,9 @@
      "features": [
       "table.ruled"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the table's frame is drawn, black, on all four sides — check issue P"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the black box drawn is the Zone's, about 8 px outside the table at the sides and round its title and note: no rule at the table's top or foot; re-opened at 2× on 2026-11-01, the first call misread the sheet"
     },
     {
      "n": 32,
@@ -34264,9 +34264,9 @@
      "features": [
       "table.long"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the rules between Qty, Unit and Extended are drawn on every row — check issue P"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the header draws no rule between Qty and Unit, and rows such as Cylinder head gasket none between Unit and Extended; re-opened at 2× on 2026-11-01, the first call misread the sheet"
     },
     {
      "n": 3,
@@ -34279,9 +34279,9 @@
      "features": [
       "table.long"
      ],
-     "stage": null,
-     "call": "rejected",
-     "why": "the table's frame is drawn on all sides — check issue P"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the right frame is drawn beside the header only; the body rows have none; re-opened at 2× on 2026-11-01, the first call misread the sheet"
     },
     {
      "n": 4,
@@ -39461,9 +39461,9 @@
      "element": "Prezzo del biglietto; 38,00 €",
      "note": "2 of the 2 rules the page draws frame are not drawn",
      "features": [],
-     "stage": null,
-     "call": "rejected",
-     "why": "the price rows are drawn inside ruled lines — check issue P"
+     "stage": "render",
+     "call": "confirmed",
+     "why": "no rule is drawn above 'Prezzo del biglietto'; re-opened at 2× on 2026-11-01, the first call misread the sheet"
     },
     {
      "n": 14,

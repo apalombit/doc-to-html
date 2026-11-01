@@ -473,6 +473,26 @@ MEASURE = r"""
     // question, since `border-collapse` decides whose border shows.
     const cellIds = new Map();
     const tables = [];
+    // Rules drawn by an element of their own: a separator, an `hr` — a box
+    // at most 4px tall that paints a fill, a gradient's dashes or a border.
+    // One lying along a table's top or bottom edge, across its width, frames
+    // it there (spec 0021's review of dev: c0126's top rule, a separator).
+    const drawnRules = [];
+    if (document.querySelector('table')) {
+      for (const element of document.body.querySelectorAll('*')) {
+        const rect = element.getBoundingClientRect();
+        if (rect.height <= 0 || rect.height > 4 || rect.width < 8) continue;
+        const style = getComputedStyle(element);
+        const fill = style.backgroundColor;
+        const dashes = /rgba?\([^)]*\)/.exec(style.backgroundImage || '');
+        let paint = null;
+        if (fill && fill !== 'rgba(0, 0, 0, 0)' && fill !== 'transparent') paint = [rect.height, 'solid', fill];
+        else if (dashes) paint = [rect.height, 'dashed', dashes[0]];
+        else if (px(style.borderTopWidth) > 0) paint = side(style, 'Top');
+        else if (px(style.borderBottomWidth) > 0) paint = side(style, 'Bottom');
+        if (paint) drawnRules.push({rect, paint, ground: groundOf(element.parentElement || element)});
+      }
+    }
     for (const table of document.querySelectorAll('table')) {
       if (skipped.has(table) || !shown(table)) continue;
       const index = tables.length;
@@ -526,6 +546,14 @@ MEASURE = r"""
           if (wrap[k] === null && gap >= -1 && gap <= 6 && width > 0
               && kind !== 'none' && kind !== 'hidden') wrap[k] = [theirs[k], groundOf(up)];
         });
+      }
+      for (const rule of drawnRules) {
+        const across = Math.min(rule.rect.right, own.right) - Math.max(rule.rect.left, own.left);
+        if (across < 0.9 * own.width) continue;
+        if (wrap[0] === null && rule.rect.bottom >= own.top - 6 && rule.rect.top <= own.top + 1)
+          wrap[0] = [rule.paint, rule.ground];
+        if (wrap[2] === null && rule.rect.top <= own.bottom + 6 && rule.rect.bottom >= own.bottom - 1)
+          wrap[2] = [rule.paint, rule.ground];
       }
       tables.push({index, rows: rows.length,
                    cols: Math.max(0, ...grid.map((row) => (row ? row.length : 0))),

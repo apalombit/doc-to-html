@@ -765,6 +765,85 @@ holds `s14-result/`'s 21 documents and `K0-s13` holds `s13-result/`'s.
   same documents, and all 176 check faults match K0's by check, element
   and note.
 
+**The check issues, fixed — 2026-11-01.** Each in the check that raised
+it, and pinned on its page in `tests/test_checks.py`,
+`TestWhatTheReviewOfDevRejected`, with the page's true fault asserted
+beside the false alarm's absence. The dev renders the pins read are
+committed in `tests/frozen/l2-dev/` (seven pages, README there).
+
+| id | the fix | pinned on |
+|---|---|---|
+| T | words inside a figure Zone that carries pixels, lost as text, are one minor, "drawn as a picture" (`checks.pictured_regions`) | c0550: the callouts 1, 2, 4, 5 minor; the list's 1 and 4, read as bullets, still lost |
+| I | interleaved groups judged run by run, in the output's order: the next run must sit where the page puts it, beside or below, its drift within 2 lines once the page's stretch is allowed for (`_side_by_side`). Under another heading only where the render's HTML and its drawing agree, and not where the page's HTML and its print disagree. A section stops at its heading's left edge | c0208 (minor), c0236 (the copies' major kept) |
+| A | a justified line that does not reach its box's right edge is set left; a line drawn within 2 px of where it is printed, at the printed or the drawn alignment's anchor, keeps its alignment (`PLACE_SLACK`) | c0486, c0492, each with its true fault |
+| P | a thin drawn rule (a separator, an `hr`) along a table's top or foot frames it (`projection`, `Table.wrap`); each output table the cells landed in is judged on its own rows, and a rule counts as drawn if any of them draws it | c0126, c0309 |
+| type | a size fault needs the size against the body to move by more than the margin, not only across it; italics are not judged on a script face | cv_0013, letter_0016 |
+| B | spelling judged word for word whatever its tokens; a change of marks alone is a minor, "mark changed" (see N) | probe_datasheet's order codes |
+
+**Measured over every call** (the 31, dev's 69 and the first stretch's
+14), the checks at the session's start (`b1972dc`, the projection then)
+against today's:
+
+| check | confirmed, still raised | confirmed, gone | rejected, still raised |
+|---|---|---|---|
+| words | 1,257 → 1,146 | 111: every one a word drawn in a figure's pixels, now one minor a page | 114 → 8 |
+| order | 93 → 86 | 7 | 84 → 64 |
+| alignment | 169 → 167 | 2 | 36 → 28 |
+| type | 494 → 491 | 3 | 29 → 24 |
+| rules | 76 → 75 | 1 | 3 → 0 |
+| cells, structure, lines, height | unchanged | 0 | unchanged |
+
+- **The confirmed faults gone, each looked at.**
+  - Order, 7. Five pages keep a major interleave carrying the same fault:
+    the recipe, the datasheet, c0347, c0439, and c0565 (its code-box gap).
+    One is lost: **c0464's part-number block**, printed beside the title
+    and drawn under the intro. Neither order check sees a block moved
+    within its own section, and the old one caught it only through the
+    render's HTML order.
+  - Alignment, 2: c0377's run-in heading drawn into its paragraph's first
+    line (the lines check's fault, 2 px from where printed), and c0374's
+    line that nearly fills its frame.
+  - Type, 3: two size changes of 1.4% and 3.4% against the body
+    (cv_0013, c0112), and a signature in a script face (c0355).
+  - Rules, 1: c0439 still reports its frames missing, under other
+    examples.
+- **New faults.** B adds three spelling majors (32 → 35 over the called
+  pages, the datasheet's order codes among them) and a "mark changed"
+  minor on 20 pages, mostly apostrophes drawn straight on the French and
+  Italian pages.
+- **Calls corrected.** Re-opened at 2×, seven of the nine rules faults
+  the review had rejected as check issue P are true: c0049, c0166, c0425,
+  c0434, c0461 (twice), c0522. The render draws no frame or rule there,
+  and the sheet's scale had hidden it. One the review had confirmed, on
+  c0421, is false: the render splits the table in three and draws every
+  row rule. The check had mixed rows from the three. Only c0126's and
+  c0309's were the check's. Corrected in `L2-dev-90.json`.
+- **Tried and dropped.** For A, reading a line's room on its row (up to
+  the nearest ink beside it, a logo or a label) instead of its frame: 7
+  fewer rejected, 10 more confirmed lost. For I, a drift threshold above
+  2 lines: at 3, c0020's confirmed major (B and D drawn as one table, 2.4
+  lines) is lost while c0374's and c0384's minors are fixed. The calls
+  overlap at 2.4–3.8 lines.
+- **Still open**:
+  - I: c0221, c0374, c0384, c0464 major, called minor. c0008: an unread
+    section's repeated words match their copies. c0424 is F.
+  - A: 28 rejected still raised. Most are the printed side read against
+    a frame wider than the line's room: a name after its logo (c0552,
+    c0126), a day's text after its label (c0551), probe_contract's
+    clauses beside their hanging numbers, and D/K's chips.
+  - F, F′: crosswise copies (payslip, c0345, c0424, c0008).
+  - L (the minutes' neighbour named), W (c0185).
+  - type: weight read from CSS where a display face prints bold at 400
+    (c0586, c0545).
+- **Proved on this code, 2026-11-01**: identity over dev's 231 clean
+  (208 s); `replay_run.py` over `s14-result/` 21 of 21 byte-identical,
+  0 asked differently; `rederive.py` 21 of 21 byte-identical, scored 0
+  differing fields; 1676 tests pass (1 skipped); mypy clean.
+- **N, and the marks B exposes, are Alessandro's.** Is a mark drawn as a
+  look-alike one (✕ as an X in a box, a curly apostrophe drawn straight,
+  an en dash drawn as a hyphen) a word changed, a major, or a minor?
+  Until he decides, a change of marks alone is a minor.
+
 ---
 
 ## Where L2 stands, 2026-10-31 15:45 — and the prompt for a fresh chat
@@ -785,7 +864,8 @@ this time (1,180 s, 83 calls, its runaway table stopped at 180 s and
 left unread).
 
 **Check issues still open**, from the review of the 31 (the rest fixed in
-`52b5ca2`):
+`52b5ca2`). *2026-11-01: A, B and the contract's clauses taken up in "The
+check issues, fixed", above, with what stays open.*
 
 | id | check | what the picture shows |
 |---|---|---|

@@ -471,6 +471,44 @@ class TestWhatTheReviewOfDevRejected:
         assert not [f for f in aligned if "Grant Nguyen" in f.element or "Hiro Ramirez" in f.element]
         assert [f for f in aligned if "ST-22-0417" in f.element and "printed right, drawn left" in f.note]
 
+    def test_a_rule_drawn_by_a_separator_along_the_table_frames_it(self) -> None:
+        """c0126's top rule is a separator above the table, not a border;
+        its misread year stays."""
+        result = check_page("c0126", DEV / "c0126.html")
+        assert not [f for f in result.faults if f.check == "rules"]
+        assert [f for f in result.faults if f.fault == "changed" and f.element == "2020 → 2028"]
+
+    def test_rows_drawn_in_a_table_of_their_own_are_judged_there(self) -> None:
+        """c0309's totals are drawn as a table apart; the rule under Repas is
+        the main table's foot. Its steps drawn as bullets stay."""
+        result = check_page("c0309", DEV / "c0309.html")
+        assert not [f for f in result.faults if f.check == "rules" and "Total HT" in f.element]
+        assert [f for f in result.faults if f.fault == "numbers as bullets"]
+
+    def test_a_signature_in_a_script_face_has_no_italics_to_lose(self) -> None:
+        """letter_0016's signature is a script face on both; the letterhead's
+        serif drawn sans stays."""
+        result = check_page("letter_0016", S14 / "letter_0016.html")
+        assert not [f for f in result.faults if f.fault == "italics" and "Tomas Halden" in f.element]
+        assert [f for f in result.faults if f.fault == "wrong face" and "Halden & Pryce" in f.element]
+
+    def test_a_size_across_the_margin_by_less_than_it_is_not_out_of_proportion(self) -> None:
+        """cv_0013's job titles, 1.04 of the body printed and 1.05 drawn; their
+        bold drawn regular stays."""
+        result = check_page("cv_0013", S14 / "cv_0013.html")
+        sizes = [f for f in result.faults if f.fault == "sizes out of proportion"]
+        assert not [f for f in sizes if "Structural Engineer" in f.element]
+        assert [f for f in result.faults if f.fault == "bold lost" and "Senior Structural Engineer" in f.element]
+
+    def test_a_word_of_several_tokens_is_spelled_as_a_whole(self) -> None:
+        """probe_datasheet's order codes, three tokens each (issue B): the
+        case changed is a misspelling; a hyphen drawn as an en dash alone is
+        a mark changed, a minor until look-alike marks are decided."""
+        result = check_page("probe_datasheet", PROBE / "datasheet" / "render.html")
+        spelt = {f.element: f for f in result.faults if f.fault in ("spelling", "mark changed")}
+        assert spelt["AQ7-MB-W → AQ7–MB–w"].severity == "major"
+        assert spelt["AQ7-POE-G → AQ7–POE–G"].severity == "minor"
+
 
 # --- identity -----------------------------------------------------------------
 
