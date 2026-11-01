@@ -108,6 +108,21 @@ Measured on the 31 known pages, both sides, 2026-10-30, for lines placed in
 an ancestor's box: the two margins differ by 0 px on 15 lines, 1 on 9, 2 on
 1, never by 3, then by 4 on 2, 5 on 5, and by 11 px or more."""
 
+PLACE_SLACK = 2.0
+"""Pixels a line may be drawn from where it is printed, past what its
+width change explains, and still keep its alignment to the eye: the
+alignment the frames say is then the render's HTML, not its look. A
+line's frame on the render is often not the page's (a Zone's box starts
+at its ink: c0492's names, centred in their halves on both, read as
+set left).
+
+Measured over the review's calls, 2026-11-01, the lines of every
+alignment change the check made on the 31 and dev's 83, justified
+aside: in rejected groups, 28 lines moved under 1 px and 7 under 2, none
+from 2 to 3, then 2 from 3 to 4; in confirmed groups 44 under 1 px (a
+column's widest number, in place while the rest move), 3 under 2, 3
+from 2 to 3."""
+
 GLUE = 1.0
 """Pixels between two words' ink below which they are one printed word: a
 superscript in its own element (`10<sup>9</sup>`), a bold first syllable
@@ -143,6 +158,27 @@ RUN_TOKENS = 2
 """Tokens a stretch of one group must hold to count when two groups are
 tested for interleaving. A single token out of place is an alignment
 artefact more often than a moved block."""
+
+SECTION_SLACK = 12.0
+"""How far left of its heading a block may start and still be in its
+section, in pixels: a hanging number or a bullet's indent outdented a
+little. A block starting further left is not under that heading's column,
+whatever the HTML's order: c0565's full-width footer, after the right
+column's 'Next steps' in the source, is no part of that section."""
+
+COLUMN_TOUCH = 0.1
+"""Two runs of words are in different columns if they share no more of
+their width than this share of the narrower: c0552's '−19 %', drawn 36 px
+into the left column's 392 (9%) under the right column's chart, is still
+beside it to the eye."""
+
+DRIFT_LINES = 2.0
+"""How far, in the source's lines, a run drawn in the next column may sit
+off where the page puts it from the run before it, and still be drawn as
+printed (`_placed_as_printed`). c0221's and the recipe's columns drift by
+1.2 and 1.8 lines where the render spaces them differently;
+probe_datasheet's key features sit 15 lines off, drawn below the table
+they print beside."""
 
 CHECK_FEATURES: dict[str, tuple[str, ...]] = {
     "words": ("fmt.", "list.ticks"),
@@ -388,7 +424,13 @@ def _first_word(side: _Side, token: str, unmatched: Iterable[int]) -> Rect | Non
     return None
 
 
-def _check_words(source: _Side, output: _Side, alignment: Alignment) -> list[Fault]:
+def _inside(box: Rect, regions: Sequence[Rect]) -> bool:
+    x, y = (box[0] + box[2]) / 2, (box[1] + box[3]) / 2
+    return any(r[0] <= x <= r[2] and r[1] <= y <= r[3] for r in regions)
+
+
+def _check_words(source: _Side, output: _Side, alignment: Alignment,
+                 pictured: Sequence[Rect] = ()) -> list[Fault]:
     faults: list[Fault] = []
     lost = Counter(source.tokens) - Counter(output.tokens)
     invented = Counter(output.tokens) - Counter(source.tokens)
@@ -411,6 +453,22 @@ def _check_words(source: _Side, output: _Side, alignment: Alignment) -> list[Fau
             output_box=_union(output.box(output.owner[j]) for j in range(j1, j2))))
     unmatched_source = [i for i in range(len(source.tokens)) if i not in alignment.pairs]
     unmatched_output = [j for j in range(len(output.tokens)) if j not in matched_output]
+    in_picture = [i for i in unmatched_source
+                  if pictured and _inside(source.box(source.owner[i]), pictured)]
+    drawn_as_picture: Counter[str] = Counter()
+    for token, count in Counter(source.tokens[i] for i in in_picture).items():
+        drawn_as_picture[token] = min(count, max(lost[token], 0))
+        lost[token] -= drawn_as_picture[token]
+    if +drawn_as_picture:
+        pictured_words = sorted(+drawn_as_picture)
+        total = sum(drawn_as_picture.values())
+        faults.append(Fault(
+            "words", "drawn as a picture", "minor",
+            " ".join(pictured_words[:8]) + (" …" if len(pictured_words) > 8 else ""),
+            f"{total} word{'s' if total > 1 else ''} printed as text, drawn in a figure's pixels",
+            source_box=_union(source.box(source.owner[i]) for i in in_picture
+                              if drawn_as_picture[source.tokens[i]] > 0)))
+        unmatched_source = [i for i in unmatched_source if i not in set(in_picture)]
     for token, count in sorted(lost.items()):
         if count > 0:
             faults.append(Fault("words", "lost", "major", token,
@@ -858,8 +916,11 @@ def _groups(source: _Side) -> list[tuple[str, list[int]]]:
         ends = [min(held_by_block[h]) for h in headings[at + 1:] if h in held_by_block
                 and min(held_by_block[h]) > start]
         end = min(ends) if ends else len(source.tokens)
+        left = source.projection.blocks[heading].ink[0] - SECTION_SLACK
         groups.append((f"section {source.projection.blocks[heading].text[:30]!r}",
-                       list(range(start, end))))
+                       [i for i in range(start, end)
+                        if source.projection.blocks[source.words[source.owner[i]].block].ink[0]
+                        >= left]))
     del order
     return groups
 
@@ -894,10 +955,7 @@ def _check_order(source: _Side, output: _Side, alignment: Alignment) -> list[Fau
             theirs = [(alignment.pairs[i], "a") for i in held_a if i in alignment.strong] + \
                      [(alignment.pairs[i], "b") for i in held_b if i in alignment.strong]
             if _interleaves(theirs):
-                beside = _beside(*(_union(source.words[source.owner[i]].rect for i in held)
-                                   for held in (held_a, held_b))) and _beside(*(
-                    _union(output.words[output.owner[j]].rect for j, label in theirs if label == side)
-                    for side in ("a", "b")))
+                beside = _side_by_side(theirs, source, output, alignment)
                 faults.append(Fault(
                     "order", "interleaved", "minor" if beside else "major", f"{name_a} and {name_b}",
                     "their words alternate in the output's HTML, drawn side by side as printed"
@@ -907,20 +965,104 @@ def _check_order(source: _Side, output: _Side, alignment: Alignment) -> list[Fau
     return faults
 
 
-def _beside(first: Rect, second: Rect) -> bool:
-    """Two regions side by side: they share most of the shorter's height and
-    none of their width. Two groups drawn so, as the page prints them, read
-    right to the eye whatever order the HTML holds them in — the right look
-    from the wrong HTML, which the criteria call minor (cv_0013's education,
-    reviewed 2026-10-31)."""
-    overlap = min(first[3], second[3]) - max(first[1], second[1])
-    shorter = min(first[3] - first[1], second[3] - second[1])
-    apart = first[2] <= second[0] + ALIGN_SLACK or second[2] <= first[0] + ALIGN_SLACK
-    return shorter > 0 and overlap > 0.5 * shorter and apart
+def _apart(first: Rect, second: Rect) -> bool:
+    """Two boxes in different columns: they share no more than `COLUMN_TOUCH`
+    of the narrower's width."""
+    shared = min(first[2], second[2]) - max(first[0], second[0])
+    narrower = min(first[2] - first[0], second[2] - second[0])
+    return shared <= max(ALIGN_SLACK, COLUMN_TOUCH * narrower)
+
+
+def _side_by_side(theirs: Sequence[tuple[int, str]], source: _Side, output: _Side,
+                  alignment: Alignment) -> bool:
+    """Two groups whose words alternate in the output's HTML, drawn where
+    the page prints them: at every switch from one group's run to the
+    other's, in the output's order, the second run sits where it is
+    printed from the first — beside, below, in the same column or the next
+    (`_placed_as_printed`). A render that sets columns as rows of bands
+    reads them row by row: the HTML alternates and the eye does not. The right look
+    from the wrong HTML, which the criteria call minor (cv_0013's
+    education, reviewed 2026-10-31).
+
+    Judged run by run, not on each group's whole extent: a section whose
+    own blocks sit in both columns (c0246's header, its number at the
+    right) is still drawn as printed, and one run drawn elsewhere breaks
+    it — probe_datasheet's key features, printed beside the specification
+    table and drawn below it; the recipe's steps, set level with the wrong
+    ingredients. The review of dev, 2026-11-01, rejected 18 majors on 12
+    pages of the first kind."""
+    reverse = {j: i for i, j in alignment.pairs.items()}
+    runs: list[tuple[str, list[int]]] = []
+    for j, label in sorted(theirs):
+        if runs and runs[-1][0] == label:
+            runs[-1][1].append(j)
+        else:
+            runs.append((label, [j]))
+    merged: list[tuple[str, list[int]]] = []
+    for label, held in runs:
+        if len(held) < RUN_TOKENS:
+            continue
+        if merged and merged[-1][0] == label:
+            merged[-1][1].extend(held)
+        else:
+            merged.append((label, list(held)))
+    line = 1.25 * _mode(word.font_px for word in source.words)
+    stretch = output.projection.height / max(source.projection.height, 1)
+    for (_, first), (_, second) in zip(merged, merged[1:]):
+        drawn = [_union(output.box(output.owner[j]) for j in held) for held in (first, second)]
+        printed = [_union(source.box(source.owner[reverse[j]]) for j in held) for held in (first, second)]
+        if not _placed_as_printed(drawn, printed, line, stretch):
+            return False
+    return True
+
+
+def _across(first: Rect, second: Rect) -> str:
+    if not _apart(first, second):
+        return "same"
+    return "right" if second[0] >= first[0] else "left"
+
+
+def _placed_as_printed(drawn: Sequence[Rect], printed: Sequence[Rect], line: float,
+                       stretch: float = 1.0) -> bool:
+    """The second run sits from the first where the page puts it: in the
+    same column, above or below as printed; in the next, its top no more
+    than `DRIFT_LINES` lines off where the page sets it, the page's
+    distances stretched as the render stretches the whole. Columns drift
+    against each other where the render spaces their lines differently —
+    c0221's sections, 17 px apart after six items — and a run moved past
+    what it prints beside is not drift: probe_datasheet's key features,
+    printed 61 px below the specification table's top and drawn 268 px."""
+    if _across(*drawn) != _across(*printed):
+        return False
+    if _across(*drawn) == "same":
+        return (drawn[1][1] >= drawn[0][1]) == (printed[1][1] >= printed[0][1])
+    shift_drawn = drawn[1][1] - drawn[0][1]
+    shift_printed = (printed[1][1] - printed[0][1]) * stretch
+    return abs(shift_drawn - shift_printed) <= DRIFT_LINES * line
+
+
+def _heading_over(blocks: Sequence[Any], ink: Rect, candidates: Iterable[int]) -> int | None:
+    """The heading a box is drawn under: of the headings above it whose
+    width it shares, the lowest. `ink` is all of a block's words where they
+    are drawn: a pair drawn as a label and a value is one block in the
+    source and two in the render."""
+    above = [h for h in candidates
+             if blocks[h].ink[3] <= ink[1] + ALIGN_SLACK and not _apart(blocks[h].ink, ink)]
+    return max(above, key=lambda h: blocks[h].ink[3]) if above else None
 
 
 def _check_headings_over(source: _Side, output: _Side, alignment: Alignment) -> list[Fault]:
     """A block under another heading in the output than in the source.
+
+    Under another heading both in the output's HTML and where it is drawn
+    (`_heading_over`): a render that sets columns as rows of bands holds a
+    right column's block after the left column's heading in its HTML, and
+    draws it under its own (c0565's table, c0208's header, reviewed
+    2026-11-01). Either reading alone misleads: the HTML's order there, a
+    heading set narrower than its column or out of it in the drawing. On
+    the source too: where the page's HTML and its print disagree on a
+    block's heading (c0063's footer, after section 6 in the HTML, printed
+    under section 5), the block is not judged.
 
     Judged only where the block's own heading is drawn as a heading: where
     it is not, every block under it would fire, and `heading not kept`
@@ -949,6 +1091,10 @@ def _check_headings_over(source: _Side, output: _Side, alignment: Alignment) -> 
         mine = max(above, key=lambda h: starts[h])
         if mine not in kept:
             continue
+        printed_under = _heading_over(source.projection.blocks, source.projection.blocks[block].ink,
+                                      (h for h in headings if h != block))
+        if printed_under is not None and printed_under != mine:
+            continue
         landed = _landed_block(output, alignment, indexes)
         if landed is None or landed not in out_starts:
             continue
@@ -956,11 +1102,18 @@ def _check_headings_over(source: _Side, output: _Side, alignment: Alignment) -> 
         if not over:
             continue
         theirs = heading_of_out.get(max(over, key=lambda h: out_starts[h]))
-        if theirs is not None and theirs != mine and theirs in headings:
-            found.append((f"printed under {source.projection.blocks[mine].text[:30]!r}, "
-                          f"drawn under {source.projection.blocks[theirs].text[:30]!r}",
-                          source.projection.blocks[block].text[:40],
-                          source.projection.blocks[block].ink))
+        if theirs is None or theirs == mine or theirs not in headings:
+            continue
+        drawn = [output.owner[alignment.pairs[i]] for i in indexes if i in alignment.pairs]
+        placed = {output.words[owner].block for owner in drawn}
+        seen = _heading_over(output.projection.blocks, _union(output.box(owner) for owner in drawn),
+                             (h for h in out_headings if h in heading_of_out and h not in placed))
+        if seen is None or heading_of_out[seen] == mine:
+            continue
+        found.append((f"printed under {source.projection.blocks[mine].text[:30]!r}, "
+                      f"drawn under {source.projection.blocks[theirs].text[:30]!r}",
+                      source.projection.blocks[block].text[:40],
+                      source.projection.blocks[block].ink))
     return _grouped("order", "under another heading", "major", found)
 
 
@@ -1057,8 +1210,13 @@ def alignment_of(line: Rect, frames: Frames | None, *, last: bool = False) -> st
     if TEXT_ALIGN.get(frames.align) == "justified":
         # Before the box test: a justified line fills its block's box, so the
         # test would pass over it to an ancestor and read it by its ink, as
-        # set right (probe_minutes' items 2 and 3).
-        return "left" if last else "justified"
+        # set right (probe_minutes' items 2 and 3). One that does not fill it
+        # is set left, as the last line is: a short line in a justified
+        # block, a name ended by a break (c0486's 'Margaret Ellison', c0220's
+        # address, reviewed 2026-11-01). Its right edge says: a first line
+        # may be indented (paper_0018's abstract).
+        fills = frames.chain[0][2] - line[2] <= ALIGN_SLACK
+        return "justified" if fills and not last else "left"
     width = line[2] - line[0]
     for at, box in enumerate(frames.chain):
         if box[2] - box[0] >= width + FRAME_SLACK:
@@ -1071,6 +1229,22 @@ def alignment_of(line: Rect, frames: Frames | None, *, last: bool = False) -> st
                 return "centre"
             return "left" if left < right else "right"
     return None
+
+
+def _anchor(line: Rect, aligned: str) -> float:
+    if aligned == "left":
+        return line[0]
+    if aligned == "right":
+        return line[2]
+    return (line[0] + line[2]) / 2
+
+
+def _moved(printed: Rect, drawn: Rect, was: str, now: str) -> float:
+    """How far a line is drawn from where it is printed, at the point its
+    alignment holds still: the printed alignment's or the drawn one's. A
+    line set in other type keeps that point and moves the rest; a line
+    drawn in part (c0551's chips, one of three) keeps neither."""
+    return min(abs(_anchor(drawn, aligned) - _anchor(printed, aligned)) for aligned in (was, now))
 
 
 def _justified(frames: Frames | None) -> bool:
@@ -1107,6 +1281,9 @@ def _check_alignment(source: _Side, output: _Side, alignment: Alignment) -> list
         now_last = last_theirs.get(out_line[0]) == out_line[1]
         now = alignment_of(output.line_box(out_line), theirs.get(out_line[0]), last=now_last)
         if was in (None, "full") or now in (None, "full") or was == now:
+            continue
+        if "justified" not in (was, now) and \
+                _moved(source.line_box(line), output.line_box(out_line), was, now) <= PLACE_SLACK:
             continue
         kept = there >= len(held) - 1 and on_line[out_line] <= there + 1
         if {was, now} == {"left", "justified"} and (
@@ -1241,12 +1418,15 @@ def _tag(faults: Iterable[Fault], features: Sequence[str]) -> list[Fault]:
 
 def check(source: Projection, output: Projection, *, picture_height: int,
           page: str = "", features: Sequence[str] = (),
-          spellings: dict[str, str] | None = None) -> PageCheck:
-    """Every check, source against output. Both read with `detail=True`."""
+          spellings: dict[str, str] | None = None,
+          pictured: Sequence[Rect] = ()) -> PageCheck:
+    """Every check, source against output. Both read with `detail=True`.
+    `pictured`: the regions of the page the output draws as pixels
+    (`pictured_regions`), in the source's coordinates."""
     mine = _side(source, spellings)
     theirs = _side(output)
     alignment = align(mine.tokens, theirs.tokens)
-    faults = _check_words(mine, theirs, alignment)
+    faults = _check_words(mine, theirs, alignment, pictured)
     for table in mine.detail.tables:
         if table.rows >= 2 and table.cols >= 2:
             faults += _check_table(table, mine, theirs, alignment)
@@ -1310,7 +1490,8 @@ def check_page(page: str, output_html: Path | str, *, root: Path | None = None) 
     output = output_html if isinstance(output_html, str) else output_html.read_text(encoding="utf-8")
     theirs = project(output, width=width, detail=True, label=f"{page}/output")
     found = check(mine, theirs, picture_height=height, page=page,
-                  features=page_features(page), spellings=spellings_for(page))
+                  features=page_features(page), spellings=spellings_for(page),
+                  pictured=pictured_regions(output, width, height))
     registered = registration(source.png_path(root), mine)
     if registered < REGISTERED:
         return replace(found, registered=registered,
@@ -1319,6 +1500,34 @@ def check_page(page: str, output_html: Path | str, *, root: Path | None = None) 
                            f"{', '.join(LAYOUT_CHECKS)} withheld: the HTML does not lay out "
                            f"as its picture (registration {registered:.2f})",))
     return replace(found, registered=registered)
+
+
+_IR = re.compile(r'<script type="application/json" id="doc-ir">(.*?)</script>', re.S)
+
+
+def pictured_regions(output_html: str, width: int, height: int) -> tuple[Rect, ...]:
+    """The regions of the page an output draws as pixels: each figure Zone
+    the render drew from the picture, from the IR it embeds, in the
+    picture's coordinates, which are the source's where it registers.
+
+    A word printed inside one is not lost to the eye: a chart's axis, a
+    logo's wordmark, a map's labels are drawn, in the figure's pixels. The
+    review of dev (2026-11-01) rejected 115 such words called lost on 13
+    pages; they are reported as `drawn as a picture`, a figure's minor."""
+    found = _IR.search(output_html)
+    if found is None:
+        return ()
+    try:
+        zones = json.loads(found.group(1)).get("zones") or ()
+    except ValueError:
+        return ()
+    regions = []
+    for zone in zones:
+        box = zone.get("bbox") or {}
+        if zone.get("kind") == "figure" and zone.get("pixels") and box:
+            regions.append((box["left"] * width, box["top"] * height,
+                            box["right"] * width, box["bottom"] * height))
+    return tuple(regions)
 
 
 def registration(picture: Path, source: Projection) -> float:

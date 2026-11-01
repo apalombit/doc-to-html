@@ -418,6 +418,60 @@ class TestWhatTheReviewOfTheThirtyOneRejected:
         assert "'Ferry Wharf" in inverted.note
 
 
+# --- what the review of dev rejected, 2026-11-01 ------------------------------------
+
+
+DEV = REPO / "tests" / "frozen" / "l2-dev"
+
+
+@needs_chrome
+class TestWhatTheReviewOfDevRejected:
+    """False alarms found by opening dev's sheets (spec 0021, the review of
+    L2-dev-90), each pinned on its page, with the true fault beside it kept."""
+
+    def test_words_drawn_in_a_figures_pixels_are_a_figures_minor(self) -> None:
+        """c0550's callouts are drawn in the exploded drawing's pixels; the
+        nomenclature's 1 and 4, read as bullets, are lost."""
+        result = check_page("c0550", DEV / "c0550.html")
+        (pictured,) = [f for f in result.faults if f.fault == "drawn as a picture"]
+        assert pictured.severity == "minor" and pictured.element.split() == ["1", "2", "4", "5", "cinder"]
+        lost = {f.element for f in result.faults if f.fault == "lost"}
+        assert {"1", "4"} <= lost and not {"2", "5", "cinder"} & lost, "the true faults stay"
+
+    def test_columns_drawn_side_by_side_as_printed_are_minor_and_under_their_own_heading(self) -> None:
+        """c0208's header and patient box: the render's HTML reads its bands
+        row by row, the eye reads the columns as printed."""
+        result = check_page("c0208", DEV / "c0208.html")
+        order = [f for f in result.faults if f.check == "order"]
+        assert order and all(f.fault == "interleaved" and f.severity == "minor" for f in order)
+
+    def test_copies_drawn_in_another_column_stay_under_another_heading(self) -> None:
+        """c0236: the medication list's copies drawn in the Plan column are
+        the true fault; the vitals drawn in their own column are not."""
+        result = check_page("c0236", DEV / "c0236.html")
+        under = [f for f in result.faults if f.fault == "under another heading"]
+        assert [f for f in under if "Metformin" in f.element and f.severity == "major"]
+        assert not [f for f in under if "Wt 214" in f.element or "SpO2" in f.element]
+
+    def test_a_short_line_in_a_justified_block_is_set_left(self) -> None:
+        """c0486's name, ended by a break in a justified block, is drawn
+        left as printed; the job title drawn right is the true fault."""
+        result = check_page("c0486", DEV / "c0486.html")
+        aligned = [f for f in result.faults if f.check == "alignment"]
+        assert not [f for f in aligned if "Margaret Ellison" in f.element]
+        assert [f for f in aligned if "Senior Landscape Architect" in f.element
+                and "printed left, drawn right" in f.note]
+
+    def test_a_line_drawn_where_it_is_printed_keeps_its_alignment(self) -> None:
+        """c0492's names sit centred in their halves on both; the render's box
+        starts at the ink and reads them as set left. The value set left of
+        where the page sets it flush right is the true fault."""
+        result = check_page("c0492", DEV / "c0492.html")
+        aligned = [f for f in result.faults if f.check == "alignment"]
+        assert not [f for f in aligned if "Grant Nguyen" in f.element or "Hiro Ramirez" in f.element]
+        assert [f for f in aligned if "ST-22-0417" in f.element and "printed right, drawn left" in f.note]
+
+
 # --- identity -----------------------------------------------------------------
 
 
