@@ -778,7 +778,8 @@ committed in `tests/frozen/l2-dev/` (seven pages, README there).
 | A | a justified line that does not reach its box's right edge is set left; a line drawn within 2 px of where it is printed, at the printed or the drawn alignment's anchor, keeps its alignment (`PLACE_SLACK`) | c0486, c0492, each with its true fault |
 | P | a thin drawn rule (a separator, an `hr`) along a table's top or foot frames it (`projection`, `Table.wrap`); each output table the cells landed in is judged on its own rows, and a rule counts as drawn if any of them draws it | c0126, c0309 |
 | type | a size fault needs the size against the body to move by more than the margin, not only across it; italics are not judged on a script face | cv_0013, letter_0016 |
-| B | spelling judged word for word whatever its tokens; a change of marks alone is a minor, "mark changed" (see N) | probe_datasheet's order codes |
+| B | spelling judged word for word whatever its tokens; a change of marks alone is a minor, "mark changed" (N) | probe_datasheet's order codes |
+| N | a cross mark drawn as the letter X is one "mark changed" minor, not a mark lost and a word invented (Alessandro's call) | pricing_0017, catalogue_0015 |
 
 **Measured over every call** (the 31, dev's 69 and the first stretch's
 14), the checks at the session's start (`b1972dc`, the projection then)
@@ -839,10 +840,17 @@ against today's:
   (208 s); `replay_run.py` over `s14-result/` 21 of 21 byte-identical,
   0 asked differently; `rederive.py` 21 of 21 byte-identical, scored 0
   differing fields; 1676 tests pass (1 skipped); mypy clean.
-- **N, and the marks B exposes, are Alessandro's.** Is a mark drawn as a
-  look-alike one (✕ as an X in a box, a curly apostrophe drawn straight,
-  an en dash drawn as a hyphen) a word changed, a major, or a minor?
-  Until he decides, a change of marks alone is a minor.
+- **N, decided by Alessandro on 2026-11-01: a look-alike mark is a
+  minor.** A cross drawn as the letter X in a box, a curly apostrophe
+  drawn straight, an en dash drawn as a hyphen: the same letters and the
+  same meaning. Recorded in `review-criteria.md`'s severity table. The
+  words check pairs a cross mark with an `x` the output draws where the
+  page has nothing else between the same two neighbours, and reports
+  them as one "mark changed" minor (`_crosses_as_x`). On form_0007 two
+  rejected majors become one minor, and on pricing_0017 one. c0066's
+  empty boxes drawn as X stay major, and so does catalogue's × read as an x.
+  Pinned on pricing_0017 and catalogue_0015. The marks B exposes
+  (apostrophes, dashes) are the same minor.
 
 ---
 

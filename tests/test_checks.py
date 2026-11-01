@@ -503,11 +503,24 @@ class TestWhatTheReviewOfDevRejected:
     def test_a_word_of_several_tokens_is_spelled_as_a_whole(self) -> None:
         """probe_datasheet's order codes, three tokens each (issue B): the
         case changed is a misspelling; a hyphen drawn as an en dash alone is
-        a mark changed, a minor until look-alike marks are decided."""
+        a mark changed, a minor (issue N)."""
         result = check_page("probe_datasheet", PROBE / "datasheet" / "render.html")
         spelt = {f.element: f for f in result.faults if f.fault in ("spelling", "mark changed")}
         assert spelt["AQ7-MB-W → AQ7–MB–w"].severity == "major"
         assert spelt["AQ7-POE-G → AQ7–POE–G"].severity == "minor"
+
+    def test_a_cross_drawn_as_the_letter_x_is_a_mark_changed(self) -> None:
+        """Issue N, Alessandro 2026-11-01: a look-alike mark is a minor.
+        pricing_0017's one ✕ drawn as an X is that; its other two crosses
+        and nine ticks, not drawn, stay lost. catalogue_0015's × read as an
+        x is a word changed, not a mark."""
+        result = check_page("pricing_0017", S14 / "pricing_0017.html")
+        words = {(f.fault, f.element): f for f in result.faults if f.check == "words"}
+        assert words[("mark changed", "✕ → X")].severity == "minor"
+        assert ("invented", "x") not in words
+        assert words[("mark lost", "✕")].note.startswith("2 ") and words[("mark lost", "✓")].note.startswith("9 ")
+        result = check_page("catalogue_0015", S14 / "catalogue_0015.html")
+        assert [f for f in result.faults if f.fault == "invented" and f.element == "x" and f.severity == "major"]
 
 
 # --- identity -----------------------------------------------------------------

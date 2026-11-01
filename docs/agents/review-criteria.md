@@ -24,7 +24,7 @@ in L2, after the corpus is built (his order).
 
 | | major | minor |
 |---|---|---|
-| **words and numbers** | a word or number lost, invented, changed or merged (`NP-229 I` for `NP-2291`, `METH`, `gsalt`) | — |
+| **words and numbers** | a word or number lost, invented, changed or merged (`NP-229 I` for `NP-2291`, `METH`, `gsalt`) | a mark drawn as a look-alike, the letters and the meaning unchanged: ✕ as the letter X, ’ as ', – as - |
 | **structure** | a cell in the wrong row or column; a label printed over its value flattened onto one line; numbered steps drawn as bullets; content under the wrong heading, or two blocks interleaved | the right look built from the wrong HTML structure |
 | **layout** | any line breaking at a different word; page height off by more than 10%; alignment changed (right-aligned numbers drawn left, a centred title drawn flush left) | page height off by up to 10% |
 | **type** | the wrong font class (serif, sans, mono, script); sizes out of proportion; bold printed regular | italics; letterspacing; small caps |
@@ -36,6 +36,12 @@ After words, numbers and the overall layout, **structure comes first**.
 Three of these calls were Claude's inference, confirmed by Alessandro the
 same day: a cell in the wrong row or column, merged or split words, and a
 page drawn on the wrong ground are all major.
+
+**A look-alike mark is minor — Alessandro, 2026-11-01** (spec 0021's
+issue N). A cross drawn as the letter X in a box, a curly apostrophe drawn
+straight, an en dash drawn as a hyphen: the same letters, the same
+meaning. A mark whose meaning changes stays major: an empty box drawn
+crossed, a tick lost.
 
 ## Deciding
 

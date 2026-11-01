@@ -425,6 +425,42 @@ def _first_word(side: _Side, token: str, unmatched: Iterable[int]) -> Rect | Non
     return None
 
 
+CROSSES = frozenset("✕✖✗✘☒")
+"""Cross marks, which a render may draw as the letter X (in a drawn box):
+the look of the page with another character under it, a minor (issue N,
+Alessandro, 2026-11-01). An empty box drawn as an X says it is crossed,
+which the page does not: still a mark lost and a word invented."""
+
+
+def _crosses_as_x(source: _Side, output: _Side, alignment: Alignment,
+                  unmatched_output: Sequence[int]) -> list[tuple[int, int]]:
+    """Each output token `x` drawn by no source word, paired with a source
+    word carrying a cross mark where the source has nothing else between
+    the same two matched neighbours: (source word, output token)."""
+    crosses = [w for w, word in enumerate(source.words) if any(ch in CROSSES for ch in word.text)]
+    if not crosses:
+        return []
+    reverse = {j: i for i, j in alignment.pairs.items()}
+    used: set[int] = set()
+    found = []
+    for j in unmatched_output:
+        if output.tokens[j] != "x":
+            continue
+        before = next((reverse[k] for k in range(j - 1, -1, -1) if k in reverse), None)
+        after = next((reverse[k] for k in range(j + 1, len(output.tokens)) if k in reverse), None)
+        if before is not None and after is not None and after != before + 1:
+            # Source words between the neighbours: the x may be a misreading
+            # of them (c0587's re-reads), not the cross.
+            continue
+        low = source.owner[before] if before is not None else -1
+        high = source.owner[after] if after is not None else len(source.words)
+        near = [w for w in crosses if low <= w <= high and w not in used]
+        if near:
+            used.add(near[0])
+            found.append((near[0], j))
+    return found
+
+
 def _inside(box: Rect, regions: Sequence[Rect]) -> bool:
     x, y = (box[0] + box[2]) / 2, (box[1] + box[3]) / 2
     return any(r[0] <= x <= r[2] and r[1] <= y <= r[3] for r in regions)
@@ -454,6 +490,14 @@ def _check_words(source: _Side, output: _Side, alignment: Alignment,
             output_box=_union(output.box(output.owner[j]) for j in range(j1, j2))))
     unmatched_source = [i for i in range(len(source.tokens)) if i not in alignment.pairs]
     unmatched_output = [j for j in range(len(output.tokens)) if j not in matched_output]
+    crossed = _crosses_as_x(source, output, alignment, unmatched_output)
+    if crossed:
+        invented["x"] -= len(crossed)
+        unmatched_output = [j for j in unmatched_output if j not in {j for _, j in crossed}]
+        faults.append(Fault(
+            "words", "mark changed", "minor", "✕ → X",
+            f"{len(crossed)} cross mark{'s' if len(crossed) > 1 else ''} drawn as the letter X",
+            source_box=source.box(crossed[0][0]), output_box=output.box(output.owner[crossed[0][1]])))
     in_picture = [i for i in unmatched_source
                   if pictured and _inside(source.box(source.owner[i]), pictured)]
     drawn_as_picture: Counter[str] = Counter()
@@ -482,7 +526,8 @@ def _check_words(source: _Side, output: _Side, alignment: Alignment,
                                 f"drawn {count} more time{'s' if count > 1 else ''} "
                                 "than printed",
                                 output_box=_first_word(output, token, unmatched_output)))
-    for mark, count in sorted((_marks(source.words) - _marks(output.words)).items()):
+    drawn_as_x = Counter(next(ch for ch in source.words[w].text if ch in CROSSES) for w, _ in crossed)
+    for mark, count in sorted((_marks(source.words) - _marks(output.words) - drawn_as_x).items()):
         faults.append(Fault("words", "mark lost", "major", mark,
                             f"{count} printed and not drawn"))
     for mark, count in sorted((_marks(output.words) - _marks(source.words)).items()):
@@ -559,8 +604,8 @@ def _check_spelling(source: _Side, output: _Side, alignment: Alignment) -> list[
         if _LETTERS.sub("", printed[0]) == _LETTERS.sub("", printed[1]):
             # The same letters with another mark between them: a curly
             # apostrophe drawn straight, an en dash drawn as a hyphen
-            # (`l’11` as `l'11`, dev's French and Italian pages). A minor
-            # until Alessandro decides look-alike marks (issue N).
+            # (`l’11` as `l'11`, dev's French and Italian pages). A minor:
+            # a look-alike mark (issue N, Alessandro, 2026-11-01).
             faults.append(Fault("words", "mark changed", "minor",
                                 f"{printed[0]} → {printed[1]}",
                                 source_box=source.box(first), output_box=output.box(second)))
