@@ -732,6 +732,40 @@ receipt, statement and ticket.
   class has to come from the checks' own counts over every page, with
   each check's false alarms (the table above) taken out first.
 
+**Step 7's second leftover: the pairwise exercise.** `debug/runs/K0-pair`
+holds `s14-result/`'s 21 documents and `K0-s13` holds `s13-result/`'s.
+`measure_run.py K0-pair --previous K0-s13` took 3 min 13 s, Chrome only.
+- **The sampling of moved pages**: 17 of the 21 renders moved, by 0.07%
+  to 10.2% of pixels, and every one was opened. The 4 that did not move
+  (menu, receipt, semantic, sample_table) were opened by seed for their
+  families. Fresh screenshots of those 4 are pixel-identical between the
+  two runs.
+- **The highlight points at what moved** where little moved: two colons
+  on invoice_0001, one word on form_0007, one name on statement. Where a
+  weight changes everywhere (certificate 5.66%, newsletter 8.31%, paper
+  9.23%), most of the page turns red and the highlight only says where to
+  look. A three-way strip at full scale (source, previous, this) then
+  names the element.
+- **Better / same / worse: 17 better, 4 same, none worse**, each naming
+  its element, in `docs/agents/review-calls/K0-pair.json`. The gains:
+  - weights as printed, on 10 pages;
+  - colons and separators kept (invoice_0001, invoice_0002, nonlatin);
+  - words read as printed ('fernpost', 'Quillon');
+  - raised marks;
+  - newsletter's drop cap;
+  - certificate's seal;
+  - ticket's OSL;
+  - sample_css's chip;
+  - timetable's grid, every lesson in its column.
+
+  S14's own review on 2026-10-23 called 14 better and 7 the same. The
+  three it called the same are form (one word), letter and pricing (one
+  weight each). Readings from two sessions are not comparable, so this is
+  recorded only.
+- **The 21's fault calls carried over from `K0-known31`**: they are the
+  same documents, and all 176 check faults match K0's by check, element
+  and note.
+
 ---
 
 ## Where L2 stands, 2026-10-31 15:45 — and the prompt for a fresh chat
