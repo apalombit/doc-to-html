@@ -1,0 +1,4790 @@
+{
+ "run": "L2-dev-mixed",
+ "previous": null,
+ "model": "qwen3-vl:4b",
+ "stamp": "L2-dev-mixed · 2026-11-01",
+ "taken": "2026-11-01",
+ "rubric_version": 2,
+ "areas": [
+  "words",
+  "structure",
+  "layout",
+  "type",
+  "looks",
+  "figures"
+ ],
+ "stages": [
+  "rectify",
+  "layout",
+  "caption",
+  "classify",
+  "extract",
+  "inline runs",
+  "re-read",
+  "third reading",
+  "wire",
+  "locate",
+  "render"
+ ],
+ "pages": [
+  {
+   "name": "c0004",
+   "family": "forms",
+   "kind": "registration form",
+   "opened": false,
+   "why": [
+    "not checked: timeout: not converted within 20 minutes; stopped"
+   ],
+   "faults": [],
+   "changed": null,
+   "changed_note": "",
+   "worst": null
+  },
+  {
+   "name": "c0008",
+   "family": "forms",
+   "kind": "numbered-box tax form",
+   "opened": false,
+   "why": [
+    "not checked: timeout: not converted within 20 minutes; stopped"
+   ],
+   "faults": [],
+   "changed": null,
+   "changed_note": "",
+   "worst": null
+  },
+  {
+   "name": "c0014",
+   "family": "fragments",
+   "kind": "chart with caption",
+   "opened": true,
+   "why": [
+    "drawn for fragments, seed 0"
+   ],
+   "faults": [
+    {
+     "n": 1,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "0",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 2,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "1",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 3,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "15",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 4,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "2023",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 5,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "22",
+     "note": "printed 2 more times than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 6,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "2k",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 7,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "4",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 8,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "4k",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 9,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "6k",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 10,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "8",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 11,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "8k",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 12,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "and",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 13,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "e",
+     "note": "printed 4 more times than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 14,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "jan",
+     "note": "printed 4 more times than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 15,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "january",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 16,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "newry",
+     "note": "printed 2 more times than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 17,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "sites",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 18,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "stockport",
+     "note": "printed 2 more times than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 19,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "thousands",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 20,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "to",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 21,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "w",
+     "note": "printed 4 more times than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 22,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "weeks",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.dates"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's axis, legend, subtitle and title, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 23,
+     "from": "check",
+     "check": "lines",
+     "fault": "broken differently",
+     "severity": "major",
+     "element": "Fig. 1. Stockport rose every week after ",
+     "note": "1 breaks added and 1 of 1 lost, in 1 block",
+     "features": [],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 24,
+     "from": "check",
+     "check": "height",
+     "fault": "height",
+     "severity": "major",
+     "element": "1.13 of the picture's height",
+     "note": "447 px drawn against 394",
+     "features": [
+      "arr.one_column"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 25,
+     "from": "check",
+     "check": "type",
+     "fault": "wrong face",
+     "severity": "major",
+     "element": "Weekly visitors, Spruce Linnet Garden Ce; Fig. 1. Stockport rose every week after ; Source: door counters, 22/01/2023. Check",
+     "note": "mono printed, sans drawn (3 blocks)",
+     "features": [
+      "type.mono"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 26,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Source: door counters, 22/01/2023. Check",
+     "note": "printed at the body's size, drawn smaller than the body (1 block)",
+     "features": [
+      "type.mono"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 27,
+     "from": "review",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "Weekly visitors, Spruce Linnet Garden Centre",
+     "note": "the title drawn twice: as grey sans text above a picture that already holds it",
+     "features": [
+      "fig.chart"
+     ],
+     "stage": "render",
+     "call": null,
+     "why": ""
+    },
+    {
+     "n": 28,
+     "from": "review",
+     "check": "looks",
+     "fault": "frame changed",
+     "severity": "minor",
+     "element": "the page's frame",
+     "note": "a thin grey frame round the chart and its caption printed, not drawn",
+     "features": [],
+     "stage": "render",
+     "call": null,
+     "why": ""
+    }
+   ],
+   "changed": null,
+   "changed_note": "",
+   "worst": 25
+  },
+  {
+   "name": "c0072",
+   "family": "forms",
+   "kind": "numbered-box tax form",
+   "opened": false,
+   "why": [
+    "not checked: timeout: not converted within 20 minutes; stopped"
+   ],
+   "faults": [],
+   "changed": null,
+   "changed_note": "",
+   "worst": null
+  },
+  {
+   "name": "c0112",
+   "family": "transactional",
+   "kind": "bank statement",
+   "opened": true,
+   "why": [
+    "a major to confirm: cells: wrong column, rules: frame missing"
+   ],
+   "faults": [
+    {
+     "n": 1,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "ance",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "re-read",
+     "call": "confirmed",
+     "why": "a fragment 'ANCE' re-read from the balances row and drawn above it"
+    },
+    {
+     "n": 2,
+     "from": "check",
+     "check": "cells",
+     "fault": "wrong column",
+     "severity": "major",
+     "element": "Opening balance£2,418.60",
+     "note": "drawn under 'Statement period01/09/2026 – 30/09/2026', printed under 'Account holderMr David J. Pennington'",
+     "features": [
+      "table.long",
+      "table.subrows"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the account grid of four fields per row read as label | value rows, its balances row left out and drawn as one line; the transactions' Ref sub-rows read as empty rows and drawn after the table"
+    },
+    {
+     "n": 3,
+     "from": "check",
+     "check": "cells",
+     "fault": "wrong column",
+     "severity": "major",
+     "element": "Total paid in£3,862.15",
+     "note": "drawn under 'Statement period01/09/2026 – 30/09/2026', printed under 'Account number40-22-18 7731 0456'",
+     "features": [
+      "table.long",
+      "table.subrows"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the account grid of four fields per row read as label | value rows, its balances row left out and drawn as one line; the transactions' Ref sub-rows read as empty rows and drawn after the table"
+    },
+    {
+     "n": 4,
+     "from": "check",
+     "check": "cells",
+     "fault": "wrong column",
+     "severity": "major",
+     "element": "Total paid out£3,401.82",
+     "note": "drawn under 'Account holderMr David J. Pennington', printed under 'Statement period01/09/2026 – 30/09/2026'",
+     "features": [
+      "table.long",
+      "table.subrows"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the account grid of four fields per row read as label | value rows, its balances row left out and drawn as one line; the transactions' Ref sub-rows read as empty rows and drawn after the table"
+    },
+    {
+     "n": 5,
+     "from": "check",
+     "check": "cells",
+     "fault": "wrong column",
+     "severity": "major",
+     "element": "Closing balance£2,878.93",
+     "note": "drawn under 'Account holderMr David J. Pennington', printed under 'Statement no.09/2026'",
+     "features": [
+      "table.long",
+      "table.subrows"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the account grid of four fields per row read as label | value rows, its balances row left out and drawn as one line; the transactions' Ref sub-rows read as empty rows and drawn after the table"
+    },
+    {
+     "n": 6,
+     "from": "check",
+     "check": "cells",
+     "fault": "wrong column",
+     "severity": "major",
+     "element": "Ref 8841-2201, contactless",
+     "note": "drawn under 'Date', printed under 'Description'",
+     "features": [
+      "table.long",
+      "table.subrows"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the account grid of four fields per row read as label | value rows, its balances row left out and drawn as one line; the transactions' Ref sub-rows read as empty rows and drawn after the table"
+    },
+    {
+     "n": 7,
+     "from": "check",
+     "check": "cells",
+     "fault": "wrong column",
+     "severity": "major",
+     "element": "Ref 1190-7743, online",
+     "note": "drawn under 'Date', printed under 'Description'",
+     "features": [
+      "table.long",
+      "table.subrows"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the account grid of four fields per row read as label | value rows, its balances row left out and drawn as one line; the transactions' Ref sub-rows read as empty rows and drawn after the table"
+    },
+    {
+     "n": 8,
+     "from": "check",
+     "check": "cells",
+     "fault": "wrong column",
+     "severity": "major",
+     "element": "Ref 5512-0098, chip and PIN",
+     "note": "drawn under 'Date', printed under 'Description'",
+     "features": [
+      "table.long",
+      "table.subrows"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the account grid of four fields per row read as label | value rows, its balances row left out and drawn as one line; the transactions' Ref sub-rows read as empty rows and drawn after the table"
+    },
+    {
+     "n": 9,
+     "from": "check",
+     "check": "cells",
+     "fault": "wrong column",
+     "severity": "major",
+     "element": "Ref 7730-1156, 3 items",
+     "note": "drawn under 'Date', printed under 'Description'",
+     "features": [
+      "table.long",
+      "table.subrows"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the account grid of four fields per row read as label | value rows, its balances row left out and drawn as one line; the transactions' Ref sub-rows read as empty rows and drawn after the table"
+    },
+    {
+     "n": 10,
+     "from": "check",
+     "check": "rules",
+     "fault": "frame missing",
+     "severity": "major",
+     "element": "Date; Balance; 01/09/2026",
+     "note": "64 of the 70 rules the page draws frame are not drawn",
+     "features": [
+      "table.long",
+      "table.subrows"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the rules between the transaction rows not drawn"
+    },
+    {
+     "n": 11,
+     "from": "check",
+     "check": "lines",
+     "fault": "rows joined",
+     "severity": "major",
+     "element": "Opening balance; £2,418.60; Total paid in; and 4 more",
+     "note": "drawn on one line with the row printed below it (7 blocks)",
+     "features": [
+      "kv.over"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 12,
+     "from": "check",
+     "check": "height",
+     "fault": "height",
+     "severity": "major",
+     "element": "1.17 of the picture's height",
+     "note": "1105 px drawn against 945",
+     "features": [
+      "arr.one_column"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 13,
+     "from": "check",
+     "check": "alignment",
+     "fault": "alignment",
+     "severity": "major",
+     "element": "Current Account Statement",
+     "note": "printed right, drawn left (1 block)",
+     "features": [
+      "arr.one_column",
+      "kv.over"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "drawn dark on the navy band, short of its right edge"
+    },
+    {
+     "n": 14,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Mr David J. Pennington; 40-22-18 7731 0456; 01/09/2026 – 30/09/2026; and 6 more",
+     "note": "printed larger than the body, drawn at the body's size (9 blocks)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 15,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Statement period; Statement no.; Opening balance; and 11 more",
+     "note": "printed smaller than the body, drawn at the body's size (14 blocks)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 16,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Type",
+     "note": "printed at the body's size, drawn larger than the body (1 block)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 17,
+     "from": "check",
+     "check": "type",
+     "fault": "weight added",
+     "severity": "minor",
+     "element": "Current Account Statement; Statement period; Statement no.; and 11 more",
+     "note": "regular printed, bold drawn (14 blocks)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 18,
+     "from": "review",
+     "check": "looks",
+     "fault": "text invisible on its band",
+     "severity": "major",
+     "element": "Harbourgate Savings & Loan Society; Current Account Statement; Transactions",
+     "note": "the white header text drawn navy on the navy band, barely visible; the 'Transactions' band drawn as plain text",
+     "features": [
+      "look.bands"
+     ],
+     "stage": "render",
+     "call": null,
+     "why": ""
+    }
+   ],
+   "changed": null,
+   "changed_note": "",
+   "worst": 2
+  },
+  {
+   "name": "c0126",
+   "family": "transactional",
+   "kind": "purchase order",
+   "opened": true,
+   "why": [
+    "a major to confirm: rules: frame missing"
+   ],
+   "faults": [
+    {
+     "n": 1,
+     "from": "check",
+     "check": "words",
+     "fault": "changed",
+     "severity": "major",
+     "element": "2020 → 2028",
+     "note": "",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the signature's date '05/31/2020' read '2028'"
+    },
+    {
+     "n": 2,
+     "from": "check",
+     "check": "rules",
+     "fault": "frame missing",
+     "severity": "major",
+     "element": "Item; Description; Qty",
+     "note": "5 of the 5 rules the page draws frame are not drawn",
+     "features": [
+      "table.ruled",
+      "table.subrows"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the table is drawn framed with its header rule — check issue P"
+    },
+    {
+     "n": 3,
+     "from": "check",
+     "check": "structure",
+     "fault": "heading not kept",
+     "severity": "minor",
+     "element": "Compass Outfitters",
+     "note": "drawn as body text; the type checks say whether it looks so",
+     "features": [
+      "table.ruled",
+      "table.subrows"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn bold, as printed"
+    },
+    {
+     "n": 4,
+     "from": "check",
+     "check": "structure",
+     "fault": "heading not kept",
+     "severity": "minor",
+     "element": "Purchase order",
+     "note": "drawn as body text; the type checks say whether it looks so",
+     "features": [
+      "table.ruled",
+      "table.subrows"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn bold and large; too large is #9"
+    },
+    {
+     "n": 5,
+     "from": "check",
+     "check": "structure",
+     "fault": "heading not kept",
+     "severity": "minor",
+     "element": "PO-20-0531",
+     "note": "drawn as body text; the type checks say whether it looks so",
+     "features": [
+      "table.ruled",
+      "table.subrows"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 6,
+     "from": "check",
+     "check": "lines",
+     "fault": "broken differently",
+     "severity": "major",
+     "element": "Compass Outfitters; Purchase order; Order date; and 8 more",
+     "note": "13 breaks added and 3 of 3 lost, in 11 blocks",
+     "features": [],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 7,
+     "from": "check",
+     "check": "height",
+     "fault": "height",
+     "severity": "minor",
+     "element": "1.07 of the picture's height",
+     "note": "792 px drawn against 739",
+     "features": [
+      "arr.one_column"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 8,
+     "from": "check",
+     "check": "alignment",
+     "fault": "alignment",
+     "severity": "major",
+     "element": "Compass Outfitters",
+     "note": "printed right, drawn left (1 block)",
+     "features": [
+      "arr.one_column"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "printed left with the logo and drawn left — check issue A"
+    },
+    {
+     "n": 9,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Purchase order",
+     "note": "printed at the body's size, drawn larger than the body (1 block)",
+     "features": [
+      "type.mono"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 10,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "PO-20-0531",
+     "note": "printed larger than the body, drawn smaller than the body (1 block)",
+     "features": [
+      "type.mono"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the PO number, the page's largest type, drawn at 4 px"
+    },
+    {
+     "n": 11,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Order date; Deliver by; Buyer; and 9 more",
+     "note": "printed smaller than the body, drawn at the body's size (12 blocks)",
+     "features": [
+      "type.mono"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 12,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Total USD; $8,687.50",
+     "note": "printed larger than the body, drawn at the body's size (2 blocks)",
+     "features": [
+      "type.mono"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 13,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "PO-20-0531",
+     "note": "printed larger than 'Compass Outfitters', drawn smaller (1 block)",
+     "features": [
+      "type.mono"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 14,
+     "from": "check",
+     "check": "type",
+     "fault": "bold lost",
+     "severity": "major",
+     "element": "PO-20-0531",
+     "note": "bold printed, regular drawn (1 block)",
+     "features": [
+      "type.mono"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 15,
+     "from": "check",
+     "check": "type",
+     "fault": "weight added",
+     "severity": "minor",
+     "element": "Purchase order; 40; $3,380.00; and 3 more",
+     "note": "regular printed, bold drawn (6 blocks)",
+     "features": [
+      "type.mono"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 16,
+     "from": "review",
+     "check": "figures",
+     "fault": "figure lost",
+     "severity": "minor",
+     "element": "the compass logo",
+     "note": "the logo before the company name not drawn",
+     "features": [
+      "fig.logo"
+     ],
+     "stage": "layout",
+     "call": null,
+     "why": ""
+    }
+   ],
+   "changed": null,
+   "changed_note": "",
+   "worst": 10
+  },
+  {
+   "name": "c0153",
+   "family": "fragments",
+   "kind": "form section",
+   "opened": true,
+   "why": [
+    "drawn for fragments, seed 0"
+   ],
+   "faults": [
+    {
+     "n": 1,
+     "from": "check",
+     "check": "structure",
+     "fault": "marker changed",
+     "severity": "minor",
+     "element": "bullet added: C16. PHONE",
+     "note": "1 item",
+     "features": [],
+     "stage": "classify",
+     "call": "confirmed",
+     "why": "a field's label read as a list, drawn with a bullet"
+    },
+    {
+     "n": 2,
+     "from": "check",
+     "check": "structure",
+     "fault": "marker changed",
+     "severity": "minor",
+     "element": "bullet added: C15. AUTHORISING OFFICIAL",
+     "note": "1 item",
+     "features": [],
+     "stage": "classify",
+     "call": "confirmed",
+     "why": "a field's label read as a list, drawn with a bullet"
+    },
+    {
+     "n": 3,
+     "from": "check",
+     "check": "structure",
+     "fault": "marker changed",
+     "severity": "minor",
+     "element": "bullet added: C14. TOTAL REQUESTED",
+     "note": "1 item",
+     "features": [],
+     "stage": "classify",
+     "call": "confirmed",
+     "why": "a field's label read as a list, drawn with a bullet"
+    },
+    {
+     "n": 4,
+     "from": "check",
+     "check": "structure",
+     "fault": "marker changed",
+     "severity": "minor",
+     "element": "bullet added: C9. TRAVEL",
+     "note": "1 item",
+     "features": [],
+     "stage": "classify",
+     "call": "confirmed",
+     "why": "a field's label read as a list, drawn with a bullet"
+    },
+    {
+     "n": 5,
+     "from": "check",
+     "check": "structure",
+     "fault": "marker changed",
+     "severity": "minor",
+     "element": "bullet added: C6. PARTNER SITE",
+     "note": "1 item",
+     "features": [],
+     "stage": "classify",
+     "call": "confirmed",
+     "why": "a field's label read as a list, drawn with a bullet"
+    },
+    {
+     "n": 6,
+     "from": "check",
+     "check": "structure",
+     "fault": "marker changed",
+     "severity": "minor",
+     "element": "bullet added: C5. Co-INVESTIGATOR",
+     "note": "1 item",
+     "features": [],
+     "stage": "classify",
+     "call": "confirmed",
+     "why": "a field's label read as a list, drawn with a bullet"
+    },
+    {
+     "n": 7,
+     "from": "check",
+     "check": "structure",
+     "fault": "marker changed",
+     "severity": "minor",
+     "element": "bullet added: C1. PRINCIPAL INVESTIGATOR",
+     "note": "1 item",
+     "features": [],
+     "stage": "classify",
+     "call": "confirmed",
+     "why": "a field's label read as a list, drawn with a bullet"
+    },
+    {
+     "n": 8,
+     "from": "check",
+     "check": "lines",
+     "fault": "broken differently",
+     "severity": "major",
+     "element": "Complete one form for each award period.",
+     "note": "1 breaks added and 1 of 1 lost, in 1 block",
+     "features": [
+      "kv.boxed",
+      "kv.two_per_line"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 9,
+     "from": "check",
+     "check": "height",
+     "fault": "height",
+     "severity": "major",
+     "element": "1.52 of the picture's height",
+     "note": "720 px drawn against 474",
+     "features": [
+      "arr.one_column"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 10,
+     "from": "check",
+     "check": "alignment",
+     "fault": "alignment",
+     "severity": "major",
+     "element": "C6. Partner site",
+     "note": "printed left, drawn centre (1 block)",
+     "features": [
+      "arr.one_column",
+      "kv.boxed",
+      "kv.two_per_line"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 11,
+     "from": "check",
+     "check": "alignment",
+     "fault": "alignment",
+     "severity": "major",
+     "element": "$48,200; $3,400; $5,125; and 3 more",
+     "note": "printed right, drawn left (6 blocks)",
+     "features": [
+      "arr.one_column",
+      "kv.boxed",
+      "kv.two_per_line"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "values drawn centred in their boxes, $12,750 and $86,322.50 outside any box"
+    },
+    {
+     "n": 12,
+     "from": "check",
+     "check": "type",
+     "fault": "wrong face",
+     "severity": "major",
+     "element": "Section C. Funding and Budget Summary; Complete one form for each award period.; C1. Principal investigator; and 31 more",
+     "note": "serif printed, sans drawn (34 blocks)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the form's serif drawn as a sans throughout"
+    },
+    {
+     "n": 13,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Complete one form for each award period.; Jasmine Brandt; August 24, 2021; and 12 more",
+     "note": "printed larger than the body, drawn at the body's size (15 blocks)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 14,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "C3. Host institution; C7. Personnel; C8. Equipment; and 4 more",
+     "note": "printed at the body's size, drawn smaller than the body (7 blocks)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 15,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Mei Castillo, Director of Sponsored Prog",
+     "note": "printed larger than the body, drawn smaller than the body (1 block)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 16,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "August 24, 2021; NI-21-0418; Bangor, ME; and 12 more",
+     "note": "printed larger than 'Complete one form for each awa', drawn smaller (15 blocks)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 17,
+     "from": "check",
+     "check": "type",
+     "fault": "weight added",
+     "severity": "minor",
+     "element": "C1. Principal investigator; Jasmine Brandt; August 24, 2021; and 11 more",
+     "note": "regular printed, bold drawn (14 blocks)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 18,
+     "from": "review",
+     "check": "cells",
+     "fault": "wrong column",
+     "severity": "major",
+     "element": "$5,125; $78,475; $86,322.50",
+     "note": "every label and value is its own Zone, and the render's grid puts C10's and C12's values in full-width boxes under C9 and C11, C14's below the form",
+     "features": [
+      "kv.boxed",
+      "kv.two_per_line"
+     ],
+     "stage": "render",
+     "call": null,
+     "why": ""
+    }
+   ],
+   "changed": null,
+   "changed_note": "",
+   "worst": 12
+  },
+  {
+   "name": "c0202",
+   "family": "reports",
+   "kind": "prescription",
+   "opened": true,
+   "why": [
+    "drawn for reports, seed 0"
+   ],
+   "faults": [
+    {
+     "n": 1,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "rx",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "list.ticks"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the 'Rx' mark, drawn in its own pixels — check issue T"
+    },
+    {
+     "n": 2,
+     "from": "check",
+     "check": "words",
+     "fault": "mark lost",
+     "severity": "major",
+     "element": "☐",
+     "note": "1 printed and not drawn",
+     "features": [
+      "list.ticks"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the ticked and empty boxes drawn as bullets: which checks were done is lost"
+    },
+    {
+     "n": 3,
+     "from": "check",
+     "check": "words",
+     "fault": "mark lost",
+     "severity": "major",
+     "element": "☑",
+     "note": "3 printed and not drawn",
+     "features": [
+      "list.ticks"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the ticked and empty boxes drawn as bullets: which checks were done is lost"
+    },
+    {
+     "n": 4,
+     "from": "check",
+     "check": "structure",
+     "fault": "marker changed",
+     "severity": "minor",
+     "element": "bullet added: Pregnancy test; bullet added: Interactions screened",
+     "note": "2 items",
+     "features": [
+      "list.bullets",
+      "list.ticks",
+      "table.section_rows"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the checklist drawn as bullets"
+    },
+    {
+     "n": 5,
+     "from": "check",
+     "check": "structure",
+     "fault": "marker changed",
+     "severity": "minor",
+     "element": "bullet added: Renal function normal",
+     "note": "1 item",
+     "features": [
+      "list.bullets",
+      "list.ticks",
+      "table.section_rows"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the checklist drawn as bullets"
+    },
+    {
+     "n": 6,
+     "from": "check",
+     "check": "structure",
+     "fault": "marker changed",
+     "severity": "minor",
+     "element": "bullet added: Allergies reviewed",
+     "note": "1 item",
+     "features": [
+      "list.bullets",
+      "list.ticks",
+      "table.section_rows"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the checklist drawn as bullets"
+    },
+    {
+     "n": 7,
+     "from": "check",
+     "check": "lines",
+     "fault": "broken differently",
+     "severity": "major",
+     "element": "Patient: Daniel R. Okafor; DOB: 03/14/1978 (age 48); Weight: 82 kg; and 6 more",
+     "note": "9 breaks added and 0 of 0 lost, in 9 blocks",
+     "features": [
+      "kv.inline"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "each 'Label: value' line read as a pair and drawn label over value"
+    },
+    {
+     "n": 8,
+     "from": "check",
+     "check": "height",
+     "fault": "height",
+     "severity": "major",
+     "element": "1.19 of the picture's height",
+     "note": "528 px drawn against 442",
+     "features": [
+      "arr.two_columns"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 9,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "220 Orchard Street, Suite 4, Madison, WI; Medication; Qty; and 11 more",
+     "note": "printed smaller than the body, drawn at the body's size (14 blocks)",
+     "features": [
+      "type.sans"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 10,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Date: 10/22/2026; Allergies: Penicillin",
+     "note": "printed at the body's size, drawn smaller than the body (2 blocks)",
+     "features": [
+      "type.sans"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 11,
+     "from": "check",
+     "check": "type",
+     "fault": "bold lost",
+     "severity": "major",
+     "element": "Patient: Daniel R. Okafor; DOB: 03/14/1978 (age 48); Weight: 82 kg; and 2 more",
+     "note": "bold printed, regular drawn (5 blocks)",
+     "features": [
+      "type.sans"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 12,
+     "from": "check",
+     "check": "type",
+     "fault": "weight added",
+     "severity": "minor",
+     "element": "6",
+     "note": "regular printed, bold drawn (1 block)",
+     "features": [
+      "type.sans"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    }
+   ],
+   "changed": null,
+   "changed_note": "",
+   "worst": 3
+  },
+  {
+   "name": "c0220",
+   "family": "reports",
+   "kind": "prescription",
+   "opened": true,
+   "why": [
+    "drawn for reports, seed 0"
+   ],
+   "faults": [
+    {
+     "n": 1,
+     "from": "check",
+     "check": "words",
+     "fault": "changed",
+     "severity": "major",
+     "element": "i10 → 110",
+     "note": "",
+     "features": [
+      "fmt.eu_numbers"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "'I10' read '110'"
+    },
+    {
+     "n": 2,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "o",
+     "note": "printed 2 more times than drawn",
+     "features": [
+      "fmt.eu_numbers"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "'n.º' read with a degree sign, 'n.°', twice"
+    },
+    {
+     "n": 3,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "firma",
+     "note": "drawn 1 more time than printed",
+     "features": [
+      "fmt.eu_numbers"
+     ],
+     "stage": "re-read",
+     "call": "confirmed",
+     "why": "'FIRMA Y SELLO' drawn twice: a 4 px copy above the doctor and the label below"
+    },
+    {
+     "n": 4,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "sello",
+     "note": "drawn 1 more time than printed",
+     "features": [
+      "fmt.eu_numbers"
+     ],
+     "stage": "re-read",
+     "call": "confirmed",
+     "why": "'FIRMA Y SELLO' drawn twice: a 4 px copy above the doctor and the label below"
+    },
+    {
+     "n": 5,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "y",
+     "note": "drawn 1 more time than printed",
+     "features": [
+      "fmt.eu_numbers"
+     ],
+     "stage": "re-read",
+     "call": "confirmed",
+     "why": "'FIRMA Y SELLO' drawn twice: a 4 px copy above the doctor and the label below"
+    },
+    {
+     "n": 6,
+     "from": "check",
+     "check": "structure",
+     "fault": "heading not kept",
+     "severity": "minor",
+     "element": "RX-2026-084417",
+     "note": "drawn as body text; the type checks say whether it looks so",
+     "features": [
+      "list.bullets",
+      "table.subrows"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn bold, as printed"
+    },
+    {
+     "n": 7,
+     "from": "check",
+     "check": "lines",
+     "fault": "broken differently",
+     "severity": "major",
+     "element": "Hipertensión arterial esencial; dislipem",
+     "note": "1 breaks added and 0 of 0 lost, in 1 block",
+     "features": [
+      "kv.boxed"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 8,
+     "from": "check",
+     "check": "height",
+     "fault": "height",
+     "severity": "minor",
+     "element": "1.07 of the picture's height",
+     "note": "845 px drawn against 789",
+     "features": [
+      "arr.one_column"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 9,
+     "from": "check",
+     "check": "alignment",
+     "fault": "alignment",
+     "severity": "major",
+     "element": "Centro de Salud Las Acacias C/ Alcalá 11; Dr. Álvaro Sepúlveda Ríos Col. n.º 28/44; Fecha de emisión: 24 de octubre de 2026.",
+     "note": "printed left, drawn justified (3 blocks)",
+     "features": [
+      "arr.one_column",
+      "kv.boxed"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "printed left and drawn left — check issue A"
+    },
+    {
+     "n": 10,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Centro de Salud Las Acacias C/ Alcalá 11; Receta n.º Válida hasta el 24/11/2026; Médico prescriptor; and 1 more",
+     "note": "printed smaller than the body, drawn at the body's size (4 blocks)",
+     "features": [
+      "type.sans",
+      "type.small_caps"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 11,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "RX-2026-084417",
+     "note": "printed larger than the body, drawn at the body's size (1 block)",
+     "features": [
+      "type.sans",
+      "type.small_caps"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 12,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Paciente; Diagnóstico; Prescripción; and 1 more",
+     "note": "printed larger than the body, drawn smaller than the body (4 blocks)",
+     "features": [
+      "type.sans",
+      "type.small_caps"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 13,
+     "from": "check",
+     "check": "type",
+     "fault": "bold lost",
+     "severity": "major",
+     "element": "12/03/1968; Penicilina; Hipertensión arterial esencial; dislipem; and 4 more",
+     "note": "bold printed, regular drawn (7 blocks)",
+     "features": [
+      "type.sans",
+      "type.small_caps"
+     ],
+     "stage": "inline runs",
+     "call": "confirmed",
+     "why": "the drug names and the patient's values printed bold, drawn regular"
+    },
+    {
+     "n": 14,
+     "from": "check",
+     "check": "type",
+     "fault": "weight added",
+     "severity": "minor",
+     "element": "8,45 €; 3",
+     "note": "regular printed, bold drawn (2 blocks)",
+     "features": [
+      "type.sans",
+      "type.small_caps"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 15,
+     "from": "review",
+     "check": "looks",
+     "fault": "frame changed",
+     "severity": "minor",
+     "element": "Firma y sello",
+     "note": "the tinted signature box not drawn",
+     "features": [
+      "kv.boxed"
+     ],
+     "stage": "render",
+     "call": null,
+     "why": ""
+    }
+   ],
+   "changed": null,
+   "changed_note": "",
+   "worst": 1
+  },
+  {
+   "name": "c0246",
+   "family": "reports",
+   "kind": "prescription",
+   "opened": true,
+   "why": [
+    "a major to confirm: order: interleaved, structure: numbers as bullets"
+   ],
+   "faults": [
+    {
+     "n": 1,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "1",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the drugs' numbers 1–3 not read, and the 'Medico prescrittore' heading dropped by the pairs read of its Zone"
+    },
+    {
+     "n": 2,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "2",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the drugs' numbers 1–3 not read, and the 'Medico prescrittore' heading dropped by the pairs read of its Zone"
+    },
+    {
+     "n": 3,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "3",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the drugs' numbers 1–3 not read, and the 'Medico prescrittore' heading dropped by the pairs read of its Zone"
+    },
+    {
+     "n": 4,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "medico",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the drugs' numbers 1–3 not read, and the 'Medico prescrittore' heading dropped by the pairs read of its Zone"
+    },
+    {
+     "n": 5,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "prescrittore",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the drugs' numbers 1–3 not read, and the 'Medico prescrittore' heading dropped by the pairs read of its Zone"
+    },
+    {
+     "n": 6,
+     "from": "check",
+     "check": "structure",
+     "fault": "list not kept",
+     "severity": "minor",
+     "element": "2.Paracetamolo 1000 mg Forma: compresse,",
+     "note": "1 item",
+     "features": [],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 7,
+     "from": "check",
+     "check": "structure",
+     "fault": "marker changed",
+     "severity": "minor",
+     "element": "2.Paracetamolo 1000 mg Forma: compresse,",
+     "note": "1 item",
+     "features": [],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 8,
+     "from": "check",
+     "check": "structure",
+     "fault": "numbers as bullets",
+     "severity": "major",
+     "element": "1.Amoxicillina + acido clavulanico 875 m; 3.Omeprazolo 20 mg Forma: capsule gastro",
+     "note": "2 items",
+     "features": [],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 9,
+     "from": "check",
+     "check": "structure",
+     "fault": "heading not kept",
+     "severity": "minor",
+     "element": "Ricetta medica",
+     "note": "drawn as body text; the type checks say whether it looks so",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn as bold teal caps on its tinted band, as printed"
+    },
+    {
+     "n": 10,
+     "from": "check",
+     "check": "structure",
+     "fault": "heading not kept",
+     "severity": "minor",
+     "element": "Paziente",
+     "note": "drawn as body text; the type checks say whether it looks so",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn as small teal caps under a rule, as printed"
+    },
+    {
+     "n": 11,
+     "from": "check",
+     "check": "structure",
+     "fault": "heading not kept",
+     "severity": "minor",
+     "element": "Prescrizione",
+     "note": "drawn as body text; the type checks say whether it looks so",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn as small teal caps under a rule, as printed"
+    },
+    {
+     "n": 12,
+     "from": "check",
+     "check": "structure",
+     "fault": "heading not kept",
+     "severity": "minor",
+     "element": "1. Amoxicillina + acido clavulanico 875 mg + 125 mg",
+     "note": "drawn as body text; the type checks say whether it looks so",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the drug's name drawn as body text, run into its details"
+    },
+    {
+     "n": 13,
+     "from": "check",
+     "check": "structure",
+     "fault": "heading not kept",
+     "severity": "minor",
+     "element": "2. Paracetamolo 1000 mg",
+     "note": "drawn as body text; the type checks say whether it looks so",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the drug's name drawn as body text, run into its details"
+    },
+    {
+     "n": 14,
+     "from": "check",
+     "check": "structure",
+     "fault": "heading not kept",
+     "severity": "minor",
+     "element": "3. Omeprazolo 20 mg",
+     "note": "drawn as body text; the type checks say whether it looks so",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the drug's name drawn as body text, run into its details"
+    },
+    {
+     "n": 15,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "major",
+     "element": "section 'Ricetta medica' and section 'Paziente'",
+     "note": "their words alternate in the output's reading order",
+     "features": [
+      "arr.two_columns"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "patient and doctor on the left, the prescription on the right, side by side as printed — check issue I"
+    },
+    {
+     "n": 16,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "major",
+     "element": "section 'Ricetta medica' and section 'Medico prescrittore'",
+     "note": "their words alternate in the output's reading order",
+     "features": [
+      "arr.two_columns"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "patient and doctor on the left, the prescription on the right, side by side as printed — check issue I"
+    },
+    {
+     "n": 17,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "major",
+     "element": "section 'Ricetta medica' and section '3. Omeprazolo 20 mg'",
+     "note": "their words alternate in the output's reading order",
+     "features": [
+      "arr.two_columns"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "patient and doctor on the left, the prescription on the right, side by side as printed — check issue I"
+    },
+    {
+     "n": 18,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "major",
+     "element": "section 'Prescrizione' and section '3. Omeprazolo 20 mg'",
+     "note": "their words alternate in the output's reading order",
+     "features": [
+      "arr.two_columns"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "patient and doctor on the left, the prescription on the right, side by side as printed — check issue I"
+    },
+    {
+     "n": 19,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "major",
+     "element": "section '1. Amoxicillina + acido clavul' and section '3. Omeprazolo 20 mg'",
+     "note": "their words alternate in the output's reading order",
+     "features": [
+      "arr.two_columns"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "patient and doctor on the left, the prescription on the right, side by side as printed — check issue I"
+    },
+    {
+     "n": 20,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "major",
+     "element": "section '2. Paracetamolo 1000 mg' and section '3. Omeprazolo 20 mg'",
+     "note": "their words alternate in the output's reading order",
+     "features": [
+      "arr.two_columns"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "patient and doctor on the left, the prescription on the right, side by side as printed — check issue I"
+    },
+    {
+     "n": 21,
+     "from": "check",
+     "check": "lines",
+     "fault": "broken differently",
+     "severity": "major",
+     "element": "Diagnosi: faringotonsillite acuta batter; Forma: compresse rivestite, 12 compresse; Posologia: 1 compressa ogni 12 ore, a st; and 4 more",
+     "note": "7 breaks added and 0 of 0 lost, in 7 blocks",
+     "features": [
+      "kv.inline",
+      "kv.leaders"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 22,
+     "from": "check",
+     "check": "lines",
+     "fault": "rows joined",
+     "severity": "major",
+     "element": "1. Amoxicillina + acido clavulanico 875 ; Forma: compresse rivestite, 12 compresse; Posologia: 1 compressa ogni 12 ore, a st; and 3 more",
+     "note": "drawn on one line with the row printed below it (6 blocks)",
+     "features": [
+      "kv.inline",
+      "kv.leaders"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "drugs 1 and 3 read as one paragraph each, 'Forma', 'Posologia' and 'Quantità' run together"
+    },
+    {
+     "n": 23,
+     "from": "check",
+     "check": "height",
+     "fault": "height",
+     "severity": "major",
+     "element": "1.11 of the picture's height",
+     "note": "517 px drawn against 466",
+     "features": [
+      "arr.two_columns"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 24,
+     "from": "check",
+     "check": "alignment",
+     "fault": "alignment",
+     "severity": "major",
+     "element": "Simone Ferri; Perugia, 12/03/1984; 36 anni; and 6 more",
+     "note": "printed right, drawn left (9 blocks)",
+     "features": [
+      "arr.two_columns",
+      "kv.inline",
+      "kv.leaders"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the leaders lost, the values drawn in a left-aligned column"
+    },
+    {
+     "n": 25,
+     "from": "check",
+     "check": "alignment",
+     "fault": "alignment",
+     "severity": "major",
+     "element": "Posologia: 1 compressa al bisogno per fe",
+     "note": "printed left, drawn right (1 block)",
+     "features": [
+      "arr.two_columns",
+      "kv.inline",
+      "kv.leaders"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 26,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Ricetta medica; 1. Amoxicillina + acido clavulanico 875 ; 2. Paracetamolo 1000 mg; and 1 more",
+     "note": "printed larger than the body, drawn at the body's size (4 blocks)",
+     "features": [
+      "type.sans"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 27,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Ricetta n. 0720-2020-48812 · Siena; Paziente; Cognome e nome; and 9 more",
+     "note": "printed smaller than the body, drawn at the body's size (12 blocks)",
+     "features": [
+      "type.sans"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 28,
+     "from": "check",
+     "check": "type",
+     "fault": "bold lost",
+     "severity": "major",
+     "element": "Paziente; Simone Ferri; Perugia, 12/03/1984; and 23 more",
+     "note": "bold printed, regular drawn (26 blocks)",
+     "features": [
+      "type.sans"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 29,
+     "from": "check",
+     "check": "type",
+     "fault": "italics",
+     "severity": "minor",
+     "element": "Posologia: 1 capsula al mattino a digiun; Quantità: 1 confezione",
+     "note": "upright printed italic (2 blocks)",
+     "features": [
+      "type.sans"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    }
+   ],
+   "changed": null,
+   "changed_note": "",
+   "worst": 22
+  },
+  {
+   "name": "c0305",
+   "family": "correspondence and legal",
+   "kind": "referral letter",
+   "opened": true,
+   "why": [
+    "drawn for correspondence and legal, seed 0"
+   ],
+   "faults": [
+    {
+     "n": 1,
+     "from": "check",
+     "check": "words",
+     "fault": "changed",
+     "severity": "major",
+     "element": "électrocardiogramme → electrocardiogramme",
+     "note": "",
+     "features": [
+      "list.ticks"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "'Électrocardiogramme' read without its accent"
+    },
+    {
+     "n": 2,
+     "from": "check",
+     "check": "words",
+     "fault": "changed",
+     "severity": "major",
+     "element": "médicamenteuse → médicamentueuse",
+     "note": "",
+     "features": [
+      "list.ticks"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "'médicamenteuse' read 'médicamentueuse'"
+    },
+    {
+     "n": 3,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "générale",
+     "note": "drawn 1 more time than printed",
+     "features": [
+      "list.ticks"
+     ],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "Zone 1 lies inside Zone 2, so 'Médecine générale' is drawn twice over itself; the signature read as the letter 'm'"
+    },
+    {
+     "n": 4,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "m",
+     "note": "drawn 1 more time than printed",
+     "features": [
+      "list.ticks"
+     ],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "Zone 1 lies inside Zone 2, so 'Médecine générale' is drawn twice over itself; the signature read as the letter 'm'"
+    },
+    {
+     "n": 5,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "médecine",
+     "note": "drawn 1 more time than printed",
+     "features": [
+      "list.ticks"
+     ],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "Zone 1 lies inside Zone 2, so 'Médecine générale' is drawn twice over itself; the signature read as the letter 'm'"
+    },
+    {
+     "n": 6,
+     "from": "check",
+     "check": "words",
+     "fault": "mark lost",
+     "severity": "major",
+     "element": "✓",
+     "note": "2 printed and not drawn",
+     "features": [
+      "list.ticks"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the ticks and the cross drawn as bullets"
+    },
+    {
+     "n": 7,
+     "from": "check",
+     "check": "words",
+     "fault": "mark lost",
+     "severity": "major",
+     "element": "✗",
+     "note": "1 printed and not drawn",
+     "features": [
+      "list.ticks"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the ticks and the cross drawn as bullets"
+    },
+    {
+     "n": 8,
+     "from": "check",
+     "check": "structure",
+     "fault": "marker changed",
+     "severity": "minor",
+     "element": "✓ Électrocardiogramme de repos du 8 octo; ✓ Bilan biologique du 5 octobre (NT-proB; ✓ Liste des traitements en cours",
+     "note": "4 items",
+     "features": [
+      "list.ticks"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the ticks and the cross drawn as bullets"
+    },
+    {
+     "n": 9,
+     "from": "check",
+     "check": "lines",
+     "fault": "broken differently",
+     "severity": "major",
+     "element": "Médecine générale; 14, rue des Tanneurs, 69002 Lyon; 04 78 55 01 42; and 7 more",
+     "note": "117 breaks added and 0 of 4 lost, in 10 blocks",
+     "features": [
+      "text.justified"
+     ],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "three overlapping Zones in the letterhead set a one-word-wide column, and the address, recipient, subject and first two paragraphs are drawn one word per line"
+    },
+    {
+     "n": 10,
+     "from": "check",
+     "check": "height",
+     "fault": "height",
+     "severity": "major",
+     "element": "3.58 of the picture's height",
+     "note": "3559 px drawn against 994",
+     "features": [
+      "arr.one_column"
+     ],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "3.58 of the page's height, from the one-word column"
+    },
+    {
+     "n": 11,
+     "from": "check",
+     "check": "alignment",
+     "fault": "alignment",
+     "severity": "major",
+     "element": "Je vous adresse mon patient, Monsieur Pi; À l'examen du 8 octobre, la tension arté; Périndopril 5 mg le matin, amlodipine 5 ",
+     "note": "printed justified, drawn left (3 blocks)",
+     "features": [
+      "arr.one_column"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the justified paragraphs drawn ragged"
+    },
+    {
+     "n": 12,
+     "from": "check",
+     "check": "type",
+     "fault": "wrong face",
+     "severity": "major",
+     "element": "N° RPPS : 10 0012 3456 7",
+     "note": "sans printed, mono drawn (1 block)",
+     "features": [
+      "type.sans"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 13,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "N° RPPS : 10 0012 3456 7; ✓ Électrocardiogramme de repos du 8 octo",
+     "note": "printed at the body's size, drawn smaller than the body (2 blocks)",
+     "features": [
+      "type.sans"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 14,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Éléments du dossier joints à ce courrier; ✗ Échocardiographie : non réalisée à ce ",
+     "note": "printed at the body's size, drawn larger than the body (2 blocks)",
+     "features": [
+      "type.sans"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 15,
+     "from": "check",
+     "check": "type",
+     "fault": "bold lost",
+     "severity": "major",
+     "element": "Éléments du dossier joints à ce courrier",
+     "note": "bold printed, regular drawn (1 block)",
+     "features": [
+      "type.sans"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 16,
+     "from": "check",
+     "check": "type",
+     "fault": "weight added",
+     "severity": "minor",
+     "element": "✓ Électrocardiogramme de repos du 8 octo",
+     "note": "regular printed, bold drawn (1 block)",
+     "features": [
+      "type.sans"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 17,
+     "from": "review",
+     "check": "figures",
+     "fault": "figure lost",
+     "severity": "minor",
+     "element": "the signature; the address icons",
+     "note": "the handwritten signature drawn as 'm'; the pin, phone and mail icons lost",
+     "features": [
+      "fig.icons"
+     ],
+     "stage": "extract",
+     "call": null,
+     "why": ""
+    }
+   ],
+   "changed": null,
+   "changed_note": "",
+   "worst": 9
+  },
+  {
+   "name": "c0312",
+   "family": "correspondence and legal",
+   "kind": "contract",
+   "opened": false,
+   "why": [
+    "not checked: timeout: not converted within 20 minutes; stopped"
+   ],
+   "faults": [],
+   "changed": null,
+   "changed_note": "",
+   "worst": null
+  },
+  {
+   "name": "c0363",
+   "family": "publishing",
+   "kind": "manual page",
+   "opened": true,
+   "why": [
+    "drawn for publishing, seed 0"
+   ],
+   "faults": [
+    {
+     "n": 1,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "10",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.currency"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's labels, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 2,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "20",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.currency"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's labels, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 3,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "30",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.currency"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's labels, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 4,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "40",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.currency"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's labels, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 5,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "ciclo",
+     "note": "printed 4 more times than drawn",
+     "features": [
+      "fmt.currency"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's labels, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 6,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "prima",
+     "note": "printed 1 more time than drawn",
+     "features": [
+      "fmt.currency"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's labels, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 7,
+     "from": "check",
+     "check": "words",
+     "fault": "spelling",
+     "severity": "major",
+     "element": "TAMBURO → TAMBuro",
+     "note": "",
+     "features": [
+      "fmt.currency"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "'TAMBURO' read 'TAMBuro'"
+    },
+    {
+     "n": 8,
+     "from": "check",
+     "check": "structure",
+     "fault": "heading not kept",
+     "severity": "minor",
+     "element": "Tostatrice industriale TR-40 per caffè",
+     "note": "drawn as body text; the type checks say whether it looks so",
+     "features": [
+      "table.section_rows"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn red and bold, as printed"
+    },
+    {
+     "n": 9,
+     "from": "check",
+     "check": "lines",
+     "fault": "broken differently",
+     "severity": "major",
+     "element": "La tostatrice TR-40 richiede una pulizia; Se il consumo supera di oltre il 10% il ",
+     "note": "3 breaks added and 3 of 3 lost, in 2 blocks",
+     "features": [
+      "text.justified"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 10,
+     "from": "check",
+     "check": "height",
+     "fault": "height",
+     "severity": "major",
+     "element": "1.11 of the picture's height",
+     "note": "1122 px drawn against 1014",
+     "features": [
+      "arr.one_column"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 11,
+     "from": "check",
+     "check": "alignment",
+     "fault": "alignment",
+     "severity": "major",
+     "element": "La tostatrice TR-40 richiede una pulizia; Prima di ogni operazione spegnere la mac; Se il consumo supera di oltre il 10% il ",
+     "note": "printed justified, drawn left (3 blocks)",
+     "features": [
+      "arr.one_column"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 12,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "4.1 Quando intervenire; 4.2 Ricambi e costi indicativi; Codice; and 27 more",
+     "note": "printed smaller than the body, drawn at the body's size (30 blocks)",
+     "features": [
+      "type.sans",
+      "type.weights"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the headings, table and sidebar are not visibly larger than printed"
+    },
+    {
+     "n": 13,
+     "from": "check",
+     "check": "type",
+     "fault": "weight added",
+     "severity": "minor",
+     "element": "Serie TR-40 Manutenzione 3 ottobre 2026 ",
+     "note": "regular printed, bold drawn (1 block)",
+     "features": [
+      "type.sans",
+      "type.weights"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 14,
+     "from": "review",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "4.3 CONSUMO DI GAS DOPO LA PULIZIA",
+     "note": "the heading drawn twice: as the chart Zone's Title in black and as its first line in red; the title-echo rule does not reach a figure Zone",
+     "features": [
+      "fig.chart"
+     ],
+     "stage": "wire",
+     "call": null,
+     "why": ""
+    }
+   ],
+   "changed": null,
+   "changed_note": "",
+   "worst": 9
+  },
+  {
+   "name": "c0366",
+   "family": "publishing",
+   "kind": "FAQ",
+   "opened": true,
+   "why": [
+    "a major to confirm: order: interleaved"
+   ],
+   "faults": [
+    {
+     "n": 1,
+     "from": "check",
+     "check": "words",
+     "fault": "changed",
+     "severity": "major",
+     "element": "example → exemple",
+     "note": "",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "'example' read 'exemple' in the e-mail address"
+    },
+    {
+     "n": 2,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "et",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "Zone 0 spans the title, the first two themes and the first question, so 'Thèmes' and two themes are drawn twice; the chart's labels and title drawn as text under a picture that holds them"
+    },
+    {
+     "n": 3,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "ferme",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "Zone 0 spans the title, the first two themes and the first question, so 'Thèmes' and two themes are drawn twice; the chart's labels and title drawn as text under a picture that holds them"
+    },
+    {
+     "n": 4,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "france",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "Zone 0 spans the title, the first two themes and the first question, so 'Thèmes' and two themes are drawn twice; the chart's labels and title drawn as text under a picture that holds them"
+    },
+    {
+     "n": 5,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "hebdomadaires",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "Zone 0 spans the title, the first two themes and the first question, so 'Thèmes' and two themes are drawn twice; the chart's labels and title drawn as text under a picture that holds them"
+    },
+    {
+     "n": 6,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "import",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "Zone 0 spans the title, the first two themes and the first question, so 'Thèmes' and two themes are drawn twice; the chart's labels and title drawn as text under a picture that holds them"
+    },
+    {
+     "n": 7,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "les",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "Zone 0 spans the title, the first two themes and the first question, so 'Thèmes' and two themes are drawn twice; the chart's labels and title drawn as text under a picture that holds them"
+    },
+    {
+     "n": 8,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "livraison",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "Zone 0 spans the title, the first two themes and the first question, so 'Thèmes' and two themes are drawn twice; the chart's labels and title drawn as text under a picture that holds them"
+    },
+    {
+     "n": 9,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "paniers",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "Zone 0 spans the title, the first two themes and the first question, so 'Thèmes' and two themes are drawn twice; the chart's labels and title drawn as text under a picture that holds them"
+    },
+    {
+     "n": 10,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "retrait",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "Zone 0 spans the title, the first two themes and the first question, so 'Thèmes' and two themes are drawn twice; the chart's labels and title drawn as text under a picture that holds them"
+    },
+    {
+     "n": 11,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "région",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "Zone 0 spans the title, the first two themes and the first question, so 'Thèmes' and two themes are drawn twice; the chart's labels and title drawn as text under a picture that holds them"
+    },
+    {
+     "n": 12,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "thèmes",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "Zone 0 spans the title, the first two themes and the first question, so 'Thèmes' and two themes are drawn twice; the chart's labels and title drawn as text under a picture that holds them"
+    },
+    {
+     "n": 13,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "voisins",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "Zone 0 spans the title, the first two themes and the first question, so 'Thèmes' and two themes are drawn twice; the chart's labels and title drawn as text under a picture that holds them"
+    },
+    {
+     "n": 14,
+     "from": "check",
+     "check": "structure",
+     "fault": "list not kept",
+     "severity": "minor",
+     "element": "Les paniers hebdomadaires; Livraison et retrait",
+     "note": "2 items",
+     "features": [],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 15,
+     "from": "check",
+     "check": "structure",
+     "fault": "marker changed",
+     "severity": "minor",
+     "element": "Paiement et facturation; Abonnement et pause; Qualité et origine",
+     "note": "4 items",
+     "features": [],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 16,
+     "from": "check",
+     "check": "structure",
+     "fault": "heading not kept",
+     "severity": "minor",
+     "element": "Thèmes",
+     "note": "drawn as body text; the type checks say whether it looks so",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn as orange caps, as printed"
+    },
+    {
+     "n": 17,
+     "from": "check",
+     "check": "structure",
+     "fault": "heading not kept",
+     "severity": "minor",
+     "element": "Comment fonctionne un panier hebdomadaire ?",
+     "note": "drawn as body text; the type checks say whether it looks so",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn as an orange bold question, as printed"
+    },
+    {
+     "n": 18,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "major",
+     "element": "list 'Les paniers hebdomadaires' and section 'Foire aux questions'",
+     "note": "their words alternate in the output's reading order",
+     "features": [
+      "arr.sidebar"
+     ],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "Zone 0 groups the title, the themes' top and the first question: the first answer is drawn as a narrow column beside its question, above the themes list"
+    },
+    {
+     "n": 19,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "major",
+     "element": "list 'Les paniers hebdomadaires' and section 'Comment fonctionne un panier h'",
+     "note": "their words alternate in the output's reading order",
+     "features": [
+      "arr.sidebar"
+     ],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "Zone 0 groups the title, the themes' top and the first question: the first answer is drawn as a narrow column beside its question, above the themes list"
+    },
+    {
+     "n": 20,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "major",
+     "element": "section 'Foire aux questions' and section 'Thèmes'",
+     "note": "their words alternate in the output's reading order",
+     "features": [
+      "arr.sidebar"
+     ],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "Zone 0 groups the title, the themes' top and the first question: the first answer is drawn as a narrow column beside its question, above the themes list"
+    },
+    {
+     "n": 21,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "major",
+     "element": "section 'Foire aux questions' and section 'Comment fonctionne un panier h'",
+     "note": "their words alternate in the output's reading order",
+     "features": [
+      "arr.sidebar"
+     ],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "Zone 0 groups the title, the themes' top and the first question: the first answer is drawn as a narrow column beside its question, above the themes list"
+    },
+    {
+     "n": 22,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "major",
+     "element": "section 'Thèmes' and section 'Comment fonctionne un panier h'",
+     "note": "their words alternate in the output's reading order",
+     "features": [
+      "arr.sidebar"
+     ],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "Zone 0 groups the title, the themes' top and the first question: the first answer is drawn as a narrow column beside its question, above the themes list"
+    },
+    {
+     "n": 23,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "minor",
+     "element": "section 'Thèmes' and section 'Où et quand puis-je retirer mo'",
+     "note": "their words alternate in the output's HTML, drawn side by side as printed",
+     "features": [
+      "arr.sidebar"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn side by side as printed — check issue I"
+    },
+    {
+     "n": 24,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "minor",
+     "element": "section 'Thèmes' and section 'Puis-je livrer à domicile ?'",
+     "note": "their words alternate in the output's HTML, drawn side by side as printed",
+     "features": [
+      "arr.sidebar"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn side by side as printed — check issue I"
+    },
+    {
+     "n": 25,
+     "from": "check",
+     "check": "lines",
+     "fault": "broken differently",
+     "severity": "major",
+     "element": "Chaque semaine, nous composons un panier; Quatre points de retrait sont ouverts : ; Oui, dans un rayon de 15 km autour de Be; and 4 more",
+     "note": "23 breaks added and 13 of 13 lost, in 7 blocks",
+     "features": [
+      "text.quote"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 26,
+     "from": "check",
+     "check": "height",
+     "fault": "height",
+     "severity": "major",
+     "element": "1.45 of the picture's height",
+     "note": "1456 px drawn against 1005",
+     "features": [
+      "arr.sidebar"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 27,
+     "from": "check",
+     "check": "alignment",
+     "fault": "alignment",
+     "severity": "major",
+     "element": "Région",
+     "note": "printed centre, drawn left (1 block)",
+     "features": [
+      "arr.sidebar"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "a chart label, drawn in the chart's pixels — check issue T"
+    },
+    {
+     "n": 28,
+     "from": "check",
+     "check": "alignment",
+     "fault": "alignment",
+     "severity": "major",
+     "element": "France; Import; Le petit panier coûte 14,50 €, le moyen ; and 2 more",
+     "note": "printed right, drawn left (5 blocks)",
+     "features": [
+      "arr.sidebar"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "chart labels, and paragraphs printed and drawn left — checks issues T and A"
+    },
+    {
+     "n": 29,
+     "from": "check",
+     "check": "alignment",
+     "fault": "alignment",
+     "severity": "major",
+     "element": "Oui, dans un rayon de 15 km autour de Be",
+     "note": "printed left, drawn right (1 block)",
+     "features": [
+      "arr.sidebar"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn left, indented a few pixels with the quote above it"
+    },
+    {
+     "n": 30,
+     "from": "check",
+     "check": "type",
+     "fault": "wrong face",
+     "severity": "major",
+     "element": "Foire aux questions; Coopérative maraîchère du Val-d'Ognon; Thèmes; and 31 more",
+     "note": "serif printed, sans drawn (34 blocks)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the page's serif drawn as a sans throughout"
+    },
+    {
+     "n": 31,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Livraison et retrait; Nous contacter",
+     "note": "printed at the body's size, drawn smaller than the body (2 blocks)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 32,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Origine des légumes en 2025",
+     "note": "printed at the body's size, drawn larger than the body (1 block)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 33,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Comment fonctionne un panier hebdomadair; « On ne mange jamais mieux qu'un légume ; Comment suspendre mon abonnement ?",
+     "note": "printed larger than the body, drawn at the body's size (3 blocks)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 34,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "« On ne mange jamais mieux qu'un légume ",
+     "note": "printed larger than 'Comment fonctionne un panier h', drawn smaller (1 block)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 35,
+     "from": "check",
+     "check": "type",
+     "fault": "bold lost",
+     "severity": "major",
+     "element": "Foire aux questions",
+     "note": "bold printed, regular drawn (1 block)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 36,
+     "from": "check",
+     "check": "type",
+     "fault": "italics",
+     "severity": "minor",
+     "element": "Quatre points de retrait sont ouverts : ",
+     "note": "upright printed italic (1 block)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 37,
+     "from": "check",
+     "check": "type",
+     "fault": "italics",
+     "severity": "minor",
+     "element": "« On ne mange jamais mieux qu'un légume ",
+     "note": "italic printed upright (1 block)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    }
+   ],
+   "changed": null,
+   "changed_note": "",
+   "worst": 18
+  },
+  {
+   "name": "c0423",
+   "family": "reference",
+   "kind": "timetable",
+   "opened": true,
+   "why": [
+    "a major to confirm: order: interleaved"
+   ],
+   "faults": [
+    {
+     "n": 1,
+     "from": "check",
+     "check": "words",
+     "fault": "changed",
+     "severity": "major",
+     "element": "saltby cross1 → saltyb cross",
+     "note": "",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "'Saltby Cross¹' read 'Saltyb Cross'"
+    },
+    {
+     "n": 2,
+     "from": "check",
+     "check": "words",
+     "fault": "changed",
+     "severity": "major",
+     "element": "minutes2 → minutes",
+     "note": "",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "'5 minutes²' read without its number and marker"
+    },
+    {
+     "n": 3,
+     "from": "check",
+     "check": "words",
+     "fault": "changed",
+     "severity": "major",
+     "element": "saltby cross1 → saltyb cross",
+     "note": "",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "'Saltby Cross¹' read 'Saltyb Cross'"
+    },
+    {
+     "n": 4,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "1",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the footnote markers ¹ ² ³ not read, in the table and before the footnotes"
+    },
+    {
+     "n": 5,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "2",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the footnote markers ¹ ² ³ not read, in the table and before the footnotes"
+    },
+    {
+     "n": 6,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "3",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the footnote markers ¹ ² ³ not read, in the table and before the footnotes"
+    },
+    {
+     "n": 7,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "0715",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the two timetables read as one table: the return table's STOP row drawn again as a 4 px line after it, its times as a bold title row"
+    },
+    {
+     "n": 8,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "0830",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the two timetables read as one table: the return table's STOP row drawn again as a 4 px line after it, its times as a bold title row"
+    },
+    {
+     "n": 9,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "1015",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the two timetables read as one table: the return table's STOP row drawn again as a 4 px line after it, its times as a bold title row"
+    },
+    {
+     "n": 10,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "1215",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the two timetables read as one table: the return table's STOP row drawn again as a 4 px line after it, its times as a bold title row"
+    },
+    {
+     "n": 11,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "1415",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the two timetables read as one table: the return table's STOP row drawn again as a 4 px line after it, its times as a bold title row"
+    },
+    {
+     "n": 12,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "1545",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the two timetables read as one table: the return table's STOP row drawn again as a 4 px line after it, its times as a bold title row"
+    },
+    {
+     "n": 13,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "1730",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the two timetables read as one table: the return table's STOP row drawn again as a 4 px line after it, its times as a bold title row"
+    },
+    {
+     "n": 14,
+     "from": "check",
+     "check": "structure",
+     "fault": "marker changed",
+     "severity": "minor",
+     "element": "bullet added: Request stop. Please ring the ; bullet added: Times after the break are fixe; bullet added: Fare-paying adults may use the",
+     "note": "3 items",
+     "features": [
+      "list.bullets",
+      "table.ruled",
+      "table.spanning"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 15,
+     "from": "check",
+     "check": "structure",
+     "fault": "heading not kept",
+     "severity": "minor",
+     "element": "Aldbury → Fenmouth",
+     "note": "drawn as body text; the type checks say whether it looks so",
+     "features": [
+      "list.bullets",
+      "table.ruled",
+      "table.spanning"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the return table's caption drawn as a small cell in its header row"
+    },
+    {
+     "n": 16,
+     "from": "check",
+     "check": "structure",
+     "fault": "heading not kept",
+     "severity": "minor",
+     "element": "No service",
+     "note": "drawn as body text; the type checks say whether it looks so",
+     "features": [
+      "list.bullets",
+      "table.ruled",
+      "table.spanning"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn as small bold caps, as printed"
+    },
+    {
+     "n": 17,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "major",
+     "element": "list 'Buy tickets from the driver; c' and list 'Saturdays and Sundays'",
+     "note": "their words alternate in the output's reading order",
+     "features": [
+      "arr.one_column",
+      "list.bullets"
+     ],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "'Christmas week…', printed under No service, is a Zone in column 0 and is drawn in the Before you travel list"
+    },
+    {
+     "n": 18,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "major",
+     "element": "list 'Buy tickets from the driver; c' and section 'No service'",
+     "note": "their words alternate in the output's reading order",
+     "features": [
+      "arr.one_column",
+      "list.bullets"
+     ],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "'Christmas week…', printed under No service, is a Zone in column 0 and is drawn in the Before you travel list"
+    },
+    {
+     "n": 19,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "major",
+     "element": "list 'Saturdays and Sundays' and section 'Before you travel'",
+     "note": "their words alternate in the output's reading order",
+     "features": [
+      "arr.one_column",
+      "list.bullets"
+     ],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "'Christmas week…', printed under No service, is a Zone in column 0 and is drawn in the Before you travel list"
+    },
+    {
+     "n": 20,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "major",
+     "element": "section 'Before you travel' and section 'No service'",
+     "note": "their words alternate in the output's reading order",
+     "features": [
+      "arr.one_column",
+      "list.bullets"
+     ],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "'Christmas week…', printed under No service, is a Zone in column 0 and is drawn in the Before you travel list"
+    },
+    {
+     "n": 21,
+     "from": "check",
+     "check": "lines",
+     "fault": "broken differently",
+     "severity": "major",
+     "element": "Weekdays Schools only Valid from 26/10/2",
+     "note": "1 breaks added and 0 of 0 lost, in 1 block",
+     "features": [
+      "text.footnotes"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the three chips are drawn on one line, as printed"
+    },
+    {
+     "n": 22,
+     "from": "check",
+     "check": "height",
+     "fault": "height",
+     "severity": "minor",
+     "element": "1.08 of the picture's height",
+     "note": "1006 px drawn against 934",
+     "features": [
+      "arr.one_column"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 23,
+     "from": "check",
+     "check": "alignment",
+     "fault": "alignment",
+     "severity": "major",
+     "element": "Refreshment break at Hallam Green, 5 min",
+     "note": "printed centre, drawn left (1 block)",
+     "features": [
+      "arr.one_column"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 24,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Line 7",
+     "note": "printed at the body's size, drawn larger than the body (1 block)",
+     "features": [
+      "type.sans"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 25,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Refreshment break at Hallam Green, 5 min; Stop; 0715; and 9 more",
+     "note": "printed smaller than the body, drawn at the body's size (12 blocks)",
+     "features": [
+      "type.sans"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 26,
+     "from": "check",
+     "check": "type",
+     "fault": "bold lost",
+     "severity": "major",
+     "element": "Stop",
+     "note": "bold printed, regular drawn (1 block)",
+     "features": [
+      "type.sans"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    }
+   ],
+   "changed": null,
+   "changed_note": "",
+   "worst": 7
+  },
+  {
+   "name": "c0427",
+   "family": "reference",
+   "kind": "catalogue",
+   "opened": false,
+   "why": [
+    "not checked: timeout: not converted within 20 minutes; stopped"
+   ],
+   "faults": [],
+   "changed": null,
+   "changed_note": "",
+   "worst": null
+  },
+  {
+   "name": "c0482",
+   "family": "credentials",
+   "kind": "certificate",
+   "opened": true,
+   "why": [
+    "drawn for credentials, seed 0"
+   ],
+   "faults": [
+    {
+     "n": 1,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "the",
+     "note": "drawn 2 more times than printed",
+     "features": [],
+     "stage": "re-read",
+     "call": "confirmed",
+     "why": "a stray 'The' drawn twice in red above the signatures"
+    },
+    {
+     "n": 2,
+     "from": "check",
+     "check": "lines",
+     "fault": "broken differently",
+     "severity": "major",
+     "element": "“Work slowly, measure twice, and leave e",
+     "note": "1 breaks added and 0 of 0 lost, in 1 block",
+     "features": [
+      "text.quote"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 3,
+     "from": "check",
+     "check": "height",
+     "fault": "height",
+     "severity": "major",
+     "element": "1.19 of the picture's height",
+     "note": "1121 px drawn against 943",
+     "features": [
+      "arr.centred"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 4,
+     "from": "check",
+     "check": "alignment",
+     "fault": "alignment",
+     "severity": "major",
+     "element": "Thomas A. Rourke; Director of Studies; Hannah L. Okafor; and 1 more",
+     "note": "printed centre, drawn left (4 blocks)",
+     "features": [
+      "arr.centred"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 5,
+     "from": "check",
+     "check": "type",
+     "fault": "wrong face",
+     "severity": "major",
+     "element": "The Cedar Hollow School of Fine Woodwork; Asheville, North Carolina; Certificate of Completion; and 11 more",
+     "note": "serif printed, sans drawn (14 blocks)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the certificate's serif drawn as a sans throughout"
+    },
+    {
+     "n": 6,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Thomas A. Rourke; Hannah L. Okafor",
+     "note": "printed smaller than the body, drawn at the body's size (2 blocks)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 7,
+     "from": "check",
+     "check": "type",
+     "fault": "bold lost",
+     "severity": "major",
+     "element": "has satisfactorily completed the two-yea",
+     "note": "bold printed, regular drawn (1 block)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "inline runs",
+     "call": "confirmed",
+     "why": "'Traditional Furniture Making', bold red, drawn italic black"
+    },
+    {
+     "n": 8,
+     "from": "check",
+     "check": "type",
+     "fault": "weight added",
+     "severity": "minor",
+     "element": "Certificate of Completion; Eleanor J. Whitcombe",
+     "note": "regular printed, bold drawn (2 blocks)",
+     "features": [
+      "type.serif"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 9,
+     "from": "review",
+     "check": "looks",
+     "fault": "frame changed",
+     "severity": "major",
+     "element": "the certificate's frame",
+     "note": "the double red frame not drawn; every block drawn on its own pale box instead",
+     "features": [
+      "look.rules"
+     ],
+     "stage": "render",
+     "call": null,
+     "why": ""
+    },
+    {
+     "n": 10,
+     "from": "review",
+     "check": "figures",
+     "fault": "figure lost",
+     "severity": "minor",
+     "element": "two signature lines",
+     "note": "the rules the names sit under not drawn",
+     "features": [
+      "look.rules"
+     ],
+     "stage": "render",
+     "call": null,
+     "why": ""
+    }
+   ],
+   "changed": null,
+   "changed_note": "",
+   "worst": 5
+  },
+  {
+   "name": "c0493",
+   "family": "credentials",
+   "kind": "membership card",
+   "opened": false,
+   "why": [
+    "not checked: timeout: not converted within 20 minutes; stopped"
+   ],
+   "faults": [],
+   "changed": null,
+   "changed_note": "",
+   "worst": null
+  },
+  {
+   "name": "c0543",
+   "family": "presentation",
+   "kind": "pricing page",
+   "opened": true,
+   "why": [
+    "drawn for presentation, seed 0"
+   ],
+   "faults": [
+    {
+     "n": 1,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "79",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn in figure pixels: the Merlin Pro card's name and price, the chart's title, the QR code's caption — check issue T"
+    },
+    {
+     "n": 2,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "average",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn in figure pixels: the Merlin Pro card's name and price, the chart's title, the QR code's caption — check issue T"
+    },
+    {
+     "n": 3,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "free",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn in figure pixels: the Merlin Pro card's name and price, the chart's title, the QR code's caption — check issue T"
+    },
+    {
+     "n": 4,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "merlin",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn in figure pixels: the Merlin Pro card's name and price, the chart's title, the QR code's caption — check issue T"
+    },
+    {
+     "n": 5,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "mo",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn in figure pixels: the Merlin Pro card's name and price, the chart's title, the QR code's caption — check issue T"
+    },
+    {
+     "n": 6,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "pro",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn in figure pixels: the Merlin Pro card's name and price, the chart's title, the QR code's caption — check issue T"
+    },
+    {
+     "n": 7,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "scan",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn in figure pixels: the Merlin Pro card's name and price, the chart's title, the QR code's caption — check issue T"
+    },
+    {
+     "n": 8,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "start",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn in figure pixels: the Merlin Pro card's name and price, the chart's title, the QR code's caption — check issue T"
+    },
+    {
+     "n": 9,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "to",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn in figure pixels: the Merlin Pro card's name and price, the chart's title, the QR code's caption — check issue T"
+    },
+    {
+     "n": 10,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "tracked",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn in figure pixels: the Merlin Pro card's name and price, the chart's title, the QR code's caption — check issue T"
+    },
+    {
+     "n": 11,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "trial",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn in figure pixels: the Merlin Pro card's name and price, the chart's title, the QR code's caption — check issue T"
+    },
+    {
+     "n": 12,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "units",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn in figure pixels: the Merlin Pro card's name and price, the chart's title, the QR code's caption — check issue T"
+    },
+    {
+     "n": 13,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "your",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "drawn in figure pixels: the Merlin Pro card's name and price, the chart's title, the QR code's caption — check issue T"
+    },
+    {
+     "n": 14,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "10",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "re-read",
+     "call": "confirmed",
+     "why": "'LODESTAR CLOUD · FEB 10, 2026' drawn twice, a 4 px copy above it; 'Starter' twice"
+    },
+    {
+     "n": 15,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "2026",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "re-read",
+     "call": "confirmed",
+     "why": "'LODESTAR CLOUD · FEB 10, 2026' drawn twice, a 4 px copy above it; 'Starter' twice"
+    },
+    {
+     "n": 16,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "cloud",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "re-read",
+     "call": "confirmed",
+     "why": "'LODESTAR CLOUD · FEB 10, 2026' drawn twice, a 4 px copy above it; 'Starter' twice"
+    },
+    {
+     "n": 17,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "feb",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "re-read",
+     "call": "confirmed",
+     "why": "'LODESTAR CLOUD · FEB 10, 2026' drawn twice, a 4 px copy above it; 'Starter' twice"
+    },
+    {
+     "n": 18,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "lodestar",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "re-read",
+     "call": "confirmed",
+     "why": "'LODESTAR CLOUD · FEB 10, 2026' drawn twice, a 4 px copy above it; 'Starter' twice"
+    },
+    {
+     "n": 19,
+     "from": "check",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "starter",
+     "note": "drawn 1 more time than printed",
+     "features": [],
+     "stage": "re-read",
+     "call": "confirmed",
+     "why": "'LODESTAR CLOUD · FEB 10, 2026' drawn twice, a 4 px copy above it; 'Starter' twice"
+    },
+    {
+     "n": 20,
+     "from": "check",
+     "check": "structure",
+     "fault": "items merged",
+     "severity": "minor",
+     "element": "1 tracked unit + 7-day history + E-mail alerts",
+     "note": "1 item",
+     "features": [
+      "table.empty_cells"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "a card's three features read as one paragraph"
+    },
+    {
+     "n": 21,
+     "from": "check",
+     "check": "structure",
+     "fault": "marker changed",
+     "severity": "minor",
+     "element": "1 tracked unit; 7-day history; E-mail alerts",
+     "note": "3 items",
+     "features": [
+      "table.empty_cells"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the features drawn with or without bullets, not as printed"
+    },
+    {
+     "n": 22,
+     "from": "check",
+     "check": "structure",
+     "fault": "marker changed",
+     "severity": "minor",
+     "element": "25 tracked units; 1-year history; Route reports",
+     "note": "3 items",
+     "features": [
+      "table.empty_cells"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the features drawn with or without bullets, not as printed"
+    },
+    {
+     "n": 23,
+     "from": "check",
+     "check": "structure",
+     "fault": "items merged",
+     "severity": "minor",
+     "element": "Unlimited units + Unlimited history + Dedicated support",
+     "note": "1 item",
+     "features": [
+      "table.empty_cells"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "a card's three features read as one paragraph"
+    },
+    {
+     "n": 24,
+     "from": "check",
+     "check": "structure",
+     "fault": "marker changed",
+     "severity": "minor",
+     "element": "Unlimited units; Unlimited history; Dedicated support",
+     "note": "3 items",
+     "features": [
+      "table.empty_cells"
+     ],
+     "stage": "extract",
+     "call": "confirmed",
+     "why": "the features drawn with or without bullets, not as printed"
+    },
+    {
+     "n": 25,
+     "from": "check",
+     "check": "structure",
+     "fault": "heading not kept",
+     "severity": "minor",
+     "element": "Pricing that grows with your fleet.",
+     "note": "drawn as body text; the type checks say whether it looks so",
+     "features": [
+      "table.empty_cells"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the 60 px display title drawn at 14 px"
+    },
+    {
+     "n": 26,
+     "from": "check",
+     "check": "structure",
+     "fault": "heading not kept",
+     "severity": "minor",
+     "element": "$19 /mo",
+     "note": "drawn as body text; the type checks say whether it looks so",
+     "features": [
+      "table.empty_cells"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the price is drawn large, as printed"
+    },
+    {
+     "n": 27,
+     "from": "check",
+     "check": "structure",
+     "fault": "heading not kept",
+     "severity": "minor",
+     "element": "$249 /mo",
+     "note": "drawn as body text; the type checks say whether it looks so",
+     "features": [
+      "table.empty_cells"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the Fleet price drawn at 6 px"
+    },
+    {
+     "n": 28,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "minor",
+     "element": "list '25 tracked units' and section '$19 /mo'",
+     "note": "their words alternate in the output's HTML, drawn side by side as printed",
+     "features": [
+      "arr.panels_side_by_side"
+     ],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "the three cards drawn apart: Starter left, Fleet right, the Merlin Pro card split into an orange bar above and full-width orange bands below them"
+    },
+    {
+     "n": 29,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "minor",
+     "element": "list '25 tracked units' and section '$249 /mo'",
+     "note": "their words alternate in the output's HTML, drawn side by side as printed",
+     "features": [
+      "arr.panels_side_by_side"
+     ],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "the three cards drawn apart: Starter left, Fleet right, the Merlin Pro card split into an orange bar above and full-width orange bands below them"
+    },
+    {
+     "n": 30,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "minor",
+     "element": "list 'Unlimited units' and section '$19 /mo'",
+     "note": "their words alternate in the output's HTML, drawn side by side as printed",
+     "features": [
+      "arr.panels_side_by_side"
+     ],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "the three cards drawn apart: Starter left, Fleet right, the Merlin Pro card split into an orange bar above and full-width orange bands below them"
+    },
+    {
+     "n": 31,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "minor",
+     "element": "section '$19 /mo' and section '$79 /mo'",
+     "note": "their words alternate in the output's HTML, drawn side by side as printed",
+     "features": [
+      "arr.panels_side_by_side"
+     ],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "the three cards drawn apart: Starter left, Fleet right, the Merlin Pro card split into an orange bar above and full-width orange bands below them"
+    },
+    {
+     "n": 32,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "minor",
+     "element": "section '$19 /mo' and section '$249 /mo'",
+     "note": "their words alternate in the output's HTML, drawn side by side as printed",
+     "features": [
+      "arr.panels_side_by_side"
+     ],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "the three cards drawn apart: Starter left, Fleet right, the Merlin Pro card split into an orange bar above and full-width orange bands below them"
+    },
+    {
+     "n": 33,
+     "from": "check",
+     "check": "order",
+     "fault": "interleaved",
+     "severity": "minor",
+     "element": "section '$79 /mo' and section '$249 /mo'",
+     "note": "their words alternate in the output's HTML, drawn side by side as printed",
+     "features": [
+      "arr.panels_side_by_side"
+     ],
+     "stage": "layout",
+     "call": "confirmed",
+     "why": "the three cards drawn apart: Starter left, Fleet right, the Merlin Pro card split into an orange bar above and full-width orange bands below them"
+    },
+    {
+     "n": 34,
+     "from": "check",
+     "check": "lines",
+     "fault": "broken differently",
+     "severity": "major",
+     "element": "Pricing that grows with your fleet.; For one vehicle owner; 7-day history; and 3 more",
+     "note": "4 breaks added and 2 of 2 lost, in 6 blocks",
+     "features": [],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 35,
+     "from": "check",
+     "check": "lines",
+     "fault": "rows joined",
+     "severity": "major",
+     "element": "$19 /mo; For one vehicle owner; 1 tracked unit; and 3 more",
+     "note": "drawn on one line with the row printed below it (6 blocks)",
+     "features": [],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 36,
+     "from": "check",
+     "check": "height",
+     "fault": "height",
+     "severity": "major",
+     "element": "1.13 of the picture's height",
+     "note": "1390 px drawn against 1225",
+     "features": [
+      "arr.panels_side_by_side"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 37,
+     "from": "check",
+     "check": "alignment",
+     "fault": "alignment",
+     "severity": "major",
+     "element": "For one vehicle owner; 1 tracked unit; 7-day history",
+     "note": "printed left, drawn right (3 blocks)",
+     "features": [
+      "arr.panels_side_by_side"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 38,
+     "from": "check",
+     "check": "alignment",
+     "fault": "alignment",
+     "severity": "major",
+     "element": "Start free; Talk to sales; Pro; and 3 more",
+     "note": "printed centre, drawn left (6 blocks)",
+     "features": [
+      "arr.panels_side_by_side"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 39,
+     "from": "check",
+     "check": "alignment",
+     "fault": "alignment",
+     "severity": "major",
+     "element": "For growing small fleets",
+     "note": "printed left, drawn centre (1 block)",
+     "features": [
+      "arr.panels_side_by_side"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 40,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Lodestar Cloud · Feb 10, 2026",
+     "note": "printed smaller than the body, drawn larger than the body (1 block)",
+     "features": [
+      "type.sans",
+      "type.weights"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 41,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Pricing that grows with your fleet.; Starter; Fleet",
+     "note": "printed larger than the body, drawn at the body's size (3 blocks)",
+     "features": [
+      "type.sans",
+      "type.weights"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 42,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "For growing small fleets; 1-year history; Route reports; and 1 more",
+     "note": "printed at the body's size, drawn smaller than the body (4 blocks)",
+     "features": [
+      "type.sans",
+      "type.weights"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 43,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "25 tracked units",
+     "note": "printed at the body's size, drawn larger than the body (1 block)",
+     "features": [
+      "type.sans",
+      "type.weights"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 44,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "$249 /mo",
+     "note": "printed larger than the body, drawn smaller than the body (1 block)",
+     "features": [
+      "type.sans",
+      "type.weights"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 45,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Erin Morales, Customer Success · Greenvi",
+     "note": "printed smaller than the body, drawn at the body's size (1 block)",
+     "features": [
+      "type.sans",
+      "type.weights"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 46,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Pricing that grows with your fleet.; Starter; Fleet; and 1 more",
+     "note": "printed larger than 'Pick a plan, switch any time. ', drawn smaller (4 blocks)",
+     "features": [
+      "type.sans",
+      "type.weights"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 47,
+     "from": "check",
+     "check": "type",
+     "fault": "bold lost",
+     "severity": "major",
+     "element": "Pricing that grows with your fleet.; $19 /mo",
+     "note": "bold printed, regular drawn (2 blocks)",
+     "features": [
+      "type.sans",
+      "type.weights"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 48,
+     "from": "check",
+     "check": "type",
+     "fault": "weight added",
+     "severity": "minor",
+     "element": "25 tracked units",
+     "note": "regular printed, bold drawn (1 block)",
+     "features": [
+      "type.sans",
+      "type.weights"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 49,
+     "from": "review",
+     "check": "looks",
+     "fault": "fill shape changed",
+     "severity": "major",
+     "element": "Merlin Pro card",
+     "note": "the orange card drawn as three full-width orange bands across the page",
+     "features": [
+      "look.bands"
+     ],
+     "stage": "layout",
+     "call": null,
+     "why": ""
+    }
+   ],
+   "changed": null,
+   "changed_note": "",
+   "worst": 28
+  },
+  {
+   "name": "c0545",
+   "family": "presentation",
+   "kind": "flyer",
+   "opened": true,
+   "why": [
+    "drawn for presentation, seed 0"
+   ],
+   "faults": [
+    {
+     "n": 1,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "fri",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's day labels, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 2,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "mon",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's day labels, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 3,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "sat",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's day labels, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 4,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "sun",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's day labels, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 5,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "thu",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's day labels, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 6,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "tue",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's day labels, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 7,
+     "from": "check",
+     "check": "words",
+     "fault": "lost",
+     "severity": "major",
+     "element": "wed",
+     "note": "printed 1 more time than drawn",
+     "features": [],
+     "stage": null,
+     "call": "rejected",
+     "why": "the chart's day labels, drawn in the chart's own pixels — check issue T"
+    },
+    {
+     "n": 8,
+     "from": "check",
+     "check": "structure",
+     "fault": "marker changed",
+     "severity": "minor",
+     "element": "bullet added: All ages",
+     "note": "1 item",
+     "features": [
+      "table.zebra"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 9,
+     "from": "check",
+     "check": "lines",
+     "fault": "broken differently",
+     "severity": "major",
+     "element": "Netherby Leisure Trust Autumn programme ; Active Week at Netherby Baths; Free entry All ages No booking Step-free; and 2 more",
+     "note": "9 breaks added and 3 of 5 lost, in 5 blocks",
+     "features": [],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "the chips wrapped inside themselves ('Free / entry', 'All / ages'), the title on two lines that print as one"
+    },
+    {
+     "n": 10,
+     "from": "check",
+     "check": "height",
+     "fault": "height",
+     "severity": "major",
+     "element": "1.24 of the picture's height",
+     "note": "903 px drawn against 726",
+     "features": [
+      "arr.panels_side_by_side"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 11,
+     "from": "check",
+     "check": "alignment",
+     "fault": "alignment",
+     "severity": "major",
+     "element": "Time; 07:00; 16:30; and 5 more",
+     "note": "printed right, drawn left (8 blocks)",
+     "features": [
+      "arr.panels_side_by_side"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 12,
+     "from": "check",
+     "check": "alignment",
+     "fault": "alignment",
+     "severity": "major",
+     "element": "When; Monday 2 to Sunday 8 November 2026",
+     "note": "printed left, drawn centre (2 blocks)",
+     "features": [
+      "arr.panels_side_by_side"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 13,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "This week’s sessions; Visitors last Active Week",
+     "note": "printed at the body's size, drawn smaller than the body (2 blocks)",
+     "features": [
+      "type.sans"
+     ],
+     "stage": "render",
+     "call": "confirmed",
+     "why": "as the picture shows"
+    },
+    {
+     "n": 14,
+     "from": "check",
+     "check": "type",
+     "fault": "sizes out of proportion",
+     "severity": "major",
+     "element": "Mon; Early lengths; 07:00; and 18 more",
+     "note": "printed larger than the body, drawn at the body's size (21 blocks)",
+     "features": [
+      "type.sans"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "the table's text is not visibly out of proportion with the body"
+    },
+    {
+     "n": 15,
+     "from": "check",
+     "check": "type",
+     "fault": "weight added",
+     "severity": "minor",
+     "element": "Free entry All ages No booking Step-free",
+     "note": "regular printed, bold drawn (1 block)",
+     "features": [
+      "type.sans"
+     ],
+     "stage": null,
+     "call": "rejected",
+     "why": "only 'Free entry' is drawn bold, as printed"
+    },
+    {
+     "n": 16,
+     "from": "review",
+     "check": "words",
+     "fault": "invented",
+     "severity": "major",
+     "element": "VISITORS LAST ACTIVE WEEK",
+     "note": "the chart's title drawn twice: as text above a picture that already holds it",
+     "features": [
+      "fig.chart"
+     ],
+     "stage": "render",
+     "call": null,
+     "why": ""
+    }
+   ],
+   "changed": null,
+   "changed_note": "",
+   "worst": 9
+  }
+ ],
+ "ranked": [
+  {
+   "check": "words",
+   "fault": "invented",
+   "why": "10 of 14 pages, and with changed and lost the worst fault on 5. The content faults are drawn twice: a chart's or a figure Zone's title is drawn as text above a picture that already holds it (c0014, c0363, c0545), overlapping Zones are re-read (c0366, c0543), two tables are read as one (c0423). Misreads by extract are on 5 pages"
+  },
+  {
+   "check": "order",
+   "fault": "interleaved",
+   "why": "with the one-word column on c0305 and the split cards on c0543: layout groups across what the page separates. Few pages, each one badly wrong, as on dev-90"
+  },
+  {
+   "check": "type",
+   "fault": "wrong face",
+   "why": "5 pages where a serif page is drawn in a sans, plus the sizes on 13: the render, as on dev-90 and the 31"
+  },
+  {
+   "check": "words",
+   "fault": "mark lost",
+   "why": "with numbers as bullets: ticks, boxes and numbers drawn as bullets on c0202, c0246, c0305 and c0423, the same class as dev-90's third"
+  }
+ ]
+}

@@ -611,6 +611,127 @@ changed (no call of theirs reached 3 minutes). Track it with
 `touch debug/runs/L2-dev-90/stop.txt` stops it after the page in hand, and
 the same command resumes it.
 
+**The run's outcome, 2026-11-01.** `L2-dev-90` ran 2026-10-31 15:06 to
+2026-11-01 06:59 (15h54m) on `8bb13b8`, nothing beside it: **84 converted,
+6 timed out, 0 raised**. With the first stretch's 14, **98 dev pages are
+converted.** 4,658 calls answered, median 14.2 s; 9 stopped at the 3-minute
+limit, on 7 pages.
+
+| | first stretch, `L2-dev-mixed` (20) | `L2-dev-90` (90) |
+|---|---|---|
+| sparse | 3 of 3 converted: 90, 377, 620 s | 23 of 24: median 428 s, 188–738 |
+| medium | 8 of 10: median 467 s, 302–1,001 | 34 of 36: median 450 s, 216–1,180 |
+| dense | 3 of 7: 596, 656, 679 s | 27 of 30: median 742 s, 378–1,102 |
+| timed out, big page | 3 (c0427, c0312, c0072) | 5: c0045, c0595, c0024 (dense), c0023, c0249 (medium); 88–124 calls started, medians 8–16 s, every call normal |
+| timed out, runaway | 3 (c0004, c0008, c0493) | 1: c0028 (sparse), three prose calls stopped at 180 s, 9 of its 20 minutes |
+| a call stopped, the page converted | — (no limit) | c0008 and c0493, the two runaways of the first stretch, each with 1 Zone unread; c0135 and c0044, a table stopped, 1 Zone unread; c0458, two prose calls stopped, converted |
+
+- **The call limit did what decision 11 asked**: a runaway costs 3
+  minutes and one unread Zone, not the page. Every stopped call streamed
+  on the reasoning channel with **0 characters answered**, 8,163 to 15,006
+  in reasoning.
+- **What runs away**: three tables, on crops of 48, 170 and 187 KB, and
+  six prose reads, five of them on crops under 1 KB (c0028's three and
+  c0458's two) and one of 14 KB. So a near-empty prose crop is the
+  commonest runaway after all, though 19 of the first stretch's answered.
+- **c0135 and c0044 converted in 2 and 9 calls**: their table is most of
+  the page, so most of the page is unread. c0044 was in the review's
+  sample; c0135 was not, and was opened by hand: the whole receipt is one
+  table Zone, drawn as the title over one hatched unread box — 155 words
+  lost, and none guessed.
+- **Verdicts** on the 84: 67 converted, 12 with Zones read short, 5 with a
+  Zone unread.
+
+**The review of dev, 2026-11-01.** `tools/measure_run.py` ran over
+`L2-dev-90` and `L2-dev-mixed` with the checks at `7e86b2b7c66b`, and the
+sampling rule (seed 0) opened **69 of the 84** and **all 14** of the first
+stretch. Claude called every fault on every opened sheet, at rubric 2; the
+calls are `docs/agents/review-calls/L2-dev-90.json` and
+`L2-dev-mixed.json`.
+
+| | `L2-dev-90` | `L2-dev-mixed` |
+|---|---|---|
+| pages opened | 69 of 84 | 14 of 14 |
+| check faults confirmed | 2,189 | 215 |
+| check faults rejected | 214 | 78 |
+| faults added by the review | 105, 79 of them major | 12, 7 major |
+| unanswered; majors with no stage | 0; 0 | 0; 0 |
+
+Lost and invented words count one fault per word, which is why the totals
+are large. **What the review ranks first**, `L2-dev-90`'s list (the
+first stretch's agrees, class for class):
+
+1. **Content**: lost, invented, changed or marks lost, on **68 of 69
+   pages**, and the worst fault on 38. Most come from the model's reading
+   (extract on 49 pages, the caption pass on 10, re-reads on 7). The
+   layout front causes them on 23:
+   - a narrow Zone cuts a line, so the line is read twice ('Ser /
+     Landscape / March' on c0486 and c0504);
+   - two Zones overlap, so a region is drawn twice in 4–5 px copies;
+   - a line that no Zone covers is lost (c0063's consent items, c0488's
+     distance column).
+2. **Cells in the wrong column**, 19 pages, the worst fault on 11: a header
+   row lost or shifted, or a spanning header read flat.
+3. **Ticks, crosses, discs and numbers drawn as bullets**, 30 pages.
+4. **Grouping across what the page separates**, 32 pages. Cards lose
+   their pictures, a hero title becomes a one-word column (c0548; c0305's
+   whole letter), and a band splits into boxes.
+5. **Text invisible on its band**, 10 pages, all render. The IR holds the
+   text, but it is drawn navy on navy or white on white.
+6. **Size, line breaks and height**, on 68, 59 and 68 pages, all render.
+   Display type is drawn at the body's size.
+7. **A serif or script page drawn in a sans**, 26 pages.
+8. **Furniture not drawn**: rules, frames, fills, and chips drawn as
+   plain text, 35 pages.
+
+**Against the 31**, where sizes, line breaks and furniture came first,
+dev puts content first. Pages nobody tuned lose and invent content that
+the tuned pages kept: the probe's 9 of 10, now on 83 pages.
+
+**Where the review overturns the checks**, by the fault the check makes.
+Each one is a check issue for the next step:
+
+| id | check | what the picture shows | pages |
+|---|---|---|---|
+| T | words | text inside a figure Zone, drawn in the figure's pixels, is called lost (chart axes, logos, map labels, barcodes) | 13 |
+| I | order | columns drawn side by side as printed are read in DOM order: interleaved, under another heading | 12, and 6 more under another heading |
+| H | structure | a heading drawn as large and bold as printed is called "not kept" | 12 |
+| A | alignment | a short line read as justified, a name centred in its half read as left | 11 |
+| P | rules | a frame or rule that is drawn (on a wrapper, or as the table's own border) is read as missing | 8 |
+| — | type | a size difference the eye cannot see | 6 |
+| F, F′ | order, type | a repeated phrase, or the repeated words of a lost block, matched crosswise | 3: c0008, c0345, c0424 |
+| W | words | item numbers drawn as '·' go unreported, because the multiset finds the digits elsewhere | 1: c0185 |
+
+**Step 7's first leftover: would the sampling rule alone have found
+what the full review of the 31 found?** Over `K0-known31.json` (seed 0;
+the checks as at the review and as today give the same sample), the rule
+opens **22 of 31**. Seven are opened for a major in cells, rules,
+structure or order, and fifteen are drawn by seed. The nine left
+unopened are darkdeck, letter, menu, newsletter, nonlatin, paper,
+receipt, statement and ticket.
+- **By fault class it finds most**: 26 of the 31 classes the review
+  found, and **17 of the 19 major classes**. The two major classes it
+  misses are "split on its line" (darkdeck) and "colour lost" (menu's
+  green VG), plus three minor ones.
+- **By fault it misses a share**: 16 of the 61 faults the review added,
+  **7 of them major**:
+  - darkdeck's split line;
+  - letter's alignment, twice;
+  - menu's colour;
+  - nonlatin's wrong face;
+  - paper's alignment;
+  - statement's width.
+  
+  It also leaves standing 5 of the 30 check faults the review rejected:
+  letter's italics, newsletter's alignment, statement's alignment and
+  lost bold, and ticket's alignment.
+- **The seed matters at the margin**: seeds 1–5 find 23–28 classes and
+  13–18 major classes, and miss 6–14 majors.
+- **So**: the sample is enough to rank fault classes, which is what the
+  review is for. It is not enough to count faults per page. A rate per
+  class has to come from the checks' own counts over every page, with
+  each check's false alarms (the table above) taken out first.
+
 ---
 
 ## Where L2 stands, 2026-10-31 15:45 — and the prompt for a fresh chat
