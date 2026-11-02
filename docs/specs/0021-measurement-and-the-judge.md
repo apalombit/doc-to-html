@@ -473,6 +473,31 @@ The skill and `docs/agents/visual-review.md` are rewritten for rubric 2.
   his call; the review by judging the past called pages again.
 - **Where his calls disagree with the checks, Claude stops and asks.**
 
+**Built 2026-11-02, after Alessandro's go on 2026-11-01** ("dev, as the
+spec says"): **https://claude.ai/artifact/RpUd3a7ioGjdNWBLyqM6JD**,
+private, `db` and `user`.
+- **What it holds.** The eight ranked fault classes of `L2-dev-90`, each
+  with an example sheet. Then 47 pages: the 42 where Claude's call
+  overturns a check (32 of `L2-dev-90`, 10 of `L2-dev-mixed`), the three
+  known-fault pages (labreport, recipe, quiz) and two at random, seed 0
+  (c0425, c0429). The calls are the ones committed after today's
+  corrections.
+- **One tick per fault group.** The check's faults with the same call
+  and reason form one group, and a fault the review added stands alone:
+  **670 groups**, 85 where Claude overturns the check, 62 added, 523
+  confirmed. The confirmed ones fold behind a button on each page. A
+  filter shows only the overturns, the groups not called yet, or the
+  disagreements.
+- **His calls** go to the page's `calls` collection, one document per
+  group: `<run>~<page>~g<n>`, or `~a<n>` for an added fault, holding
+  the fault numbers it covers, `verdict` (agree / disagree), `note`, `by`
+  and `at`. Claude reads them with `ArtifactData` into
+  `docs/agents/review-calls/`. Checked once after publishing: a probe
+  call was written, read back and deleted.
+- **Rebuilt by** `python tools/review_page.py <out_dir>`, whose template
+  is `tools/review_page.html`. It rebuilt the published page byte for
+  byte.
+
 ### Step 7 — the proof on the 31 known pages
 
 - **The run, `K0-known31`**, takes no model:
