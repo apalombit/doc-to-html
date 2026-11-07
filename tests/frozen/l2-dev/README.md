@@ -1,4 +1,4 @@
-# `l2-dev/` — seventeen of dev's renders, the input to the check tests
+# `l2-dev/` — twenty-three of dev's renders, the input to the check tests
 
 Spec 0021's review of dev (2026-11-01) overturned the exact checks on
 some pages. Each fix to a check is pinned on the page that showed the
@@ -26,6 +26,12 @@ renders those tests read: `tests/test_checks.py`, classes
 | `c0221.html` | C2: three columns kept, no interleaving; item (a) drawn in section 3's column stays |
 | `c0166.html` | D1: the receipt's labels drawn over their values |
 | `c0187.html` | D2: Year to date and Time off, side by side, drawn stacked |
+| `c0366.html` | C1: the heading's 'panier' kept with its heading; 'Foire aux questions' drawn regular stays |
+| `c0008.html` | C2: section 1, mostly lost, not interleaved with what is drawn |
+| `c0063.html` | D3: the patient total drawn too faint to read |
+| `c0419.html` | D3: the lead printed on the page, drawn in a dark box |
+| `c0355.html` | D3: the order number printed red, drawn dark |
+| `c0567.html` | D3: cards framed on the page, drawn as filled boxes, a minor |
 
 ## Provenance
 
@@ -39,6 +45,9 @@ renders those tests read: `tests/test_checks.py`, classes
 - Added 2026-11-07, the same way: `c0363` and `c0246` from run
   `L2-dev-mixed` on `618750c`, the other eight from `L2-dev-90` on
   `8bb13b8`. md5: `c0029` `1492666822299512d3c37af76e099c31`, `c0166` `0cd372f9d88c12ff3c95c00f940f18aa`, `c0187` `6ef037cdefbf8685c13e30b09de8000c`, `c0221` `6b9b20ee92644c5b89fa10fe2ed88d83`, `c0246` `c7ab7e246b0cd2cfa17d422d233215c6`, `c0345` `f0fd6d49903e17c405367cb47890e4fb`, `c0363` `c58615a3181db96c902f9290ac2617c6`, `c0548` `b1097ecbd763345246a4f52bb8e2d0d2`, `c0576` `b0383d01520f2288f39349209d266608`, `c0600` `19b4daff5e718243eefaf17bba9e5c26`.
+- Added 2026-11-07 for D3, the same way: `c0366` from run
+  `L2-dev-mixed` on `618750c`, the other four from `L2-dev-90` on
+  `8bb13b8`. md5: `c0008` `365f9fac4edc3b21e7278a8db776ffdc`, `c0063` `3f9c8129f269ed807dd963cce7ae99e0`, `c0355` `542a2b5345588a228d449f0ec2e57c42`, `c0366` `7a89cf535ae0f6828f46dfb5cc943d29`, `c0419` `edb33326c76069871f5c61f40b7c0122`, and `c0567` (`L2-dev-90`) `d41fbe75a2227d5427ec8c9eb1c7b4bd`.
 - Each source is `corpus/` (`doc_to_html.corpus.page`), which `check_page`
   finds by the page's name.
 

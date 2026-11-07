@@ -1889,6 +1889,573 @@
      }
     }
    ]
+  },
+  {
+   "name": "Round 5",
+   "date": "2026-11-07",
+   "title": "Round 5: the build, before and after",
+   "intro": "Round 4 is recorded: twelve agreed, and serif drawn as sans is now minor. The build is done: alignment, sizes, line breaks, faces, subscripts, copies, columns, and three new checks (text over text, beside, looks). This round shows real pages whose verdict moved, mostly pages you have not seen. The first three need your call: a card the checks now miss, an accent colour, a gap in a list. The rest confirm the new checks on new pages. Click a decision: it saves and the next issue opens.",
+   "about": "Round 5: the build's before and after on real pages, fourteen issues. Three ask for a call (a card moved that the checks now miss, a heading's accent colour, a gap in a list); eleven confirm the changed and new checks on pages mostly not seen before.",
+   "issues": [
+    {
+     "key": "r5-cards",
+     "kind": "after",
+     "page": "c0543",
+     "run": "L2-dev-mixed",
+     "title": "A card's body drawn under the other two: the checks now miss it",
+     "what": "Three plan cards sit side by side. Our render keeps Starter and Fleet at the top, and draws Merlin Pro's price and features as an orange band below both.",
+     "checks": "Before: 6 majors, “their words alternate”. After: none. Each card stays in its own column, so the column rule (round 1) drops the interleaving, and no other check sees a card drawn below its neighbours.",
+     "claude": "A real major the build lost. Claude tried a check for it (a group printed beside another, drawn wholly below it): 1 true and 6 false on the 114 pages (columns of different lengths, cards staggered by a badge), so it was not kept.",
+     "often": "This page only, among the 114.",
+     "proposes": "Accept the miss: Claude's review names it as a major by eye, and the spec records it as a gap in the checks.",
+     "source_crop": [
+      30,
+      280,
+      1050,
+      700
+     ],
+     "render_crop": [
+      0,
+      180,
+      1080,
+      680
+     ],
+     "source_marks": [
+      [
+       383,
+       297,
+       696,
+       682
+      ]
+     ],
+     "render_marks": [
+      [
+       0,
+       440,
+       1080,
+       610
+      ]
+     ]
+    },
+    {
+     "key": "r5-accent",
+     "kind": "after",
+     "page": "c0548",
+     "run": "L2-dev-90",
+     "title": "A heading's accent colour drawn black",
+     "what": "“Des tarifs simples” is printed orange, in a script face; our render draws it dark. (The script drawn as a plain face is a separate fault, a major already.)",
+     "checks": "After: major, “colour lost”: the new looks check, a coloured text drawn neutral.",
+     "claude": "Here the colour is decoration, not meaning: the heading reads the same. The criteria make lost colour major where it marks something (red flags, an orange card frame), and a colour off in its family minor.",
+     "often": "18 “colour lost” majors on 114 pages; about half are headings or titles like this one.",
+     "proposes": "Minor for a heading's or title's accent colour; major where coloured text or numbers carry meaning (as in the red notice, two issues on).",
+     "source_crop": [
+      300,
+      80,
+      700,
+      165
+     ],
+     "render_crop": [
+      380,
+      85,
+      800,
+      165
+     ],
+     "source_marks": [
+      [
+       410,
+       102,
+       590,
+       144
+      ]
+     ],
+     "render_marks": [
+      [
+       490,
+       104,
+       682,
+       143
+      ]
+     ]
+    },
+    {
+     "key": "r5-datasheet",
+     "kind": "after",
+     "page": "probe_datasheet",
+     "run": "K0-known31",
+     "title": "A list torn by a gap, still in its column",
+     "what": "Key features sit beside the specifications on both. Our render draws the first feature, a blank gap, then the other five below the table's height.",
+     "checks": "Before: 4 majors, “features and specifications alternate”. After: none, and no check reports the gap.",
+     "claude": "The order is right: nothing is drawn among the specifications. The gap is spacing. Claude's own review had confirmed the 4 majors; that call was wrong.",
+     "often": "One page of this kind among the 114.",
+     "proposes": "No order fault; the gap is a minor (spacing), which Claude's review adds by eye.",
+     "source_crop": [
+      20,
+      150,
+      880,
+      445
+     ],
+     "render_crop": [
+      0,
+      165,
+      900,
+      600
+     ],
+     "source_marks": [
+      [
+       30,
+       190,
+       380,
+       355
+      ]
+     ],
+     "render_marks": [
+      [
+       0,
+       205,
+       330,
+       585
+      ]
+     ]
+    },
+    {
+     "key": "r5-recipe",
+     "kind": "after",
+     "page": "probe_recipe",
+     "run": "K0-known31",
+     "title": "The recipe: one step drawn across the ingredients",
+     "what": "The method sits beside the ingredients on both. Step 3 (“Toast the hazelnuts…”) is drawn across the page, between the salad's ingredients and the dressing's.",
+     "checks": "Before: 8 majors, “ingredients and method alternate”. After: 1 major, step 3 “drawn across the column printed beside it”. The steps drawn as bullets stay major.",
+     "claude": "Right: columns kept side by side are no fault (round 1); the one step crossing into the ingredients is. One of the three known faults, now named exactly.",
+     "often": "Drawn across: 2 pages of 114 (this and c0522). Interleaving majors fell from 120 to 21.",
+     "proposes": "Keep: one major for the step drawn across.",
+     "source_crop": [
+      20,
+      135,
+      870,
+      560
+     ],
+     "render_crop": [
+      20,
+      150,
+      880,
+      720
+     ],
+     "source_marks": [
+      [
+       380,
+       300,
+       850,
+       346
+      ]
+     ],
+     "render_marks": [
+      [
+       35,
+       467,
+       740,
+       495
+      ]
+     ]
+    },
+    {
+     "key": "r5-lost",
+     "kind": "after",
+     "page": "c0008",
+     "run": "L2-dev-90",
+     "title": "A section lost is not a section reordered",
+     "what": "Section 1 (“About you”: surname, first names, taxpayer reference…) is drawn as a black bar over an empty hatched box: its fields are missing from our render.",
+     "checks": "Before: 11 majors, “interleaved”, from three stray copies (“1”, “DD”, “MM”) paired with the signature table's. You rejected them. After: none; the missing words are reported as lost.",
+     "claude": "Right: a group with under half its words drawn is judged by the words check, not for order. Every interleaving you confirmed keeps 62% or more of its words.",
+     "often": "This page only: 11 rejected majors gone, no confirmed one lost.",
+     "proposes": "Keep.",
+     "source_crop": [
+      20,
+      170,
+      880,
+      330
+     ],
+     "render_crop": [
+      0,
+      160,
+      980,
+      330
+     ],
+     "source_marks": [
+      [
+       25,
+       178,
+       870,
+       322
+      ]
+     ],
+     "render_marks": [
+      [
+       2,
+       203,
+       978,
+       268
+      ]
+     ]
+    },
+    {
+     "key": "r5-red",
+     "kind": "after",
+     "page": "c0355",
+     "run": "L2-dev-90",
+     "title": "A red order number drawn black",
+     "what": "The order number, “encomenda n.º 2103-118”, is printed red and bold in the letter's first lines; our render draws it in the body's colour and weight.",
+     "checks": "Before: nothing. After: major, “colour lost”.",
+     "claude": "Agree: the red marks the order the letter is about.",
+     "often": "18 “colour lost” majors on 114 pages.",
+     "proposes": "Keep major.",
+     "source_crop": [
+      0,
+      200,
+      880,
+      330
+     ],
+     "render_crop": [
+      0,
+      190,
+      880,
+      330
+     ],
+     "source_marks": [
+      [
+       405,
+       242,
+       560,
+       264
+      ]
+     ],
+     "render_marks": [
+      [
+       440,
+       232,
+       612,
+       253
+      ]
+     ]
+    },
+    {
+     "key": "r5-faint",
+     "kind": "after",
+     "page": "c0063",
+     "run": "L2-dev-90",
+     "title": "A total drawn too faint to read",
+     "what": "The patient's total, “Estimated patient responsibility $2,965.78”, is printed white on a black bar; in our render it cannot be read on its ground.",
+     "checks": "Before: nothing. After: major, “printed readable, drawn too faint to read”.",
+     "claude": "Agree: the total is unreadable.",
+     "often": "11 majors on 11 pages.",
+     "proposes": "Keep major.",
+     "source_crop": [
+      450,
+      600,
+      875,
+      715
+     ],
+     "render_crop": [
+      440,
+      690,
+      880,
+      760
+     ],
+     "source_marks": [
+      [
+       620,
+       688,
+       875,
+       712
+      ]
+     ],
+     "render_marks": [
+      [
+       475,
+       727,
+       875,
+       750
+      ]
+     ]
+    },
+    {
+     "key": "r5-ground",
+     "kind": "after",
+     "page": "c0419",
+     "run": "L2-dev-90",
+     "title": "A headline drawn on dark boxes",
+     "what": "The headline is printed dark on the page's light ground; our render draws it white on dark boxes.",
+     "checks": "Before: nothing. After: major, “printed on light, drawn on dark”.",
+     "claude": "Agree: the page reads differently.",
+     "often": "17 majors.",
+     "proposes": "Keep major.",
+     "source_crop": [
+      0,
+      60,
+      700,
+      260
+     ],
+     "render_crop": [
+      0,
+      150,
+      700,
+      340
+     ],
+     "source_marks": [
+      [
+       28,
+       136,
+       430,
+       198
+      ]
+     ],
+     "render_marks": [
+      [
+       28,
+       190,
+       560,
+       300
+      ]
+     ]
+    },
+    {
+     "key": "r5-pill",
+     "kind": "after",
+     "page": "probe_flyer",
+     "run": "K0-known31",
+     "title": "A pill drawn as a band across the page",
+     "what": "“Free entry · Family friendly” sits in a pill about a third of the page wide; our render fills the page's whole width.",
+     "checks": "Before: nothing. After: major, “fill drawn another shape” (31% of the page → 100%).",
+     "claude": "Agree, per your round 2 call (a fill drawn the wrong shape is major).",
+     "often": "9 majors.",
+     "proposes": "Keep major.",
+     "source_crop": [
+      100,
+      420,
+      800,
+      500
+     ],
+     "render_crop": [
+      0,
+      470,
+      900,
+      530
+     ],
+     "source_marks": [
+      [
+       285,
+       443,
+       610,
+       482
+      ]
+     ],
+     "render_marks": [
+      [
+       0,
+       482,
+       900,
+       517
+      ]
+     ]
+    },
+    {
+     "key": "r5-frames",
+     "kind": "after",
+     "page": "c0181",
+     "run": "L2-dev-90",
+     "title": "Fields drawn with no frame",
+     "what": "The applicant's fields are framed boxes on the page; our render draws them as plain rows with rules under them.",
+     "checks": "Before: nothing. After: major, “frame missing” (9 fields).",
+     "claude": "Agree: the fields no longer read as boxes to fill in.",
+     "often": "10 majors. A box drawn filled instead of framed (cards on a coloured ground) is now a minor: 12 minors, with chips and buttons.",
+     "proposes": "Keep major.",
+     "source_crop": [
+      15,
+      50,
+      825,
+      200
+     ],
+     "render_crop": [
+      0,
+      50,
+      840,
+      215
+     ],
+     "source_marks": [
+      [
+       25,
+       60,
+       410,
+       99
+      ]
+     ],
+     "render_marks": [
+      [
+       10,
+       60,
+       405,
+       98
+      ]
+     ]
+    },
+    {
+     "key": "r5-chip",
+     "kind": "after",
+     "page": "c0600",
+     "run": "L2-dev-90",
+     "title": "Buttons drawn as plain text are minor",
+     "what": "“Book a place” is an orange button under each workshop on the page; our render draws two of the three as plain text (the middle one keeps its button).",
+     "checks": "Before: nothing. After: minor, “chip drawn plain”.",
+     "claude": "Per your round 2 call (buttons drawn as plain lines: minor).",
+     "often": "9 minors.",
+     "proposes": "Keep minor.",
+     "source_crop": [
+      20,
+      290,
+      780,
+      370
+     ],
+     "render_crop": [
+      0,
+      300,
+      780,
+      395
+     ],
+     "source_marks": [
+      [
+       36,
+       322,
+       140,
+       355
+      ],
+      [
+       542,
+       322,
+       646,
+       355
+      ]
+     ],
+     "render_marks": [
+      [
+       12,
+       346,
+       97,
+       371
+      ],
+      [
+       530,
+       333,
+       628,
+       358
+      ]
+     ]
+    },
+    {
+     "key": "r5-wrap",
+     "kind": "after",
+     "page": "letter_0016",
+     "run": "K0-known31",
+     "title": "Paragraphs re-wrapped by their column are minor",
+     "what": "The letter's paragraphs wrap at different words than printed, in a slightly wider column.",
+     "checks": "Before: major, “broken differently”. After: minor, “re-wrapped” (8 breaks moved).",
+     "claude": "Per your round 3 call.",
+     "often": "Line-break majors fell from 92 to 25; 89 minors.",
+     "proposes": "Keep minor.",
+     "source_crop": [
+      40,
+      290,
+      800,
+      470
+     ],
+     "render_crop": [
+      40,
+      290,
+      800,
+      480
+     ],
+     "source_marks": [],
+     "render_marks": []
+    },
+    {
+     "key": "r5-over",
+     "kind": "after",
+     "page": "c0068",
+     "run": "L2-dev-90",
+     "title": "A label and its value drawn over each other",
+     "what": "“Nom Delacroix”: label and value are apart on the page; our render draws them on top of each other.",
+     "checks": "Before: nothing. After: major, “drawn over another word”.",
+     "claude": "Agree: unreadable. Your round 1 call.",
+     "often": "13 majors.",
+     "proposes": "Keep major.",
+     "source_crop": [
+      30,
+      100,
+      400,
+      145
+     ],
+     "render_crop": [
+      30,
+      165,
+      400,
+      210
+     ],
+     "source_marks": [
+      [
+       40,
+       110,
+       146,
+       134
+      ]
+     ],
+     "render_marks": [
+      [
+       40,
+       176,
+       108,
+       199
+      ]
+     ]
+    },
+    {
+     "key": "r5-beside",
+     "kind": "after",
+     "page": "c0105",
+     "run": "L2-dev-90",
+     "title": "An amount torn from its label",
+     "what": "“Total to pay £28.74” is one row on the page; our render draws £28.74 on the next line, at the left.",
+     "checks": "Before: nothing. After: major, “printed beside, drawn under”.",
+     "claude": "Agree, per your round 1 call (labels torn from their amounts).",
+     "often": "34 majors.",
+     "proposes": "Keep major.",
+     "source_crop": [
+      0,
+      400,
+      500,
+      520
+     ],
+     "render_crop": [
+      0,
+      440,
+      520,
+      590
+     ],
+     "source_marks": [
+      [
+       25,
+       418,
+       475,
+       452
+      ]
+     ],
+     "render_marks": [
+      [
+       5,
+       462,
+       160,
+       524
+      ]
+     ]
+    }
+   ]
   }
  ]
 }

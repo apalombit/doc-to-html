@@ -432,6 +432,39 @@ MEASURE = r"""
       }
       return 'rgb(255, 255, 255)';
     };
+    // A fill drawn as an image of one colour (the render's bands,
+    // `linear-gradient(c, c)` sized across a Zone's top): its colour and
+    // the rectangle it paints, from the box's top left. null for no image;
+    // undefined for any other image, which no one colour describes.
+    const strip = (style, rect) => {
+      const image = style.backgroundImage || 'none';
+      if (image === 'none') return null;
+      const stops = image.match(/rgba?\([^)]*\)/g) || [];
+      if (!/^linear-gradient\(/.test(image) || !stops.length || new Set(stops).size !== 1) return undefined;
+      const [across, down] = (style.backgroundSize || 'auto').split(' ');
+      const size = (value, full) => (!value || value === 'auto' ? full
+        : value.endsWith('%') ? full * parseFloat(value) / 100 : parseFloat(value));
+      const once = (style.backgroundRepeat || '').includes('no-repeat');
+      return {colour: stops[0],
+              rect: [rect.left, rect.top, rect.left + (once ? size(across, rect.width) : rect.width),
+                     rect.top + (once ? size(down || across, rect.height) : rect.height)]};
+    };
+    // What a word is drawn on, at its centre: the nearest painted
+    // background, a strip's colour where it covers the word; '' under any
+    // other image (a hatch, a photograph).
+    const paintedUnder = (element, x, y) => {
+      for (let at = element; at; at = at.parentElement) {
+        const style = getComputedStyle(at);
+        const drawn = strip(style, at.getBoundingClientRect());
+        if (drawn === undefined) return '';
+        if (drawn && x >= drawn.rect[0] && x <= drawn.rect[2] && y >= drawn.rect[1] && y <= drawn.rect[3]) {
+          return drawn.colour;
+        }
+        const colour = style.backgroundColor;
+        if (colour && colour !== 'rgba(0, 0, 0, 0)' && colour !== 'transparent') return colour;
+      }
+      return 'rgb(255, 255, 255)';
+    };
     const ordered = (elements) => [...elements].sort((a, b) =>
       (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1);
 
@@ -772,6 +805,7 @@ MEASURE = r"""
         for (const match of text.matchAll(/\S+/g)) {
           const width = canvas.measureText(match[0]).width;
           const [left, top, bottom] = near(width);
+          const under = paintedUnder(element, left + width / 2, (top + bottom) / 2);
           words.push({text: match[0], rect: [left, top, left + width, bottom], block, lines: 1,
                       weight: parseInt(style.fontWeight, 10) || 400,
                       italic: style.fontStyle === 'italic', family: face.family,
@@ -779,7 +813,7 @@ MEASURE = r"""
                       transform: style.textTransform,
                       small_caps: /small-caps/.test(style.fontVariantCaps || ''),
                       cell: cell && cellIds.has(cell) ? cellIds.get(cell) : null,
-                      item, generated: true});
+                      item, generated: true, ground: under});
         }
       }
     };
@@ -827,7 +861,7 @@ MEASURE = r"""
                     color: style.color, transform: style.textTransform,
                     small_caps: /small-caps/.test(style.fontVariantCaps || ''),
                     cell: cell && cellIds.has(cell) ? cellIds.get(cell) : null,
-                    item});
+                    item, ground: paintedUnder(parent, (l + r) / 2, (t + b) / 2)});
       }
       if (after.has(node) && first) {
         let edge = first[1].right + 3;
@@ -857,11 +891,37 @@ MEASURE = r"""
       frames.push({block: record.index, chain, align: getComputedStyle(element).textAlign});
     }
 
+    // Every box drawn under or round content: a fill, or three or four
+    // sides of a border. Not the page's own ground (a box over 80% of it),
+    // and not a rule (`drawnRules`, at most 4px tall).
+    const boxes = [];
+    const pageArea = document.documentElement.scrollWidth
+      * Math.max(document.documentElement.scrollHeight, 1);
+    for (const element of document.body.querySelectorAll('*')) {
+      if (skipped.has(element) || !shown(element)) continue;
+      const rect = element.getBoundingClientRect();
+      if (rect.width < 8 || rect.height <= 4 || rect.width * rect.height > 0.8 * pageArea) continue;
+      const style = getComputedStyle(element);
+      const fill = style.backgroundColor;
+      const filled = fill && fill !== 'rgba(0, 0, 0, 0)' && fill !== 'transparent';
+      const own = sides(element);
+      const framed = own.filter(([width, kind]) => width > 0 && kind !== 'none' && kind !== 'hidden').length >= 3;
+      const table = !!(element.closest('table') || element.querySelector('table'));
+      const ground = groundOf(element.parentElement || document.body);
+      const drawn = strip(style, rect);
+      if (drawn) {
+        boxes.push({rect: drawn.rect, fill: drawn.colour, ground, table,
+                    sides: [0, 1, 2, 3].map(() => [0, 'none', 'rgba(0, 0, 0, 0)'])});
+      }
+      if (!filled && !framed) continue;
+      boxes.push({rect: box(rect), fill: filled ? fill : null, sides: own, ground, table});
+    }
+
     let unread = 0;
     for (const element of document.querySelectorAll('.disputed, .unread, [data-unread]')) {
       if (!skipped.has(element)) unread += 1;
     }
-    return {words, tables, lists, frames, unread};
+    return {words, tables, lists, frames, boxes, unread};
   }
 
   const payload = {
@@ -1047,6 +1107,10 @@ class Word:
     generated: bool = False
     """Printed by a `::before` or `::after`, not a text node: a counter's
     number, a ticked box's cross. Its box is estimated from the font."""
+    ground: str = ""
+    """What the word is drawn on, at its centre: the nearest painted
+    background, a one-colour strip where it covers the word; '' under any
+    other image."""
 
 
 @dataclass(frozen=True)
@@ -1252,6 +1316,33 @@ class Frames:
 
 
 @dataclass(frozen=True)
+class Box:
+    """An element that draws a fill under its content or a frame round it:
+    a card, a panel, a band, a chip, a field."""
+
+    rect: Rect
+    fill: str | None
+    sides: tuple[Side, Side, Side, Side]
+    ground: str
+    """What the box is drawn on."""
+    table: bool
+    """A table's part or a box round one: the rules check's."""
+
+    def filled(self) -> bool:
+        """Whether its fill is seen against what it is drawn on."""
+        if self.fill is None:
+            return False
+        ink, under = parse_rgba(self.fill), parse_rgba(self.ground)
+        if ink is None or ink[3] <= 0.1:
+            return False
+        return under is None or max(abs(ink[i] - under[i]) for i in range(3)) > INK_FROM_GROUND
+
+    def framed(self) -> bool:
+        """Three or four of its sides drawn."""
+        return sum(side.drawn(self.ground) for side in self.sides) >= 3
+
+
+@dataclass(frozen=True)
 class Detail:
     """What `project(..., detail=True)` adds: spec 0021's reading."""
 
@@ -1262,6 +1353,7 @@ class Detail:
     unread: int
     """Elements drawn as unread or disputed (`.disputed`, `.unread`,
     `[data-unread]`)."""
+    boxes: tuple[Box, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -1457,7 +1549,8 @@ def _detail(payload: dict[str, Any]) -> Detail:
              mono=bool(item["mono"]), font_px=float(item["font_px"]),
              color=str(item["color"]), transform=str(item["transform"]),
              small_caps=bool(item["small_caps"]), cell=_pair(item["cell"]),
-             item=_pair(item["item"]), generated=bool(item.get("generated", False)))
+             item=_pair(item["item"]), generated=bool(item.get("generated", False)),
+             ground=str(item.get("ground", "")))
         for item in payload["words"]
     )
     tables = tuple(
@@ -1498,8 +1591,13 @@ def _detail(payload: dict[str, Any]) -> Detail:
                align=str(frame["align"]))
         for frame in payload["frames"]
     )
+    boxes = tuple(
+        Box(rect=_rect(found["rect"]), fill=found["fill"], sides=_sides(found["sides"]),
+            ground=str(found["ground"]), table=bool(found["table"]))
+        for found in payload.get("boxes", ())
+    )
     return Detail(words=words, tables=tables, lists=lists, frames=frames,
-                  unread=int(payload["unread"]))
+                  unread=int(payload["unread"]), boxes=boxes)
 
 
 SHOT_SLACK = 120

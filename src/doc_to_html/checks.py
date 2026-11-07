@@ -30,6 +30,7 @@ histogram in its constant's docstring.
 
 from __future__ import annotations
 
+import colorsys
 import itertools
 import json
 import math
@@ -43,7 +44,8 @@ from pathlib import Path
 from typing import Any
 
 from .factory.fonts import CANDIDATES, GENERIC
-from .projection import Detail, Frames, Projection, Rect, Table, TableCell, Word, project
+from .projection import (Box, Detail, Frames, Projection, Rect, Table, TableCell, Word, parse_rgba,
+                         project)
 from .scoring import normalise, tokens
 
 REPO = Path(__file__).resolve().parent.parent.parent
@@ -153,7 +155,7 @@ crop of the picture spans 64 grey levels: sample_table_0003 0.022 and
 invoice_0002 0.326 (whose HTML wants a CDN), then nothing until pricing
 0.917 and timetable 0.922, and the other 27 from 0.963 to 1.000."""
 
-LAYOUT_CHECKS = ("lines", "beside", "overprint", "alignment", "type")
+LAYOUT_CHECKS = ("lines", "beside", "overprint", "alignment", "type", "looks")
 """The checks that read where the source's HTML lays its words out, and how
 large: withheld on a page whose HTML does not register with its picture
 (`REGISTERED`). Its words, its tables, lists and order are the DOM's and
@@ -166,6 +168,14 @@ RUN_TOKENS = 2
 """Tokens a stretch of one group must hold to count when two groups are
 tested for interleaving. A single token out of place is an alignment
 artefact more often than a moved block."""
+
+ORDER_KEPT = 0.5
+"""The share of a group's words the output must draw, in runs, for the
+group to be judged for interleaving. A group mostly lost is a words
+fault: its few words left are copies matched where another group draws
+them. c0008's section 1, 3% to 8% drawn, raised eight interleavings,
+each rejected (Alessandro, 2026-11-07); every interleaving confirmed
+keeps 62% or more of both groups."""
 
 SECTION_SLACK = 12.0
 """How far left of its heading a block may start and still be in its
@@ -200,6 +210,7 @@ CHECK_FEATURES: dict[str, tuple[str, ...]] = {
     "overprint": ("arr.", "kv."),
     "alignment": ("arr.", "kv."),
     "type": ("type.",),
+    "looks": ("look.",),
 }
 """The page features each check bears on, by prefix: a fault is tagged with
 the page's features that match, so the report counts per feature."""
@@ -460,9 +471,21 @@ def _nearest_copies(source: _Side, output: _Side, alignment: Alignment) -> Align
     anchors = [(_centre(source.box(owner)), _centre(output.box(other)))
                for owner, other in whole.items()
                if printed[key[owner]] == 1 and drawn[key[owner]] == 1]
+    # A copy matched in a run, inside its own block, that holds a word
+    # printed once is placed by that word: c0366's heading 'Comment
+    # fonctionne un panier', not swapped with the 'panier' of the answer
+    # under it. c0345's signature, a block of its own, is not placed by
+    # the date before it.
+    run_of: dict[int, int] = {}
+    for i in sorted(alignment.pairs):
+        run_of[i] = run_of[i - 1] if i - 1 in run_of and \
+            alignment.pairs[i] == alignment.pairs[i - 1] + 1 and \
+            source.words[source.owner[i]].block == source.words[source.owner[i - 1]].block else i
+    unique = {owner for owner in whole if printed[key[owner]] == 1 and drawn[key[owner]] == 1}
+    anchored = {run_of[i] for owner in unique for i in mine[owner]}
     groups: dict[tuple[str, ...], list[int]] = defaultdict(list)
     for owner in whole:
-        if printed[key[owner]] > 1:
+        if printed[key[owner]] > 1 and not any(run_of[i] in anchored for i in mine[owner]):
             groups[key[owner]].append(owner)
     if not anchors or not groups:
         return alignment
@@ -1165,13 +1188,20 @@ def _interleaves(positions: Sequence[tuple[int, str]]) -> bool:
     return len(_runs([label for label, _ in runs])) >= 3
 
 
+def _kept(held: Sequence[int], alignment: Alignment) -> float:
+    return sum(i in alignment.strong for i in held) / len(held) if held else 0.0
+
+
 def _check_order(source: _Side, output: _Side, alignment: Alignment) -> list[Fault]:
     faults: list[Fault] = []
     groups = _groups(source)
+    apart: dict[int, list[int]] = defaultdict(list)
     for a in range(len(groups)):
         for b in range(a + 1, len(groups)):
             (name_a, held_a), (name_b, held_b) = groups[a], groups[b]
             if set(held_a) & set(held_b):
+                continue
+            if min(_kept(held_a, alignment), _kept(held_b, alignment)) < ORDER_KEPT:
                 continue
             mine = [(i, "a") for i in held_a] + [(i, "b") for i in held_b]
             if _interleaves(mine):
@@ -1179,6 +1209,8 @@ def _check_order(source: _Side, output: _Side, alignment: Alignment) -> list[Fau
             if _columns_apart(source, held_a, held_b) and _columns_apart(
                     output, [alignment.pairs[i] for i in held_a if i in alignment.pairs],
                     [alignment.pairs[i] for i in held_b if i in alignment.pairs]):
+                apart[a].append(b)
+                apart[b].append(a)
                 continue
             theirs = [(alignment.pairs[i], "a") for i in held_a if i in alignment.strong] + \
                      [(alignment.pairs[i], "b") for i in held_b if i in alignment.strong]
@@ -1189,8 +1221,73 @@ def _check_order(source: _Side, output: _Side, alignment: Alignment) -> list[Fau
                     "their words alternate in the output's HTML, drawn side by side as printed"
                     if beside else "their words alternate in the output's reading order",
                     source_box=_union(source.words[source.owner[i]].rect for i in held_a + held_b)))
+    across: dict[int, Rect] = {}
+    for a, others in apart.items():
+        across.update(_drawn_across(source, output, alignment, groups[a][1],
+                                    [groups[b][1] for b in others]))
+    faults += _grouped("order", "interleaved", "major", [
+        ("drawn across the column printed beside it", source.projection.blocks[block].text[:40], box)
+        for block, box in sorted(across.items())])
     faults += _check_headings_over(source, output, alignment)
     return faults
+
+
+def _drawn_across(source: _Side, output: _Side, alignment: Alignment,
+                  held: Sequence[int], beside: Sequence[Sequence[int]]) -> list[tuple[int, Rect]]:
+    """The blocks of one group drawn out of its column, toward the column
+    set beside it, more than halfway further than the page prints them,
+    with that column drawn above it and below: the recipe's step 3, drawn
+    across the page between the salad's ingredients and the dressing's, a known fault
+    (spec 0021, step 7) that the columns kept apart would skip. The other
+    column is every group set apart from this one on that side, together:
+    one group's lines are short, and the step falls between two. Measured
+    against the page, since a group's column is the median of its blocks'
+    edges, a heading's where it holds a heading and one paragraph. A label
+    pushed toward its value on a row it shares with the other column (the
+    probe label's 'Calories', by its 230) is beside it still. A block drawn wholly in the other column
+    is `under another heading`."""
+    found: list[tuple[int, Rect]] = []
+    mine = _column_of(output, [alignment.pairs[i] for i in held if i in alignment.pairs])
+    printed_mine = _column_of(source, held)
+    if mine is None or printed_mine is None:
+        return found
+    blocks: dict[int, list[int]] = defaultdict(list)
+    for i in held:
+        if i in alignment.strong:
+            blocks[source.words[source.owner[i]].block].append(alignment.pairs[i])
+    for left in (True, False):
+        printed: list[Rect] = []
+        drawn: list[Rect] = []
+        words: list[Rect] = []
+        for other in beside:
+            column = _column_of(output, [alignment.pairs[i] for i in other if i in alignment.pairs])
+            source_column = _column_of(source, other)
+            if column is None or source_column is None:
+                continue
+            if (column[2] <= mine[0] + ALIGN_SLACK) if left else (column[0] >= mine[2] - ALIGN_SLACK):
+                drawn.append(column)
+                printed.append(source_column)
+                words += [output.box(output.owner[alignment.pairs[i]]) for i in other if i in alignment.strong]
+        if not drawn:
+            continue
+        lane, page = _union(drawn), _union(printed)
+
+        def reach(box: Rect, column: Rect, other: Rect) -> float:
+            return (column[0] - box[0]) / max(column[0] - other[0], 1.0) if left else \
+                (box[2] - column[2]) / max(other[2] - column[2], 1.0)
+
+        for block, held_at in blocks.items():
+            ink = source.projection.blocks[block].ink
+            if len(held_at) < RUN_TOKENS or not _apart(ink, page):
+                continue
+            box = _union(output.box(output.owner[j]) for j in held_at)
+            if reach(box, mine, lane) - max(reach(ink, printed_mine, page), 0.0) > 0.5 and \
+                    not _apart(box, mine) and \
+                    any(word[3] <= box[1] + ALIGN_SLACK for word in words) and \
+                    any(word[1] >= box[3] - ALIGN_SLACK for word in words) and \
+                    not any(min(word[3], box[3]) - max(word[1], box[1]) > 0 for word in words):
+                found.append((block, ink))
+    return found
 
 
 def _column_of(side: _Side, held: Sequence[int]) -> Rect | None:
@@ -1478,6 +1575,275 @@ def _check_lines(source: _Side, output: _Side, alignment: Alignment) -> list[Fau
 
 
 # --- height, alignment, type -----------------------------------------------------
+
+
+# --- looks: grounds, colours, fills, frames ------------------------------------------
+
+
+READABLE = 3.0
+"""The contrast, text against its ground (WCAG's ratio), at which the page's
+words read: a word printed at least this clear must stay readable."""
+
+FAINT = 1.5
+"""The contrast under which a word cannot be read: c0063's total, white on
+black printed, black on black drawn, is 1.0."""
+
+NEUTRAL = 60
+"""How far apart, of 255, a colour's channels may sit and still be a grey,
+with `MUTED`: cream paper, 250 245 230, and c0187's slate labels, 107 103
+144, are greys; c0355's red, 185 28 28, and a gold rule, 138 109 47, are
+colours."""
+
+MUTED = 0.35
+"""The saturation under which a colour reads as a grey (HSV)."""
+
+GREY = 25
+"""How far apart a drawn colour's channels sit at most to be grey or black:
+a colour lost. c0153's blue labels drawn a dark slate blue, 50 apart, are
+a colour off, the criteria's minor, not reported."""
+
+SHAPE = 2.5
+"""How many times wider or narrower, as a share of the page's width, a fill
+must be drawn to be another shape: c0374's yellow strip across the
+masthead drawn as three boxes. Against the page, not its words: c0105's
+total band, across the receipt on both, holds its amount only on the
+page."""
+
+PILL = 0.6
+"""The widest, as a share of the page, a fill printed about its words may
+be and still be drawn across the page when the render loses its edges: a
+band printed across the column is not."""
+
+CHIP_LINES = 3.0
+
+CHIP_TYPE = 1.3
+"""The largest a chip's type is, against the page's body."""
+
+CHIP_WIDE = 2.0
+"""The widest a chip is, against its words: it hugs them. c0231's teal
+strips across the column are bands."""
+"""A box no taller than this many of its words' sizes, holding a few words,
+is a chip or a button: drawn plain, a minor (the criteria)."""
+
+
+def _rgb(colour: str, under: str = "") -> tuple[float, float, float] | None:
+    found = parse_rgba(colour)
+    if found is None:
+        return None
+    if found[3] >= 1:
+        return found[:3]
+    base = parse_rgba(under) or (255.0, 255.0, 255.0, 1.0)
+    return (found[3] * found[0] + (1 - found[3]) * base[0],
+            found[3] * found[1] + (1 - found[3]) * base[1],
+            found[3] * found[2] + (1 - found[3]) * base[2])
+
+
+def _luminance(rgb: tuple[float, float, float]) -> float:
+    def linear(channel: float) -> float:
+        channel /= 255
+        return channel / 12.92 if channel <= 0.03928 else ((channel + 0.055) / 1.055) ** 2.4
+    return 0.2126 * linear(rgb[0]) + 0.7152 * linear(rgb[1]) + 0.0722 * linear(rgb[2])
+
+
+def _contrast(first: tuple[float, float, float], second: tuple[float, float, float]) -> float:
+    light, dark = sorted((_luminance(first), _luminance(second)), reverse=True)
+    return (light + 0.05) / (dark + 0.05)
+
+
+HUES = ((15, "red"), (45, "orange"), (70, "yellow"), (165, "green"), (195, "teal"),
+        (255, "blue"), (290, "purple"), (335, "pink"), (360, "red"))
+
+
+def colour_family(rgb: tuple[float, float, float]) -> str:
+    """A grey as 'light' or 'dark'; any other colour by its hue."""
+    hue, saturation, _ = colorsys.rgb_to_hsv(*(channel / 255 for channel in rgb))
+    if max(rgb) - min(rgb) < NEUTRAL or saturation < MUTED:
+        return "light" if _luminance(rgb) > 0.4 else "dark"
+    return next(name for edge, name in HUES if hue * 360 < edge)
+
+
+def _chromatic(family: str) -> bool:
+    return family not in ("light", "dark")
+
+
+def _innermost(side: _Side, boxes: Sequence[Box]) -> dict[int, int]:
+    """Each word's smallest box holding its centre, by index into `boxes`."""
+    order = sorted(range(len(boxes)), key=lambda k: (boxes[k].rect[2] - boxes[k].rect[0])
+                   * (boxes[k].rect[3] - boxes[k].rect[1]))
+    found = {}
+    for owner in set(side.owner):
+        x, y = _centre(side.box(owner))
+        for k in order:
+            rect = boxes[k].rect
+            if rect[0] <= x <= rect[2] and rect[1] <= y <= rect[3]:
+                found[owner] = k
+                break
+    return found
+
+
+def _chip(box: Box, side: _Side, owners: Sequence[int]) -> bool:
+    """A few words in small type in a box little taller than they are: a
+    chip, a button, a tag. Not a headline boxed line by line (c0419)."""
+    size = max(side.words[owner].font_px for owner in owners)
+    body = _mode(word.font_px for word in side.words)
+    span = _union(side.box(owner) for owner in owners)
+    return (box.rect[3] - box.rect[1]) <= CHIP_LINES * size and len(owners) <= 5 \
+        and size <= CHIP_TYPE * body and box.rect[2] - box.rect[0] <= CHIP_WIDE * (span[2] - span[0])
+
+
+def _check_looks(source: _Side, output: _Side, alignment: Alignment) -> list[Fault]:
+    """The page's looks, word by word and box by box (Alessandro, review
+    rounds 1 and 4, 2026-11-07): what each word is drawn on, and how
+    clearly; the colour it is printed in; the fills and frames round it.
+
+    - **ground changed**: a word printed on one colour family drawn on
+      another — a band or fill lost (c0063's black bar), added (c0419's
+      headline boxed dark), or recoloured. Words in a chip, a minor.
+    - **too faint**: a word printed readable drawn under `FAINT`.
+    - **colour lost**: a word printed in a colour drawn grey or black
+      (c0355's order number, red).
+    - **fill drawn another shape**: a fill drawn `SHAPE` times wider or
+      narrower about its words (probe_flyer's pill as a band).
+    - **frame missing**: a box framed round its words drawn with no frame
+      round them (the payslip's totals); a chip's or a button's, or one
+      drawn as a filled box about as wide (c0567's cards), a minor.
+    - **frame colour lost**: a frame printed in a colour drawn grey
+      (c0548's Équipe card, orange).
+
+    Tables are the rules check's; a word on an image is not judged, nor one
+    matched alone (c0550's callout '3', paired with the '3' of '(× 3)')."""
+    pairs: dict[int, int] = {}
+    strong: dict[int, int] = {}
+    for i, j in alignment.pairs.items():
+        pairs.setdefault(source.owner[i], output.owner[j])
+        if i in alignment.strong:
+            strong.setdefault(source.owner[i], output.owner[j])
+    texts = {block.index: block for block in source.projection.blocks}
+    grounds = []
+    faint: dict[int, tuple[str, str, Rect]] = {}
+    colours: dict[tuple[int, str], tuple[str, str, Rect]] = {}
+    for mine, theirs in sorted(strong.items()):
+        was, now = source.words[mine], output.words[theirs]
+        if was.generated or now.generated or not was.ground or not now.ground:
+            continue
+        under_was, under_now = _rgb(was.ground), _rgb(now.ground)
+        ink_was, ink_now = _rgb(was.color, was.ground), _rgb(now.color, now.ground)
+        if None in (under_was, under_now, ink_was, ink_now):
+            continue
+        assert under_was and under_now and ink_was and ink_now
+        block = texts[was.block]
+        family_was, family_now = colour_family(under_was), colour_family(under_now)
+        if family_was != family_now:
+            grounds.append((family_was, family_now, mine, theirs))
+        if _contrast(ink_was, under_was) >= READABLE and _contrast(ink_now, under_now) < FAINT:
+            faint[block.index] = ("printed readable, drawn too faint to read", block.text[:40], block.ink)
+        if _chromatic(colour_family(ink_was)) and max(ink_now) - min(ink_now) < GREY \
+                and colour_family(under_now) != colour_family(ink_was):
+            # Not where the colour moved to the ground: c0392's step
+            # numbers, orange printed, white on an orange disc drawn.
+            note = f"printed {colour_family(ink_was)}, drawn {colour_family(ink_now)}"
+            colours[(block.index, note)] = (note, block.text[:40], block.ink)
+    # A table's own fills and frames are the rules check's on the page; in
+    # the render, a cell may draw what the page draws with a box.
+    mine_boxes = [box for box in source.detail.boxes if not box.table]
+    their_boxes = list(output.detail.boxes)
+    filled_mine = _innermost(source, [box for box in mine_boxes if box.filled()])
+    filled_theirs = _innermost(output, [box for box in their_boxes if box.filled()])
+    framed_mine = _innermost(source, [box for box in mine_boxes if box.framed()])
+    framed_theirs = _innermost(output, [box for box in their_boxes if box.framed()])
+    fills_mine = [box for box in mine_boxes if box.filled()]
+    fills_theirs = [box for box in their_boxes if box.filled()]
+    frames_mine = [box for box in mine_boxes if box.framed()]
+    frames_theirs = [box for box in their_boxes if box.framed()]
+
+    changed: dict[tuple[int, str], tuple[str, str, Rect]] = {}
+    chips: dict[tuple[int, str], tuple[str, str, Rect]] = {}
+    for family_was, family_now, mine, theirs in grounds:
+        block = texts[source.words[mine].block]
+        held, holding = filled_mine.get(mine), filled_theirs.get(theirs)
+        holders = [owner for owner, k in filled_mine.items() if k == held]
+        drawn_holders = [owner for owner, k in filled_theirs.items() if k == holding]
+        note = f"printed on {family_was}, drawn on {family_now}"
+        chip = (held is not None and _chip(fills_mine[held], source, holders)) or \
+            (holding is not None and _chip(fills_theirs[holding], output, drawn_holders))
+        (chips if chip else changed)[(block.index, note)] = (note, block.text[:40], block.ink)
+
+    shapes: list[tuple[str, str, Rect]] = []
+    missing: list[tuple[str, str, Rect]] = []
+    plain: list[tuple[str, str, Rect]] = []
+    frame_colours: list[tuple[str, str, Rect]] = []
+    plain_colours: list[tuple[str, str, Rect]] = []
+    for which, boxes, held_by, theirs_by, their_boxes_of in (
+            ("fill", fills_mine, filled_mine, filled_theirs, fills_theirs),
+            ("frame", frames_mine, framed_mine, framed_theirs, frames_theirs)):
+        for k, box in enumerate(boxes):
+            owners = [owner for owner, at in held_by.items() if at == k and owner in pairs]
+            if not owners:
+                continue
+            drawn = Counter(theirs_by.get(pairs[owner]) for owner in owners).most_common(1)[0][0]
+            block = texts[source.words[owners[0]].block]
+            if which == "fill":
+                if drawn is None:
+                    # Its words still drawn on its colour, and no box of
+                    # their own: the fill is drawn across the page
+                    # (probe_flyer's pill). Off it, the ground check's.
+                    under = [_rgb(output.words[pairs[owner]].ground) for owner in owners]
+                    fill, around = _rgb(box.fill or "", box.ground), _rgb(box.ground)
+                    if fill and around and colour_family(fill) != colour_family(around) \
+                            and box.rect[2] - box.rect[0] <= PILL * source.projection.width \
+                            and under and all(found and colour_family(found) == colour_family(fill)
+                                              for found in under):
+                        shapes.append(("printed wider or narrower than drawn",
+                                       f"{block.text[:40]} (about its words → across the page)",
+                                       box.rect))
+                    continue
+                other = their_boxes_of[drawn]
+                wide_was = (box.rect[2] - box.rect[0]) / source.projection.width
+                wide_now = (other.rect[2] - other.rect[0]) / output.projection.width
+                if not 1 / SHAPE <= wide_now / wide_was <= SHAPE:
+                    # A chip too: probe_flyer's pill drawn as a band is a
+                    # major (Alessandro, round 2, 2026-11-07).
+                    shapes.append(("printed wider or narrower than drawn",
+                                   f"{block.text[:40]} ({wide_was:.0%} of the page → {wide_now:.0%})",
+                                   box.rect))
+                continue
+            if drawn is None:
+                # Drawn as a filled box about the same width instead: still a
+                # box to the eye (c0567's cards, white on the render's beige).
+                filled = Counter(filled_theirs.get(pairs[owner]) for owner in owners).most_common(1)[0][0]
+                if filled is not None:
+                    other = fills_theirs[filled]
+                    wide_was = (box.rect[2] - box.rect[0]) / source.projection.width
+                    wide_now = (other.rect[2] - other.rect[0]) / output.projection.width
+                    if 1 / SHAPE <= wide_now / wide_was <= SHAPE:
+                        plain.append(("framed on the page, drawn as a filled box", block.text[:40], box.rect))
+                        continue
+                (plain if _chip(box, source, owners) else missing).append(
+                    ("framed on the page, drawn with no frame", block.text[:40], box.rect))
+                continue
+            printed_in = _frame_colour(box)
+            drawn_in = _frame_colour(their_boxes_of[drawn])
+            if printed_in and drawn_in and _chromatic(printed_in) and not _chromatic(drawn_in):
+                (plain_colours if _chip(box, source, owners) else frame_colours).append(
+                    (f"frame printed {printed_in}, drawn {drawn_in}", block.text[:40], box.rect))
+    return (_grouped("looks", "ground changed", "major", changed.values())
+            + _grouped("looks", "chip drawn plain", "minor", chips.values())
+            + _grouped("looks", "too faint", "major", faint.values())
+            + _grouped("looks", "colour lost", "major", colours.values())
+            + _grouped("looks", "fill drawn another shape", "major", shapes)
+
+            + _grouped("looks", "frame missing", "major", missing)
+            + _grouped("looks", "frame missing", "minor", plain)
+            + _grouped("looks", "frame colour lost", "major", frame_colours)
+            + _grouped("looks", "frame colour lost", "minor", plain_colours))
+
+
+def _frame_colour(box: Box) -> str | None:
+    for side in box.sides:
+        if side.drawn(box.ground):
+            found = _rgb(side.color, box.ground)
+            return colour_family(found) if found else None
+    return None
 
 
 def _check_height(output: _Side, picture_height: int) -> tuple[list[Fault], float]:
@@ -1892,6 +2258,7 @@ def check(source: Projection, output: Projection, *, picture_height: int,
     faults += _check_overprint(mine, theirs, alignment)
     faults += _check_alignment(mine, theirs, alignment, moved)
     faults += _check_type(mine, theirs, alignment)
+    faults += _check_looks(mine, theirs, alignment)
     return PageCheck(page=page, faults=tuple(_tag(faults, features)), height_ratio=ratio,
                      unread=theirs.detail.unread, source_tokens=len(mine.tokens),
                      output_tokens=len(theirs.tokens), matched_tokens=len(alignment.pairs),

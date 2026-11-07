@@ -196,6 +196,7 @@ class TestTheKnownFaults:
         why = {page["name"]: " ".join(page["why"]) for page in record["pages"]}
         assert "cells: wrong column" in why["probe_labreport"]
         assert "rules: cells merged as drawn" in why["probe_quiz"]
+        assert "order: interleaved" in why["probe_recipe"]
         assert "structure: numbers as bullets" in why["probe_recipe"]
 
     def test_the_form_arrives_with_the_checks_faults_waiting_for_a_call(

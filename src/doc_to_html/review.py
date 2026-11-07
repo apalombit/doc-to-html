@@ -178,7 +178,7 @@ added under the area it belongs to."""
 AREA_OF_CHECK: dict[str, str] = {
     "words": "words", "cells": "structure", "structure": "structure",
     "order": "structure", "rules": "looks", "lines": "layout",
-    "height": "layout", "beside": "layout", "overprint": "layout", "alignment": "layout", "type": "type",
+    "height": "layout", "beside": "layout", "overprint": "layout", "alignment": "layout", "type": "type", "looks": "looks",
 }
 """Which area each of `checks`'s checks reports under: a rule missing is a
 look ("a frame or rule missing"), a cell out of place is structure."""

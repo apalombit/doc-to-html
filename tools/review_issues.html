@@ -59,7 +59,7 @@ header.top p { color: var(--muted); max-width: 70ch; }
 .kind { justify-self: start; font: 500 .74rem/1 var(--mono); text-transform: uppercase; letter-spacing: .07em; padding: 5px 8px; border-radius: 4px; }
 .kind.missed, .kind.added { background: var(--disagree-soft); color: var(--disagree); }
 .kind.false { background: var(--accent-soft); color: var(--accent); }
-.kind.followup, .kind.criteria, .kind.rule { background: var(--unsure-soft); color: var(--unsure); }
+.kind.followup, .kind.criteria, .kind.rule, .kind.after { background: var(--unsure-soft); color: var(--unsure); }
 .kind.spot { background: var(--agree-soft); color: var(--agree); }
 .rounds { display: flex; flex-wrap: wrap; gap: 4px; }
 .rounds button { border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 6px 12px; font-size: .9rem; }
@@ -164,7 +164,8 @@ textarea { width: 100%; min-height: 3.2rem; resize: vertical; font: .95rem/1.45 
   let ISSUES = ROUNDS[round].issues;
   const $ = (s) => document.querySelector(s);
   const KIND = { missed: "Missed by the checks", false: "False alarm by the checks", followup: "Your round 1 call",
-                 criteria: "A question the criteria leave open", spot: "Spot check of Claude's call", rule: "Testing your alignment line", added: "A fault Claude added" };
+                 criteria: "A question the criteria leave open", spot: "Spot check of Claude's call", rule: "Testing your alignment line", added: "A fault Claude added",
+                 after: "Before and after the build" };
   const HERE = "https://claude.ai/artifact/RpUd3a7ioGjdNWBLyqM6JD";
   const decisions = new Map();   // key -> {verdict, note}
   const pending = new Set();     // keys decided before the store answered

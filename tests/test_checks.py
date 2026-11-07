@@ -58,14 +58,18 @@ class TestTheKnownFaults:
         assert merged.note.startswith("4 of the ")
         assert not [f for f in result.faults if f.check == "cells"]
 
-    def test_the_recipes_method_drawn_as_bullets_beside_its_ingredients(self) -> None:
-        """The method stays beside the ingredients, as printed: their words
-        alternate in the render's HTML, which no reader sees (Alessandro,
-        2026-11-07). The steps drawn as bullets are the fault."""
+    def test_the_recipes_step_drawn_across_the_ingredients_and_drawn_as_bullets(self) -> None:
+        """The method's column is kept beside the ingredients', so their
+        words alternating in the render's HTML is no fault (round 1's
+        columns, 2026-11-07); step 3, drawn across both columns between the
+        salad's ingredients and the dressing's, is. The steps drawn as
+        bullets are the other fault."""
         result = check_page("probe_recipe", PROBE / "recipe" / "render.html")
         kinds = {(f.check, f.fault) for f in result.faults}
-        assert ("order", "interleaved") not in kinds
         assert ("structure", "numbers as bullets") in kinds
+        (across,) = [f for f in result.faults if f.fault == "interleaved"]
+        assert across.severity == "major" and across.element.startswith("Toast the hazelnuts")
+        assert across.note.startswith("drawn across the column printed beside it")
 
 
 # --- mutations ----------------------------------------------------------------
@@ -606,6 +610,65 @@ class TestWhatTheRoundsDecided:
         result = check_page("c0187", DEV / "c0187.html")
         (under,) = [f for f in result.faults if f.check == "beside"]
         assert under.severity == "major" and "Time off" in under.element
+
+    def test_a_copy_matched_beside_a_word_printed_once_stays_with_it(self) -> None:
+        """c0366's heading 'Comment fonctionne un panier', not swapped with
+        the 'panier' of the answer under it. 'Foire aux questions' drawn
+        regular stays."""
+        result = check_page("c0366", DEV / "c0366.html")
+        assert not [f for f in result.faults if f.check == "type" and "Comment fonctionne" in f.element]
+        (bold,) = [f for f in result.faults if f.fault == "bold lost"]
+        assert bold.element == "Foire aux questions"
+
+    def test_a_group_mostly_lost_is_not_interleaved(self) -> None:
+        """c0008's section 1, 3% to 8% of it drawn: eight interleavings, each
+        rejected."""
+        result = check_page("c0008", DEV / "c0008.html")
+        assert not [f for f in result.faults if f.fault == "interleaved"
+                    and ("SECTION 1" in f.element or "Surname" in f.element)]
+
+    def test_type_drawn_too_faint_to_read(self) -> None:
+        """c0063's patient total, dark on its tint, drawn white on white."""
+        result = check_page("c0063", DEV / "c0063.html")
+        (faint,) = [f for f in result.faults if f.fault == "too faint"]
+        assert faint.severity == "major" and "$2,965.78" in faint.element
+
+    def test_a_line_printed_on_the_page_drawn_in_a_dark_box(self) -> None:
+        result = check_page("c0419", DEV / "c0419.html")
+        (ground,) = [f for f in result.faults if f.fault == "ground changed"]
+        assert ground.severity == "major" and "Le Sentier des Mousses" in ground.element
+        assert "printed on light, drawn on dark" in ground.note
+
+    def test_colour_printed_drawn_dark(self) -> None:
+        """c0355's notice printed red."""
+        result = check_page("c0355", DEV / "c0355.html")
+        (lost,) = [f for f in result.faults if f.fault == "colour lost"]
+        assert lost.severity == "major" and "printed red, drawn dark" in lost.note
+
+    def test_an_accent_frame_drawn_light_a_chip_minor(self) -> None:
+        """c0548's orange buttons: the plans' a major, the contact chip a
+        minor."""
+        result = check_page("c0548", DEV / "c0548.html")
+        frames = {f.severity: f.element for f in result.faults if f.fault == "frame colour lost"}
+        assert "Essayer 30 jours" in frames["major"] and "Parler à Yann Masson" in frames["minor"]
+
+    def test_a_pill_drawn_across_the_page(self) -> None:
+        result = check_page("probe_flyer", PROBE / "flyer" / "render.html")
+        (shape,) = [f for f in result.faults if f.fault == "fill drawn another shape"]
+        assert shape.severity == "major" and "31% of the page → 100%" in shape.element
+
+    def test_a_framed_card_drawn_as_a_filled_box_is_minor(self) -> None:
+        """c0567's cards, framed on the page, drawn white on the render's
+        beige: boxes to the eye still."""
+        result = check_page("c0567", DEV / "c0567.html")
+        (frame,) = [f for f in result.faults if f.fault == "frame missing"]
+        assert frame.severity == "minor" and "Ardnamurchan lodge" in frame.element
+        assert frame.note.startswith("framed on the page, drawn as a filled box")
+
+    def test_a_framed_box_drawn_with_no_frame(self) -> None:
+        result = check_page("probe_payslip", PROBE / "payslip" / "render.html")
+        (frame,) = [f for f in result.faults if f.fault == "frame missing"]
+        assert frame.severity == "major" and "Gross pay" in frame.element
 
 
 # --- identity -----------------------------------------------------------------
