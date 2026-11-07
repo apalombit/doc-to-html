@@ -1,9 +1,10 @@
 """tools/review_issues.py <out_dir>: build step 6's issue page (spec 0021).
 
-One issue at a time, for Alessandro's decisions: the review's
-disagreements with the checks, ranked by consequence, each shown on one
-page as two marked crops, the page beside our render. The issues and
-their crops are `docs/agents/review-issues.json`; this shoots each
+One issue at a time, for Alessandro's decisions, in rounds: each issue
+shown on one screen as two marked crops, the page beside our render, with
+what the checks say, what Claude says and what Claude proposes. The
+rounds, their issues and crops are `docs/agents/review-issues.json`
+(each decided issue carries his decision under `decided`); this shoots each
 example's render, crops and marks both sides, and writes
 <out_dir>/l2-issues.html (the template tools/review_issues.html with the
 data inlined) and <out_dir>/crops/*.webp beside it, ready to publish as
@@ -42,12 +43,15 @@ def cropped(image: Image.Image, box, marks, labels, dest: Path) -> str:
     return f"crops/{dest.name}"
 
 
-for issue in data["issues"]:
+shot: set[str] = set()
+for issue in (issue for round_ in data["rounds"] for issue in round_["issues"]):
     name, run = issue["page"], issue["run"]
     source = page(name).png_path(REPO)
     width = Image.open(source).width
-    render = shots / f"{name}-render.png"
-    screenshot(REPO / f"debug/runs/{run}/dump/qwen3-vl_4b/{name}/document.html", render, width=width)
+    render = shots / f"{run}~{name}-render.png"
+    if render.name not in shot:
+        screenshot(REPO / f"debug/runs/{run}/dump/qwen3-vl_4b/{name}/document.html", render, width=width)
+        shot.add(render.name)
     labels = issue.get("labels")
     issue["source_img"] = cropped(Image.open(source), issue["source_crop"], issue["source_marks"], labels,
                                   OUT / "crops" / f"{issue['key']}-source.webp")
@@ -58,4 +62,4 @@ for issue in data["issues"]:
 template = (Path(__file__).parent / "review_issues.html").read_text(encoding="utf-8")
 (OUT / "l2-issues.html").write_text(
     template.replace("/*DATA*/", json.dumps(data, ensure_ascii=False).replace("</", "<\\/")), encoding="utf-8")
-print(len(data["issues"]), "issues ->", OUT / "l2-issues.html")
+print(", ".join(f"{r['name']}: {len(r['issues'])} issues" for r in data["rounds"]), "->", OUT / "l2-issues.html")

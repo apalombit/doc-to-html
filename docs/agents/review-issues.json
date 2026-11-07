@@ -1,79 +1,721 @@
 {
- "stamp": "spec 0021 · step 6 · 2026-11-07",
- "about": "The review's disagreements with the checks, as eight issues ranked by consequence: four faults no check raises (counted from Claude's review of dev's 83 opened pages and the 31 known), then four false alarms the checks still raise today (each rejected call re-checked on today's code, 2026-11-07, and counted where it is still major). Built into a page by tools/review_issues.py; Alessandro's decisions land in the page's `issues` collection, one document per key.",
- "issues": [
-  {"key": "invisible", "kind": "missed", "page": "c0063", "run": "L2-dev-90",
-   "title": "Words drawn in the same colour as their band",
-   "what": "The page prints “Estimated patient responsibility $2,965.78” in white on a black bar. Our render draws the bar black and the words black, so the patient's total cannot be read.",
-   "checks": "Nothing. Every word is in the HTML, so no check sees a problem.",
-   "claude": "A major fault: the reader loses the line.",
-   "often": "11 pages: dark bars, header rows and buttons whose words vanish.",
-   "proposes": "A new check: every line the page prints readable must be drawn with enough contrast against what lies behind it. If not, major.",
-   "source_crop": [440, 570, 890, 722], "render_crop": [470, 618, 890, 760],
-   "source_marks": [[620, 690, 880, 712]], "render_marks": [[474, 728, 884, 750]]},
-  {"key": "torn", "kind": "missed", "page": "c0185", "run": "L2-dev-90",
-   "title": "Labels and their amounts pulled apart",
-   "what": "The page prints each label with its amount on one line. Our render draws the three labels, then the three amounts under them.",
-   "checks": "Nothing. Every word is there, in an order the checks accept.",
-   "claude": "A major fault: you cannot tell which amount belongs to which label.",
-   "often": "8 pages: totals, price lists, rows joined by leaders.",
-   "proposes": "A new check: a label and its value printed on one line must be drawn on one line. If not, major.",
-   "source_crop": [400, 690, 830, 785], "render_crop": [500, 765, 860, 935],
-   "source_marks": [[515, 705, 815, 776]], "render_marks": [[515, 772, 640, 846], [515, 850, 616, 930]]},
-  {"key": "overprint", "kind": "missed", "page": "c0166", "run": "L2-dev-90",
-   "title": "Text drawn on top of other text",
-   "what": "The receipt prints “Date: 01/10/2021”. Our render draws each label over its value, so the line reads “Dat01/10/2021”.",
-   "checks": "Nothing. The words are all there, in order.",
-   "claude": "A major fault: the lines cannot be read.",
-   "often": "8 pages: labels over values, signature blocks, chips over chips.",
-   "proposes": "A new check: two words apart on the page must not overlap in the render. If they do, major.",
-   "source_crop": [92, 205, 330, 292], "render_crop": [92, 242, 330, 326],
-   "source_marks": [], "render_marks": [[96, 248, 290, 324]]},
-  {"key": "stacked", "kind": "missed", "page": "c0187", "run": "L2-dev-90",
-   "title": "Two boxes side by side, drawn one under the other",
-   "what": "The page prints “Year to date” and “Time off” side by side. Our render stacks them, and draws Time off as loose lines.",
-   "checks": "Only the line it lost (“Vacation used 40 h”). No check sees side by side become stacked.",
-   "claude": "A major fault: the page's layout is lost.",
-   "often": "14 pages: cards, header boxes, a list beside its picture.",
-   "proposes": "A new check: blocks printed side by side must be drawn side by side. If stacked, major.",
-   "source_crop": [20, 585, 740, 795], "render_crop": [10, 600, 740, 935],
-   "source_marks": [], "render_marks": []},
-  {"key": "align", "kind": "false", "page": "c0126", "run": "L2-dev-mixed",
-   "title": "Alignment flagged where nothing moved",
-   "what": "“Compass Outfitters” is printed at the left, after its logo. Our render draws it at the left too. It wraps on two lines and loses the logo, but those are other faults.",
-   "checks": "Major: “printed right, drawn left”. The check measured the name against its whole box, and the logo before it made it look pushed to the right.",
-   "claude": "Not an alignment fault: the name sits where the page puts it.",
-   "often": "22 majors still raised on 18 pages: a name after a logo, a clause beside its hanging number, a size inside a chip.",
-   "proposes": "Raise an alignment fault only when the line itself moves on the page, its left, centre and right edges all more than a few pixels from where it is printed.",
-   "source_crop": [20, 25, 660, 115], "render_crop": [20, 25, 800, 100],
-   "source_marks": [[80, 45, 248, 72]], "render_marks": [[52, 44, 148, 90]]},
-  {"key": "size", "kind": "false", "page": "form_0007", "run": "K0-known31",
-   "title": "A size change nobody can see, called major",
-   "what": "“OFFICE USE” is 11 px on the page and 10.8 px in our render.",
-   "checks": "Major: “printed at the body's size, drawn smaller than the body”. The page's labels are 11 px and the render's 11.5 px, so 10.8 px falls just under them.",
-   "claude": "Not a fault: the difference cannot be seen.",
-   "often": "12 type majors still raised on 11 pages, most of this kind.",
-   "proposes": "Raise a size fault only when the line's own size, printed against drawn, differs by more than 10%.",
-   "source_crop": [520, 15, 815, 90], "render_crop": [520, 15, 815, 95],
-   "source_marks": [[673, 29, 756, 49]], "render_marks": [[680, 27, 756, 47]]},
-  {"key": "copies", "kind": "false", "page": "c0345", "run": "L2-dev-90",
-   "title": "A name printed twice, compared with the wrong copy",
-   "what": "“Camila Park” is printed twice: a script signature (1) and a bold printed name (2). Our render draws both the same way.",
-   "checks": "Two majors: “script printed, sans drawn” and “sans printed, script drawn”. It compared copy 1 on the page with copy 2 in the render.",
-   "claude": "Not a fault: each copy is drawn as printed.",
-   "often": "36 majors still raised on 4 pages (c0008, c0424, c0345, the payslip).",
-   "proposes": "Where the same words are printed more than once, pair each copy with the nearest copy in the render, not the first one found.",
-   "source_crop": [190, 975, 800, 1100], "render_crop": [190, 1112, 820, 1256],
-   "source_marks": [[535, 987, 700, 1035], [529, 1038, 609, 1059]], "render_marks": [[553, 1126, 712, 1173], [544, 1193, 625, 1215]],
-   "labels": ["1", "2"]},
-  {"key": "columns", "kind": "false", "page": "c0221", "run": "L2-dev-90",
-   "title": "Three columns: the check counts a mix-up 15 times",
-   "what": "Sections 2, 3 and 4 are printed as three columns, and our render keeps three columns. But it draws item (a) of section 2 in section 3's column, and 4.4 at the bottom under section 2.",
-   "checks": "15 majors, one for every pair of sections: “their words alternate in the reading order”.",
-   "claude": "The 15 are one fault counted 15 times. The real faults are the two items drawn in the wrong column. Claude's first call named only 4.4; on a second look, (a) is out of place too.",
-   "often": "20 majors still raised on 4 pages (c0221, c0374, c0384, c0464).",
-   "proposes": "Where the page sets columns, read the order column by column, and report only the items drawn in another column: here 2 faults, “under another heading”.",
-   "source_crop": [15, 200, 890, 428], "render_crop": [0, 385, 900, 675],
-   "source_marks": [], "render_marks": []}
+ "stamp": "spec 0021 · step 6",
+ "about": "The review's questions for Alessandro, one issue at a time, in rounds. Built into a page by tools/review_issues.py; his decisions land in the page's `issues` collection, one document per key, and are copied here under each issue's `decided`.",
+ "rounds": [
+  {
+   "name": "Round 1",
+   "date": "2026-11-07",
+   "title": "Eight issues, one at a time",
+   "intro": "Each screen is one issue the review found: the page beside our render, what the checks say, what Claude says, and what Claude proposes. The first four are faults no check raises; the last four are false alarms the checks still raise today. Click a decision: it saves and the next issue opens.",
+   "about": "The review's disagreements with the checks, as eight issues ranked by consequence: four faults no check raises (counted from Claude's review of dev's 83 opened pages and the 31 known), then four false alarms the checks still raise today (each rejected call re-checked on today's code, 2026-11-07, and counted where it is still major). Built into a page by tools/review_issues.py; Alessandro's decisions land in the page's `issues` collection, one document per key.",
+   "issues": [
+    {
+     "key": "invisible",
+     "kind": "missed",
+     "page": "c0063",
+     "run": "L2-dev-90",
+     "title": "Words drawn in the same colour as their band",
+     "what": "The page prints “Estimated patient responsibility $2,965.78” in white on a black bar. Our render draws the bar black and the words black, so the patient's total cannot be read.",
+     "checks": "Nothing. Every word is in the HTML, so no check sees a problem.",
+     "claude": "A major fault: the reader loses the line.",
+     "often": "11 pages: dark bars, header rows and buttons whose words vanish.",
+     "proposes": "A new check: every line the page prints readable must be drawn with enough contrast against what lies behind it. If not, major.",
+     "source_crop": [
+      440,
+      570,
+      890,
+      722
+     ],
+     "render_crop": [
+      470,
+      618,
+      890,
+      760
+     ],
+     "source_marks": [
+      [
+       620,
+       690,
+       880,
+       712
+      ]
+     ],
+     "render_marks": [
+      [
+       474,
+       728,
+       884,
+       750
+      ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
+    },
+    {
+     "key": "torn",
+     "kind": "missed",
+     "page": "c0185",
+     "run": "L2-dev-90",
+     "title": "Labels and their amounts pulled apart",
+     "what": "The page prints each label with its amount on one line. Our render draws the three labels, then the three amounts under them.",
+     "checks": "Nothing. Every word is there, in an order the checks accept.",
+     "claude": "A major fault: you cannot tell which amount belongs to which label.",
+     "often": "8 pages: totals, price lists, rows joined by leaders.",
+     "proposes": "A new check: a label and its value printed on one line must be drawn on one line. If not, major.",
+     "source_crop": [
+      400,
+      690,
+      830,
+      785
+     ],
+     "render_crop": [
+      500,
+      765,
+      860,
+      935
+     ],
+     "source_marks": [
+      [
+       515,
+       705,
+       815,
+       776
+      ]
+     ],
+     "render_marks": [
+      [
+       515,
+       772,
+       640,
+       846
+      ],
+      [
+       515,
+       850,
+       616,
+       930
+      ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
+    },
+    {
+     "key": "overprint",
+     "kind": "missed",
+     "page": "c0166",
+     "run": "L2-dev-90",
+     "title": "Text drawn on top of other text",
+     "what": "The receipt prints “Date: 01/10/2021”. Our render draws each label over its value, so the line reads “Dat01/10/2021”.",
+     "checks": "Nothing. The words are all there, in order.",
+     "claude": "A major fault: the lines cannot be read.",
+     "often": "8 pages: labels over values, signature blocks, chips over chips.",
+     "proposes": "A new check: two words apart on the page must not overlap in the render. If they do, major.",
+     "source_crop": [
+      92,
+      205,
+      330,
+      292
+     ],
+     "render_crop": [
+      92,
+      242,
+      330,
+      326
+     ],
+     "source_marks": [],
+     "render_marks": [
+      [
+       96,
+       248,
+       290,
+       324
+      ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
+    },
+    {
+     "key": "stacked",
+     "kind": "missed",
+     "page": "c0187",
+     "run": "L2-dev-90",
+     "title": "Two boxes side by side, drawn one under the other",
+     "what": "The page prints “Year to date” and “Time off” side by side. Our render stacks them, and draws Time off as loose lines.",
+     "checks": "Only the line it lost (“Vacation used 40 h”). No check sees side by side become stacked.",
+     "claude": "A major fault: the page's layout is lost.",
+     "often": "14 pages: cards, header boxes, a list beside its picture.",
+     "proposes": "A new check: blocks printed side by side must be drawn side by side. If stacked, major.",
+     "source_crop": [
+      20,
+      585,
+      740,
+      795
+     ],
+     "render_crop": [
+      10,
+      600,
+      740,
+      935
+     ],
+     "source_marks": [],
+     "render_marks": [],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
+    },
+    {
+     "key": "align",
+     "kind": "false",
+     "page": "c0126",
+     "run": "L2-dev-mixed",
+     "title": "Alignment flagged where nothing moved",
+     "what": "“Compass Outfitters” is printed at the left, after its logo. Our render draws it at the left too. It wraps on two lines and loses the logo, but those are other faults.",
+     "checks": "Major: “printed right, drawn left”. The check measured the name against its whole box, and the logo before it made it look pushed to the right.",
+     "claude": "Not an alignment fault: the name sits where the page puts it.",
+     "often": "22 majors still raised on 18 pages: a name after a logo, a clause beside its hanging number, a size inside a chip.",
+     "proposes": "Raise an alignment fault only when the line itself moves on the page, its left, centre and right edges all more than a few pixels from where it is printed.",
+     "source_crop": [
+      20,
+      25,
+      660,
+      115
+     ],
+     "render_crop": [
+      20,
+      25,
+      800,
+      100
+     ],
+     "source_marks": [
+      [
+       80,
+       45,
+       248,
+       72
+      ]
+     ],
+     "render_marks": [
+      [
+       52,
+       44,
+       148,
+       90
+      ]
+     ],
+     "decided": {
+      "verdict": "disagree",
+      "note": "",
+      "on": "2026-11-07"
+     }
+    },
+    {
+     "key": "size",
+     "kind": "false",
+     "page": "form_0007",
+     "run": "K0-known31",
+     "title": "A size change nobody can see, called major",
+     "what": "“OFFICE USE” is 11 px on the page and 10.8 px in our render.",
+     "checks": "Major: “printed at the body's size, drawn smaller than the body”. The page's labels are 11 px and the render's 11.5 px, so 10.8 px falls just under them.",
+     "claude": "Not a fault: the difference cannot be seen.",
+     "often": "12 type majors still raised on 11 pages, most of this kind.",
+     "proposes": "Raise a size fault only when the line's own size, printed against drawn, differs by more than 10%.",
+     "source_crop": [
+      520,
+      15,
+      815,
+      90
+     ],
+     "render_crop": [
+      520,
+      15,
+      815,
+      95
+     ],
+     "source_marks": [
+      [
+       673,
+       29,
+       756,
+       49
+      ]
+     ],
+     "render_marks": [
+      [
+       680,
+       27,
+       756,
+       47
+      ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
+    },
+    {
+     "key": "copies",
+     "kind": "false",
+     "page": "c0345",
+     "run": "L2-dev-90",
+     "title": "A name printed twice, compared with the wrong copy",
+     "what": "“Camila Park” is printed twice: a script signature (1) and a bold printed name (2). Our render draws both the same way.",
+     "checks": "Two majors: “script printed, sans drawn” and “sans printed, script drawn”. It compared copy 1 on the page with copy 2 in the render.",
+     "claude": "Not a fault: each copy is drawn as printed.",
+     "often": "36 majors still raised on 4 pages (c0008, c0424, c0345, the payslip).",
+     "proposes": "Where the same words are printed more than once, pair each copy with the nearest copy in the render, not the first one found.",
+     "source_crop": [
+      190,
+      975,
+      800,
+      1100
+     ],
+     "render_crop": [
+      190,
+      1112,
+      820,
+      1256
+     ],
+     "source_marks": [
+      [
+       535,
+       987,
+       700,
+       1035
+      ],
+      [
+       529,
+       1038,
+       609,
+       1059
+      ]
+     ],
+     "render_marks": [
+      [
+       553,
+       1126,
+       712,
+       1173
+      ],
+      [
+       544,
+       1193,
+       625,
+       1215
+      ]
+     ],
+     "labels": [
+      "1",
+      "2"
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
+    },
+    {
+     "key": "columns",
+     "kind": "false",
+     "page": "c0221",
+     "run": "L2-dev-90",
+     "title": "Three columns: the check counts a mix-up 15 times",
+     "what": "Sections 2, 3 and 4 are printed as three columns, and our render keeps three columns. But it draws item (a) of section 2 in section 3's column, and 4.4 at the bottom under section 2.",
+     "checks": "15 majors, one for every pair of sections: “their words alternate in the reading order”.",
+     "claude": "The 15 are one fault counted 15 times. The real faults are the two items drawn in the wrong column. Claude's first call named only 4.4; on a second look, (a) is out of place too.",
+     "often": "20 majors still raised on 4 pages (c0221, c0374, c0384, c0464).",
+     "proposes": "Where the page sets columns, read the order column by column, and report only the items drawn in another column: here 2 faults, “under another heading”.",
+     "source_crop": [
+      15,
+      200,
+      890,
+      428
+     ],
+     "render_crop": [
+      0,
+      385,
+      900,
+      675
+     ],
+     "source_marks": [],
+     "render_marks": [],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
+    }
+   ]
+  },
+  {
+   "name": "Round 2",
+   "date": "2026-11-07",
+   "title": "Round 2: eight more, one at a time",
+   "intro": "Your round 1 decisions are recorded: seven agreed, and one disagreed, the alignment issue. This round asks first about alignment, so Claude learns where your line is. Then two questions the criteria do not settle, and three spot checks of faults Claude confirmed, to test Claude's own judgement. Click a decision: it saves and the next issue opens.",
+   "about": "Round 2: issue 1 asks again about round 1's alignment issue, which Alessandro disagreed with; 2-3 are alignment examples (one false alarm, one Claude confirmed); 4-6 are severity questions review-criteria.md does not settle; 7-8 are spot checks of Claude's confirmed majors, drawn at random (seed 0) from the confirmed majors still raised today. Every example re-checked on today's code, 2026-11-07.",
+   "issues": [
+    {
+     "key": "logo",
+     "kind": "followup",
+     "page": "c0126",
+     "run": "L2-dev-mixed",
+     "title": "The name after the logo: what is wrong here?",
+     "what": "You disagreed with Claude on this one in round 1. The page prints a logo, then “Compass Outfitters” on one line. Our render drops the logo, wraps the name onto two lines, and so starts it about 30 px further left.",
+     "checks": "Major: “printed right, drawn left”.",
+     "claude": "The name is still set left. What is wrong is the lost logo and the wrap, and each should be its own fault: a figure lost, a line broken differently.",
+     "often": "The alignment check raises this kind on 18 pages.",
+     "proposes": "Report this as the lost logo and the wrap, not as alignment. Disagree if, to your eye, the name's alignment is wrong too, and say so in the note.",
+     "source_crop": [
+      20,
+      25,
+      660,
+      115
+     ],
+     "render_crop": [
+      20,
+      25,
+      800,
+      100
+     ],
+     "source_marks": [
+      [
+       80,
+       45,
+       248,
+       72
+      ]
+     ],
+     "render_marks": [
+      [
+       52,
+       44,
+       148,
+       90
+      ]
+     ]
+    },
+    {
+     "key": "nav",
+     "kind": "false",
+     "page": "c0548",
+     "run": "L2-dev-90",
+     "title": "A menu drawn where the page prints it, called moved",
+     "what": "The menu “Produit · Tarifs · Clients · Aide” sits at the top right, on the page and in our render. Only the dots between the words are lost.",
+     "checks": "Major: “printed right, drawn left”.",
+     "claude": "Not an alignment fault: the menu is where the page puts it. The lost dots are a minor.",
+     "often": "One of the 22 alignment majors still raised on 18 pages.",
+     "proposes": "No alignment fault here; one minor for the dots. Raise alignment only when the line itself moves.",
+     "source_crop": [
+      20,
+      25,
+      980,
+      80
+     ],
+     "render_crop": [
+      20,
+      25,
+      980,
+      80
+     ],
+     "source_marks": [
+      [
+       755,
+       39,
+       958,
+       67
+      ]
+     ],
+     "render_marks": [
+      [
+       736,
+       39,
+       958,
+       66
+      ]
+     ]
+    },
+    {
+     "key": "retries",
+     "kind": "spot",
+     "page": "c0565",
+     "run": "L2-dev-90",
+     "title": "Values pushed away from their labels",
+     "what": "The page prints “Jobs: 214    Retries: 19”, each value right after its label. Our render pushes “214” to the right, against “Retries:”, and “£212.40” away from “Cost:”.",
+     "checks": "Major: alignment, “printed left, drawn right”.",
+     "claude": "Agrees: a real major fault. The values no longer read with their labels.",
+     "often": "One of 36 alignment majors Claude confirmed.",
+     "proposes": "Keep it as a major fault.",
+     "source_crop": [
+      40,
+      425,
+      400,
+      545
+     ],
+     "render_crop": [
+      0,
+      790,
+      400,
+      905
+     ],
+     "source_marks": [
+      [
+       152,
+       441,
+       250,
+       465
+      ],
+      [
+       168,
+       516,
+       281,
+       540
+      ]
+     ],
+     "render_marks": [
+      [
+       101,
+       805,
+       195,
+       827
+      ],
+      [
+       101,
+       875,
+       225,
+       898
+      ]
+     ]
+    },
+    {
+     "key": "justified",
+     "kind": "criteria",
+     "page": "probe_contract",
+     "run": "K0-known31",
+     "title": "Justified text drawn ragged: major or minor?",
+     "what": "The page sets each clause justified, both edges straight, beside a hanging number (1.1, 1.2). Our render sets it ragged on the right, puts the number inline, and adds bullets before 1.2 and 1.3.",
+     "checks": "Major: “printed justified, drawn left”.",
+     "claude": "A real fault: Claude's first call rejected it, and on today's check that call was wrong. But a ragged right edge is hard to see. The lost hanging numbers and the added bullets are the bigger change.",
+     "often": "Justified text is on many pages: letters, contracts, reports.",
+     "proposes": "Justified drawn ragged: minor. A lost hanging number or added bullets: a structure fault, major.",
+     "source_crop": [
+      40,
+      160,
+      790,
+      292
+     ],
+     "render_crop": [
+      40,
+      160,
+      790,
+      292
+     ],
+     "source_marks": [
+      [
+       86,
+       191,
+       768,
+       234
+      ]
+     ],
+     "render_marks": [
+      [
+       52,
+       190,
+       770,
+       232
+      ]
+     ]
+    },
+    {
+     "key": "fill",
+     "kind": "criteria",
+     "page": "probe_flyer",
+     "run": "K0-known31",
+     "title": "A pill drawn as a full-width band: major or minor?",
+     "what": "The page prints “Free entry · Family friendly” in a small orange pill. Our render draws an orange band across the whole page.",
+     "checks": "Nothing: the words are all there.",
+     "claude": "Major: the band changes how the page looks at a glance. The criteria call a missing fill major, but say nothing of a fill drawn the wrong shape.",
+     "often": "6 pages: a band split into boxes, a pill stretched to a band, a card drawn as stripes.",
+     "proposes": "A fill drawn the wrong shape or size is major, like a missing fill, and a new check catches it.",
+     "source_crop": [
+      100,
+      425,
+      700,
+      505
+     ],
+     "render_crop": [
+      0,
+      468,
+      800,
+      548
+     ],
+     "source_marks": [
+      [
+       270,
+       438,
+       528,
+       484
+      ]
+     ],
+     "render_marks": [
+      [
+       2,
+       484,
+       798,
+       530
+      ]
+     ]
+    },
+    {
+     "key": "buttons",
+     "kind": "criteria",
+     "page": "c0548",
+     "run": "L2-dev-90",
+     "title": "Buttons drawn as plain lines: major or minor?",
+     "what": "The page prints three buttons, outlined or filled. Our render draws two of them as plain lines between rules, and loses the third.",
+     "checks": "Only the lost one, “Commencer maintenant”.",
+     "claude": "Claude was not consistent: major on this page, minor on others. The criteria call “chips drawn as plain text” minor and “a frame missing” major, and a button is both.",
+     "often": "7 pages.",
+     "proposes": "Minor, like chips: the words are there and read the same. A frame missing stays major for boxes that hold content: cards, panels, fields. The lost button is its own major.",
+     "source_crop": [
+      30,
+      610,
+      970,
+      680
+     ],
+     "render_crop": [
+      30,
+      940,
+      970,
+      1050
+     ],
+     "source_marks": [
+      [
+       66,
+       624,
+       316,
+       668
+      ],
+      [
+       374,
+       624,
+       625,
+       668
+      ],
+      [
+       682,
+       624,
+       934,
+       668
+      ]
+     ],
+     "render_marks": [
+      [
+       75,
+       960,
+       335,
+       1003
+      ],
+      [
+       690,
+       1001,
+       950,
+       1044
+      ]
+     ]
+    },
+    {
+     "key": "cells",
+     "kind": "spot",
+     "page": "c0464",
+     "run": "L2-dev-90",
+     "title": "Values under the wrong header",
+     "what": "The page's header “Value” spans Min, Typ and Max. Our render shifts the headers, so “Unit” stands over the typical values and the units have no header.",
+     "checks": "Major: “48” is “drawn under Unit, printed under Typ”.",
+     "claude": "Agrees: a real major fault. The table reads wrong.",
+     "often": "One of 6 cell majors Claude confirmed.",
+     "proposes": "Keep it as a major fault.",
+     "source_crop": [
+      28,
+      500,
+      790,
+      670
+     ],
+     "render_crop": [
+      28,
+      600,
+      790,
+      770
+     ],
+     "source_marks": [
+      [
+       560,
+       530,
+       625,
+       603
+      ]
+     ],
+     "render_marks": [
+      [
+       585,
+       610,
+       650,
+       693
+      ]
+     ]
+    },
+    {
+     "key": "bullets",
+     "kind": "spot",
+     "page": "c0404",
+     "run": "L2-dev-90",
+     "title": "Numbered steps drawn as bullets",
+     "what": "The page numbers four steps, 1 to 4. Our render draws bullets: steps 1 and 2 lose their numbers, and 3 and 4 keep them after a bullet.",
+     "checks": "Major: “numbers as bullets”, 4 items.",
+     "claude": "Agrees: a real major fault. The steps' order is no longer printed.",
+     "often": "One of 10 structure majors Claude confirmed.",
+     "proposes": "Keep it as a major fault.",
+     "source_crop": [
+      370,
+      300,
+      670,
+      500
+     ],
+     "render_crop": [
+      370,
+      330,
+      670,
+      545
+     ],
+     "source_marks": [
+      [
+       378,
+       328,
+       662,
+       497
+      ]
+     ],
+     "render_marks": [
+      [
+       378,
+       368,
+       662,
+       540
+      ]
+     ]
+    }
+   ]
+  }
  ]
 }

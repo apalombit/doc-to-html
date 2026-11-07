@@ -59,9 +59,15 @@ header.top p { color: var(--muted); max-width: 70ch; }
 .kind { justify-self: start; font: 500 .74rem/1 var(--mono); text-transform: uppercase; letter-spacing: .07em; padding: 5px 8px; border-radius: 4px; }
 .kind.missed { background: var(--disagree-soft); color: var(--disagree); }
 .kind.false { background: var(--accent-soft); color: var(--accent); }
+.kind.followup, .kind.criteria { background: var(--unsure-soft); color: var(--unsure); }
+.kind.spot { background: var(--agree-soft); color: var(--agree); }
+.rounds { display: flex; flex-wrap: wrap; gap: 4px; }
+.rounds button { border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 6px 12px; font-size: .9rem; }
+.rounds button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
 .what { font-size: 1.05rem; max-width: 75ch; }
 
 .pics { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; padding: 8px 24px 20px; align-items: start; }
+.pics.wide { grid-template-columns: minmax(0, 1fr); }
 figure { margin: 0; display: grid; gap: 6px; min-width: 0; }
 figcaption { font: 500 .78rem var(--mono); text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
 figure img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
@@ -103,9 +109,10 @@ textarea { width: 100%; min-height: 3.2rem; resize: vertical; font: .95rem/1.45 
 
 <div class="wrap">
   <header class="top">
-    <span class="eyebrow">Spec 0021 · step 6 · the review's issues</span>
-    <h1>Eight issues, one at a time</h1>
-    <p>Each screen is one issue the review found: the page beside our render, what the checks say, what Claude says, and what Claude proposes. The first four are faults no check raises; the last four are false alarms the checks still raise today. Click a decision: it saves and the next issue opens.</p>
+    <span class="eyebrow">Spec 0021 · step 6 · the review's questions</span>
+    <div class="rounds" id="rounds" role="group" aria-label="Rounds"></div>
+    <h1 id="round-title"></h1>
+    <p id="round-intro"></p>
     <p class="banner" id="banner" hidden></p>
   </header>
 
@@ -121,7 +128,7 @@ textarea { width: 100%; min-height: 3.2rem; resize: vertical; font: .95rem/1.45 
       <h2 id="title"></h2>
       <p class="what" id="what"></p>
     </div>
-    <div class="pics">
+    <div class="pics" id="pics">
       <figure><figcaption>The page</figcaption><img id="img-source" alt=""></figure>
       <figure><figcaption>Our render</figcaption><img id="img-render" alt=""></figure>
     </div>
@@ -152,9 +159,12 @@ textarea { width: 100%; min-height: 3.2rem; resize: vertical; font: .95rem/1.45 
 <script>
 (() => {
   const DATA = JSON.parse(document.getElementById("data").textContent);
-  const ISSUES = DATA.issues;
+  const ROUNDS = DATA.rounds;
+  let round = ROUNDS.length - 1;
+  let ISSUES = ROUNDS[round].issues;
   const $ = (s) => document.querySelector(s);
-  const KIND = { missed: "Missed by the checks", false: "False alarm by the checks" };
+  const KIND = { missed: "Missed by the checks", false: "False alarm by the checks", followup: "Your round 1 call",
+                 criteria: "A question the criteria leave open", spot: "Spot check of Claude's call" };
   const HERE = "https://claude.ai/artifact/RpUd3a7ioGjdNWBLyqM6JD";
   const decisions = new Map();   // key -> {verdict, note}
   const pending = new Set();     // keys decided before the store answered
@@ -172,16 +182,32 @@ textarea { width: 100%; min-height: 3.2rem; resize: vertical; font: .95rem/1.45 
     say("Not saving.", true);
   }
 
-  // ---- the steps ------------------------------------------------------------
-  const steps = $("#steps"), count = $("#count");
-  const dots = ISSUES.map((issue, i) => {
+  // ---- the rounds and the steps ----------------------------------------------
+  const steps = $("#steps"), count = $("#count"), roundsEl = $("#rounds");
+  let dots = [];
+  const roundButtons = ROUNDS.map((r, i) => {
     const b = document.createElement("button");
-    b.type = "button"; b.textContent = String(i + 1);
-    b.setAttribute("aria-label", `Issue ${i + 1}: ${issue.title}`);
-    b.addEventListener("click", () => show(i));
-    steps.insertBefore(b, count);
+    b.type = "button"; b.textContent = r.name;
+    b.addEventListener("click", () => openRound(i, 0));
+    roundsEl.append(b);
     return b;
   });
+  function openRound(r, i) {
+    round = r; ISSUES = ROUNDS[r].issues;
+    roundButtons.forEach((b, k) => b.setAttribute("aria-pressed", String(k === r)));
+    $("#round-title").textContent = ROUNDS[r].title;
+    $("#round-intro").textContent = ROUNDS[r].intro;
+    for (const d of dots) d.remove();
+    dots = ISSUES.map((issue, k) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.textContent = String(k + 1);
+      b.setAttribute("aria-label", `Issue ${k + 1}: ${issue.title}`);
+      b.addEventListener("click", () => show(k));
+      steps.insertBefore(b, count);
+      return b;
+    });
+    show(i);
+  }
   function paintSteps() {
     let done = 0;
     ISSUES.forEach((issue, i) => {
@@ -203,6 +229,9 @@ textarea { width: 100%; min-height: 3.2rem; resize: vertical; font: .95rem/1.45 
     const kind = $("#kind"); kind.textContent = KIND[issue.kind]; kind.className = `kind ${issue.kind}`;
     $("#title").textContent = issue.title;
     $("#what").textContent = issue.what;
+    // a wide, short crop reads better full width, the page above our render
+    const [l, t, r, b] = issue.source_crop;
+    $("#pics").classList.toggle("wide", (r - l) / (b - t) > 2.4);
     const src = $("#img-source"), ren = $("#img-render");
     src.src = issue.source_img; src.alt = `The page ${issue.page}, the spot marked in red`;
     ren.src = issue.render_img; ren.alt = `Our render of ${issue.page}, the spot marked in red`;
@@ -215,8 +244,8 @@ textarea { width: 100%; min-height: 3.2rem; resize: vertical; font: .95rem/1.45 
     $("#prev").disabled = at === 0;
     $("#next").textContent = at === ISSUES.length - 1 ? "Back to issue 1" : "Next issue →";
     paintSteps();
-    try { history.replaceState(null, "", `#${at + 1}`); } catch (e) {}
-    try { localStorage.setItem("l2-issues-at", String(at)); } catch (e) {}
+    try { history.replaceState(null, "", `#r${round + 1}-${at + 1}`); } catch (e) {}
+    try { localStorage.setItem("l2-issues-at", `${round}:${at}`); } catch (e) {}
   }
   function paintChoice() {
     const d = decisions.get(ISSUES[at].key) || {};
@@ -244,8 +273,9 @@ textarea { width: 100%; min-height: 3.2rem; resize: vertical; font: .95rem/1.45 
     write(key, next);
   }
   function write(key, d) {
-    const issue = ISSUES.find((x) => x.key === key);
-    const body = { key, title: issue.title, page: issue.page, kind: issue.kind, verdict: d.verdict ?? null,
+    const r = ROUNDS.find((x) => x.issues.some((i) => i.key === key));
+    const issue = r.issues.find((x) => x.key === key);
+    const body = { key, round: r.name, title: issue.title, page: issue.page, kind: issue.kind, verdict: d.verdict ?? null,
                    note: d.note ?? "", by: uid, at: new Date().toISOString() };
     const ref = db.collection("issues").doc(key);
     const run = (chains.get(key) || Promise.resolve()).then(async () => {
@@ -288,11 +318,12 @@ textarea { width: 100%; min-height: 3.2rem; resize: vertical; font: .95rem/1.45 
   note.addEventListener("blur", () => { clearTimeout(timer); keepNote(); });
 
   // ---- first paint, then the store --------------------------------------------
+  // the latest round opens, at the issue last seen there
   let start = 0;
-  const hash = parseInt(location.hash.slice(1), 10);
-  if (hash >= 1 && hash <= ISSUES.length) start = hash - 1;
-  else { try { const s = parseInt(localStorage.getItem("l2-issues-at"), 10); if (s >= 0) start = s; } catch (e) {} }
-  show(start);
+  const hash = /^#r(\d+)-(\d+)$/.exec(location.hash);
+  if (hash && +hash[1] === ROUNDS.length && +hash[2] >= 1 && +hash[2] <= ISSUES.length) start = +hash[2] - 1;
+  else { try { const [r, i] = (localStorage.getItem("l2-issues-at") || "").split(":").map(Number); if (r === round && i >= 0 && i < ISSUES.length) start = i; } catch (e) {} }
+  openRound(round, start);
 
   (async () => {
     const c = window.claude;

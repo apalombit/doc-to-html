@@ -519,6 +519,18 @@ with a note, into the `issues` collection, one document per key.
 - **Rebuilt by** `python tools/review_issues.py <out_dir>` from
   `docs/agents/review-issues.json` (the text, the crops and their
   marks); template `tools/review_issues.html`.
+- **Round 1 decided, 2026-11-07**: agree on seven, the four new
+  checks (band colour, labels torn, text over text, side by side
+  stacked) and three false-alarm fixes (sizes past 10%, copies paired
+  by position, columns read column by column); **disagree on the
+  alignment fix**, with no note. Recorded under each issue's `decided`.
+- **Round 2, published 2026-11-07**: the alignment question again on
+  its page (c0126) and on two more (a menu where printed, c0548; values
+  pushed from their labels, c0565, which Claude confirmed); two
+  severities the criteria leave open (justified drawn ragged; a fill
+  drawn the wrong shape; buttons drawn as plain lines); two spot checks
+  of Claude's confirmed majors, drawn at random (cells, c0464;
+  numbers as bullets, c0404).
 
 ### Step 7 — the proof on the 31 known pages
 
