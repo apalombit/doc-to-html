@@ -498,6 +498,28 @@ private, `db` and `user`.
   is `tools/review_page.html`. It rebuilt the published page byte for
   byte.
 
+**Replaced 2026-11-07 by one issue at a time** (Alessandro: 670 groups
+at once could not be followed, and a fault's description could not be
+matched to its spot on a sheet). Same URL, same `db`. The page now holds
+**eight issues**, ranked by consequence, one per screen: two marked
+crops (the page, our render), what the checks say, what Claude says, how
+often, and Claude's proposal; he answers agree / disagree / not sure,
+with a note, into the `issues` collection, one document per key.
+- **Missed by the checks** (counted from Claude's review): words drawn
+  in their band's colour (11 pages), labels torn from their amounts (8),
+  text over text (8), side by side drawn stacked (14).
+- **False alarms still raised**, each rejected call re-checked on
+  today's code and counted where still major (116 of 270 rejections
+  still raised, 96 of them major): alignment where nothing moved (22 on
+  18 pages), sizes nobody sees (12 on 11), a printed-twice name paired
+  with the wrong copy (36 on 4), columns counted as interleaved (20 on
+  4). Re-looking for the columns example found Claude's own call on
+  c0221 incomplete: item (a) of section 2 is also drawn in section 3's
+  column; the issue says so.
+- **Rebuilt by** `python tools/review_issues.py <out_dir>` from
+  `docs/agents/review-issues.json` (the text, the crops and their
+  marks); template `tools/review_issues.html`.
+
 ### Step 7 — the proof on the 31 known pages
 
 - **The run, `K0-known31`**, takes no model:
