@@ -802,7 +802,12 @@
        612,
        215
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "times",
@@ -842,7 +847,12 @@
        340,
        600
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "flags",
@@ -894,7 +904,12 @@
        950,
        918
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "aside",
@@ -934,7 +949,12 @@
        400,
        525
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "indent",
@@ -974,7 +994,12 @@
        174,
        406
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "small",
@@ -1014,7 +1039,12 @@
        640,
        229
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "smaller",
@@ -1054,7 +1084,12 @@
        760,
        106
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "ticks",
@@ -1094,7 +1129,12 @@
        720,
        652
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "subscript",
@@ -1134,7 +1174,12 @@
        690,
        666
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "disagree",
+      "note": "formula is overall correct but misrepresented i guess can just use some reformat to show it as suffix so not major",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "lostlines",
@@ -1167,7 +1212,12 @@
        602
       ]
      ],
-     "render_marks": []
+     "render_marks": [],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "breaks",
@@ -1219,7 +1269,12 @@
        715,
        220
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "rewrap",
@@ -1245,7 +1300,12 @@
       330
      ],
      "source_marks": [],
-     "render_marks": []
+     "render_marks": [],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "rules-one",
@@ -1285,7 +1345,12 @@
        800,
        496
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "disagree",
+      "note": "major - table layout not respected risks data misinterpretation in this case creates confusion",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "order",
@@ -1325,7 +1390,12 @@
        330,
        803
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "height",
@@ -1349,6 +1419,406 @@
       0,
       980,
       1343
+     ],
+     "source_marks": [],
+     "render_marks": [],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
+    }
+   ]
+  },
+  {
+   "name": "Round 4",
+   "date": "2026-11-07",
+   "title": "Round 4: thirteen faults Claude added",
+   "intro": "Round 3 is recorded: thirteen agreed. Your alignment line holds on all five cases, and a re-wrapped paragraph is minor. Two disagreed: subscripts drawn as “H_2015” are minor (the formula is right, only shown differently), and one missing table rule is major, because it risks misreading the table. Claude's confirmed majors held on 8 of 10. This round checks the other side: faults no check raised that Claude added on its own, one of each kind you have not seen, drawn at random. Click a decision: it saves and the next issue opens.",
+   "about": "Round 4: one fault of each kind Claude's review added and Alessandro had not seen, nine major and four minor (letterspacing and small capitals on one page, as one issue), to check Claude's additions. Issue 11 is Claude's minor re-proposed as major, by the criteria's colour rule.",
+   "issues": [
+    {
+     "key": "heading",
+     "kind": "added",
+     "page": "c0124",
+     "run": "L2-dev-90",
+     "title": "A total's label at the top, its amount at the bottom",
+     "what": "The receipt prints “TOTALE COMPLESSIVO € 44,05” together under the items. Our render draws the label above the item list and the amount at the very bottom, under a column of prices torn from their items.",
+     "checks": "Nothing for the label's place. The prices torn from their items are round 1's “labels pulled apart”.",
+     "claude": "Added as major: the total no longer reads as one line.",
+     "often": "Claude added 7 majors of this kind: a line drawn under another heading or apart from its group.",
+     "proposes": "Keep it major.",
+     "source_crop": [
+      20,
+      270,
+      480,
+      660
+     ],
+     "render_crop": [
+      20,
+      320,
+      480,
+      1130
+     ],
+     "source_marks": [],
+     "render_marks": [
+      [
+       64,
+       333,
+       210,
+       358
+      ],
+      [
+       225,
+       1094,
+       292,
+       1127
+      ]
+     ]
+    },
+    {
+     "key": "frame",
+     "kind": "added",
+     "page": "probe_payslip",
+     "run": "K0-known31",
+     "title": "A summary box drawn without its frame",
+     "what": "The page frames the three totals in a box and shades Net pay. Our render draws them with dividers only: no frame, no shading.",
+     "checks": "Nothing.",
+     "claude": "Added as major: the criteria call a missing frame major, and this box holds content.",
+     "often": "Claude added 5 majors of this kind.",
+     "proposes": "Keep it major, and a check for frames the page draws.",
+     "source_crop": [
+      30,
+      420,
+      870,
+      495
+     ],
+     "render_crop": [
+      30,
+      452,
+      870,
+      520
+     ],
+     "source_marks": [],
+     "render_marks": []
+    },
+    {
+     "key": "face",
+     "kind": "added",
+     "page": "c0552",
+     "run": "L2-dev-90",
+     "title": "A serif page drawn in a sans",
+     "what": "The page sets its title, headings and body in a serif. Our render sets everything in a sans.",
+     "checks": "Nothing: the type check reads faces from the CSS and misses this one.",
+     "claude": "Added as major: the criteria call the wrong font class major.",
+     "often": "Claude added 5 majors of this kind.",
+     "proposes": "Keep it major, and fix the type check so it sees it.",
+     "source_crop": [
+      40,
+      140,
+      800,
+      480
+     ],
+     "render_crop": [
+      0,
+      220,
+      800,
+      560
+     ],
+     "source_marks": [],
+     "render_marks": []
+    },
+    {
+     "key": "twice",
+     "kind": "added",
+     "page": "c0545",
+     "run": "L2-dev-mixed",
+     "title": "A chart's title drawn twice",
+     "what": "The page prints “VISITORS LAST ACTIVE WEEK” once, above its chart. Our render draws it as text, and again inside the chart's picture.",
+     "checks": "Nothing: the picture's words are not read.",
+     "claude": "Added as major: an invented line.",
+     "often": "Claude added 4 majors of this kind: a title or headline drawn twice.",
+     "proposes": "Keep it major.",
+     "source_crop": [
+      350,
+      300,
+      800,
+      450
+     ],
+     "render_crop": [
+      350,
+      370,
+      800,
+      520
+     ],
+     "source_marks": [],
+     "render_marks": [
+      [
+       428,
+       382,
+       628,
+       424
+      ]
+     ]
+    },
+    {
+     "key": "signlines",
+     "kind": "added",
+     "page": "probe_contract",
+     "run": "K0-known31",
+     "title": "Signing lines not drawn",
+     "what": "The page draws a line to sign on above “Signature”, “Name and title” and “Date”, for both parties. Our render draws none, and the second party's labels pile onto the first's.",
+     "checks": "Only the labels drawn over each other.",
+     "claude": "Added as major: the lines are what the block is for.",
+     "often": "Claude added 4 majors of this kind.",
+     "proposes": "Keep it major.",
+     "source_crop": [
+      40,
+      530,
+      800,
+      645
+     ],
+     "render_crop": [
+      40,
+      515,
+      800,
+      650
+     ],
+     "source_marks": [],
+     "render_marks": []
+    },
+    {
+     "key": "width",
+     "kind": "added",
+     "page": "c0221",
+     "run": "L2-dev-90",
+     "title": "A four-column grid drawn as two columns in tiny type",
+     "what": "The page sets the project's eight fields in a four-column grid. Our render draws two columns, in type about 7 px high.",
+     "checks": "Nothing: sizes are checked line by line, and a grid's width not at all.",
+     "claude": "Added as major: the box's shape and its type both change.",
+     "often": "Claude added 3 majors of this kind.",
+     "proposes": "Keep it major.",
+     "source_crop": [
+      15,
+      85,
+      890,
+      200
+     ],
+     "render_crop": [
+      15,
+      215,
+      900,
+      360
+     ],
+     "source_marks": [],
+     "render_marks": []
+    },
+    {
+     "key": "filladd",
+     "kind": "added",
+     "page": "c0419",
+     "run": "L2-dev-90",
+     "title": "A headline drawn white on dark boxes",
+     "what": "The page prints the headline dark on white. Our render draws it white on a dark box behind each line, and misspells “MOUSSES”.",
+     "checks": "Only the misspelling.",
+     "claude": "Added as major: a fill the page does not have changes the headline's look.",
+     "often": "Claude added 3 majors of this kind.",
+     "proposes": "Keep it major.",
+     "source_crop": [
+      0,
+      100,
+      800,
+      330
+     ],
+     "render_crop": [
+      0,
+      150,
+      800,
+      400
+     ],
+     "source_marks": [],
+     "render_marks": []
+    },
+    {
+     "key": "colour",
+     "kind": "added",
+     "page": "c0355",
+     "run": "L2-dev-90",
+     "title": "A bold red order number drawn black",
+     "what": "The letter prints “encomenda n.º 2103-118” in bold red. Our render draws it in bold black.",
+     "checks": "Nothing.",
+     "claude": "Added as major: the red marks what matters, and the criteria call a colour that carries meaning major.",
+     "often": "Claude added 3 majors of this kind.",
+     "proposes": "Keep it major.",
+     "source_crop": [
+      100,
+      225,
+      720,
+      285
+     ],
+     "render_crop": [
+      100,
+      215,
+      720,
+      275
+     ],
+     "source_marks": [
+      [
+       404,
+       242,
+       562,
+       266
+      ]
+     ],
+     "render_marks": [
+      [
+       440,
+       231,
+       600,
+       254
+      ]
+     ]
+    },
+    {
+     "key": "rowout",
+     "kind": "added",
+     "page": "probe_payslip",
+     "run": "K0-known31",
+     "title": "A table's last row drawn below the table",
+     "what": "The page closes the earnings table with “Gross pay 4,098.08” under a rule. Our render draws it below the table as a loose line, with its amount beside the label.",
+     "checks": "Only a cells fault that matched the wrong copy (round 1, issue 7).",
+     "claude": "Added as major: the row leaves its table.",
+     "often": "Claude added 3 majors of this kind: a row out of its table, or into one.",
+     "proposes": "Keep it major.",
+     "source_crop": [
+      20,
+      150,
+      530,
+      415
+     ],
+     "render_crop": [
+      20,
+      170,
+      600,
+      452
+     ],
+     "source_marks": [
+      [
+       26,
+       378,
+       522,
+       408
+      ]
+     ],
+     "render_marks": [
+      [
+       30,
+       422,
+       170,
+       446
+      ]
+     ]
+    },
+    {
+     "key": "smallcaps",
+     "kind": "added",
+     "page": "certificate_0021",
+     "run": "K0-known31",
+     "title": "Letterspacing and small capitals lost",
+     "what": "The page sets “GUILD OF TIMBER ENGINEERS” with wide letterspacing, and the title in small capitals. Our render draws both at normal spacing, and the title in plain capitals.",
+     "checks": "Nothing.",
+     "claude": "Added as two minors, as the criteria say.",
+     "often": "Claude added 16 minors of these kinds.",
+     "proposes": "Keep them minor; add letterspacing to the IR later.",
+     "source_crop": [
+      200,
+      55,
+      800,
+      165
+     ],
+     "render_crop": [
+      200,
+      55,
+      800,
+      180
+     ],
+     "source_marks": [],
+     "render_marks": []
+    },
+    {
+     "key": "border",
+     "kind": "added",
+     "page": "c0548",
+     "run": "L2-dev-90",
+     "title": "A highlighted card's orange border drawn grey",
+     "what": "The page marks the Équipe card with an orange border. Our render draws it grey, like the other cards.",
+     "checks": "Nothing.",
+     "claude": "Claude added it as a minor, a frame in the wrong colour. But the orange marks the plan the page recommends, and the criteria call a colour that carries meaning major.",
+     "often": "Claude added 10 frame changes, 9 of them minor.",
+     "proposes": "Major, like the red order number: the colour carries meaning.",
+     "source_crop": [
+      330,
+      265,
+      680,
+      470
+     ],
+     "render_crop": [
+      330,
+      610,
+      680,
+      830
+     ],
+     "source_marks": [],
+     "render_marks": []
+    },
+    {
+     "key": "figmiss",
+     "kind": "added",
+     "page": "c0166",
+     "run": "L2-dev-90",
+     "title": "A signature and a barcode not drawn",
+     "what": "The receipt prints a signature and a barcode. Our render draws two “signature” labels and the barcode's digits, but neither picture.",
+     "checks": "Nothing.",
+     "claude": "Added as minor: the criteria call figures minor.",
+     "often": "Claude added 13 figure faults, 12 of them minor.",
+     "proposes": "Keep it minor.",
+     "source_crop": [
+      80,
+      700,
+      420,
+      860
+     ],
+     "render_crop": [
+      80,
+      740,
+      420,
+      935
+     ],
+     "source_marks": [],
+     "render_marks": []
+    },
+    {
+     "key": "icons",
+     "kind": "added",
+     "page": "c0551",
+     "run": "L2-dev-90",
+     "title": "Icons drawn as bullets",
+     "what": "The page starts each “Good to know” line with an icon: a clock, a mountain, a house. Our render draws plain bullets.",
+     "checks": "Nothing.",
+     "claude": "Added as minor: the criteria call figures minor.",
+     "often": "Claude added 5 of this kind.",
+     "proposes": "Keep it minor.",
+     "source_crop": [
+      20,
+      690,
+      500,
+      805
+     ],
+     "render_crop": [
+      0,
+      680,
+      520,
+      795
      ],
      "source_marks": [],
      "render_marks": []

@@ -546,6 +546,18 @@ with a note, into the `issues` collection, one document per key.
   Claude's confirmed majors across type, words, lines, rules, order and
   height, on two of which (a re-wrapped paragraph, one missing rule)
   Claude now proposes minor.
+- **Round 3 decided, 2026-11-07**: agree on thirteen. The alignment line
+  holds on all five (right-aligned numbers drawn left in their own
+  column is minor, so the criteria's example changes; a line moved off
+  its title's line is major; a lost first-line indent is minor); a
+  paragraph re-wrapped by a wider column is minor. **Disagree on two**:
+  subscripts drawn as `H_2015` are minor ("formula is overall correct
+  but misrepresented"), and one missing table rule is major ("table
+  layout not respected risks data misinterpretation"), so Claude's
+  original call stood and its revision was wrong. Claude's confirmed
+  majors held on 8 of the 10 spot checks.
+- **Round 4, published 2026-11-07**, thirteen faults Claude's review
+  added, one of each kind he had not seen: nine major, four minor.
 
 ### Step 7 — the proof on the 31 known pages
 
