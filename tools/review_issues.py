@@ -27,7 +27,8 @@ shots = OUT / "shots"
 shots.mkdir(exist_ok=True)
 
 
-def cropped(image: Image.Image, box, marks, labels, dest: Path) -> str:
+def cropped(image: Image.Image, box: list[float], marks: list[list[float]],
+            labels: list[str] | None, dest: Path) -> str:
     image = image.convert("RGB")
     draw = ImageDraw.Draw(image)
     for i, mark in enumerate(marks):
@@ -35,10 +36,9 @@ def cropped(image: Image.Image, box, marks, labels, dest: Path) -> str:
         if labels:
             draw.rectangle([mark[2] + 2, mark[1], mark[2] + 18, mark[1] + 18], fill=MARK)
             draw.text((mark[2] + 6, mark[1] + 3), labels[i], fill="white")
-    box = [max(0, box[0]), max(0, box[1]), min(image.width, box[2]), min(image.height, box[3])]
-    crop = image.crop(box)
+    crop = image.crop((max(0, box[0]), max(0, box[1]), min(image.width, box[2]), min(image.height, box[3])))
     scale = 2 if crop.width < 400 else 1.5 if crop.width < 600 else 1
-    crop = crop.resize((round(crop.width * scale), round(crop.height * scale)), Image.LANCZOS)
+    crop = crop.resize((round(crop.width * scale), round(crop.height * scale)), Image.Resampling.LANCZOS)
     crop.save(dest, "WEBP", quality=88, method=6)
     return f"crops/{dest.name}"
 

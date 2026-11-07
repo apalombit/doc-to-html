@@ -28,7 +28,7 @@ rest = sorted((r, p["name"]) for r in ("L2-dev-90", "L2-dev-mixed") for p in run
 for r, n in random.Random(0).sample(rest, 2):
     chosen.append((r, n, "drawn at random (seed 0)"))
 manifest = json.load(open("corpus/manifest.json"))["pages"]
-def sheets(run, name):
+def sheets(run: str, name: str) -> list[str]:
     found = sorted(glob.glob(f"debug/runs/{run}/_review/*-{name}.png") + glob.glob(f"debug/runs/{run}/_review/*-{name}-p*.png"))
     out = []
     for f in found:
@@ -38,7 +38,7 @@ def sheets(run, name):
             Image.open(f).convert("RGB").save(dest, "WEBP", quality=82, method=6)
         out.append(f"sheets/{run}/{dest.name}")
     return out
-def slim(f):
+def slim(f: dict[str, object]) -> dict[str, object]:
     return {k: f.get(k) for k in ("n", "from", "check", "fault", "severity", "element", "note", "stage", "call", "why")}
 pages = []
 for run, name, reason in chosen:
