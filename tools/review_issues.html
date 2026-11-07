@@ -105,7 +105,7 @@ textarea { width: 100%; min-height: 3.2rem; resize: vertical; font: .95rem/1.45 
   <header class="top">
     <span class="eyebrow">Spec 0021 · step 6 · the review's issues</span>
     <h1>Eight issues, one at a time</h1>
-    <p>Each screen is one issue the review found: the page beside our render, what the checks say, what Claude says, and what Claude proposes. The first four are faults no check raises; the last four are false alarms the checks still raise today. Decide, then go to the next. Each click saves.</p>
+    <p>Each screen is one issue the review found: the page beside our render, what the checks say, what Claude says, and what Claude proposes. The first four are faults no check raises; the last four are false alarms the checks still raise today. Click a decision: it saves and the next issue opens.</p>
     <p class="banner" id="banner" hidden></p>
   </header>
 
@@ -133,12 +133,12 @@ textarea { width: 100%; min-height: 3.2rem; resize: vertical; font: .95rem/1.45 
     </dl>
     <div class="decide">
       <p class="q">Your decision on Claude's proposal</p>
+      <textarea id="note" placeholder="Optional, before you click: why, or what to do instead" aria-label="Your note on this issue"></textarea>
       <div class="choices" role="group" aria-label="Your decision">
         <button type="button" data-v="agree" aria-pressed="false">✓ Agree, do it</button>
         <button type="button" data-v="disagree" aria-pressed="false">✗ Disagree</button>
         <button type="button" data-v="unsure" aria-pressed="false">? Not sure</button>
       </div>
-      <textarea id="note" placeholder="Optional: why, or what to do instead" aria-label="Your note on this issue"></textarea>
       <span class="saved" id="saved"></span>
     </div>
     <div class="nav">
@@ -190,7 +190,7 @@ textarea { width: 100%; min-height: 3.2rem; resize: vertical; font: .95rem/1.45 
       dots[i].className = v ? `v-${v}` : "";
       if (i === at) dots[i].setAttribute("aria-current", "step"); else dots[i].removeAttribute("aria-current");
     });
-    count.textContent = `${done} of ${ISSUES.length} decided`;
+    count.textContent = done === ISSUES.length ? `All ${done} decided: tell Claude` : `${done} of ${ISSUES.length} decided`;
   }
 
   // ---- one issue --------------------------------------------------------------
@@ -233,6 +233,8 @@ textarea { width: 100%; min-height: 3.2rem; resize: vertical; font: .95rem/1.45 
 
   // ---- deciding and saving: one write at a time per issue ---------------------
   const chains = new Map();
+  let timer = null;
+  const keepNote = () => { const key = ISSUES[at].key; if ((decisions.get(key)?.note ?? "") !== note.value) save(key, { note: note.value }); };
   function save(key, patch) {
     if (!writable) { say("This view can read the decisions but not save them.", true); return; }
     const next = { ...(decisions.get(key) || {}), ...patch };
@@ -265,12 +267,23 @@ textarea { width: 100%; min-height: 3.2rem; resize: vertical; font: .95rem/1.45 
     chains.set(key, run);
   }
   function lock() { for (const b of choices) b.disabled = true; note.readOnly = true; }
+  // a decision moves on by itself, to the next issue not decided yet
+  let moving = null;
+  function advance() {
+    for (let k = 1; k <= ISSUES.length; k++) {
+      const i = (at + k) % ISSUES.length;
+      if (!decisions.get(ISSUES[i].key)?.verdict) { show(i); window.scrollTo({ top: 0 }); return; }
+    }
+    if (at < ISSUES.length - 1) { show(at + 1); window.scrollTo({ top: 0 }); }
+  }
   for (const b of choices) b.addEventListener("click", () => {
+    clearTimeout(timer); keepNote();
     const key = ISSUES[at].key, cur = decisions.get(key)?.verdict;
-    save(key, { verdict: cur === b.dataset.v ? null : b.dataset.v });
+    const verdict = cur === b.dataset.v ? null : b.dataset.v;
+    save(key, { verdict });
+    clearTimeout(moving);
+    if (verdict && writable) moving = setTimeout(advance, 350);
   });
-  let timer = null;
-  const keepNote = () => { const key = ISSUES[at].key; if ((decisions.get(key)?.note ?? "") !== note.value) save(key, { note: note.value }); };
   note.addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(keepNote, 900); });
   note.addEventListener("blur", () => { clearTimeout(timer); keepNote(); });
 
