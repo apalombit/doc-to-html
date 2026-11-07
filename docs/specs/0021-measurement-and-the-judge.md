@@ -582,6 +582,63 @@ after (Claude's calls and his decisions both).
 | D3 | new, looks: words drawn too faint against their ground where printed readable; a fill drawn the wrong shape, added or missing; a frame the page draws missing; a chromatic text or frame colour drawn neutral: major | rounds 1, 2, 4 |
 | E | `review-criteria.md` brought to the decisions: alignment and spacing, re-wrap, serif and sans, subscripts, buttons with chips, fills' shape, invisible text | all |
 
+**The build, done 2026-11-07** (`9bc10d3`, `96c2ca7`, `c7a9a17`). Each
+item in the check that owns it, pinned on its page in
+`tests/test_checks.py`, `TestWhatTheRoundsDecided`, with the page's true
+fault asserted beside it; sixteen renders added to `tests/frozen/l2-dev/`
+(23 there now). Measured over the 114 pages the review opened (the 31,
+dev's 69, the first stretch's 14), the checks before the build against
+after, with Claude's calls and his decisions:
+
+| check, fault | before → after | what moved it |
+|---|---|---|
+| alignment | 195 major → 187 minor, 0 major | B1 |
+| beside, drawn under | new, 34 major | D2 |
+| overprint, drawn over another word | new, 13 major | D1 |
+| lines, broken differently | 92 → 25 major; 89 re-wrapped minor | B3 |
+| order, interleaved | 120 → 21 major, 23 → 7 minor | C2, and a group under half drawn not judged |
+| type, sizes out of proportion | 284 → 211 major | B2 |
+| type, wrong face | 38 → 17 major; 20 other face minor | B4 |
+| words, mark changed | 24 → 25 minor | B5 (c0576's subscripts) |
+| looks | new: 62 major, 30 minor | D3 |
+
+- **Every confirmed major no longer raised was opened** (313): sizes
+  under 10% (107), re-wraps now minor (89), interleavings of columns kept
+  side by side (62), serif and sans (20), alignment now minor (19). The
+  other 16 are the same faults found again: c0429's on the copy of its
+  table drawn elsewhere, c0345's bold lost one block smaller (the
+  signature, C1), c0576's subscripts one minor.
+- **What the build lost and won back.** C2 hid the recipe's known fault,
+  step 3 drawn across both columns among the ingredients: a block drawn
+  more than halfway across the gutter into the column set beside it,
+  with that column drawn above and below it and none of it on its row,
+  is interleaved again (`_drawn_across`; 2 pages of 114, the recipe and
+  c0522, both true). On c0008, an unread section's stray copies raised
+  eleven interleavings he had rejected; a group with under half its words
+  drawn is no longer judged for order (`ORDER_KEPT`: every confirmed
+  interleaving keeps 62% or more, every rejected one 8% or less).
+- **What it lost and keeps lost: c0543.** Merlin Pro's card body drawn as
+  a band under the other two cards; six confirmed interleavings gone, and
+  nothing raised in their place. A check for a group printed beside
+  another and drawn wholly below it found it, and six false ones besides
+  (columns of different lengths, cards staggered by a badge): dropped.
+  Alessandro accepted the miss (round 5): Claude's review names it.
+- **D3, calibrated by eye on the 114** (`checks._check_looks`): a word's
+  ground and ink are read from the page and the render, one-colour
+  strips included (`projection`, `Word.ground`, `Detail.boxes`). A frame
+  missing round a box drawn filled about as wide is a minor (c0567's
+  cards); a heading's or a title's accent colour drawn neutral is a minor,
+  a lone number's or letter's stays major (round 5).
+- **Round 5, decided 2026-11-07: agree on all fourteen.** The build's
+  before and after on real pages: the c0543 miss accepted, a title's
+  accent colour minor (built, `c7a9a17`), the datasheet's gap a spacing
+  minor for the review, the recipe's step drawn across, c0008's lost
+  section, and nine confirmations of the new checks. **Four of its
+  issues repeated pages and faults he had decided in rounds 1, 2 and 4**
+  (c0063, c0355, c0419, the flyer's pill): drawn from Claude's
+  calibration list without checking the earlier rounds. Over the five
+  rounds, 53 of 58 agreed.
+
 ### Step 7 — the proof on the 31 known pages
 
 - **The run, `K0-known31`**, takes no model:
@@ -609,6 +666,10 @@ after (Claude's calls and his decisions both).
 The outcome; `docs/status.md`, `CLAUDE.md` and `level-up.md` §6 updated;
 issue #44 closed; a handover prompt for L3, the honest baseline on
 `corpus/l3-subset.txt`.
+
+**Done 2026-11-07**: the outcome below, `docs/status.md`, `CLAUDE.md` and
+`level-up.md` §6 updated, issue #44 closed, the L3 prompt at the end of
+"Where L2 stands".
 
 ### Alongside — dev converted (decision 1)
 
@@ -963,75 +1024,90 @@ against today's:
 
 ---
 
-## Where L2 stands, 2026-10-31 15:45 — and the prompt for a fresh chat
+## Where L2 stands, 2026-11-07 — closed, and the prompt for L3
 
-**Done.** Steps 0–5 (above). Step 7's run `K0-known31` reviewed in full by
-Claude at rubric 2: 300 check faults confirmed, 30 rejected, 61 added by
-the review, 0 unanswered, 6 majors with no stage, each with its reason —
-`docs/agents/review-calls/K0-known31.json` (Claude's calls; Alessandro's
-come through step 6's page). The review turned into check fixes
-(`52b5ca2`): over the 31, 11 rejected faults gone, every confirmed one
-kept or carried as review-added; identity over the 231 clean. The call
-limit (decision 11) and the dev set (decision 12) are above. 1665 tests
-pass (1 skipped), measured 14:27.
+**Done: steps 0 to 8.** What L2 hands on:
+- **One command**, `python tools/measure_run.py debug/runs/<label>`
+  (`--all` opens every page, `--previous` compares two runs): the checks
+  over every page, the report, the sample by step 5's rule, the sheets.
+- **The checks** (§C and the build): words, cells, structure, order,
+  lines, height, beside, overprint, alignment, type, looks and rules,
+  each pinned on the pages that decided it, in `tests/test_checks.py`
+  over `tests/frozen/l2-dev/` (23 renders) and the committed probes.
+- **The judge**: Claude, by `docs/agents/review-criteria.md`, which holds
+  every call Alessandro made; Claude's calls in
+  `docs/agents/review-calls/<run>.json`; his through the issue page,
+  https://claude.ai/artifact/RpUd3a7ioGjdNWBLyqM6JD, built by
+  `tools/review_issues.py` from `docs/agents/review-issues.json`. Five
+  rounds, 58 issues, 53 agreed.
+- **The batch runner** with a 20-minute page limit and a 3-minute call
+  limit; dev converted on 98 pages (`L2-dev-90`'s 84, `L2-dev-mixed`'s
+  14).
 
-**Running.** `L2-dev-90`, detached, started 15:06 on `8bb13b8`; about 16
-hours, so about 07:00 on 2026-11-01, give or take two. c0008 converted
-this time (1,180 s, 83 calls, its runaway table stopped at 180 s and
-left unread).
+**What the checks still miss or misread**, for a review to look for by
+eye:
+- a group drawn wholly below the one printed beside it, each in its own
+  column (c0543's middle card): no check raises it;
+- a list torn by a blank gap in its own column (the datasheet): spacing,
+  a minor no check raises;
+- over the 114 called pages, faults the review rejected and still
+  raised: 23 major, 32 minor;
+- of 2026-11-01's open list, the columns (I) and the copies (F, F′) are
+  the build's C2 and C1, and alignment (A) is minor now; the neighbour
+  named for a moved cell (L), digits found elsewhere for a lost item
+  number (W), and a display face's weight read from CSS stay open.
 
-**Check issues still open**, from the review of the 31 (the rest fixed in
-`52b5ca2`). *2026-11-01: A, B and the contract's clauses taken up in "The
-check issues, fixed", above, with what stays open.*
+**Proved on this code, 2026-11-07** (`c7a9a17`):
+- `tools/replay_run.py tests/frozen/s14-result`: 21 of 21 byte-identical,
+  0 asked differently;
+- `tools/rederive.py` over it: 21 of 21 byte-identical files;
+- every dev page checked against itself: 231 pages, 0 faults, every token
+  matched (128 s);
+- 1698 tests pass (1 skipped); mypy clean on `src/`.
 
-| id | check | what the picture shows |
-|---|---|---|
-| A | alignment | a hanging clause number's indent read as right alignment (contract) |
-| B | words | multi-token words skipped by the spelling list |
-| D, K | alignment | a badge or size inside a chip, short lines in a flex row, read as lines aligned or moved (email, catalogue) |
-| F | cells, type | a repeated phrase whose copy moved matched crosswise to the other copy (payslip, 6 false alarms) |
-| L | cells | the moved cell named is the neighbour of the one that moved (minutes) |
-| N | words | a mark drawn as a look-alike letter (✕ as X in a drawn box) counted lost and invented: Alessandro's judgement |
-| — | alignment | probe_contract's clauses, justified beside a hanging number, still read "printed justified, drawn left" (rejected) |
+**The prompt for L3:**
 
-**The prompt for the next chat:**
-
-> Continue L2 of the level-up plan: spec 0021,
-> `docs/specs/0021-measurement-and-the-judge.md`, issue #44, branch
-> `level-up`. Read the spec's "Read first" list, then its "Alongside —
-> dev converted", "Where L2 stands" and decisions 7–12.
+> Start L3 of the level-up plan, the honest baseline: `docs/level-up.md`
+> §6 and decision 1 of §8. Branch `level-up`. Read `docs/level-up.md`'s
+> Gist and §6, spec 0020's "L3 — the honest baseline", spec 0021's
+> "Where L2 stands" and `docs/agents/review-criteria.md`, then
+> `docs/status.md`.
 >
-> First, the dev run. `python tools/batch.py L2-dev-90 --status` and
-> `debug/L2-dev-90.log`. **While it runs, run no Chrome job and no test
-> beside it** (decision 8): wait. When it has ended, record its outcome
-> in the spec — converted, timed out and why (a big page or a call
-> stopped at its limit: `grep "stopped at its limit"`), times by
-> density — beside the first stretch's.
+> 1. **Write spec 0022**, `docs/specs/0022-the-honest-baseline.md`, and
+>    its GitHub issue (`docs/agents/issue-tracker.md`). Two questions for
+>    Alessandro, on the one-issue-at-a-time page (load the
+>    `artifact-capabilities` skill first; never re-show an issue he has
+>    decided, `docs/agents/review-issues.json`): should the L3 set carry
+>    a real PDF page (it holds none; nine of the panel's 200 are PDFs)?
+>    Is every one of the 36 opened (Claude's recommendation: yes, it is
+>    the reference P2 decides against)?
+> 2. **The conversion**: today's shipped pipeline over
+>    `corpus/l3-subset.txt`, 36 panel pages (four a family; 16 medium,
+>    13 sparse, 7 dense), one page at a time, the 20-minute page limit
+>    and 3-minute call limit: about 5 hours at dev's medians, 6 if every
+>    dense page reaches its limit. **Over two hours: give him the time
+>    and wait for his go.** Then, detached, with nothing beside it:
+>    `nohup env PATH="$PWD/.venv/bin:$PATH" python tools/batch.py
+>    L3-baseline --pages l3 > debug/L3-baseline.log 2>&1 & disown`;
+>    track it with `python tools/batch.py L3-baseline --status`.
+> 3. **The measurement**: `python tools/measure_run.py
+>    debug/runs/L3-baseline --all`, then Claude's review of every page by
+>    the criteria, looking by eye for what the checks still miss (spec
+>    0021, "Where L2 stands"). Calls in
+>    `docs/agents/review-calls/L3-baseline.json`.
+> 4. **The result**: fault classes ranked by pages touched, on pages
+>    nobody has tuned on; his calls through the issue page; a check issue
+>    the review finds is fixed as in L2, pinned on a dev page only.
+> 5. **Close**: the outcome, `docs/status.md`, `CLAUDE.md`,
+>    `level-up.md` §6, the issue, and a handover prompt for P1.
 >
-> Then, in order:
-> 1. The checks over dev's converted pages, `tools/measure_run.py` over
->    `debug/runs/L2-dev-90` and `debug/runs/L2-dev-mixed` (its 14
->    converted pages); then the review by step 5's sampling rule,
->    Claude's calls, by looking at every opened sheet.
-> 2. Step 7's two leftovers: would the sampling rule alone have found
->    what the full review of the 31 found
->    (`docs/agents/review-calls/K0-known31.json`)? And the pairwise
->    exercise, `s13-result/` against `s14-result/`.
-> 3. The open check issues in "Where L2 stands", each fixed in the check
->    that raised it and pinned on its page with the true fault kept; N is
->    Alessandro's call, ask him.
-> 4. Step 6, the review page: **stop and ask Alessandro before building
->    it**, with the `artifact-capabilities` skill loaded first.
-> 5. Step 8, close: the outcome, `docs/status.md`, `CLAUDE.md`,
->    `level-up.md` §6, issue #44, and a handover prompt for L3 on
->    `corpus/l3-subset.txt`.
->
-> Rules: never pass `unseal=True`. L2 converts no panel page, and panel
-> pages c0001 and c0002 are never used in tests. One conversion at a
-> time with nothing beside it; every Chrome job finished before a
-> conversion starts. Stop and ask before any conversion longer than two
-> hours, and wherever his calls disagree with the checks. Judge by eye
-> (`docs/agents/review-criteria.md`); a number is a pointer to a page.
+> Rules: never pass `unseal=True`. No panel page is used in a test,
+> c0001 and c0002 above all. L3 changes no conversion code. One
+> conversion at a time, nothing beside it; every Chrome job finished
+> before a conversion starts. Stop and ask before any conversion longer
+> than two hours, and wherever his calls disagree with the checks. Judge
+> by eye (`docs/agents/review-criteria.md`); a number is a pointer to a
+> page. Keep replies short: bullets, facts, no filler.
 
 ---
 
@@ -1044,7 +1120,10 @@ src/doc_to_html/review.py          faults, tiles, highlights, sampling, roll-up
 tools/batch.py                     the batch runner
 tools/measure_run.py               the one command
 corpus/twin-spellings.json         c0082's known twin spellings
-docs/agents/review-calls/          Alessandro's calls, per run
+docs/agents/review-calls/          Claude's calls, per run
+docs/agents/review-issues.json     the rounds and Alessandro's decisions
+tools/review_issues.py, .html      the issue page, one issue at a time
+tests/frozen/l2-dev/               23 dev renders the check tests read
 .claude/skills/visual-review/      the skill, evolved
 debug/runs/<label>/checks/         the checks and the report, per run (gitignored)
 tests/test_checks.py, test_batch.py, test_measure_run.py

@@ -33,17 +33,18 @@ behind the rules, what the rubric must never become, and the remaining gaps.
 trial axis is kept rather than rejected. **The criteria it judges by were
 agreed with Alessandro on 2026-10-24**: `docs/agents/review-criteria.md`
 (the render looks like the page, never guess, every line as printed, net
-gain ships). The skill takes them up in the level-up's L2, after the
-corpus.
+gain ships). The skill took them up in the level-up's L2 (spec 0021),
+and every call Alessandro has made since is in that file.
 
 ### Specs
 
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
 measured numbers and what has already been tried and rejected. **No spec
-is open. Spec 0020, `docs/specs/0020-the-corpus.md` (issue #43, closed),
-built the corpus, the level-up's L1b, done 2026-10-30; next is L2,
-spec 0021, run from spec 0020's last handover prompt.** The
+is open. Spec 0021, `docs/specs/0021-measurement-and-the-judge.md`
+(issue #44, closed), built the checks and the judge, the level-up's L2,
+done 2026-11-07; next is L3, spec 0022, run from spec 0021's last
+handover prompt.** Spec 0020 (issue #43, closed) built the corpus. The
 level-up plan (`docs/level-up.md`, 2026-10-24) is decided; each of its
 steps gets a spec and an issue when it starts, and spec 0020's "What comes
 after" outlines the ones that follow (L2 with the judge, L3, the GLM-OCR
@@ -83,7 +84,8 @@ line that caused the deletion.
 a structural fault on 9 of 10, against 0 of 6 tuned pages. So the aim is
 now conversion that generalises: build a corpus by its variability first
 (L1: the variability agreed 2026-10-24, the corpus built 2026-10-30;
-next L2, measuring on it), then a
+L2, the checks and the judge, done 2026-11-07; next L3, the honest
+baseline), then a
 GLM-OCR parser-first PoC (P1), local models only. Work continues on branch
 `level-up`; `scaffold` is retired into `develop`.
 
@@ -246,8 +248,10 @@ LEVEL-UP    2026-10-24, Alessandro: docs/level-up.md, branch level-up —
               L1a the variability          AGREED 2026-10-24
               L1b the corpus, 631 pages    DONE 2026-10-30: spec 0020,
                 #43; 573 generated (130 parts), 27 PDF, the 31 in dev
-              L2 measurement and a judge   NEXT: spec 0021
-              L3 a baseline, limited set
+              L2 measurement and a judge   DONE 2026-11-07: spec 0021,
+                #44; the checks, one command, the issue page; dev
+                converted on 98 pages; five rounds of his calls
+              L3 a baseline, limited set   NEXT: spec 0022
               P1 the GLM-OCR parser-first PoC, after L1  P2 decide  L5 fit
 ```
 
@@ -305,7 +309,8 @@ frozen as `tests/frozen/s14-result/`, **and cleared every open item the
 same day**, the spec's four ranked directions included. Nothing is open:
 do not pick anything up unless he names it. **He named the level-up plan
 on 2026-10-24** (`docs/level-up.md`); L1b, spec 0020, built the corpus
-by 2026-10-30, and its next step is L2, spec 0021.
+by 2026-10-30; L2, spec 0021, the checks and the judge by 2026-11-07; its
+next step is L3, spec 0022.
 `docs/specs/0007-handover.md` holds spec 0007's prompts, as record.
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
@@ -378,13 +383,14 @@ a document is writing an HTML file — which is what lets the corpus leave five.
 
 **The source and its screenshot agree exactly for the ten authored documents
 — since 2026-09-29, and pinned by `TestTheCorpusPictureIsItsOwnHTML` — and
-approximately for four of the original five.** Until that day this sentence
+approximately, or not at all, for the original five.** Until that day this sentence
 was false and nothing checked it: the ten had been shot before
 `projection.SHOT_SLACK` and each was missing its bottom 60-90px, found by
-re-shooting and diffing. Only `invoice.html` still
-re-renders to its screenshot (0.74% of pixels differing); the other four differ
-by 6.9–14.1%, in content *height* rather than position, because of fonts on
-this machine — and `invoice2.html` additionally wants a CDN. So `height_ratio`
+re-shooting and diffing. **None of the original five re-renders to its
+screenshot now** (re-shot 2026-11-07): 6.9% to 49% of pixels differ,
+`invoice.html` 15.5% where it once differed by 0.74%, each picture 3 px
+shorter to 76 px taller than its PNG, because of fonts on this machine — and
+`invoice2.html` additionally wants a CDN. So `height_ratio`
 is measured against the **PNG's** own height, which is what the model was
 shown, while T3's relations and column shares come from the re-rendered source.
 
@@ -729,7 +735,7 @@ each other — `CellState.DISPUTED` and the Ladder are already the vocabulary fo
 it, and `_climb_ladders` already records that it waits on a second Engine. That
 is model time and Alessandro's decision, not a detector.
 
-**Tracker state, 2026-10-30: no issue is open; #43 (spec 0020, the corpus) closed when the corpus was built.** #31–#42 (specs 0008–0019) are closed, each done and decided. #30 (spec 0007) closed when its
+**Tracker state, 2026-11-07: no issue is open; #44 (spec 0021, L2) closed when its work finished, #43 (spec 0020, the corpus) when the corpus was built.** #31–#42 (specs 0008–0019) are closed, each done and decided. #30 (spec 0007) closed when its
 work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
 #17 (the vision layout prompt) were closed by Thread 0. Every other spec is closed
 history; 0007 still defines the target.
