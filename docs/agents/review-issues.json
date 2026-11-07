@@ -362,7 +362,7 @@
    "name": "Round 2",
    "date": "2026-11-07",
    "title": "Round 2: eight more, one at a time",
-   "intro": "Your round 1 decisions are recorded: seven agreed, and one disagreed, the alignment issue. This round asks first about alignment, so Claude learns where your line is. Then two questions the criteria do not settle, and three spot checks of faults Claude confirmed, to test Claude's own judgement. Click a decision: it saves and the next issue opens.",
+   "intro": "Your round 1 decisions are recorded: seven agreed, and one disagreed, the alignment issue. Issues 1 to 3 ask about alignment, so Claude learns where your line is; 3 is a fault Claude confirmed. Issues 4 to 6 are severities the criteria leave open. Issues 7 and 8 are spot checks of faults Claude confirmed, to test Claude's own judgement. Click a decision: it saves and the next issue opens.",
    "about": "Round 2: issue 1 asks again about round 1's alignment issue, which Alessandro disagreed with; 2-3 are alignment examples (one false alarm, one Claude confirmed); 4-6 are severity questions review-criteria.md does not settle; 7-8 are spot checks of Claude's confirmed majors, drawn at random (seed 0) from the confirmed majors still raised today. Every example re-checked on today's code, 2026-11-07.",
    "issues": [
     {

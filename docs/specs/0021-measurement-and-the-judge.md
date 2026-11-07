@@ -526,7 +526,7 @@ with a note, into the `issues` collection, one document per key.
   alignment fix**, with no note. Recorded under each issue's `decided`.
 - **Round 2, published 2026-11-07**: the alignment question again on
   its page (c0126) and on two more (a menu where printed, c0548; values
-  pushed from their labels, c0565, which Claude confirmed); two
+  pushed from their labels, c0565, which Claude confirmed); three
   severities the criteria leave open (justified drawn ragged; a fill
   drawn the wrong shape; buttons drawn as plain lines); two spot checks
   of Claude's confirmed majors, drawn at random (cells, c0464;
