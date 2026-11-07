@@ -24,11 +24,11 @@ in L2, after the corpus is built (his order).
 
 | | major | minor |
 |---|---|---|
-| **words and numbers** | a word or number lost, invented, changed or merged (`NP-229 I` for `NP-2291`, `METH`, `gsalt`) | a mark drawn as a look-alike, the letters and the meaning unchanged: ✕ as the letter X, ’ as ', – as - |
-| **structure** | a cell in the wrong row or column; a label printed over its value flattened onto one line; numbered steps drawn as bullets; content under the wrong heading, or two blocks interleaved | the right look built from the wrong HTML structure |
-| **layout** | any line breaking at a different word; page height off by more than 10%; alignment changed (right-aligned numbers drawn left, a centred title drawn flush left) | page height off by up to 10% |
-| **type** | the wrong font class (serif, sans, mono, script); sizes out of proportion; bold printed regular | italics; letterspacing; small caps |
-| **looks** | the page drawn on the wrong ground (dark for light); a colour that carries meaning lost (red H/L flags printed grey); a fill or band missing; a frame or rule missing | a colour in the right family but off; chips drawn as plain text; a legend's swatches missing |
+| **words and numbers** | a word or number lost, invented, changed or merged (`NP-229 I` for `NP-2291`, `METH`, `gsalt`) | a mark drawn as a look-alike, the letters and the meaning unchanged: ✕ as the letter X, ’ as ', – as -; a subscript or superscript drawn inline after a mark (`H_2015` for H₂₀₁₅) |
+| **structure** | a cell in the wrong row or column; a label printed over its value flattened onto one line; numbered steps drawn as bullets, or a hanging number lost; content drawn under the wrong heading, in another column | the right look built from the wrong HTML structure. Groups set side by side on the page and in the render are no fault, however the HTML orders them |
+| **layout** | a block printed beside another drawn under it (a label torn from its amount, two boxes stacked, a note off its title's line); text drawn over text; a line joined or split where it had room; page height off by more than 10% | a paragraph re-wrapped by its column's width; alignment changed within the line's own column or cell (right-aligned numbers drawn left, a value further from its label, a centred line drawn flush left, justified drawn ragged, a first-line indent lost); page height off by up to 10% |
+| **type** | the wrong font class where it changes the kind of text: a monospace or a script lost or added; sizes out of proportion, the line's own size changed by more than 10%; bold printed regular | serif drawn sans or sans drawn serif; italics; letterspacing; small caps |
+| **looks** | the page drawn on the wrong ground (dark for light); text too faint to read on its ground; a colour that carries meaning lost (red H/L flags printed grey, an orange frame drawn grey); a fill or band missing, added or drawn another shape (a pill drawn as a band); a frame missing round a box that holds content (card, panel, field); a rule missing that merges cells | a colour in the right family but off; chips and buttons drawn as plain text; a legend's swatches missing |
 | **figures** | — | any figure missing or imperfect, for now: logos, barcodes, icons, signatures, photos |
 
 After words, numbers and the overall layout, **structure comes first**.
@@ -42,6 +42,28 @@ issue N). A cross drawn as the letter X in a box, a curly apostrophe drawn
 straight, an en dash drawn as a hyphen: the same letters, the same
 meaning. A mark whose meaning changes stays major: an empty box drawn
 crossed, a tick lost.
+
+**Rounds 1 to 4 — Alessandro, 2026-11-07** (spec 0021, step 6; 44
+issues, one at a time, `review-issues.json`). Where the checks and the
+eye disagreed, the eye's rule was taken:
+
+- *Moved, not shifted.* An alignment change is minor while the line
+  stays in its column or cell ("a spacing issue… all text is there");
+  it is major only when the line is drawn in another place — off the
+  row it shares with another block. That is its own fault, `beside`.
+- *Columns as the eye reads them.* Two groups set side by side on the
+  page and in the render are not interleaved, whatever the HTML's
+  order; an item drawn in the other column is under another heading.
+- *A break the column made is not a break the page set.* A paragraph
+  re-wrapped by a wider column is minor; a line joined or split where it
+  had room stays major.
+- *A size is judged by the line's own size*: under 10% changed, no
+  reader sees it.
+- *Serif and sans read the same*; a monospace or a script does not.
+- *A missing rule that merges cells is major* (c0208, against Claude's
+  proposed minor): the table reads wrong.
+- *A colour that marks something is meaning*: an order number printed
+  red, a card framed orange.
 
 ## Deciding
 

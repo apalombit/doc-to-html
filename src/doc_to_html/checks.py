@@ -30,12 +30,13 @@ histogram in its constant's docstring.
 
 from __future__ import annotations
 
+import itertools
 import json
 import math
 import re
 import unicodedata
 from collections import Counter, defaultdict
-from collections.abc import Iterable, Iterator, Sequence
+from collections.abc import Iterable, Iterator, Sequence, Set
 from dataclasses import asdict, dataclass, field, replace
 from difflib import SequenceMatcher
 from pathlib import Path
@@ -82,6 +83,12 @@ over the page's body size: 0.92: 79, 0.93: 19, none at 0.94–0.95, 0.96:
 26, 1.00: 873, 1.04: 5, none at 1.05–1.06, 1.07: 3, 1.08: 19. The margin
 sits in the two empty bands either side of the body. (0.15 was the first
 guess, and it fell in the middle of the 0.85 and 1.15 clusters.)"""
+
+SIZE_SEEN = 0.10
+"""How much a line's own size, printed against drawn, must change for a
+size fault: form_0007's 'OFFICE USE', 11 px printed and 10.8 px drawn,
+crossed the body's margin and cannot be seen (Alessandro, review round
+1, 2026-11-07)."""
 
 HEIGHT_NOTICED = 0.01
 """How far off the picture's height a render may be before it is a minor
@@ -146,7 +153,7 @@ crop of the picture spans 64 grey levels: sample_table_0003 0.022 and
 invoice_0002 0.326 (whose HTML wants a CDN), then nothing until pricing
 0.917 and timetable 0.922, and the other 27 from 0.963 to 1.000."""
 
-LAYOUT_CHECKS = ("lines", "alignment", "type")
+LAYOUT_CHECKS = ("lines", "beside", "overprint", "alignment", "type")
 """The checks that read where the source's HTML lays its words out, and how
 large: withheld on a page whose HTML does not register with its picture
 (`REGISTERED`). Its words, its tables, lists and order are the DOM's and
@@ -189,6 +196,8 @@ CHECK_FEATURES: dict[str, tuple[str, ...]] = {
     "order": ("arr.", "list."),
     "lines": ("text.", "kv."),
     "height": ("arr.",),
+    "beside": ("arr.", "kv."),
+    "overprint": ("arr.", "kv."),
     "alignment": ("arr.", "kv."),
     "type": ("type.",),
 }
@@ -411,6 +420,79 @@ def align(source: Sequence[str], output: Sequence[str]) -> Alignment:
     return Alignment(pairs, frozenset(strong), replaced)
 
 
+COPY_GAIN = 20.0
+"""How much nearer, in pixels summed over a word's copies, pairing each
+with the copy where its neighbours land must put them before the pairing
+in order is replaced."""
+
+
+def _centre(box: Rect) -> tuple[float, float]:
+    return ((box[0] + box[2]) / 2, (box[1] + box[3]) / 2)
+
+
+def _nearest_copies(source: _Side, output: _Side, alignment: Alignment) -> Alignment:
+    """A word printed more than once, each copy paired with the copy drawn
+    where its neighbours are drawn, not the one the reading order reaches
+    first: c0345's 'Camila Park', a script signature and a bold name,
+    compared signature with name and raised a wrong face both ways
+    (Alessandro, review round 1, 2026-11-07). Where its neighbours land is
+    the median shift of the three nearest words printed and drawn once."""
+    def spans(side: _Side) -> dict[int, list[int]]:
+        held: dict[int, list[int]] = defaultdict(list)
+        for index, owner in enumerate(side.owner):
+            held[owner].append(index)
+        return held
+
+    mine, theirs = spans(source), spans(output)
+    key = {owner: (source.text(owner),) + tuple(source.tokens[i] for i in held)
+           for owner, held in mine.items()}
+    their_key = {owner: (output.text(owner),) + tuple(output.tokens[j] for j in held)
+                 for owner, held in theirs.items()}
+    whole: dict[int, int] = {}
+    for owner, held in mine.items():
+        landed = {output.owner[alignment.pairs[i]] for i in held if i in alignment.pairs}
+        if len(landed) == 1 and all(i in alignment.pairs for i in held):
+            other = landed.pop()
+            if their_key[other] == key[owner] and [alignment.pairs[i] for i in held] == theirs[other]:
+                whole[owner] = other
+    printed = Counter(key.values())
+    drawn = Counter(their_key.values())
+    anchors = [(_centre(source.box(owner)), _centre(output.box(other)))
+               for owner, other in whole.items()
+               if printed[key[owner]] == 1 and drawn[key[owner]] == 1]
+    groups: dict[tuple[str, ...], list[int]] = defaultdict(list)
+    for owner in whole:
+        if printed[key[owner]] > 1:
+            groups[key[owner]].append(owner)
+    if not anchors or not groups:
+        return alignment
+
+    def expected(owner: int) -> tuple[float, float]:
+        x, y = _centre(source.box(owner))
+        near = sorted(anchors, key=lambda a: (a[0][0] - x) ** 2 + (a[0][1] - y) ** 2)[:3]
+        dx = sorted(b[0] - a[0] for a, b in near)[len(near) // 2]
+        dy = sorted(b[1] - a[1] for a, b in near)[len(near) // 2]
+        return x + dx, y + dy
+
+    pairs = dict(alignment.pairs)
+    for owners in groups.values():
+        if len(owners) < 2 or len(owners) > 6:
+            continue
+        targets = [whole[owner] for owner in owners]
+        want = [expected(owner) for owner in owners]
+
+        def cost(order: Sequence[int]) -> float:
+            return sum(math.dist(w, _centre(output.box(t))) for w, t in zip(want, order))
+
+        best = min(itertools.permutations(targets), key=cost)
+        if cost(targets) - cost(best) <= COPY_GAIN:
+            continue
+        for owner, other in zip(owners, best):
+            for i, j in zip(mine[owner], theirs[other]):
+                pairs[i] = j
+    return replace(alignment, pairs=pairs)
+
+
 # --- words ------------------------------------------------------------------
 
 
@@ -488,6 +570,18 @@ def _check_words(source: _Side, output: _Side, alignment: Alignment,
             "words", kind, "major", f"{' '.join(was)} → {' '.join(now)}",
             source_box=_union(source.box(source.owner[i]) for i in range(i1, i2)),
             output_box=_union(output.box(output.owner[j]) for j in range(j1, j2))))
+    for was_word, now_word in _scripts_inline(source, output):
+        was, now = tokens(source.text(was_word)), tokens(output.text(now_word))
+        if all(lost[token] > 0 for token in was) and any(invented[token] > 0 for token in now):
+            # A part the rest of the page also prints (c0576's 2015, a
+            # year on its axis) may already stand for a copy elsewhere.
+            lost.subtract(was)
+            invented.subtract(token for token in now if invented[token] > 0)
+            faults.append(Fault(
+                "words", "mark changed", "minor",
+                f"{source.text(was_word)} → {output.text(now_word)}",
+                "a part printed raised or lowered, drawn inline after a mark",
+                source_box=source.box(was_word), output_box=output.box(now_word)))
     unmatched_source = [i for i in range(len(source.tokens)) if i not in alignment.pairs]
     unmatched_output = [j for j in range(len(output.tokens)) if j not in matched_output]
     crossed = _crosses_as_x(source, output, alignment, unmatched_output)
@@ -538,8 +632,34 @@ def _check_words(source: _Side, output: _Side, alignment: Alignment,
         faults.append(Fault("words", "lost", "major", "—",
                             f"{lost_dashes} cell{'s' if lost_dashes > 1 else ''} printed "
                             "with a dash for none, drawn blank"))
-    faults += _check_spelling(source, output, alignment)
-    return faults
+    return _grouped_marks(faults + _check_spelling(source, output, alignment))
+
+
+INLINE_MARKS = re.compile(r"[_^{}]")
+"""What a render writes for a raised or lowered part it sets inline:
+`H_2015`, `x^2`, `V_{t}`."""
+
+
+def _scripts_inline(source: _Side, output: _Side) -> list[tuple[int, int]]:
+    """Printed words with a part set smaller beside their first — a
+    subscript or a superscript, glued (`GLUE`) — each paired with an output
+    word that spells it with marks between: c0576's H₂₀₁₅ drawn `H_2015`.
+    A minor, one 'mark changed' (Alessandro, review round 3, 2026-11-07:
+    "formula is overall correct but misrepresented")."""
+    def bare(text: str) -> str:
+        return INLINE_MARKS.sub("", _EDGE.sub("", text))
+
+    scripted: dict[str, list[int]] = defaultdict(list)
+    for owner, group in source.glued.items():
+        if len(group) > 1 and min(source.words[w].font_px for w in group[1:]) \
+                < source.words[group[0]].font_px:
+            scripted[bare(source.text(owner))].append(owner)
+    found = []
+    for owner in output.glued:
+        text = _EDGE.sub("", output.text(owner))
+        if INLINE_MARKS.search(text) and scripted.get(bare(text)):
+            found.append((scripted[bare(text)].pop(0), owner))
+    return found
 
 
 DASHES = frozenset("—–-")
@@ -613,7 +733,7 @@ def _check_spelling(source: _Side, output: _Side, alignment: Alignment) -> list[
             faults.append(Fault("words", "spelling", "major",
                                 f"{printed[0]} → {printed[1]}",
                                 source_box=source.box(first), output_box=output.box(second)))
-    return _grouped_marks(faults)
+    return faults
 
 
 _LETTERS = re.compile(r"[\W_]", re.UNICODE)
@@ -1056,6 +1176,10 @@ def _check_order(source: _Side, output: _Side, alignment: Alignment) -> list[Fau
             mine = [(i, "a") for i in held_a] + [(i, "b") for i in held_b]
             if _interleaves(mine):
                 continue
+            if _columns_apart(source, held_a, held_b) and _columns_apart(
+                    output, [alignment.pairs[i] for i in held_a if i in alignment.pairs],
+                    [alignment.pairs[i] for i in held_b if i in alignment.pairs]):
+                continue
             theirs = [(alignment.pairs[i], "a") for i in held_a if i in alignment.strong] + \
                      [(alignment.pairs[i], "b") for i in held_b if i in alignment.strong]
             if _interleaves(theirs):
@@ -1067,6 +1191,34 @@ def _check_order(source: _Side, output: _Side, alignment: Alignment) -> list[Fau
                     source_box=_union(source.words[source.owner[i]].rect for i in held_a + held_b)))
     faults += _check_headings_over(source, output, alignment)
     return faults
+
+
+def _column_of(side: _Side, held: Sequence[int]) -> Rect | None:
+    """The width a group is set across, by its blocks: the lower median of
+    their left edges and of their right, so one item drawn in another
+    column does not move its section's (c0221's 4.4, drawn under section
+    2); and their full height."""
+    blocks: dict[int, list[Rect]] = defaultdict(list)
+    for i in held:
+        owner = side.owner[i]
+        blocks[side.words[owner].block].append(side.box(owner))
+    if not blocks:
+        return None
+    boxes = [_union(found) for found in blocks.values()]
+    lefts = sorted(box[0] for box in boxes)
+    rights = sorted(box[2] for box in boxes)
+    middle = (len(boxes) - 1) // 2
+    return (lefts[middle], min(box[1] for box in boxes), rights[middle], max(box[3] for box in boxes))
+
+
+def _columns_apart(side: _Side, held_a: Sequence[int], held_b: Sequence[int]) -> bool:
+    """Two groups set in different columns. Where they are on the page and
+    in the render, their words alternating in the output's HTML is no
+    fault a reader sees, and an item drawn in the other column is
+    `under another heading` (c0221's three sections, fifteen majors for
+    two items, Alessandro, review round 1, 2026-11-07)."""
+    a, b = _column_of(side, held_a), _column_of(side, held_b)
+    return a is not None and b is not None and _apart(a, b)
 
 
 def _apart(first: Rect, second: Rect) -> bool:
@@ -1224,14 +1376,52 @@ def _check_headings_over(source: _Side, output: _Side, alignment: Alignment) -> 
 # --- lines ----------------------------------------------------------------------
 
 
+def _had_room(side: _Side, frames: dict[int, Frames], end: int, after: int) -> bool:
+    """Whether the line ending at word `end` had room for word `after` in
+    its block's content box: a break there was set, not made by the
+    column's width."""
+    line = side.line_of[end]
+    found = frames.get(line[0])
+    if found is None or not found.chain:
+        return True
+    box, frame, word = side.line_box(line), found.chain[0], side.box(after)
+    widest = max(side.line_box(other)[2] - side.line_box(other)[0]
+                 for other in side.line_words if other[0] == line[0])
+    if len(found.chain) > 1 and not _justified(found) and abs((frame[2] - frame[0]) - widest) <= 1.0 \
+            and (found.chain[1][2] - found.chain[1][0]) > (frame[2] - frame[0]) + 1.0:
+        # A box as wide as its widest line, inside a wider one, grew to its
+        # lines and would have grown before it wrapped: its breaks are set
+        # (the lab report's right-hand header, 'Collected … 08:12'). Not a
+        # justified block, whose every full line is as wide as its box.
+        return True
+    room = (frame[2] - frame[0]) - (box[2] - box[0]) - (word[2] - word[0])
+    return room >= ROOM_SPARE * side.words[after].font_px
+
+
+ROOM_SPARE = 0.8
+"""How much room, in ems, a line must have left beside the next word for a
+break before that word to count as set (`_had_room`): a space, about a
+third of an em, and as much again, so a word that only just did not fit
+is a wrap. c0363's 'con | una', 678 px of a 700 px column and a 21 px
+word, wrapped."""
+
+
 def _check_lines(source: _Side, output: _Side, alignment: Alignment) -> list[Fault]:
     """Every line breaking where the page breaks it. Judged on word pairs
     that sit next to each other on both sides: two words on one printed
     line drawn on two (a break added), two printed lines drawn as one (a
     break lost), and two printed rows from different blocks drawn on one
-    line (a label printed over its value, flattened)."""
+    line (a label printed over its value, flattened).
+
+    A break the column's width makes is a re-wrap, minor: a paragraph set
+    in a wider column breaks at other words and loses nothing. A break
+    where the line had room for the next word is set, and losing or adding
+    one is major: fields printed one to a line run into a paragraph
+    (c0246), a line split short (Alessandro, review round 3, 2026-11-07)."""
+    mine, theirs = _frames(source), _frames(output)
     added: dict[int, int] = Counter()
     lost: dict[int, int] = Counter()
+    set_breaks: set[int] = set()
     joined: dict[int, int] = Counter()
     breaks: dict[int, int] = Counter()
     for i in range(len(source.tokens) - 1):
@@ -1255,21 +1445,32 @@ def _check_lines(source: _Side, output: _Side, alignment: Alignment) -> list[Fau
             # Two cells side by side are two lines of two blocks, one row
             # to the eye: a pair drawn label | value (probe_minutes' Present).
             added[block] += 1
+            if output.words[x].block != output.words[y].block or _had_room(output, theirs, x, y):
+                # A line the render cuts into two blocks is split, not
+                # wrapped: c0246's 'Diagnosi:' drawn over its text.
+                set_breaks.add(block)
         elif same_block and not same_line and out_same:
             lost[block] += 1
+            if _had_room(source, mine, a, b):
+                set_breaks.add(block)
         elif not same_block and out_same and not _same_row(source.words[a].rect,
                                                             source.words[b].rect):
             joined[block] += 1
     texts = {block.index: block for block in source.projection.blocks}
-    changed = sorted(set(added) | set(lost))
-    faults = _grouped("lines", "broken differently", "major",
-                      [("lines break at other words", texts[block].text[:40], texts[block].ink)
-                       for block in changed])
-    if faults:
-        faults[0] = Fault(**{**asdict(faults[0]), "note": (
-            f"{sum(added.values())} breaks added and {sum(lost.values())} of "
-            f"{sum(breaks[block] for block in changed)} lost, in {len(changed)} "
-            f"block{'s' if len(changed) > 1 else ''}")})
+    faults = []
+    for severity, fault, blocks in (
+            ("major", "broken differently", sorted((set(added) | set(lost)) & set_breaks)),
+            ("minor", "re-wrapped", sorted((set(added) | set(lost)) - set_breaks))):
+        found = _grouped("lines", fault, severity,
+                         [("lines break at other words", texts[block].text[:40], texts[block].ink)
+                          for block in blocks])
+        if found:
+            found[0] = Fault(**{**asdict(found[0]), "note": (
+                f"{sum(added[block] for block in blocks)} breaks added and "
+                f"{sum(lost[block] for block in blocks)} of "
+                f"{sum(breaks[block] for block in blocks)} lost, in {len(blocks)} "
+                f"block{'s' if len(blocks) > 1 else ''}")})
+        faults += found
     faults += _grouped("lines", "rows joined", "major",
                        [("drawn on one line with the row printed below it",
                          texts[block].text[:40], texts[block].ink) for block in sorted(joined)])
@@ -1367,13 +1568,135 @@ def _frames(side: _Side) -> dict[int, Frames]:
     return {frames.block: frames for frames in side.detail.frames}
 
 
-def _check_alignment(source: _Side, output: _Side, alignment: Alignment) -> list[Fault]:
+def _drawn_spans(source: _Side, output: _Side, alignment: Alignment) -> dict[int, Rect]:
+    """Each source block where the render draws it: its matched words in
+    the output block holding most of them, so a word matched to a copy
+    across the page does not stretch it."""
+    held: dict[int, list[int]] = defaultdict(list)
+    for i, owner in enumerate(source.owner):
+        if i in alignment.pairs:
+            held[source.words[owner].block].append(output.owner[alignment.pairs[i]])
+    spans = {}
+    for block, owners in held.items():
+        home = Counter(output.words[owner].block for owner in owners).most_common(1)[0][0]
+        spans[block] = _union(output.box(owner) for owner in owners
+                              if output.words[owner].block == home)
+    return spans
+
+
+def _printed_beside(side: _Side) -> set[tuple[int, int]]:
+    """Pairs of blocks with a line each on one row, apart across it: a
+    label and its amount, a title and the note on its line, two boxes
+    side by side. Cells of one table are the cells check's."""
+    table = {word.block: word.cell[0] for word in side.words if word.cell is not None}
+    lines = sorted(((side.line_box(line), line[0]) for line in side.line_words), key=lambda x: x[0][1])
+    pairs = set()
+    for n, (box, block) in enumerate(lines):
+        for other, mate in lines[n + 1:]:
+            if other[1] >= box[3]:
+                break
+            if mate == block or not _same_row(box, other) \
+                    or not (other[0] >= box[2] or other[2] <= box[0]):
+                continue
+            if block in table and table[block] == table.get(mate):
+                continue
+            pairs.add((min(block, mate), max(block, mate)))
+    return pairs
+
+
+def _check_beside(source: _Side, output: _Side, alignment: Alignment) -> tuple[list[Fault], set[int]]:
+    """Blocks printed side by side and drawn one under the other: a label's
+    amount drawn under it (c0185, c0328), a note drawn under the title it
+    shares a line with (c0600), a box drawn under the one it stands beside
+    (c0187). Major: the block is drawn in another place, not shifted in
+    its own (Alessandro, review rounds 1 to 3, 2026-11-07). Stacked is
+    sharing some of their width and none of their height; a block beside
+    another only by the page's grid — the next card's text, the seal
+    between two signatures — stays apart across however its lines wrap.
+    Returns the faults and the blocks drawn under."""
+    spans = _drawn_spans(source, output, alignment)
+    texts = {block.index: block for block in source.projection.blocks}
+    under: dict[int, int] = {}
+    for first, second in sorted(_printed_beside(source)):
+        if first not in spans or second not in spans:
+            continue
+        one, two = spans[first], spans[second]
+        across = min(one[2], two[2]) - max(one[0], two[0])
+        down = min(one[3], two[3]) - max(one[1], two[1])
+        if across > 0 and down <= 0:
+            lower, upper = (second, first) if two[1] >= one[3] else (first, second)
+            under.setdefault(lower, upper)
+    return _grouped("beside", "drawn under", "major",
+                    [("printed beside, drawn under", f"{texts[lower].text[:40]} (beside "
+                      f"{texts[upper].text[:25]!r})", texts[lower].ink)
+                     for lower, upper in sorted(under.items())]), set(under)
+
+
+OVERPRINT = 0.3
+"""The share of the smaller of two words' boxes they must cover together
+to be drawn one over the other (`_check_overprint`)."""
+
+
+def _check_overprint(source: _Side, output: _Side, alignment: Alignment) -> list[Fault]:
+    """Two words apart on the page drawn over each other: c0166's labels
+    over their values, read 'Dat01/10/2021'; the contract's second party's
+    labels on the first's. Major: neither can be read (Alessandro, review
+    round 1, 2026-11-07). Words the page itself sets over each other are
+    not judged."""
+    printed_as: dict[int, int] = {}
+    for i, j in alignment.pairs.items():
+        printed_as.setdefault(output.owner[j], source.owner[i])
+    # A word wrapped at its hyphen has one box across both lines, over
+    # every word between (cv_0013's 'per-scheme').
+    drawn = sorted((output.box(owner), owner) for owner in printed_as
+                   if not output.words[owner].generated
+                   and all(output.words[w].lines == 1 for w in output.glued.get(owner, [owner])))
+    found: dict[int, tuple[int, int]] = {}
+    for n, (box, owner) in enumerate(drawn):
+        for other_box, other in drawn[n + 1:]:
+            if other_box[0] >= box[2]:
+                break
+            across = min(box[2], other_box[2]) - max(box[0], other_box[0])
+            down = min(box[3], other_box[3]) - max(box[1], other_box[1])
+            if across <= 0 or down <= 0:
+                continue
+            smaller = min((box[2] - box[0]) * (box[3] - box[1]),
+                          (other_box[2] - other_box[0]) * (other_box[3] - other_box[1]))
+            if across * down <= OVERPRINT * smaller:
+                continue
+            mine, theirs = printed_as[owner], printed_as[other]
+            if mine == theirs or _area_shared(source.box(mine), source.box(theirs)) > 0:
+                continue
+            block = source.words[mine].block
+            found.setdefault(block, (mine, theirs))
+    return _grouped("overprint", "drawn over another word", "major",
+                    [("two words apart on the page drawn one over the other",
+                      f"{source.text(mine)} / {source.text(theirs)}", source.box(mine))
+                     for _, (mine, theirs) in sorted(found.items())], unit="place")
+
+
+def _area_shared(first: Rect, second: Rect) -> float:
+    across = min(first[2], second[2]) - max(first[0], second[0])
+    down = min(first[3], second[3]) - max(first[1], second[1])
+    return max(across, 0) * max(down, 0)
+
+
+def _check_alignment(source: _Side, output: _Side, alignment: Alignment,
+                     moved: Set[int] = frozenset()) -> list[Fault]:
+    """A line set on another side of where the page sets it: minor, a shift
+    in its own column or cell — values further from their labels,
+    right-aligned numbers drawn left in their column, justified text drawn
+    ragged (Alessandro, review rounds 1 to 3, 2026-11-07: "a spacing
+    issue… all text is there"). A block drawn in another place is the
+    beside check's major, `moved`, and not reported again here."""
     mine, theirs = _frames(source), _frames(output)
     last_mine = _last_lines(source)
     last_theirs = _last_lines(output)
     on_line = Counter(output.line_of[owner] for owner in output.owner)
     changed: dict[int, Counter[str]] = defaultdict(Counter)
     for line, indexes in source.line_words.items():
+        if line[0] in moved:
+            continue
         held = [i for i, owner in enumerate(source.owner) if owner in indexes]
         out_lines = Counter(output.line_of[output.owner[alignment.pairs[i]]]
                             for i in held if i in alignment.pairs)
@@ -1382,12 +1705,17 @@ def _check_alignment(source: _Side, output: _Side, alignment: Alignment) -> list
         was_last = last_mine.get(line[0]) == line[1]
         was = alignment_of(source.line_box(line), mine.get(line[0]), last=was_last)
         out_line, there = out_lines.most_common(1)[0]
+        # A printed line the render draws as several blocks on one row — a
+        # menu's items, each its own link — is read whole: c0548's menu,
+        # at the right on both, read by its first item alone as set left.
+        drawn = _union(output.line_box(other) for other in out_lines
+                       if _same_row(output.line_box(other), output.line_box(out_line)))
         now_last = last_theirs.get(out_line[0]) == out_line[1]
-        now = alignment_of(output.line_box(out_line), theirs.get(out_line[0]), last=now_last)
+        now = alignment_of(drawn, theirs.get(out_line[0]), last=now_last)
         if was in (None, "full") or now in (None, "full") or was == now:
             continue
         if "justified" not in (was, now) and \
-                _moved(source.line_box(line), output.line_box(out_line), was, now) <= PLACE_SLACK:
+                _moved(source.line_box(line), drawn, was, now) <= PLACE_SLACK:
             continue
         kept = there >= len(held) - 1 and on_line[out_line] <= there + 1
         if {was, now} == {"left", "justified"} and (
@@ -1403,7 +1731,7 @@ def _check_alignment(source: _Side, output: _Side, alignment: Alignment) -> list
             continue
         changed[line[0]][f"{was} → {now}"] += 1
     texts = {block.index: block for block in source.projection.blocks}
-    return _grouped("alignment", "alignment", "major",
+    return _grouped("alignment", "alignment", "minor",
                     [(f"printed {change.replace(' → ', ', drawn ')}", texts[block].text[:40],
                       texts[block].ink)
                      for block, counts in sorted(changed.items())
@@ -1447,20 +1775,30 @@ def _check_type(source: _Side, output: _Side, alignment: Alignment) -> list[Faul
             # recipe's bold step numbers made every step 'bold lost'.
             continue
         pairs_by_block[word.block].append((word, output.words[second]))
-    faces, sizes, bold, heavy, slant = [], [], [], [], []
+    faces: list[tuple[str, str, Rect]] = []
+    near: list[tuple[str, str, Rect]] = []
+    sizes, bold, heavy, slant = [], [], [], []
     for block, pairs in sorted(pairs_by_block.items()):
         text, ink = texts[block].text[:40], texts[block].ink
         printed = Counter(face_class(w) for w, _ in pairs).most_common(1)[0][0]
         drawn = Counter(face_class(w) for _, w in pairs).most_common(1)[0][0]
         if printed in JUDGED_FACES and drawn in JUDGED_FACES and printed != drawn:
-            faces.append((f"{printed} printed, {drawn} drawn", text, ink))
-        size_mine = _mode(w.font_px for w, _ in pairs) / body_mine
-        size_theirs = _mode(w.font_px for _, w in pairs) / body_theirs
+            # A serif set as a sans reads the same, and looks a little
+            # plainer: minor. A monospace or a script lost or added is a
+            # different kind of text (Alessandro, review round 4,
+            # 2026-11-07, c0552).
+            (near if {printed, drawn} == {"serif", "sans"} else faces).append(
+                (f"{printed} printed, {drawn} drawn", text, ink))
+        px_mine = _mode(w.font_px for w, _ in pairs)
+        px_theirs = _mode(w.font_px for _, w in pairs)
+        size_mine, size_theirs = px_mine / body_mine, px_theirs / body_theirs
         was, now = _relation(size_mine, 1.0), _relation(size_theirs, 1.0)
-        if was != now and abs(math.log(size_theirs / size_mine)) > math.log(1 + SIZE_MARGIN):
+        if was != now and abs(math.log(size_theirs / size_mine)) > math.log(1 + SIZE_MARGIN) \
+                and abs(math.log(px_theirs / px_mine)) > math.log(1 + SIZE_SEEN):
             # Moved across the margin and by more than it: 1.04 of the body
             # drawn at 1.05 crosses the line and changes nothing a reader
-            # sees (cv_0013's job titles, reviewed 2026-11-01).
+            # sees (cv_0013's job titles, reviewed 2026-11-01). And the
+            # line's own size changed enough to see (`SIZE_SEEN`).
             sizes.append((f"printed {_said(was)}, drawn {_said(now)}", text, ink))
         if any(w.weight >= 600 and other.weight < 600 for w, other in pairs):
             bold.append(("bold printed, regular drawn", text, ink))
@@ -1474,6 +1812,7 @@ def _check_type(source: _Side, output: _Side, alignment: Alignment) -> list[Faul
             slant.append(("italic printed upright" if pairs[0][0].italic
                           else "upright printed italic", text, ink))
     faults = _grouped("type", "wrong face", "major", faces)
+    faults += _grouped("type", "other face", "minor", near)
     faults += _grouped("type", "sizes out of proportion", "major",
                        sizes + _hierarchy(pairs_by_block, body_mine, texts))
     faults += _grouped("type", "bold lost", "major", bold)
@@ -1537,7 +1876,7 @@ def check(source: Projection, output: Projection, *, picture_height: int,
     (`pictured_regions`), in the source's coordinates."""
     mine = _side(source, spellings)
     theirs = _side(output)
-    alignment = align(mine.tokens, theirs.tokens)
+    alignment = _nearest_copies(mine, theirs, align(mine.tokens, theirs.tokens))
     faults = _check_words(mine, theirs, alignment, pictured)
     for table in mine.detail.tables:
         if table.rows >= 2 and table.cols >= 2:
@@ -1548,7 +1887,10 @@ def check(source: Projection, output: Projection, *, picture_height: int,
     faults += _check_lines(mine, theirs, alignment)
     height, ratio = _check_height(theirs, picture_height)
     faults += height
-    faults += _check_alignment(mine, theirs, alignment)
+    beside, moved = _check_beside(mine, theirs, alignment)
+    faults += beside
+    faults += _check_overprint(mine, theirs, alignment)
+    faults += _check_alignment(mine, theirs, alignment, moved)
     faults += _check_type(mine, theirs, alignment)
     return PageCheck(page=page, faults=tuple(_tag(faults, features)), height_ratio=ratio,
                      unread=theirs.detail.unread, source_tokens=len(mine.tokens),

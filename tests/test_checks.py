@@ -58,14 +58,14 @@ class TestTheKnownFaults:
         assert merged.note.startswith("4 of the ")
         assert not [f for f in result.faults if f.check == "cells"]
 
-    def test_the_recipes_method_interleaved_and_drawn_as_bullets(self) -> None:
+    def test_the_recipes_method_drawn_as_bullets_beside_its_ingredients(self) -> None:
+        """The method stays beside the ingredients, as printed: their words
+        alternate in the render's HTML, which no reader sees (Alessandro,
+        2026-11-07). The steps drawn as bullets are the fault."""
         result = check_page("probe_recipe", PROBE / "recipe" / "render.html")
         kinds = {(f.check, f.fault) for f in result.faults}
-        assert ("order", "interleaved") in kinds
+        assert ("order", "interleaved") not in kinds
         assert ("structure", "numbers as bullets") in kinds
-        interleaved = [f.element for f in result.faults if f.fault == "interleaved"]
-        assert any("Heat the oven" in element and "butternut" in element
-                   for element in interleaved)
 
 
 # --- mutations ----------------------------------------------------------------
@@ -300,7 +300,7 @@ def make_it_taller(page: Projection, html: str) -> str:
             "document.body.appendChild(d);")
 
 
-LAYOUT = {"lines", "alignment", "height", "type"}
+LAYOUT = {"lines", "beside", "alignment", "height", "type"}
 """What a change in widths or wraps moves besides the thing changed."""
 
 
@@ -329,7 +329,7 @@ class TestEachMutationIsFoundByItsCheck:
         _applied("arr.centred", 3, centred_set_left, ("alignment", "alignment"), {"alignment"})
 
     def test_a_serif_block_set_sans(self) -> None:
-        _applied("type.serif", 3, serif_set_sans, ("type", "wrong face"), LAYOUT)
+        _applied("type.serif", 3, serif_set_sans, ("type", "other face"), LAYOUT)
 
     def test_a_bold_word_set_regular(self) -> None:
         _applied("type.weights", 3, bold_set_regular, ("type", "bold lost"), LAYOUT)
@@ -375,10 +375,12 @@ class TestWhatTheReviewOfTheThirtyOneRejected:
         (lines,) = [f for f in result.faults if f.fault == "broken differently"]
         assert "Present" not in lines.element and "Next meeting" in lines.element
 
-    def test_two_groups_drawn_side_by_side_as_printed_interleave_only_in_the_html(self) -> None:
+    def test_two_groups_drawn_side_by_side_as_printed_are_not_interleaved(self) -> None:
+        """The education, in the left column on both: the render's HTML reads
+        the columns row by row, and the eye reads them as printed. Once a
+        minor; since 2026-11-07 no fault (Alessandro, round 1, c0221)."""
         result = check_page("cv_0013", S14 / "cv_0013.html")
-        education = [f for f in result.faults if f.fault == "interleaved" and "MEng" in f.element]
-        assert education and all(f.severity == "minor" for f in education)
+        assert not [f for f in result.faults if f.fault == "interleaved" and "MEng" in f.element]
 
     def test_a_page_that_does_not_register_keeps_its_words_not_its_layout(self) -> None:
         result = check_page("invoice_0002", S14 / "invoice_0002.html")
@@ -490,7 +492,7 @@ class TestWhatTheReviewOfDevRejected:
         serif drawn sans stays."""
         result = check_page("letter_0016", S14 / "letter_0016.html")
         assert not [f for f in result.faults if f.fault == "italics" and "Tomas Halden" in f.element]
-        assert [f for f in result.faults if f.fault == "wrong face" and "Halden & Pryce" in f.element]
+        assert [f for f in result.faults if f.fault == "other face" and "Halden & Pryce" in f.element]
 
     def test_a_size_across_the_margin_by_less_than_it_is_not_out_of_proportion(self) -> None:
         """cv_0013's job titles, 1.04 of the body printed and 1.05 drawn; their
@@ -521,6 +523,89 @@ class TestWhatTheReviewOfDevRejected:
         assert words[("mark lost", "✕")].note.startswith("2 ") and words[("mark lost", "✓")].note.startswith("9 ")
         result = check_page("catalogue_0015", S14 / "catalogue_0015.html")
         assert [f for f in result.faults if f.fault == "invented" and f.element == "x" and f.severity == "major"]
+
+
+# --- what Alessandro decided, review rounds 1 to 4, 2026-11-07 -----------------------
+
+
+@needs_chrome
+class TestWhatTheRoundsDecided:
+    """docs/agents/review-issues.json: each rule pinned on the page it was
+    decided on, with the page's true fault beside it."""
+
+    def test_a_menu_drawn_as_its_items_on_one_row_keeps_its_place(self) -> None:
+        """c0548's menu sits at the top right on both; read by its first
+        item alone it was 'printed right, drawn left'."""
+        result = check_page("c0548", DEV / "c0548.html")
+        assert not [f for f in result.faults if f.check == "alignment" and "Produit" in f.element]
+
+    def test_a_note_drawn_under_the_title_whose_line_it_shares_is_drawn_under(self) -> None:
+        result = check_page("c0600", DEV / "c0600.html")
+        (under,) = [f for f in result.faults if f.check == "beside"]
+        assert under.severity == "major" and "Fill in and hand" in under.element
+        assert not [f for f in result.faults if f.check == "alignment" and "Fill in" in f.element]
+
+    def test_values_shifted_in_their_column_are_minor_and_drawn_under_their_questions_major(self) -> None:
+        """c0029: answers drawn beside their questions, not at the right edge,
+        a minor; the six drawn under all the questions, a major."""
+        result = check_page("c0029", DEV / "c0029.html")
+        assert all(f.severity == "minor" for f in result.faults if f.check == "alignment")
+        (under,) = [f for f in result.faults if f.check == "beside"]
+        assert under.severity == "major" and "about 16" in under.element
+
+    def test_a_paragraph_rewrapped_by_its_column_is_minor(self) -> None:
+        result = check_page("c0363", DEV / "c0363.html")
+        assert not [f for f in result.faults if f.fault == "broken differently"]
+        (wrapped,) = [f for f in result.faults if f.fault == "re-wrapped"]
+        assert wrapped.severity == "minor" and "La tostatrice" in wrapped.element
+
+    def test_fields_run_together_or_split_from_their_label_stay_major(self) -> None:
+        """c0246: Forma, Posologia and Quantità drawn on one line; 'Diagnosi:'
+        drawn in a block of its own over its text."""
+        result = check_page("c0246", DEV / "c0246.html")
+        (split,) = [f for f in result.faults if f.fault == "broken differently"]
+        assert split.severity == "major" and "Diagnosi" in split.element
+        (joined,) = [f for f in result.faults if f.fault == "rows joined"]
+        assert joined.severity == "major" and "Amoxicillina" in joined.element
+
+    def test_a_size_change_no_reader_sees_is_not_out_of_proportion(self) -> None:
+        """form_0007's 'OFFICE USE', 11 px printed and 10.8 px drawn."""
+        result = check_page("form_0007", S14 / "form_0007.html")
+        assert not [f for f in result.faults if f.fault == "sizes out of proportion"
+                    and "OFFICE USE" in f.element.upper()]
+
+    def test_a_subscript_drawn_inline_after_a_mark_is_one_mark_changed(self) -> None:
+        result = check_page("c0576", DEV / "c0576.html")
+        (marks,) = [f for f in result.faults if f.fault == "mark changed"]
+        assert marks.severity == "minor" and "H2015) → H_2015)" in marks.element
+        assert not [f for f in result.faults if f.fault in ("lost", "invented")
+                    and f.element in ("h2015", "v2015", "ht", "vt", "h", "v", "t")]
+
+    def test_a_copy_is_compared_with_the_copy_drawn_where_it_is_printed(self) -> None:
+        """c0345's 'Camila Park', a script signature and a bold name, each
+        drawn as printed; its section numbers drawn regular stay."""
+        result = check_page("c0345", DEV / "c0345.html")
+        assert not [f for f in result.faults if f.check == "type" and "Camila Park" in f.element]
+        assert [f for f in result.faults if f.fault == "bold lost" and "1 Parties" in f.element]
+
+    def test_columns_kept_as_printed_name_only_the_items_drawn_in_another(self) -> None:
+        """c0221's three sections, three columns on both: fifteen majors for
+        two items. Item (a) drawn in section 3's column stays."""
+        result = check_page("c0221", DEV / "c0221.html")
+        assert not [f for f in result.faults if f.fault == "interleaved"]
+        assert [f for f in result.faults if f.fault == "under another heading"
+                and "quadri di distribuzione" in f.element and f.severity == "major"]
+
+    def test_labels_drawn_over_their_values(self) -> None:
+        result = check_page("c0166", DEV / "c0166.html")
+        (over,) = [f for f in result.faults if f.check == "overprint"]
+        assert over.severity == "major" and "Date: / 01/10/2021" in over.element
+
+    def test_two_boxes_printed_side_by_side_drawn_stacked(self) -> None:
+        """c0187's Year to date and Time off."""
+        result = check_page("c0187", DEV / "c0187.html")
+        (under,) = [f for f in result.faults if f.check == "beside"]
+        assert under.severity == "major" and "Time off" in under.element
 
 
 # --- identity -----------------------------------------------------------------
