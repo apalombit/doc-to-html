@@ -403,7 +403,12 @@
        148,
        90
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "nav",
@@ -443,7 +448,12 @@
        958,
        66
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "retries",
@@ -495,7 +505,12 @@
        225,
        898
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "disagree",
+      "note": "Problem seems more a spacing issue - in this specific case not major since all text is there and right aligned values however have inconsistent distance wrt their same line label which i think is more a minor",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "justified",
@@ -535,7 +550,12 @@
        770,
        232
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "fill",
@@ -575,7 +595,12 @@
        798,
        530
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "buttons",
@@ -633,7 +658,12 @@
        950,
        1044
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "cells",
@@ -673,7 +703,12 @@
        650,
        693
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "bullets",
@@ -713,7 +748,610 @@
        662,
        540
       ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
+    }
+   ]
+  },
+  {
+   "name": "Round 3",
+   "date": "2026-11-07",
+   "title": "Round 3: fifteen, one at a time",
+   "intro": "Round 2 is recorded: seven agreed, and one disagreed, the values pushed from their labels, which you called spacing and minor. Claude takes that as your line for alignment: a line drawn in another place on the page is major; a shift inside its own column, different spacing or a lost indent is minor. Issues 1 to 5 test that line. Issues 6 to 15 are spot checks of Claude's confirmed majors in the other classes (type, words, lines, rules, order, page height), drawn at random; on two of them Claude now proposes minor. Click a decision: it saves and the next issue opens.",
+   "about": "Round 3: issues 1-5 test the alignment line Alessandro drew in round 2 (spacing is minor), four from Claude's confirmed alignment majors and one Claude added; 6-15 are spot checks of Claude's confirmed majors, drawn at random (seed 1; the lost lines seed 2) among those still major on today's code, one or two per class.",
+   "issues": [
+    {
+     "key": "tbl-right",
+     "kind": "rule",
+     "page": "c0029",
+     "run": "L2-dev-90",
+     "title": "Right-aligned answers drawn beside their questions",
+     "what": "The page prints each answer at the right edge, joined to its question by a dotted leader. Our render puts the answers in a column right beside the questions, and drops the leaders.",
+     "checks": "Major: “printed right, drawn left”, 16 lines.",
+     "claude": "Claude first confirmed it major. By your round 2 line it is minor: every answer is there and reads with its question; what changed is spacing. The lost leaders are a separate minor.",
+     "often": "One of 36 alignment majors Claude confirmed; many are of this kind.",
+     "proposes": "Minor: answers drawn beside their questions instead of at the right edge.",
+     "source_crop": [
+      235,
+      90,
+      750,
+      225
+     ],
+     "render_crop": [
+      270,
+      100,
+      785,
+      230
+     ],
+     "source_marks": [
+      [
+       600,
+       108,
+       742,
+       200
+      ]
+     ],
+     "render_marks": [
+      [
+       434,
+       120,
+       612,
+       215
+      ]
      ]
+    },
+    {
+     "key": "times",
+     "kind": "rule",
+     "page": "c0545",
+     "run": "L2-dev-mixed",
+     "title": "Times drawn at the left of their column",
+     "what": "The page sets the times flush right in their column. Our render sets them flush left in the same column.",
+     "checks": "Major: “printed right, drawn left”, 8 lines.",
+     "claude": "The criteria's own example of a major alignment fault is exactly this: right-aligned numbers drawn left. By your round 2 note it would be minor: same column, same rows. Your call decides which wins.",
+     "often": "Numbers in table columns, on many pages.",
+     "proposes": "Minor, and the criteria's example changes: right-aligned numbers drawn left in their own column is minor.",
+     "source_crop": [
+      40,
+      330,
+      380,
+      570
+     ],
+     "render_crop": [
+      40,
+      395,
+      380,
+      600
+     ],
+     "source_marks": [
+      [
+       280,
+       340,
+       368,
+       545
+      ]
+     ],
+     "render_marks": [
+      [
+       296,
+       405,
+       340,
+       600
+      ]
+     ]
+    },
+    {
+     "key": "flags",
+     "kind": "rule",
+     "page": "c0236",
+     "run": "L2-dev-90",
+     "title": "A flag drawn at the column's edge, not its centre",
+     "what": "The page centres the “H” (high) flag in its Flag column. Our render draws it at the table's right edge, and the column's header shrinks to a speck.",
+     "checks": "Major: “printed centre, drawn left”, the header and 5 flags.",
+     "claude": "Minor by your line: same row, same column. The header drawn tiny is a size fault of its own.",
+     "often": "One of 36 alignment majors Claude confirmed.",
+     "proposes": "Minor.",
+     "source_crop": [
+      560,
+      425,
+      975,
+      700
+     ],
+     "render_crop": [
+      560,
+      735,
+      975,
+      1010
+     ],
+     "source_marks": [
+      [
+       866,
+       428,
+       925,
+       454
+      ],
+      [
+       880,
+       603,
+       920,
+       628
+      ]
+     ],
+     "render_marks": [
+      [
+       915,
+       742,
+       955,
+       760
+      ],
+      [
+       920,
+       893,
+       950,
+       918
+      ]
+     ]
+    },
+    {
+     "key": "aside",
+     "kind": "rule",
+     "page": "c0600",
+     "run": "L2-dev-90",
+     "title": "A note moved off the title's line",
+     "what": "The page prints “Fill in and hand to a Kestrel Makers volunteer” at the right, on the same line as the title “Booking slip”. Our render draws it on its own line under the title, at the left.",
+     "checks": "Major: “printed right, drawn left”.",
+     "claude": "Major by your line: the line has moved to another place, not just shifted in its own spot.",
+     "often": "One of 36 alignment majors Claude confirmed.",
+     "proposes": "Major: a line drawn in another place on the page.",
+     "source_crop": [
+      0,
+      390,
+      780,
+      440
+     ],
+     "render_crop": [
+      0,
+      445,
+      780,
+      530
+     ],
+     "source_marks": [
+      [
+       536,
+       403,
+       768,
+       427
+      ]
+     ],
+     "render_marks": [
+      [
+       20,
+       500,
+       400,
+       525
+      ]
+     ]
+    },
+    {
+     "key": "indent",
+     "kind": "rule",
+     "page": "paper_0018",
+     "run": "K0-known31",
+     "title": "A paragraph's first-line indent lost",
+     "what": "The page indents the first line of every paragraph. Our render sets this one flush; the next paragraph keeps its indent.",
+     "checks": "Nothing.",
+     "claude": "Claude added it as a major. By your line it is spacing: minor.",
+     "often": "Claude added 6 majors of this kind: indents lost, justified text drawn ragged.",
+     "proposes": "Minor.",
+     "source_crop": [
+      40,
+      370,
+      860,
+      470
+     ],
+     "render_crop": [
+      30,
+      372,
+      860,
+      472
+     ],
+     "source_marks": [
+      [
+       60,
+       385,
+       190,
+       407
+      ]
+     ],
+     "render_marks": [
+      [
+       46,
+       386,
+       174,
+       406
+      ]
+     ]
+    },
+    {
+     "key": "small",
+     "kind": "spot",
+     "page": "c0384",
+     "run": "L2-dev-90",
+     "title": "A small date line drawn at body size, in bold",
+     "what": "The page prints “Aggiornato il 19 aprile 2023” small and regular under the title. Our render draws it at the body's size, in bold.",
+     "checks": "Major: “printed smaller than the body, drawn at the body's size”.",
+     "claude": "Agrees: major. The line gains size and weight and competes with the title.",
+     "often": "One of 87 type majors Claude confirmed.",
+     "proposes": "Keep it major.",
+     "source_crop": [
+      100,
+      20,
+      860,
+      160
+     ],
+     "render_crop": [
+      100,
+      0,
+      860,
+      240
+     ],
+     "source_marks": [
+      [
+       395,
+       120,
+       565,
+       145
+      ]
+     ],
+     "render_marks": [
+      [
+       376,
+       205,
+       640,
+       229
+      ]
+     ]
+    },
+    {
+     "key": "smaller",
+     "kind": "spot",
+     "page": "c0236",
+     "run": "L2-dev-90",
+     "title": "A small address line drawn twice as large",
+     "what": "The page prints the clinic's address small, under its name. Our render draws it about twice the size, wrapping onto two lines.",
+     "checks": "Major: “printed smaller than the body, drawn larger than the body”.",
+     "claude": "Agrees: major.",
+     "often": "One of 87 type majors Claude confirmed.",
+     "proposes": "Keep it major.",
+     "source_crop": [
+      0,
+      0,
+      980,
+      80
+     ],
+     "render_crop": [
+      0,
+      0,
+      980,
+      110
+     ],
+     "source_marks": [
+      [
+       74,
+       48,
+       389,
+       67
+      ]
+     ],
+     "render_marks": [
+      [
+       103,
+       52,
+       760,
+       106
+      ]
+     ]
+    },
+    {
+     "key": "ticks",
+     "kind": "spot",
+     "page": "c0208",
+     "run": "L2-dev-90",
+     "title": "Tick and cross marks drawn as bullets",
+     "what": "The page marks three medicines ✓ and one ✗: “Sospesa: ibuprofene” (stopped). Our render keeps the first ✓ and draws the rest as bullets, so the ✗ is lost.",
+     "checks": "Major: “✓, 2 printed and not drawn”.",
+     "claude": "Agrees: major. The cross carries meaning: this drug is stopped.",
+     "often": "One of 102 word majors Claude confirmed.",
+     "proposes": "Keep it major.",
+     "source_crop": [
+      440,
+      475,
+      880,
+      620
+     ],
+     "render_crop": [
+      440,
+      515,
+      880,
+      660
+     ],
+     "source_marks": [
+      [
+       446,
+       588,
+       720,
+       610
+      ]
+     ],
+     "render_marks": [
+      [
+       446,
+       630,
+       720,
+       652
+      ]
+     ]
+    },
+    {
+     "key": "subscript",
+     "kind": "spot",
+     "page": "c0576",
+     "run": "L2-dev-90",
+     "title": "Subscripts drawn as underscores",
+     "what": "The page prints the formula with subscripts: H₂₀₁₅, Vₜ. Our render writes them as code: “H_2015”, “V_t”.",
+     "checks": "Major: the word “h2015” lost.",
+     "claude": "Agrees: major. The formula no longer reads as printed.",
+     "often": "One of 102 word majors Claude confirmed.",
+     "proposes": "Keep it major.",
+     "source_crop": [
+      150,
+      570,
+      700,
+      640
+     ],
+     "render_crop": [
+      150,
+      628,
+      720,
+      672
+     ],
+     "source_marks": [
+      [
+       533,
+       588,
+       596,
+       621
+      ]
+     ],
+     "render_marks": [
+      [
+       575,
+       634,
+       690,
+       666
+      ]
+     ]
+    },
+    {
+     "key": "lostlines",
+     "kind": "spot",
+     "page": "c0063",
+     "run": "L2-dev-90",
+     "title": "Two checklist lines lost",
+     "what": "Section 3 prints three ticked statements. Our render draws only the first; the other two are gone.",
+     "checks": "Major: their words lost.",
+     "claude": "Agrees: major. The two lines fall between two Zones, and no Zone covers them.",
+     "often": "One of 102 word majors Claude confirmed.",
+     "proposes": "Keep it major.",
+     "source_crop": [
+      15,
+      500,
+      450,
+      615
+     ],
+     "render_crop": [
+      15,
+      550,
+      450,
+      640
+     ],
+     "source_marks": [
+      [
+       36,
+       562,
+       330,
+       602
+      ]
+     ],
+     "render_marks": []
+    },
+    {
+     "key": "breaks",
+     "kind": "spot",
+     "page": "c0246",
+     "run": "L2-dev-mixed",
+     "title": "Lines run together into one paragraph",
+     "what": "The page prints Forma, Posologia and Quantità each on its own line under the drug. Our render runs them into one paragraph, and breaks “Diagnosi:” away from its text.",
+     "checks": "Major: line breaks differ in 7 blocks.",
+     "claude": "Agrees: major. The lines no longer read as a list of fields.",
+     "often": "One of 44 line majors Claude confirmed.",
+     "proposes": "Keep it major.",
+     "source_crop": [
+      300,
+      70,
+      720,
+      220
+     ],
+     "render_crop": [
+      300,
+      70,
+      720,
+      240
+     ],
+     "source_marks": [
+      [
+       310,
+       84,
+       552,
+       112
+      ],
+      [
+       300,
+       118,
+       715,
+       202
+      ]
+     ],
+     "render_marks": [
+      [
+       310,
+       100,
+       560,
+       140
+      ],
+      [
+       315,
+       145,
+       715,
+       220
+      ]
+     ]
+    },
+    {
+     "key": "rewrap",
+     "kind": "spot",
+     "page": "c0363",
+     "run": "L2-dev-mixed",
+     "title": "A paragraph wrapped at different words",
+     "what": "Our render's text column is wider than the page's, so the same paragraph wraps at different words: three lines on both, broken in other places.",
+     "checks": "Major: “3 breaks added and 3 lost”.",
+     "claude": "Major by the criteria (“any line breaking at a different word”). But nothing is lost and only the column's width differs; by your round 2 note this could be minor.",
+     "often": "One of 44 line majors Claude confirmed; many are of this kind.",
+     "proposes": "Minor where a whole paragraph re-wraps because its column is wider or narrower. Major where lines are joined or split inside a block, as in the previous issue.",
+     "source_crop": [
+      300,
+      180,
+      1020,
+      250
+     ],
+     "render_crop": [
+      300,
+      262,
+      1080,
+      330
+     ],
+     "source_marks": [],
+     "render_marks": []
+    },
+    {
+     "key": "rules-one",
+     "kind": "spot",
+     "page": "c0208",
+     "run": "L2-dev-90",
+     "title": "One empty cell merged with its neighbour",
+     "what": "In the exams table, “Rx torace di controllo” has an empty Ingresso cell beside it. Our render draws no rule between them, so the label runs into that cell and wraps.",
+     "checks": "Major: “2 of the 27 rules not drawn”.",
+     "claude": "Claude confirmed it major. Looking again: the table reads the same, and one missing rule is minor.",
+     "often": "One of 16 rule majors Claude confirmed.",
+     "proposes": "Minor when a few rules go missing and the table reads the same; major when the table's grid is lost.",
+     "source_crop": [
+      450,
+      265,
+      845,
+      460
+     ],
+     "render_crop": [
+      470,
+      280,
+      805,
+      500
+     ],
+     "source_marks": [
+      [
+       455,
+       425,
+       840,
+       455
+      ]
+     ],
+     "render_marks": [
+      [
+       475,
+       455,
+       800,
+       496
+      ]
+     ]
+    },
+    {
+     "key": "order",
+     "kind": "spot",
+     "page": "c0423",
+     "run": "L2-dev-mixed",
+     "title": "A line drawn under the wrong heading",
+     "what": "The page prints “Christmas week, 24/12/2026 to 01/01/2027” under NO SERVICE. Our render draws it under BEFORE YOU TRAVEL, as if it were a travel tip.",
+     "checks": "Major: “interleaved”, the two lists' words alternate.",
+     "claude": "Agrees: major. The meaning flips: there are no buses that week.",
+     "often": "One of 8 order majors Claude confirmed.",
+     "proposes": "Keep it major.",
+     "source_crop": [
+      40,
+      640,
+      1100,
+      790
+     ],
+     "render_crop": [
+      40,
+      640,
+      1100,
+      820
+     ],
+     "source_marks": [
+      [
+       580,
+       735,
+       845,
+       762
+      ]
+     ],
+     "render_marks": [
+      [
+       70,
+       777,
+       330,
+       803
+      ]
+     ]
+    },
+    {
+     "key": "height",
+     "kind": "spot",
+     "page": "c0236",
+     "run": "L2-dev-90",
+     "title": "The page drawn 24% taller",
+     "what": "Our render is 1,343 px tall against the page's 1,081: about a quarter taller, from larger type and lines that wrap.",
+     "checks": "Major: “1.24 of the picture's height”.",
+     "claude": "Agrees: major by the criteria (more than 10% off).",
+     "often": "One of 31 height majors Claude confirmed.",
+     "proposes": "Keep it major.",
+     "source_crop": [
+      0,
+      0,
+      980,
+      1081
+     ],
+     "render_crop": [
+      0,
+      0,
+      980,
+      1343
+     ],
+     "source_marks": [],
+     "render_marks": []
     }
    ]
   }

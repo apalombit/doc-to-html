@@ -531,6 +531,21 @@ with a note, into the `issues` collection, one document per key.
   drawn the wrong shape; buttons drawn as plain lines); two spot checks
   of Claude's confirmed majors, drawn at random (cells, c0464;
   numbers as bullets, c0404).
+- **Round 2 decided, 2026-11-07**: agree on seven. The logo is the lost
+  logo and the wrap, not alignment; the menu is no fault; justified drawn
+  ragged is minor, a lost hanging number a structure major; a fill drawn
+  the wrong shape is major and wants a check; buttons drawn as plain
+  lines are minor; two spot checks upheld. **Disagree on c0565's values
+  pushed from their labels**, which Claude had confirmed major: "more a
+  spacing issue… all text is there… more a minor". One of three spot
+  checks over-severe, in alignment.
+- **Round 3, published 2026-11-07**, fifteen issues: five test the
+  alignment line his note draws (another place: major; a shift in its
+  own column, spacing, a lost indent: minor), including the criteria's
+  own example, right-aligned numbers drawn left; ten spot checks of
+  Claude's confirmed majors across type, words, lines, rules, order and
+  height, on two of which (a re-wrapped paragraph, one missing rule)
+  Claude now proposes minor.
 
 ### Step 7 — the proof on the 31 known pages
 
