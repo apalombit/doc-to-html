@@ -1701,7 +1701,8 @@ def _check_looks(source: _Side, output: _Side, alignment: Alignment) -> list[Fau
       headline boxed dark), or recoloured. Words in a chip, a minor.
     - **too faint**: a word printed readable drawn under `FAINT`.
     - **colour lost**: a word printed in a colour drawn grey or black
-      (c0355's order number, red).
+      (c0355's order number, red); a heading's or a title's accent, a
+      minor (`_titled`).
     - **fill drawn another shape**: a fill drawn `SHAPE` times wider or
       narrower about its words (probe_flyer's pill as a band).
     - **frame missing**: a box framed round its words drawn with no frame
@@ -1722,6 +1723,8 @@ def _check_looks(source: _Side, output: _Side, alignment: Alignment) -> list[Fau
     grounds = []
     faint: dict[int, tuple[str, str, Rect]] = {}
     colours: dict[tuple[int, str], tuple[str, str, Rect]] = {}
+    accents: dict[tuple[int, str], tuple[str, str, Rect]] = {}
+    body = _mode(word.font_px for word in source.words)
     for mine, theirs in sorted(strong.items()):
         was, now = source.words[mine], output.words[theirs]
         if was.generated or now.generated or not was.ground or not now.ground:
@@ -1742,7 +1745,8 @@ def _check_looks(source: _Side, output: _Side, alignment: Alignment) -> list[Fau
             # Not where the colour moved to the ground: c0392's step
             # numbers, orange printed, white on an orange disc drawn.
             note = f"printed {colour_family(ink_was)}, drawn {colour_family(ink_now)}"
-            colours[(block.index, note)] = (note, block.text[:40], block.ink)
+            (accents if _titled(source, block, body) else colours)[(block.index, note)] = \
+                (note, block.text[:40], block.ink)
     # A table's own fills and frames are the rules check's on the page; in
     # the render, a cell may draw what the page draws with a box.
     mine_boxes = [box for box in source.detail.boxes if not box.table]
@@ -1830,12 +1834,27 @@ def _check_looks(source: _Side, output: _Side, alignment: Alignment) -> list[Fau
             + _grouped("looks", "chip drawn plain", "minor", chips.values())
             + _grouped("looks", "too faint", "major", faint.values())
             + _grouped("looks", "colour lost", "major", colours.values())
+            + _grouped("looks", "colour lost", "minor", accents.values())
             + _grouped("looks", "fill drawn another shape", "major", shapes)
 
             + _grouped("looks", "frame missing", "major", missing)
             + _grouped("looks", "frame missing", "minor", plain)
             + _grouped("looks", "frame colour lost", "major", frame_colours)
             + _grouped("looks", "frame colour lost", "minor", plain_colours))
+
+
+def _titled(side: _Side, block: Any, body: float) -> bool:
+    """A heading or a title: a block read as a heading, or words set larger
+    than the body. Its colour is an accent, and drawn neutral a minor
+    (c0548's 'Des tarifs simples', Alessandro, round 5, 2026-11-07). Not a
+    lone number or letter, a step's, a day's or a flag's, whose colour
+    marks something however large it is set."""
+    if sum(ch.isalpha() for ch in block.text) < 3:
+        return False
+    if block.role == "heading":
+        return True
+    sizes = [word.font_px for word in side.words if word.block == block.index]
+    return bool(sizes) and max(sizes) > body * (1 + SIZE_MARGIN)
 
 
 def _frame_colour(box: Box) -> str | None:

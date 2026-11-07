@@ -645,6 +645,13 @@ class TestWhatTheRoundsDecided:
         (lost,) = [f for f in result.faults if f.fault == "colour lost"]
         assert lost.severity == "major" and "printed red, drawn dark" in lost.note
 
+    def test_a_headings_accent_colour_drawn_dark_is_minor(self) -> None:
+        """c0548's 'Des tarifs simples', orange printed, dark drawn
+        (Alessandro, round 5, 2026-11-07)."""
+        result = check_page("c0548", DEV / "c0548.html")
+        (lost,) = [f for f in result.faults if f.fault == "colour lost"]
+        assert lost.severity == "minor" and lost.element == "Des tarifs simples"
+
     def test_an_accent_frame_drawn_light_a_chip_minor(self) -> None:
         """c0548's orange buttons: the plans' a major, the contact chip a
         minor."""

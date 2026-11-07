@@ -1935,7 +1935,12 @@
        1080,
        610
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "r5-accent",
@@ -1975,7 +1980,12 @@
        682,
        143
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "r5-datasheet",
@@ -2015,7 +2025,12 @@
        330,
        585
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "r5-recipe",
@@ -2055,7 +2070,12 @@
        740,
        495
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "r5-lost",
@@ -2095,7 +2115,12 @@
        978,
        268
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "r5-red",
@@ -2135,7 +2160,12 @@
        612,
        253
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "r5-faint",
@@ -2175,7 +2205,12 @@
        875,
        750
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "r5-ground",
@@ -2215,7 +2250,12 @@
        560,
        300
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "r5-pill",
@@ -2255,7 +2295,12 @@
        900,
        517
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "r5-frames",
@@ -2295,7 +2340,12 @@
        405,
        98
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "r5-chip",
@@ -2347,7 +2397,12 @@
        628,
        358
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "r5-wrap",
@@ -2373,7 +2428,12 @@
       480
      ],
      "source_marks": [],
-     "render_marks": []
+     "render_marks": [],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "r5-over",
@@ -2413,7 +2473,12 @@
        108,
        199
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "r5-beside",
@@ -2453,7 +2518,12 @@
        160,
        524
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     }
    ]
   }
