@@ -10,6 +10,11 @@ example's render, crops and marks both sides, and writes
 data inlined) and <out_dir>/crops/*.webp beside it, ready to publish as
 an Artifact with capabilities {db: {}, user: {}}. Decisions land in the
 page's `issues` collection, one document per issue key.
+
+An issue whose two crops are already in <out_dir> is not shot again, so
+copying the last build's crops in first rebuilds only a new round. A
+question for the plan (spec 0022) has no `run`: no render is shot, and its
+one picture, if any, is `montage`, the tops of the named pages side by side.
 """
 import json, sys
 from pathlib import Path
@@ -43,8 +48,33 @@ def cropped(image: Image.Image, box: list[float], marks: list[list[float]],
     return f"crops/{dest.name}"
 
 
+def montage(names: list[str], top: int, dest: Path) -> list[int]:
+    """The top `top` px of each page, side by side at one width; the crop box."""
+    tiles = [Image.open(page(n).png_path(REPO)).convert("RGB") for n in names]
+    tiles = [t.crop((0, 0, t.width, min(t.height, top))) for t in tiles]
+    width = 420
+    tiles = [t.resize((width, round(t.height * width / t.width)), Image.Resampling.LANCZOS) for t in tiles]
+    gap, height = 12, max(t.height for t in tiles)
+    sheet = Image.new("RGB", (len(tiles) * width + (len(tiles) - 1) * gap, height), "white")
+    for i, t in enumerate(tiles):
+        sheet.paste(t, (i * (width + gap), 0))
+    sheet.save(dest, "WEBP", quality=88, method=6)
+    return [0, 0, sheet.width, sheet.height]
+
+
 shot: set[str] = set()
 for issue in (issue for round_ in data["rounds"] for issue in round_["issues"]):
+    if "run" not in issue:
+        if issue.get("montage"):
+            dest = OUT / "crops" / f"{issue['key']}-source.webp"
+            issue["source_crop"] = montage(issue["montage"], issue.get("montage_top", 700), dest)
+            issue["source_img"] = f"crops/{dest.name}"
+        print(issue["key"], "a question for the plan")
+        continue
+    done = [OUT / "crops" / f"{issue['key']}-{side}.webp" for side in ("source", "render")]
+    if all(d.exists() for d in done):
+        issue["source_img"], issue["render_img"] = (f"crops/{d.name}" for d in done)
+        continue
     name, run = issue["page"], issue["run"]
     source = page(name).png_path(REPO)
     width = Image.open(source).width

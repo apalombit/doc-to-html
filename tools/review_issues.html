@@ -61,6 +61,7 @@ header.top p { color: var(--muted); max-width: 70ch; }
 .kind.false { background: var(--accent-soft); color: var(--accent); }
 .kind.followup, .kind.criteria, .kind.rule, .kind.after { background: var(--unsure-soft); color: var(--unsure); }
 .kind.spot { background: var(--agree-soft); color: var(--agree); }
+.kind.plan { background: var(--sunk); color: var(--ink); }
 .rounds { display: flex; flex-wrap: wrap; gap: 4px; }
 .rounds button { border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 6px 12px; font-size: .9rem; }
 .rounds button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
@@ -68,6 +69,7 @@ header.top p { color: var(--muted); max-width: 70ch; }
 
 .pics { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; padding: 8px 24px 20px; align-items: start; }
 .pics.wide { grid-template-columns: minmax(0, 1fr); }
+.pics[hidden], figure[hidden] { display: none; }
 figure { margin: 0; display: grid; gap: 6px; min-width: 0; }
 figcaption { font: 500 .78rem var(--mono); text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
 figure img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
@@ -109,7 +111,7 @@ textarea { width: 100%; min-height: 3.2rem; resize: vertical; font: .95rem/1.45 
 
 <div class="wrap">
   <header class="top">
-    <span class="eyebrow">Spec 0021 · step 6 · the review's questions</span>
+    <span class="eyebrow" id="stamp">The review's questions</span>
     <div class="rounds" id="rounds" role="group" aria-label="Rounds"></div>
     <h1 id="round-title"></h1>
     <p id="round-intro"></p>
@@ -129,13 +131,13 @@ textarea { width: 100%; min-height: 3.2rem; resize: vertical; font: .95rem/1.45 
       <p class="what" id="what"></p>
     </div>
     <div class="pics" id="pics">
-      <figure><figcaption>The page</figcaption><img id="img-source" alt=""></figure>
-      <figure><figcaption>Our render</figcaption><img id="img-render" alt=""></figure>
+      <figure id="fig-source"><figcaption id="cap-source">The page</figcaption><img id="img-source" alt=""></figure>
+      <figure id="fig-render"><figcaption>Our render</figcaption><img id="img-render" alt=""></figure>
     </div>
     <dl class="says">
-      <dt>The checks say</dt><dd id="checks"></dd>
+      <dt id="dt-checks">The checks say</dt><dd id="checks"></dd>
       <dt>Claude says</dt><dd id="claude"></dd>
-      <dt>How often</dt><dd id="often"></dd>
+      <dt id="dt-often">How often</dt><dd id="often"></dd>
       <dt class="proposes">Claude proposes</dt><dd class="proposes" id="proposes"></dd>
     </dl>
     <div class="decide">
@@ -160,12 +162,13 @@ textarea { width: 100%; min-height: 3.2rem; resize: vertical; font: .95rem/1.45 
 (() => {
   const DATA = JSON.parse(document.getElementById("data").textContent);
   const ROUNDS = DATA.rounds;
+  if (DATA.page_stamp) document.getElementById("stamp").textContent = DATA.page_stamp;
   let round = ROUNDS.length - 1;
   let ISSUES = ROUNDS[round].issues;
   const $ = (s) => document.querySelector(s);
   const KIND = { missed: "Missed by the checks", false: "False alarm by the checks", followup: "Your round 1 call",
                  criteria: "A question the criteria leave open", spot: "Spot check of Claude's call", rule: "Testing your alignment line", added: "A fault Claude added",
-                 after: "Before and after the build" };
+                 after: "Before and after the build", plan: "A question for the plan" };
   const HERE = "https://claude.ai/artifact/RpUd3a7ioGjdNWBLyqM6JD";
   const decisions = new Map();   // key -> {verdict, note}
   const pending = new Set();     // keys decided before the store answered
@@ -230,12 +233,20 @@ textarea { width: 100%; min-height: 3.2rem; resize: vertical; font: .95rem/1.45 
     const kind = $("#kind"); kind.textContent = KIND[issue.kind]; kind.className = `kind ${issue.kind}`;
     $("#title").textContent = issue.title;
     $("#what").textContent = issue.what;
-    // a wide, short crop reads better full width, the page above our render
-    const [l, t, r, b] = issue.source_crop;
-    $("#pics").classList.toggle("wide", (r - l) / (b - t) > 2.4);
+    // a wide, short crop reads better full width, the page above our render;
+    // a question for the plan may show one picture, or none
     const src = $("#img-source"), ren = $("#img-render");
-    src.src = issue.source_img; src.alt = `The page ${issue.page}, the spot marked in red`;
-    ren.src = issue.render_img; ren.alt = `Our render of ${issue.page}, the spot marked in red`;
+    $("#pics").hidden = !issue.source_img;
+    $("#fig-render").hidden = !issue.render_img;
+    if (issue.source_img) {
+      const [l, t, r, b] = issue.source_crop;
+      $("#pics").classList.toggle("wide", !issue.render_img || (r - l) / (b - t) > 2.4);
+      $("#cap-source").textContent = issue.source_caption || "The page";
+      src.src = issue.source_img; src.alt = issue.source_caption || `The page ${issue.page}, the spot marked in red`;
+    }
+    if (issue.render_img) { ren.src = issue.render_img; ren.alt = `Our render of ${issue.page}, the spot marked in red`; }
+    $("#dt-checks").textContent = issue.says?.checks || "The checks say";
+    $("#dt-often").textContent = issue.says?.often || "How often";
     $("#checks").textContent = issue.checks;
     $("#claude").textContent = issue.claude;
     $("#often").textContent = issue.often;
