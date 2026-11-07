@@ -558,6 +558,29 @@ with a note, into the `issues` collection, one document per key.
   majors held on 8 of the 10 spot checks.
 - **Round 4, published 2026-11-07**, thirteen faults Claude's review
   added, one of each kind he had not seen: nine major, four minor.
+- **Round 4 decided, 2026-11-07**: agree on twelve, Claude's additions
+  upheld, the orange border of the recommended card major. **Disagree on
+  the serif page drawn in a sans**: asked, he answered "minor, change the
+  criteria". Over the four rounds, 39 of 44 agreed.
+
+**The build, decided 2026-11-07** ("build, then a before/after round").
+Each item is built in the check that owns it, pinned on its page with the
+page's true faults kept, and measured over every called page before and
+after (Claude's calls and his decisions both).
+
+| # | what | from |
+|---|---|---|
+| B1 | alignment: no fault where the line is drawn where printed; **major only where a line moves to another place** (off the row it shares with another block); a shift in its own column or cell, spacing, justified drawn ragged, a lost indent: **minor** | rounds 1–3 |
+| B2 | a size fault only where the line's own size, printed against drawn, differs by more than 10% | round 1 |
+| B3 | lines: a paragraph re-wrapped because its column is wider or narrower is minor; lines joined or split inside a block (a break where the line had room) stay major | round 3 |
+| B4 | serif drawn sans, or sans serif: minor; mono and script stay major | round 4 |
+| B5 | a subscript or superscript drawn as plain characters (`H_2015`): one minor "mark changed", like N | round 3 |
+| C1 | copies: where the same words are printed more than once, each copy pairs with the nearest copy in the render, for the order, cells and type checks | round 1 |
+| C2 | columns: groups side by side on the page and in the render are not interleaved; an item drawn in another column is "under another heading" | round 1 |
+| D1 | new, text over text: two words apart on the page drawn overlapping, major | round 1 |
+| D2 | new, beside: two blocks printed side by side drawn one under the other (a label and its amount, two cards, a note off its title's line), major | rounds 1, 3 |
+| D3 | new, looks: words drawn too faint against their ground where printed readable; a fill drawn the wrong shape, added or missing; a frame the page draws missing; a chromatic text or frame colour drawn neutral: major | rounds 1, 2, 4 |
+| E | `review-criteria.md` brought to the decisions: alignment and spacing, re-wrap, serif and sans, subscripts, buttons with chips, fills' shape, invisible text | all |
 
 ### Step 7 — the proof on the 31 known pages
 

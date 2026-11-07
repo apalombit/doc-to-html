@@ -1474,7 +1474,12 @@
        292,
        1127
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "frame",
@@ -1500,7 +1505,12 @@
       520
      ],
      "source_marks": [],
-     "render_marks": []
+     "render_marks": [],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "face",
@@ -1526,7 +1536,12 @@
       560
      ],
      "source_marks": [],
-     "render_marks": []
+     "render_marks": [],
+     "decided": {
+      "verdict": "disagree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "twice",
@@ -1559,7 +1574,12 @@
        628,
        424
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "signlines",
@@ -1585,7 +1605,12 @@
       650
      ],
      "source_marks": [],
-     "render_marks": []
+     "render_marks": [],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "width",
@@ -1611,7 +1636,12 @@
       360
      ],
      "source_marks": [],
-     "render_marks": []
+     "render_marks": [],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "filladd",
@@ -1637,7 +1667,12 @@
       400
      ],
      "source_marks": [],
-     "render_marks": []
+     "render_marks": [],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "colour",
@@ -1677,7 +1712,12 @@
        600,
        254
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "rowout",
@@ -1717,7 +1757,12 @@
        170,
        446
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "smallcaps",
@@ -1743,7 +1788,12 @@
       180
      ],
      "source_marks": [],
-     "render_marks": []
+     "render_marks": [],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "border",
@@ -1769,7 +1819,12 @@
       830
      ],
      "source_marks": [],
-     "render_marks": []
+     "render_marks": [],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "figmiss",
@@ -1795,7 +1850,12 @@
       935
      ],
      "source_marks": [],
-     "render_marks": []
+     "render_marks": [],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     },
     {
      "key": "icons",
@@ -1821,7 +1881,12 @@
       795
      ],
      "source_marks": [],
-     "render_marks": []
+     "render_marks": [],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-07"
+     }
     }
    ]
   }
