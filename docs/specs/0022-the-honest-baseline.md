@@ -1,7 +1,6 @@
 # The honest baseline: today's pipeline on panel pages nobody has tuned on
 
-**Status: written 2026-11-07, issue #45; two questions for Alessandro, then his go
-for the conversion.** The decisions are at the end.
+**Status: decided 2026-11-08, issue #45; the conversion running.** The decisions are at the end.
 - **This is step L3** of the level-up plan
   ([`../level-up.md`](../level-up.md) §6, decision 1 of §8), on branch
   `level-up`. Its outline is spec 0020's "L3 — the honest baseline"; its
@@ -228,6 +227,6 @@ the issue closed; a handover prompt for P1, with its facts re-measured.
 
 | # | asked | decided |
 |---|---|---|
-| 1 | Q1: real PDF pages in the L3 set? | waiting |
-| 2 | Q2: every page opened? | waiting |
-| 3 | the conversion's time, and the go | waiting |
+| 1 | Q1: real PDF pages in the L3 set? | **Yes, the five not dense** (round 6, 2026-11-08): c0074, c0082, c0196, c0272, c0300; 41 pages |
+| 2 | Q2: every page opened? | **Yes** (round 6, 2026-11-08): Claude reviews all 41; he checks every page where Claude's call overturns a check, and two at random |
+| 3 | the conversion's time, and the go | **Go**, 2026-11-08, given about 5.7 h (7.6 h at worst) |

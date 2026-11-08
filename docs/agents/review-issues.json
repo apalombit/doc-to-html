@@ -2554,7 +2554,12 @@
      "checks": "No real PDF page has been converted under today's limits: dev's one try, a dense form, ran out its 20 minutes.",
      "claude": "The GLM-OCR trial is judged on this set, and its model learned from real pages. With none in the set, we cannot see whether it does better or worse on real pages than on pages Claude wrote. Five pages are a look, not a rate, so they are reported in their own line.",
      "often": "About 40 minutes more at the usual pace, 100 at worst: 41 pages, about 5¾ hours (7½ at worst) instead of 5 (6).",
-     "proposes": "Add the panel's five PDF pages that are not dense: two application forms, an invoice, meeting minutes, an Italian status report (c0074, c0082, c0196, c0272, c0300). Picked by that rule, not by looking. The four dense ones (a tax form, two papers, a timetable) stay out: they would most likely run out their 20 minutes."
+     "proposes": "Add the panel's five PDF pages that are not dense: two application forms, an invoice, meeting minutes, an Italian status report (c0074, c0082, c0196, c0272, c0300). Picked by that rule, not by looking. The four dense ones (a tax form, two papers, a timetable) stay out: they would most likely run out their 20 minutes.",
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-08"
+     }
     },
     {
      "key": "l3-open",
@@ -2569,7 +2574,12 @@
      "checks": "The checks still miss some faults (a card drawn below its neighbours, a list torn by a gap) and still raise false ones: over L2's 114 reviewed pages, 23 majors and 32 minors Claude had rejected.",
      "claude": "This set is the yardstick the GLM-OCR trial is judged against, so every page should carry a call made by eye. Opened pages count as seen: no fix is ever pinned on them, and the vault stays the sealed exam.",
      "often": "Claude's time only; no model run.",
-     "proposes": "Yes: Claude opens every page and reviews it by the criteria. You check, as in L2, every page where Claude's call overturns a check, plus two at random."
+     "proposes": "Yes: Claude opens every page and reviews it by the criteria. You check, as in L2, every page where Claude's call overturns a check, plus two at random.",
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-08"
+     }
     }
    ]
   }

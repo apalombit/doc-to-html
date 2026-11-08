@@ -23,6 +23,11 @@ arrangement feature at least twice. While anything is uncovered, the page
 covering the most of what is missing is taken. After that, the page
 adding the most features not yet held twice is taken. Ties go to the
 seeded order.
+
+**Then the panel's real PDF pages that are not dense** (spec 0022,
+Alessandro's decision 1, 2026-11-08): the cover took none, and the parser
+P2 weighs learned from real pages. The dense ones are left out because
+they would most likely reach the batch runner's page limit. 41 pages.
 """
 
 from __future__ import annotations
@@ -118,12 +123,14 @@ def _repair(taxonomy: Taxonomy, cards: Sequence[Card], pools: dict[str, str],
 
 
 L3_GROUPS = ("tables", "key_value", "lists", "arrangement")
+L3_PDF_LEFT_OUT = ("dense",)
 
 
 def l3_subset(taxonomy: Taxonomy, cards: Sequence[Card], pools: dict[str, str],
               seed: int, size: int = 36, per_family: int = 4, per_feature: int = 2
               ) -> list[str]:
-    """`size` panel pages covering every family and the structural features."""
+    """`size` panel pages covering every family and the structural features,
+    then the panel's PDF pages whose density is not in `L3_PDF_LEFT_OUT`."""
     rng = random.Random(seed)
     panel = [c for c in cards if pools.get(c.id) == "panel" and c.kind]
     rng.shuffle(panel)
@@ -156,7 +163,9 @@ def l3_subset(taxonomy: Taxonomy, cards: Sequence[Card], pools: dict[str, str],
             break
         best = max(pool, key=lambda c: gain(c, need))
         chosen.append(best)
-    return sorted(c.id for c in chosen)
+    real = [c for c in cards if pools.get(c.id) == "panel" and c.origin == "pdf"
+            and c.density not in L3_PDF_LEFT_OUT and c not in chosen]
+    return sorted(c.id for c in chosen + real)
 
 
 def pool_counts(cards: Sequence[Card], pools: dict[str, str]) -> dict[str, Counter[str]]:

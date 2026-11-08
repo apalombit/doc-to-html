@@ -76,9 +76,11 @@ def test_the_vault_refuses_unless_unsealed() -> None:
     assert len(corpus.pool("vault", unseal=True)) == 200
 
 
-def test_the_l3_set_is_thirty_six_panel_pages() -> None:
+def test_the_l3_set_is_forty_one_panel_pages() -> None:
+    # the cover's 36, then the panel's five PDF pages that are not dense (spec 0022)
     l3 = corpus.names("l3")
-    assert len(l3) == 36 and all(PAGES[i]["pool"] == "panel" for i in l3)
+    assert len(l3) == 41 and all(PAGES[i]["pool"] == "panel" for i in l3)
+    assert sum(PAGES[i]["origin"] == "pdf" for i in l3) == 5
     seed, drawn = cards.load(REPO / "corpus" / "cards.json")
     assert list(l3) == pools.l3_subset(TAXONOMY, drawn, pools.deal(TAXONOMY, drawn, seed), seed)
 

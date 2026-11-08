@@ -64,9 +64,12 @@ def test_the_deal_is_seeded(drawn: list[cards.Card], dealt: dict[str, str]) -> N
 def test_the_l3_set_covers_families_and_structure(drawn: list[cards.Card],
                                                   dealt: dict[str, str]) -> None:
     chosen = pools.l3_subset(TAXONOMY, drawn, dealt, SEED)
-    assert len(chosen) == 36
+    assert len(chosen) == 41
     picked = [c for c in drawn if c.id in chosen]
     assert all(dealt[c.id] == "panel" for c in picked)
+    # the cover's 36, then every panel PDF page that is not dense (spec 0022)
+    real = [c for c in drawn if dealt[c.id] == "panel" and c.origin == "pdf"]
+    assert {c.id for c in real if c.density != "dense"} == {c.id for c in picked if c.origin == "pdf"}
     families = Counter(c.family for c in picked)
     assert all(families[f] >= 4 for f in TAXONOMY["families"]), families
     held = Counter(fid for c in picked for fid in c.all_features())
