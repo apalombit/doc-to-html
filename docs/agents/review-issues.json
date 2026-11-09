@@ -1,5 +1,5 @@
 {
- "stamp": "spec 0021 · step 6; spec 0022 · L3",
+ "stamp": "spec 0021 · step 6; spec 0022 · L3; spec 0023 · P1",
  "about": "The review's questions for Alessandro, one issue at a time, in rounds. Built into a page by tools/review_issues.py; his decisions land in the page's `issues` collection, one document per key, and are copied here under each issue's `decided`.",
  "rounds": [
   {
@@ -3368,7 +3368,123 @@
      }
     }
    ]
+  },
+  {
+   "name": "Round 8",
+   "date": "2026-11-09",
+   "title": "Round 8: four questions before the GLM-OCR trial",
+   "intro": "Round 7 is recorded: all fifteen agreed. P1 builds the GLM-OCR trial: GLM-OCR cuts the page into blocks and reads them, a new adapter turns its blocks into our pages, and our looks and renderer draw them. Four questions set where it is built, on which pages, how long its run may take, and one GLM-OCR setting. Click a decision: it saves and the next opens.",
+   "about": "Round 8: spec 0023's four questions for P1, none asked in rounds 1-7: the branch's base, the build pages, the time for the 41-page run, and whether to read the regions GLM-OCR discards by default. No render: questions for the plan; Q2 shows three of the eleven dev pages, Q4 the payslip with the discarded lines marked.",
+   "issues": [
+    {
+     "key": "p1-branch",
+     "kind": "plan",
+     "page": "the trial's branch",
+     "title": "Build the GLM-OCR trial on a branch from level-up?",
+     "what": "The plan says to branch from develop. But the corpus, the checks, the batch runner and L3's frozen run were all made on level-up, after develop was cut. From develop, the trial would have none of them.",
+     "says": {
+      "checks": "Today",
+      "often": "What it costs"
+     },
+     "checks": "level-up holds everything L1 to L3 built. develop stops at the S14 baseline of 2026-10-23.",
+     "claude": "The trial needs the corpus to pick its pages, the batch runner to convert them, and the checks and L3's run to compare against. From develop, all of them would have to be copied across.",
+     "often": "Nothing. level-up itself takes nothing of the trial until P2 decides.",
+     "proposes": "Branch poc-parser-first from level-up's head."
+    },
+    {
+     "key": "p1-pages",
+     "kind": "plan",
+     "page": "the build pages",
+     "title": "Build the adapter on eleven dev pages, then run the L3 set?",
+     "what": "The adapter, the new code that turns GLM-OCR's blocks into our pages, is built and judged by eye on dev pages only. Below, three of the eleven Claude proposes: a flyer, the ticket and a real PDF purchase order.",
+     "montage": [
+      "probe_flyer",
+      "ticket_0020",
+      "c0197"
+     ],
+     "montage_top": 640,
+     "source_caption": "Three of the eleven build pages, all from dev",
+     "says": {
+      "checks": "Today",
+      "often": "What it costs"
+     },
+     "checks": "No page has been drawn by GLM-OCR and our renderer yet. The plan names the kinds of page where it may go wrong.",
+     "claude": "Picked by a rule, not by looking: every dev page the plan names for a risk (the designed pages: flyer, quiz, ticket, pricing, catalogue; side-by-side panels: payslip, recipe, datasheet; the hardest table: the lab report), plus dev's two real PDF pages of the kinds in the L3 set (an application form, a purchase order). No panel page is opened before the run.",
+     "often": "GLM-OCR reads each page once, about 20 seconds; after that each change to the adapter is drawn again in seconds, with no model.",
+     "proposes": "Build on these eleven dev pages; then convert the 41 L3 pages once, with the adapter frozen."
+    },
+    {
+     "key": "p1-time",
+     "kind": "plan",
+     "page": "the L3 run",
+     "title": "Run the 41 pages without waiting, if they fit in two hours?",
+     "what": "GLM-OCR read each of five dev pages in 8 to 36 seconds today, its layout model and its reader together. Today's pipeline took 6.6 hours for the 41 L3 pages.",
+     "says": {
+      "checks": "Today",
+      "often": "What it costs"
+     },
+     "checks": "GLM-OCR alone: 8 to 36 s a page. Our looks and render add to it; the eleven build pages measure the whole page's time before the run.",
+     "claude": "At a minute a page the 41 take about 40 minutes. The same 20-minute page limit as L3 keeps the two runs' timeouts comparable.",
+     "often": "Under an hour expected, against L3's 6.6 hours. Local model time only; the review afterwards is Claude's.",
+     "proposes": "Keep the 20-minute page limit. Before the run Claude gives you the time measured on the build pages, and starts if it is under two hours; over two hours, it stops and waits for your go."
+    },
+    {
+     "key": "p1-discard",
+     "kind": "plan",
+     "page": "probe_payslip",
+     "title": "Read the headers and footers GLM-OCR throws away?",
+     "what": "By default GLM-OCR discards six kinds of block: page headers, footers, footnotes, page numbers, side notes and references. On the payslip below, the five lines boxed in red would be read by nobody: the company, PAYSLIP, the address, the pay period and the footer.",
+     "picture": "probe_payslip",
+     "source_crop": [
+      0,
+      0,
+      900,
+      628
+     ],
+     "source_marks": [
+      [
+       27,
+       27,
+       341,
+       57
+      ],
+      [
+       738,
+       27,
+       869,
+       57
+      ],
+      [
+       26,
+       54,
+       312,
+       79
+      ],
+      [
+       659,
+       58,
+       871,
+       82
+      ],
+      [
+       26,
+       572,
+       789,
+       596
+      ]
+     ],
+     "source_caption": "The payslip: in red, the lines GLM-OCR discards by default",
+     "says": {
+      "checks": "Today",
+      "often": "How often"
+     },
+     "checks": "Our pipeline reads every line it finds, and L3 counts each line lost as a major.",
+     "claude": "These are lost by a setting, not by a misreading: on most pages that is a major fault by design, and the comparison would measure the setting rather than GLM-OCR. Reading them is one line of its configuration; its boxes, labels, order and weights stay its own.",
+     "often": "Most pages print a header or a footer: on the payslip, 5 of its 13 blocks.",
+     "proposes": "Read all six kinds as text, each header and footer drawn as a header or a footer."
+    }
+   ]
   }
  ],
- "page_stamp": "Spec 0022 · L3 · round 7: the review's spot checks"
+ "page_stamp": "Spec 0023 · P1 · round 8: four questions before the GLM-OCR trial"
 }

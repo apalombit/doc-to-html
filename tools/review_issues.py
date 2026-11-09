@@ -14,7 +14,9 @@ page's `issues` collection, one document per issue key.
 An issue whose two crops are already in <out_dir> is not shot again, so
 copying the last build's crops in first rebuilds only a new round. A
 question for the plan (spec 0022) has no `run`: no render is shot, and its
-one picture, if any, is `montage`, the tops of the named pages side by side.
+one picture, if any, is `montage`, the tops of the named pages side by side,
+or `picture`, one page cropped and marked by `source_crop` and `source_marks`
+(spec 0023).
 """
 import json, sys
 from pathlib import Path
@@ -69,6 +71,10 @@ for issue in (issue for round_ in data["rounds"] for issue in round_["issues"]):
             dest = OUT / "crops" / f"{issue['key']}-source.webp"
             issue["source_crop"] = montage(issue["montage"], issue.get("montage_top", 700), dest)
             issue["source_img"] = f"crops/{dest.name}"
+        elif issue.get("picture"):
+            dest = OUT / "crops" / f"{issue['key']}-source.webp"
+            issue["source_img"] = cropped(Image.open(page(issue["picture"]).png_path(REPO)), issue["source_crop"],
+                                          issue.get("source_marks", []), issue.get("labels"), dest)
         print(issue["key"], "a question for the plan")
         continue
     done = [OUT / "crops" / f"{issue['key']}-{side}.webp" for side in ("source", "render")]
