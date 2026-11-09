@@ -83,6 +83,27 @@ issues, all agreed):
   minor); a chart drawn as loose numbers; a card's fill split into one
   box per Zone.
 
+**Round 9 — Alessandro, 2026-11-09** (spec 0023, D2's review; 11
+issues on the calls and P2's question, all agreed):
+
+- *A look-alike mark, checked as one*: √ ✓ ✔, × ✗ ✕ and □ ☐ ▢ are one
+  mark each; drawn as another of its set it is a minor "mark changed",
+  never a mark lost plus a mark invented (`checks.ALIKE`, pinned on
+  c0068). A tick lost outright stays major.
+- *A drawn box written as □ is not invented* when the page draws the
+  box (c0074); a box lost stays major.
+- *A heading on a band is on the band's ground*, not its parents'
+  (c0082); *two blocks drawn side by side as printed are not
+  interleaved* (c0243). Both rejected as called; the checks are not
+  changed for one page.
+- *Major, new kinds*: a label parted from its value (labels on one line,
+  values on the next, c0515); a formula drawn as its LaTeX source
+  (c0382); a full-width block drawn in a lane (c0523); a colour added (a
+  black paragraph drawn red, c0387). Markup drawn as text (`4^{1}$`,
+  c0405) is a mark invented, major.
+- *Kept major on his spot checks*: a form read only to its first header
+  rows (c0196); bold header cells drawn regular (c0300).
+
 ## Deciding
 
 - **Net gain ships.** A change that makes more pages better than worse

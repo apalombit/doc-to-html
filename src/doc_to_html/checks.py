@@ -563,6 +563,37 @@ def _marks(words: Iterable[Word]) -> Counter[str]:
     return Counter(ch for word in words for ch in word.text if ch in MARKS)
 
 
+ALIKE = {"✓": "tick", "✔": "tick", "√": "tick",
+         "✕": "cross", "✖": "cross", "✗": "cross", "✘": "cross", "×": "cross",
+         "☐": "box", "□": "box", "▢": "box"}
+"""Marks that look alike and mean the same: a tick, a cross, an empty box.
+One drawn for another is a minor, 'mark changed' (issue N, Alessandro,
+2026-11-01): GLM-OCR writes ✓ as √, ✗ as × and ☐ as □ (round 9's
+p1-lookalike, 2026-11-09). √ and × are not `MARKS` (× is also the
+multiplication sign): they count only as the stand-in for a mark lost."""
+
+
+def _alike(lost: Counter[str], invented: Counter[str], drawn: Counter[str]
+           ) -> list[tuple[str, str, int]]:
+    """Each lost mark paired with a look-alike drawn in its place, taken off
+    `lost` and `invented`: (printed, drawn, how many). `drawn` is every
+    look-alike the output draws that the source does not print."""
+    pairs = []
+    for printed in sorted(lost):
+        for stand_in in sorted(drawn):
+            if stand_in == printed or ALIKE.get(stand_in) != ALIKE.get(printed, ""):
+                continue
+            count = min(lost[printed], drawn[stand_in])
+            if count <= 0:
+                continue
+            lost[printed] -= count
+            drawn[stand_in] -= count
+            if stand_in in invented:
+                invented[stand_in] -= count
+            pairs.append((printed, stand_in, count))
+    return pairs
+
+
 def _first_word(side: _Side, token: str, unmatched: Iterable[int]) -> Rect | None:
     for index in unmatched:
         if side.tokens[index] == token:
@@ -684,10 +715,17 @@ def _check_words(source: _Side, output: _Side, alignment: Alignment,
                                 "than printed",
                                 output_box=_first_word(output, token, unmatched_output)))
     drawn_as_x = Counter(next(ch for ch in source.words[w].text if ch in CROSSES) for w, _ in crossed)
-    for mark, count in sorted((_marks(source.words) - _marks(output.words) - drawn_as_x).items()):
+    marks_lost = _marks(source.words) - _marks(output.words) - drawn_as_x
+    marks_invented = _marks(output.words) - _marks(source.words)
+    alike = Counter(ch for word in output.words for ch in word.text if ch in ALIKE) - Counter(
+        ch for word in source.words for ch in word.text if ch in ALIKE)
+    for printed, drawn, count in _alike(marks_lost, marks_invented, alike):
+        faults.append(Fault("words", "mark changed", "minor", f"{printed} → {drawn}",
+                            f"{count} drawn as a look-alike"))
+    for mark, count in sorted((+marks_lost).items()):
         faults.append(Fault("words", "mark lost", "major", mark,
                             f"{count} printed and not drawn"))
-    for mark, count in sorted((_marks(output.words) - _marks(source.words)).items()):
+    for mark, count in sorted((+marks_invented).items()):
         faults.append(Fault("words", "mark invented", "major", mark,
                             f"{count} drawn and not printed"))
     lost_dashes = _cell_dashes(source) - _cell_dashes(output, anywhere=True)

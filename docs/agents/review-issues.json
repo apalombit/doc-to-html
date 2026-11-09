@@ -3579,7 +3579,12 @@
       "1",
       "2",
       "3"
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "p1-box",
@@ -3635,7 +3640,12 @@
      "labels": [
       "1",
       "2"
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "p1-ground",
@@ -3675,7 +3685,12 @@
        945,
        106
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "p1-interleaved",
@@ -3727,7 +3742,12 @@
        776,
        300
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "p1-parted",
@@ -3779,7 +3799,12 @@
        372,
        486
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "p1-latex",
@@ -3819,7 +3844,12 @@
        326,
        1002
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "p1-markup",
@@ -3859,7 +3889,12 @@
        544,
        272
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "p1-lane",
@@ -3909,7 +3944,12 @@
      "labels": [
       "1",
       "2"
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "p1-colour",
@@ -3949,7 +3989,12 @@
        430,
        604
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "p1-spot-stopped",
@@ -3995,7 +4040,12 @@
        950,
        360
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "p1-spot-bold",
@@ -4059,7 +4109,12 @@
        636,
        212
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "p2-decide",
@@ -4074,7 +4129,12 @@
      "checks": "Time: 26 s a page against 577 s (18 minutes against 6.6 hours), no timeouts against 4. On the 37 pages both converted: 660 majors against 651; 13 pages better, 7 worse, 17 the same. D2 also converted the 4 pages today's lost. Words invented: 7 pages against 24; numbered steps drawn as bullets: none against 10.",
      "claude": "Net gain, and fast enough to measure every change on the whole panel. The worse pages are named: c0097 and c0441 (the parser misses a sidebar, a name), c0064 and c0129 (accents and names misread), c0115 (four lines in no region), c0070 (broken table HTML), c0387 (stacked columns).",
      "often": "Parser side: a box read as one table and only its grid read (c0097, c0196, c0300); misread names and accents. Our side, fixable: tables with spans left unmeasured by locate (12 pages), $ amounts taken for maths, stacked columns drawn under, formulas drawn as source.",
-     "proposes": "Take D2. Next, L5 on D2: our side's faults first, each reproduced on a dev page, the parser's weights untouched. Disagree to keep today's; a mix (which side from which arm) in the note."
+     "proposes": "Take D2. Next, L5 on D2: our side's faults first, each reproduced on a dev page, the parser's weights untouched. Disagree to keep today's; a mix (which side from which arm) in the note.",
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     }
    ]
   }

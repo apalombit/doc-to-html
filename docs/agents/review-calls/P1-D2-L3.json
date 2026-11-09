@@ -18168,5 +18168,25 @@
    "fault": "height",
    "why": "40 pages (22 major). Mostly the consequence of the beside faults; c0097 and c0196 short because content is lost."
   }
- ]
+ ],
+ "after_round_9": {
+  "on": "2026-11-09",
+  "note": "Round 9's p1-lookalike was fixed after this review: √ ✓ ✔, × ✗ ✕ and □ ☐ ▢ are look-alikes, a minor 'mark changed' (checks.ALIKE, pinned on c0068). Re-checked, the faults under `gone` are no longer raised and four pages gain or widen a minor 'mark changed': every one was rejected here, except c0034's □, confirmed here as invented and now the look-alike of a printed ☐; c0034's and c0291's ☐ lost stay, more ☐ printed than □ drawn. The sheets and checks this review was answered on are in debug/runs/P1-D2-L3/_review.reviewed/ and checks.reviewed/.",
+  "gone": {
+   "c0034": [
+    48
+   ],
+   "c0291": [
+    19,
+    20,
+    21
+   ],
+   "c0316": [
+    4
+   ],
+   "c0342": [
+    4
+   ]
+  }
+ }
 }

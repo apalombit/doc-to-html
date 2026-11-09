@@ -737,6 +737,33 @@ class TestWhatRoundSevenDecided:
         assert [f for f in order if f.severity == "major" and "Comment fonctionne" in f.element]
 
 
+class TestWhatRoundNineDecided:
+    """docs/agents/review-issues.json, round 9: a false alarm found on
+    P1-D2-L3's panel pages, pinned on a dev page."""
+
+    LOOKALIKES = ("for (const n of (function* w(e) { for (const c of e.childNodes) "
+                  "{ if (c.nodeType === 3) yield c; else yield* w(c); } })(document.body)) "
+                  "n.textContent = n.textContent.replace(/✓/g, '√').replace(/✗/g, '×')"
+                  ".replace(/☐/g, '□');")
+
+    def test_a_tick_drawn_as_its_look_alike_is_a_minor(self) -> None:
+        """p1-lookalike (c0291's ✓ ✗ ☐ written √ × □): c0068's three of each,
+        drawn as the look-alikes, are one minor 'mark changed', never a mark
+        lost and a mark invented."""
+        mine, theirs = _read("c0068", self.LOOKALIKES)
+        result = check(mine, theirs, picture_height=mine.height, page="c0068")
+        words = [f for f in result.faults if f.check == "words"]
+        assert not [f for f in words if f.fault in ("mark lost", "mark invented")]
+        assert [f for f in words if f.fault == "mark changed" and f.severity == "minor"]
+
+    def test_a_tick_lost_outright_stays_major(self) -> None:
+        """A ✓ dropped, not drawn as √, is still a mark lost."""
+        mine, theirs = _read("c0068", self.LOOKALIKES.replace("'√'", "''"))
+        result = check(mine, theirs, picture_height=mine.height, page="c0068")
+        assert [f for f in result.faults if f.fault == "mark lost" and f.element == "✓"
+                and f.severity == "major"]
+
+
 # --- identity -----------------------------------------------------------------
 
 
