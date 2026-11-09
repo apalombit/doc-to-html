@@ -25,7 +25,6 @@ adapter and the looks are re-run over them with no model (`tools/d2.py`).
 from __future__ import annotations
 
 import json
-import os
 import subprocess
 import time
 from collections.abc import Sequence
@@ -50,8 +49,7 @@ MODEL = "glm-ocr:latest"
 """The reader, as Ollama serves it. Its dumps are under `dump/glm-ocr_latest/`."""
 
 CONFIG = REPO / "parser" / "glmocr.yaml"
-PARSER_PYTHON = Path(os.environ.get("DTH_PARSER_PYTHON",
-                                    Path.home() / ".venvs" / "glmocr" / "bin" / "python"))
+PARSER_PYTHON = Path.home() / ".venvs" / "glmocr" / "bin" / "python"
 """The parser's own Python: `glmocr[selfhosted]` at `0288f96`, kept out of
 this project's environment (spec 0023: it needs PyMuPDF, AGPL-3.0)."""
 

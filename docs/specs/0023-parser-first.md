@@ -313,6 +313,80 @@ the issue closed; a handover prompt for P2 or L5, facts re-measured.
   his calls disagree with the checks.
 - Judge by eye (`review-criteria.md`); a number is a pointer to a page.
 
+## Outcome — steps 1 to 3, 2026-11-09
+
+### What was built (`poc-parser-first`, `8f518c1`, `1e49926`)
+
+- **The parser**: `~/.venvs/glmocr` (`glmocr[selfhosted]` at `0288f96`,
+  torch 2.15, transformers 5.22, PyMuPDF 2.1, none of it in this
+  project's venv); `parser/glmocr.yaml`; `tools/glmocr_parse.py`, which
+  writes the reader's **raw** regions (before the SDK's markdown
+  formatter, which adds `## `, invents a bullet between two bulleted
+  lines and doubles line ends: the recipe's `For the dressing` became
+  `- For the dressing`).
+- **The adapter**, `adapter.py`; **the arm**, `parser_first.py`
+  (`flat`: rectify without warp or deskew; `containers`; `measure`,
+  today's measuring passes; `uncut`); `tools/d2.py`, the offline loop;
+  `tools/batch.py --arm d2`. 17 unit tests on regions built by hand,
+  `tests/test_adapter.py`.
+- **The passes D2 runs after the adapter**: the furniture, the palette,
+  the regions (`structure`), each Zone's chrome, the type sizes, the
+  separators, `locate.locate` (tesseract as a locator only; it places the
+  parser's Cells and reads nothing new), `furniture.place`,
+  `rhythm.read`, `looks.read`, each figure's pixels. Not run:
+  `without_cut_copies` (it deletes a Cell), `spans`, `raised`,
+  `display`, `dropcap`, `separator`, `fields`, the unclaimed lines.
+
+### The adapter, iteration by iteration, on the eleven build pages
+
+Each judged by eye, source beside render, against the iteration before.
+
+| # | change | what it fixed, and where |
+|---|---|---|
+| v0 | one Zone per region | the payslip whole, both tables, header and footer; every other page cut too fine |
+| v1 | a line end the reader writes is kept (the reader joins a paragraph's wrapped lines itself) | the payslip's three fields no longer run onto one line |
+| v2 | grouping: a drawn box's regions one Zone; a column stack one Zone | the catalogue's prices drawn (they had been put in one grid cell with `each` and covered by its box); the recipe's ingredients one list |
+| v3 | a stack needs a shared edge, not an overlap | chips stopped joining headings: the recipe's ingredients beside its method |
+| v5 | left or centre edges only; a ragged right edge meets a chip's by chance | the recipe's title over its chips (height 1.54 → 1.05) |
+| v6–7 | a box no wider than a card (0.45 of the page) is one Zone; a wider box only bounds the stacks | c0071's two sections side by side (1.92 → 1.07); the catalogue's cards kept whole |
+| v8 | a heading over its table is its Title, found by position, not reading order | the payslip's EARNINGS table back beside DEDUCTIONS (1.23 → 0.96); `CO₂`, `200°C` |
+| v9 | a heading opens a stack and may stand two lines above it | the datasheet's key features under their heading, beside the specification table (1.47 → 1.09) |
+| v10 | boxes inset half a line for banding only | the lab report's header off its table's row |
+| v11 | a cell's line ends kept as `Cell.below` | the lab report's patient box, each label over its value |
+| v12 | a region of lanes that cuts a parser block is drawn as one flow | pricing's cards, one picture to the parser, drawn at full width (0.54 → 1.04); **one page only**, and byte-identical elsewhere |
+
+v4 (a region alone in a drawn box joins no stack) is kept but moved
+nothing: the recipe's pill chips are not furniture `furniture.find`
+reports.
+
+### What is left on the build pages, by side
+
+- **The parser's layout**: pricing's three cards read as one picture,
+  never read as text; the ticket, a tilted photograph (picture-level
+  difficulty, kept out of the corpus, §4.8), cut and ordered wrong.
+- **The parser's reading**: `√` for ✓ and the last tick lost, `A07` for
+  `AQ7` (datasheet); `Gross pay£4,098.08`, label and value run together
+  (payslip); `[1 m]` for `[1 mark]` (quiz); card 1's `In stock` not read
+  (catalogue); a line-end hyphen dropped when it joins lines
+  (`ninemonth`, newsletter, read for timing only).
+- **The drawing side, shared with today's pipeline**: the flyer's display
+  title drawn small and dark, its pill a band; table rows' shading
+  (datasheet, lab report); the lab report's red flags grey; the
+  catalogue's prices small and its rows' colours; the recipe's hanging
+  step numbers; the datasheet's monospace; form fields' frames (c0071),
+  the PDF order form's ruled boxes (c0197).
+
+### Proved on the frozen adapter, 2026-11-09
+
+- `tools/replay_run.py tests/frozen/s14-result`: **21 of 21
+  byte-identical, 0 asked differently**; `tools/rederive.py`: **21 of
+  21**. Today's pipeline is untouched.
+- A fresh parse of two build pages through `batch.py --arm d2`
+  reproduced the offline loop's regions and HTML byte for byte.
+- `mypy src/` clean; **1719 tests pass, 1 skipped** (L3's 1702 and
+  `test_adapter.py`'s 17), 16:44. `parser_first.PARSER_PYTHON` is a fixed
+  path: the environment is read only in `config.py`.
+
 ## What P1 does not do
 
 - No change to the parser's weights, prompts or thresholds.
