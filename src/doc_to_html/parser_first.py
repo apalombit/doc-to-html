@@ -35,7 +35,7 @@ from typing import Any
 from . import furniture, locate, looks, rhythm
 from . import style as style_module
 from .adapter import document_of
-from .ir import BBox, Document, Kind, RowRole
+from .ir import BBox, Document, Flow, Kind, Region, RowRole, Zone
 from .orchestrator import body_px
 from .preprocess import (Rectified, _cv2, caption_band, equalise, figure_pixels,
                          ground_is_dark, header_band, resize_long_edge, sha256_of,
@@ -91,6 +91,28 @@ def containers(rectified: Rectified) -> list[BBox]:
     return boxes
 
 
+CUT = 0.02
+"""How far past a lane's split a Zone may reach, as a share of the page's
+width, before the split is said to cut it."""
+
+
+def uncut(region: Region, zones: Sequence[Zone]) -> Region:
+    """A region of lanes that cuts through one of the parser's blocks is
+    drawn as one flow. `structure` reads lanes off the page's gutters, and
+    the parser decides what is one block: pricing's three cards, one picture
+    region to the parser, were drawn in one lane of the grid their gutters
+    made, at a third of their width."""
+    if region.flow is Flow.SINGLE or not region.splits:
+        return region
+    for zone in zones:
+        box = zone.bbox
+        if box is None or not region.holds(box):
+            continue
+        if any(box.left + CUT < split < box.right - CUT for split in region.splits):
+            return Region(top=region.top, bottom=region.bottom)
+    return region
+
+
 def measure(document: Document, rectified: Rectified) -> None:
     """Today's measuring passes over the adapter's IR, in a Conversion's
     order, on the flat picture: the furniture, the palette and the ink;
@@ -104,9 +126,10 @@ def measure(document: Document, rectified: Rectified) -> None:
     document.furniture = furniture.find(plain, inverted=rectified.inverted, read=rectified.image)
     document.style = style_module.measure(plain, inverted=rectified.inverted, read=rectified.image,
                                           without=furniture.mask(document.furniture, plain.shape))
-    document.regions = structure(plain, [z.bbox for z in document.zones if z.bbox is not None],
-                                 ground=document.style.page_bg, inverted=rectified.inverted,
-                                 furniture=document.furniture)
+    document.regions = [uncut(region, document.zones) for region in structure(
+        plain, [z.bbox for z in document.zones if z.bbox is not None],
+        ground=document.style.page_bg, inverted=rectified.inverted,
+        furniture=document.furniture)]
     drawn = style_module.rectangles(plain, ground=document.style.page_bg,
                                     inverted=rectified.inverted)
     own = style_module.boxes_for([z.bbox for z in document.zones], drawn)
