@@ -603,7 +603,7 @@ recorded; each rests on one page.
 >    one-issue-at-a-time page (round 10; load the `artifact-capabilities`
 >    skill first; never re-show an issue he has decided,
 >    `docs/agents/review-issues.json`): the branch (D2 is on
->    `poc-parser-first`, four commits ahead of `level-up`; Claude's
+>    `poc-parser-first`, ahead of `level-up`; Claude's
 >    recommendation: fast-forward `level-up` to it and work there, today's
 >    pipeline kept in the tree as it is); a D2 run over the dev pool to
 >    find our side's faults on pages that may be opened (231 pages, at
