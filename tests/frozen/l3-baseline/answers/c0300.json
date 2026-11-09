@@ -1,0 +1,136 @@
+{
+ "calls": [
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "f38b5916ca7b",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "6cefaf4823e0",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "ad9d6d9a5fa9",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "table",
+   "answer": "{\n  \"rows\": [\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"PG8.2026 Competenze e politiche di responsabilità sociale\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Si intende l'investimento che l'Istituto deve compiere per lo sviluppo e la valorizzazione del capitale umano. Il programma include le iniziative connesse all'individuazione delle famiglie professionali necessarie a sostenere la modernizzazione dell'Ente e del Sistan, alla formazione del personale, allo sviluppo di politiche del reclutamento e di progressioni di carriera e la mobilità.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "5df41ec7638b",
+    "picture": "f38b5916ca7b",
+    "schema": "32d195a8c340"
+   }
+  },
+  {
+   "pass_name": "table",
+   "answer": "{\n  \"rows\": [\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"Descrizione obiettivo\",\n        \"\",\n        \"N. initiative\",\n        \"FTE\",\n        \"Stato di avanzamento %\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Attivare percorsi formativi differenziati per target di riferimento per tutti i dipendenti o specifici e professionalizzanti\",\n        \"\",\n        \"3\",\n        \"7,3\",\n        \"100,0\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Realizzare il bilancio di genere, il bilancio ambientale e iniziative orientate alla sostenibilità\",\n        \"\",\n        \"1\",\n        \"1,7\",\n        \"100,0\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Promuovere misure per il miglioramento del benessere del personale e alla promozione della salute e sicurezza\",\n        \"\",\n        \"4\",\n        \"10,3\",\n        \"100,0\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Potenziare l'utilizzo del sistema delle competenze e la sua integrazione con i processi di gestione e valorizzazione delle risorse umane e potenziare la capacità di gestione del reclutamento con particolare riferimento ai giovani\",\n        \"\",\n        \"3\",\n        \"7,7\",\n        \"100,0\"\n      ]\n    },\n    {\n      \"role\": \"summary\",\n      \"cells\": [\n        \"PG8 Totale\",\n        \"\",\n        \"11\",\n        \"27,0\",\n        \"100,0\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "5bc41722a575",
+    "picture": "6cefaf4823e0",
+    "schema": "32d195a8c340"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"The\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"The\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "ad9d6d9a5fa9",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "ad9d6d9a5fa9",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"are l'utilizz\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "92e2458871c3",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Potenziare l'utilizzo del sistema delle c\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "13ca7ec7c229",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Si intende l'investimento che l'Istituto deve compiere per lo sviluppo e la valorizzazione del capitale umano. Il programma\",\n        \"include le iniziative connesse all'individuazione delle famiglie professionali necessarie a sostenere la modernizzazione\",\n        \"dell'Ente e del Sistan, alla formazione del personale, allo sviluppo di politiche del reclutamento e di progressioni di\",\n        \"carriera e la mobilità.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "abbb1a908846",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"initiative\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "97db76169ac3",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Potenziare l'utilizzo del sistema delle cor\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "bb6db353eb87",
+    "schema": "2a31e0885054"
+   }
+  }
+ ]
+}

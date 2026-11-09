@@ -481,6 +481,8 @@ says they are.
 | `s12-result/` | all twenty-one documents, scores and 749 answers, sweep `S12-sweep`; `scores-paper-frame.json` its re-score by spec 0018's 0b scorer | record — the baseline 2026-10-18 to 2026-10-19 |
 | `s13-result/` | all twenty-one documents, scores and 755 answers, sweep `S13-sweep` | record — the baseline 2026-10-19 to 2026-10-23 |
 | **`s14-result/`** | **all twenty-one documents, scores and 811 answers, sweep `S14-sweep`** | **the baseline, from 2026-10-23** |
+| `l2-dev/` | twenty-three dev renders | the check tests' input, not a baseline |
+| `l3-baseline/` | L3's 37 panel renders and 1577 answers, run `L3-baseline` | P2's reference; **panel pages, never read by a test** |
 
 **Score against the baseline by path**, and always with `--documents sweep` —
 without a `fixtures.txt` the report silently scores the iterate five:

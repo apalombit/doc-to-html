@@ -1,0 +1,125 @@
+{
+ "calls": [
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"PREPARED BY\",\n  \"line_is\": \"header\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "ed67f24cb56b",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "ed67f24cb56b",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Table 3. Nesting boxes installed and cost by site, 2026 season (US dollars)\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "44827a3b3bd8",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "ce102a98a589",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"2. Unit cost includes hardware; labor was volunteered by Travis Mahoney's crew.\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "b138abc79c78",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "b138abc79c78",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "table",
+   "answer": "{\n  \"rows\": [\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"PREPARER BY\",\n        \"REVIEWED\",\n        \"DATE\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Keisha Lindqvist\",\n        \"Ashley Adeyemi\",\n        \"December 30, 2026\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "0ae1a278ead0",
+    "picture": "ed67f24cb56b",
+    "schema": "32d195a8c340"
+   }
+  },
+  {
+   "pass_name": "table",
+   "answer": "{\n  \"rows\": [\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"Site\",\n        \"Boxes\",\n        \"Occupied\",\n        \"Unit cost\",\n        \"Total cost\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Washington\",\n        \"\",\n        \"\",\n        \"\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Tacoma, WA (Quarry Park)\",\n        \"40\",\n        \"26\",\n        \"18.50\",\n        \"740.00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Tacoma, WA (Nuthatch Ridge)\",\n        \"25\",\n        \"19\",\n        \"18.50\",\n        \"462.50\"\n      ]\n    },\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"Arizona\",\n        \"\",\n        \"\",\n        \"\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Flagstaff, AZ (Quarry Road)\",\n        \"30\",\n        \"12\",\n        \"21.00\",\n        \"630.00\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Flagstaff, AZ (Upper Mesa)\",\n        \"20\",\n        \"9\",\n        \"21.00\",\n        \"420.00\"\n      ]\n    },\n    {\n      \"role\": \"summary\",\n      \"cells\": [\n        \"Subtotal\",\n        \"115\",\n        \"66\",\n        \"\",\n        \"2,252.50\"\n      ]\n    },\n    {\n      \"role\": \"summary\",\n      \"cells\": [\n        \"Shipping and handling\",\n        \"\",\n        \"\",\n        \"\",\n        \"84.00\"\n      ]\n    },\n    {\n      \"role\": \"summary\",\n      \"cells\": [\n        \"Total\",\n        \"115\",\n        \"66\",\n        \"\",\n        \"2,336.50\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"\",\n        \"\",\n        \"\",\n        \"\",\n        \"\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"1. Occupied counts are boxes with at least one egg on the last check.\",\n        \"\",\n        \"\",\n        \"\",\n        \"\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "2cf923dc911c",
+    "picture": "44827a3b3bd8",
+    "schema": "32d195a8c340"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"2. Unit cost includes hardware; labor was volunteered by Travis Mahoney's crew.\"\n      ]\n    },\n    {\n      \"kind\": \"item\",\n      \"lines\": [\n        \"3. Source: Nuthatch Quarry Project field log, accessed December 30, 2026.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "b138abc79c78",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "b138abc79c78",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"PREPARED BY\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "a825787b7331",
+    "schema": "2a31e0885054"
+   }
+  }
+ ]
+}

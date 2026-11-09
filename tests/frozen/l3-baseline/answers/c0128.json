@@ -1,0 +1,378 @@
+{
+ "calls": [
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"BASALT MAPLE\",\n  \"line_is\": \"caption\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "5860fd208c50",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "a6884aef5436",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Tue 06/07/2021 17:42\",\n  \"line_is\": \"header\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "aa6d7016ada9",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "aa6d7016ada9",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"ITEM\",\n  \"line_is\": \"header\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "7dafc6c8afbe",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"table\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "7dafc6c8afbe",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Rewards points this shop: 54\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "e992785a601e",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"pairs\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "e992785a601e",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"Prices include VAT where applicable.\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "1c7c875479ed",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "1c7c875479ed",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"0467 2291 0706 2142 0004\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "e38cf7a911e8",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"figure\",\n  \"graphic\": \"logo\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "e38cf7a911e8",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "caption",
+   "answer": "{\n  \"first_line\": \"0467 2291 0706 2142 0004\",\n  \"line_is\": \"content\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "cdb187230a2a",
+    "picture": "3ce006a1c952",
+    "schema": "7519cd3269d9"
+   }
+  },
+  {
+   "pass_name": "classify",
+   "answer": "{\n  \"kind\": \"prose\",\n  \"graphic\": \"\"\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "785c85c66270",
+    "picture": "3ce006a1c952",
+    "schema": "7ea6826d1557"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"heading\",\n      \"lines\": [\n        \"BASALT MAPLE\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Food & Home Store\"\n      ]\n    },\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"14 Botchergate, Carlisle CA1 1QS\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Tel 01228 555 0147\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"VAT Reg 214 8830 17\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "5860fd208c50",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"14 Botchergate, Carlisle CA1 1QS\",\n      \"kind\": \"mark\"\n    },\n    {\n      \"text\": \"Tel 01228 555 0147\",\n      \"kind\": \"mark\"\n    },\n    {\n      \"text\": \"VAT Reg 214 8830 17\",\n      \"kind\": \"mark\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "5860fd208c50",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n  \"pairs\": [\n    {\n      \"label\": \"Tue\",\n      \"value\": \"06/07/2021\"\n    },\n    {\n      \"label\": \"17:42\",\n      \"value\": \"\"\n    },\n    {\n      \"label\": \"Till\",\n      \"value\": \"04\"\n    },\n    {\n      \"label\": \"Served by\",\n      \"value\": \"Owen Rahman\"\n    },\n    {\n      \"label\": \"Receipt no.\",\n      \"value\": \"0467/2291\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "aa6d7016ada9",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "table",
+   "answer": "{\n  \"rows\": [\n    {\n      \"role\": \"header\",\n      \"cells\": [\n        \"ITEM\",\n        \"GBP\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Semi-skimmed milk 2L\",\n        \"1.55\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Wholemeal loaf\",\n        \"1.10\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Free-range eggs x12\",\n        \"2.85\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Salted butter 250g\",\n        \"1.95\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Mature cheddar 400g\",\n        \"3.40\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Bananas loose kg\",\n        \"0.89\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Gala apples 6pk\",\n        \"1.75\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Baking potatoes 2kg\",\n        \"1.90\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Brown onions 1kg\",\n        \"0.95\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Chopped tomatoes\",\n        \"1.80\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Spaghetti 500g\",\n        \"1.60\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Basmati rice 1kg\",\n        \"2.10\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Porridge oats 1kg\",\n        \"1.40\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Tea bags x80\",\n        \"2.25\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Ground coffee 227g\",\n        \"3.15\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Orange juice 1L\",\n        \"2.60\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Back bacon 300g\",\n        \"2.60\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Chicken thighs 1kg\",\n        \"3.85\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Cod fillets 2pk\",\n        \"4.50\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Frozen peas 900g\",\n        \"1.45\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Vanilla ice cream\",\n        \"2.20\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Washing-up liquid\",\n        \"1.15\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Kitchen roll 2pk\",\n        \"2.40\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Bin liners x30\",\n        \"1.60\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Dishwasher tabs x20\",\n        \"3.30\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Carrier bag 5p\",\n        \"0.15\"\n      ]\n    },\n    {\n      \"role\": \"summary\",\n      \"cells\": [\n        \"TOTAL (33 items)\",\n        \"54.44\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Visa contactless\",\n        \"54.44\"\n      ]\n    },\n    {\n      \"role\": \"data\",\n      \"cells\": [\n        \"Change due\",\n        \"0.00\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "425aff954e3b",
+    "picture": "7dafc6c8afbe",
+    "schema": "32d195a8c340"
+   }
+  },
+  {
+   "pass_name": "pairs",
+   "answer": "{\n    \"pairs\": [\n        {\n            \"label\": \"Rewards points this shop\",\n            \"value\": \"54\"\n        },\n        {\n            \"label\": \"Card ending\",\n            \"value\": \"4471\"\n        },\n        {\n            \"label\": \"Auth\",\n            \"value\": \"903118\"\n        },\n        {\n            \"label\": \"Customer\",\n            \"value\": \"Niamh Doherty\"\n        }\n    ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "6e48f2e687a4",
+    "picture": "e992785a601e",
+    "schema": "82c49f2c0bc4"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Prices include VAT where applicable.\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Returns within 28 days with this receipt.\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "1c7c875479ed",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "1c7c875479ed",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "figure",
+   "answer": "{\"graphic\": \"logo\", \"text\": []}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "2bd08d0c016f",
+    "picture": "e38cf7a911e8",
+    "schema": "076cd0b9aaab"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"0467 2291 0706 2142 0004\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"THANK YOU FOR SHOPPING WITH US\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "3ce006a1c952",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "runs",
+   "answer": "{\n  \"marked\": [\n    {\n      \"text\": \"0467 2291 0706 2142 0004\",\n      \"kind\": \"code\"\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "dc164c8ae741",
+    "picture": "3ce006a1c952",
+    "schema": "334959f8ecb0"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"nopped\",\n        \"× 0.45\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "5a199dec4f71",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"paghett\",\n        \"x 0.80\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "05f9dcdf8dae",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"range\",\n        \"x 1.30\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "cdb6dde0648e",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"arrrier\",\n        \"x 0.05\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "af48524d2fd9",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"address\",\n      \"lines\": [\n        \"14 Botchergate, Carlisle CA1 1QS\"\n      ]\n    },\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Tel 01228 555 0147\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "3ea3333c4994",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"1.55\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "66f19c27ac15",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Free-range eggs x12\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "3f80053d87d0",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Porridge oats 1kg\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "5849eb727137",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"3.15\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "235031126481",
+    "schema": "2a31e0885054"
+   }
+  },
+  {
+   "pass_name": "prose",
+   "answer": "{\n  \"blocks\": [\n    {\n      \"kind\": \"paragraph\",\n      \"lines\": [\n        \"Chicken thighs 1kg\"\n      ]\n    }\n  ]\n}",
+   "truncated": false,
+   "error": null,
+   "asked": {
+    "prompt": "f12e355979ef",
+    "picture": "15f5c25e5a19",
+    "schema": "2a31e0885054"
+   }
+  }
+ ]
+}

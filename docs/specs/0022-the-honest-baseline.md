@@ -350,9 +350,10 @@ raise.
 **The reference.** `L3-baseline`'s ranked table above, its majors by
 stage, and the calls in `docs/agents/review-calls/L3-baseline.json`. P2
 compares P1's arm against it **class by class, on the same 41 pages**,
-by the same judge and criteria. The run itself is in
-`debug/runs/L3-baseline/` (gitignored): `pages.jsonl` holds each page's
-time and verdict.
+by the same judge and criteria. **The run is frozen in
+`tests/frozen/l3-baseline/`** (2026-11-09): its 37 renders, its 1577
+answers and `pages.jsonl`, each page's time and verdict. No test reads
+it; its README has the provenance and what the replay reproduces.
 
 **What the checks still miss**, for P1's review to look for by eye
 (each added by this review, none raised by a check):
@@ -386,7 +387,8 @@ fixes have no dev page that shows their fault.
 > `docs/level-up.md` §5.3, §6 and decision 2 of §8. Read
 > `docs/level-up.md`'s Gist, §5.3 and §8 (GLM-OCR as of 2026-10-24),
 > spec 0022's "Outcome" (the reference: the ranked fault classes, the
-> majors by stage, what the checks still miss),
+> majors by stage, what the checks still miss; its renders and answers
+> frozen in `tests/frozen/l3-baseline/`, panel pages, never in a test),
 > `docs/agents/review-criteria.md`, then `docs/status.md`.
 >
 > 1. **Re-check GLM-OCR** before anything is built: the `glmocr` SDK's

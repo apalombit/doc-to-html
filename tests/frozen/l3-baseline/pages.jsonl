@@ -1,0 +1,41 @@
+{"page": "c0032", "seconds": 586.2, "model_seconds": 577.2, "calls": 36, "verdict": "converted", "error": null, "finished": "2026-11-08T18:02:05"}
+{"page": "c0034", "seconds": 1200.0, "model_seconds": null, "calls": null, "verdict": "timeout", "error": "timeout: not converted within 20 minutes; stopped", "finished": "2026-11-08T18:22:05"}
+{"page": "c0064", "seconds": 304.6, "model_seconds": 298.2, "calls": 22, "verdict": "converted", "error": null, "finished": "2026-11-08T18:27:10"}
+{"page": "c0069", "seconds": 385.5, "model_seconds": 378.2, "calls": 26, "verdict": "converted", "error": null, "finished": "2026-11-08T18:33:35"}
+{"page": "c0070", "seconds": 176.1, "model_seconds": 170.8, "calls": 11, "verdict": "converted", "error": null, "finished": "2026-11-08T18:36:31"}
+{"page": "c0074", "seconds": 731.2, "model_seconds": 711.8, "calls": 51, "verdict": "2 zone(s) read short", "error": null, "finished": "2026-11-08T18:48:42"}
+{"page": "c0082", "seconds": 283.2, "model_seconds": 272.9, "calls": 23, "verdict": "converted", "error": null, "finished": "2026-11-08T18:53:26"}
+{"page": "c0097", "seconds": 733.8, "model_seconds": 725.5, "calls": 68, "verdict": "converted", "error": null, "finished": "2026-11-08T19:05:39"}
+{"page": "c0115", "seconds": 695.5, "model_seconds": 686.4, "calls": 61, "verdict": "converted", "error": null, "finished": "2026-11-08T19:17:15"}
+{"page": "c0121", "seconds": 371.4, "model_seconds": 365.0, "calls": 31, "verdict": "converted", "error": null, "finished": "2026-11-08T19:23:26"}
+{"page": "c0128", "seconds": 506.1, "model_seconds": 493.5, "calls": 34, "verdict": "converted", "error": null, "finished": "2026-11-08T19:31:52"}
+{"page": "c0129", "seconds": 1091.8, "model_seconds": 1075.1, "calls": 62, "verdict": "1 zone(s) read short", "error": null, "finished": "2026-11-08T19:50:04"}
+{"page": "c0196", "seconds": 1200.1, "model_seconds": null, "calls": null, "verdict": "timeout", "error": "timeout: not converted within 20 minutes; stopped", "finished": "2026-11-08T20:10:04"}
+{"page": "c0234", "seconds": 829.3, "model_seconds": 821.6, "calls": 82, "verdict": "converted", "error": null, "finished": "2026-11-08T20:23:54"}
+{"page": "c0243", "seconds": 323.1, "model_seconds": 313.6, "calls": 23, "verdict": "converted", "error": null, "finished": "2026-11-08T20:29:17"}
+{"page": "c0252", "seconds": 883.9, "model_seconds": 872.9, "calls": 77, "verdict": "converted", "error": null, "finished": "2026-11-08T20:44:01"}
+{"page": "c0272", "seconds": 366.8, "model_seconds": 355.6, "calls": 29, "verdict": "1 zone(s) read short", "error": null, "finished": "2026-11-08T20:50:08"}
+{"page": "c0291", "seconds": 1200.1, "model_seconds": null, "calls": null, "verdict": "timeout", "error": "timeout: not converted within 20 minutes; stopped", "finished": "2026-11-08T21:10:08"}
+{"page": "c0300", "seconds": 230.5, "model_seconds": 218.2, "calls": 12, "verdict": "converted", "error": null, "finished": "2026-11-08T21:13:58"}
+{"page": "c0316", "seconds": 819.6, "model_seconds": 807.6, "calls": 81, "verdict": "converted", "error": null, "finished": "2026-11-08T21:27:38"}
+{"page": "c0334", "seconds": 607.3, "model_seconds": 599.7, "calls": 59, "verdict": "converted", "error": null, "finished": "2026-11-08T21:37:45"}
+{"page": "c0342", "seconds": 429.6, "model_seconds": 423.8, "calls": 36, "verdict": "converted", "error": null, "finished": "2026-11-08T21:44:55"}
+{"page": "c0343", "seconds": 410.4, "model_seconds": 402.9, "calls": 37, "verdict": "converted", "error": null, "finished": "2026-11-08T21:51:45"}
+{"page": "c0356", "seconds": 407.4, "model_seconds": 402.1, "calls": 37, "verdict": "converted", "error": null, "finished": "2026-11-08T21:58:33"}
+{"page": "c0382", "seconds": 689.8, "model_seconds": 682.4, "calls": 66, "verdict": "converted", "error": null, "finished": "2026-11-08T22:10:03"}
+{"page": "c0387", "seconds": 534.4, "model_seconds": 526.4, "calls": 59, "verdict": "converted", "error": null, "finished": "2026-11-08T22:18:57"}
+{"page": "c0388", "seconds": 731.0, "model_seconds": 718.5, "calls": 63, "verdict": "1 zone(s) read short", "error": null, "finished": "2026-11-08T22:31:08"}
+{"page": "c0405", "seconds": 599.6, "model_seconds": 591.9, "calls": 58, "verdict": "converted", "error": null, "finished": "2026-11-08T22:41:08"}
+{"page": "c0431", "seconds": 724.9, "model_seconds": 713.2, "calls": 57, "verdict": "1 zone(s) read short", "error": null, "finished": "2026-11-08T22:53:13"}
+{"page": "c0441", "seconds": 410.8, "model_seconds": 405.0, "calls": 31, "verdict": "converted", "error": null, "finished": "2026-11-08T23:00:04"}
+{"page": "c0456", "seconds": 1200.0, "model_seconds": null, "calls": null, "verdict": "timeout", "error": "timeout: not converted within 20 minutes; stopped", "finished": "2026-11-08T23:20:04"}
+{"page": "c0467", "seconds": 425.0, "model_seconds": 418.5, "calls": 30, "verdict": "converted", "error": null, "finished": "2026-11-08T23:27:09"}
+{"page": "c0476", "seconds": 436.0, "model_seconds": 421.0, "calls": 36, "verdict": "converted", "error": null, "finished": "2026-11-08T23:34:25"}
+{"page": "c0485", "seconds": 399.8, "model_seconds": 394.8, "calls": 37, "verdict": "converted", "error": null, "finished": "2026-11-08T23:41:05"}
+{"page": "c0515", "seconds": 196.7, "model_seconds": 190.2, "calls": 11, "verdict": "converted", "error": null, "finished": "2026-11-08T23:44:21"}
+{"page": "c0523", "seconds": 328.9, "model_seconds": 324.2, "calls": 28, "verdict": "converted", "error": null, "finished": "2026-11-08T23:49:50"}
+{"page": "c0527", "seconds": 276.0, "model_seconds": 269.7, "calls": 25, "verdict": "converted", "error": null, "finished": "2026-11-08T23:54:26"}
+{"page": "c0547", "seconds": 415.0, "model_seconds": 408.7, "calls": 42, "verdict": "converted", "error": null, "finished": "2026-11-09T00:01:21"}
+{"page": "c0555", "seconds": 580.3, "model_seconds": 572.2, "calls": 56, "verdict": "4 zone(s) read short", "error": null, "finished": "2026-11-09T00:11:02"}
+{"page": "c0575", "seconds": 537.9, "model_seconds": 531.3, "calls": 48, "verdict": "converted", "error": null, "finished": "2026-11-09T00:20:00"}
+{"page": "c0596", "seconds": 386.5, "model_seconds": 375.7, "calls": 31, "verdict": "converted", "error": null, "finished": "2026-11-09T00:26:26"}

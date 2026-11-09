@@ -249,7 +249,9 @@ Measurement only; no conversion code changed (the replay of
 calls (`agents/review-calls/L3-baseline.json`), round 7 on the issue
 page, and six fixes to the checks (`checks.py`, and `Word.joined` in the
 projection), each pinned on a dev page. The spec's "Outcome" is the
-record and the reference P2 decides against.
+record and the reference P2 decides against. The run's 37 renders and
+1577 answers are frozen in `tests/frozen/l3-baseline/`: panel pages,
+read by no test.
 
 ### Spec 0019 — steady, checked, structured, styled, 2026-10-19 to 2026-10-23
 

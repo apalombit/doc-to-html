@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Document</title>
+<style>
+:root { --ink:#1a1a1a; --muted:#666; --rule:#e0e0e0; --shade:#f4f4f4;
+        --page-bg:#fff; --accent:inherit;
+        --flag:#b45309;
+        --link:#0645ad; --mark-bg:#fff2a8; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink:#e8e8e8; --muted:#9a9a9a; --rule:#333; --shade:#1e1e1e;
+          --page-bg:#111;
+          --flag:#fbbf24;
+          --link:#7aa7ff; --mark-bg:#5a4a12; }
+}
+body { font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+       color:var(--ink); background:var(--page-bg); margin:0; padding:2rem 1rem; }
+.doc { max-width:52rem; margin:0 auto; }
+/* Inline runs. `<a>` carries no href — nothing read off the page says where a
+   link goes — so it needs styling of its own to read as one. */
+a { color:var(--link); text-decoration:underline; }
+code { font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+       font-size:0.92em; }
+mark { background:var(--mark-bg); color:inherit; padding:0 0.15em; }
+.band { display:flex; gap:2rem; align-items:flex-start;
+        margin-bottom:1.75rem; flex-wrap:wrap; }
+.band > * { flex:1 1 12rem; min-width:0; }
+/* A `columns` Region: its lanes side by side, each read top to bottom and as
+   wide as the page draws it. Spec 0008, step 2. */
+.columns { display:flex; gap:2rem; align-items:flex-start; margin-bottom:1.75rem; }
+.lane { min-width:0; }
+.lane > :last-child { margin-bottom:0; }
+/* A rectangle the page draws round a run of Zones in one lane, drawn once
+   round the run. Spec 0011, step 1a — see `rhythm.frames`. */
+.frame { border:1px solid var(--rule); border-radius:4px; margin-bottom:1.75rem; }
+/* One Zone of a Continuation, holding its own margins, so the gap drawn before it is
+   the page's and not that gap collapsed into a paragraph's. Spec 0011, 1b. */
+.cont { display:flow-root; }
+/* A `grid` Region: its Zones by row and by lane, never wrapped. Spec 0010, B1. */
+.grid { display:grid; column-gap:2rem; row-gap:1.75rem; align-items:start;
+        margin-bottom:1.75rem; }
+.grid > * { min-width:0; }
+/* A label column in a lane takes at most half of it. A lane is narrower than
+   the page, and `cv_0013`'s `Chartered Engineer, Engineers Ireland (2019)`
+   sized the `auto` track to the whole sidebar, leaving `Reg. no. 11408` a
+   sliver that `anywhere` broke after every letter — N4's fault, in a lane. */
+.columns dl.pairs { grid-template-columns:fit-content(50%) 1fr; }
+.zone-header { font-size:1.05em; }
+.zone-footer { color:var(--muted); font-size:.875em; }
+h1 { font-size:1.6em; margin:0 0 .35em; letter-spacing:.01em; }
+section.boxed { border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
+section.filled { border-radius:4px; overflow:hidden; }
+h2.zone-title { font-size:.95em; font-weight:600; margin:0; padding:.55em 0; }
+h2.zone-title.barred { padding:.55em .9em; }
+section.boxed > h2.zone-title, section.filled > h2.zone-title { padding:.55em .9em; }
+.zone-body { padding:0; }
+section.boxed > .zone-body, section.filled > .zone-body { padding:.9em; }
+section.boxed > .zone-body > .table-wrap,
+section.filled > .zone-body > .table-wrap { margin:-.9em; }
+section.filled.grounded > h2.zone-title { padding:.55em 0; }
+section.filled.grounded > .zone-body { padding:0; }
+section.filled.grounded > .zone-body > .table-wrap { margin:0; }
+blockquote { margin:.6em 0 .3em 1.5em; }
+p.attribution { color:var(--muted); font-size:.85em; margin:0 0 .4em; }
+ul { margin:0 0 .4em; padding-left:1.3em; }
+.zone-header ul { display:flex; flex-wrap:wrap; gap:1.1rem;
+                  list-style:none; padding:0; }
+p { margin:0 0 .4em; }
+dl.pairs { display:grid; grid-template-columns:auto 1fr; gap:.15em .75em; margin:0; }
+/* A long unbreakable value must wrap, not be hidden. `section.filled` and
+   `section.boxed` both set `overflow:hidden` to keep a fill inside its own
+   rounded corner, so anything wider than the Zone is silently cut off in the
+   screenshot — recall says the text is present and the picture does not
+   contain it. `cv_0013`'s sidebar was the corpus's one case: the `auto` track
+   sized itself to `ines.halloran@fempost.example`, which has no break
+   opportunity, giving the Zone a 368px content width inside a 256px box.
+   `anywhere` rather than `break-word` because only `anywhere` lowers the
+   min-content width the grid track is measured from. Measured 2026-09-25 over
+   all fifteen: corpus `clipped` 1 -> 0, `beside_agreement` +0.0033,
+   `alignment_agreement` +0.0019, ratchet clean, and `cv_0013`'s height_ratio
+   1.77 -> 2.14, which is the wrapped address taking the lines it needs. */
+dl.pairs dt, dl.pairs dd { overflow-wrap:anywhere; }
+/* A label with no value is not in the label column. Left there, the `auto`
+   track sizes itself to it as if a value stood beside it, and the `1fr` track
+   gets what is left: `catalogue_0015`'s `Suffolk pattern, 265 mm, beeswax` took
+   the whole card and `each`, the next line's value, was broken after every
+   letter by the `anywhere` above. Across both columns it sizes neither, so the
+   label column is as wide as the labels that have values. N4, 2026-10-10. */
+dl.pairs dt.alone { grid-column:1 / -1; }
+dl.pairs dt.alone + dd { display:none; }
+dl.pairs dt { color:var(--muted); }
+/* A pairs Zone whose lines the page sets centred or flush right: each pair a
+   line, label beside value, so the line can sit where the page sets it. */
+dl.pairs.lines { display:block; }
+dl.pairs.lines dt, dl.pairs.lines dd { display:inline; }
+dl.pairs dd { margin:0; }
+.zone-summary dl.pairs dd { font-weight:600; text-align:right; }
+.table-wrap { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; }
+th, td { padding:.45em .6em; text-align:left; border-bottom:1px solid var(--rule); }
+thead th { background:var(--shade); font-weight:600; }
+td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+tfoot td:last-child { text-align:right; }
+tfoot td { font-weight:600; border-top:2px solid var(--rule); border-bottom:none; }
+figure.omitted { margin:0; border:1px dashed var(--rule); border-radius:3px;
+                 min-height:3rem; display:flex; align-items:center;
+                 justify-content:center; color:var(--muted); font-size:.8em; }
+figure.omitted figcaption { padding:.5em; text-align:center; }
+.mark { display:inline-block; border:2px solid var(--flag); color:var(--flag);
+        padding:.15em .6em; border-radius:3px; font-weight:600; letter-spacing:.08em; }
+.disputed { cursor:help; }
+.corrected { border-bottom:2px solid var(--rule); cursor:help; }
+.skeleton { background:repeating-linear-gradient(135deg, var(--shade),
+            var(--shade) 6px, transparent 6px, transparent 12px);
+            border:1px dashed var(--rule); min-height:2.5rem; border-radius:3px; }
+</style>
+<style>:root { --page-bg:rgb(247,243,234); --ink:rgb(35,50,58); --muted:rgb(105,114,116); --rule:rgb(215,214,208); --shade:rgb(234,231,223); --accent:rgb(138,111,59); }
+.placed .line { display:grid; align-items:baseline; }
+.placed .line > span { white-space:nowrap; padding-right:.3em; }
+.placed .line > span:only-child { white-space:normal; }
+.placed .label { color:var(--muted); }
+body { font-size:16px; --body:16px; }
+body { padding:56px 70px 61px 70px; }
+.doc { max-width:580px; }</style>
+</head>
+<body>
+<div class="doc">
+<div class="band"><section class="zone zone-header boxed" style="padding:301px 104px 221px 104px;border-top:1px solid rgb(138,111,59);padding-top:294px"><div class="placed" style="max-width:495px"><div class="line" style="grid-template-columns:minmax(0,80.61fr);margin-left:19.39%"><span style="font-size:calc(0.75 * var(--body, 1em));color:rgb(138,111,59)">WALNUT FLINT HALL INVITES YOU</span></div><div class="line" style="grid-template-columns:minmax(0,100.00fr);margin-top:13px"><span style="font-size:calc(3.00 * var(--body, 1em));font-weight:700">An Evening of Autumn</span></div><div class="line" style="grid-template-columns:minmax(0,62.44fr);margin-left:37.56%;margin-top:0px"><span style="font-size:calc(3.00 * var(--body, 1em));font-weight:700">Music</span></div><div class="line" style="grid-template-columns:minmax(0,100.00fr);margin-top:35px"><span>Freya Patel and the trustees of Walnut Flint Hall request the pleasure of</span></div><div class="line" style="grid-template-columns:minmax(0,95.40fr);margin-left:4.60%;margin-top:0px"><span>your company at a supper concert in aid of the hall&#x27;s roof appeal.</span></div><div class="line" style="grid-template-columns:minmax(0,40.31fr) minmax(0,31.58fr);margin-left:28.11%;margin-top:18px"><span class="label" style="font-size:calc(0.67 * var(--body, 1em));color:rgb(139,113,62)">DATE</span><span class="label" style="font-size:calc(0.67 * var(--body, 1em));color:rgb(138,111,59)">TIME</span></div><div class="line" style="grid-template-columns:minmax(0,43.13fr) minmax(0,32.31fr) minmax(0,12.28fr);margin-left:12.28%;margin-top:0px"><span>Saturday 12 September 2020</span><span style="justify-self:end">7.00 pm for 7.30 pm</span></div><div class="line" style="grid-template-columns:minmax(0,35.70fr) minmax(0,31.58fr);margin-left:32.71%;margin-top:11px"><span class="label" style="font-size:calc(0.67 * var(--body, 1em));color:rgb(138,111,59)">PLACE</span><span class="label" style="font-size:calc(0.67 * var(--body, 1em));color:rgb(138,111,59)">DRESS</span></div><div class="line" style="grid-template-columns:minmax(0,39.90fr) minmax(0,21.32fr) minmax(0,19.39fr);margin-left:19.39%;margin-top:0px"><span>The Long Room, Wrexham</span><span style="font-size:calc(0.83 * var(--body, 1em));justify-self:end">Smart casual</span></div><div class="line" style="grid-template-columns:minmax(0,100.00fr);margin-top:39px"><span style="font-size:calc(0.83 * var(--body, 1em));color:rgb(90,87,79)">Supper will be served in the interval. Please reply to Megan Haworth by 12 August 2020,</span></div><div class="line" style="grid-template-columns:minmax(0,87.72fr);margin-left:12.28%;margin-top:0px"><span style="font-size:calc(0.83 * var(--body, 1em));color:rgb(90,87,79)">so that we may plan the tables. Parking is available behind the hall.</span></div></div></section></div>
+</div>
+<script type="application/json" id="doc-ir">{"source":{"path":"/Users/aless/Desktop/Projects/pic-to-html/doc-to-html/corpus/pages/c0515.png","sha256":"8634e79273b04e1f68f5777a09ec07e10823a5e8d5aeb75336620c1b5394e36d","width":720,"height":736,"rectified_width":720,"rectified_height":736,"paper":null,"surround":null},"ir_version":1,"rectifier_version":7,"hint":null,"page_px":720,"style":{"page_bg":[247,243,234],"ink":[35,50,58],"accent":[138,111,59],"shade":[138,111,59],"body_px":16.0,"face":"sans"},"zones":[{"kind":"pairs","role":"header","band":0,"column":0,"bbox":{"left":0.09722222222222222,"top":0.07608695652173914,"right":0.9027777777777778,"bottom":0.9171195652173914},"title":null,"rows":[],"pairs":[{"label":{"bbox":{"left":0.34888888888888886,"top":0.4934782608695652,"right":0.39166666666666666,"bottom":0.503804347826087},"readings":[{"engine":"ollama","text":"DATE","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"DATE","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.67,"bold":false,"italic":false,"color":[139,113,62],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},"value":{"bbox":{"left":0.24333333333333332,"top":0.5173913043478261,"right":0.5011111111111112,"bottom":0.5380434782608695},"readings":[{"engine":"ollama","text":"Saturday 12 September 2020","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"Saturday 12 September 2020","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.92,"bold":false,"italic":false,"color":[43,42,40],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},"marks":[]},{"label":{"bbox":{"left":0.6416666666666667,"top":0.49293478260869567,"right":0.6833333333333333,"bottom":0.5043478260869565},"readings":[{"engine":"ollama","text":"TIME","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"TIME","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.67,"bold":false,"italic":false,"color":[138,111,59],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},"value":{"bbox":{"left":0.5722222222222222,"top":0.5173913043478261,"right":0.7561111111111111,"bottom":0.5380434782608695},"readings":[{"engine":"ollama","text":"7.00 pm for 7.30 pm","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"7.00 pm for 7.30 pm","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.92,"bold":false,"italic":false,"color":[43,42,40],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},"marks":[]},{"label":{"bbox":{"left":0.38055555555555554,"top":0.5652173913043478,"right":0.4338888888888889,"bottom":0.5760869565217391},"readings":[{"engine":"ollama","text":"PLACE","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"PLACE","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.67,"bold":false,"italic":false,"color":[138,111,59],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},"value":{"bbox":{"left":0.28888888888888886,"top":0.5896739130434783,"right":0.5277777777777778,"bottom":0.6103260869565217},"readings":[{"engine":"ollama","text":"The Long Room, Wrexham","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"The Long Room, Wrexham","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.92,"bold":false,"italic":false,"color":[43,42,40],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},"marks":[]},{"label":{"bbox":{"left":0.6261111111111112,"top":0.5652173913043478,"right":0.6811111111111111,"bottom":0.5760869565217391},"readings":[{"engine":"ollama","text":"DRESS","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"DRESS","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.67,"bold":false,"italic":false,"color":[138,111,59],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},"value":{"bbox":{"left":0.5988888888888889,"top":0.5891304347826087,"right":0.71,"bottom":0.6048913043478261},"readings":[{"engine":"ollama","text":"Smart casual","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"Smart casual","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.83,"bold":false,"italic":false,"color":[43,42,40],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},"marks":[]}],"blocks":[],"extra":[{"kind":"heading","lines":[{"bbox":{"left":0.29444444444444445,"top":0.14076086956521738,"right":0.7,"bottom":0.15217391304347827},"readings":[{"engine":"ollama","text":"WALNUT FLINT HALL INVITES YOU","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"WALNUT FLINT HALL INVITES YOU","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.75,"bold":false,"italic":false,"color":[138,111,59],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":null,"read_from":{"left":0.29444444444444445,"top":0.14076086956521738,"right":0.7,"bottom":0.15217391304347827}},{"kind":"heading","lines":[{"bbox":{"left":0.165,"top":0.1983695652173913,"right":0.8333333333333334,"bottom":0.25815217391304346},"readings":[{"engine":"ollama","text":"An Evening of Autumn","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"1 4 OF Oh","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":3.0,"bold":true,"italic":false,"color":[35,50,58],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":null,"read_from":{"left":0.16527777777777777,"top":0.1956521739130435,"right":0.8333333333333334,"bottom":0.25815217391304346}},{"kind":"heading","lines":[{"bbox":{"left":0.41388888888888886,"top":0.26766304347826086,"right":0.5861111111111111,"bottom":0.31929347826086957},"readings":[{"engine":"ollama","text":"Music","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"e","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":3.0,"bold":true,"italic":false,"color":[35,50,58],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":null,"read_from":{"left":0.41388888888888886,"top":0.26766304347826086,"right":0.5861111111111111,"bottom":0.31929347826086957}},{"kind":"paragraph","lines":[{"bbox":{"left":0.16444444444444445,"top":0.3989130434782609,"right":0.8377777777777778,"bottom":0.42173913043478256},"readings":[{"engine":"ollama","text":"Freya Patel and the trustees of Walnut Flint Hall request the pleasure of","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"Freya Patel and the trustees of Walnut Flint Hall request the pleasure of","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[43,42,40],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":null,"read_from":{"left":0.16444444444444445,"top":0.3989130434782609,"right":0.8377777777777778,"bottom":0.42173913043478256}},{"kind":"paragraph","lines":[{"bbox":{"left":0.18722222222222223,"top":0.4331521739130435,"right":0.8111111111111111,"bottom":0.45543478260869563},"readings":[{"engine":"ollama","text":"your company at a supper concert in aid of the hall's roof appeal.","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"your company at a supper concert in aid of the hall's roof appeal.","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[43,42,40],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":null,"read_from":{"left":0.18722222222222223,"top":0.4331521739130435,"right":0.8111111111111111,"bottom":0.45543478260869563}},{"kind":"paragraph","lines":[{"bbox":{"left":0.15555555555555556,"top":0.6766304347826086,"right":0.8433333333333334,"bottom":0.6951086956521739},"readings":[{"engine":"ollama","text":"Supper will be served in the interval. Please reply to Megan Haworth by 12 August 2020,","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"Supper will be served in the interval. Please reply to Megan Haworth by 12 August 2020,","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.83,"bold":false,"italic":false,"color":[90,87,79],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":null,"read_from":{"left":0.15555555555555556,"top":0.6766304347826086,"right":0.8433333333333334,"bottom":0.6951086956521739}},{"kind":"paragraph","lines":[{"bbox":{"left":0.24000000000000002,"top":0.7038043478260869,"right":0.7588888888888888,"bottom":0.7222826086956522},"readings":[{"engine":"ollama","text":"so that we may plan the tables. Parking is available behind the hall.","model":"qwen3-vl:4b","prompt_version":"2","runs":[]},{"engine":"tesseract","text":"so that we may plan the tables. Parking is available behind the hall.","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.83,"bold":false,"italic":false,"color":[90,87,79],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":null,"read_from":{"left":0.24000000000000002,"top":0.7038043478260869,"right":0.7588888888888888,"bottom":0.7222826086956522}}],"graphic_kind":null,"pixels":null,"fill":null,"title_size":null,"title_caps":false,"face":null,"title_color":null,"title_fill":null,"header_fill":null,"boxed":true,"frame":{"left":0.09722222222222222,"top":0.07608695652173914,"right":0.9027777777777778,"bottom":0.9171195652173914},"group":null,"align":"left","title_align":null,"complete":true}],"corrections":[],"probes":[],"gaps":[],"failures":[],"caveats":[],"shortfalls":[],"unclaimed":[],"regions":[{"top":0.0,"bottom":1.0,"flow":"single","splits":[],"rows":1}],"separators":[],"furniture":[{"kind":"frame","bbox":{"left":0.09722222222222222,"top":0.07608695652173914,"right":0.9027777777777778,"bottom":0.907608695652174},"thickness":0.001388888888888889,"color":[138,111,59],"style":"solid","second":null,"period":null,"angle":null,"zone":null},{"kind":"rule","bbox":{"left":0.10833333333333334,"top":0.08559782608695653,"right":0.8916666666666667,"bottom":0.08695652173913043},"thickness":0.001388888888888889,"color":[138,111,59],"style":"solid","second":null,"period":null,"angle":null,"zone":0},{"kind":"rule","bbox":{"left":0.8222222222222222,"top":0.21739130434782608,"right":0.8277777777777777,"bottom":0.2418478260869565},"thickness":0.005555555555555556,"color":[35,50,58],"style":"solid","second":null,"period":null,"angle":null,"zone":0},{"kind":"rule","bbox":{"left":0.41944444444444445,"top":0.27853260869565216,"right":0.42083333333333334,"bottom":0.3138586956521739},"thickness":0.001388888888888889,"color":[35,50,58],"style":"solid","second":null,"period":null,"angle":null,"zone":0},{"kind":"rule","bbox":{"left":0.3611111111111111,"top":0.35733695652173914,"right":0.6388888888888888,"bottom":0.36141304347826086},"thickness":0.004166666666666667,"color":[138,111,59],"style":"double","second":null,"period":null,"angle":null,"zone":0},{"kind":"rule","bbox":{"left":0.4375,"top":0.6399456521739131,"right":0.5625,"bottom":0.6413043478260869},"thickness":0.001388888888888889,"color":[138,111,59],"style":"solid","second":null,"period":null,"angle":null,"zone":0},{"kind":"rule","bbox":{"left":0.09861111111111111,"top":0.9157608695652174,"right":0.9013888888888889,"bottom":0.9171195652173914},"thickness":0.001388888888888889,"color":[138,111,59],"style":"solid","second":null,"period":null,"angle":null,"zone":0}]}</script>
+</body>
+</html>
