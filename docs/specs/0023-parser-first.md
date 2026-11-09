@@ -3,7 +3,7 @@
 **Status: open, 2026-11-09.** Step P1 of the level-up plan
 ([`../level-up.md`](../level-up.md) §5.3, §6 and decision 2 of §8), from
 spec 0022's last prompt. Its issue is #46. Four questions for Alessandro
-are on the issue page (round 8); his calls go under "Decisions".
+were asked on the issue page (round 8) and all four agreed, 2026-11-09; his calls are under "Decisions".
 
 - **It builds one new arm, D2**, beside today's pipeline, on branch
   `poc-parser-first`: GLM-OCR's own pipeline cuts the page into blocks
@@ -327,7 +327,7 @@ the issue closed; a handover prompt for P2 or L5, facts re-measured.
 
 | # | asked | decided |
 |---|---|---|
-| 1 | Q1: the branch's base | — |
-| 2 | Q2: the build pages, then the L3 set | — |
-| 3 | Q3: the time for the 41 pages | — |
-| 4 | Q4: read what GLM-OCR discards | — |
+| 1 | Q1: the branch's base | **`level-up`** (round 8, 2026-11-09): `poc-parser-first` cut from its head |
+| 2 | Q2: the build pages, then the L3 set | **Agreed** (round 8): the eleven dev pages, then the 41 once, the adapter frozen |
+| 3 | Q3: the time for the 41 pages | **Agreed** (round 8): the 20-minute page limit; the time from the build pages given before the run; started if under two hours, his go if over |
+| 4 | Q4: read what GLM-OCR discards | **Agreed** (round 8): all six kinds read as text, headers and footers with their role |

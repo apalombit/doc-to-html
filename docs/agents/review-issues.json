@@ -3389,7 +3389,12 @@
      "checks": "level-up holds everything L1 to L3 built. develop stops at the S14 baseline of 2026-10-23.",
      "claude": "The trial needs the corpus to pick its pages, the batch runner to convert them, and the checks and L3's run to compare against. From develop, all of them would have to be copied across.",
      "often": "Nothing. level-up itself takes nothing of the trial until P2 decides.",
-     "proposes": "Branch poc-parser-first from level-up's head."
+     "proposes": "Branch poc-parser-first from level-up's head.",
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "p1-pages",
@@ -3411,7 +3416,12 @@
      "checks": "No page has been drawn by GLM-OCR and our renderer yet. The plan names the kinds of page where it may go wrong.",
      "claude": "Picked by a rule, not by looking: every dev page the plan names for a risk (the designed pages: flyer, quiz, ticket, pricing, catalogue; side-by-side panels: payslip, recipe, datasheet; the hardest table: the lab report), plus dev's two real PDF pages of the kinds in the L3 set (an application form, a purchase order). No panel page is opened before the run.",
      "often": "GLM-OCR reads each page once, about 20 seconds; after that each change to the adapter is drawn again in seconds, with no model.",
-     "proposes": "Build on these eleven dev pages; then convert the 41 L3 pages once, with the adapter frozen."
+     "proposes": "Build on these eleven dev pages; then convert the 41 L3 pages once, with the adapter frozen.",
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "p1-time",
@@ -3426,7 +3436,12 @@
      "checks": "GLM-OCR alone: 8 to 36 s a page. Our looks and render add to it; the eleven build pages measure the whole page's time before the run.",
      "claude": "At a minute a page the 41 take about 40 minutes. The same 20-minute page limit as L3 keeps the two runs' timeouts comparable.",
      "often": "Under an hour expected, against L3's 6.6 hours. Local model time only; the review afterwards is Claude's.",
-     "proposes": "Keep the 20-minute page limit. Before the run Claude gives you the time measured on the build pages, and starts if it is under two hours; over two hours, it stops and waits for your go."
+     "proposes": "Keep the 20-minute page limit. Before the run Claude gives you the time measured on the build pages, and starts if it is under two hours; over two hours, it stops and waits for your go.",
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "p1-discard",
@@ -3481,7 +3496,12 @@
      "checks": "Our pipeline reads every line it finds, and L3 counts each line lost as a major.",
      "claude": "These are lost by a setting, not by a misreading: on most pages that is a major fault by design, and the comparison would measure the setting rather than GLM-OCR. Reading them is one line of its configuration; its boxes, labels, order and weights stay its own.",
      "often": "Most pages print a header or a footer: on the payslip, 5 of its 13 blocks.",
-     "proposes": "Read all six kinds as text, each header and footer drawn as a header or a footer."
+     "proposes": "Read all six kinds as text, each header and footer drawn as a header or a footer.",
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     }
    ]
   }
