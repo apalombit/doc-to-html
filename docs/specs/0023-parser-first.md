@@ -387,6 +387,123 @@ reports.
   `test_adapter.py`'s 17), 16:44. `parser_first.PARSER_PYTHON` is a fixed
   path: the environment is read only in `config.py`.
 
+## Outcome — steps 4 to 6, 2026-11-09: D2 against L3-baseline
+
+### The run
+
+- **`P1-D2-L3`**, `batch.py --arm d2` on `1cb0e47`, the 41 pages of
+  `corpus/l3-subset.txt`, one page at a time, 2026-11-09 14:06 to 14:24:
+  **18 minutes, 41 of 41 converted, none timed out.** 26 s a page on
+  average; medians by density: sparse 19 s (14 pages), medium 25 s (20),
+  dense 38 s (7). The parser's own share: median 13.9 s.
+- `L3-baseline` took **6.6 hours**, 577 s a page, and lost c0034,
+  c0196, c0291 and c0456 to the 20-minute limit.
+
+### The review
+
+- `measure_run.py --all`, then every page opened, its sheet beside its
+  parser regions (`dump/glm-ocr_latest/<page>/00_regions.json`) and its
+  IR. Calls: `docs/agents/review-calls/P1-D2-L3.json`.
+- **1184 check faults called: 1176 confirmed, 8 rejected** on 6 pages;
+  **47 added** that no check raises. Every major carries its stage.
+- **A major fault on 41 of 41 pages**, as on L3's 37 of 37.
+- The stages: **parser: layout** (a box, a label, the order), **parser:
+  reading** (a region's text or table), **adapter** (our mapping),
+  **locate**, and the drawing side's `cv:*` and `render`.
+
+### Side by side, on the 37 pages both converted
+
+| | L3-baseline | D2 |
+|---|---|---|
+| majors | 651 | 660 |
+| majors per page | 17.6 | 17.8 |
+| major classes per page | 7.3 | 6.6 |
+| PDF pages (c0074, c0082, c0272, c0300) | 43.5 | 30.2 |
+| generated pages (33) | 14.5 | 16.3 |
+| dense / medium / sparse | 27.3 / 19.9 / 10.6 | 21.3 / 22.8 / 10.4 |
+| seconds a page | 577 | 26 |
+
+By family, majors per page, L3 → D2: correspondence and legal 9.8 → 5.5,
+credentials 9.8 → 6.5, presentation 12.2 → 9.8, fragments 13.5 → 12.8,
+reference 22.3 → 16.3, reports 25.8 → 26.6, publishing 10.0 → 14.0,
+forms 33.8 → 36.8, transactional 16.2 → 25.0.
+
+**The four pages L3 lost to the limit**, D2's majors: c0034 64 (a dense
+tax form, read whole but its tables unmeasured), c0196 153 (PDF: read to
+its first header rows), c0291 25 (the card grid read as one table),
+c0456 23. **The fifth PDF page**, c0196, is D2's worst page.
+
+### Where the majors are made
+
+| side | D2, 41 pages | D2, the 37 | L3, the 37 |
+|---|---|---|---|
+| **the parser** (D2) / reading the page (L3) | parser: reading 442, layout 183 = **625** | **413** | 495 |
+| **ours** | adapter 106, cv:looks 86, render 46, locate 40, cv:zone_chrome 9, cv:heading_sizes 8, the rest 6 = **300** | **247** | 156 |
+
+### The fault classes, side by side
+
+Pages touched / times, standing faults, on the 37; D2's stages from the
+calls file.
+
+| class | L3 | D2 | D2 made at |
+|---|---|---|---|
+| words: lost | 24 / 182 | 15 / 313 | parser reading (a box taken for one table, only its grid read: c0097, c0196, c0300), parser layout (lines in no region), adapter (c0070's broken table HTML; `$` amounts read as maths) |
+| words: invented | 24 / 178 | 7 / 27 | parser reading; adapter (LaTeX drawn as source, c0382) |
+| words: changed | 10 / 15 | 15 / 40 | parser reading: names, accents (c0064, c0129), numbers |
+| words: merged | 0 / 0 | 6 / 21 | parser reading: spaces dropped (`250mg`, `Sample:48`) |
+| structure: numbers as bullets | 10 / 12 | 0 / 0 | — |
+| structure: marker changed | 16 / 20 | 7 / 11 | parser reading |
+| beside: drawn under | 9 / 9 | 11 / 12 | adapter: a column's second Zone banded after the tall one beside it |
+| lines: broken differently | 13 / 13 | 24 / 25 | parser reading (two lines written as one), render |
+| lines: rows joined | 3 / 3 | 10 / 10 | parser reading: a label and the line under it as one |
+| type: bold lost | 26 / 26 | 31 / 32 | cv:looks (bold runs inside a line: no inline-runs pass), locate |
+| type: sizes out of proportion | 33 / 67 | 33 / 67 | cv:looks, parser reading, locate |
+| looks: fill drawn another shape | 12 / 14 | 9 / 9 | adapter: a band read as several regions |
+| rules: cells merged as drawn | 9 / 13 | 10 / 16 | render, locate |
+| cells: wrong column | 5 / 17 | 4 / 7 | parser reading |
+| height | 37 / 37 | 36 / 36 | adapter, render |
+
+### Page by page, D2 against L3, both against the page
+
+Judged by eye, the three side by side.
+
+- **Better, 13**: c0032 (the list's numbers kept), c0069 (header whole,
+  every field in its table), c0074 (no doubled fragments of lines 1-2),
+  c0082 (no invented placeholder text), c0243 (the header and the table
+  whole), c0252 (the medication table readable row by row), c0316 (no
+  doubled header), c0342 (the side panel beside the map), c0405 (the
+  facts row and numbered steps kept), c0431 (the sidebar in order),
+  c0467 (the chart a picture, not loose numbers), c0476 (the 3×2 dish
+  grid kept), c0515 (no overprinted fields).
+- **Worse, 7**: c0064 (the QUADRO badge lost, the 2×2 fields as rows,
+  accents dropped), c0070 (six rows lost: the reader's broken
+  `colspan="5>`), c0097 (the sidebar and both questions lost: one table
+  region, its grid alone read), c0115 (the Date/Register lines in no
+  region), c0129 (names and numbers misread, the chart pushed down),
+  c0387 (the pull quote and a paragraph drawn at the foot, a paragraph
+  red), c0441 (the company name and the legend line in no region).
+- **The same, 17**: c0121, c0128, c0234, c0272, c0300, c0334, c0343,
+  c0356, c0382, c0388, c0485, c0523, c0527, c0547, c0555, c0575, c0596.
+- **Converted only by D2, 4**: c0034, c0196, c0291, c0456.
+
+### Found on our side, not fixed
+
+Each must be reproduced on a dev page before anything changes (Rules):
+
+- **`locate` leaves a D2 table unmeasured.** `locate._built` takes any
+  table with a span or a second line in a cell for one `spans.read`
+  built, and keeps its boxes: the adapter's tables have no boxes, so
+  every Cell stays unplaced and nothing in it is measured (366 of 869
+  table Cells, 12 pages): bold, size, alignment, row rules and fills.
+- **`plain` takes `$` amounts for inline maths** (c0034, c0291, c0456,
+  c0121): the spaces between two amounts closed up.
+- **A reader's malformed table HTML** drops the rest of the table
+  (c0070, one missing quote).
+- **Display formulas drawn as LaTeX** (c0382); the reader's bold markers
+  dropped (`<strong>`) or drawn (`**Action:**`); `4^{1}$` drawn as written.
+- **Banding**: two Zones stacked in a column beside a taller one; the
+  second gets a band of its own after the tall one (7 pages).
+
 ## What P1 does not do
 
 - No change to the parser's weights, prompts or thresholds.

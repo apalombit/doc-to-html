@@ -86,7 +86,9 @@ for issue in (issue for round_ in data["rounds"] for issue in round_["issues"]):
     width = Image.open(source).width
     render = shots / f"{run}~{name}-render.png"
     if render.name not in shot:
-        screenshot(REPO / f"debug/runs/{run}/dump/qwen3-vl_4b/{name}/document.html", render, width=width)
+        # Any arm's dump: today's under qwen3-vl_4b/, D2's under glm-ocr_latest/ (spec 0023).
+        (html,) = (REPO / f"debug/runs/{run}/dump").glob(f"*/{name}/document.html")
+        screenshot(html, render, width=width)
         shot.add(render.name)
     labels = issue.get("labels")
     issue["source_img"] = cropped(Image.open(source), issue["source_crop"], issue["source_marks"], labels,

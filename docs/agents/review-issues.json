@@ -3504,7 +3504,580 @@
      }
     }
    ]
+  },
+  {
+   "name": "Round 9",
+   "date": "2026-11-09",
+   "title": "Round 9: the D2 review, eleven spot checks, then P2",
+   "intro": "Round 8 is recorded: all four agreed. D2 converted all 41 L3 pages in 18 minutes; Claude reviewed every page. Issues 1 to 4 are every check fault Claude rejected. Issues 5 to 9 are new kinds of fault Claude added. Issues 10 and 11 are two of Claude's confirmed majors, drawn at random. Issue 12 is P2's question. Click a decision: it saves and the next issue opens.",
+   "about": "Round 9: spec 0023's spot checks of Claude's review of P1-D2-L3 (41 pages opened). 1-4 cover every rejected check fault (8 faults on 6 pages); 5-9 are one example of each kind of added major not shown before; 10-11 are confirmed check majors drawn at random (seed 9) on pages not otherwise in this round; 12 is P2's decision.",
+   "issues": [
+    {
+     "key": "p1-lookalike",
+     "kind": "false",
+     "page": "c0291",
+     "run": "P1-D2-L3",
+     "title": "Ticks drawn as √, called lost",
+     "what": "The status report prints ✓ for done (1), ☐ for open (2) and ✗ for blocked (3). GLM-OCR writes them as √, □ and ×, and our render draws what it writes (marked). The meaning is unchanged: every √ is a printed ✓.",
+     "checks": "Major, three times: ✓ printed 13 times and not drawn, ✗ twice; and □ drawn 6 times, not printed. Also on c0316 (✓ three times) and c0342 (✓ three times).",
+     "claude": "A false alarm, as major. By your rule of 2026-11-01 a look-alike mark is a minor: Claude rejected the four majors and added one minor “mark changed” on each page. The ☐ that GLM-OCR dropped outright (5 of 11 here) stay major.",
+     "often": "4 majors rejected on 3 pages; D2 only (today's reader writes ✓).",
+     "proposes": "Fix the check: √ ✓ ✔, × ✗ ✕ and □ ☐ are look-alikes, a minor “mark changed”, never lost plus invented. Pinned on a dev page.",
+     "source_crop": [
+      0,
+      100,
+      800,
+      300
+     ],
+     "render_crop": [
+      0,
+      100,
+      800,
+      300
+     ],
+     "source_marks": [
+      [
+       16,
+       148,
+       38,
+       168
+      ],
+      [
+       410,
+       150,
+       428,
+       168
+      ],
+      [
+       430,
+       190,
+       448,
+       208
+      ]
+     ],
+     "render_marks": [
+      [
+       12,
+       180,
+       30,
+       198
+      ],
+      [
+       252,
+       228,
+       268,
+       246
+      ],
+      [
+       573,
+       228,
+       591,
+       248
+      ]
+     ],
+     "labels": [
+      "1",
+      "2",
+      "3"
+     ]
+    },
+    {
+     "key": "p1-box",
+     "kind": "false",
+     "page": "c0074",
+     "run": "P1-D2-L3",
+     "title": "A drawn tick box written as □, called invented",
+     "what": "Line 1 of this PDF form prints an empty tick box (1). GLM-OCR writes it as the character □, and our render draws it in place. Line 2's box (2) is not written at all, and our render has no box there.",
+     "checks": "Major: □ drawn once and not printed. Nothing for line 2's box: the PDF's text layer has no character for either box.",
+     "claude": "Rejected: the □ is the page's own box, drawn where the page draws it. Claude added line 2's lost box as a major “mark lost”: an empty box lost changes what the form asks.",
+     "often": "1 page; the PDF pages draw their boxes as lines, not characters.",
+     "proposes": "Rejected as invented; line 2's lost box major. No check change: the PDF gives the check no box to compare.",
+     "source_crop": [
+      40,
+      190,
+      760,
+      330
+     ],
+     "render_crop": [
+      40,
+      250,
+      760,
+      400
+     ],
+     "source_marks": [
+      [
+       94,
+       214,
+       112,
+       234
+      ],
+      [
+       94,
+       293,
+       112,
+       313
+      ]
+     ],
+     "render_marks": [
+      [
+       78,
+       276,
+       96,
+       294
+      ],
+      [
+       64,
+       362,
+       90,
+       386
+      ]
+     ],
+     "labels": [
+      "1",
+      "2"
+     ]
+    },
+    {
+     "key": "p1-ground",
+     "kind": "false",
+     "page": "c0082",
+     "run": "P1-D2-L3",
+     "title": "A heading on a green band, called “printed on light”",
+     "what": "This PDF prints the section heading in white on a green band. Our render draws the band green and the heading white on it (smaller, a separate fault).",
+     "checks": "Major: “printed on light, drawn on green”.",
+     "claude": "A false alarm: the page prints it on green. This page's HTML draws the band as a separate box under the heading, not as its parent, and the check reads the ground from the heading's parents: the white body.",
+     "often": "1 page. Round 7's c0074 tab was the same kind: the ground read where the page does not paint it.",
+     "proposes": "Rejected. The check could read a line's ground from what is painted under it, not from its parents; one page, so recorded for now.",
+     "source_crop": [
+      40,
+      40,
+      960,
+      170
+     ],
+     "render_crop": [
+      40,
+      30,
+      960,
+      130
+     ],
+     "source_marks": [
+      [
+       57,
+       57,
+       903,
+       143
+      ]
+     ],
+     "render_marks": [
+      [
+       50,
+       62,
+       945,
+       106
+      ]
+     ]
+    },
+    {
+     "key": "p1-interleaved",
+     "kind": "false",
+     "page": "c0243",
+     "run": "P1-D2-L3",
+     "title": "Two blocks side by side, called interleaved",
+     "what": "The patient details (left) and the observations table (right) sit side by side, and our render draws them side by side, in their places.",
+     "checks": "Minor: their words alternate in the output's HTML, “drawn side by side as printed”.",
+     "claude": "A false alarm: drawn as the page prints them; the order of words in the HTML is not seen.",
+     "often": "1 minor on 1 page.",
+     "proposes": "Rejected. The check could skip blocks it finds drawn side by side as printed.",
+     "source_crop": [
+      0,
+      40,
+      780,
+      270
+     ],
+     "render_crop": [
+      0,
+      50,
+      780,
+      310
+     ],
+     "source_marks": [
+      [
+       14,
+       58,
+       386,
+       118
+      ],
+      [
+       394,
+       58,
+       763,
+       263
+      ]
+     ],
+     "render_marks": [
+      [
+       8,
+       64,
+       332,
+       132
+      ],
+      [
+       408,
+       60,
+       776,
+       300
+      ]
+     ]
+    },
+    {
+     "key": "p1-parted",
+     "kind": "added",
+     "page": "c0515",
+     "run": "P1-D2-L3",
+     "title": "Two fields read as one: labels on one line, values on the next",
+     "what": "The invitation prints PLACE over “The Long Room, Wrexham” and, beside it, DRESS over “Smart casual”. Our render draws “PLACE DRESS”, then “The Long Room, Wrexham Smart casual”: whose value is whose is lost.",
+     "checks": "Nothing: every word is there, in order line by line.",
+     "claude": "Major: a reader cannot tell the dress code from the place. GLM-OCR takes the two fields for one block and writes it line by line across both.",
+     "often": "3 pages (c0121's four field pairs, c0515, c0342's labels over values); the parser's reading.",
+     "proposes": "Major, a new kind: “label parted from its value”.",
+     "source_crop": [
+      100,
+      320,
+      620,
+      480
+     ],
+     "render_crop": [
+      80,
+      400,
+      620,
+      520
+     ],
+     "source_marks": [
+      [
+       200,
+       406,
+       390,
+       452
+      ],
+      [
+       424,
+       406,
+       506,
+       452
+      ]
+     ],
+     "render_marks": [
+      [
+       96,
+       440,
+       202,
+       462
+      ],
+      [
+       96,
+       462,
+       372,
+       486
+      ]
+     ]
+    },
+    {
+     "key": "p1-latex",
+     "kind": "added",
+     "page": "c0382",
+     "run": "P1-D2-L3",
+     "title": "A formula drawn as its LaTeX source",
+     "what": "The textbook prints t½ = ln 2 / k as a set formula. Our render draws “$$”, “t _ {1 / 2} = \\ln 2 / k”, “$$”: GLM-OCR writes display formulas as LaTeX, and the adapter draws the source.",
+     "checks": "Words lost and invented (kt, approx, left, right…), and “hint” split letter by letter.",
+     "claude": "Major: the formula cannot be read as printed. Our side: the adapter turns inline maths into characters but not display formulas.",
+     "often": "1 page, three formulas; any page with display maths.",
+     "proposes": "Major, a new kind: “formula drawn as source”, made at the adapter.",
+     "source_crop": [
+      40,
+      560,
+      480,
+      740
+     ],
+     "render_crop": [
+      0,
+      820,
+      480,
+      1080
+     ],
+     "source_marks": [
+      [
+       180,
+       664,
+       322,
+       706
+      ]
+     ],
+     "render_marks": [
+      [
+       174,
+       928,
+       326,
+       1002
+      ]
+     ]
+    },
+    {
+     "key": "p1-markup",
+     "kind": "added",
+     "page": "c0405",
+     "run": "P1-D2-L3",
+     "title": "Markup drawn as text: “4^{1}$”",
+     "what": "The recipe prints SERVES 4¹. Our render draws “4^{1}$”: GLM-OCR writes the raised 1 as broken LaTeX, and it is drawn as written. On c0234 the reader's bold markers are drawn too: “**Action:**”.",
+     "checks": "Minor: “a part printed raised, drawn inline after a mark”.",
+     "claude": "Major: braces, a caret and a dollar sign are drawn that the page does not print, an invented mark.",
+     "often": "2 pages (c0405, c0234).",
+     "proposes": "Major: “mark invented”.",
+     "source_crop": [
+      30,
+      180,
+      620,
+      300
+     ],
+     "render_crop": [
+      30,
+      210,
+      620,
+      330
+     ],
+     "source_marks": [
+      [
+       454,
+       206,
+       486,
+       238
+      ]
+     ],
+     "render_marks": [
+      [
+       468,
+       242,
+       544,
+       272
+      ]
+     ]
+    },
+    {
+     "key": "p1-lane",
+     "kind": "added",
+     "page": "c0523",
+     "run": "P1-D2-L3",
+     "title": "A full-width table drawn in half the page",
+     "what": "The ticket prints its passenger table across the whole ticket (1). Our render draws it in the left half, its cells wrapping (“Bags:1 / hold,1 / hand”), and the passenger icon from inside the table alone in a white box in the right half (2).",
+     "checks": "Rules merged, bold lost, the page 1.51 times as tall: not the half width.",
+     "claude": "Major: the table is drawn as a narrow column beside an empty box. GLM-OCR gives the icon inside the table a region of its own; the adapter bands it beside the table.",
+     "often": "2 pages (c0523; c0388's icons beside their list, drawn one word a line).",
+     "proposes": "Major: “drawn in a lane”, made at the adapter.",
+     "source_crop": [
+      0,
+      150,
+      700,
+      354
+     ],
+     "render_crop": [
+      0,
+      300,
+      700,
+      536
+     ],
+     "source_marks": [
+      [
+       26,
+       190,
+       676,
+       258
+      ]
+     ],
+     "render_marks": [
+      [
+       6,
+       320,
+       304,
+       536
+      ],
+      [
+       324,
+       326,
+       668,
+       356
+      ]
+     ],
+     "labels": [
+      "1",
+      "2"
+     ]
+    },
+    {
+     "key": "p1-colour",
+     "kind": "added",
+     "page": "c0387",
+     "run": "P1-D2-L3",
+     "title": "A black paragraph drawn red",
+     "what": "The magazine prints the paragraph “Arjun Patel, who has kept bees…” in black; the pull quote under it is red. Our render draws the paragraph red.",
+     "checks": "Nothing: the colour checks look for colour lost, not added.",
+     "claude": "Major: red marks the quote; a red paragraph reads as part of it. The paragraph's measured colour came from the quote's lines.",
+     "often": "1 page.",
+     "proposes": "Major, a new kind: “colour added”.",
+     "source_crop": [
+      0,
+      240,
+      450,
+      560
+     ],
+     "render_crop": [
+      0,
+      300,
+      450,
+      620
+     ],
+     "source_marks": [
+      [
+       34,
+       356,
+       430,
+       446
+      ]
+     ],
+     "render_marks": [
+      [
+       30,
+       520,
+       430,
+       604
+      ]
+     ]
+    },
+    {
+     "key": "p1-spot-stopped",
+     "kind": "spot",
+     "page": "c0196",
+     "run": "P1-D2-L3",
+     "title": "A PDF form read only to its first header rows",
+     "what": "GLM-OCR takes the whole voucher for one table and writes only its header rows (render, right). The title, the payment and certification sections and the numbered notes (marked) are not read: 143 words.",
+     "checks": "Major, among them: “signature” printed twice and not drawn.",
+     "claude": "Agree, major: made by the parser's reading. Today's pipeline timed out on this page.",
+     "often": "Words lost on 19 pages; three pages lose most of a section this way (c0097, c0196, c0300).",
+     "proposes": "Keep major.",
+     "source_crop": [
+      0,
+      40,
+      1000,
+      1200
+     ],
+     "render_crop": [
+      0,
+      0,
+      1000,
+      546
+     ],
+     "source_marks": [
+      [
+       75,
+       60,
+       755,
+       132
+      ],
+      [
+       60,
+       700,
+       920,
+       1135
+      ]
+     ],
+     "render_marks": [
+      [
+       60,
+       40,
+       950,
+       360
+      ]
+     ]
+    },
+    {
+     "key": "p1-spot-bold",
+     "kind": "spot",
+     "page": "c0300",
+     "run": "P1-D2-L3",
+     "title": "Bold header cells drawn regular",
+     "what": "This PDF table prints its header row and its total row bold. Our render draws “Descrizione obiettivo”, “FTE” and the total's 9 regular.",
+     "checks": "Major: “bold printed, regular drawn” (7 blocks).",
+     "claude": "Agree, major: those cells measured regular.",
+     "often": "Bold lost: 35 pages.",
+     "proposes": "Keep major.",
+     "source_crop": [
+      60,
+      60,
+      960,
+      410
+     ],
+     "render_crop": [
+      60,
+      50,
+      960,
+      240
+     ],
+     "source_marks": [
+      [
+       280,
+       278,
+       442,
+       306
+      ],
+      [
+       718,
+       278,
+       767,
+       306
+      ],
+      [
+       650,
+       362,
+       678,
+       388
+      ]
+     ],
+     "render_marks": [
+      [
+       86,
+       112,
+       240,
+       140
+      ],
+      [
+       683,
+       112,
+       724,
+       140
+      ],
+      [
+       610,
+       184,
+       636,
+       212
+      ]
+     ]
+    },
+    {
+     "key": "p2-decide",
+     "kind": "plan",
+     "page": "P2",
+     "says": {
+      "checks": "Measured",
+      "often": "What D2 still gets wrong"
+     },
+     "title": "P2: take D2 as the converter?",
+     "what": "D2: GLM-OCR cuts the page and reads it, our adapter maps its blocks, our looks and renderer draw them. On the 41 L3 pages, against today's pipeline (L3-baseline), both reviewed page by page.",
+     "checks": "Time: 26 s a page against 577 s (18 minutes against 6.6 hours), no timeouts against 4. On the 37 pages both converted: 660 majors against 651; 13 pages better, 7 worse, 17 the same. D2 also converted the 4 pages today's lost. Words invented: 7 pages against 24; numbered steps drawn as bullets: none against 10.",
+     "claude": "Net gain, and fast enough to measure every change on the whole panel. The worse pages are named: c0097 and c0441 (the parser misses a sidebar, a name), c0064 and c0129 (accents and names misread), c0115 (four lines in no region), c0070 (broken table HTML), c0387 (stacked columns).",
+     "often": "Parser side: a box read as one table and only its grid read (c0097, c0196, c0300); misread names and accents. Our side, fixable: tables with spans left unmeasured by locate (12 pages), $ amounts taken for maths, stacked columns drawn under, formulas drawn as source.",
+     "proposes": "Take D2. Next, L5 on D2: our side's faults first, each reproduced on a dev page, the parser's weights untouched. Disagree to keep today's; a mix (which side from which arm) in the note."
+    }
+   ]
   }
  ],
- "page_stamp": "Spec 0023 · P1 · round 8: four questions before the GLM-OCR trial"
+ "page_stamp": "Spec 0023 · P1 · round 9: the D2 review, then P2"
 }
