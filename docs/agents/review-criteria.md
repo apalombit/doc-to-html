@@ -65,6 +65,24 @@ eye disagreed, the eye's rule was taken:
 - *A colour that marks something is meaning*: an order number printed
   red, a card framed orange.
 
+**Round 7 — Alessandro, 2026-11-09** (spec 0022, L3's review; 15
+issues, all agreed):
+
+- *What is not drawn is not judged for its look.* A table or a block
+  mostly lost is a words fault; its structure, size and weight are not
+  judged from a few of its words matched elsewhere (c0300's PG7).
+- *A drop cap and the rest of its word are one word*; the drop cap
+  drawn in the line is a minor (c0334's 'N' + 'otice').
+- *Printed beside a heading is not under it* (c0476's opening hours),
+  and a line the page does not print as a heading heads nothing (c0431).
+- *A line in its place is not moved*: what c0575's line lost is its bold
+  and its colour.
+- *Major, though no check raises them*: a block drawn unreadable (a
+  column a pixel wide, a word at 0.30 of the body); an accent word drawn
+  as a link (an address the page prints plain, drawn as a link, stays
+  minor); a chart drawn as loose numbers; a card's fill split into one
+  box per Zone.
+
 ## Deciding
 
 - **Net gain ships.** A change that makes more pages better than worse

@@ -177,6 +177,14 @@ them. c0008's section 1, 3% to 8% drawn, raised eight interleavings,
 each rejected (Alessandro, 2026-11-07); every interleaving confirmed
 keeps 62% or more of both groups."""
 
+JUDGED_KEPT = ORDER_KEPT
+"""The share of a table's or a block's words the output must draw, matched
+anywhere, for its structure and its type to be judged (`_drawn_share`). A block mostly lost is a
+words fault, and its few words left are copies matched where other lines
+draw them: c0300's PG7.2026 table, cropped away whole, was called a table
+not kept, a heading not kept, two sizes and a bold lost (round 7,
+Alessandro, 2026-11-09)."""
+
 SECTION_SLACK = 12.0
 """How far left of its heading a block may start and still be in its
 section, in pixels: a hanging number or a bullet's indent outdented a
@@ -304,6 +312,10 @@ class _Side:
     """A printed word's first word → every word it was glued from (`GLUE`)."""
     line_of: dict[int, tuple[int, int]] = field(default_factory=dict)
     line_words: dict[tuple[int, int], list[int]] = field(default_factory=dict)
+    spellings: dict[str, str] = field(default_factory=dict)
+    """The page's `TWIN_SPELLINGS`, a source side's only."""
+    drop_caps: set[int] = field(default_factory=set)
+    """Printed words that open with a drop cap (`_drop_cap`), by first word."""
 
     @property
     def words(self) -> tuple[Word, ...]:
@@ -317,6 +329,20 @@ class _Side:
 
     def line_box(self, line: tuple[int, int]) -> Rect:
         return _union(self.words[index].rect for index in self.line_words[line])
+
+
+DROP_CAP = 2.0
+"""How much larger than the rest of its word a drop cap is set, at least:
+c0334's N, 64 px before 'otice' at 15; c0399's E, 54 px before 'very'."""
+
+
+def _drop_cap(cap: Word, word: Word) -> bool:
+    """A drop cap and the rest of its word, one word: a single letter, set
+    `DROP_CAP` times larger or more, with no space before the rest in the
+    HTML. Floated, it is a block of its own (round 7, Alessandro,
+    2026-11-09). c0407's 'A', then ' lã', is a word of its own."""
+    return word.joined and len(cap.text) == 1 and cap.text.isalpha() \
+        and cap.font_px >= DROP_CAP * word.font_px
 
 
 def _union(rects: Iterable[Rect]) -> Rect:
@@ -337,12 +363,16 @@ def _side(projection: Projection, spellings: dict[str, str] | None = None) -> _S
     detail = projection.detail
     if detail is None:
         raise ValueError(f"{projection.label}: read without detail=True")
-    side = _Side(projection, detail)
+    side = _Side(projection, detail, spellings=dict(spellings or {}))
     groups: list[list[int]] = []
     for index, word in enumerate(detail.words):
         if groups:
             last = detail.words[groups[-1][-1]]
             gap = word.rect[0] - last.rect[2]
+            if _drop_cap(last, word) and len(groups[-1]) == 1:
+                side.drop_caps.add(groups[-1][0])
+                groups[-1].append(index)
+                continue
             if last.block == word.block and _same_row(last.rect, word.rect) \
                     and not (last.generated or word.generated) and -1.0 <= gap < GLUE:
                 groups[-1].append(index)
@@ -507,7 +537,17 @@ def _nearest_copies(source: _Side, output: _Side, alignment: Alignment) -> Align
         def cost(order: Sequence[int]) -> float:
             return sum(math.dist(w, _centre(output.box(t))) for w, t in zip(want, order))
 
-        best = min(itertools.permutations(targets), key=cost)
+        def each_nearer(order: Sequence[int]) -> bool:
+            # Every copy moved lands nearer where its neighbours went than
+            # its copy in order: c0476's six 'Serves 2', its card grid drawn
+            # as one column, were re-paired by a sum that sent card 6's copy
+            # 860 px from its neighbours to save more on others (round 7,
+            # Alessandro, 2026-11-09).
+            return all(math.dist(w, _centre(output.box(t))) < math.dist(w, _centre(output.box(s)))
+                       for w, t, s in zip(want, order, targets) if t != s)
+
+        best = min((order for order in itertools.permutations(targets) if each_nearer(order)),
+                   key=cost)
         if cost(targets) - cost(best) <= COPY_GAIN:
             continue
         for owner, other in zip(owners, best):
@@ -744,6 +784,12 @@ def _check_spelling(source: _Side, output: _Side, alignment: Alignment) -> list[
         printed = _printed(was, source.text(first)), _printed(now, output.text(second))
         if printed[0] == printed[1]:
             continue
+        if any(token in source.spellings for token in tokens(source.text(first))) and \
+                [source.tokens[i] for i in indexes] == tokens(output.text(second)):
+            # The twin spells it as its text layer does and the picture
+            # prints the map's spelling, as drawn: c0082's `specifc`, its
+            # fi ligature dropped (round 7, Alessandro, 2026-11-09).
+            continue
         if _LETTERS.sub("", printed[0]) == _LETTERS.sub("", printed[1]):
             # The same letters with another mark between them: a curly
             # apostrophe drawn straight, an en dash drawn as a hyphen
@@ -831,6 +877,8 @@ def _check_table(table: Table, source: _Side, output: _Side, alignment: Alignmen
                  ) -> list[Fault]:
     faults: list[Fault] = []
     held = _cell_tokens(source, table.index)
+    if _drawn_share([i for tokens_ in held.values() for i in tokens_], alignment) < JUDGED_KEPT:
+        return faults
     places = {index: _output_place(output, alignment, tokens_)
               for index, tokens_ in held.items()}
     filled = [index for index, cell in enumerate(table.cells)
@@ -1122,7 +1170,10 @@ def _check_headings(source: _Side, output: _Side, alignment: Alignment) -> list[
     faults = []
     held = _block_words(source)
     for block in source.projection.blocks:
-        if block.role != "heading" or block.index not in held:
+        if block.role != "heading" or block.index not in held \
+                or not _judged(held[block.index], alignment) \
+                or all(source.owner[i] in source.drop_caps for i in held[block.index]):
+            # A drop cap, bold and large, is set like a heading and is not one.
             continue
         landed = _landed_block(output, alignment, held[block.index])
         if landed is None:
@@ -1163,11 +1214,22 @@ def _groups(source: _Side) -> list[tuple[str, list[int]]]:
         ends = [min(held_by_block[h]) for h in headings[at + 1:] if h in held_by_block
                 and min(held_by_block[h]) > start]
         end = min(ends) if ends else len(source.tokens)
-        left = source.projection.blocks[heading].ink[0] - SECTION_SLACK
+        ink = source.projection.blocks[heading].ink
+        left = ink[0] - SECTION_SLACK
+
+        def under(block: int) -> bool:
+            # Printed beside the heading, on its row and right of it, is not
+            # under it: c0476's opening hours, top right of 'Small plates',
+            # drawn there, raised five interleavings (round 7, Alessandro,
+            # 2026-11-09).
+            box = source.projection.blocks[block].ink
+            if block != heading and box[0] >= ink[2] and ink[1] <= (box[1] + box[3]) / 2 <= ink[3]:
+                return False
+            return box[0] >= left
+
         groups.append((f"section {source.projection.blocks[heading].text[:30]!r}",
                        [i for i in range(start, end)
-                        if source.projection.blocks[source.words[source.owner[i]].block].ink[0]
-                        >= left]))
+                        if under(source.words[source.owner[i]].block)]))
     del order
     return groups
 
@@ -1190,6 +1252,20 @@ def _interleaves(positions: Sequence[tuple[int, str]]) -> bool:
 
 def _kept(held: Sequence[int], alignment: Alignment) -> float:
     return sum(i in alignment.strong for i in held) / len(held) if held else 0.0
+
+
+def _drawn_share(held: Sequence[int], alignment: Alignment) -> float:
+    """Matched alone or in a run: a one-word heading or total is matched
+    alone, and is judged (c0115's 'TOTAL', c0345's 'Contractor')."""
+    return sum(i in alignment.pairs for i in held) / len(held) if held else 0.0
+
+
+def _judged(held: Sequence[int], alignment: Alignment) -> bool:
+    """A block drawn enough for its look to be judged: half its words, or a
+    run of its own. c0243's practice name is drawn in a run, tiny, while the
+    address sharing its block is lost."""
+    return _drawn_share(held, alignment) >= JUDGED_KEPT or \
+        sum(i in alignment.strong for i in held) >= RUN_TOKENS
 
 
 def _check_order(source: _Side, output: _Side, alignment: Alignment) -> list[Fault]:
@@ -1459,8 +1535,13 @@ def _check_headings_over(source: _Side, output: _Side, alignment: Alignment) -> 
             continue
         drawn = [output.owner[alignment.pairs[i]] for i in indexes if i in alignment.pairs]
         placed = {output.words[owner].block for owner in drawn}
+        # Only a heading the page prints as one: c0431's top-right line
+        # 'Trade catalog, July 2024 edition', drawn as a heading, stood over
+        # Section 1's right-hand columns, which its narrower heading does
+        # not reach (round 7, Alessandro, 2026-11-09).
         seen = _heading_over(output.projection.blocks, _union(output.box(owner) for owner in drawn),
-                             (h for h in out_headings if h in heading_of_out and h not in placed))
+                             (h for h in out_headings if h in heading_of_out
+                              and heading_of_out[h] in headings and h not in placed))
         if seen is None or heading_of_out[seen] == mine:
             continue
         found.append((f"printed under {source.projection.blocks[mine].text[:30]!r}, "
@@ -1727,7 +1808,8 @@ def _check_looks(source: _Side, output: _Side, alignment: Alignment) -> list[Fau
     body = _mode(word.font_px for word in source.words)
     for mine, theirs in sorted(strong.items()):
         was, now = source.words[mine], output.words[theirs]
-        if was.generated or now.generated or not was.ground or not now.ground:
+        if was.generated or now.generated or not was.ground or not now.ground \
+                or mine in source.drop_caps:
             continue
         under_was, under_now = _rgb(was.ground), _rgb(now.ground)
         ink_was, ink_now = _rgb(was.color, was.ground), _rgb(now.color, now.ground)
@@ -2147,13 +2229,20 @@ def _check_type(source: _Side, output: _Side, alignment: Alignment) -> list[Faul
     body_mine = _mode(word.font_px for word in source.words)
     body_theirs = _drawn_body(source, output, alignment, body_mine)
     texts = {block.index: block for block in source.projection.blocks}
+    judged = {block for block, held in _block_words(source).items()
+              if _judged(held, alignment)}
     pairs_by_block: dict[int, list[tuple[Word, Word]]] = defaultdict(list)
     seen: set[tuple[int, int]] = set()
+    capped: list[tuple[int, int]] = []
     for i, j in alignment.pairs.items():
         first, second = source.owner[i], output.owner[j]
-        if (first, second) in seen:
+        if (first, second) in seen or source.words[first].block not in judged:
             continue
         seen.add((first, second))
+        if first in source.drop_caps:
+            # Its size and colour are the drop cap's, judged as one.
+            capped.append((first, second))
+            continue
         word = source.words[first]
         if word.generated or output.words[second].generated:
             # A CSS counter's look is its marker's, not its item's: the
@@ -2163,6 +2252,8 @@ def _check_type(source: _Side, output: _Side, alignment: Alignment) -> list[Faul
     faces: list[tuple[str, str, Rect]] = []
     near: list[tuple[str, str, Rect]] = []
     sizes, bold, heavy, slant = [], [], [], []
+    lost_caps = [("printed as a drop cap, drawn in the line", source.text(first), source.box(first))
+                 for first, second in capped if second not in output.drop_caps]
     for block, pairs in sorted(pairs_by_block.items()):
         text, ink = texts[block].text[:40], texts[block].ink
         printed = Counter(face_class(w) for w, _ in pairs).most_common(1)[0][0]
@@ -2203,6 +2294,7 @@ def _check_type(source: _Side, output: _Side, alignment: Alignment) -> list[Faul
     faults += _grouped("type", "bold lost", "major", bold)
     faults += _grouped("type", "weight added", "minor", heavy)
     faults += _grouped("type", "italics", "minor", slant)
+    faults += _grouped("type", "drop cap lost", "minor", lost_caps)
     return faults
 
 

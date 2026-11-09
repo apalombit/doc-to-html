@@ -2652,7 +2652,12 @@
        347,
        724
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "l3-copies",
@@ -2704,7 +2709,12 @@
        78,
        796
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "this is more a layout fault then alignment since is completely different from the 2x3 cards layout and all sequential along page",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "l3-hours",
@@ -2756,7 +2766,12 @@
        101,
        63
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "l3-columns",
@@ -2820,7 +2835,12 @@
        145,
        787
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "first card of the set of three has replicated wrong format title - this is the main issue as it replicates it not even sure what was flagged error but yes is major",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "l3-dropcap",
@@ -2860,7 +2880,12 @@
        40,
        251
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "l3-ground",
@@ -2900,7 +2925,12 @@
        202,
        1033
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "l3-rules",
@@ -2940,7 +2970,12 @@
        608,
        375
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "l3-align",
@@ -2980,7 +3015,12 @@
        790,
        866
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "agree this is just text bold and color with justification so minor is ok but an alignment issue per se just result of wrong text show-specs",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "l3-moot",
@@ -3020,7 +3060,12 @@
        195,
        558
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "l3-unreadable",
@@ -3060,7 +3105,12 @@
        654,
        990
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "l3-link",
@@ -3100,7 +3150,12 @@
        460,
        370
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "l3-chart",
@@ -3140,7 +3195,12 @@
        608,
        410
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "l3-cardfill",
@@ -3192,7 +3252,12 @@
        430,
        605
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "l3-spot-cells",
@@ -3244,7 +3309,12 @@
        509,
        285
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     },
     {
      "key": "l3-spot-twice",
@@ -3290,7 +3360,12 @@
        153,
        481
       ]
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-09"
+     }
     }
    ]
   }

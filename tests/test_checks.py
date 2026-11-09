@@ -678,6 +678,65 @@ class TestWhatTheRoundsDecided:
         assert frame.severity == "major" and "Gross pay" in frame.element
 
 
+# --- what Alessandro decided, review round 7, 2026-11-09 (spec 0022) ------------
+
+
+@needs_chrome
+class TestWhatRoundSevenDecided:
+    """docs/agents/review-issues.json, round 7: false alarms found on L3's
+    panel pages, each pinned on a dev page the same way (panel pages are
+    never used in a test)."""
+
+    def test_a_word_its_twin_spells_otherwise_is_spelled_as_the_map_says(self) -> None:
+        """l3-ligature (c0082): a PDF's text layer drops the fi ligature of
+        'specific'; the spelling check compared that raw text. c0421's
+        'soil-specific', its twin made to drop the fi, mapped back."""
+        source = corpus.page("c0421")
+        width = Image.open(source.png_path()).width
+        html = source.html_path().read_text(encoding="utf-8")
+        twin = project(html.replace("specific", "specifc"), width=width, flat=True, detail=True)
+        page = project(html, width=width, flat=True, detail=True)
+        result = check(twin, page, picture_height=twin.height, page="c0421",
+                       spellings={"specifc": "specific"})
+        assert not [f for f in result.faults if f.check == "words"]
+
+    def test_a_drop_cap_and_the_rest_of_its_word_are_one_word(self) -> None:
+        """l3-dropcap (c0334's 'N' + 'otice'): c0399's drop cap 'E' + 'very'
+        drawn in the line is one word kept and one drop cap lost, a minor;
+        not a merge, and not a heading."""
+        mine, theirs = _read("c0399", "for (const e of document.querySelectorAll('.dc')) "
+                             "Object.assign(e.style, {float: 'none', fontSize: 'inherit', "
+                             "lineHeight: 'inherit', fontWeight: 'inherit', padding: '0', "
+                             "color: 'inherit'});")
+        result = check(mine, theirs, picture_height=mine.height, page="c0399")
+        kinds = {(f.check, f.fault, f.severity) for f in result.faults}
+        assert ("type", "drop cap lost", "minor") in kinds
+        assert not [f for f in result.faults if f.fault in ("merged", "heading not kept")
+                    or f.check in ("type", "looks") and f.element in ("E", "Every")
+                    and f.fault != "drop cap lost"]
+
+    def test_a_block_not_drawn_is_not_judged_for_its_look(self) -> None:
+        """l3-moot (c0300's PG7.2026, cropped away whole): c0029's '5. Safety
+        and staff' and c0309's 'Note de service' are not drawn; their loss
+        is the words check's, and no heading or type fault is raised on the
+        few words matched elsewhere."""
+        for page_id, heading, word in (("c0029", "5. Safety and staff", "safety"),
+                                       ("c0309", "Note de service", "service")):
+            result = check_page(page_id, DEV / f"{page_id}.html")
+            assert [f for f in result.faults if f.fault == "lost" and f.element == word]
+            assert not [f for f in result.faults if f.check in ("structure", "type")
+                        and heading in f.element]
+
+    def test_a_line_printed_beside_a_heading_is_not_under_it(self) -> None:
+        """l3-hours (c0476's opening hours, top right of 'Small plates'):
+        c0366's themes box, beside 'Foire aux questions', is not its
+        section; the first answer drawn as a narrow column stays major."""
+        result = check_page("c0366", DEV / "c0366.html")
+        order = [f for f in result.faults if f.fault == "interleaved"]
+        assert not [f for f in order if "Foire aux questions" in f.element]
+        assert [f for f in order if f.severity == "major" and "Comment fonctionne" in f.element]
+
+
 # --- identity -----------------------------------------------------------------
 
 

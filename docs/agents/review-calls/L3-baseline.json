@@ -14027,12 +14027,12 @@
   {
    "check": "beside",
    "fault": "drawn under",
-   "why": "9 pages, and 4 more added (layout: beside). Card grids and side-by-side blocks drawn one under another: the cards read as one table or list Zone, or a second Zone given a band of its own. The main cause of the height faults."
+   "why": "13 pages: 9 raised by the check, 4 added (layout: beside). Card grids and side-by-side blocks drawn one under another: the cards read as one table or list Zone, or a second Zone given a band of its own. The main cause of the height faults."
   },
   {
    "check": "looks",
    "fault": "fill drawn another shape",
-   "why": "12 pages, and 11 added. A band, card or header split into one box per Zone; card fills found by the furniture but placed in no Zone; a badge with its pixels drawn as a mark."
+   "why": "12 pages, 14 times, 11 of them added by the review. A band, card or header split into one box per Zone; card fills found by the furniture but placed in no Zone; a badge with its pixels drawn as a mark."
   },
   {
    "check": "height",
@@ -14097,7 +14097,53 @@
   {
    "check": "rules",
    "fault": "frame missing",
-   "why": "6 pages, and 4 added (looks: frame missing): the page's frame found as loose rules, or not found."
+   "why": "11 pages with the 4 added (looks: frame missing): the page's frame found as loose rules, or not found."
   }
- ]
+ ],
+ "after_round_7": {
+  "on": "2026-11-09",
+  "note": "Round 7's check issues were fixed after this review (spec 0022, step 4). Re-checked with the fixed checks, the faults under `gone` are no longer raised: every one was rejected here, or sits on a block not drawn at all (round 7's l3-moot: c0431's 46, the store name). Those under `narrowed` are still raised, with a block not drawn left out. c0334 gains one minor, 'drop cap lost', which this review had added by hand (n 13). The sheets and checks this review was answered on are in debug/runs/L3-baseline/_review.reviewed/ and checks.reviewed/.",
+  "gone": {
+   "c0082": [
+    7,
+    8,
+    9
+   ],
+   "c0300": [
+    79,
+    81,
+    90,
+    92,
+    93
+   ],
+   "c0334": [
+    1,
+    5
+   ],
+   "c0431": [
+    46,
+    48
+   ],
+   "c0476": [
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "narrowed": {
+   "c0342": [
+    28
+   ],
+   "c0382": [
+    12,
+    17
+   ]
+  }
+ }
 }

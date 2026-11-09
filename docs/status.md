@@ -1,4 +1,4 @@
-# Status — 2026-11-07 (**the baseline is `tests/frozen/s14-result/`; the corpus is built (spec 0020); L2, measurement and the judge, is done (spec 0021, issue #44 closed); next is L3, the honest baseline, spec 0022**)
+# Status — 2026-11-09 (**the baseline is `tests/frozen/s14-result/`; the corpus is built (spec 0020); L2 is done (spec 0021); L3, the honest baseline, is done (spec 0022, issue #45 closed): every one of 37 unseen pages has a major fault; next is P1, the GLM-OCR parser-first PoC, spec 0023**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-23,
@@ -6,8 +6,9 @@ when Alessandro took spec 0019's sweep `S14-sweep` as the baseline,
 frozen as `s14-result/` (issue #42 closed), and cleared every open item.
 Updated 2026-10-24, when he decided the level-up plan
 ([`level-up.md`](level-up.md) §8), 2026-10-30, when spec 0020 built
-the corpus (issue #43 closed), and 2026-11-07, when spec 0021 closed L2
-(issue #44 closed).
+the corpus (issue #43 closed), 2026-11-07, when spec 0021 closed L2
+(issue #44 closed), and 2026-11-09, when spec 0022 closed L3 (issue #45
+closed).
 
 Reading order for a fresh session:
 1. `CLAUDE.md`'s **READ THIS FIRST**;
@@ -16,9 +17,11 @@ Reading order for a fresh session:
 3. this file;
 4. [`level-up.md`](level-up.md)'s Gist, §6 and §8: the plan from
    2026-10-24, and what comes next;
-5. [`specs/0021-measurement-and-the-judge.md`](specs/0021-measurement-and-the-judge.md)'s
-   "Where L2 stands", what L2 hands on and the prompt that starts L3,
-   and [`agents/review-criteria.md`](agents/review-criteria.md), the
+5. [`specs/0022-the-honest-baseline.md`](specs/0022-the-honest-baseline.md)'s
+   "Outcome", the ranked fault classes P2 decides against and the prompt
+   that starts P1; [`specs/0021-measurement-and-the-judge.md`](specs/0021-measurement-and-the-judge.md)'s
+   "Where L2 stands", what the checks and the judge are; and
+   [`agents/review-criteria.md`](agents/review-criteria.md), the
    criteria every review is judged by;
 6. [`specs/0019-steady-checked-structured-styled.md`](specs/0019-steady-checked-structured-styled.md)'s
    "Outcome — the steps" and "Outcome — the sweep", the last conversion
@@ -29,12 +32,13 @@ If you are going to look at output — and you should — use the
 
 Branches `main`, `develop` and `level-up`, all on the remote since
 2026-10-24; work continues on `level-up`, and `scaffold` is retired into
-`develop`. **1698 tests pass (1 skipped), `mypy src/` clean**: measured
-2026-11-07 on `level-up`, at the end of spec 0021. The conversion code
+`develop`. **1702 tests pass (1 skipped), `mypy src/` clean**: measured
+2026-11-09 on `level-up`, at the end of spec 0022. The conversion code
 is still `a0d73c9`'s in what it answers: spec 0020 added the corpus
 factory, and spec 0021 the batch runner and a 3-minute limit on each
 model call; `tools/replay_run.py` reproduces `s14-result/` 21 of 21 byte
-for byte on 2026-11-07.
+for byte on 2026-11-09, at the end of spec 0022, which changed the
+checks and not the conversion.
 
 **How work is judged — Alessandro, 2026-10-12, for spec 0011; carried
 over by specs 0012 to 0019.**
@@ -139,7 +143,12 @@ Spec 0021   Measurement and the judge, L2 — issue #44: the checks,
               issue page; dev converted on 98 pages; five rounds of
               Alessandro's calls, 53 of 58 agreed, the checks built
               to them                                   DONE 2026-11-07
-              L3 the honest baseline, spec 0022         NEXT
+Spec 0022   The honest baseline, L3 — issue #45: L3-baseline over 41
+              panel pages (five real PDF), 37 converted, 4 timed out;
+              every page reviewed: a major fault on 37 of 37, three
+              in four made reading the page; round 7, 15 of 15
+              agreed; six check issues fixed      DONE 2026-11-09
+              P1 the GLM-OCR parser-first PoC, spec 0023 NEXT
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -232,6 +241,15 @@ Means over `S14-sweep`, against `s13-result/scores.json`:
 ---
 
 ## What the last work shipped
+
+### Spec 0022 — the honest baseline, L3, 2026-11-08 to 2026-11-09
+
+Measurement only; no conversion code changed (the replay of
+`s14-result/` is still 21 of 21 byte-identical). It shipped the L3 run's
+calls (`agents/review-calls/L3-baseline.json`), round 7 on the issue
+page, and six fixes to the checks (`checks.py`, and `Word.joined` in the
+projection), each pinned on a dev page. The spec's "Outcome" is the
+record and the reference P2 decides against.
 
 ### Spec 0019 — steady, checked, structured, styled, 2026-10-19 to 2026-10-23
 
@@ -328,7 +346,8 @@ In order (`level-up.md` §6):
    both on 2026-10-30, and `level-up.md` §8 records it as decision 7.
 
    They are dealt into dev (231), panel (200) and vault (200), and the
-   L3 set is 36 panel pages. `doc_to_html.corpus.names("dev" | "panel" |
+   L3 set is 41 panel pages (36, and the five PDF pages not dense,
+   Alessandro 2026-11-08). `doc_to_html.corpus.names("dev" | "panel" |
    "l3")` returns a pool, and the vault refuses unless unsealed.
 3. **L2 — measurement and the judge, done 2026-11-07**
    ([spec 0021](specs/0021-measurement-and-the-judge.md), issue #44
@@ -344,14 +363,26 @@ In order (`level-up.md` §6):
    Dev is converted on 98 pages. The checks still miss a group drawn
    wholly below the one printed beside it and a list torn by a gap
    (spec 0021, "Where L2 stands"): a review looks for both by eye.
-4. **L3 — the honest baseline, next: spec 0022**, from spec 0021's last
-   prompt. Today's pipeline over `corpus/l3-subset.txt`, 36 panel pages,
-   about 5 to 6 hours of conversion; every page reviewed; fault classes
-   ranked by pages touched.
-5. **P1 — the parser-first PoC**, after L1, on its own branch: GLM-OCR's
-   latest, whole pipeline (its layout model and its reader), then an
-   adapter into the IR, then our looks and renderer. **Local models
-   only.**
+4. **L3 — the honest baseline, done 2026-11-09**
+   ([spec 0022](specs/0022-the-honest-baseline.md), issue #45 closed).
+   Today's pipeline over the 41 pages of `corpus/l3-subset.txt`, 6.6
+   hours; 37 converted, 4 timed out (a dense form, a PDF invoice, two
+   card grids). Claude reviewed every page; Alessandro agreed all 15
+   spot checks of round 7.
+   - **Every one of the 37 pages has a major fault**: 14.5 a generated
+     page, 43.5 a PDF page.
+   - **Three majors in four are made reading the page** (extract, layout,
+     locate, rectify: 495), one in four drawing it (render and the cv
+     passes: 156).
+   - The ranked classes, in the spec's outcome: words lost and invented
+     (24 pages each), side by side drawn as a stack (13), fills split per
+     Zone (12), numbers as bullets, ticks lost, misreads, bold and sizes.
+   - Six check issues the review found are fixed and pinned on dev.
+5. **P1 — the parser-first PoC, next: spec 0023**, from spec 0022's
+   last prompt, on its own branch: GLM-OCR's latest, whole pipeline (its
+   layout model and its reader), then an adapter into the IR, then our
+   looks and renderer, against L3-baseline class by class. **Local
+   models only.**
 6. **P2 — the decision**, then **L5 — fit what is left** instead of
    setting it by hand.
 

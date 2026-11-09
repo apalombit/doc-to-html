@@ -41,10 +41,13 @@ and every call Alessandro has made since is in that file.
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
 measured numbers and what has already been tried and rejected. **No spec
-is open. Spec 0021, `docs/specs/0021-measurement-and-the-judge.md`
-(issue #44, closed), built the checks and the judge, the level-up's L2,
-done 2026-11-07; next is L3, spec 0022, run from spec 0021's last
-handover prompt.** Spec 0020 (issue #43, closed) built the corpus. The
+is open. Spec 0022, `docs/specs/0022-the-honest-baseline.md` (issue
+#45, closed), ran the level-up's L3, the honest baseline, done
+2026-11-09: a major fault on 37 of 37 unseen pages, three in four made
+reading the page; its outcome's ranked table is what P2 decides against.
+Next is P1, the GLM-OCR parser-first PoC, spec 0023, run from spec
+0022's last handover prompt.** Spec 0021 (issue #44, closed) built the
+checks and the judge (L2); spec 0020 (issue #43, closed) built the corpus. The
 level-up plan (`docs/level-up.md`, 2026-10-24) is decided; each of its
 steps gets a spec and an issue when it starts, and spec 0020's "What comes
 after" outlines the ones that follow (L2 with the judge, L3, the GLM-OCR
@@ -84,9 +87,9 @@ line that caused the deletion.
 a structural fault on 9 of 10, against 0 of 6 tuned pages. So the aim is
 now conversion that generalises: build a corpus by its variability first
 (L1: the variability agreed 2026-10-24, the corpus built 2026-10-30;
-L2, the checks and the judge, done 2026-11-07; next L3, the honest
-baseline), then a
-GLM-OCR parser-first PoC (P1), local models only. Work continues on branch
+L2, the checks and the judge, done 2026-11-07; L3, the honest
+baseline, done 2026-11-09), then a
+GLM-OCR parser-first PoC (P1, next), local models only. Work continues on branch
 `level-up`; `scaffold` is retired into `develop`.
 
 ```
@@ -251,8 +254,11 @@ LEVEL-UP    2026-10-24, Alessandro: docs/level-up.md, branch level-up —
               L2 measurement and a judge   DONE 2026-11-07: spec 0021,
                 #44; the checks, one command, the issue page; dev
                 converted on 98 pages; five rounds of his calls
-              L3 a baseline, limited set   NEXT: spec 0022
-              P1 the GLM-OCR parser-first PoC, after L1  P2 decide  L5 fit
+              L3 a baseline, limited set   DONE 2026-11-09: spec 0022,
+                #45; 41 panel pages, 37 converted; a major on 37 of
+                37, three in four made reading the page; round 7
+              P1 the GLM-OCR parser-first PoC   NEXT: spec 0023
+              P2 decide  L5 fit
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
@@ -309,8 +315,8 @@ frozen as `tests/frozen/s14-result/`, **and cleared every open item the
 same day**, the spec's four ranked directions included. Nothing is open:
 do not pick anything up unless he names it. **He named the level-up plan
 on 2026-10-24** (`docs/level-up.md`); L1b, spec 0020, built the corpus
-by 2026-10-30; L2, spec 0021, the checks and the judge by 2026-11-07; its
-next step is L3, spec 0022.
+by 2026-10-30; L2, spec 0021, the checks and the judge by 2026-11-07; L3, spec 0022,
+the honest baseline by 2026-11-09; its next step is P1, spec 0023.
 `docs/specs/0007-handover.md` holds spec 0007's prompts, as record.
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
@@ -735,7 +741,7 @@ each other — `CellState.DISPUTED` and the Ladder are already the vocabulary fo
 it, and `_climb_ladders` already records that it waits on a second Engine. That
 is model time and Alessandro's decision, not a detector.
 
-**Tracker state, 2026-11-07: no issue is open; #44 (spec 0021, L2) closed when its work finished, #43 (spec 0020, the corpus) when the corpus was built.** #31–#42 (specs 0008–0019) are closed, each done and decided. #30 (spec 0007) closed when its
+**Tracker state, 2026-11-09: no issue is open; #45 (spec 0022, L3) closed when its work finished, #44 (spec 0021, L2) likewise, #43 (spec 0020, the corpus) when the corpus was built.** #31–#42 (specs 0008–0019) are closed, each done and decided. #30 (spec 0007) closed when its
 work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
 #17 (the vision layout prompt) were closed by Thread 0. Every other spec is closed
 history; 0007 still defines the target.

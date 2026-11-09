@@ -817,6 +817,7 @@ MEASURE = r"""
         }
       }
     };
+    let previous = '';
     for (const [node, block] of nodes) {
       const first = (() => {
         range.selectNodeContents(node);
@@ -861,8 +862,10 @@ MEASURE = r"""
                     color: style.color, transform: style.textTransform,
                     small_caps: /small-caps/.test(style.fontVariantCaps || ''),
                     cell: cell && cellIds.has(cell) ? cellIds.get(cell) : null,
-                    item, ground: paintedUnder(parent, (l + r) / 2, (t + b) / 2)});
+                    item, ground: paintedUnder(parent, (l + r) / 2, (t + b) / 2),
+                    joined: match.index === 0 && previous !== '' && !/\s$/.test(previous)});
       }
+      previous = node.textContent;
       if (after.has(node) && first) {
         let edge = first[1].right + 3;
         generatedWords(after.get(node), block, (width) => {
@@ -1111,6 +1114,9 @@ class Word:
     """What the word is drawn on, at its centre: the nearest painted
     background, a one-colour strip where it covers the word; '' under any
     other image."""
+    joined: bool = False
+    """No space between it and the text before it in the HTML: the rest of
+    a word after a drop cap, `<span>N</span>otice` (c0334)."""
 
 
 @dataclass(frozen=True)
@@ -1550,7 +1556,7 @@ def _detail(payload: dict[str, Any]) -> Detail:
              color=str(item["color"]), transform=str(item["transform"]),
              small_caps=bool(item["small_caps"]), cell=_pair(item["cell"]),
              item=_pair(item["item"]), generated=bool(item.get("generated", False)),
-             ground=str(item.get("ground", "")))
+             ground=str(item.get("ground", "")), joined=bool(item.get("joined", False)))
         for item in payload["words"]
     )
     tables = tuple(
