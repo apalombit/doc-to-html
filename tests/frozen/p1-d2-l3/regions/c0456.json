@@ -1,0 +1,1956 @@
+[
+ {
+  "index": 0,
+  "label": "text",
+  "content": "Hawthorn Cycle Works\n214 Quarry Street\nSanta Fe, NM 87501",
+  "bbox_2d": [
+   40,
+   58,
+   158,
+   107
+  ],
+  "polygon": [
+   [
+    40,
+    58
+   ],
+   [
+    40,
+    106
+   ],
+   [
+    157,
+    106
+   ],
+   [
+    157,
+    58
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "doc_title",
+  "content": "Workshop service price list.",
+  "bbox_2d": [
+   272,
+   58,
+   625,
+   170
+  ],
+  "polygon": [
+   [
+    272,
+    58
+   ],
+   [
+    272,
+    169
+   ],
+   [
+    624,
+    169
+   ],
+   [
+    624,
+    58
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "text",
+  "content": "EFFECTIVE",
+  "bbox_2d": [
+   40,
+   211,
+   94,
+   225
+  ],
+  "polygon": [
+   [
+    40,
+    211
+   ],
+   [
+    40,
+    224
+   ],
+   [
+    93,
+    224
+   ],
+   [
+    93,
+    211
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "text",
+  "content": "October 4, 2019",
+  "bbox_2d": [
+   40,
+   230,
+   132,
+   248
+  ],
+  "polygon": [
+   [
+    40,
+    230
+   ],
+   [
+    40,
+    247
+   ],
+   [
+    131,
+    247
+   ],
+   [
+    131,
+    230
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   43,
+   299,
+   70,
+   329
+  ],
+  "polygon": [
+   [
+    43,
+    299
+   ],
+   [
+    43,
+    328
+   ],
+   [
+    69,
+    328
+   ],
+   [
+    69,
+    299
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "paragraph_title",
+  "content": "Safety check",
+  "bbox_2d": [
+   40,
+   344,
+   134,
+   366
+  ],
+  "polygon": [
+   [
+    40,
+    344
+   ],
+   [
+    40,
+    365
+   ],
+   [
+    133,
+    365
+   ],
+   [
+    133,
+    344
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "text",
+  "content": "Brakes, tires, bolts, chain and quick-release checked and reported in writing. Minor adjustments included.",
+  "bbox_2d": [
+   40,
+   369,
+   250,
+   420
+  ],
+  "polygon": [
+   [
+    40,
+    369
+   ],
+   [
+    40,
+    419
+   ],
+   [
+    249,
+    419
+   ],
+   [
+    249,
+    369
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "text",
+  "content": "01",
+  "bbox_2d": [
+   241,
+   299,
+   255,
+   314
+  ],
+  "polygon": [
+   [
+    241,
+    299
+   ],
+   [
+    241,
+    313
+   ],
+   [
+    254,
+    313
+   ],
+   [
+    254,
+    299
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "text",
+  "content": "TIME\n20 min",
+  "bbox_2d": [
+   40,
+   468,
+   80,
+   506
+  ],
+  "polygon": [
+   [
+    40,
+    468
+   ],
+   [
+    40,
+    505
+   ],
+   [
+    80,
+    505
+   ],
+   [
+    80,
+    468
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "text",
+  "content": "PRICE $25",
+  "bbox_2d": [
+   187,
+   469,
+   220,
+   506
+  ],
+  "polygon": [
+   [
+    187,
+    469
+   ],
+   [
+    187,
+    474
+   ],
+   [
+    187,
+    480
+   ],
+   [
+    187,
+    505
+   ],
+   [
+    219,
+    505
+   ],
+   [
+    219,
+    469
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "text",
+  "content": "LABOR Included",
+  "bbox_2d": [
+   112,
+   469,
+   166,
+   506
+  ],
+  "polygon": [
+   [
+    112,
+    469
+   ],
+   [
+    112,
+    505
+   ],
+   [
+    165,
+    505
+   ],
+   [
+    165,
+    469
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "paragraph_title",
+  "content": "Drivetrain and gears",
+  "bbox_2d": [
+   40,
+   599,
+   183,
+   619
+  ],
+  "polygon": [
+   [
+    40,
+    599
+   ],
+   [
+    40,
+    618
+   ],
+   [
+    182,
+    618
+   ],
+   [
+    182,
+    599
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "text",
+  "content": "TIME\n45 min",
+  "bbox_2d": [
+   40,
+   721,
+   81,
+   759
+  ],
+  "polygon": [
+   [
+    40,
+    721
+   ],
+   [
+    40,
+    758
+   ],
+   [
+    80,
+    758
+   ],
+   [
+    80,
+    726
+   ],
+   [
+    70,
+    721
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "text",
+  "content": "Chain, cassette and chairings measured for wear, derailleurs adjusted, shifting tested under load on the stand.",
+  "bbox_2d": [
+   40,
+   621,
+   254,
+   672
+  ],
+  "polygon": [
+   [
+    40,
+    621
+   ],
+   [
+    40,
+    671
+   ],
+   [
+    253,
+    671
+   ],
+   [
+    253,
+    621
+   ],
+   [
+    195,
+    621
+   ],
+   [
+    184,
+    621
+   ],
+   [
+    155,
+    621
+   ],
+   [
+    149,
+    621
+   ]
+  ]
+ },
+ {
+  "index": 14,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   42,
+   556,
+   70,
+   579
+  ],
+  "polygon": [
+   [
+    42,
+    556
+   ],
+   [
+    42,
+    578
+   ],
+   [
+    69,
+    578
+   ],
+   [
+    69,
+    556
+   ]
+  ]
+ },
+ {
+  "index": 15,
+  "label": "text",
+  "content": "LABOR\n0.75 hr",
+  "bbox_2d": [
+   112,
+   722,
+   156,
+   759
+  ],
+  "polygon": [
+   [
+    112,
+    722
+   ],
+   [
+    112,
+    758
+   ],
+   [
+    155,
+    758
+   ],
+   [
+    155,
+    722
+   ]
+  ]
+ },
+ {
+  "index": 16,
+  "label": "text",
+  "content": "PRICE $55",
+  "bbox_2d": [
+   186,
+   721,
+   221,
+   759
+  ],
+  "polygon": [
+   [
+    220,
+    721
+   ],
+   [
+    217,
+    721
+   ],
+   [
+    186,
+    726
+   ],
+   [
+    186,
+    758
+   ],
+   [
+    220,
+    758
+   ]
+  ]
+ },
+ {
+  "index": 17,
+  "label": "text",
+  "content": "WORKSHOP MANAGER Jordan Nguyen",
+  "bbox_2d": [
+   273,
+   211,
+   381,
+   250
+  ],
+  "polygon": [
+   [
+    273,
+    211
+   ],
+   [
+    273,
+    249
+   ],
+   [
+    380,
+    249
+   ],
+   [
+    380,
+    211
+   ]
+  ]
+ },
+ {
+  "index": 18,
+  "label": "text",
+  "content": "05",
+  "bbox_2d": [
+   241,
+   554,
+   256,
+   568
+  ],
+  "polygon": [
+   [
+    241,
+    554
+   ],
+   [
+    241,
+    567
+   ],
+   [
+    255,
+    567
+   ],
+   [
+    255,
+    554
+   ]
+  ]
+ },
+ {
+  "index": 19,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   278,
+   298,
+   301,
+   328
+  ],
+  "polygon": [
+   [
+    278,
+    298
+   ],
+   [
+    278,
+    327
+   ],
+   [
+    300,
+    327
+   ],
+   [
+    300,
+    298
+   ]
+  ]
+ },
+ {
+  "index": 20,
+  "label": "text",
+  "content": "MOST BOOKED",
+  "bbox_2d": [
+   415,
+   297,
+   490,
+   312
+  ],
+  "polygon": [
+   [
+    415,
+    297
+   ],
+   [
+    415,
+    311
+   ],
+   [
+    489,
+    311
+   ],
+   [
+    489,
+    297
+   ]
+  ]
+ },
+ {
+  "index": 21,
+  "label": "text",
+  "content": "Basic tune-up Gears and brakes indexed, wheels truled to a tolerance of 1 mm, drivetrain cleaned and lubricated, tires inflated.",
+  "bbox_2d": [
+   272,
+   346,
+   490,
+   420
+  ],
+  "polygon": [
+   [
+    272,
+    346
+   ],
+   [
+    272,
+    419
+   ],
+   [
+    489,
+    419
+   ],
+   [
+    489,
+    346
+   ]
+  ]
+ },
+ {
+  "index": 22,
+  "label": "text",
+  "content": "TIME\n1 hr",
+  "bbox_2d": [
+   273,
+   468,
+   301,
+   506
+  ],
+  "polygon": [
+   [
+    273,
+    468
+   ],
+   [
+    273,
+    505
+   ],
+   [
+    300,
+    505
+   ],
+   [
+    300,
+    468
+   ]
+  ]
+ },
+ {
+  "index": 23,
+  "label": "text",
+  "content": "LABOR\n1 hr",
+  "bbox_2d": [
+   346,
+   469,
+   382,
+   506
+  ],
+  "polygon": [
+   [
+    346,
+    469
+   ],
+   [
+    346,
+    484
+   ],
+   [
+    346,
+    490
+   ],
+   [
+    346,
+    505
+   ],
+   [
+    381,
+    505
+   ],
+   [
+    381,
+    501
+   ],
+   [
+    381,
+    494
+   ],
+   [
+    381,
+    469
+   ]
+  ]
+ },
+ {
+  "index": 24,
+  "label": "text",
+  "content": "PRICE $79",
+  "bbox_2d": [
+   420,
+   469,
+   452,
+   506
+  ],
+  "polygon": [
+   [
+    420,
+    469
+   ],
+   [
+    420,
+    505
+   ],
+   [
+    451,
+    505
+   ],
+   [
+    451,
+    469
+   ]
+  ]
+ },
+ {
+  "index": 25,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   276,
+   552,
+   303,
+   583
+  ],
+  "polygon": [
+   [
+    280,
+    552
+   ],
+   [
+    276,
+    557
+   ],
+   [
+    276,
+    582
+   ],
+   [
+    302,
+    582
+   ],
+   [
+    302,
+    552
+   ],
+   [
+    290,
+    552
+   ],
+   [
+    284,
+    552
+   ]
+  ]
+ },
+ {
+  "index": 26,
+  "label": "paragraph_title",
+  "content": "Wheel true",
+  "bbox_2d": [
+   273,
+   599,
+   352,
+   618
+  ],
+  "polygon": [
+   [
+    273,
+    599
+   ],
+   [
+    273,
+    617
+   ],
+   [
+    351,
+    617
+   ],
+   [
+    351,
+    599
+   ]
+  ]
+ },
+ {
+  "index": 27,
+  "label": "text",
+  "content": "Spokes tensioned and the rim trued for lateral and radial runout. Broken spokes are charged separately.",
+  "bbox_2d": [
+   273,
+   622,
+   483,
+   673
+  ],
+  "polygon": [
+   [
+    273,
+    622
+   ],
+   [
+    273,
+    672
+   ],
+   [
+    482,
+    672
+   ],
+   [
+    482,
+    622
+   ]
+  ]
+ },
+ {
+  "index": 28,
+  "label": "text",
+  "content": "LABOR Included",
+  "bbox_2d": [
+   346,
+   722,
+   399,
+   759
+  ],
+  "polygon": [
+   [
+    346,
+    722
+   ],
+   [
+    346,
+    758
+   ],
+   [
+    398,
+    758
+   ],
+   [
+    398,
+    722
+   ]
+  ]
+ },
+ {
+  "index": 29,
+  "label": "text",
+  "content": "06",
+  "bbox_2d": [
+   475,
+   553,
+   490,
+   568
+  ],
+  "polygon": [
+   [
+    475,
+    553
+   ],
+   [
+    475,
+    567
+   ],
+   [
+    489,
+    567
+   ],
+   [
+    489,
+    553
+   ]
+  ]
+ },
+ {
+  "index": 30,
+  "label": "text",
+  "content": "PRICE $30",
+  "bbox_2d": [
+   420,
+   722,
+   453,
+   759
+  ],
+  "polygon": [
+   [
+    420,
+    722
+   ],
+   [
+    420,
+    758
+   ],
+   [
+    452,
+    758
+   ],
+   [
+    452,
+    722
+   ]
+  ]
+ },
+ {
+  "index": 31,
+  "label": "text",
+  "content": "TIME\n25 min",
+  "bbox_2d": [
+   273,
+   721,
+   314,
+   759
+  ],
+  "polygon": [
+   [
+    273,
+    726
+   ],
+   [
+    273,
+    758
+   ],
+   [
+    313,
+    758
+   ],
+   [
+    313,
+    726
+   ],
+   [
+    303,
+    721
+   ],
+   [
+    289,
+    721
+   ]
+  ]
+ },
+ {
+  "index": 32,
+  "label": "text",
+  "content": "Tue to Sat, 9:00 am to 6:00 pm",
+  "bbox_2d": [
+   508,
+   230,
+   679,
+   249
+  ],
+  "polygon": [
+   [
+    508,
+    230
+   ],
+   [
+    508,
+    248
+   ],
+   [
+    678,
+    248
+   ],
+   [
+    678,
+    230
+   ]
+  ]
+ },
+ {
+  "index": 33,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   510,
+   298,
+   537,
+   330
+  ],
+  "polygon": [
+   [
+    510,
+    298
+   ],
+   [
+    510,
+    329
+   ],
+   [
+    536,
+    329
+   ],
+   [
+    536,
+    298
+   ]
+  ]
+ },
+ {
+  "index": 34,
+  "label": "paragraph_title",
+  "content": "Full overhaul",
+  "bbox_2d": [
+   508,
+   345,
+   600,
+   365
+  ],
+  "polygon": [
+   [
+    508,
+    345
+   ],
+   [
+    508,
+    364
+   ],
+   [
+    599,
+    364
+   ],
+   [
+    599,
+    345
+   ]
+  ]
+ },
+ {
+  "index": 35,
+  "label": "text",
+  "content": "Complete strip-down: bearings repacked in the hubs, headset and bottom bracket, cables and housing replaced, frame cleaned.",
+  "bbox_2d": [
+   507,
+   369,
+   721,
+   420
+  ],
+  "polygon": [
+   [
+    507,
+    369
+   ],
+   [
+    507,
+    419
+   ],
+   [
+    720,
+    419
+   ],
+   [
+    720,
+    369
+   ]
+  ]
+ },
+ {
+  "index": 36,
+  "label": "table",
+  "content": "<table><thead><tr><th>TIME</th><th>LABOR</th><th>PRICE</th></tr></thead><tbody><tr><td>3 days</td><td>3.5 hrs</td><td>$189</td></tr></tbody></table>",
+  "bbox_2d": [
+   508,
+   467,
+   690,
+   507
+  ],
+  "polygon": [
+   [
+    508,
+    472
+   ],
+   [
+    508,
+    506
+   ],
+   [
+    644,
+    506
+   ],
+   [
+    650,
+    491
+   ],
+   [
+    655,
+    506
+   ],
+   [
+    690,
+    506
+   ],
+   [
+    690,
+    472
+   ],
+   [
+    624,
+    467
+   ],
+   [
+    620,
+    467
+   ],
+   [
+    614,
+    467
+   ],
+   [
+    533,
+    467
+   ]
+  ]
+ },
+ {
+  "index": 37,
+  "label": "text",
+  "content": "03",
+  "bbox_2d": [
+   709,
+   300,
+   722,
+   314
+  ],
+  "polygon": [
+   [
+    709,
+    300
+   ],
+   [
+    709,
+    313
+   ],
+   [
+    721,
+    313
+   ],
+   [
+    721,
+    300
+   ]
+  ]
+ },
+ {
+  "index": 38,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   510,
+   552,
+   538,
+   583
+  ],
+  "polygon": [
+   [
+    510,
+    552
+   ],
+   [
+    510,
+    582
+   ],
+   [
+    537,
+    582
+   ],
+   [
+    537,
+    552
+   ]
+  ]
+ },
+ {
+  "index": 39,
+  "label": "paragraph_title",
+  "content": "Puncture repair",
+  "bbox_2d": [
+   508,
+   599,
+   619,
+   619
+  ],
+  "polygon": [
+   [
+    508,
+    599
+   ],
+   [
+    508,
+    618
+   ],
+   [
+    618,
+    618
+   ],
+   [
+    618,
+    599
+   ]
+  ]
+ },
+ {
+  "index": 40,
+  "label": "text",
+  "content": "Tube patched or replaced, tire and rim inspected for the cause, pressure set for the rider's weight.",
+  "bbox_2d": [
+   507,
+   622,
+   719,
+   673
+  ],
+  "polygon": [
+   [
+    507,
+    622
+   ],
+   [
+    507,
+    626
+   ],
+   [
+    507,
+    632
+   ],
+   [
+    507,
+    672
+   ],
+   [
+    718,
+    672
+   ],
+   [
+    718,
+    622
+   ]
+  ]
+ },
+ {
+  "index": 41,
+  "label": "table",
+  "content": "<table><thead><tr><th>TIME</th><th>LABOR</th><th>PRICE</th></tr></thead><tbody><tr><td>15 min</td><td>Included</td><td>$15</td></tr></tbody></table>",
+  "bbox_2d": [
+   508,
+   721,
+   688,
+   759
+  ],
+  "polygon": [
+   [
+    508,
+    721
+   ],
+   [
+    508,
+    758
+   ],
+   [
+    687,
+    758
+   ],
+   [
+    687,
+    721
+   ],
+   [
+    523,
+    721
+   ],
+   [
+    512,
+    721
+   ]
+  ]
+ },
+ {
+  "index": 42,
+  "label": "text",
+  "content": "07",
+  "bbox_2d": [
+   709,
+   553,
+   722,
+   568
+  ],
+  "polygon": [
+   [
+    709,
+    553
+   ],
+   [
+    709,
+    567
+   ],
+   [
+    721,
+    567
+   ],
+   [
+    721,
+    553
+   ]
+  ]
+ },
+ {
+  "index": 43,
+  "label": "text",
+  "content": "BOOKING\n(505) 555-0148",
+  "bbox_2d": [
+   741,
+   211,
+   827,
+   249
+  ],
+  "polygon": [
+   [
+    741,
+    211
+   ],
+   [
+    741,
+    248
+   ],
+   [
+    826,
+    248
+   ],
+   [
+    826,
+    211
+   ]
+  ]
+ },
+ {
+  "index": 44,
+  "label": "text",
+  "content": "04",
+  "bbox_2d": [
+   942,
+   300,
+   957,
+   314
+  ],
+  "polygon": [
+   [
+    942,
+    300
+   ],
+   [
+    942,
+    313
+   ],
+   [
+    956,
+    313
+   ],
+   [
+    956,
+    300
+   ]
+  ]
+ },
+ {
+  "index": 45,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   744,
+   299,
+   770,
+   330
+  ],
+  "polygon": [
+   [
+    744,
+    299
+   ],
+   [
+    744,
+    329
+   ],
+   [
+    770,
+    329
+   ],
+   [
+    770,
+    299
+   ]
+  ]
+ },
+ {
+  "index": 46,
+  "label": "paragraph_title",
+  "content": "Brake service",
+  "bbox_2d": [
+   741,
+   345,
+   840,
+   365
+  ],
+  "polygon": [
+   [
+    741,
+    345
+   ],
+   [
+    741,
+    364
+   ],
+   [
+    839,
+    364
+   ],
+   [
+    839,
+    345
+   ]
+  ]
+ },
+ {
+  "index": 47,
+  "label": "text",
+  "content": "Pads replaced or cleaned, rotors trued, hydraulic lines bled or cable brakes recentered and tensioned. Per brake.",
+  "bbox_2d": [
+   740,
+   369,
+   928,
+   420
+  ],
+  "polygon": [
+   [
+    740,
+    369
+   ],
+   [
+    740,
+    419
+   ],
+   [
+    927,
+    419
+   ],
+   [
+    927,
+    369
+   ]
+  ]
+ },
+ {
+  "index": 48,
+  "label": "table",
+  "content": "<table><thead><tr><th>TIME</th><th>LABOR</th><th>PRICE</th></tr></thead><tbody><tr><td>30 min</td><td>0.5 hr</td><td>$45</td></tr></tbody></table>",
+  "bbox_2d": [
+   743,
+   467,
+   924,
+   507
+  ],
+  "polygon": [
+   [
+    743,
+    467
+   ],
+   [
+    743,
+    506
+   ],
+   [
+    923,
+    506
+   ],
+   [
+    923,
+    467
+   ]
+  ]
+ },
+ {
+  "index": 49,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   744,
+   553,
+   770,
+   583
+  ],
+  "polygon": [
+   [
+    744,
+    553
+   ],
+   [
+    744,
+    582
+   ],
+   [
+    770,
+    582
+   ],
+   [
+    770,
+    553
+   ]
+  ]
+ },
+ {
+  "index": 50,
+  "label": "paragraph_title",
+  "content": "Tubeless conversion",
+  "bbox_2d": [
+   740,
+   599,
+   885,
+   618
+  ],
+  "polygon": [
+   [
+    740,
+    599
+   ],
+   [
+    740,
+    617
+   ],
+   [
+    884,
+    617
+   ],
+   [
+    884,
+    599
+   ]
+  ]
+ },
+ {
+  "index": 51,
+  "label": "text",
+  "content": "Rim tape, valves and sealant fitted and the tire seated on the rim. Sealant top-up is free for six months.",
+  "bbox_2d": [
+   740,
+   621,
+   951,
+   672
+  ],
+  "polygon": [
+   [
+    740,
+    621
+   ],
+   [
+    740,
+    671
+   ],
+   [
+    950,
+    671
+   ],
+   [
+    950,
+    621
+   ],
+   [
+    897,
+    621
+   ],
+   [
+    890,
+    621
+   ],
+   [
+    811,
+    621
+   ],
+   [
+    805,
+    621
+   ],
+   [
+    761,
+    621
+   ],
+   [
+    755,
+    621
+   ]
+  ]
+ },
+ {
+  "index": 52,
+  "label": "paragraph_title",
+  "content": "Parts",
+  "bbox_2d": [
+   273,
+   817,
+   305,
+   833
+  ],
+  "polygon": [
+   [
+    273,
+    817
+   ],
+   [
+    273,
+    832
+   ],
+   [
+    304,
+    832
+   ],
+   [
+    304,
+    817
+   ]
+  ]
+ },
+ {
+  "index": 53,
+  "label": "table",
+  "content": "<table><tr><td>TIME</td><td>LABOR</td><td>PRICE</td></tr><tr><td>40 min</td><td>0.6 hr</td><td>$60</td></tr></table>",
+  "bbox_2d": [
+   741,
+   720,
+   948,
+   760
+  ],
+  "polygon": [
+   [
+    741,
+    720
+   ],
+   [
+    741,
+    759
+   ],
+   [
+    947,
+    759
+   ],
+   [
+    947,
+    725
+   ],
+   [
+    922,
+    720
+   ]
+  ]
+ },
+ {
+  "index": 54,
+  "label": "text",
+  "content": "Parts are extra and quoted before any work starts. The workshop labor rate is $68 per hour, billed in quarter-hours above the times shown.",
+  "bbox_2d": [
+   273,
+   836,
+   479,
+   903
+  ],
+  "polygon": [
+   [
+    273,
+    836
+   ],
+   [
+    273,
+    902
+   ],
+   [
+    478,
+    902
+   ],
+   [
+    478,
+    836
+   ]
+  ]
+ },
+ {
+  "index": 55,
+  "label": "paragraph_title",
+  "content": "Notes on pricing",
+  "bbox_2d": [
+   40,
+   817,
+   123,
+   834
+  ],
+  "polygon": [
+   [
+    40,
+    817
+   ],
+   [
+    40,
+    833
+   ],
+   [
+    122,
+    833
+   ],
+   [
+    122,
+    817
+   ]
+  ]
+ },
+ {
+  "index": 56,
+  "label": "paragraph_title",
+  "content": "Rush and e-bikes",
+  "bbox_2d": [
+   508,
+   816,
+   596,
+   833
+  ],
+  "polygon": [
+   [
+    595,
+    816
+   ],
+   [
+    565,
+    816
+   ],
+   [
+    508,
+    821
+   ],
+   [
+    508,
+    832
+   ],
+   [
+    595,
+    832
+   ]
+  ]
+ },
+ {
+  "index": 57,
+  "label": "text",
+  "content": "Same-day service is +$20. Electric bikes carry a surcharge of +$15 on every service for battery and motor diagnostics.",
+  "bbox_2d": [
+   507,
+   836,
+   720,
+   887
+  ],
+  "polygon": [
+   [
+    507,
+    841
+   ],
+   [
+    507,
+    882
+   ],
+   [
+    512,
+    886
+   ],
+   [
+    714,
+    886
+   ],
+   [
+    719,
+    882
+   ],
+   [
+    719,
+    836
+   ],
+   [
+    512,
+    836
+   ]
+  ]
+ },
+ {
+  "index": 58,
+  "label": "paragraph_title",
+  "content": "Collection",
+  "bbox_2d": [
+   741,
+   816,
+   795,
+   833
+  ],
+  "polygon": [
+   [
+    741,
+    816
+   ],
+   [
+    741,
+    832
+   ],
+   [
+    794,
+    832
+   ],
+   [
+    794,
+    816
+   ]
+  ]
+ },
+ {
+  "index": 59,
+  "label": "text",
+  "content": "Bikes not collected within 30 days are stored at $2 per day. Our Fresno, CA workshop shares this list; ask there for its pick-up service.",
+  "bbox_2d": [
+   740,
+   836,
+   958,
+   887
+  ],
+  "polygon": [
+   [
+    740,
+    836
+   ],
+   [
+    740,
+    886
+   ],
+   [
+    957,
+    886
+   ],
+   [
+    957,
+    836
+   ]
+  ]
+ },
+ {
+  "index": 60,
+  "label": "footer",
+  "content": "Prices in US dollars, sales tax not included. Subject to change without notice.",
+  "bbox_2d": [
+   40,
+   943,
+   360,
+   958
+  ],
+  "polygon": [
+   [
+    40,
+    943
+   ],
+   [
+    40,
+    957
+   ],
+   [
+    359,
+    957
+   ],
+   [
+    359,
+    943
+   ]
+  ]
+ },
+ {
+  "index": 61,
+  "label": "footer",
+  "content": "Hawthorn Cycle Works, Santa Fe, NM · Fresno, CA",
+  "bbox_2d": [
+   747,
+   943,
+   957,
+   958
+  ],
+  "polygon": [
+   [
+    747,
+    943
+   ],
+   [
+    747,
+    957
+   ],
+   [
+    956,
+    957
+   ],
+   [
+    956,
+    943
+   ]
+  ]
+ }
+]

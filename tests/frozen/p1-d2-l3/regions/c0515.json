@@ -1,0 +1,295 @@
+[
+ {
+  "index": 0,
+  "label": "text",
+  "content": "WALNUT FLINT HALL INVITES YOU",
+  "bbox_2d": [
+   287,
+   133,
+   704,
+   157
+  ],
+  "polygon": [
+   [
+    287,
+    133
+   ],
+   [
+    287,
+    156
+   ],
+   [
+    702,
+    156
+   ],
+   [
+    702,
+    133
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "doc_title",
+  "content": "An Evening of Autumn Music",
+  "bbox_2d": [
+   159,
+   190,
+   836,
+   324
+  ],
+  "polygon": [
+   [
+    159,
+    190
+   ],
+   [
+    159,
+    323
+   ],
+   [
+    834,
+    323
+   ],
+   [
+    834,
+    190
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "text",
+  "content": "Freya Patel and the trustees of Walnut Flint Hall request the pleasure of your company at a supper concert in aid of the hall's roof appeal.",
+  "bbox_2d": [
+   156,
+   394,
+   841,
+   459
+  ],
+  "polygon": [
+   [
+    156,
+    394
+   ],
+   [
+    162,
+    457
+   ],
+   [
+    840,
+    457
+   ],
+   [
+    840,
+    394
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "text",
+  "content": "DATE\nSaturday 12 September 2020",
+  "bbox_2d": [
+   236,
+   486,
+   508,
+   540
+  ],
+  "polygon": [
+   [
+    236,
+    486
+   ],
+   [
+    236,
+    539
+   ],
+   [
+    506,
+    539
+   ],
+   [
+    506,
+    486
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "text",
+  "content": "TIME\n7.00 pm for 7.30 pm",
+  "bbox_2d": [
+   565,
+   486,
+   761,
+   540
+  ],
+  "polygon": [
+   [
+    565,
+    486
+   ],
+   [
+    565,
+    539
+   ],
+   [
+    759,
+    539
+   ],
+   [
+    759,
+    491
+   ],
+   [
+    755,
+    486
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "text",
+  "content": "PLACE DRESS\nThe Long Room, Wrexham Smart casual",
+  "bbox_2d": [
+   281,
+   557,
+   716,
+   612
+  ],
+  "polygon": [
+   [
+    281,
+    562
+   ],
+   [
+    281,
+    611
+   ],
+   [
+    715,
+    611
+   ],
+   [
+    715,
+    557
+   ],
+   [
+    693,
+    557
+   ],
+   [
+    605,
+    557
+   ],
+   [
+    531,
+    557
+   ],
+   [
+    301,
+    557
+   ],
+   [
+    293,
+    557
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "text",
+  "content": "Supper will be served in the interval. Please reply to Megan Haworth by 12 August 2020, so that we may plan the tables. Parking is available behind the hall.",
+  "bbox_2d": [
+   148,
+   671,
+   847,
+   725
+  ],
+  "polygon": [
+   [
+    148,
+    671
+   ],
+   [
+    148,
+    724
+   ],
+   [
+    845,
+    724
+   ],
+   [
+    845,
+    671
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   381,
+   769,
+   613,
+   813
+  ],
+  "polygon": [
+   [
+    381,
+    769
+   ],
+   [
+    381,
+    812
+   ],
+   [
+    500,
+    812
+   ],
+   [
+    520,
+    812
+   ],
+   [
+    612,
+    812
+   ],
+   [
+    612,
+    769
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "text",
+  "content": "Freya Patel, Chair of Trustees",
+  "bbox_2d": [
+   383,
+   834,
+   613,
+   860
+  ],
+  "polygon": [
+   [
+    383,
+    834
+   ],
+   [
+    383,
+    858
+   ],
+   [
+    612,
+    858
+   ],
+   [
+    612,
+    834
+   ]
+  ]
+ }
+]

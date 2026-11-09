@@ -1,0 +1,1009 @@
+[
+ {
+  "index": 0,
+  "label": "header",
+  "content": "CORMORANT HOUSING ASSOCIATION",
+  "bbox_2d": [
+   42,
+   53,
+   332,
+   79
+  ],
+  "polygon": [
+   [
+    42,
+    53
+   ],
+   [
+    42,
+    77
+   ],
+   [
+    331,
+    77
+   ],
+   [
+    331,
+    53
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "header",
+  "content": "Minutes of the Board meeting",
+  "bbox_2d": [
+   41,
+   87,
+   444,
+   132
+  ],
+  "polygon": [
+   [
+    41,
+    92
+   ],
+   [
+    41,
+    131
+   ],
+   [
+    443,
+    131
+   ],
+   [
+    443,
+    92
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "header",
+  "content": "Friday 16 May 2025 Carlisle office, 10.00 to 12.15",
+  "bbox_2d": [
+   775,
+   87,
+   957,
+   142
+  ],
+  "polygon": [
+   [
+    775,
+    93
+   ],
+   [
+    775,
+    140
+   ],
+   [
+    956,
+    140
+   ],
+   [
+    956,
+    87
+   ],
+   [
+    791,
+    87
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "paragraph_title",
+  "content": "PRESENT",
+  "bbox_2d": [
+   40,
+   197,
+   115,
+   224
+  ],
+  "polygon": [
+   [
+    114,
+    197
+   ],
+   [
+    91,
+    197
+   ],
+   [
+    40,
+    202
+   ],
+   [
+    40,
+    223
+   ],
+   [
+    114,
+    223
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "text",
+  "content": "Chair ..... Amelia Llewellyn\nSecretary ..... Niamh Haworth\nTreasurer ..... Megan Gallagher\nQuorum ..... Yes (5 of 7)\nNext meeting ..... 20 June 2025",
+  "bbox_2d": [
+   40,
+   237,
+   290,
+   425
+  ],
+  "polygon": [
+   [
+    40,
+    237
+   ],
+   [
+    40,
+    423
+   ],
+   [
+    288,
+    423
+   ],
+   [
+    288,
+    237
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "paragraph_title",
+  "content": "APOLOGIES",
+  "bbox_2d": [
+   40,
+   451,
+   136,
+   477
+  ],
+  "polygon": [
+   [
+    40,
+    451
+   ],
+   [
+    40,
+    475
+   ],
+   [
+    135,
+    475
+   ],
+   [
+    135,
+    451
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "text",
+  "content": "- Two trustees, both in Inverness for the regional forum",
+  "bbox_2d": [
+   43,
+   493,
+   267,
+   551
+  ],
+  "polygon": [
+   [
+    43,
+    493
+   ],
+   [
+    43,
+    550
+   ],
+   [
+    266,
+    550
+   ],
+   [
+    266,
+    493
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "text",
+  "content": "- Tenants' representative, due to illness",
+  "bbox_2d": [
+   43,
+   559,
+   268,
+   616
+  ],
+  "polygon": [
+   [
+    43,
+    559
+   ],
+   [
+    43,
+    614
+   ],
+   [
+    267,
+    614
+   ],
+   [
+    267,
+    559
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "paragraph_title",
+  "content": "PAPERS CIRCULATED",
+  "bbox_2d": [
+   41,
+   642,
+   205,
+   669
+  ],
+  "polygon": [
+   [
+    41,
+    647
+   ],
+   [
+    41,
+    668
+   ],
+   [
+    204,
+    668
+   ],
+   [
+    204,
+    647
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "text",
+  "content": "- Draft accounts to 31 March",
+  "bbox_2d": [
+   42,
+   687,
+   243,
+   715
+  ],
+  "polygon": [
+   [
+    42,
+    687
+   ],
+   [
+    42,
+    713
+   ],
+   [
+    242,
+    713
+   ],
+   [
+    242,
+    687
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "text",
+  "content": "- Wagtail Court repairs schedule",
+  "bbox_2d": [
+   42,
+   723,
+   270,
+   752
+  ],
+  "polygon": [
+   [
+    42,
+    723
+   ],
+   [
+    42,
+    728
+   ],
+   [
+    47,
+    750
+   ],
+   [
+    268,
+    750
+   ],
+   [
+    268,
+    723
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "text",
+  "content": "- Energy survey summary",
+  "bbox_2d": [
+   42,
+   760,
+   224,
+   788
+  ],
+  "polygon": [
+   [
+    42,
+    760
+   ],
+   [
+    42,
+    768
+   ],
+   [
+    42,
+    779
+   ],
+   [
+    42,
+    783
+   ],
+   [
+    47,
+    786
+   ],
+   [
+    223,
+    786
+   ],
+   [
+    223,
+    760
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "paragraph_title",
+  "content": "1. Minutes and matters arising",
+  "bbox_2d": [
+   314,
+   220,
+   548,
+   250
+  ],
+  "polygon": [
+   [
+    314,
+    220
+   ],
+   [
+    314,
+    249
+   ],
+   [
+    547,
+    249
+   ],
+   [
+    547,
+    220
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "text",
+  "content": "1.1 The minutes of 18 April 2025 were agreed as a true record and signed by the Chair.",
+  "bbox_2d": [
+   315,
+   260,
+   612,
+   351
+  ],
+  "polygon": [
+   [
+    315,
+    260
+   ],
+   [
+    315,
+    325
+   ],
+   [
+    315,
+    331
+   ],
+   [
+    315,
+    349
+   ],
+   [
+    611,
+    349
+   ],
+   [
+    611,
+    266
+   ],
+   [
+    606,
+    260
+   ]
+  ]
+ },
+ {
+  "index": 14,
+  "label": "text",
+  "content": "1.2 The $ 3^{\\mathrm{rd}} $ floor lift at Wagtail Court was repaired on 2 May; no further cost expected.",
+  "bbox_2d": [
+   315,
+   372,
+   600,
+   466
+  ],
+  "polygon": [
+   [
+    315,
+    378
+   ],
+   [
+    315,
+    464
+   ],
+   [
+    598,
+    464
+   ],
+   [
+    598,
+    378
+   ],
+   [
+    460,
+    372
+   ],
+   [
+    335,
+    372
+   ]
+  ]
+ },
+ {
+  "index": 15,
+  "label": "paragraph_title",
+  "content": "2. Finance",
+  "bbox_2d": [
+   314,
+   487,
+   397,
+   516
+  ],
+  "polygon": [
+   [
+    314,
+    487
+   ],
+   [
+    314,
+    514
+   ],
+   [
+    396,
+    514
+   ],
+   [
+    396,
+    491
+   ],
+   [
+    392,
+    487
+   ],
+   [
+    344,
+    487
+   ],
+   [
+    333,
+    487
+   ]
+  ]
+ },
+ {
+  "index": 16,
+  "label": "text",
+  "content": "2.1 The Treasurer reported income of £412,600 against a budget of £405,000.",
+  "bbox_2d": [
+   315,
+   529,
+   583,
+   618
+  ],
+  "polygon": [
+   [
+    315,
+    529
+   ],
+   [
+    315,
+    616
+   ],
+   [
+    533,
+    616
+   ],
+   [
+    582,
+    611
+   ],
+   [
+    582,
+    529
+   ]
+  ]
+ },
+ {
+  "index": 17,
+  "label": "text",
+  "content": "2.2 Arrears stand at 3.1% of rent due, down from 3.8% in March.",
+  "bbox_2d": [
+   314,
+   635,
+   620,
+   694
+  ],
+  "polygon": [
+   [
+    314,
+    635
+   ],
+   [
+    314,
+    692
+   ],
+   [
+    618,
+    692
+   ],
+   [
+    618,
+    640
+   ]
+  ]
+ },
+ {
+  "index": 18,
+  "label": "text",
+  "content": "(a) Court action is not recommended for any case this month.",
+  "bbox_2d": [
+   314,
+   711,
+   604,
+   773
+  ],
+  "polygon": [
+   [
+    314,
+    716
+   ],
+   [
+    314,
+    771
+   ],
+   [
+    603,
+    771
+   ],
+   [
+    603,
+    716
+   ]
+  ]
+ },
+ {
+  "index": 19,
+  "label": "text",
+  "content": "(b) Two payment plans were agreed by the housing officer.",
+  "bbox_2d": [
+   315,
+   791,
+   618,
+   849
+  ],
+  "polygon": [
+   [
+    315,
+    791
+   ],
+   [
+    315,
+    847
+   ],
+   [
+    617,
+    847
+   ],
+   [
+    617,
+    791
+   ]
+  ]
+ },
+ {
+  "index": 20,
+  "label": "paragraph_title",
+  "content": "3. Energy and repairs",
+  "bbox_2d": [
+   647,
+   220,
+   815,
+   250
+  ],
+  "polygon": [
+   [
+    647,
+    220
+   ],
+   [
+    647,
+    249
+   ],
+   [
+    814,
+    249
+   ],
+   [
+    814,
+    220
+   ]
+  ]
+ },
+ {
+  "index": 21,
+  "label": "text",
+  "content": "3.1 The survey found loft insulation below standard in 46 homes, about 3,900 $ m^{2} $ in all.",
+  "bbox_2d": [
+   648,
+   260,
+   948,
+   355
+  ],
+  "polygon": [
+   [
+    648,
+    260
+   ],
+   [
+    648,
+    354
+   ],
+   [
+    947,
+    354
+   ],
+   [
+    947,
+    286
+   ],
+   [
+    947,
+    266
+   ],
+   [
+    943,
+    260
+   ]
+  ]
+ },
+ {
+  "index": 22,
+  "label": "text",
+  "content": "3.2 Retrofit is expected to save 180 tonnes of CO<sub>2</sub> a year. Members noted:",
+  "bbox_2d": [
+   648,
+   375,
+   948,
+   435
+  ],
+  "polygon": [
+   [
+    648,
+    375
+   ],
+   [
+    648,
+    433
+   ],
+   [
+    947,
+    433
+   ],
+   [
+    947,
+    375
+   ]
+  ]
+ },
+ {
+  "index": 23,
+  "label": "text",
+  "content": "- grant funding covers 60% of the cost",
+  "bbox_2d": [
+   650,
+   454,
+   917,
+   485
+  ],
+  "polygon": [
+   [
+    650,
+    454
+   ],
+   [
+    650,
+    483
+   ],
+   [
+    916,
+    483
+   ],
+   [
+    916,
+    454
+   ]
+  ]
+ },
+ {
+  "index": 24,
+  "label": "text",
+  "content": "- work would start in September",
+  "bbox_2d": [
+   650,
+   491,
+   877,
+   519
+  ],
+  "polygon": [
+   [
+    650,
+    491
+   ],
+   [
+    650,
+    517
+   ],
+   [
+    876,
+    517
+   ],
+   [
+    876,
+    496
+   ],
+   [
+    872,
+    491
+   ],
+   [
+    853,
+    491
+   ],
+   [
+    847,
+    491
+   ],
+   [
+    843,
+    491
+   ],
+   [
+    837,
+    491
+   ],
+   [
+    788,
+    491
+   ],
+   [
+    783,
+    491
+   ],
+   [
+    734,
+    491
+   ],
+   [
+    723,
+    491
+   ],
+   [
+    714,
+    491
+   ]
+  ]
+ },
+ {
+  "index": 25,
+  "label": "text",
+  "content": "- residents will be consulted first",
+  "bbox_2d": [
+   650,
+   527,
+   878,
+   555
+  ],
+  "polygon": [
+   [
+    650,
+    527
+   ],
+   [
+    650,
+    553
+   ],
+   [
+    877,
+    553
+   ],
+   [
+    877,
+    527
+   ]
+  ]
+ },
+ {
+  "index": 26,
+  "label": "paragraph_title",
+  "content": "4. Any other business",
+  "bbox_2d": [
+   648,
+   577,
+   816,
+   608
+  ],
+  "polygon": [
+   [
+    648,
+    577
+   ],
+   [
+    648,
+    606
+   ],
+   [
+    815,
+    606
+   ],
+   [
+    815,
+    577
+   ]
+  ]
+ },
+ {
+  "index": 27,
+  "label": "text",
+  "content": "4.1 Members thanked Megan Gallagher for her work on the accounts.",
+  "bbox_2d": [
+   648,
+   619,
+   954,
+   677
+  ],
+  "polygon": [
+   [
+    648,
+    619
+   ],
+   [
+    648,
+    676
+   ],
+   [
+    953,
+    676
+   ],
+   [
+    953,
+    619
+   ]
+  ]
+ },
+ {
+  "index": 28,
+  "label": "text",
+  "content": "**Action:** Secretary to send the energy survey to all members by 30 May.",
+  "bbox_2d": [
+   663,
+   708,
+   935,
+   765
+  ],
+  "polygon": [
+   [
+    663,
+    708
+   ],
+   [
+    663,
+    763
+   ],
+   [
+    934,
+    763
+   ],
+   [
+    934,
+    708
+   ]
+  ]
+ },
+ {
+  "index": 29,
+  "label": "footer",
+  "content": "Signed as a true record:",
+  "bbox_2d": [
+   41,
+   919,
+   178,
+   941
+  ],
+  "polygon": [
+   [
+    41,
+    919
+   ],
+   [
+    41,
+    940
+   ],
+   [
+    177,
+    940
+   ],
+   [
+    177,
+    919
+   ]
+  ]
+ },
+ {
+  "index": 30,
+  "label": "footer",
+  "content": "Date:",
+  "bbox_2d": [
+   833,
+   919,
+   868,
+   940
+  ],
+  "polygon": [
+   [
+    833,
+    919
+   ],
+   [
+    833,
+    938
+   ],
+   [
+    867,
+    938
+   ],
+   [
+    867,
+    919
+   ]
+  ]
+ }
+]

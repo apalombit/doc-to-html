@@ -1,0 +1,791 @@
+[
+ {
+  "index": 0,
+  "label": "doc_title",
+  "content": "MAKE YOUR ROOF EARN ITS KEEP",
+  "bbox_2d": [
+   54,
+   69,
+   641,
+   194
+  ],
+  "polygon": [
+   [
+    54,
+    69
+   ],
+   [
+    54,
+    193
+   ],
+   [
+    640,
+    193
+   ],
+   [
+    640,
+    69
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "header_image",
+  "content": "Panels from £4,950 $1 fully fitted",
+  "bbox_2d": [
+   800,
+   66,
+   945,
+   249
+  ],
+  "polygon": [
+   [
+    800,
+    66
+   ],
+   [
+    800,
+    100
+   ],
+   [
+    800,
+    112
+   ],
+   [
+    800,
+    248
+   ],
+   [
+    944,
+    248
+   ],
+   [
+    944,
+    121
+   ],
+   [
+    939,
+    82
+   ],
+   [
+    934,
+    71
+   ],
+   [
+    904,
+    66
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "text",
+  "content": "Cormorant Solar, serving Shrewsbury and Lancaster",
+  "bbox_2d": [
+   51,
+   210,
+   500,
+   238
+  ],
+  "polygon": [
+   [
+    51,
+    210
+   ],
+   [
+    51,
+    237
+   ],
+   [
+    498,
+    237
+   ],
+   [
+    498,
+    210
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   77,
+   356,
+   129,
+   415
+  ],
+  "polygon": [
+   [
+    77,
+    356
+   ],
+   [
+    77,
+    413
+   ],
+   [
+    127,
+    413
+   ],
+   [
+    127,
+    356
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "paragraph_title",
+  "content": "Cut your bills",
+  "bbox_2d": [
+   144,
+   359,
+   291,
+   386
+  ],
+  "polygon": [
+   [
+    144,
+    359
+   ],
+   [
+    144,
+    385
+   ],
+   [
+    290,
+    385
+   ],
+   [
+    290,
+    359
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "text",
+  "content": "Typical homes save £520 a year on electricity $ ^{2} $",
+  "bbox_2d": [
+   143,
+   392,
+   453,
+   421
+  ],
+  "polygon": [
+   [
+    143,
+    392
+   ],
+   [
+    143,
+    420
+   ],
+   [
+    452,
+    420
+   ],
+   [
+    452,
+    392
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   536,
+   361,
+   579,
+   408
+  ],
+  "polygon": [
+   [
+    536,
+    361
+   ],
+   [
+    536,
+    407
+   ],
+   [
+    577,
+    407
+   ],
+   [
+    577,
+    361
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "paragraph_title",
+  "content": "Free roof survey",
+  "bbox_2d": [
+   597,
+   359,
+   776,
+   386
+  ],
+  "polygon": [
+   [
+    597,
+    359
+   ],
+   [
+    597,
+    385
+   ],
+   [
+    775,
+    385
+   ],
+   [
+    775,
+    359
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "paragraph_title",
+  "content": "```markdown\n\n```",
+  "bbox_2d": [
+   86,
+   509,
+   120,
+   565
+  ],
+  "polygon": [
+   [
+    86,
+    509
+   ],
+   [
+    86,
+    563
+   ],
+   [
+    119,
+    563
+   ],
+   [
+    119,
+    509
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "paragraph_title",
+  "content": "Battery ready",
+  "bbox_2d": [
+   144,
+   510,
+   296,
+   537
+  ],
+  "polygon": [
+   [
+    144,
+    510
+   ],
+   [
+    144,
+    532
+   ],
+   [
+    154,
+    536
+   ],
+   [
+    295,
+    536
+   ],
+   [
+    295,
+    510
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "text",
+  "content": "An engineer visits within a week and measures up.",
+  "bbox_2d": [
+   595,
+   391,
+   909,
+   439
+  ],
+  "polygon": [
+   [
+    595,
+    391
+   ],
+   [
+    595,
+    438
+   ],
+   [
+    908,
+    438
+   ],
+   [
+    908,
+    391
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "text",
+  "content": "Store the sun's output for the evening.",
+  "bbox_2d": [
+   141,
+   541,
+   401,
+   566
+  ],
+  "polygon": [
+   [
+    141,
+    562
+   ],
+   [
+    141,
+    565
+   ],
+   [
+    400,
+    565
+   ],
+   [
+    400,
+    541
+   ],
+   [
+    391,
+    541
+   ],
+   [
+    365,
+    541
+   ],
+   [
+    341,
+    541
+   ],
+   [
+    336,
+    541
+   ],
+   [
+    331,
+    541
+   ],
+   [
+    295,
+    541
+   ],
+   [
+    147,
+    541
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   536,
+   510,
+   577,
+   562
+  ],
+  "polygon": [
+   [
+    536,
+    510
+   ],
+   [
+    536,
+    561
+   ],
+   [
+    576,
+    561
+   ],
+   [
+    576,
+    510
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "paragraph_title",
+  "content": "25-year guarantee",
+  "bbox_2d": [
+   597,
+   510,
+   797,
+   537
+  ],
+  "polygon": [
+   [
+    597,
+    510
+   ],
+   [
+    597,
+    536
+   ],
+   [
+    791,
+    536
+   ],
+   [
+    796,
+    532
+   ],
+   [
+    796,
+    515
+   ],
+   [
+    791,
+    510
+   ]
+  ]
+ },
+ {
+  "index": 14,
+  "label": "text",
+  "content": "Panels and workmanship, in writing.",
+  "bbox_2d": [
+   596,
+   543,
+   834,
+   566
+  ],
+  "polygon": [
+   [
+    596,
+    543
+   ],
+   [
+    596,
+    565
+   ],
+   [
+    833,
+    565
+   ],
+   [
+    833,
+    543
+   ]
+  ]
+ },
+ {
+  "index": 15,
+  "label": "paragraph_title",
+  "content": "THREE STEPS TO SUNSHINE",
+  "bbox_2d": [
+   51,
+   631,
+   498,
+   667
+  ],
+  "polygon": [
+   [
+    51,
+    631
+   ],
+   [
+    51,
+    665
+   ],
+   [
+    497,
+    665
+   ],
+   [
+    497,
+    631
+   ]
+  ]
+ },
+ {
+  "index": 16,
+  "label": "paragraph_title",
+  "content": "1",
+  "bbox_2d": [
+   55,
+   706,
+   93,
+   765
+  ],
+  "polygon": [
+   [
+    55,
+    706
+   ],
+   [
+    55,
+    763
+   ],
+   [
+    91,
+    763
+   ],
+   [
+    91,
+    706
+   ]
+  ]
+ },
+ {
+  "index": 17,
+  "label": "text",
+  "content": "Call or book online for a free survey.",
+  "bbox_2d": [
+   51,
+   774,
+   319,
+   798
+  ],
+  "polygon": [
+   [
+    51,
+    774
+   ],
+   [
+    51,
+    797
+   ],
+   [
+    318,
+    797
+   ],
+   [
+    318,
+    774
+   ]
+  ]
+ },
+ {
+  "index": 18,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   355,
+   707,
+   403,
+   766
+  ],
+  "polygon": [
+   [
+    355,
+    707
+   ],
+   [
+    355,
+    765
+   ],
+   [
+    402,
+    765
+   ],
+   [
+    402,
+    707
+   ]
+  ]
+ },
+ {
+  "index": 19,
+  "label": "text",
+  "content": "Approve your quote and pick a fitting date.",
+  "bbox_2d": [
+   352,
+   774,
+   626,
+   823
+  ],
+  "polygon": [
+   [
+    352,
+    814
+   ],
+   [
+    352,
+    822
+   ],
+   [
+    625,
+    822
+   ],
+   [
+    625,
+    774
+   ],
+   [
+    358,
+    774
+   ]
+  ]
+ },
+ {
+  "index": 20,
+  "label": "text",
+  "content": "3",
+  "bbox_2d": [
+   658,
+   707,
+   704,
+   766
+  ],
+  "polygon": [
+   [
+    658,
+    707
+   ],
+   [
+    658,
+    765
+   ],
+   [
+    703,
+    765
+   ],
+   [
+    703,
+    707
+   ]
+  ]
+ },
+ {
+  "index": 21,
+  "label": "text",
+  "content": "We fit in two days and switch you on.",
+  "bbox_2d": [
+   655,
+   772,
+   927,
+   798
+  ],
+  "polygon": [
+   [
+    655,
+    772
+   ],
+   [
+    655,
+    797
+   ],
+   [
+    926,
+    797
+   ],
+   [
+    926,
+    772
+   ]
+  ]
+ },
+ {
+  "index": 22,
+  "label": "text",
+  "content": "Ask for Imogen Treloar on 01743 555 0129",
+  "bbox_2d": [
+   76,
+   873,
+   452,
+   902
+  ],
+  "polygon": [
+   [
+    76,
+    873
+   ],
+   [
+    76,
+    900
+   ],
+   [
+    451,
+    900
+   ],
+   [
+    451,
+    873
+   ]
+  ]
+ },
+ {
+  "index": 23,
+  "label": "text",
+  "content": "Spring offer ends 30 June 2024",
+  "bbox_2d": [
+   645,
+   873,
+   920,
+   903
+  ],
+  "polygon": [
+   [
+    645,
+    873
+   ],
+   [
+    645,
+    902
+   ],
+   [
+    919,
+    902
+   ],
+   [
+    919,
+    873
+   ]
+  ]
+ },
+ {
+  "index": 24,
+  "label": "footer",
+  "content": "$ ^{1} $ Price for a 3 kW system on a south-facing roof, correct at 21 April 2014 $ ^{2} $ Based on average use of 3,200 kWh a year; savings vary.",
+  "bbox_2d": [
+   51,
+   942,
+   680,
+   960
+  ],
+  "polygon": [
+   [
+    51,
+    942
+   ],
+   [
+    51,
+    959
+   ],
+   [
+    679,
+    959
+   ],
+   [
+    679,
+    942
+   ]
+  ]
+ }
+]

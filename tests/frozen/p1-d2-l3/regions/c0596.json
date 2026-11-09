@@ -1,0 +1,386 @@
+[
+ {
+  "index": 0,
+  "label": "header_image",
+  "content": "Puffin Bay BOAT TRIPS",
+  "bbox_2d": [
+   333,
+   24,
+   668,
+   75
+  ],
+  "polygon": [
+   [
+    333,
+    24
+   ],
+   [
+    333,
+    74
+   ],
+   [
+    666,
+    74
+   ],
+   [
+    666,
+    24
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "text",
+  "content": "AUTUMN SAILINGS FROM 15 SEPTEMBER 2023",
+  "bbox_2d": [
+   177,
+   120,
+   814,
+   138
+  ],
+  "polygon": [
+   [
+    177,
+    120
+   ],
+   [
+    177,
+    137
+   ],
+   [
+    812,
+    137
+   ],
+   [
+    812,
+    120
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "text",
+  "content": "See the puffins and the dolphins from the water",
+  "bbox_2d": [
+   164,
+   146,
+   835,
+   222
+  ],
+  "polygon": [
+   [
+    164,
+    184
+   ],
+   [
+    164,
+    221
+   ],
+   [
+    659,
+    221
+   ],
+   [
+    666,
+    221
+   ],
+   [
+    718,
+    221
+   ],
+   [
+    833,
+    221
+   ],
+   [
+    829,
+    146
+   ],
+   [
+    175,
+    146
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "text",
+  "content": "A relaxed coastal cruise from Slate Quay, Aberystwyth, with a skipper who knows every cove.",
+  "bbox_2d": [
+   120,
+   233,
+   874,
+   280
+  ],
+  "polygon": [
+   [
+    120,
+    279
+   ],
+   [
+    872,
+    279
+   ],
+   [
+    872,
+    233
+   ],
+   [
+    125,
+    233
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "text",
+  "content": "Duration: 90 minutes",
+  "bbox_2d": [
+   364,
+   334,
+   633,
+   353
+  ],
+  "polygon": [
+   [
+    364,
+    334
+   ],
+   [
+    364,
+    352
+   ],
+   [
+    631,
+    352
+   ],
+   [
+    631,
+    334
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "text",
+  "content": "Meet at: the Slate Quay pontoon, 15 minutes before departure Booking line: 01970 555 0148",
+  "bbox_2d": [
+   120,
+   361,
+   874,
+   408
+  ],
+  "polygon": [
+   [
+    120,
+    361
+   ],
+   [
+    120,
+    407
+   ],
+   [
+    753,
+    407
+   ],
+   [
+    872,
+    407
+   ],
+   [
+    872,
+    361
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "paragraph_title",
+  "content": "AUTUMN TIMETABLE AND FARES",
+  "bbox_2d": [
+   253,
+   451,
+   738,
+   469
+  ],
+  "polygon": [
+   [
+    253,
+    451
+   ],
+   [
+    253,
+    468
+   ],
+   [
+    737,
+    468
+   ],
+   [
+    737,
+    451
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "table",
+  "content": "<table border=\"1\"><tr><td rowspan=\"2\">Days</td><td rowspan=\"2\">Departs</td><td colspan=\"2\">Fares</td></tr><tr><td>Adult</td><td>Child</td></tr><tr><td rowspan=\"2\">Monday to Friday</td><td>11:00</td><td>£14</td><td>£8</td></tr><tr><td>14:30</td><td>£14</td><td>£8</td></tr><tr><td rowspan=\"3\">Saturday and Sunday</td><td>10:30</td><td>£16</td><td>£9</td></tr><tr><td>13:00</td><td>£16</td><td>£9</td></tr><tr><td>15:30</td><td>£16</td><td>£9</td></tr></table>",
+  "bbox_2d": [
+   59,
+   481,
+   937,
+   750
+  ],
+  "polygon": [
+   [
+    59,
+    481
+   ],
+   [
+    64,
+    748
+   ],
+   [
+    935,
+    748
+   ],
+   [
+    935,
+    481
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "text",
+  "content": "Family ticket (2 adults and 2 children): £38 on any sailing",
+  "bbox_2d": [
+   177,
+   755,
+   818,
+   776
+  ],
+  "polygon": [
+   [
+    177,
+    755
+   ],
+   [
+    177,
+    775
+   ],
+   [
+    816,
+    775
+   ],
+   [
+    816,
+    755
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "text",
+  "content": "Book a seat",
+  "bbox_2d": [
+   242,
+   819,
+   407,
+   839
+  ],
+  "polygon": [
+   [
+    242,
+    819
+   ],
+   [
+    242,
+    838
+   ],
+   [
+    405,
+    838
+   ],
+   [
+    405,
+    819
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "text",
+  "content": "Buy a gift voucher",
+  "bbox_2d": [
+   505,
+   818,
+   753,
+   840
+  ],
+  "polygon": [
+   [
+    505,
+    818
+   ],
+   [
+    505,
+    839
+   ],
+   [
+    751,
+    839
+   ],
+   [
+    751,
+    818
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "text",
+  "content": "Group bookings and school trips: ask for Leah Trelloar. Coach connections from Shrewsbury are arranged by Megan Kaur and Bethan Hughes, bookings[pufffinbay.example.com]",
+  "bbox_2d": [
+   94,
+   897,
+   901,
+   956
+  ],
+  "polygon": [
+   [
+    94,
+    897
+   ],
+   [
+    94,
+    955
+   ],
+   [
+    900,
+    955
+   ],
+   [
+    900,
+    897
+   ],
+   [
+    661,
+    897
+   ],
+   [
+    631,
+    897
+   ],
+   [
+    574,
+    897
+   ],
+   [
+    288,
+    897
+   ]
+  ]
+ }
+]

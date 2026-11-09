@@ -1,0 +1,176 @@
+[
+ {
+  "index": 0,
+  "label": "table",
+  "content": "<table><thead><tr><th>PREPARED BY</th><th>REVIEWED</th><th>DATE</th></tr></thead><tbody><tr><td>Keisha Lindqvist</td><td>Ashley Adeyemi</td><td>December 30, 2026</td></tr></tbody></table>",
+  "bbox_2d": [
+   14,
+   0,
+   979,
+   105
+  ],
+  "polygon": [
+   [
+    14,
+    0
+   ],
+   [
+    14,
+    102
+   ],
+   [
+    977,
+    98
+   ],
+   [
+    977,
+    0
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "figure_title",
+  "content": "Table 3. Nesting boxes installed and cost by site, 2026 season (US dollars)",
+  "bbox_2d": [
+   14,
+   126,
+   642,
+   168
+  ],
+  "polygon": [
+   [
+    14,
+    130
+   ],
+   [
+    14,
+    165
+   ],
+   [
+    641,
+    165
+   ],
+   [
+    641,
+    126
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "table",
+  "content": "<table border=\"1\"><tr><td>Site</td><td>Boxes</td><td>Occupied</td><td>Unit cost</td><td>Total cost</td></tr><tr><td colspan=\"5\">Washington</td></tr><tr><td>Tacoma, WA(Quarry Park)</td><td>40</td><td>26</td><td>18.50</td><td>740.00</td></tr><tr><td>Tacoma, WA(Nuthatch Ridge)</td><td>25</td><td>19</td><td>18.50</td><td>462.50</td></tr><tr><td colspan=\"5>Arizona</td></tr><tr><td>Flagstaff, AZ(Quarry Road)</td><td>30</td><td>12</td><td>21.00</td><td>630.00</td></tr><tr><td>Flagstaff, AZ(Upper Mesa)</td><td>20</td><td>9</td><td>21.00</td><td>420.00</td></tr><tr><td>Subtotal</td><td>115</td><td>66</td><td></td><td>2,252.50</td></tr><tr><td>Shipping and handling</td><td></td><td></td><td></td><td>84.00</td></tr><tr><td>Total</td><td>115</td><td>66</td><td></td><td>2,336.50</td></tr></table>",
+  "bbox_2d": [
+   14,
+   179,
+   979,
+   820
+  ],
+  "polygon": [
+   [
+    14,
+    186
+   ],
+   [
+    20,
+    817
+   ],
+   [
+    977,
+    817
+   ],
+   [
+    977,
+    179
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "vision_footnote",
+  "content": "1. Occupied counts are boxes with at least one egg on the last check.",
+  "bbox_2d": [
+   16,
+   838,
+   507,
+   873
+  ],
+  "polygon": [
+   [
+    16,
+    838
+   ],
+   [
+    16,
+    871
+   ],
+   [
+    505,
+    871
+   ],
+   [
+    505,
+    838
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "vision_footnote",
+  "content": "2. Unit cost includes hardware; labor was volunteered by Travis Mahoney's crew.",
+  "bbox_2d": [
+   14,
+   880,
+   597,
+   918
+  ],
+  "polygon": [
+   [
+    14,
+    880
+   ],
+   [
+    14,
+    915
+   ],
+   [
+    595,
+    915
+   ],
+   [
+    595,
+    880
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "vision_footnote",
+  "content": "3. Source: Nuthatch Quarry Project field log, accessed December 30, 2026.",
+  "bbox_2d": [
+   14,
+   922,
+   547,
+   960
+  ],
+  "polygon": [
+   [
+    14,
+    922
+   ],
+   [
+    14,
+    957
+   ],
+   [
+    545,
+    957
+   ],
+   [
+    545,
+    922
+   ]
+  ]
+ }
+]

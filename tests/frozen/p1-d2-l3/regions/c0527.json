@@ -1,0 +1,275 @@
+[
+ {
+  "index": 0,
+  "label": "header_image",
+  "content": "Marigold Climbing Club\nFLAGSTAFF, ARIZONA",
+  "bbox_2d": [
+   96,
+   101,
+   522,
+   199
+  ],
+  "polygon": [
+   [
+    96,
+    101
+   ],
+   [
+    96,
+    197
+   ],
+   [
+    521,
+    197
+   ],
+   [
+    521,
+    112
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "header",
+  "content": "TEASEL ANNUAL",
+  "bbox_2d": [
+   732,
+   138,
+   881,
+   169
+  ],
+  "polygon": [
+   [
+    732,
+    138
+   ],
+   [
+    732,
+    167
+   ],
+   [
+    880,
+    167
+   ],
+   [
+    880,
+    138
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   101,
+   342,
+   326,
+   704
+  ],
+  "polygon": [
+   [
+    101,
+    342
+   ],
+   [
+    101,
+    702
+   ],
+   [
+    325,
+    702
+   ],
+   [
+    325,
+    342
+   ],
+   [
+    147,
+    342
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "text",
+  "content": "MEMBER",
+  "bbox_2d": [
+   359,
+   279,
+   436,
+   307
+  ],
+  "polygon": [
+   [
+    359,
+    279
+   ],
+   [
+    359,
+    305
+   ],
+   [
+    435,
+    305
+   ],
+   [
+    435,
+    279
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "paragraph_title",
+  "content": "Jordan Holloway",
+  "bbox_2d": [
+   355,
+   317,
+   700,
+   389
+  ],
+  "polygon": [
+   [
+    355,
+    317
+   ],
+   [
+    355,
+    386
+   ],
+   [
+    698,
+    386
+   ],
+   [
+    698,
+    317
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "content",
+  "content": "Member number ..... MC-40-2217\nMember since ..... 10/02/2023\nValid through ..... 10/01/2024\nHome gym ..... Flagstaff, AZ\nGuest passes ..... 4 per year",
+  "bbox_2d": [
+   356,
+   413,
+   901,
+   686
+  ],
+  "polygon": [
+   [
+    356,
+    413
+   ],
+   [
+    361,
+    684
+   ],
+   [
+    900,
+    684
+   ],
+   [
+    900,
+    413
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   759,
+   771,
+   896,
+   814
+  ],
+  "polygon": [
+   [
+    759,
+    771
+   ],
+   [
+    759,
+    812
+   ],
+   [
+    894,
+    812
+   ],
+   [
+    894,
+    778
+   ],
+   [
+    869,
+    771
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "footer",
+  "content": "Show this card at the front desk. Not transferable. Also valid at our Mobile, AL gym. Sponsored by Luis Shapiro.",
+  "bbox_2d": [
+   97,
+   828,
+   513,
+   890
+  ],
+  "polygon": [
+   [
+    97,
+    828
+   ],
+   [
+    102,
+    887
+   ],
+   [
+    511,
+    887
+   ],
+   [
+    511,
+    828
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "text",
+  "content": "Keisha Schultz General Manager",
+  "bbox_2d": [
+   776,
+   826,
+   900,
+   892
+  ],
+  "polygon": [
+   [
+    776,
+    857
+   ],
+   [
+    776,
+    890
+   ],
+   [
+    898,
+    890
+   ],
+   [
+    898,
+    826
+   ],
+   [
+    781,
+    826
+   ]
+  ]
+ }
+]

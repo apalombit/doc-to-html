@@ -1,0 +1,766 @@
+[
+ {
+  "index": 0,
+  "label": "paragraph_title",
+  "content": "PATIENT",
+  "bbox_2d": [
+   41,
+   61,
+   116,
+   89
+  ],
+  "polygon": [
+   [
+    41,
+    66
+   ],
+   [
+    41,
+    87
+   ],
+   [
+    115,
+    87
+   ],
+   [
+    115,
+    61
+   ],
+   [
+    47,
+    61
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "text",
+  "content": "NAME",
+  "bbox_2d": [
+   42,
+   99,
+   86,
+   122
+  ],
+  "polygon": [
+   [
+    42,
+    99
+   ],
+   [
+    42,
+    120
+   ],
+   [
+    85,
+    120
+   ],
+   [
+    85,
+    99
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "paragraph_title",
+  "content": "Wesley Hendricks",
+  "bbox_2d": [
+   42,
+   125,
+   208,
+   156
+  ],
+  "polygon": [
+   [
+    42,
+    125
+   ],
+   [
+    42,
+    155
+   ],
+   [
+    207,
+    155
+   ],
+   [
+    207,
+    125
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "text",
+  "content": "DATE OF BIRTH\n08/14/1979 (44 y)",
+  "bbox_2d": [
+   42,
+   166,
+   175,
+   224
+  ],
+  "polygon": [
+   [
+    42,
+    171
+   ],
+   [
+    42,
+    222
+   ],
+   [
+    173,
+    222
+   ],
+   [
+    173,
+    166
+   ],
+   [
+    64,
+    166
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "text",
+  "content": "ADDRESS\n1718 Alder Court, Billings, MT 59101",
+  "bbox_2d": [
+   42,
+   234,
+   298,
+   288
+  ],
+  "polygon": [
+   [
+    42,
+    234
+   ],
+   [
+    42,
+    287
+   ],
+   [
+    297,
+    287
+   ],
+   [
+    297,
+    234
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "text",
+  "content": "WEIGHT 176 lb",
+  "bbox_2d": [
+   42,
+   297,
+   102,
+   353
+  ],
+  "polygon": [
+   [
+    42,
+    297
+   ],
+   [
+    42,
+    351
+   ],
+   [
+    96,
+    351
+   ],
+   [
+    101,
+    338
+   ],
+   [
+    101,
+    297
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "text",
+  "content": "ALLERGIES\nPenicillin (hives)",
+  "bbox_2d": [
+   42,
+   361,
+   159,
+   419
+  ],
+  "polygon": [
+   [
+    42,
+    366
+   ],
+   [
+    42,
+    417
+   ],
+   [
+    158,
+    417
+   ],
+   [
+    158,
+    361
+   ],
+   [
+    53,
+    361
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "paragraph_title",
+  "content": "PRESCRIBER",
+  "bbox_2d": [
+   42,
+   463,
+   147,
+   490
+  ],
+  "polygon": [
+   [
+    42,
+    463
+   ],
+   [
+    42,
+    488
+   ],
+   [
+    146,
+    488
+   ],
+   [
+    146,
+    463
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "text",
+  "content": "NAME Camila Holloway, MD",
+  "bbox_2d": [
+   41,
+   498,
+   239,
+   561
+  ],
+  "polygon": [
+   [
+    41,
+    498
+   ],
+   [
+    41,
+    559
+   ],
+   [
+    238,
+    559
+   ],
+   [
+    238,
+    498
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "text",
+  "content": "CLINIC\nTopaz Family Clinic, Billings, MT",
+  "bbox_2d": [
+   41,
+   569,
+   265,
+   627
+  ],
+  "polygon": [
+   [
+    41,
+    569
+   ],
+   [
+    41,
+    625
+   ],
+   [
+    264,
+    625
+   ],
+   [
+    264,
+    569
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "text",
+  "content": "PHONE\n(406) 555-0128",
+  "bbox_2d": [
+   42,
+   635,
+   157,
+   691
+  ],
+  "polygon": [
+   [
+    42,
+    635
+   ],
+   [
+    42,
+    689
+   ],
+   [
+    155,
+    689
+   ],
+   [
+    155,
+    635
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "paragraph_title",
+  "content": "INSTRUCTIONS",
+  "bbox_2d": [
+   42,
+   735,
+   169,
+   762
+  ],
+  "polygon": [
+   [
+    42,
+    735
+   ],
+   [
+    42,
+    760
+   ],
+   [
+    167,
+    760
+   ],
+   [
+    167,
+    735
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "text",
+  "content": "Generic substitution permitted.",
+  "bbox_2d": [
+   42,
+   770,
+   273,
+   800
+  ],
+  "polygon": [
+   [
+    42,
+    770
+   ],
+   [
+    42,
+    798
+   ],
+   [
+    272,
+    798
+   ],
+   [
+    272,
+    770
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "text",
+  "content": "Dispense as written",
+  "bbox_2d": [
+   44,
+   808,
+   204,
+   836
+  ],
+  "polygon": [
+   [
+    44,
+    808
+   ],
+   [
+    44,
+    834
+   ],
+   [
+    203,
+    834
+   ],
+   [
+    203,
+    808
+   ]
+  ]
+ },
+ {
+  "index": 14,
+  "label": "text",
+  "content": "Allergies checked with patient",
+  "bbox_2d": [
+   42,
+   841,
+   271,
+   871
+  ],
+  "polygon": [
+   [
+    42,
+    846
+   ],
+   [
+    42,
+    869
+   ],
+   [
+    270,
+    869
+   ],
+   [
+    270,
+    841
+   ],
+   [
+    205,
+    841
+   ],
+   [
+    189,
+    841
+   ],
+   [
+    180,
+    841
+   ],
+   [
+    164,
+    841
+   ],
+   [
+    160,
+    841
+   ],
+   [
+    88,
+    841
+   ],
+   [
+    64,
+    841
+   ]
+  ]
+ },
+ {
+  "index": 15,
+  "label": "text",
+  "content": "Controlled substance",
+  "bbox_2d": [
+   42,
+   877,
+   213,
+   905
+  ],
+  "polygon": [
+   [
+    42,
+    877
+   ],
+   [
+    42,
+    904
+   ],
+   [
+    211,
+    904
+   ],
+   [
+    211,
+    877
+   ]
+  ]
+ },
+ {
+  "index": 16,
+  "label": "paragraph_title",
+  "content": "Rx",
+  "bbox_2d": [
+   347,
+   67,
+   413,
+   125
+  ],
+  "polygon": [
+   [
+    347,
+    67
+   ],
+   [
+    347,
+    123
+   ],
+   [
+    411,
+    123
+   ],
+   [
+    411,
+    67
+   ]
+  ]
+ },
+ {
+  "index": 17,
+  "label": "paragraph_title",
+  "content": "Outpatient Prescription",
+  "bbox_2d": [
+   664,
+   67,
+   951,
+   108
+  ],
+  "polygon": [
+   [
+    664,
+    67
+   ],
+   [
+    664,
+    107
+   ],
+   [
+    950,
+    107
+   ],
+   [
+    950,
+    67
+   ]
+  ]
+ },
+ {
+  "index": 18,
+  "label": "text",
+  "content": "Written May 25, 2024 · No. 24-05-3318",
+  "bbox_2d": [
+   695,
+   112,
+   951,
+   141
+  ],
+  "polygon": [
+   [
+    695,
+    117
+   ],
+   [
+    695,
+    140
+   ],
+   [
+    950,
+    140
+   ],
+   [
+    950,
+    112
+   ],
+   [
+    896,
+    112
+   ],
+   [
+    775,
+    112
+   ],
+   [
+    751,
+    112
+   ],
+   [
+    730,
+    112
+   ],
+   [
+    725,
+    112
+   ],
+   [
+    701,
+    112
+   ]
+  ]
+ },
+ {
+  "index": 19,
+  "label": "table",
+  "content": "<table border=\"1\"><tr><td>Medication</td><td>Strength</td><td>Qty</td><td>Refills</td><td>Days supply</td></tr><tr><td>Azithromycin tablets</td><td>250mg</td><td>6</td><td>0</td><td>5</td></tr><tr><td colspan=\"5\">Sig: take 2 tablets on day1, then 1 tablet daily on days2 to5, with water.</td></tr><tr><td colspan=\"5\">Note: finish the course even if you feel better.</td></tr><tr><td>Ibuprofen tablets</td><td>600mg</td><td>30</td><td>1</td><td></td></tr><tr><td colspan=\"5\">Sig: 1 tablet every8 hours as needed for pain,with food. Maximum3 tablets a day.</td></tr><tr><td>Fluticasone nasal spray</td><td>50mcg</td><td>1</td><td></td><td>30</td></tr><tr><td colspan=\"5\">Sig: 2 sprays in each nostril once daily.</td></tr></table>",
+  "bbox_2d": [
+   350,
+   181,
+   947,
+   599
+  ],
+  "polygon": [
+   [
+    350,
+    181
+   ],
+   [
+    350,
+    597
+   ],
+   [
+    946,
+    597
+   ],
+   [
+    946,
+    181
+   ]
+  ]
+ },
+ {
+  "index": 20,
+  "label": "text",
+  "content": "Send to: Maple Street Pharmacy (mail order), 410 Maple Street, Boise, ID 83702.\nPatient prefers delivery.",
+  "bbox_2d": [
+   354,
+   636,
+   903,
+   699
+  ],
+  "polygon": [
+   [
+    354,
+    641
+   ],
+   [
+    354,
+    698
+   ],
+   [
+    902,
+    698
+   ],
+   [
+    902,
+    636
+   ]
+  ]
+ },
+ {
+  "index": 21,
+  "label": "text",
+  "content": "Camila Holloway, MD Signature of prescriber",
+  "bbox_2d": [
+   344,
+   768,
+   502,
+   828
+  ],
+  "polygon": [
+   [
+    344,
+    768
+   ],
+   [
+    344,
+    826
+   ],
+   [
+    501,
+    826
+   ],
+   [
+    501,
+    768
+   ]
+  ]
+ },
+ {
+  "index": 22,
+  "label": "text",
+  "content": "Brandon Castillo, PharmD Verified by pharmacist",
+  "bbox_2d": [
+   655,
+   768,
+   847,
+   826
+  ],
+  "polygon": [
+   [
+    655,
+    768
+   ],
+   [
+    655,
+    825
+   ],
+   [
+    846,
+    825
+   ],
+   [
+    846,
+    768
+   ]
+  ]
+ },
+ {
+  "index": 23,
+  "label": "text",
+  "content": "This prescription is valid for one year from the date written. Not valid without the prescriber's signature. Keep out of reach of children.",
+  "bbox_2d": [
+   344,
+   843,
+   948,
+   891
+  ],
+  "polygon": [
+   [
+    344,
+    843
+   ],
+   [
+    344,
+    889
+   ],
+   [
+    947,
+    889
+   ],
+   [
+    947,
+    843
+   ]
+  ]
+ }
+]

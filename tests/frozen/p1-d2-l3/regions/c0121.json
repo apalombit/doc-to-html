@@ -1,0 +1,490 @@
+[
+ {
+  "index": 0,
+  "label": "text",
+  "content": "Bluebell Meridian, Inc.\n1180 Aspen Way, Flagstaff, AZ 8601",
+  "bbox_2d": [
+   50,
+   59,
+   289,
+   129
+  ],
+  "polygon": [
+   [
+    50,
+    59
+   ],
+   [
+    50,
+    127
+   ],
+   [
+    288,
+    127
+   ],
+   [
+    288,
+    84
+   ],
+   [
+    284,
+    59
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "paragraph_title",
+  "content": "EARNINGS STATEMENT Pay date: January 20, 2022",
+  "bbox_2d": [
+   51,
+   145,
+   461,
+   181
+  ],
+  "polygon": [
+   [
+    51,
+    145
+   ],
+   [
+    51,
+    179
+   ],
+   [
+    460,
+    179
+   ],
+   [
+    460,
+    150
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "text",
+  "content": "Employee Employee ID\nTravis Morales 004417",
+  "bbox_2d": [
+   51,
+   201,
+   346,
+   258
+  ],
+  "polygon": [
+   [
+    51,
+    201
+   ],
+   [
+    51,
+    256
+   ],
+   [
+    345,
+    256
+   ],
+   [
+    345,
+    201
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "text",
+  "content": "Department Pay period\nField Operations 01/01/2022 – 01/15/2022",
+  "bbox_2d": [
+   51,
+   269,
+   450,
+   328
+  ],
+  "polygon": [
+   [
+    51,
+    269
+   ],
+   [
+    51,
+    326
+   ],
+   [
+    448,
+    326
+   ],
+   [
+    448,
+    269
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "paragraph_title",
+  "content": "Earnings",
+  "bbox_2d": [
+   51,
+   371,
+   120,
+   403
+  ],
+  "polygon": [
+   [
+    51,
+    371
+   ],
+   [
+    51,
+    402
+   ],
+   [
+    119,
+    402
+   ],
+   [
+    119,
+    371
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "table",
+  "content": "<table><thead><tr><th>Type</th><th>Hours</th><th>Rate</th><th>Amount</th></tr></thead><tbody><tr><td>Regular</td><td>80.00</td><td>24.50</td><td>1,960.00</td></tr><tr><td>Overtime</td><td>6.00</td><td>36.75</td><td>220.50</td></tr><tr><td>Holiday</td><td>8.00</td><td>24.50</td><td>196.00</td></tr><tr><td>Shift bonus²</td><td></td><td></td><td>75.00</td></tr><tr><td>Gross pay</td><td></td><td></td><td>2,451.50</td></tr></tbody></table>",
+  "bbox_2d": [
+   52,
+   411,
+   479,
+   662
+  ],
+  "polygon": [
+   [
+    52,
+    416
+   ],
+   [
+    52,
+    484
+   ],
+   [
+    52,
+    621
+   ],
+   [
+    57,
+    660
+   ],
+   [
+    478,
+    660
+   ],
+   [
+    478,
+    411
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "vision_footnote",
+  "content": "Net pay, deposited to account ending 7741",
+  "bbox_2d": [
+   50,
+   719,
+   262,
+   748
+  ],
+  "polygon": [
+   [
+    50,
+    719
+   ],
+   [
+    50,
+    746
+   ],
+   [
+    261,
+    746
+   ],
+   [
+    261,
+    719
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "text",
+  "content": "Manager Location\nAaliyah Yamamoto Flagstaff, AZ",
+  "bbox_2d": [
+   515,
+   201,
+   836,
+   260
+  ],
+  "polygon": [
+   [
+    515,
+    201
+   ],
+   [
+    515,
+    258
+   ],
+   [
+    835,
+    258
+   ],
+   [
+    835,
+    201
+   ],
+   [
+    667,
+    201
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "text",
+  "content": "$1,783.31",
+  "bbox_2d": [
+   51,
+   748,
+   164,
+   797
+  ],
+  "polygon": [
+   [
+    51,
+    748
+   ],
+   [
+    51,
+    795
+   ],
+   [
+    163,
+    795
+   ],
+   [
+    163,
+    748
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "text",
+  "content": "Payroll contact Filing status\nEmily Delgado Single¹",
+  "bbox_2d": [
+   517,
+   269,
+   803,
+   333
+  ],
+  "polygon": [
+   [
+    517,
+    269
+   ],
+   [
+    517,
+    328
+   ],
+   [
+    802,
+    332
+   ],
+   [
+    802,
+    269
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "paragraph_title",
+  "content": "Deductions",
+  "bbox_2d": [
+   515,
+   371,
+   602,
+   402
+  ],
+  "polygon": [
+   [
+    515,
+    371
+   ],
+   [
+    515,
+    400
+   ],
+   [
+    601,
+    400
+   ],
+   [
+    601,
+    371
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "table",
+  "content": "<table><thead><tr><th>Type</th><th>This period</th><th>Year to date</th></tr></thead><tbody><tr><td>Federal tax</td><td>294.18</td><td>294.18</td></tr><tr><td>Social Security</td><td>152.00</td><td>152.00</td></tr><tr><td>Medicare</td><td>35.55</td><td>35.55</td></tr><tr><td>Health plan</td><td>88.40</td><td>88.40</td></tr><tr><td>Retirement 4%</td><td>98.06</td><td>98.06</td></tr><tr><td><strong>Total</strong></td><td><strong>668.19</strong></td><td><strong>668.19</strong></td></tr></tbody></table>",
+  "bbox_2d": [
+   518,
+   411,
+   944,
+   692
+  ],
+  "polygon": [
+   [
+    518,
+    411
+   ],
+   [
+    518,
+    691
+   ],
+   [
+    943,
+    691
+   ],
+   [
+    943,
+    411
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "vision_footnote",
+  "content": "Paid time off balance",
+  "bbox_2d": [
+   517,
+   737,
+   626,
+   764
+  ],
+  "polygon": [
+   [
+    517,
+    737
+   ],
+   [
+    517,
+    763
+   ],
+   [
+    625,
+    763
+   ],
+   [
+    625,
+    737
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "vision_footnote",
+  "content": "64.5 hours",
+  "bbox_2d": [
+   517,
+   766,
+   594,
+   797
+  ],
+  "polygon": [
+   [
+    517,
+    766
+   ],
+   [
+    517,
+    795
+   ],
+   [
+    593,
+    795
+   ],
+   [
+    593,
+    766
+   ]
+  ]
+ },
+ {
+  "index": 14,
+  "label": "footnote",
+  "content": "$ ^{1} $Withholding follows the form on file dated December 6, 2021.",
+  "bbox_2d": [
+   50,
+   870,
+   388,
+   901
+  ],
+  "polygon": [
+   [
+    50,
+    870
+   ],
+   [
+    50,
+    899
+   ],
+   [
+    387,
+    899
+   ],
+   [
+    387,
+    876
+   ]
+  ]
+ },
+ {
+  "index": 15,
+  "label": "footnote",
+  "content": "$ ^{2} $ Night shift premium, one shift of $ 75.00 , $ taxed as regular wages.",
+  "bbox_2d": [
+   48,
+   904,
+   401,
+   935
+  ],
+  "polygon": [
+   [
+    48,
+    904
+   ],
+   [
+    48,
+    933
+   ],
+   [
+    400,
+    933
+   ],
+   [
+    400,
+    904
+   ],
+   [
+    351,
+    904
+   ],
+   [
+    335,
+    904
+   ]
+  ]
+ }
+]

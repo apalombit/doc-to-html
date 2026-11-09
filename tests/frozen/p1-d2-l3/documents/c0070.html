@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Document</title>
+<style>
+:root { --ink:#1a1a1a; --muted:#666; --rule:#e0e0e0; --shade:#f4f4f4;
+        --page-bg:#fff; --accent:inherit;
+        --flag:#b45309;
+        --link:#0645ad; --mark-bg:#fff2a8; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink:#e8e8e8; --muted:#9a9a9a; --rule:#333; --shade:#1e1e1e;
+          --page-bg:#111;
+          --flag:#fbbf24;
+          --link:#7aa7ff; --mark-bg:#5a4a12; }
+}
+body { font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+       color:var(--ink); background:var(--page-bg); margin:0; padding:2rem 1rem; }
+.doc { max-width:52rem; margin:0 auto; }
+/* Inline runs. `<a>` carries no href — nothing read off the page says where a
+   link goes — so it needs styling of its own to read as one. */
+a { color:var(--link); text-decoration:underline; }
+code { font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+       font-size:0.92em; }
+mark { background:var(--mark-bg); color:inherit; padding:0 0.15em; }
+.band { display:flex; gap:2rem; align-items:flex-start;
+        margin-bottom:1.75rem; flex-wrap:wrap; }
+.band > * { flex:1 1 12rem; min-width:0; }
+/* A `columns` Region: its lanes side by side, each read top to bottom and as
+   wide as the page draws it. Spec 0008, step 2. */
+.columns { display:flex; gap:2rem; align-items:flex-start; margin-bottom:1.75rem; }
+.lane { min-width:0; }
+.lane > :last-child { margin-bottom:0; }
+/* A rectangle the page draws round a run of Zones in one lane, drawn once
+   round the run. Spec 0011, step 1a — see `rhythm.frames`. */
+.frame { border:1px solid var(--rule); border-radius:4px; margin-bottom:1.75rem; }
+/* One Zone of a Continuation, holding its own margins, so the gap drawn before it is
+   the page's and not that gap collapsed into a paragraph's. Spec 0011, 1b. */
+.cont { display:flow-root; }
+/* A `grid` Region: its Zones by row and by lane, never wrapped. Spec 0010, B1. */
+.grid { display:grid; column-gap:2rem; row-gap:1.75rem; align-items:start;
+        margin-bottom:1.75rem; }
+.grid > * { min-width:0; }
+/* A label column in a lane takes at most half of it. A lane is narrower than
+   the page, and `cv_0013`'s `Chartered Engineer, Engineers Ireland (2019)`
+   sized the `auto` track to the whole sidebar, leaving `Reg. no. 11408` a
+   sliver that `anywhere` broke after every letter — N4's fault, in a lane. */
+.columns dl.pairs { grid-template-columns:fit-content(50%) 1fr; }
+.zone-header { font-size:1.05em; }
+.zone-footer { color:var(--muted); font-size:.875em; }
+h1 { font-size:1.6em; margin:0 0 .35em; letter-spacing:.01em; }
+section.boxed { border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
+section.filled { border-radius:4px; overflow:hidden; }
+h2.zone-title { font-size:.95em; font-weight:600; margin:0; padding:.55em 0; }
+h2.zone-title.barred { padding:.55em .9em; }
+section.boxed > h2.zone-title, section.filled > h2.zone-title { padding:.55em .9em; }
+.zone-body { padding:0; }
+section.boxed > .zone-body, section.filled > .zone-body { padding:.9em; }
+section.boxed > .zone-body > .table-wrap,
+section.filled > .zone-body > .table-wrap { margin:-.9em; }
+section.filled.grounded > h2.zone-title { padding:.55em 0; }
+section.filled.grounded > .zone-body { padding:0; }
+section.filled.grounded > .zone-body > .table-wrap { margin:0; }
+blockquote { margin:.6em 0 .3em 1.5em; }
+p.attribution { color:var(--muted); font-size:.85em; margin:0 0 .4em; }
+ul { margin:0 0 .4em; padding-left:1.3em; }
+.zone-header ul { display:flex; flex-wrap:wrap; gap:1.1rem;
+                  list-style:none; padding:0; }
+p { margin:0 0 .4em; }
+dl.pairs { display:grid; grid-template-columns:auto 1fr; gap:.15em .75em; margin:0; }
+/* A long unbreakable value must wrap, not be hidden. `section.filled` and
+   `section.boxed` both set `overflow:hidden` to keep a fill inside its own
+   rounded corner, so anything wider than the Zone is silently cut off in the
+   screenshot — recall says the text is present and the picture does not
+   contain it. `cv_0013`'s sidebar was the corpus's one case: the `auto` track
+   sized itself to `ines.halloran@fempost.example`, which has no break
+   opportunity, giving the Zone a 368px content width inside a 256px box.
+   `anywhere` rather than `break-word` because only `anywhere` lowers the
+   min-content width the grid track is measured from. Measured 2026-09-25 over
+   all fifteen: corpus `clipped` 1 -> 0, `beside_agreement` +0.0033,
+   `alignment_agreement` +0.0019, ratchet clean, and `cv_0013`'s height_ratio
+   1.77 -> 2.14, which is the wrapped address taking the lines it needs. */
+dl.pairs dt, dl.pairs dd { overflow-wrap:anywhere; }
+/* A label with no value is not in the label column. Left there, the `auto`
+   track sizes itself to it as if a value stood beside it, and the `1fr` track
+   gets what is left: `catalogue_0015`'s `Suffolk pattern, 265 mm, beeswax` took
+   the whole card and `each`, the next line's value, was broken after every
+   letter by the `anywhere` above. Across both columns it sizes neither, so the
+   label column is as wide as the labels that have values. N4, 2026-10-10. */
+dl.pairs dt.alone { grid-column:1 / -1; }
+dl.pairs dt.alone + dd { display:none; }
+dl.pairs dt { color:var(--muted); }
+/* A pairs Zone whose lines the page sets centred or flush right: each pair a
+   line, label beside value, so the line can sit where the page sets it. */
+dl.pairs.lines { display:block; }
+dl.pairs.lines dt, dl.pairs.lines dd { display:inline; }
+dl.pairs dd { margin:0; }
+.zone-summary dl.pairs dd { font-weight:600; text-align:right; }
+.table-wrap { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; }
+th, td { padding:.45em .6em; text-align:left; border-bottom:1px solid var(--rule); }
+thead th { background:var(--shade); font-weight:600; }
+td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+tfoot td:last-child { text-align:right; }
+tfoot td { font-weight:600; border-top:2px solid var(--rule); border-bottom:none; }
+figure.omitted { margin:0; border:1px dashed var(--rule); border-radius:3px;
+                 min-height:3rem; display:flex; align-items:center;
+                 justify-content:center; color:var(--muted); font-size:.8em; }
+figure.omitted figcaption { padding:.5em; text-align:center; }
+.mark { display:inline-block; border:2px solid var(--flag); color:var(--flag);
+        padding:.15em .6em; border-radius:3px; font-weight:600; letter-spacing:.08em; }
+.disputed { cursor:help; }
+.corrected { border-bottom:2px solid var(--rule); cursor:help; }
+.skeleton { background:repeating-linear-gradient(135deg, var(--shade),
+            var(--shade) 6px, transparent 6px, transparent 12px);
+            border:1px dashed var(--rule); min-height:2.5rem; border-radius:3px; }
+</style>
+<style>:root { --page-bg:rgb(255,255,255); --ink:rgb(17,17,17); --muted:rgb(96,96,96); --rule:rgb(219,219,219); --shade:rgb(241,241,241); }
+.separator { margin:-0.875rem 0 0.875rem; }
+.rules { display:flex; } .rules > div { flex:none; }
+table.read th, table.read td { border-bottom:none; }
+table.read thead th { background:none; }
+table.read tfoot td { border-top:none; }
+table.spaced td, table.spaced th { padding-top:0; padding-bottom:0; }
+body { font-size:13.5px; --body:13.5px; }
+body { padding:0px 14px 9px 10px; }
+.doc { max-width:656px; }
+body { font-family:Georgia, "Times New Roman", serif; }</style>
+</head>
+<body>
+<div class="doc">
+<div class="band" style="margin-bottom:0px"><section class="zone zone-body" style="min-width:min(18rem,100%)"><div class="table-wrap"><table class="read spaced"><thead><tr><th style="font-size:calc(0.70 * var(--body, 1em));font-weight:400;color:rgb(102,102,102);padding-top:.45em;padding-bottom:0px">PREPARED BY</th><th style="font-size:calc(0.70 * var(--body, 1em));font-weight:400;color:rgb(102,102,102);padding-top:.45em;padding-bottom:0px">REVIEWED</th><th style="font-size:calc(0.70 * var(--body, 1em));font-weight:400;color:rgb(102,102,102);padding-top:.45em;padding-bottom:0px">DATE</th></tr></thead><tbody><tr><td style="padding-top:0px;padding-bottom:.45em">Keisha Lindqvist</td><td style="padding-top:0px;padding-bottom:.45em">Ashley Adeyemi</td><td style="padding-top:0px;padding-bottom:.45em">December 30, 2026</td></tr></tbody></table></div></section></div><div class="band" style="margin-bottom:0px"><section class="zone zone-body"><p style="font-style:italic">Table 3. Nesting boxes installed and cost by site, 2026 season (US dollars)</p></section></div><div class="band" style="margin-bottom:0px"><section class="zone zone-body" style="min-width:min(30rem,100%)"><div class="table-wrap"><table><tbody><tr><td style="vertical-align:top">Site</td><td class="num" style="vertical-align:top">Boxes</td><td class="num" style="vertical-align:top">Occupied</td><td class="num" style="vertical-align:top">Unit cost</td><td class="num" style="vertical-align:top">Total cost</td></tr><tr><td colspan="5" style="vertical-align:top">Washington</td></tr><tr><td style="vertical-align:top">Tacoma, WA(Quarry Park)</td><td class="num" style="vertical-align:top">40</td><td class="num" style="vertical-align:top">26</td><td class="num" style="vertical-align:top">18.50</td><td class="num" style="vertical-align:top">740.00</td></tr><tr><td style="vertical-align:top">Tacoma, WA(Nuthatch Ridge)</td><td class="num" style="vertical-align:top">25</td><td class="num" style="vertical-align:top">19</td><td class="num" style="vertical-align:top">18.50</td><td class="num" style="vertical-align:top">462.50</td></tr></tbody></table></div></section></div><div class="separator" style="border-top:2px solid rgb(0,0,0);margin:0 0 2px"></div><div class="band"><section class="zone zone-body"><p style="font-size:calc(0.80 * var(--body, 1em));margin-bottom:0">1. Occupied counts are boxes with at least one egg on the last check.</p><p style="font-size:calc(0.80 * var(--body, 1em));margin-top:1px;margin-bottom:0">2. Unit cost includes hardware; labor was volunteered by Travis Mahoney&#x27;s crew.</p><p style="font-size:calc(0.80 * var(--body, 1em));margin-top:0px">3. Source: Nuthatch Quarry Project field log, accessed December 30, 2026.</p></section></div>
+</div>
+<script type="application/json" id="doc-ir">{"source":{"path":"/Users/aless/Desktop/Projects/pic-to-html/doc-to-html/corpus/pages/c0070.png","sha256":"63d79509bd78921ae3420cbbd494a672bace3248eb139d24b2dab8e5d227ad72","width":680,"height":428,"rectified_width":680,"rectified_height":428,"paper":null,"surround":null},"ir_version":1,"rectifier_version":7,"hint":null,"page_px":680,"style":{"page_bg":[255,255,255],"ink":[17,17,17],"accent":null,"shade":[153,153,153],"body_px":13.5,"face":"serif"},"zones":[{"kind":"table","role":"body","band":0,"column":0,"bbox":{"left":0.014,"top":0.0,"right":0.979,"bottom":0.105},"title":null,"rows":[{"cells":[{"bbox":{"left":0.021568627450980392,"top":0.03660436137071651,"right":0.13823529411764707,"bottom":0.053738317757009345},"readings":[{"engine":"glm-ocr","text":"PREPARED BY","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"PREPARED BY","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.7,"bold":false,"italic":false,"color":[102,102,102],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},{"bbox":{"left":0.21911764705882353,"top":0.03660436137071651,"right":0.30637254901960786,"bottom":0.053738317757009345},"readings":[{"engine":"glm-ocr","text":"REVIEWED","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"REVIEWED","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.7,"bold":false,"italic":false,"color":[102,102,102],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},{"bbox":{"left":0.4137254901960784,"top":0.03660436137071651,"right":0.45441176470588235,"bottom":0.053738317757009345},"readings":[{"engine":"glm-ocr","text":"DATE","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"DATE","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.7,"bold":false,"italic":false,"color":[102,102,102],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"role":"header","under":{"kind":"none","color":null,"width":0.0},"fill":null,"leader":null,"gap":null},{"cells":[{"bbox":{"left":0.02107843137254902,"top":0.06775700934579439,"right":0.17696078431372547,"bottom":0.10124610591900313},"readings":[{"engine":"glm-ocr","text":"Keisha Lindqvist","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"Keisha Lindqvist","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.1,"bold":false,"italic":false,"color":[17,17,17],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},{"bbox":{"left":0.2181372549019608,"top":0.06775700934579439,"right":0.37107843137254903,"bottom":0.10202492211838006},"readings":[{"engine":"glm-ocr","text":"Ashley Adeyemi","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"Ashley Adeyemi","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.1,"bold":false,"italic":false,"color":[17,17,17],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},{"bbox":{"left":0.4137254901960784,"top":0.06775700934579439,"right":0.5887254901960784,"bottom":0.09813084112149532},"readings":[{"engine":"glm-ocr","text":"December 30, 2026","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"December 30, 2026","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.1,"bold":false,"italic":false,"color":[17,17,17],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"role":"data","under":{"kind":"none","color":null,"width":0.0},"fill":null,"leader":null,"gap":0.01168}],"pairs":[],"blocks":[],"extra":[],"graphic_kind":null,"pixels":null,"fill":null,"title_size":null,"title_caps":false,"face":null,"title_color":null,"title_fill":null,"header_fill":null,"boxed":false,"frame":null,"group":null,"align":null,"title_align":null,"complete":true},{"kind":"prose","role":"body","band":1,"column":0,"bbox":{"left":0.014,"top":0.126,"right":0.642,"bottom":0.168},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"paragraph","lines":[{"bbox":{"left":0.020588235294117647,"top":0.13473520249221183,"right":0.6401960784313725,"bottom":0.16666666666666666},"readings":[{"engine":"glm-ocr","text":"Table 3. Nesting boxes installed and cost by site, 2026 season (US dollars)","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"Table 3. Nesting boxes installed and cost by site, 2026 season (US dollars)","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":true,"color":[17,17,17],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":null}],"extra":[],"graphic_kind":null,"pixels":null,"fill":null,"title_size":null,"title_caps":false,"face":null,"title_color":null,"title_fill":null,"header_fill":null,"boxed":false,"frame":null,"group":null,"align":"left","title_align":null,"complete":true},{"kind":"table","role":"body","band":2,"column":0,"bbox":{"left":0.014,"top":0.179,"right":0.979,"bottom":0.82},"title":null,"rows":[{"cells":[{"bbox":null,"readings":[{"engine":"glm-ocr","text":"Site","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":null},{"bbox":null,"readings":[{"engine":"glm-ocr","text":"Boxes","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":null},{"bbox":null,"readings":[{"engine":"glm-ocr","text":"Occupied","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":null},{"bbox":null,"readings":[{"engine":"glm-ocr","text":"Unit cost","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":null},{"bbox":null,"readings":[{"engine":"glm-ocr","text":"Total cost","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":null}],"role":"data","under":null,"fill":null,"leader":null,"gap":null},{"cells":[{"bbox":null,"readings":[{"engine":"glm-ocr","text":"Washington","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":null,"span":[1,5]},{"bbox":null,"readings":[{"engine":"glm-ocr","text":"","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":null},{"bbox":null,"readings":[{"engine":"glm-ocr","text":"","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":null},{"bbox":null,"readings":[{"engine":"glm-ocr","text":"","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":null},{"bbox":null,"readings":[{"engine":"glm-ocr","text":"","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":null}],"role":"data","under":null,"fill":null,"leader":null,"gap":null},{"cells":[{"bbox":null,"readings":[{"engine":"glm-ocr","text":"Tacoma, WA(Quarry Park)","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":null},{"bbox":null,"readings":[{"engine":"glm-ocr","text":"40","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":null},{"bbox":null,"readings":[{"engine":"glm-ocr","text":"26","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":null},{"bbox":null,"readings":[{"engine":"glm-ocr","text":"18.50","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":null},{"bbox":null,"readings":[{"engine":"glm-ocr","text":"740.00","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":null}],"role":"data","under":null,"fill":null,"leader":null,"gap":null},{"cells":[{"bbox":null,"readings":[{"engine":"glm-ocr","text":"Tacoma, WA(Nuthatch Ridge)","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":null},{"bbox":null,"readings":[{"engine":"glm-ocr","text":"25","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":null},{"bbox":null,"readings":[{"engine":"glm-ocr","text":"19","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":null},{"bbox":null,"readings":[{"engine":"glm-ocr","text":"18.50","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":null},{"bbox":null,"readings":[{"engine":"glm-ocr","text":"462.50","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":null}],"role":"data","under":null,"fill":null,"leader":null,"gap":null}],"pairs":[],"blocks":[],"extra":[],"graphic_kind":null,"pixels":null,"fill":null,"title_size":null,"title_caps":false,"face":null,"title_color":null,"title_fill":null,"header_fill":null,"boxed":false,"frame":null,"group":null,"align":null,"title_align":null,"complete":true},{"kind":"prose","role":"body","band":3,"column":0,"bbox":{"left":0.014,"top":0.838,"right":0.597,"bottom":0.96},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"paragraph","lines":[{"bbox":{"left":0.022058823529411766,"top":0.8473520249221185,"right":0.5034313725490196,"bottom":0.8738317757009346},"readings":[{"engine":"glm-ocr","text":"1. Occupied counts are boxes with at least one egg on the last check.","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"1. Occupied counts are boxes with at least one egg on the last check.","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.8,"bold":false,"italic":false,"color":[34,34,34],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":null},{"kind":"paragraph","lines":[{"bbox":{"left":0.02107843137254902,"top":0.8894080996884736,"right":0.5931372549019608,"bottom":0.9158878504672897},"readings":[{"engine":"glm-ocr","text":"2. Unit cost includes hardware; labor was volunteered by Travis Mahoney's crew.","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"2. Unit cost includes hardware; labor was volunteered by Travis Mahoney's crew.","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.8,"bold":false,"italic":false,"color":[34,34,34],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":0.01558},{"kind":"paragraph","lines":[{"bbox":{"left":0.021568627450980392,"top":0.9306853582554516,"right":0.5441176470588235,"bottom":0.9579439252336449},"readings":[{"engine":"glm-ocr","text":"3. Source: Nuthatch Quarry Project field log, accessed December 30, 2026.","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"3. Source: Nuthatch Quarry Project field log, accessed December 30, 2026.","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.8,"bold":false,"italic":false,"color":[34,34,34],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":0.0148}],"extra":[],"graphic_kind":null,"pixels":null,"fill":null,"title_size":null,"title_caps":false,"face":null,"title_color":null,"title_fill":null,"header_fill":null,"boxed":false,"frame":null,"group":null,"align":"left","title_align":null,"complete":true}],"corrections":[],"probes":[],"gaps":[],"failures":[],"caveats":[],"shortfalls":[],"unclaimed":[{"zone_index":2,"bbox":{"left":0.029411764705882353,"top":0.20249221183800625,"right":0.9705882352941176,"bottom":0.2398753894080997},"words":7,"ink_share":0.0768,"reach":{"left":-0.0005882352941176464,"top":0.20249221183800625,"right":1.0005882352941176,"bottom":0.2398753894080997}},{"zone_index":2,"bbox":{"left":0.7867647058823529,"top":0.2102803738317757,"right":0.9205882352941176,"bottom":0.2266355140186916},"words":2,"ink_share":0.0123,"reach":{"left":0.7567647058823529,"top":0.2102803738317757,"right":0.9505882352941176,"bottom":0.2266355140186916}},{"zone_index":2,"bbox":{"left":0.05,"top":0.39953271028037385,"right":0.9705882352941176,"bottom":0.4306853582554517},"words":8,"ink_share":0.069,"reach":{"left":0.020000000000000004,"top":0.39953271028037385,"right":1.0005882352941176,"bottom":0.4306853582554517}},{"zone_index":2,"bbox":{"left":0.027941176470588237,"top":0.470404984423676,"right":0.10196078431372549,"bottom":0.4961059190031153},"words":1,"ink_share":0.0158,"reach":{"left":-0.0020588235294117622,"top":0.470404984423676,"right":0.1319607843137255,"bottom":0.4961059190031153}},{"zone_index":2,"bbox":{"left":0.1411764705882353,"top":0.5132398753894081,"right":0.2995098039215686,"bottom":0.5700934579439252},"words":1,"ink_share":0.0254,"reach":{"left":0.1111764705882353,"top":0.5132398753894081,"right":0.3295098039215686,"bottom":0.5700934579439252}},{"zone_index":2,"bbox":{"left":0.5102941176470588,"top":0.5327102803738317,"right":0.6764705882352942,"bottom":0.5537383177570093},"words":2,"ink_share":0.0071,"reach":{"left":0.48029411764705876,"top":0.5327102803738317,"right":0.7064705882352942,"bottom":0.5537383177570093}},{"zone_index":2,"bbox":{"left":0.050980392156862744,"top":0.5856697819314641,"right":0.9705882352941176,"bottom":0.6230529595015576},"words":7,"ink_share":0.0659,"reach":{"left":0.020980392156862746,"top":0.5856697819314641,"right":1.0005882352941176,"bottom":0.6230529595015576}},{"zone_index":2,"bbox":{"left":0.029411764705882353,"top":0.646417445482866,"right":0.9705882352941176,"bottom":0.6838006230529594},"words":4,"ink_share":0.0455,"reach":{"left":-0.0005882352941176464,"top":0.646417445482866,"right":1.0005882352941176,"bottom":0.6838006230529594}},{"zone_index":2,"bbox":{"left":0.1196078431372549,"top":0.7095015576323986,"right":0.23823529411764705,"bottom":0.7422118380062305},"words":2,"ink_share":0.0279,"reach":{"left":0.0896078431372549,"top":0.7095015576323986,"right":0.268235294117647,"bottom":0.7422118380062305}},{"zone_index":2,"bbox":{"left":0.029411764705882353,"top":0.7102803738317757,"right":0.9705882352941176,"bottom":0.7414330218068537},"words":4,"ink_share":0.0627,"reach":{"left":-0.0005882352941176464,"top":0.7102803738317757,"right":1.0005882352941176,"bottom":0.7414330218068537}},{"zone_index":2,"bbox":{"left":0.027450980392156866,"top":0.7679127725856698,"right":0.9705882352941176,"bottom":0.8052959501557633},"words":4,"ink_share":0.0376,"reach":{"left":-0.002549019607843133,"top":0.7679127725856698,"right":1.0005882352941176,"bottom":0.8052959501557633}}],"regions":[{"top":0.0,"bottom":1.0,"flow":"single","splits":[],"rows":1}],"separators":[],"furniture":[{"kind":"rule","bbox":{"left":0.020588235294117647,"top":0.18457943925233644,"right":0.9794117647058823,"bottom":0.18925233644859812},"thickness":0.0029411764705882353,"color":[0,0,0],"style":"solid","second":null,"period":null,"angle":null,"zone":2},{"kind":"rule","bbox":{"left":0.020588235294117647,"top":0.2546728971962617,"right":0.9794117647058823,"bottom":0.2570093457943925},"thickness":0.0014705882352941176,"color":[0,0,0],"style":"solid","second":null,"period":null,"angle":null,"zone":2},{"kind":"rule","bbox":{"left":0.020588235294117647,"top":0.32710280373831774,"right":0.9794117647058823,"bottom":0.3294392523364486},"thickness":0.0014705882352941176,"color":[153,153,153],"style":"solid","second":null,"period":null,"angle":null,"zone":2},{"kind":"rule","bbox":{"left":0.020588235294117647,"top":0.5163551401869159,"right":0.9794117647058823,"bottom":0.5186915887850467},"thickness":0.0014705882352941176,"color":[153,153,153],"style":"solid","second":null,"period":null,"angle":null,"zone":2},{"kind":"rule","bbox":{"left":0.020588235294117647,"top":0.6355140186915887,"right":0.9794117647058823,"bottom":0.6378504672897196},"thickness":0.0014705882352941176,"color":[0,0,0],"style":"solid","second":null,"period":null,"angle":null,"zone":2},{"kind":"rule","bbox":{"left":0.020588235294117647,"top":0.6962616822429907,"right":0.9794117647058823,"bottom":0.6985981308411215},"thickness":0.0014705882352941176,"color":[0,0,0],"style":"solid","second":null,"period":null,"angle":null,"zone":2},{"kind":"rule","bbox":{"left":0.020588235294117647,"top":0.7570093457943925,"right":0.9794117647058823,"bottom":0.7593457943925234},"thickness":0.0014705882352941176,"color":[0,0,0],"style":"solid","second":null,"period":null,"angle":null,"zone":2},{"kind":"rule","bbox":{"left":0.020588235294117647,"top":0.8177570093457944,"right":0.9794117647058823,"bottom":0.822429906542056},"thickness":0.0029411764705882353,"color":[0,0,0],"style":"solid","second":null,"period":null,"angle":null,"zone":null}]}</script>
+</body>
+</html>

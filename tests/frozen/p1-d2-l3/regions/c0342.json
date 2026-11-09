@@ -1,0 +1,541 @@
+[
+ {
+  "index": 0,
+  "label": "paragraph_title",
+  "content": "Umber Cypress Trail Association\nRoute map 4: Billings, MT to Eugene, OR supply run",
+  "bbox_2d": [
+   15,
+   32,
+   392,
+   111
+  ],
+  "polygon": [
+   [
+    15,
+    32
+   ],
+   [
+    15,
+    98
+   ],
+   [
+    192,
+    0
+   ],
+   [
+    390,
+    109
+   ],
+   [
+    390,
+    32
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "chart",
+  "content": null,
+  "bbox_2d": [
+   21,
+   138,
+   639,
+   882
+  ],
+  "polygon": [
+   [
+    21,
+    138
+   ],
+   [
+    21,
+    880
+   ],
+   [
+    638,
+    880
+   ],
+   [
+    638,
+    138
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "paragraph_title",
+  "content": "Trip details",
+  "bbox_2d": [
+   673,
+   142,
+   759,
+   175
+  ],
+  "polygon": [
+   [
+    673,
+    142
+   ],
+   [
+    673,
+    173
+   ],
+   [
+    757,
+    173
+   ],
+   [
+    757,
+    148
+   ],
+   [
+    753,
+    142
+   ],
+   [
+    709,
+    142
+   ],
+   [
+    698,
+    142
+   ],
+   [
+    694,
+    142
+   ],
+   [
+    677,
+    142
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "text",
+  "content": "SURVEYED ON March 5, 2020",
+  "bbox_2d": [
+   672,
+   181,
+   786,
+   245
+  ],
+  "polygon": [
+   [
+    785,
+    187
+   ],
+   [
+    756,
+    181
+   ],
+   [
+    732,
+    181
+   ],
+   [
+    672,
+    187
+   ],
+   [
+    672,
+    206
+   ],
+   [
+    672,
+    214
+   ],
+   [
+    672,
+    222
+   ],
+   [
+    672,
+    228
+   ],
+   [
+    672,
+    239
+   ],
+   [
+    677,
+    243
+   ],
+   [
+    785,
+    243
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "text",
+  "content": "SURVEYED BY Keisha Brennan",
+  "bbox_2d": [
+   672,
+   249,
+   798,
+   313
+  ],
+  "polygon": [
+   [
+    672,
+    274
+   ],
+   [
+    672,
+    278
+   ],
+   [
+    677,
+    311
+   ],
+   [
+    797,
+    311
+   ],
+   [
+    797,
+    249
+   ],
+   [
+    677,
+    249
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "text",
+  "content": "CHECKED BY Kayla Delgado",
+  "bbox_2d": [
+   672,
+   317,
+   790,
+   381
+  ],
+  "polygon": [
+   [
+    672,
+    344
+   ],
+   [
+    672,
+    364
+   ],
+   [
+    672,
+    379
+   ],
+   [
+    789,
+    379
+   ],
+   [
+    789,
+    317
+   ],
+   [
+    677,
+    317
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "paragraph_title",
+  "content": "Stop checks",
+  "bbox_2d": [
+   672,
+   426,
+   760,
+   461
+  ],
+  "polygon": [
+   [
+    672,
+    432
+   ],
+   [
+    672,
+    459
+   ],
+   [
+    759,
+    459
+   ],
+   [
+    759,
+    426
+   ],
+   [
+    677,
+    426
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "text",
+  "content": "√ Fuel at stop 1 $412.50",
+  "bbox_2d": [
+   672,
+   470,
+   975,
+   505
+  ],
+  "polygon": [
+   [
+    672,
+    470
+   ],
+   [
+    672,
+    503
+   ],
+   [
+    973,
+    503
+   ],
+   [
+    973,
+    470
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "text",
+  "content": "√ Bridge cleared $0.00",
+  "bbox_2d": [
+   672,
+   511,
+   975,
+   550
+  ],
+  "polygon": [
+   [
+    672,
+    511
+   ],
+   [
+    672,
+    548
+   ],
+   [
+    973,
+    548
+   ],
+   [
+    973,
+    517
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "text",
+  "content": "X Ridge Road open $85.00",
+  "bbox_2d": [
+   672,
+   554,
+   973,
+   591
+  ],
+  "polygon": [
+   [
+    672,
+    554
+   ],
+   [
+    672,
+    589
+   ],
+   [
+    972,
+    589
+   ],
+   [
+    972,
+    554
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "text",
+  "content": "√ Yard gate key $20.00",
+  "bbox_2d": [
+   671,
+   597,
+   975,
+   637
+  ],
+  "polygon": [
+   [
+    671,
+    597
+   ],
+   [
+    671,
+    635
+   ],
+   [
+    973,
+    635
+   ],
+   [
+    973,
+    597
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "paragraph_title",
+  "content": "Contacts",
+  "bbox_2d": [
+   672,
+   682,
+   740,
+   717
+  ],
+  "polygon": [
+   [
+    672,
+    688
+   ],
+   [
+    672,
+    690
+   ],
+   [
+    672,
+    709
+   ],
+   [
+    672,
+    711
+   ],
+   [
+    677,
+    715
+   ],
+   [
+    739,
+    715
+   ],
+   [
+    739,
+    688
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "text",
+  "content": "DISPATCHER Carlos Mahoney",
+  "bbox_2d": [
+   671,
+   725,
+   801,
+   787
+  ],
+  "polygon": [
+   [
+    671,
+    725
+   ],
+   [
+    671,
+    781
+   ],
+   [
+    676,
+    785
+   ],
+   [
+    800,
+    785
+   ],
+   [
+    800,
+    725
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "text",
+  "content": "TOTAL DISTANCE 1,126 mi",
+  "bbox_2d": [
+   672,
+   789,
+   790,
+   855
+  ],
+  "polygon": [
+   [
+    672,
+    795
+   ],
+   [
+    672,
+    824
+   ],
+   [
+    672,
+    837
+   ],
+   [
+    672,
+    847
+   ],
+   [
+    672,
+    853
+   ],
+   [
+    789,
+    853
+   ],
+   [
+    789,
+    789
+   ],
+   [
+    677,
+    789
+   ]
+  ]
+ },
+ {
+  "index": 14,
+  "label": "text",
+  "content": "Legend: red line, planned route. Dashed line, rail spur. Blue band, Willow River. Green block, Uber Park. Costs are estimates in US dollars, per leg, as of March 5, 2020. Stops 1 to 5 are numbered in driving order; drivers should confirm each stop with the dispatcher before leaving the depot.",
+  "bbox_2d": [
+   17,
+   911,
+   978,
+   973
+  ],
+  "polygon": [
+   [
+    17,
+    917
+   ],
+   [
+    17,
+    971
+   ],
+   [
+    977,
+    971
+   ],
+   [
+    977,
+    911
+   ]
+  ]
+ }
+]

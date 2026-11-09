@@ -1,9 +1,11 @@
 # Parser first: GLM-OCR's whole pipeline, an adapter, our looks
 
-**Status: open, 2026-11-09.** Step P1 of the level-up plan
+**Status: done and decided, 2026-11-09.** Step P1 of the level-up plan
 ([`../level-up.md`](../level-up.md) §5.3, §6 and decision 2 of §8), from
-spec 0022's last prompt. Its issue is #46. Four questions for Alessandro
-were asked on the issue page (round 8) and all four agreed, 2026-11-09; his calls are under "Decisions".
+spec 0022's last prompt, and P2's decision. Its issue is #46, closed.
+Round 8 (four questions) and round 9 (the review's calls and P2) were
+all agreed; his calls are under "Decisions". **P2: take D2**; next, L5
+on D2.
 
 - **It builds one new arm, D2**, beside today's pipeline, on branch
   `poc-parser-first`: GLM-OCR's own pipeline cuts the page into blocks
@@ -504,6 +506,130 @@ Each must be reproduced on a dev page before anything changes (Rules):
 - **Banding**: two Zones stacked in a column beside a taller one; the
   second gets a band of its own after the tall one (7 pages).
 
+## Outcome — round 9 and P2, 2026-11-09
+
+### His spot checks and calls, round 9
+
+On the issue page (https://claude.ai/artifact/RpUd3a7ioGjdNWBLyqM6JD),
+twelve issues, **all agreed**; his rules are in
+[`../agents/review-criteria.md`](../agents/review-criteria.md), "Round 9".
+
+- **Every page where Claude's call overturns a check**: the four
+  rejected calls' kinds (p1-lookalike c0291, p1-box c0074, p1-ground
+  c0082, p1-interleaved c0243), and five kinds of major Claude added by eye,
+  four of them new (p1-parted c0515, p1-latex c0382, p1-markup c0405, p1-lane
+  c0523, p1-colour c0387). **No call of his disagrees with the checks
+  as called**, so nothing stopped for a question.
+- **Two at random**, as for L3: c0196 (read to its first header rows)
+  and c0300 (bold header cells drawn regular), both kept major.
+
+### The check fixed: look-alike marks
+
+- p1-lookalike's fix, agreed: `checks.ALIKE` takes √ ✓ ✔, × ✗ ✕ and
+  □ ☐ ▢ as one mark each; drawn as another of its set, a minor "mark
+  changed", never lost plus invented. Pinned on dev page c0068
+  (`TestWhatRoundNineDecided`: the page's marks swapped for look-alikes
+  in the browser gives a minor, a tick removed outright a major); the pin
+  fails on the old check.
+- `P1-D2-L3` re-measured with it: **1184 → 1180 check faults.** Gone:
+  c0034's □ invented, c0291's ✓ lost, ✗ lost and □ invented, c0316's
+  and c0342's ✓ lost; each but c0034's □ had been rejected by eye. Four
+  pages gain or widen a minor "mark changed". The calls file records it
+  under `after_round_9`; the review's own sheets are kept beside the new
+  ones (`_review.reviewed/`, `checks.reviewed/`).
+- The other kinds are recorded, not built into the checks: each rests on
+  one page.
+
+### P2 — decided: take D2
+
+**Alessandro, 2026-11-09 (round 9, p2-decide): take D2.** On the 37
+pages both converted, D2 is 13 pages better and 7 worse, each named
+above; it converted the four pages L3 lost to the limit; it took 18
+minutes where L3 took 6.6 hours. Majors per page are level (17.6 →
+17.8): the parser makes fewer than our reading side (413 → 495 on the
+37), and our side makes more on D2's blocks (247 against 156), most of
+them the faults listed under "Found on our side".
+
+**Next is L5 on D2**: our side's faults first (the adapter, `locate` on
+the adapter's tables, the looks), each reproduced on a dev page before
+it is changed; the parser's weights, prompts and thresholds untouched.
+`poc-parser-first` holds D2; today's pipeline is unchanged on both
+branches.
+
+### What P1 hands on, and the prompt for L5
+
+**The reference.** `P1-D2-L3`'s calls
+(`docs/agents/review-calls/P1-D2-L3.json`, with `after_round_9`), the
+class table and majors by stage above. **The run is frozen in
+`tests/frozen/p1-d2-l3/`** (2026-11-09): its 41 renders, the parser's
+41 raw regions and `pages.jsonl`. No test reads it; its README has the
+provenance and what the regions reproduce.
+
+**Our side's faults on D2's blocks**, L5's first work, each still to be
+reproduced on a dev page: the six under "Found on our side", and round
+9's new major kinds where our side makes them (a label parted from its
+value, a full-width block drawn in a lane, a colour added).
+
+**Open check issues:** p1-ground (a line's ground read from its parents,
+c0082) and p1-interleaved (side by side as printed, c0243) stay as
+recorded; each rests on one page.
+
+**Proved on this code, 2026-11-09** (`poc-parser-first`, after
+`7729990`, with the look-alike fix):
+- `tools/replay_run.py tests/frozen/s14-result`: 21 of 21
+  byte-identical, 0 asked differently; `tools/rederive.py` over it: 21
+  of 21 byte-identical files. Today's pipeline is untouched;
+- `p1-d2-l3/`'s regions through `from_regions` and `render`: 41 of 41
+  documents byte-identical;
+- every dev page checked against itself: 231 pages, 0 faults, every
+  token matched (222 s);
+- the look-alike fix over `l3-baseline/`'s 37 renders and `l2-dev/`'s
+  23: no mark paired, nothing moved; over `P1-D2-L3`, the four pages
+  above;
+- 1721 tests pass (1 skipped), 2 of them round 9's pins; `mypy src/`
+  clean.
+
+**The prompt for L5:**
+
+> Start L5 of the level-up plan on arm D2, which Alessandro took at P2
+> on 2026-11-09: `docs/level-up.md` §6 and §8. Read `docs/level-up.md`'s
+> Gist and §6, spec 0023 end to end (what D2 is, its adapter's
+> iterations, D2 against L3-baseline, "Found on our side", round 9 and
+> P2; the run frozen in `tests/frozen/p1-d2-l3/`, panel pages, never in
+> a test), `docs/agents/review-criteria.md`, then `docs/status.md`.
+>
+> 1. **Write spec 0024** and its GitHub issue
+>    (`docs/agents/issue-tracker.md`). Questions for Alessandro on the
+>    one-issue-at-a-time page (round 10; load the `artifact-capabilities`
+>    skill first; never re-show an issue he has decided,
+>    `docs/agents/review-issues.json`): the branch (D2 is on
+>    `poc-parser-first`, four commits ahead of `level-up`; Claude's
+>    recommendation: fast-forward `level-up` to it and work there, today's
+>    pipeline kept in the tree as it is); a D2 run over the dev pool to
+>    find our side's faults on pages that may be opened (231 pages, at
+>    P1's 26 s a page about 1 h 40); the order of the faults; and whether
+>    L5 ends with a second D2 run over the L3 set (18 minutes), compared
+>    with `p1-d2-l3/`.
+> 2. **Our side first**: the adapter, `locate` on the adapter's tables,
+>    the looks. Each fault in spec 0023's "Found on our side" reproduced
+>    on a dev page before anything changes for it, then fixed, pinned by
+>    a test on dev pages or regions built by hand, and judged by eye on
+>    every dev page it moves (`tools/d2.py --sheets`). The parser's
+>    weights, prompts and thresholds untouched.
+> 3. **Then fit instead of set** (§6): what D2 still decides with
+>    constants, labels from dev HTML, accepted on the panel; the vault
+>    only at a milestone, and only on his word.
+>
+> Rules: local models only. Never pass `unseal=True`. No panel page is
+> used in a test or to tune anything, c0001 and c0002 above all; a fault
+> seen on a panel page is reproduced on a dev page first. Today's
+> pipeline stays as it is: the replay of `s14-result/` stays 21 of 21.
+> One conversion at a time, nothing beside it; every Chrome job finished
+> before a conversion starts. Stop and ask before any conversion longer
+> than two hours, and wherever his calls disagree with the checks. Judge
+> by eye; a number is a pointer to a page. Keep replies short: bullets,
+> facts, no filler.
+
 ## What P1 does not do
 
 - No change to the parser's weights, prompts or thresholds.
@@ -522,3 +648,5 @@ Each must be reproduced on a dev page before anything changes (Rules):
 | 2 | Q2: the build pages, then the L3 set | **Agreed** (round 8): the eleven dev pages, then the 41 once, the adapter frozen |
 | 3 | Q3: the time for the 41 pages | **Agreed** (round 8): the 20-minute page limit; the time from the build pages given before the run; started if under two hours, his go if over |
 | 4 | Q4: read what GLM-OCR discards | **Agreed** (round 8): all six kinds read as text, headers and footers with their role |
+| 5 | Round 9: Claude's calls on D2's review, two spot checks | **All agreed** (2026-11-09): the look-alike check fixed; four new major kinds; c0196 and c0300 kept major |
+| 6 | P2: keep today's, take D2, or a mix | **Take D2** (round 9, 2026-11-09); next, L5 on D2, our side first |

@@ -1,0 +1,122 @@
+[
+ {
+  "index": 0,
+  "label": "header",
+  "content": "Relazione sulla performance - anno 2025",
+  "bbox_2d": [
+   82,
+   45,
+   439,
+   60
+  ],
+  "polygon": [
+   [
+    82,
+    45
+   ],
+   [
+    82,
+    50
+   ],
+   [
+    82,
+    60
+   ],
+   [
+    438,
+    60
+   ],
+   [
+    438,
+    45
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "table",
+  "content": "<table border=\"1\"><tr><td>Descrizione obiettivo</td><td>N. iniziative</td><td>FTE</td><td>Stato di avanzamento %</td></tr><tr><td>Incentivare la semplificazione, la digitalizzazione la transizione digitale</td><td>9</td><td>12,9</td><td>100,0</td></tr><tr><td>PG7 Totale</td><td>9</td><td>12,9</td><td>100,0</td></tr></table>",
+  "bbox_2d": [
+   96,
+   78,
+   918,
+   276
+  ],
+  "polygon": [
+   [
+    96,
+    78
+   ],
+   [
+    96,
+    276
+   ],
+   [
+    917,
+    276
+   ],
+   [
+    917,
+    78
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "table",
+  "content": "<table class=\"table table-bordered\"><thead><tr><th>Descrizione obiettivo</th><th>N. iniziative</th><th>FTE</th><th>Stato di avanzamento %</th></tr></thead><tbody><tr><td>Attivare percorsi formativi differenziati per target di riferimento per tutti i dipendenti o specifici e professionalizzanti</td><td>3</td><td>7,3</td><td>100,0</td></tr><tr><td>Realizzare il bilancio di genere, il bilancio ambientale e iniziative orientate alla sostenibilità</td><td>1</td><td>1,7</td><td>100,0</td></tr><tr><td>Promuovere misure per il miglioramento del benessere del personale e alla promozione della salute e sicurezza</td><td>4</td><td>10,3</td><td>100,0</td></tr><tr><td>Potenziare l'utilizzo del sistema delle competenze e la sua integrazione con i processi di gestione e valorizzazione delle risorse umane e potenziare la capacità di gestione del reclutamento con particolare riferimento ai giovani</td><td>3</td><td>7,7</td><td>100,0</td></tr><tr><td>PG8 Totale</td><td>11</td><td>27,0</td><td>100,0</td></tr></tbody></table>",
+  "bbox_2d": [
+   96,
+   336,
+   918,
+   678
+  ],
+  "polygon": [
+   [
+    96,
+    336
+   ],
+   [
+    96,
+    677
+   ],
+   [
+    917,
+    677
+   ],
+   [
+    917,
+    336
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "number",
+  "content": "14",
+  "bbox_2d": [
+   83,
+   930,
+   106,
+   942
+  ],
+  "polygon": [
+   [
+    83,
+    930
+   ],
+   [
+    83,
+    941
+   ],
+   [
+    105,
+    941
+   ],
+   [
+    105,
+    930
+   ]
+  ]
+ }
+]

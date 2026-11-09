@@ -1,0 +1,31 @@
+[
+ {
+  "index": 0,
+  "label": "table",
+  "content": "<table><thead><tr><th>MARKS, SECTION B</th><th>AVAILABLE</th><th>AWARDED</th></tr></thead><tbody><tr><td>Question 4</td><td>6</td><td></td></tr><tr><td>(a)</td><td>2</td><td></td></tr><tr><td>(b)(i)</td><td>3</td><td></td></tr><tr><td>(b)(ii)</td><td>1</td><td></td></tr><tr><td>Question 5</td><td>7</td><td></td></tr><tr><td>(a)</td><td>2</td><td></td></tr><tr><td>(b)</td><td>2</td><td></td></tr><tr><td>(c)</td><td>3</td><td></td></tr><tr><td>Total for section B</td><td>13</td><td></td></tr></tbody></table>",
+  "bbox_2d": [
+   6,
+   19,
+   987,
+   982
+  ],
+  "polygon": [
+   [
+    18,
+    19
+   ],
+   [
+    12,
+    980
+   ],
+   [
+    972,
+    975
+   ],
+   [
+    981,
+    19
+   ]
+  ]
+ }
+]

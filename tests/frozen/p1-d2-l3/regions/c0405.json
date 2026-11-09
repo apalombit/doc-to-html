@@ -1,0 +1,712 @@
+[
+ {
+  "index": 0,
+  "label": "text",
+  "content": "SUMMER SOUPS",
+  "bbox_2d": [
+   59,
+   31,
+   262,
+   48
+  ],
+  "polygon": [
+   [
+    59,
+    31
+   ],
+   [
+    59,
+    47
+   ],
+   [
+    261,
+    47
+   ],
+   [
+    261,
+    31
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "doc_title",
+  "content": "Chilled sorrel soup with new potatoes",
+  "bbox_2d": [
+   59,
+   54,
+   779,
+   136
+  ],
+  "polygon": [
+   [
+    59,
+    54
+   ],
+   [
+    59,
+    135
+   ],
+   [
+    777,
+    130
+   ],
+   [
+    777,
+    54
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "text",
+  "content": "By Nadia Adeyemi · Indigo Table · Updated July 28, 2019",
+  "bbox_2d": [
+   59,
+   146,
+   606,
+   167
+  ],
+  "polygon": [
+   [
+    59,
+    152
+   ],
+   [
+    59,
+    166
+   ],
+   [
+    604,
+    166
+   ],
+   [
+    604,
+    146
+   ],
+   [
+    541,
+    146
+   ],
+   [
+    485,
+    146
+   ],
+   [
+    472,
+    146
+   ],
+   [
+    414,
+    146
+   ],
+   [
+    406,
+    146
+   ],
+   [
+    400,
+    146
+   ],
+   [
+    275,
+    146
+   ],
+   [
+    245,
+    146
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "table",
+  "content": "<table border=\"1\"><tr><td>PREP</td><td>COOK</td><td>CHILL</td><td>SERVES</td></tr><tr><td>15 min</td><td>25 min</td><td>2 hours</td><td>4^{1}$</td></tr></table>",
+  "bbox_2d": [
+   58,
+   193,
+   933,
+   259
+  ],
+  "polygon": [
+   [
+    58,
+    193
+   ],
+   [
+    64,
+    258
+   ],
+   [
+    932,
+    258
+   ],
+   [
+    932,
+    193
+   ],
+   [
+    579,
+    193
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "paragraph_title",
+  "content": "Ingredients",
+  "bbox_2d": [
+   59,
+   299,
+   238,
+   325
+  ],
+  "polygon": [
+   [
+    59,
+    299
+   ],
+   [
+    59,
+    324
+   ],
+   [
+    237,
+    324
+   ],
+   [
+    237,
+    299
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "text",
+  "content": "FOR THE SOUP",
+  "bbox_2d": [
+   58,
+   340,
+   240,
+   359
+  ],
+  "polygon": [
+   [
+    58,
+    340
+   ],
+   [
+    58,
+    358
+   ],
+   [
+    238,
+    358
+   ],
+   [
+    238,
+    340
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "text",
+  "content": "- 1 lb (450 g) new potatoes, scrubbed and halved",
+  "bbox_2d": [
+   64,
+   364,
+   619,
+   387
+  ],
+  "polygon": [
+   [
+    64,
+    364
+   ],
+   [
+    64,
+    386
+   ],
+   [
+    617,
+    386
+   ],
+   [
+    617,
+    364
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "text",
+  "content": "- 4 cups (1 liter) vegetable stock",
+  "bbox_2d": [
+   64,
+   392,
+   433,
+   415
+  ],
+  "polygon": [
+   [
+    64,
+    392
+   ],
+   [
+    64,
+    414
+   ],
+   [
+    432,
+    414
+   ],
+   [
+    432,
+    392
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "text",
+  "content": "- 8 oz (225 g) fresh sorrel, stems removed",
+  "bbox_2d": [
+   64,
+   420,
+   533,
+   442
+  ],
+  "polygon": [
+   [
+    64,
+    420
+   ],
+   [
+    64,
+    440
+   ],
+   [
+    532,
+    440
+   ],
+   [
+    532,
+    420
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "text",
+  "content": "- 1 small white onion, finely chopped",
+  "bbox_2d": [
+   64,
+   449,
+   487,
+   472
+  ],
+  "polygon": [
+   [
+    64,
+    449
+   ],
+   [
+    64,
+    471
+   ],
+   [
+    485,
+    471
+   ],
+   [
+    485,
+    449
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "text",
+  "content": "- 2 tbsp butter",
+  "bbox_2d": [
+   66,
+   478,
+   246,
+   498
+  ],
+  "polygon": [
+   [
+    66,
+    478
+   ],
+   [
+    66,
+    497
+   ],
+   [
+    245,
+    497
+   ],
+   [
+    245,
+    478
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "text",
+  "content": "* ½ cup (120 ml) sour cream, plus extra to serve",
+  "bbox_2d": [
+   64,
+   505,
+   600,
+   527
+  ],
+  "polygon": [
+   [
+    64,
+    505
+   ],
+   [
+    64,
+    526
+   ],
+   [
+    598,
+    526
+   ],
+   [
+    598,
+    505
+   ],
+   [
+    556,
+    505
+   ],
+   [
+    529,
+    505
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "text",
+  "content": "- Salt and white pepper",
+  "bbox_2d": [
+   64,
+   534,
+   343,
+   556
+  ],
+  "polygon": [
+   [
+    64,
+    534
+   ],
+   [
+    64,
+    555
+   ],
+   [
+    341,
+    555
+   ],
+   [
+    341,
+    534
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "text",
+  "content": "TO SERVE",
+  "bbox_2d": [
+   59,
+   570,
+   180,
+   589
+  ],
+  "polygon": [
+   [
+    59,
+    570
+   ],
+   [
+    59,
+    587
+   ],
+   [
+    179,
+    587
+   ],
+   [
+    179,
+    570
+   ]
+  ]
+ },
+ {
+  "index": 14,
+  "label": "text",
+  "content": "- Snipped chives",
+  "bbox_2d": [
+   64,
+   594,
+   267,
+   615
+  ],
+  "polygon": [
+   [
+    64,
+    594
+   ],
+   [
+    64,
+    614
+   ],
+   [
+    266,
+    614
+   ],
+   [
+    266,
+    594
+   ]
+  ]
+ },
+ {
+  "index": 15,
+  "label": "text",
+  "content": "- 4 soft-boiled eggs, halved",
+  "bbox_2d": [
+   64,
+   622,
+   385,
+   644
+  ],
+  "polygon": [
+   [
+    64,
+    622
+   ],
+   [
+    64,
+    643
+   ],
+   [
+    383,
+    643
+   ],
+   [
+    383,
+    627
+   ],
+   [
+    364,
+    622
+   ],
+   [
+    346,
+    622
+   ],
+   [
+    300,
+    622
+   ],
+   [
+    280,
+    622
+   ],
+   [
+    269,
+    622
+   ],
+   [
+    245,
+    622
+   ],
+   [
+    133,
+    622
+   ]
+  ]
+ },
+ {
+  "index": 16,
+  "label": "text",
+  "content": "- Lemon wedges",
+  "bbox_2d": [
+   66,
+   651,
+   269,
+   672
+  ],
+  "polygon": [
+   [
+    66,
+    651
+   ],
+   [
+    66,
+    671
+   ],
+   [
+    267,
+    671
+   ],
+   [
+    267,
+    651
+   ]
+  ]
+ },
+ {
+  "index": 17,
+  "label": "paragraph_title",
+  "content": "Method",
+  "bbox_2d": [
+   59,
+   701,
+   187,
+   725
+  ],
+  "polygon": [
+   [
+    59,
+    701
+   ],
+   [
+    59,
+    724
+   ],
+   [
+    185,
+    724
+   ],
+   [
+    185,
+    701
+   ]
+  ]
+ },
+ {
+  "index": 18,
+  "label": "text",
+  "content": "1. Simmer the potatoes in the stock until tender, about 12 minutes. Lift them out with a slotted spoon and set aside to cool.",
+  "bbox_2d": [
+   58,
+   738,
+   908,
+   785
+  ],
+  "polygon": [
+   [
+    58,
+    738
+   ],
+   [
+    58,
+    784
+   ],
+   [
+    906,
+    784
+   ],
+   [
+    906,
+    738
+   ]
+  ]
+ },
+ {
+  "index": 19,
+  "label": "text",
+  "content": "2. Soften the onion in the butter over low heat for 6 minutes. Add the sorrel and stir until it turns olive green and collapses.",
+  "bbox_2d": [
+   58,
+   800,
+   901,
+   846
+  ],
+  "polygon": [
+   [
+    58,
+    800
+   ],
+   [
+    58,
+    845
+   ],
+   [
+    900,
+    845
+   ],
+   [
+    900,
+    800
+   ]
+  ]
+ },
+ {
+  "index": 20,
+  "label": "text",
+  "content": "Per serving: 210 calories · vitamin B<sub>6</sub> 14% · iron 9%",
+  "bbox_2d": [
+   75,
+   865,
+   524,
+   886
+  ],
+  "polygon": [
+   [
+    75,
+    865
+   ],
+   [
+    75,
+    885
+   ],
+   [
+    522,
+    885
+   ],
+   [
+    522,
+    865
+   ]
+  ]
+ },
+ {
+  "index": 21,
+  "label": "footnote",
+  "content": "1 Serves four as a starter; double it for a main course. Sorrel from the Santa Fe farmers' market, tested by Darnell Lindgist in Rochester, MN. Photograph by Maria Abernathy.",
+  "bbox_2d": [
+   58,
+   923,
+   882,
+   962
+  ],
+  "polygon": [
+   [
+    58,
+    923
+   ],
+   [
+    58,
+    961
+   ],
+   [
+    880,
+    961
+   ],
+   [
+    880,
+    923
+   ]
+  ]
+ }
+]

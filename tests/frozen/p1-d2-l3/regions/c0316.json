@@ -1,0 +1,1044 @@
+[
+ {
+  "index": 0,
+  "label": "header",
+  "content": "SERVICES AGREEMENT",
+  "bbox_2d": [
+   47,
+   58,
+   298,
+   82
+  ],
+  "polygon": [
+   [
+    47,
+    58
+   ],
+   [
+    47,
+    81
+   ],
+   [
+    297,
+    81
+   ],
+   [
+    297,
+    58
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "header",
+  "content": "Copper Indigo Consulting Ltd\nRef CI/2019/0302 · 2 March 2019",
+  "bbox_2d": [
+   754,
+   66,
+   950,
+   99
+  ],
+  "polygon": [
+   [
+    754,
+    66
+   ],
+   [
+    754,
+    98
+   ],
+   [
+    948,
+    98
+   ],
+   [
+    948,
+    66
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "text",
+  "content": "This agreement is made on 2 March 2019 between the parties named below and sets out the terms on which services are supplied.",
+  "bbox_2d": [
+   47,
+   114,
+   869,
+   132
+  ],
+  "polygon": [
+   [
+    47,
+    114
+   ],
+   [
+    47,
+    131
+   ],
+   [
+    868,
+    131
+   ],
+   [
+    868,
+    114
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "text",
+  "content": "Supplier: Copper Indigo Consulting Ltd, registered in Scotland, of 14 Academy Street, Inverness, represented by Priya Ashworth, Managing Director.",
+  "bbox_2d": [
+   58,
+   149,
+   461,
+   206
+  ],
+  "polygon": [
+   [
+    58,
+    149
+   ],
+   [
+    58,
+    205
+   ],
+   [
+    460,
+    205
+   ],
+   [
+    460,
+    149
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "text",
+  "content": "Client: Caldwell Marine Supplies Ltd, of B Sandgate, Ayr,\nrepresented by Niamh Caldwell, Finance Director.",
+  "bbox_2d": [
+   525,
+   149,
+   886,
+   185
+  ],
+  "polygon": [
+   [
+    525,
+    149
+   ],
+   [
+    525,
+    184
+   ],
+   [
+    884,
+    184
+   ],
+   [
+    884,
+    149
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "paragraph_title",
+  "content": "1. SERVICES",
+  "bbox_2d": [
+   47,
+   230,
+   137,
+   247
+  ],
+  "polygon": [
+   [
+    47,
+    230
+   ],
+   [
+    47,
+    246
+   ],
+   [
+    136,
+    246
+   ],
+   [
+    136,
+    230
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "text",
+  "content": "1. The Supplier shall provide the bookkeeping, payroll preparation and management reporting services described in Schedule A (the \"Services\"). $ ^{1} $",
+  "bbox_2d": [
+   46,
+   257,
+   897,
+   293
+  ],
+  "polygon": [
+   [
+    46,
+    257
+   ],
+   [
+    46,
+    292
+   ],
+   [
+    896,
+    292
+   ],
+   [
+    896,
+    257
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "text",
+  "content": "2. The Supplier shall perform the Services with reasonable skill and care and in accordance with good industry practice.",
+  "bbox_2d": [
+   46,
+   299,
+   822,
+   317
+  ],
+  "polygon": [
+   [
+    46,
+    299
+   ],
+   [
+    46,
+    316
+   ],
+   [
+    820,
+    316
+   ],
+   [
+    820,
+    299
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "text",
+  "content": "3. The Client shall give the Supplier timely access to records, staff and premises as reasonably required.",
+  "bbox_2d": [
+   45,
+   322,
+   725,
+   339
+  ],
+  "polygon": [
+   [
+    45,
+    322
+   ],
+   [
+    45,
+    338
+   ],
+   [
+    724,
+    338
+   ],
+   [
+    724,
+    322
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "paragraph_title",
+  "content": "2. FEES AND PAYMENT",
+  "bbox_2d": [
+   46,
+   356,
+   202,
+   372
+  ],
+  "polygon": [
+   [
+    46,
+    356
+   ],
+   [
+    46,
+    371
+   ],
+   [
+    201,
+    371
+   ],
+   [
+    201,
+    361
+   ],
+   [
+    156,
+    356
+   ],
+   [
+    152,
+    356
+   ],
+   [
+    146,
+    356
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "text",
+  "content": "4. The Client shall pay the monthly fee of £1,850 plus VAT at the prevailing rate, invoiced on the first working day of each month. $ ^{2} $",
+  "bbox_2d": [
+   45,
+   383,
+   880,
+   400
+  ],
+  "polygon": [
+   [
+    45,
+    383
+   ],
+   [
+    45,
+    399
+   ],
+   [
+    879,
+    399
+   ],
+   [
+    879,
+    383
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "text",
+  "content": "5. Invoices are payable within 30 days of the invoice date. Late sums carry interest at 4% above the Bank of England base rate.",
+  "bbox_2d": [
+   45,
+   406,
+   869,
+   422
+  ],
+  "polygon": [
+   [
+    45,
+    406
+   ],
+   [
+    45,
+    421
+   ],
+   [
+    868,
+    421
+   ],
+   [
+    868,
+    406
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "text",
+  "content": "6. Expenses are recharged at cost where approved in writing in advance.",
+  "bbox_2d": [
+   45,
+   427,
+   531,
+   444
+  ],
+  "polygon": [
+   [
+    45,
+    427
+   ],
+   [
+    45,
+    443
+   ],
+   [
+    530,
+    443
+   ],
+   [
+    530,
+    427
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "paragraph_title",
+  "content": "3. CONDITIONS TO BE SATISFIED BEFORE THE START DATE",
+  "bbox_2d": [
+   45,
+   462,
+   434,
+   478
+  ],
+  "polygon": [
+   [
+    45,
+    462
+   ],
+   [
+    45,
+    477
+   ],
+   [
+    433,
+    477
+   ],
+   [
+    433,
+    462
+   ],
+   [
+    420,
+    462
+   ],
+   [
+    398,
+    462
+   ],
+   [
+    375,
+    462
+   ]
+  ]
+ },
+ {
+  "index": 14,
+  "label": "text",
+  "content": "The Services begin on 1 April 2019 once each of the following has been confirmed by the Client:",
+  "bbox_2d": [
+   46,
+   488,
+   651,
+   506
+  ],
+  "polygon": [
+   [
+    46,
+    488
+   ],
+   [
+    46,
+    505
+   ],
+   [
+    650,
+    505
+   ],
+   [
+    650,
+    488
+   ]
+  ]
+ },
+ {
+  "index": 15,
+  "label": "text",
+  "content": "√ Signed copy of this agreement returned to the Supplier",
+  "bbox_2d": [
+   86,
+   512,
+   452,
+   528
+  ],
+  "polygon": [
+   [
+    86,
+    512
+   ],
+   [
+    86,
+    527
+   ],
+   [
+    451,
+    527
+   ],
+   [
+    451,
+    512
+   ]
+  ]
+ },
+ {
+  "index": 16,
+  "label": "text",
+  "content": "√ Anti-money-laundering identity checks completed for all directors",
+  "bbox_2d": [
+   86,
+   532,
+   516,
+   549
+  ],
+  "polygon": [
+   [
+    86,
+    536
+   ],
+   [
+    86,
+    548
+   ],
+   [
+    515,
+    548
+   ],
+   [
+    515,
+    536
+   ],
+   [
+    95,
+    532
+   ]
+  ]
+ },
+ {
+  "index": 17,
+  "label": "text",
+  "content": "√ Read-only access granted to the Client's accounting system",
+  "bbox_2d": [
+   86,
+   554,
+   483,
+   570
+  ],
+  "polygon": [
+   [
+    86,
+    554
+   ],
+   [
+    86,
+    569
+   ],
+   [
+    482,
+    569
+   ],
+   [
+    482,
+    554
+   ]
+  ]
+ },
+ {
+  "index": 18,
+  "label": "text",
+  "content": "x Opening balances supplied for the year ended 31 December 2018",
+  "bbox_2d": [
+   84,
+   574,
+   516,
+   591
+  ],
+  "polygon": [
+   [
+    84,
+    574
+   ],
+   [
+    84,
+    590
+   ],
+   [
+    515,
+    590
+   ],
+   [
+    515,
+    574
+   ]
+  ]
+ },
+ {
+  "index": 19,
+  "label": "text",
+  "content": "x Payroll authority letter received from the Client's bank",
+  "bbox_2d": [
+   86,
+   594,
+   439,
+   612
+  ],
+  "polygon": [
+   [
+    86,
+    594
+   ],
+   [
+    86,
+    611
+   ],
+   [
+    438,
+    611
+   ],
+   [
+    438,
+    594
+   ]
+  ]
+ },
+ {
+  "index": 20,
+  "label": "paragraph_title",
+  "content": "4. CONFIDENTIALITY AND DATA",
+  "bbox_2d": [
+   46,
+   630,
+   255,
+   646
+  ],
+  "polygon": [
+   [
+    46,
+    630
+   ],
+   [
+    46,
+    645
+   ],
+   [
+    254,
+    645
+   ],
+   [
+    254,
+    630
+   ]
+  ]
+ },
+ {
+  "index": 21,
+  "label": "text",
+  "content": "7. Each party shall keep the other's confidential information secret and use it only for the purposes of this agreement.",
+  "bbox_2d": [
+   45,
+   655,
+   804,
+   672
+  ],
+  "polygon": [
+   [
+    45,
+    655
+   ],
+   [
+    45,
+    671
+   ],
+   [
+    803,
+    671
+   ],
+   [
+    803,
+    655
+   ]
+  ]
+ },
+ {
+  "index": 22,
+  "label": "text",
+  "content": "8. The Supplier shall process personal data only on the Client's documented instructions and in line with data protection law $ ^{3} $ .",
+  "bbox_2d": [
+   45,
+   678,
+   858,
+   696
+  ],
+  "polygon": [
+   [
+    45,
+    678
+   ],
+   [
+    45,
+    695
+   ],
+   [
+    856,
+    695
+   ],
+   [
+    856,
+    678
+   ]
+  ]
+ },
+ {
+  "index": 23,
+  "label": "text",
+  "content": "9. On termination the Supplier shall return or delete the Client's records within 30 days, unless the law requires it to keep them.",
+  "bbox_2d": [
+   45,
+   701,
+   863,
+   718
+  ],
+  "polygon": [
+   [
+    45,
+    701
+   ],
+   [
+    45,
+    717
+   ],
+   [
+    862,
+    717
+   ],
+   [
+    862,
+    701
+   ]
+  ]
+ },
+ {
+  "index": 24,
+  "label": "paragraph_title",
+  "content": "5. TERM AND TERMINATION",
+  "bbox_2d": [
+   46,
+   735,
+   232,
+   751
+  ],
+  "polygon": [
+   [
+    46,
+    735
+   ],
+   [
+    46,
+    750
+   ],
+   [
+    231,
+    750
+   ],
+   [
+    231,
+    735
+   ]
+  ]
+ },
+ {
+  "index": 25,
+  "label": "text",
+  "content": "10. This agreement runs for an initial term of twelve months and then continues until either party gives three months' written notice.",
+  "bbox_2d": [
+   46,
+   762,
+   883,
+   779
+  ],
+  "polygon": [
+   [
+    46,
+    762
+   ],
+   [
+    46,
+    778
+   ],
+   [
+    882,
+    778
+   ],
+   [
+    882,
+    762
+   ]
+  ]
+ },
+ {
+  "index": 26,
+  "label": "text",
+  "content": "11. Either party may end it at once by written notice if the other commits a material breach that is not put right within 14 days of notice.",
+  "bbox_2d": [
+   46,
+   784,
+   909,
+   801
+  ],
+  "polygon": [
+   [
+    46,
+    784
+   ],
+   [
+    46,
+    800
+   ],
+   [
+    908,
+    800
+   ],
+   [
+    908,
+    784
+   ]
+  ]
+ },
+ {
+  "index": 27,
+  "label": "text",
+  "content": "12. This agreement is governed by the law of Scotland, and the Scottish courts have exclusive jurisdiction.",
+  "bbox_2d": [
+   46,
+   806,
+   733,
+   823
+  ],
+  "polygon": [
+   [
+    46,
+    806
+   ],
+   [
+    46,
+    822
+   ],
+   [
+    732,
+    822
+   ],
+   [
+    732,
+    806
+   ]
+  ]
+ },
+ {
+  "index": 28,
+  "label": "text",
+  "content": "Signed for the Supplier: Priya Ashworth Date: 2 March 2019",
+  "bbox_2d": [
+   47,
+   851,
+   279,
+   885
+  ],
+  "polygon": [
+   [
+    47,
+    851
+   ],
+   [
+    47,
+    884
+   ],
+   [
+    277,
+    884
+   ],
+   [
+    277,
+    851
+   ],
+   [
+    168,
+    851
+   ],
+   [
+    162,
+    851
+   ]
+  ]
+ },
+ {
+  "index": 29,
+  "label": "text",
+  "content": "Signed for the Client: Niamh Caldwell Date: 2 March 2019",
+  "bbox_2d": [
+   361,
+   850,
+   582,
+   885
+  ],
+  "polygon": [
+   [
+    361,
+    850
+   ],
+   [
+    361,
+    860
+   ],
+   [
+    361,
+    866
+   ],
+   [
+    361,
+    874
+   ],
+   [
+    361,
+    881
+   ],
+   [
+    361,
+    884
+   ],
+   [
+    581,
+    884
+   ],
+   [
+    581,
+    850
+   ]
+  ]
+ },
+ {
+  "index": 30,
+  "label": "text",
+  "content": "Witness: Ellie Gallagher Date: 2 March 2019",
+  "bbox_2d": [
+   676,
+   850,
+   817,
+   885
+  ],
+  "polygon": [
+   [
+    676,
+    850
+   ],
+   [
+    676,
+    884
+   ],
+   [
+    816,
+    884
+   ],
+   [
+    816,
+    850
+   ]
+  ]
+ },
+ {
+  "index": 31,
+  "label": "footnote",
+  "content": "$ ^{1} $ Schedule A lists the monthly deliverables and their deadlines; the Supplier may vary them only with the Client's consent.",
+  "bbox_2d": [
+   46,
+   912,
+   684,
+   926
+  ],
+  "polygon": [
+   [
+    46,
+    922
+   ],
+   [
+    683,
+    925
+   ],
+   [
+    683,
+    912
+   ],
+   [
+    645,
+    912
+   ],
+   [
+    52,
+    912
+   ]
+  ]
+ },
+ {
+  "index": 32,
+  "label": "footnote",
+  "content": "$ ^{2} $ The monthly fee is reviewed each April and may rise by no more than the Consumer Prices Index over the preceding year.",
+  "bbox_2d": [
+   45,
+   931,
+   691,
+   946
+  ],
+  "polygon": [
+   [
+    45,
+    931
+   ],
+   [
+    45,
+    945
+   ],
+   [
+    690,
+    945
+   ],
+   [
+    690,
+    931
+   ]
+  ]
+ },
+ {
+  "index": 33,
+  "label": "footnote",
+  "content": "$ ^{3} $The data processing terms are set out in Schedule C and form part of this agreement.",
+  "bbox_2d": [
+   46,
+   949,
+   506,
+   966
+  ],
+  "polygon": [
+   [
+    46,
+    949
+   ],
+   [
+    46,
+    965
+   ],
+   [
+    505,
+    965
+   ],
+   [
+    505,
+    949
+   ]
+  ]
+ }
+]

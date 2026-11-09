@@ -1,0 +1,412 @@
+[
+ {
+  "index": 0,
+  "label": "header",
+  "content": "FIGURE 3 TRADING",
+  "bbox_2d": [
+   14,
+   19,
+   78,
+   56
+  ],
+  "polygon": [
+   [
+    14,
+    19
+   ],
+   [
+    14,
+    55
+   ],
+   [
+    77,
+    55
+   ],
+   [
+    77,
+    19
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "paragraph_title",
+  "content": "HOW TO READ IT",
+  "bbox_2d": [
+   14,
+   110,
+   128,
+   128
+  ],
+  "polygon": [
+   [
+    14,
+    110
+   ],
+   [
+    14,
+    127
+   ],
+   [
+    127,
+    127
+   ],
+   [
+    127,
+    110
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "text",
+  "content": "1. Black bars are shop sales, red bars online orders.",
+  "bbox_2d": [
+   15,
+   135,
+   152,
+   198
+  ],
+  "polygon": [
+   [
+    15,
+    135
+   ],
+   [
+    15,
+    196
+   ],
+   [
+    151,
+    196
+   ],
+   [
+    151,
+    135
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "text",
+  "content": "2. Each pair is one calendar month.",
+  "bbox_2d": [
+   14,
+   203,
+   124,
+   244
+  ],
+  "polygon": [
+   [
+    14,
+    203
+   ],
+   [
+    14,
+    242
+   ],
+   [
+    123,
+    242
+   ],
+   [
+    123,
+    203
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "text",
+  "content": "3. December includes the Christmas gift-card redemptions $ ^{a} $",
+  "bbox_2d": [
+   13,
+   251,
+   160,
+   317
+  ],
+  "polygon": [
+   [
+    13,
+    251
+   ],
+   [
+    13,
+    316
+   ],
+   [
+    158,
+    316
+   ],
+   [
+    158,
+    251
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "text",
+  "content": "4. Online share is on the right of the table below.",
+  "bbox_2d": [
+   14,
+   323,
+   164,
+   364
+  ],
+  "polygon": [
+   [
+    14,
+    323
+   ],
+   [
+    14,
+    363
+   ],
+   [
+    163,
+    363
+   ],
+   [
+    163,
+    323
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "paragraph_title",
+  "content": "HIGHLIGHTS",
+  "bbox_2d": [
+   14,
+   378,
+   98,
+   396
+  ],
+  "polygon": [
+   [
+    14,
+    378
+   ],
+   [
+    14,
+    395
+   ],
+   [
+    97,
+    395
+   ],
+   [
+    97,
+    378
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "text",
+  "content": "Combined sales peaked in December at £9.0m; the year closed at £7.44. $^{b}$",
+  "bbox_2d": [
+   13,
+   400,
+   153,
+   492
+  ],
+  "polygon": [
+   [
+    13,
+    400
+   ],
+   [
+    13,
+    490
+   ],
+   [
+    147,
+    490
+   ],
+   [
+    152,
+    486
+   ],
+   [
+    152,
+    400
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "paragraph_title",
+  "content": "Monthly sales by channel, March 2024 to February 2025",
+  "bbox_2d": [
+   180,
+   23,
+   756,
+   55
+  ],
+  "polygon": [
+   [
+    180,
+    23
+   ],
+   [
+    180,
+    54
+   ],
+   [
+    755,
+    54
+   ],
+   [
+    755,
+    23
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "figure_title",
+  "content": "Indigo & Russet Home Ltd, Newry and Inverness distribution centres, £ million, net of VAT",
+  "bbox_2d": [
+   180,
+   61,
+   721,
+   84
+  ],
+  "polygon": [
+   [
+    180,
+    61
+   ],
+   [
+    180,
+    83
+   ],
+   [
+    720,
+    83
+   ],
+   [
+    720,
+    61
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "chart",
+  "content": null,
+  "bbox_2d": [
+   195,
+   98,
+   923,
+   527
+  ],
+  "polygon": [
+   [
+    195,
+    98
+   ],
+   [
+    201,
+    525
+   ],
+   [
+    922,
+    525
+   ],
+   [
+    917,
+    98
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "figure_title",
+  "content": "Figure 3. Online orders grew from $28\\%$ of monthly sales in March to a high of $32\\%$ in December, while shop sales followed the usual seasonal rise from September. $ ^{c} $ Totals may not sum because of rounding.",
+  "bbox_2d": [
+   12,
+   547,
+   977,
+   590
+  ],
+  "polygon": [
+   [
+    12,
+    547
+   ],
+   [
+    12,
+    589
+   ],
+   [
+    976,
+    589
+   ],
+   [
+    976,
+    547
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "table",
+  "content": "<table border=\"1\"><tr><td>Month</td><td>Shops</td><td>Online</td><td>Combined</td><td>Online share</td></tr><tr><td>Mar</td><td>£3.1m</td><td>£1.2m</td><td>£4.3m</td><td>28%</td></tr><tr><td>Apr</td><td>£3.4m</td><td>£1.3m</td><td>£4.7m</td><td>28%</td></tr><tr><td>May</td><td>£3.8m</td><td>£1.5m</td><td>£5.3m</td><td>28%</td></tr><tr><td>Jun</td><td>£4.2m</td><td>£1.4m</td><td>£5.6m</td><td>25%</td></tr><tr><td>Jul</td><td>£4.0m</td><td>£1.6m</td><td>£5.6m</td><td>29%</td></tr><tr><td>Aug</td><td>£3.6m</td><td>£1.7m</td><td>£5.3m</td><td>32%</td></tr><tr><td>Sep</td><td>£4.4m</td><td>£1.9m</td><td>£6.3m</td><td>30%</td></tr><tr><td>Oct</td><td>£4.9m</td><td>£2.0m</td><td>£6.9m</td><td>29%</td></tr><tr><td>Nov</td><td>£5.3m</td><td>£2.4m</td><td>£7.7m</td><td>31%</td></tr><tr><td>Dec</td><td>£6.1m</td><td>£2.9m</td><td>£9.0m</td><td>32%</td></tr><tr><td>Jan</td><td>£4.6m</td><td>£2.1m</td><td>£6.7m</td><td>31%</td></tr><tr><td>Feb</td><td>£4.8m</td><td>£2.2m</td><td>£7.0m</td><td>31%</td></tr></table>",
+  "bbox_2d": [
+   11,
+   608,
+   983,
+   922
+  ],
+  "polygon": [
+   [
+    11,
+    614
+   ],
+   [
+    16,
+    920
+   ],
+   [
+    982,
+    920
+   ],
+   [
+    973,
+    608
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "vision_footnote",
+  "content": "$ ^{a} $ Redemptions of £4.0m account on 24 to 31 December 2024. $ ^{b} $ Management accounts, signed 4 March 2025 by Zara Lindsay. $ ^{c} $ Online share excludes click-and-collect. Source: company management accounts; review by Niamli Liewlah and Arjun Calmil. Figures unadjusted, prepared 4 March 2025.",
+  "bbox_2d": [
+   14,
+   941,
+   834,
+   980
+  ],
+  "polygon": [
+   [
+    14,
+    941
+   ],
+   [
+    14,
+    979
+   ],
+   [
+    833,
+    979
+   ],
+   [
+    833,
+    941
+   ]
+  ]
+ }
+]

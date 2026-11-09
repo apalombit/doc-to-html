@@ -1,0 +1,472 @@
+[
+ {
+  "index": 0,
+  "label": "header_image",
+  "content": "F",
+  "bbox_2d": [
+   26,
+   36,
+   68,
+   96
+  ],
+  "polygon": [
+   [
+    26,
+    36
+   ],
+   [
+    26,
+    94
+   ],
+   [
+    67,
+    94
+   ],
+   [
+    67,
+    36
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "paragraph_title",
+  "content": "Flint Hill Credit Union",
+  "bbox_2d": [
+   78,
+   34,
+   375,
+   76
+  ],
+  "polygon": [
+   [
+    78,
+    34
+   ],
+   [
+    78,
+    74
+   ],
+   [
+    373,
+    74
+   ],
+   [
+    373,
+    34
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "doc_title",
+  "content": "Member Application, Part 2 of 4 Personal and employment details",
+  "bbox_2d": [
+   77,
+   81,
+   522,
+   110
+  ],
+  "polygon": [
+   [
+    77,
+    81
+   ],
+   [
+    77,
+    109
+   ],
+   [
+    521,
+    109
+   ],
+   [
+    521,
+    81
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "header",
+  "content": "Form MA-2 · Rev. 05/2024 Branch: Rochester, MN",
+  "bbox_2d": [
+   791,
+   43,
+   977,
+   100
+  ],
+  "polygon": [
+   [
+    791,
+    43
+   ],
+   [
+    791,
+    47
+   ],
+   [
+    791,
+    65
+   ],
+   [
+    791,
+    69
+   ],
+   [
+    791,
+    85
+   ],
+   [
+    791,
+    98
+   ],
+   [
+    976,
+    98
+   ],
+   [
+    976,
+    43
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "text",
+  "content": "Please print clearly in blue or black ink. Fields marked * are required. Date of application: 05/24/2024",
+  "bbox_2d": [
+   21,
+   132,
+   692,
+   161
+  ],
+  "polygon": [
+   [
+    21,
+    132
+   ],
+   [
+    21,
+    160
+   ],
+   [
+    691,
+    160
+   ],
+   [
+    691,
+    132
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "paragraph_title",
+  "content": "A. Applicant",
+  "bbox_2d": [
+   33,
+   196,
+   158,
+   229
+  ],
+  "polygon": [
+   [
+    33,
+    196
+   ],
+   [
+    33,
+    227
+   ],
+   [
+    157,
+    227
+   ],
+   [
+    157,
+    201
+   ],
+   [
+    137,
+    196
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "table",
+  "content": "<table><tr><td>Full name *</td><td colspan=\"3\">Travis Kowalczyk</td></tr><tr><td>Date of birth *</td><td>03/14/1986</td><td>SSN, last 4 *</td><td>4417</td></tr><tr><td>Home address *</td><td colspan=\"3\">418 Linden Court, Rochester, MN 55902</td></tr><tr><td>Years there</td><td>6</td><td>Housing</td><td>Rent Own</td></tr><tr><td>Prior address</td><td colspan=\"3\">92 Cascadilla Street, Ithaca, NY 14850</td></tr><tr><td>Phone *</td><td colspan=\"3\">(507) 555-0143</td></tr><tr><td>E-mail</td><td colspan=\"3\">travis.kowalczyk@example.com</td></tr></table>",
+  "bbox_2d": [
+   27,
+   240,
+   485,
+   585
+  ],
+  "polygon": [
+   [
+    27,
+    240
+   ],
+   [
+    27,
+    583
+   ],
+   [
+    483,
+    583
+   ],
+   [
+    483,
+    240
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "paragraph_title",
+  "content": "B. Employment and income",
+  "bbox_2d": [
+   520,
+   196,
+   757,
+   229
+  ],
+  "polygon": [
+   [
+    520,
+    196
+   ],
+   [
+    520,
+    227
+   ],
+   [
+    756,
+    227
+   ],
+   [
+    756,
+    201
+   ],
+   [
+    752,
+    196
+   ],
+   [
+    733,
+    196
+   ],
+   [
+    603,
+    196
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "table",
+  "content": "<table border=\"1\"><tr><td>Employer *</td><td colspan=\"3\">Bracken Valley Dental Group</td></tr><tr><td>Job title</td><td colspan=\"3\">Dental laboratory technician</td></tr><tr><td>Employed since</td><td>08/2016</td><td>Work phone</td><td>(507) 555-0188</td></tr><tr><td>Gross monthly *</td><td>$4,860.00</td><td>Paid</td><td>Bi-weekly</td></tr></table>",
+  "bbox_2d": [
+   515,
+   241,
+   971,
+   440
+  ],
+  "polygon": [
+   [
+    515,
+    241
+   ],
+   [
+    515,
+    400
+   ],
+   [
+    515,
+    405
+   ],
+   [
+    515,
+    423
+   ],
+   [
+    521,
+    434
+   ],
+   [
+    636,
+    438
+   ],
+   [
+    970,
+    438
+   ],
+   [
+    970,
+    241
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "figure_title",
+  "content": "Monthly obligations",
+  "bbox_2d": [
+   517,
+   449,
+   650,
+   476
+  ],
+  "polygon": [
+   [
+    517,
+    449
+   ],
+   [
+    517,
+    474
+   ],
+   [
+    648,
+    474
+   ],
+   [
+    648,
+    449
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "table",
+  "content": "<table><thead><tr><th>Item</th><th>Payment</th><th>Balance</th></tr></thead><tbody><tr><td>Rent</td><td>$1,150.00</td><td>—</td></tr><tr><td>Auto loan</td><td>$312.40</td><td>$9,860.00</td></tr></tbody></table>",
+  "bbox_2d": [
+   516,
+   485,
+   968,
+   607
+  ],
+  "polygon": [
+   [
+    516,
+    485
+   ],
+   [
+    516,
+    605
+   ],
+   [
+    967,
+    605
+   ],
+   [
+    967,
+    485
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "vision_footnote",
+  "content": "Total obligations $1,462.40",
+  "bbox_2d": [
+   778,
+   610,
+   966,
+   641
+  ],
+  "polygon": [
+   [
+    778,
+    610
+   ],
+   [
+    778,
+    640
+   ],
+   [
+    965,
+    640
+   ],
+   [
+    965,
+    610
+   ],
+   [
+    870,
+    610
+   ],
+   [
+    838,
+    610
+   ],
+   [
+    815,
+    610
+   ],
+   [
+    808,
+    610
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "paragraph_title",
+  "content": "C. Joint applicant and reference",
+  "bbox_2d": [
+   31,
+   683,
+   303,
+   716
+  ],
+  "polygon": [
+   [
+    31,
+    683
+   ],
+   [
+    31,
+    714
+   ],
+   [
+    302,
+    714
+   ],
+   [
+    302,
+    683
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "table",
+  "content": "<table><thead><tr><th>Role</th><th>Name</th><th>Relationship</th><th>Phone</th></tr></thead><tbody><tr><td>Joint applicant</td><td>Malik Hendricks</td><td>Brother</td><td>(607) 555-0127</td></tr><tr><td>Personal reference</td><td>Camila Brennan</td><td>Co-worker</td><td>(507) 555-0162</td></tr><tr><td rowspan=\"2\">Applicant's signature</td><td colspan=\"2\">T. Kowalczyk</td><td>Date: 05/24/2024</td></tr><tr><td colspan=\"3\">By signing, I confirm that the information above is true and complete, and I authorize Flint Hill Credit Union to verify it.</td></tr></tbody></table>",
+  "bbox_2d": [
+   22,
+   725,
+   973,
+   961
+  ],
+  "polygon": [
+   [
+    27,
+    725
+   ],
+   [
+    22,
+    960
+   ],
+   [
+    972,
+    960
+   ],
+   [
+    972,
+    725
+   ]
+  ]
+ }
+]

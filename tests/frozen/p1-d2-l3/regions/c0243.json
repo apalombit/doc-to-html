@@ -1,0 +1,604 @@
+[
+ {
+  "index": 0,
+  "label": "paragraph_title",
+  "content": "Quill Iris Medical Practice Norwich Road Surgery, Norwich NR3 4TT",
+  "bbox_2d": [
+   19,
+   54,
+   350,
+   153
+  ],
+  "polygon": [
+   [
+    19,
+    54
+   ],
+   [
+    19,
+    150
+   ],
+   [
+    348,
+    150
+   ],
+   [
+    348,
+    60
+   ],
+   [
+    344,
+    54
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "header",
+  "content": "Visit note\n8 November 2024",
+  "bbox_2d": [
+   832,
+   51,
+   979,
+   135
+  ],
+  "polygon": [
+   [
+    832,
+    57
+   ],
+   [
+    832,
+    132
+   ],
+   [
+    978,
+    132
+   ],
+   [
+    978,
+    57
+   ],
+   [
+    974,
+    51
+   ],
+   [
+    871,
+    51
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "text",
+  "content": "Patient ..... Priya Llewellyn",
+  "bbox_2d": [
+   19,
+   183,
+   493,
+   225
+  ],
+  "polygon": [
+   [
+    19,
+    183
+   ],
+   [
+    19,
+    222
+   ],
+   [
+    492,
+    222
+   ],
+   [
+    492,
+    183
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "text",
+  "content": "Date of birth ..... 14/06/1987",
+  "bbox_2d": [
+   19,
+   225,
+   493,
+   264
+  ],
+  "polygon": [
+   [
+    19,
+    225
+   ],
+   [
+    19,
+    261
+   ],
+   [
+    492,
+    261
+   ],
+   [
+    492,
+    225
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "text",
+  "content": "NHS no. 485 221 0937",
+  "bbox_2d": [
+   19,
+   264,
+   494,
+   303
+  ],
+  "polygon": [
+   [
+    19,
+    264
+   ],
+   [
+    19,
+    300
+   ],
+   [
+    493,
+    300
+   ],
+   [
+    493,
+    264
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "text",
+  "content": "Seen by ..... Dr G. Caldwell",
+  "bbox_2d": [
+   19,
+   303,
+   493,
+   345
+  ],
+  "polygon": [
+   [
+    19,
+    303
+   ],
+   [
+    19,
+    342
+   ],
+   [
+    492,
+    342
+   ],
+   [
+    492,
+    303
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "paragraph_title",
+  "content": "Presenting complaint",
+  "bbox_2d": [
+   20,
+   378,
+   194,
+   420
+  ],
+  "polygon": [
+   [
+    20,
+    378
+   ],
+   [
+    20,
+    417
+   ],
+   [
+    193,
+    417
+   ],
+   [
+    193,
+    378
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "text",
+  "content": "Three weeks of cough, worse at night. No fever. Mild wheeze after exercise.",
+  "bbox_2d": [
+   19,
+   417,
+   457,
+   501
+  ],
+  "polygon": [
+   [
+    19,
+    423
+   ],
+   [
+    19,
+    498
+   ],
+   [
+    456,
+    498
+   ],
+   [
+    456,
+    423
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "paragraph_title",
+  "content": "Checks made",
+  "bbox_2d": [
+   20,
+   534,
+   129,
+   576
+  ],
+  "polygon": [
+   [
+    20,
+    534
+   ],
+   [
+    20,
+    573
+   ],
+   [
+    128,
+    573
+   ],
+   [
+    128,
+    534
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "text",
+  "content": "Chest sounds heard",
+  "bbox_2d": [
+   19,
+   576,
+   183,
+   618
+  ],
+  "polygon": [
+   [
+    19,
+    582
+   ],
+   [
+    19,
+    615
+   ],
+   [
+    182,
+    615
+   ],
+   [
+    182,
+    576
+   ],
+   [
+    139,
+    576
+   ],
+   [
+    128,
+    576
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "text",
+  "content": "Peak flow recorded",
+  "bbox_2d": [
+   19,
+   621,
+   178,
+   660
+  ],
+  "polygon": [
+   [
+    19,
+    627
+   ],
+   [
+    19,
+    657
+   ],
+   [
+    176,
+    657
+   ],
+   [
+    176,
+    621
+   ],
+   [
+    58,
+    621
+   ],
+   [
+    53,
+    621
+   ],
+   [
+    44,
+    621
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "text",
+  "content": "Chest X-ray requested",
+  "bbox_2d": [
+   20,
+   666,
+   201,
+   708
+  ],
+  "polygon": [
+   [
+    20,
+    672
+   ],
+   [
+    20,
+    705
+   ],
+   [
+    200,
+    705
+   ],
+   [
+    200,
+    666
+   ],
+   [
+    80,
+    666
+   ],
+   [
+    75,
+    666
+   ],
+   [
+    71,
+    666
+   ],
+   [
+    60,
+    666
+   ],
+   [
+    41,
+    666
+   ],
+   [
+    34,
+    666
+   ],
+   [
+    30,
+    666
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "text",
+  "content": "Inhaler technique reviewed",
+  "bbox_2d": [
+   19,
+   711,
+   235,
+   753
+  ],
+  "polygon": [
+   [
+    19,
+    711
+   ],
+   [
+    19,
+    750
+   ],
+   [
+    234,
+    750
+   ],
+   [
+    234,
+    711
+   ],
+   [
+    39,
+    711
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "text",
+  "content": "Blood tests taken",
+  "bbox_2d": [
+   20,
+   756,
+   166,
+   798
+  ],
+  "polygon": [
+   [
+    20,
+    756
+   ],
+   [
+    20,
+    795
+   ],
+   [
+    165,
+    795
+   ],
+   [
+    165,
+    756
+   ],
+   [
+    152,
+    756
+   ],
+   [
+    110,
+    756
+   ],
+   [
+    87,
+    756
+   ],
+   [
+    34,
+    756
+   ]
+  ]
+ },
+ {
+  "index": 14,
+  "label": "paragraph_title",
+  "content": "Observations",
+  "bbox_2d": [
+   511,
+   198,
+   621,
+   240
+  ],
+  "polygon": [
+   [
+    511,
+    198
+   ],
+   [
+    511,
+    237
+   ],
+   [
+    620,
+    237
+   ],
+   [
+    620,
+    198
+   ]
+  ]
+ },
+ {
+  "index": 15,
+  "label": "table",
+  "content": "<table border=\"1\"><tr><td>Measure</td><td>Result</td><td>Range</td></tr><tr><td>Temp</td><td>36.8℃</td><td>36.1 to 37.2</td></tr><tr><td>SpO2</td><td>97%</td><td>95 to 100</td></tr><tr><td>BP</td><td></td><td>under 140/90</td></tr><tr><td colspan=\"3\">Lung function</td></tr><tr><td>FEV1</td><td>2.9 L</td><td>3.1 to 3.9</td></tr><tr><td>Peak flow</td><td>410 L/min</td><td>400 to 520</td></tr><tr><td>BMI</td><td></td><td>18.5 to 24.9 kg/m2</td></tr></table>",
+  "bbox_2d": [
+   506,
+   240,
+   975,
+   780
+  ],
+  "polygon": [
+   [
+    974,
+    240
+   ],
+   [
+    511,
+    246
+   ],
+   [
+    506,
+    777
+   ],
+   [
+    974,
+    777
+   ]
+  ]
+ },
+ {
+  "index": 16,
+  "label": "paragraph_title",
+  "content": "Plan",
+  "bbox_2d": [
+   503,
+   822,
+   544,
+   861
+  ],
+  "polygon": [
+   [
+    503,
+    822
+   ],
+   [
+    503,
+    858
+   ],
+   [
+    543,
+    858
+   ],
+   [
+    543,
+    822
+   ]
+  ]
+ },
+ {
+  "index": 17,
+  "label": "text",
+  "content": "Salbutamol 100 mcg as needed. Review in 2 weeks with Ellie Gallager, practice nurse.",
+  "bbox_2d": [
+   503,
+   861,
+   943,
+   948
+  ],
+  "polygon": [
+   [
+    942,
+    861
+   ],
+   [
+    503,
+    867
+   ],
+   [
+    503,
+    945
+   ],
+   [
+    942,
+    942
+   ]
+  ]
+ }
+]

@@ -1,0 +1,234 @@
+[
+ {
+  "index": 0,
+  "label": "figure_title",
+  "content": "Mean cost, US dollars per acre per month",
+  "bbox_2d": [
+   28,
+   24,
+   354,
+   54
+  ],
+  "polygon": [
+   [
+    28,
+    24
+   ],
+   [
+    28,
+    52
+   ],
+   [
+    353,
+    52
+   ],
+   [
+    353,
+    24
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "chart",
+  "content": null,
+  "bbox_2d": [
+   60,
+   55,
+   951,
+   571
+  ],
+  "polygon": [
+   [
+    60,
+    61
+   ],
+   [
+    71,
+    569
+   ],
+   [
+    950,
+    566
+   ],
+   [
+    950,
+    72
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "figure_title",
+  "content": "Figure 4. Mean irrigation cost per acre per month, by quarter, on the Juniper Moss study farms in Fort Collins, CO and Tulsa, OK. Costs peak in July to September at both sites, and the summer gap between them is wider than the winter one.",
+  "bbox_2d": [
+   23,
+   586,
+   975,
+   687
+  ],
+  "polygon": [
+   [
+    23,
+    586
+   ],
+   [
+    23,
+    685
+   ],
+   [
+    973,
+    685
+   ],
+   [
+    973,
+    586
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "table",
+  "content": "<table border=\"1\"><tr><td>Sample:48 farms</td><td>Currency:US dollars,2019</td></tr><tr><td>Collected:through December 31,2019</td><td>Prepared:January7,2020</td></tr></table>",
+  "bbox_2d": [
+   20,
+   711,
+   976,
+   802
+  ],
+  "polygon": [
+   [
+    20,
+    716
+   ],
+   [
+    26,
+    800
+   ],
+   [
+    975,
+    800
+   ],
+   [
+    975,
+    716
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "vision_footnote",
+  "content": "1. Costs include pumped water, energy and hired labor; equipment depreciation is left out.",
+  "bbox_2d": [
+   23,
+   826,
+   753,
+   854
+  ],
+  "polygon": [
+   [
+    23,
+    826
+   ],
+   [
+    23,
+    852
+   ],
+   [
+    751,
+    852
+   ],
+   [
+    751,
+    826
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "vision_footnote",
+  "content": "2. Each bar is the mean of the 24 farms at that site, as reported by DeShawn Gutierrez and Kayla Hendricks.",
+  "bbox_2d": [
+   21,
+   860,
+   890,
+   888
+  ],
+  "polygon": [
+   [
+    21,
+    865
+   ],
+   [
+    21,
+    886
+   ],
+   [
+    889,
+    886
+   ],
+   [
+    889,
+    860
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "vision_footnote",
+  "content": "3. Quarterly means are weighted by acres irrigated.",
+  "bbox_2d": [
+   21,
+   895,
+   443,
+   925
+  ],
+  "polygon": [
+   [
+    28,
+    895
+   ],
+   [
+    28,
+    923
+   ],
+   [
+    442,
+    923
+   ],
+   [
+    442,
+    895
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "vision_footnote",
+  "content": "Source: Juniper Moss farm cost survey, 2019; tabulated by Luis Le.",
+  "bbox_2d": [
+   23,
+   938,
+   514,
+   968
+  ],
+  "polygon": [
+   [
+    23,
+    938
+   ],
+   [
+    23,
+    966
+   ],
+   [
+    512,
+    966
+   ],
+   [
+    512,
+    938
+   ]
+  ]
+ }
+]

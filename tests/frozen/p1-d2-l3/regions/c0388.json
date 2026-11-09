@@ -1,0 +1,788 @@
+[
+ {
+  "index": 0,
+  "label": "header",
+  "content": "THE GANNET QUARTERLY",
+  "bbox_2d": [
+   33,
+   33,
+   195,
+   53
+  ],
+  "polygon": [
+   [
+    33,
+    33
+   ],
+   [
+    33,
+    52
+   ],
+   [
+    194,
+    52
+   ],
+   [
+    194,
+    33
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "header",
+  "content": "WALKING · MAY 2025",
+  "bbox_2d": [
+   501,
+   33,
+   637,
+   53
+  ],
+  "polygon": [
+   [
+    501,
+    33
+   ],
+   [
+    501,
+    52
+   ],
+   [
+    637,
+    52
+   ],
+   [
+    637,
+    33
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "number",
+  "content": "42",
+  "bbox_2d": [
+   946,
+   35,
+   962,
+   52
+  ],
+  "polygon": [
+   [
+    946,
+    35
+   ],
+   [
+    946,
+    50
+   ],
+   [
+    962,
+    50
+   ],
+   [
+    962,
+    35
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "text",
+  "content": "THE SLOW COAST",
+  "bbox_2d": [
+   33,
+   88,
+   169,
+   109
+  ],
+  "polygon": [
+   [
+    33,
+    88
+   ],
+   [
+    33,
+    108
+   ],
+   [
+    168,
+    108
+   ],
+   [
+    168,
+    88
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "doc_title",
+  "content": "The Long Way to Mersea",
+  "bbox_2d": [
+   32,
+   123,
+   575,
+   195
+  ],
+  "polygon": [
+   [
+    32,
+    123
+   ],
+   [
+    37,
+    194
+   ],
+   [
+    575,
+    194
+   ],
+   [
+    570,
+    123
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "text",
+  "content": "Four days on foot from Colchester, where the tide sets the timetable and the lanes give up before the sea does.",
+  "bbox_2d": [
+   31,
+   205,
+   615,
+   269
+  ],
+  "polygon": [
+   [
+    31,
+    268
+   ],
+   [
+    614,
+    268
+   ],
+   [
+    614,
+    205
+   ],
+   [
+    37,
+    211
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "text",
+  "content": "WORDS BY CALLUM HUGHES · PHOTOGRAPHS BY MEGAN BURROWS",
+  "bbox_2d": [
+   33,
+   295,
+   437,
+   322
+  ],
+  "polygon": [
+   [
+    33,
+    295
+   ],
+   [
+    33,
+    320
+   ],
+   [
+    437,
+    320
+   ],
+   [
+    437,
+    295
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "text",
+  "content": "The first mile leaves the town by the river and turns, quite suddenly, into reeds. Nobody had told us how quickly Colchester ends. By ten in the morning the only sound was the wind in the saltmarsh grass and a curlew complaining somewhere to our left.",
+  "bbox_2d": [
+   31,
+   353,
+   625,
+   449
+  ],
+  "polygon": [
+   [
+    31,
+    353
+   ],
+   [
+    31,
+    448
+   ],
+   [
+    624,
+    448
+   ],
+   [
+    624,
+    353
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "text",
+  "content": "We had planned the walk around the tide tables, as everyone must here. The causeway to the island is open for a few hours either side of low water, and an early start means the difference between a dry crossing and a long wait with a flask of tea.",
+  "bbox_2d": [
+   31,
+   471,
+   626,
+   568
+  ],
+  "polygon": [
+   [
+    31,
+    477
+   ],
+   [
+    31,
+    567
+   ],
+   [
+    625,
+    563
+   ],
+   [
+    625,
+    471
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "paragraph_title",
+  "content": "\"The causeway belongs to the sea. We are only borrowing it.\"",
+  "bbox_2d": [
+   80,
+   616,
+   581,
+   700
+  ],
+  "polygon": [
+   [
+    80,
+    616
+   ],
+   [
+    80,
+    698
+   ],
+   [
+    580,
+    698
+   ],
+   [
+    580,
+    616
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "text",
+  "content": "Aisha Pritchard, who keeps the oyster shed at the island's end, says the crossing has not changed in her lifetime, only the people on it. Her grandmother, she told us, walked it in clogs. We followed her advice and kept to the posts, and reached the far shore with wet boots and a good appetite.",
+  "bbox_2d": [
+   31,
+   749,
+   628,
+   847
+  ],
+  "polygon": [
+   [
+    31,
+    749
+   ],
+   [
+    31,
+    846
+   ],
+   [
+    627,
+    846
+   ],
+   [
+    627,
+    749
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "text",
+  "content": "Taunton seems a long way from all this, though it was there that the idea began, over a map spread on a kitchen table.",
+  "bbox_2d": [
+   31,
+   868,
+   625,
+   929
+  ],
+  "polygon": [
+   [
+    31,
+    868
+   ],
+   [
+    31,
+    928
+   ],
+   [
+    625,
+    928
+   ],
+   [
+    625,
+    868
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "paragraph_title",
+  "content": "THE FOUR STAGES",
+  "bbox_2d": [
+   690,
+   88,
+   835,
+   109
+  ],
+  "polygon": [
+   [
+    690,
+    88
+   ],
+   [
+    690,
+    108
+   ],
+   [
+    834,
+    108
+   ],
+   [
+    834,
+    88
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "text",
+  "content": "1. Colchester to Rowhedge, by the river path",
+  "bbox_2d": [
+   691,
+   127,
+   929,
+   151
+  ],
+  "polygon": [
+   [
+    691,
+    127
+   ],
+   [
+    691,
+    149
+   ],
+   [
+    928,
+    149
+   ],
+   [
+    928,
+    127
+   ]
+  ]
+ },
+ {
+  "index": 14,
+  "label": "text",
+  "content": "2. Rowhedge to Fingringhoe, through the reserve",
+  "bbox_2d": [
+   689,
+   161,
+   948,
+   185
+  ],
+  "polygon": [
+   [
+    689,
+    161
+   ],
+   [
+    689,
+    183
+   ],
+   [
+    947,
+    183
+   ],
+   [
+    947,
+    166
+   ],
+   [
+    942,
+    161
+   ]
+  ]
+ },
+ {
+  "index": 15,
+  "label": "text",
+  "content": "3. Fingringhoe to the causeway at low tide",
+  "bbox_2d": [
+   689,
+   195,
+   915,
+   219
+  ],
+  "polygon": [
+   [
+    689,
+    195
+   ],
+   [
+    689,
+    217
+   ],
+   [
+    914,
+    217
+   ],
+   [
+    914,
+    195
+   ]
+  ]
+ },
+ {
+  "index": 16,
+  "label": "text",
+  "content": "4. The island and the long road home",
+  "bbox_2d": [
+   689,
+   230,
+   891,
+   252
+  ],
+  "polygon": [
+   [
+    689,
+    230
+   ],
+   [
+    689,
+    251
+   ],
+   [
+    890,
+    251
+   ],
+   [
+    890,
+    230
+   ]
+  ]
+ },
+ {
+  "index": 17,
+  "label": "paragraph_title",
+  "content": "DISTANCES",
+  "bbox_2d": [
+   690,
+   280,
+   781,
+   301
+  ],
+  "polygon": [
+   [
+    690,
+    280
+   ],
+   [
+    690,
+    299
+   ],
+   [
+    780,
+    299
+   ],
+   [
+    780,
+    280
+   ]
+  ]
+ },
+ {
+  "index": 18,
+  "label": "table",
+  "content": "<table border=\"1\"><tr><td>Stage 1</td><td>9.5km</td></tr><tr><td>river path</td><td>6.0km</td></tr><tr><td>lanes</td><td>3.5km</td></tr><tr><td>Stage2</td><td>11km</td></tr><tr><td>reserve</td><td>7.5km</td></tr><tr><td>seawall</td><td>3.5km</td></tr><tr><td>Total</td><td>20.5km</td></tr></table>",
+  "bbox_2d": [
+   690,
+   318,
+   964,
+   528
+  ],
+  "polygon": [
+   [
+    690,
+    318
+   ],
+   [
+    690,
+    526
+   ],
+   [
+    963,
+    526
+   ],
+   [
+    963,
+    318
+   ]
+  ]
+ },
+ {
+  "index": 19,
+  "label": "paragraph_title",
+  "content": "BEFORE YOU GO",
+  "bbox_2d": [
+   691,
+   554,
+   817,
+   574
+  ],
+  "polygon": [
+   [
+    691,
+    554
+   ],
+   [
+    691,
+    573
+   ],
+   [
+    816,
+    573
+   ],
+   [
+    816,
+    554
+   ]
+  ]
+ },
+ {
+  "index": 20,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   693,
+   591,
+   715,
+   621
+  ],
+  "polygon": [
+   [
+    693,
+    591
+   ],
+   [
+    693,
+    620
+   ],
+   [
+    714,
+    620
+   ],
+   [
+    714,
+    591
+   ]
+  ]
+ },
+ {
+  "index": 21,
+  "label": "text",
+  "content": "Start two hours before low water",
+  "bbox_2d": [
+   692,
+   593,
+   891,
+   620
+  ],
+  "polygon": [
+   [
+    692,
+    593
+   ],
+   [
+    692,
+    619
+   ],
+   [
+    890,
+    619
+   ],
+   [
+    890,
+    593
+   ]
+  ]
+ },
+ {
+  "index": 22,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   693,
+   640,
+   715,
+   663
+  ],
+  "polygon": [
+   [
+    693,
+    640
+   ],
+   [
+    693,
+    662
+   ],
+   [
+    714,
+    662
+   ],
+   [
+    714,
+    640
+   ]
+  ]
+ },
+ {
+  "index": 23,
+  "label": "text",
+  "content": "Check the tide table each morning",
+  "bbox_2d": [
+   692,
+   637,
+   895,
+   662
+  ],
+  "polygon": [
+   [
+    692,
+    637
+   ],
+   [
+    692,
+    661
+   ],
+   [
+    894,
+    661
+   ],
+   [
+    894,
+    637
+   ]
+  ]
+ },
+ {
+  "index": 24,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   695,
+   675,
+   712,
+   705
+  ],
+  "polygon": [
+   [
+    695,
+    675
+   ],
+   [
+    695,
+    704
+   ],
+   [
+    712,
+    704
+   ],
+   [
+    712,
+    675
+   ]
+  ]
+ },
+ {
+  "index": 25,
+  "label": "text",
+  "content": "Book beds at least a week ahead.",
+  "bbox_2d": [
+   695,
+   676,
+   887,
+   704
+  ],
+  "polygon": [
+   [
+    695,
+    676
+   ],
+   [
+    695,
+    702
+   ],
+   [
+    886,
+    702
+   ],
+   [
+    886,
+    681
+   ],
+   [
+    821,
+    676
+   ],
+   [
+    812,
+    676
+   ],
+   [
+    790,
+    676
+   ],
+   [
+    787,
+    676
+   ],
+   [
+    780,
+    676
+   ],
+   [
+    761,
+    676
+   ],
+   [
+    755,
+    676
+   ]
+  ]
+ }
+]

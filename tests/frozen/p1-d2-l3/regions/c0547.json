@@ -1,0 +1,461 @@
+[
+ {
+  "index": 0,
+  "label": "header",
+  "content": "SANDPIPER BEACON · QUARTERLY KICKOFF",
+  "bbox_2d": [
+   50,
+   18,
+   404,
+   46
+  ],
+  "polygon": [
+   [
+    50,
+    18
+   ],
+   [
+    50,
+    44
+   ],
+   [
+    403,
+    44
+   ],
+   [
+    403,
+    18
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "header",
+  "content": "AUGUST 7, 2021",
+  "bbox_2d": [
+   811,
+   18,
+   947,
+   46
+  ],
+  "polygon": [
+   [
+    811,
+    18
+   ],
+   [
+    811,
+    44
+   ],
+   [
+    946,
+    44
+   ],
+   [
+    946,
+    18
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "text",
+  "content": "New Tacoma -> Duluth",
+  "bbox_2d": [
+   58,
+   136,
+   244,
+   165
+  ],
+  "polygon": [
+   [
+    58,
+    136
+   ],
+   [
+    58,
+    164
+   ],
+   [
+    243,
+    164
+   ],
+   [
+    243,
+    142
+   ],
+   [
+    173,
+    136
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "doc_title",
+  "content": "One beacon in every harbour shed.",
+  "bbox_2d": [
+   46,
+   207,
+   647,
+   382
+  ],
+  "polygon": [
+   [
+    46,
+    380
+   ],
+   [
+    646,
+    380
+   ],
+   [
+    646,
+    207
+   ],
+   [
+    51,
+    213
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "text",
+  "content": "- Battery lasts three winters",
+  "bbox_2d": [
+   50,
+   425,
+   346,
+   466
+  ],
+  "polygon": [
+   [
+    50,
+    425
+   ],
+   [
+    50,
+    465
+   ],
+   [
+    345,
+    465
+   ],
+   [
+    345,
+    425
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "text",
+  "content": "- Pairs by phone in under a minute",
+  "bbox_2d": [
+   50,
+   480,
+   418,
+   522
+  ],
+  "polygon": [
+   [
+    50,
+    480
+   ],
+   [
+    50,
+    520
+   ],
+   [
+    417,
+    520
+   ],
+   [
+    417,
+    480
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "text",
+  "content": "Installed at both depots by September",
+  "bbox_2d": [
+   49,
+   566,
+   437,
+   606
+  ],
+  "polygon": [
+   [
+    49,
+    566
+   ],
+   [
+    49,
+    605
+   ],
+   [
+    436,
+    605
+   ],
+   [
+    436,
+    566
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "text",
+  "content": "Pilot crews trained",
+  "bbox_2d": [
+   49,
+   622,
+   261,
+   658
+  ],
+  "polygon": [
+   [
+    49,
+    622
+   ],
+   [
+    49,
+    657
+   ],
+   [
+    260,
+    657
+   ],
+   [
+    260,
+    622
+   ],
+   [
+    226,
+    622
+   ],
+   [
+    215,
+    622
+   ],
+   [
+    115,
+    622
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "text",
+  "content": "Night mode, held to next release",
+  "bbox_2d": [
+   49,
+   675,
+   389,
+   715
+  ],
+  "polygon": [
+   [
+    49,
+    675
+   ],
+   [
+    49,
+    714
+   ],
+   [
+    388,
+    714
+   ],
+   [
+    388,
+    675
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "text",
+  "content": "\"We stopped losing the keys the first week.\" Aaliyah Abernathy, depot lead",
+  "bbox_2d": [
+   75,
+   774,
+   501,
+   860
+  ],
+  "polygon": [
+   [
+    75,
+    774
+   ],
+   [
+    75,
+    858
+   ],
+   [
+    500,
+    858
+   ],
+   [
+    500,
+    774
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   756,
+   159,
+   896,
+   376
+  ],
+  "polygon": [
+   [
+    756,
+    159
+   ],
+   [
+    756,
+    374
+   ],
+   [
+    895,
+    374
+   ],
+   [
+    895,
+    159
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "text",
+  "content": "Scan for the pilot guide",
+  "bbox_2d": [
+   743,
+   403,
+   906,
+   433
+  ],
+  "polygon": [
+   [
+    743,
+    403
+   ],
+   [
+    743,
+    431
+   ],
+   [
+    905,
+    431
+   ],
+   [
+    905,
+    403
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "text",
+  "content": "Presented by Grant Shapiro with Travis Delgado",
+  "bbox_2d": [
+   700,
+   493,
+   893,
+   560
+  ],
+  "polygon": [
+   [
+    700,
+    493
+   ],
+   [
+    700,
+    559
+   ],
+   [
+    892,
+    559
+   ],
+   [
+    892,
+    493
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "footer",
+  "content": "Sandpiper Beacon Ltd.",
+  "bbox_2d": [
+   50,
+   952,
+   186,
+   980
+  ],
+  "polygon": [
+   [
+    185,
+    952
+   ],
+   [
+    181,
+    952
+   ],
+   [
+    50,
+    956
+   ],
+   [
+    50,
+    978
+   ],
+   [
+    185,
+    978
+   ]
+  ]
+ },
+ {
+  "index": 14,
+  "label": "footer",
+  "content": "Slide 3 of 12",
+  "bbox_2d": [
+   869,
+   952,
+   948,
+   976
+  ],
+  "polygon": [
+   [
+    947,
+    952
+   ],
+   [
+    938,
+    952
+   ],
+   [
+    869,
+    958
+   ],
+   [
+    869,
+    975
+   ],
+   [
+    947,
+    975
+   ]
+  ]
+ }
+]

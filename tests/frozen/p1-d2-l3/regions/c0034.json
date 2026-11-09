@@ -1,0 +1,903 @@
+[
+ {
+  "index": 0,
+  "label": "table",
+  "content": "<table><tr><td colspan=\"4\">AR-31\nAtlas State Department of Revenue\nIndividual Income Tax Return, Short Form\nFor residents of Atlas State with income under $100,000. Round all amounts to whole dollars. Do not write in the shaded boxes.</td><td>TAX YEAR\n2024\nDue 05/21/2025</td></tr><tr><td colspan=\"5\">FILER INFORMATION</td></tr><tr><td>A YOUR NAME\nWesley Lindqvist</td><td>B FILER NUMBER\n410-77-2916</td><td>C SPOUSE&#x27;S NAME\nLuis Jackson</td><td>D SPOUSE&#x27;S NUMBER\n410-55-8302</td><td></td></tr><tr><td colspan=\"2\">E HOME ADDRESS\n3318 Redstart Lane, Fort Collins, CO 80525</td><td>F DATE FILED\n05/21/2025</td><td>G FILING STATUS\nJoint Single</td><td>H DAYTIME PHONE\n(970) 555-0188</td></tr></table>",
+  "bbox_2d": [
+   15,
+   16,
+   978,
+   232
+  ],
+  "polygon": [
+   [
+    15,
+    21
+   ],
+   [
+    15,
+    230
+   ],
+   [
+    977,
+    230
+   ],
+   [
+    977,
+    16
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "paragraph_title",
+  "content": "INCOME, ADJUSTMENTS AND TAX",
+  "bbox_2d": [
+   15,
+   244,
+   226,
+   263
+  ],
+  "polygon": [
+   [
+    15,
+    244
+   ],
+   [
+    15,
+    261
+   ],
+   [
+    225,
+    261
+   ],
+   [
+    225,
+    244
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "table",
+  "content": "<table><tr><td>1</td><td>Wages, salaries and tips</td><td>62,460</td></tr><tr><td>2</td><td>Taxable interest</td><td>318</td></tr><tr><td>3</td><td>Ordinary dividends</td><td>540</td></tr><tr><td>4</td><td>Business income</td><td>4,200</td></tr><tr><td>5</td><td>Rental income</td><td>2,150</td></tr><tr><td>6</td><td>Unemployment compensation</td><td>0</td></tr><tr><td>7</td><td>Social security, taxable part</td><td>0</td></tr><tr><td>8</td><td>Other income</td><td>275</td></tr><tr><td>9</td><td>Total income, add lines 1 to 8</td><td>69,963</td></tr><tr><td>10</td><td>Educator expenses</td><td>250</td></tr><tr><td>11</td><td>Student loan interest</td><td>1,200</td></tr><tr><td>12</td><td>Health savings deposits</td><td>1,500</td></tr><tr><td>13</td><td>Self-employment tax, half</td><td>297</td></tr><tr><td>14</td><td>Retirement contributions</td><td>2,000</td></tr><tr><td>15</td><td>Qualifying moving costs</td><td>0</td></tr><tr><td>16</td><td>Total adjustments, add lines 10 to 15</td><td>5,247</td></tr><tr><td>17</td><td>Adjusted income, line 9 less line 16</td><td>64,716</td></tr><tr><td>18</td><td>Standard deduction</td><td>14,600</td></tr><tr><td>19</td><td>Qualified business deduction</td><td>840</td></tr><tr><td>20</td><td>Total deductions, add 18 and 19</td><td>15,440</td></tr><tr><td>21</td><td>Taxable income, line 17 less line 20</td><td>49,276</td></tr><tr><td>22</td><td>Tax from the rate table</td><td>5,364</td></tr><tr><td>23</td><td>Alternative minimum tax</td><td>0</td></tr><tr><td>24</td><td>Add lines 22 and 23</td><td>5,364</td></tr><tr><td>25</td><td>Child and dependent care credit</td><td>600</td></tr><tr><td>26</td><td>Education credit</td><td>1,000</td></tr><tr><td>27</td><td>Total credits, add 25 and 26</td><td>1,600</td></tr><tr><td>28</td><td>Tax after credits, line 24 less 27</td><td>3,764</td></tr></table>",
+  "bbox_2d": [
+   13,
+   268,
+   330,
+   946
+  ],
+  "polygon": [
+   [
+    13,
+    268
+   ],
+   [
+    13,
+    944
+   ],
+   [
+    329,
+    944
+   ],
+   [
+    329,
+    268
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "paragraph_title",
+  "content": "PAYMENTS AND REFUND",
+  "bbox_2d": [
+   343,
+   244,
+   500,
+   263
+  ],
+  "polygon": [
+   [
+    343,
+    244
+   ],
+   [
+    343,
+    261
+   ],
+   [
+    498,
+    261
+   ],
+   [
+    498,
+    244
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "table",
+  "content": "<table><tr><td>29</td><td>Tax withheld from wages</td><td>4,120</td></tr><tr><td>30</td><td>Estimated payments made</td><td>0</td></tr><tr><td>31</td><td>Last year&#x27;s overpayment applied</td><td>150</td></tr><tr><td>32</td><td>Earned income credit</td><td>0</td></tr><tr><td>33</td><td>Total payments, add lines 29 to 32</td><td>4,270</td></tr><tr><td>34</td><td>Overpayment, line 33 less line 28</td><td>506</td></tr><tr><td>35</td><td>Amount to be refunded</td><td>506</td></tr><tr><td>36</td><td>Applied to next year&#x27;s tax</td><td>0</td></tr><tr><td>37</td><td>Amount you owe</td><td>0</td></tr><tr><td>38</td><td>Late-payment penalty</td><td>0</td></tr></table>",
+  "bbox_2d": [
+   340,
+   268,
+   657,
+   508
+  ],
+  "polygon": [
+   [
+    340,
+    268
+   ],
+   [
+    340,
+    507
+   ],
+   [
+    656,
+    507
+   ],
+   [
+    656,
+    268
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "table",
+  "content": "<table><tr><td>■ ROUTING NUMBER\n1021 0021 7</td><td>■ ACCOUNT TYPE\nChecking □ Savings</td></tr><tr><td colspan=\"2\">■ ACCOUNT NUMBER\n0044 1827 6531</td></tr></table>",
+  "bbox_2d": [
+   341,
+   518,
+   657,
+   607
+  ],
+  "polygon": [
+   [
+    341,
+    518
+   ],
+   [
+    341,
+    605
+   ],
+   [
+    656,
+    605
+   ],
+   [
+    656,
+    518
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "paragraph_title",
+  "content": "SIGN HERE",
+  "bbox_2d": [
+   343,
+   620,
+   417,
+   641
+  ],
+  "polygon": [
+   [
+    343,
+    620
+   ],
+   [
+    343,
+    639
+   ],
+   [
+    416,
+    639
+   ],
+   [
+    416,
+    620
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "text",
+  "content": "Under penalties of perjury, I declare that this return, with any attached schedules, is true, correct and complete.",
+  "bbox_2d": [
+   344,
+   659,
+   627,
+   693
+  ],
+  "polygon": [
+   [
+    344,
+    659
+   ],
+   [
+    344,
+    692
+   ],
+   [
+    626,
+    692
+   ],
+   [
+    626,
+    659
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "paragraph_title",
+  "content": "W. Lindqvist",
+  "bbox_2d": [
+   351,
+   701,
+   441,
+   723
+  ],
+  "polygon": [
+   [
+    351,
+    701
+   ],
+   [
+    351,
+    721
+   ],
+   [
+    440,
+    721
+   ],
+   [
+    440,
+    707
+   ],
+   [
+    435,
+    701
+   ],
+   [
+    427,
+    701
+   ],
+   [
+    395,
+    701
+   ],
+   [
+    391,
+    701
+   ],
+   [
+    385,
+    701
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "paragraph_title",
+  "content": "L. Jackson",
+  "bbox_2d": [
+   350,
+   750,
+   426,
+   773
+  ],
+  "polygon": [
+   [
+    350,
+    750
+   ],
+   [
+    350,
+    771
+   ],
+   [
+    425,
+    771
+   ],
+   [
+    425,
+    750
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "paragraph_title",
+  "content": "PAID PREPARER",
+  "bbox_2d": [
+   343,
+   812,
+   447,
+   829
+  ],
+  "polygon": [
+   [
+    343,
+    812
+   ],
+   [
+    343,
+    828
+   ],
+   [
+    446,
+    828
+   ],
+   [
+    446,
+    812
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "table",
+  "content": "<table><tr><td>PREPAREER</td><td>OFFICE</td></tr><tr><td>DeShawn Tillman</td><td>Wichita, KS</td></tr></table>",
+  "bbox_2d": [
+   342,
+   834,
+   657,
+   877
+  ],
+  "polygon": [
+   [
+    342,
+    866
+   ],
+   [
+    342,
+    875
+   ],
+   [
+    656,
+    875
+   ],
+   [
+    656,
+    834
+   ],
+   [
+    643,
+    834
+   ],
+   [
+    622,
+    834
+   ],
+   [
+    347,
+    834
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "paragraph_title",
+  "content": "INSTRUCTIONS BY LINE",
+  "bbox_2d": [
+   671,
+   244,
+   822,
+   264
+  ],
+  "polygon": [
+   [
+    671,
+    244
+   ],
+   [
+    671,
+    263
+   ],
+   [
+    821,
+    263
+   ],
+   [
+    821,
+    244
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "paragraph_title",
+  "content": "LINES 1 TO 9",
+  "bbox_2d": [
+   675,
+   275,
+   752,
+   292
+  ],
+  "polygon": [
+   [
+    675,
+    275
+   ],
+   [
+    675,
+    291
+   ],
+   [
+    751,
+    291
+   ],
+   [
+    751,
+    275
+   ]
+  ]
+ },
+ {
+  "index": 14,
+  "label": "text",
+  "content": "Enter every amount shown on your wage statements. Include tips you did not report to your employer. Line 5 is rent received less than the amount reported.",
+  "bbox_2d": [
+   673,
+   299,
+   980,
+   349
+  ],
+  "polygon": [
+   [
+    673,
+    299
+   ],
+   [
+    673,
+    348
+   ],
+   [
+    979,
+    348
+   ],
+   [
+    979,
+    299
+   ]
+  ]
+ },
+ {
+  "index": 15,
+  "label": "text",
+  "content": "If line 9 is more than $100,000, you cannot use this form. Use the long form AR-40 instead.",
+  "bbox_2d": [
+   673,
+   354,
+   979,
+   391
+  ],
+  "polygon": [
+   [
+    673,
+    354
+   ],
+   [
+    673,
+    390
+   ],
+   [
+    978,
+    390
+   ],
+   [
+    978,
+    354
+   ]
+  ]
+ },
+ {
+  "index": 16,
+  "label": "paragraph_title",
+  "content": "LINES 10 TO 17",
+  "bbox_2d": [
+   676,
+   421,
+   764,
+   438
+  ],
+  "polygon": [
+   [
+    676,
+    421
+   ],
+   [
+    676,
+    437
+   ],
+   [
+    763,
+    437
+   ],
+   [
+    763,
+    421
+   ]
+  ]
+ },
+ {
+  "index": 17,
+  "label": "text",
+  "content": "Educator expenses may not exceed $300 for each qualified student. Student loan interest is limited to $2,500 for the year. Keep the receipts for any deduction you claim for five years.",
+  "bbox_2d": [
+   673,
+   442,
+   957,
+   502
+  ],
+  "polygon": [
+   [
+    673,
+    442
+   ],
+   [
+    673,
+    500
+   ],
+   [
+    956,
+    500
+   ],
+   [
+    956,
+    442
+   ]
+  ]
+ },
+ {
+  "index": 18,
+  "label": "paragraph_title",
+  "content": "LINES 18 TO 21",
+  "bbox_2d": [
+   676,
+   530,
+   763,
+   547
+  ],
+  "polygon": [
+   [
+    676,
+    530
+   ],
+   [
+    676,
+    546
+   ],
+   [
+    761,
+    546
+   ],
+   [
+    761,
+    530
+   ]
+  ]
+ },
+ {
+  "index": 19,
+  "label": "text",
+  "content": "Joint titers claim a standard deduction of $1,460. The qualified business deduction on line 19 is 20% of net business income on line 20.",
+  "bbox_2d": [
+   673,
+   551,
+   973,
+   604
+  ],
+  "polygon": [
+   [
+    673,
+    557
+   ],
+   [
+    673,
+    603
+   ],
+   [
+    972,
+    603
+   ],
+   [
+    972,
+    551
+   ],
+   [
+    879,
+    551
+   ],
+   [
+    872,
+    551
+   ],
+   [
+    853,
+    551
+   ],
+   [
+    839,
+    551
+   ],
+   [
+    797,
+    551
+   ]
+  ]
+ },
+ {
+  "index": 20,
+  "label": "paragraph_title",
+  "content": "LINES 22 TO 28",
+  "bbox_2d": [
+   676,
+   635,
+   764,
+   653
+  ],
+  "polygon": [
+   [
+    676,
+    635
+   ],
+   [
+    676,
+    651
+   ],
+   [
+    763,
+    651
+   ],
+   [
+    763,
+    635
+   ]
+  ]
+ },
+ {
+  "index": 21,
+  "label": "text",
+  "content": "Find your taxable income in the rate table and read across to your filing status. Credits cannot reduce your tax below zero.",
+  "bbox_2d": [
+   673,
+   657,
+   957,
+   693
+  ],
+  "polygon": [
+   [
+    673,
+    662
+   ],
+   [
+    673,
+    692
+   ],
+   [
+    956,
+    692
+   ],
+   [
+    956,
+    662
+   ]
+  ]
+ },
+ {
+  "index": 22,
+  "label": "paragraph_title",
+  "content": "LINES 29 TO 38",
+  "bbox_2d": [
+   676,
+   723,
+   764,
+   740
+  ],
+  "polygon": [
+   [
+    676,
+    723
+   ],
+   [
+    676,
+    739
+   ],
+   [
+    763,
+    739
+   ],
+   [
+    763,
+    723
+   ]
+  ]
+ },
+ {
+  "index": 23,
+  "label": "text",
+  "content": "Attach a copy of each wage statement that shows tax withheld. If you pay, by the date shown above, to the penal notice",
+  "bbox_2d": [
+   673,
+   744,
+   977,
+   796
+  ],
+  "polygon": [
+   [
+    673,
+    744
+   ],
+   [
+    673,
+    794
+   ],
+   [
+    976,
+    794
+   ],
+   [
+    976,
+    744
+   ]
+  ]
+ },
+ {
+  "index": 24,
+  "label": "text",
+  "content": "For a refund by direct deposit, complete boxes I, J and K.",
+  "bbox_2d": [
+   673,
+   801,
+   942,
+   819
+  ],
+  "polygon": [
+   [
+    673,
+    801
+   ],
+   [
+    673,
+    817
+   ],
+   [
+    941,
+    817
+   ],
+   [
+    941,
+    801
+   ]
+  ]
+ },
+ {
+  "index": 25,
+  "label": "paragraph_title",
+  "content": "WHERE TO FILE",
+  "bbox_2d": [
+   675,
+   850,
+   769,
+   867
+  ],
+  "polygon": [
+   [
+    675,
+    850
+   ],
+   [
+    675,
+    866
+   ],
+   [
+    768,
+    866
+   ],
+   [
+    768,
+    850
+   ]
+  ]
+ },
+ {
+  "index": 26,
+  "label": "text",
+  "content": "Atlas State Department of Revenue, Individual Returns Unit, Box 2208, Fort Collins, CO 80522.",
+  "bbox_2d": [
+   673,
+   871,
+   976,
+   906
+  ],
+  "polygon": [
+   [
+    673,
+    871
+   ],
+   [
+    673,
+    905
+   ],
+   [
+    975,
+    905
+   ],
+   [
+    975,
+    871
+   ],
+   [
+    885,
+    871
+   ],
+   [
+    865,
+    871
+   ]
+  ]
+ },
+ {
+  "index": 27,
+  "label": "footer",
+  "content": "AR-31 (Rev. 11-24) · Redstart Division copy",
+  "bbox_2d": [
+   9,
+   963,
+   204,
+   981
+  ],
+  "polygon": [
+   [
+    9,
+    963
+   ],
+   [
+    9,
+    979
+   ],
+   [
+    203,
+    979
+   ],
+   [
+    203,
+    963
+   ]
+  ]
+ },
+ {
+  "index": 28,
+  "label": "number",
+  "content": "Page 1 of 2",
+  "bbox_2d": [
+   933,
+   964,
+   989,
+   981
+  ],
+  "polygon": [
+   [
+    933,
+    964
+   ],
+   [
+    933,
+    979
+   ],
+   [
+    988,
+    979
+   ],
+   [
+    988,
+    964
+   ]
+  ]
+ }
+]

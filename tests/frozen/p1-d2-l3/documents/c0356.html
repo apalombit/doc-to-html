@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Document</title>
+<style>
+:root { --ink:#1a1a1a; --muted:#666; --rule:#e0e0e0; --shade:#f4f4f4;
+        --page-bg:#fff; --accent:inherit;
+        --flag:#b45309;
+        --link:#0645ad; --mark-bg:#fff2a8; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink:#e8e8e8; --muted:#9a9a9a; --rule:#333; --shade:#1e1e1e;
+          --page-bg:#111;
+          --flag:#fbbf24;
+          --link:#7aa7ff; --mark-bg:#5a4a12; }
+}
+body { font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+       color:var(--ink); background:var(--page-bg); margin:0; padding:2rem 1rem; }
+.doc { max-width:52rem; margin:0 auto; }
+/* Inline runs. `<a>` carries no href — nothing read off the page says where a
+   link goes — so it needs styling of its own to read as one. */
+a { color:var(--link); text-decoration:underline; }
+code { font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+       font-size:0.92em; }
+mark { background:var(--mark-bg); color:inherit; padding:0 0.15em; }
+.band { display:flex; gap:2rem; align-items:flex-start;
+        margin-bottom:1.75rem; flex-wrap:wrap; }
+.band > * { flex:1 1 12rem; min-width:0; }
+/* A `columns` Region: its lanes side by side, each read top to bottom and as
+   wide as the page draws it. Spec 0008, step 2. */
+.columns { display:flex; gap:2rem; align-items:flex-start; margin-bottom:1.75rem; }
+.lane { min-width:0; }
+.lane > :last-child { margin-bottom:0; }
+/* A rectangle the page draws round a run of Zones in one lane, drawn once
+   round the run. Spec 0011, step 1a — see `rhythm.frames`. */
+.frame { border:1px solid var(--rule); border-radius:4px; margin-bottom:1.75rem; }
+/* One Zone of a Continuation, holding its own margins, so the gap drawn before it is
+   the page's and not that gap collapsed into a paragraph's. Spec 0011, 1b. */
+.cont { display:flow-root; }
+/* A `grid` Region: its Zones by row and by lane, never wrapped. Spec 0010, B1. */
+.grid { display:grid; column-gap:2rem; row-gap:1.75rem; align-items:start;
+        margin-bottom:1.75rem; }
+.grid > * { min-width:0; }
+/* A label column in a lane takes at most half of it. A lane is narrower than
+   the page, and `cv_0013`'s `Chartered Engineer, Engineers Ireland (2019)`
+   sized the `auto` track to the whole sidebar, leaving `Reg. no. 11408` a
+   sliver that `anywhere` broke after every letter — N4's fault, in a lane. */
+.columns dl.pairs { grid-template-columns:fit-content(50%) 1fr; }
+.zone-header { font-size:1.05em; }
+.zone-footer { color:var(--muted); font-size:.875em; }
+h1 { font-size:1.6em; margin:0 0 .35em; letter-spacing:.01em; }
+section.boxed { border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
+section.filled { border-radius:4px; overflow:hidden; }
+h2.zone-title { font-size:.95em; font-weight:600; margin:0; padding:.55em 0; }
+h2.zone-title.barred { padding:.55em .9em; }
+section.boxed > h2.zone-title, section.filled > h2.zone-title { padding:.55em .9em; }
+.zone-body { padding:0; }
+section.boxed > .zone-body, section.filled > .zone-body { padding:.9em; }
+section.boxed > .zone-body > .table-wrap,
+section.filled > .zone-body > .table-wrap { margin:-.9em; }
+section.filled.grounded > h2.zone-title { padding:.55em 0; }
+section.filled.grounded > .zone-body { padding:0; }
+section.filled.grounded > .zone-body > .table-wrap { margin:0; }
+blockquote { margin:.6em 0 .3em 1.5em; }
+p.attribution { color:var(--muted); font-size:.85em; margin:0 0 .4em; }
+ul { margin:0 0 .4em; padding-left:1.3em; }
+.zone-header ul { display:flex; flex-wrap:wrap; gap:1.1rem;
+                  list-style:none; padding:0; }
+p { margin:0 0 .4em; }
+dl.pairs { display:grid; grid-template-columns:auto 1fr; gap:.15em .75em; margin:0; }
+/* A long unbreakable value must wrap, not be hidden. `section.filled` and
+   `section.boxed` both set `overflow:hidden` to keep a fill inside its own
+   rounded corner, so anything wider than the Zone is silently cut off in the
+   screenshot — recall says the text is present and the picture does not
+   contain it. `cv_0013`'s sidebar was the corpus's one case: the `auto` track
+   sized itself to `ines.halloran@fempost.example`, which has no break
+   opportunity, giving the Zone a 368px content width inside a 256px box.
+   `anywhere` rather than `break-word` because only `anywhere` lowers the
+   min-content width the grid track is measured from. Measured 2026-09-25 over
+   all fifteen: corpus `clipped` 1 -> 0, `beside_agreement` +0.0033,
+   `alignment_agreement` +0.0019, ratchet clean, and `cv_0013`'s height_ratio
+   1.77 -> 2.14, which is the wrapped address taking the lines it needs. */
+dl.pairs dt, dl.pairs dd { overflow-wrap:anywhere; }
+/* A label with no value is not in the label column. Left there, the `auto`
+   track sizes itself to it as if a value stood beside it, and the `1fr` track
+   gets what is left: `catalogue_0015`'s `Suffolk pattern, 265 mm, beeswax` took
+   the whole card and `each`, the next line's value, was broken after every
+   letter by the `anywhere` above. Across both columns it sizes neither, so the
+   label column is as wide as the labels that have values. N4, 2026-10-10. */
+dl.pairs dt.alone { grid-column:1 / -1; }
+dl.pairs dt.alone + dd { display:none; }
+dl.pairs dt { color:var(--muted); }
+/* A pairs Zone whose lines the page sets centred or flush right: each pair a
+   line, label beside value, so the line can sit where the page sets it. */
+dl.pairs.lines { display:block; }
+dl.pairs.lines dt, dl.pairs.lines dd { display:inline; }
+dl.pairs dd { margin:0; }
+.zone-summary dl.pairs dd { font-weight:600; text-align:right; }
+.table-wrap { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; }
+th, td { padding:.45em .6em; text-align:left; border-bottom:1px solid var(--rule); }
+thead th { background:var(--shade); font-weight:600; }
+td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+tfoot td:last-child { text-align:right; }
+tfoot td { font-weight:600; border-top:2px solid var(--rule); border-bottom:none; }
+figure.omitted { margin:0; border:1px dashed var(--rule); border-radius:3px;
+                 min-height:3rem; display:flex; align-items:center;
+                 justify-content:center; color:var(--muted); font-size:.8em; }
+figure.omitted figcaption { padding:.5em; text-align:center; }
+.mark { display:inline-block; border:2px solid var(--flag); color:var(--flag);
+        padding:.15em .6em; border-radius:3px; font-weight:600; letter-spacing:.08em; }
+.disputed { cursor:help; }
+.corrected { border-bottom:2px solid var(--rule); cursor:help; }
+.skeleton { background:repeating-linear-gradient(135deg, var(--shade),
+            var(--shade) 6px, transparent 6px, transparent 12px);
+            border:1px dashed var(--rule); min-height:2.5rem; border-radius:3px; }
+</style>
+<style>:root { --page-bg:rgb(255,255,255); --ink:rgb(20,20,20); --muted:rgb(98,98,98); --rule:rgb(220,220,220); --shade:rgb(241,241,241); }
+.separator { margin:-0.875rem 0 0.875rem; }
+.rules { display:flex; } .rules > div { flex:none; }
+body { font-size:12px; --body:12px; }
+body { padding:21px 24px 32px 20px; }
+.doc { max-width:696px; }</style>
+</head>
+<body>
+<div class="doc">
+<div class="separator rules" style="margin:0 0 0px"><div style="margin-left:0.58%;width:27.00%;border-top:3px solid rgb(20,20,20)"></div><div style="margin-left:4.88%;width:67.50%;border-top:1px solid rgb(20,20,20)"></div></div><div class="band" style="margin-bottom:0px"><section class="zone zone-body" style="flex:32.0 1 0"><h2 class="zone-title" style="font-size:1.22em">Sycamore Conveyancing</h2><div class="zone-body"><p style="margin-bottom:0">12 Heaton Row Stockport SK1 4AX</p><p style="margin-top:14px;margin-bottom:0">CONVEYANCING TEAM<br>Priya Kaur, solicitor<br>Hannah Begum, case handler</p><p style="margin-top:14px;margin-bottom:0">OFFICE HOURS Monday to Friday 9:00 to 17:30</p><p style="margin-top:16px">REGULATED Authorised and regulated in England and Wales</p></div></section><section class="zone zone-body" style="margin-top:8px;flex:35.1 1 0"><p>OUR REF PK/2023/0206<br>DIRECT LINE 0161 555 0148</p></section><section class="zone zone-body" style="margin-top:8px;flex:32.9 1 0"><p>DATE 6 February 2023<br>EMAIL priya@example.com</p></section></div><div class="band"><section class="zone zone-body" style="margin-left:221px"><p style="margin-bottom:0">Mr Finlay Sinclair<br>Flat 2, Boscawen House<br>Truro TR1 2LD</p><p style="font-weight:700;margin-top:21px;margin-bottom:0">Your purchase of 14 Trelawney Mews, Truro: what we need from you</p><p style="margin-top:12px;margin-bottom:0">Dear Mr Sinclair,</p><p style="margin-top:12px;margin-bottom:0">Thank you for instructing us. We have opened your file and this morning received the draft contract from the seller&#x27;s solicitors. Before we can go further we need the following from you:</p><ul style="margin-bottom:0"><li style="margin-top:12px">certified copies of two forms of photo identity, such as your passport and driving licence;</li><li style="margin-top:5px">proof of address dated within the last three months;</li><li style="margin-top:5px">a bank statement showing where your deposit of £28,500 has come from;</li><li style="margin-top:4px">your mortgage offer, as soon as your lender issues it.</li></ul><p style="margin-top:12px">Our fee quotation is enclosed. Please sign and return it by Friday 17 February 2023 so that Hannah can order the local authority and drainage searches without delay.</p></section></div>
+</div>
+<script type="application/json" id="doc-ir">{"source":{"path":"/Users/aless/Desktop/Projects/pic-to-html/doc-to-html/corpus/pages/c0356.png","sha256":"8871bcf61c900dcd26454972679dde372043f582dd1154413f8c4338e9214aa7","width":740,"height":504,"rectified_width":740,"rectified_height":504,"paper":null,"surround":null},"ir_version":1,"rectifier_version":7,"hint":null,"page_px":740,"style":{"page_bg":[255,255,255],"ink":[20,20,20],"accent":null,"shade":[203,203,203],"body_px":12.0,"face":"sans"},"zones":[{"kind":"prose","role":"body","band":0,"column":0,"bbox":{"left":0.027,"top":0.067,"right":0.277,"bottom":0.561},"title":"Sycamore Conveyancing","rows":[],"pairs":[],"blocks":[{"kind":"paragraph","lines":[{"bbox":{"left":0.033243243243243244,"top":0.13055555555555556,"right":0.1597297297297297,"bottom":0.1847222222222222},"readings":[{"engine":"glm-ocr","text":"12 Heaton Row Stockport SK1 4AX","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"12 Heaton Row Stockport SK1 4AX","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.89,"bold":false,"italic":false,"color":[20,20,20],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":null},{"kind":"address","lines":[{"bbox":{"left":0.032837837837837835,"top":0.2263888888888889,"right":0.1727027027027027,"bottom":0.23829365079365078},"readings":[{"engine":"glm-ocr","text":"CONVEYANCING TEAM","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"CONVEYANCING TEAM","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.67,"bold":false,"italic":false,"color":[114,114,114],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},{"bbox":{"left":0.033243243243243244,"top":0.2555555555555556,"right":0.1597297297297297,"bottom":0.2763888888888889},"readings":[{"engine":"glm-ocr","text":"Priya Kaur, solicitor","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"Priya Kaur, solicitor","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.89,"bold":false,"italic":false,"color":[20,20,20],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},{"bbox":{"left":0.033243243243243244,"top":0.28948412698412695,"right":0.22945945945945945,"bottom":0.3103174603174603},"readings":[{"engine":"glm-ocr","text":"Hannah Begum, case handler","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"Hannah Begum, case handler","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.89,"bold":false,"italic":false,"color":[20,20,20],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":0.04167},{"kind":"paragraph","lines":[{"bbox":{"left":0.032837837837837835,"top":0.35138888888888886,"right":0.14756756756756756,"bottom":0.4311507936507936},"readings":[{"engine":"glm-ocr","text":"OFFICE HOURS Monday to Friday 9:00 to 17:30","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"OFFICE HOURS Monday to Friday 9:00 to 17:30","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.89,"bold":false,"italic":false,"color":[20,20,20],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":0.04107},{"kind":"paragraph","lines":[{"bbox":{"left":0.032027027027027026,"top":0.47638888888888886,"right":0.272027027027027,"bottom":0.5561507936507936},"readings":[{"engine":"glm-ocr","text":"REGULATED Authorised and regulated in England and Wales","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"REGULATED Authorised and regulated in England and Wales","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":0.89,"bold":false,"italic":false,"color":[31,31,31],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":0.04524}],"extra":[],"graphic_kind":null,"pixels":null,"fill":null,"title_size":1.22,"title_caps":false,"title_bold":true,"face":null,"title_color":[20,20,20],"title_fill":null,"header_fill":null,"boxed":false,"frame":null,"group":null,"align":"left","title_align":"left","complete":true},{"kind":"prose","role":"body","band":0,"column":1,"bbox":{"left":0.328,"top":0.065,"right":0.539,"bottom":0.142},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"address","lines":[{"bbox":{"left":0.33297297297297296,"top":0.07321428571428572,"right":0.5068918918918919,"bottom":0.09166666666666667},"readings":[{"engine":"glm-ocr","text":"OUR REF PK/2023/0206","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"Our REF PK/2023/0206","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[20,20,20],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},{"bbox":{"left":0.33378378378378376,"top":0.11666666666666665,"right":0.5377027027027027,"bottom":0.13571428571428573},"readings":[{"engine":"glm-ocr","text":"DIRECT LINE 0161 555 0148","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"DirReEcT LINE 0161 555 0148","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[20,20,20],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":null}],"extra":[],"graphic_kind":null,"pixels":null,"fill":null,"title_size":null,"title_caps":false,"face":null,"title_color":null,"title_fill":null,"header_fill":null,"boxed":false,"frame":null,"group":null,"align":"left","title_align":null,"complete":true},{"kind":"prose","role":"body","band":0,"column":2,"bbox":{"left":0.658,"top":0.065,"right":0.862,"bottom":0.144},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"address","lines":[{"bbox":{"left":0.6647297297297297,"top":0.07321428571428572,"right":0.8248648648648649,"bottom":0.09642857142857142},"readings":[{"engine":"glm-ocr","text":"DATE 6 February 2023","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"Dare 6 February 2023","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[20,20,20],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},{"bbox":{"left":0.6647297297297297,"top":0.11666666666666665,"right":0.8585135135135135,"bottom":0.13988095238095238},"readings":[{"engine":"glm-ocr","text":"EMAIL priya@example.com","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"EMAIL priya@example.com","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[20,20,20],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":null}],"extra":[],"graphic_kind":null,"pixels":null,"fill":null,"title_size":null,"title_caps":false,"face":null,"title_color":null,"title_fill":null,"header_fill":null,"boxed":false,"frame":null,"group":null,"align":"left","title_align":null,"complete":true},{"kind":"prose","role":"body","band":1,"column":0,"bbox":{"left":0.325,"top":0.192,"right":0.968,"bottom":0.922},"title":null,"rows":[],"pairs":[],"blocks":[{"kind":"address","lines":[{"bbox":{"left":0.33351351351351355,"top":0.1996031746031746,"right":0.46202702702702697,"bottom":0.22400793650793652},"readings":[{"engine":"glm-ocr","text":"Mr Finlay Sinclair","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"Mr Finlay Sinclair","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[20,20,20],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},{"bbox":{"left":0.33351351351351355,"top":0.2376984126984127,"right":0.5151351351351351,"bottom":0.25972222222222224},"readings":[{"engine":"glm-ocr","text":"Flat 2, Boscawen House","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"Flat 2, Boscawen House","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[20,20,20],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}},{"bbox":{"left":0.3322972972972973,"top":0.276984126984127,"right":0.44378378378378375,"bottom":0.29603174603174603},"readings":[{"engine":"glm-ocr","text":"Truro TR1 2LD","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"Truro TR1 2LD","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[20,20,20],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":null},{"kind":"paragraph","lines":[{"bbox":{"left":0.3322972972972973,"top":0.3543650793650793,"right":0.9448648648648649,"bottom":0.38115079365079363},"readings":[{"engine":"glm-ocr","text":"Your purchase of 14 Trelawney Mews, Truro: what we need from you","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"Your purchase of 14 Trelawney Mews, Truro: what we need from you","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.11,"bold":true,"italic":false,"color":[20,20,20],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":0.05833},{"kind":"paragraph","lines":[{"bbox":{"left":0.33351351351351355,"top":0.4180555555555555,"right":0.45635135135135135,"bottom":0.44007936507936507},"readings":[{"engine":"glm-ocr","text":"Dear Mr Sinclair,","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"Dear Mr Sinclair,","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[20,20,20],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":0.0369},{"kind":"paragraph","lines":[{"bbox":{"left":0.3322972972972973,"top":0.47757936507936505,"right":0.9663513513513512,"bottom":0.5793650793650794},"readings":[{"engine":"glm-ocr","text":"Thank you for instructing us. We have opened your file and this morning received the draft contract from the seller's solicitors. Before we can go further we need the following from you:","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"Thank you for instructing us. We have opened your file and this morning received the draft contract from the seller's solicitors. Before we can go further we need the following from you:","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[20,20,20],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":0.0375},{"kind":"item","lines":[{"bbox":{"left":0.3622972972972973,"top":0.6162698412698413,"right":0.9554054054054054,"bottom":0.6763888888888888},"readings":[{"engine":"glm-ocr","text":"certified copies of two forms of photo identity, such as your passport and driving licence;","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"certified copies of two forms of photo identity, such as your passport and driving licence;","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[20,20,20],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":0.0369},{"kind":"item","lines":[{"bbox":{"left":0.3631081081081081,"top":0.6996031746031746,"right":0.7449999999999999,"bottom":0.7234126984126984},"readings":[{"engine":"glm-ocr","text":"proof of address dated within the last three months;","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"proof of address dated within the last three months;","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[20,20,20],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":0.02321},{"kind":"item","lines":[{"bbox":{"left":0.36270270270270266,"top":0.7472222222222221,"right":0.9104054054054055,"bottom":0.771626984126984},"readings":[{"engine":"glm-ocr","text":"a bank statement showing where your deposit of \u00a328,500 has come from;","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"a bank statement showing where your deposit of \u00a328,500 has come from;","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[20,20,20],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":0.02381},{"kind":"item","lines":[{"bbox":{"left":0.3622972972972973,"top":0.7930555555555555,"right":0.757972972972973,"bottom":0.8174603174603174},"readings":[{"engine":"glm-ocr","text":"your mortgage offer, as soon as your lender issues it.","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"your mortgage offer, as soon as your lender issues it.","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[20,20,20],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":0.02143},{"kind":"paragraph","lines":[{"bbox":{"left":0.3331081081081081,"top":0.8543650793650793,"right":0.9554054054054054,"bottom":0.9186507936507936},"readings":[{"engine":"glm-ocr","text":"Our fee quotation is enclosed. Please sign and return it by Friday 17 February 2023 so that Hannah can order the local authority and drainage searches without delay.","model":null,"prompt_version":null,"runs":[]},{"engine":"tesseract","text":"Our fee quotation is enclosed. Please sign and return it by Friday 17 February 2023 so that Hannah can order the local authority and drainage searches without delay.","model":null,"prompt_version":null,"runs":[]}],"state":"agreed","look":{"size":1.0,"bold":false,"italic":false,"color":[20,20,20],"fill":null,"chip":null,"radius":null,"caps":null,"face":null,"sizes":null}}],"size":null,"gap":0.0369}],"extra":[],"graphic_kind":null,"pixels":null,"fill":null,"title_size":null,"title_caps":false,"face":null,"title_color":null,"title_fill":null,"header_fill":null,"boxed":false,"frame":null,"group":null,"align":"left","title_align":null,"complete":true}],"corrections":[],"probes":[],"gaps":[],"failures":[],"caveats":[],"shortfalls":[],"unclaimed":[],"regions":[{"top":0.0,"bottom":1.0,"flow":"single","splits":[],"rows":1}],"separators":[0.04464285714285714],"furniture":[{"kind":"rule","bbox":{"left":0.032432432432432434,"top":0.04365079365079365,"right":0.2864864864864865,"bottom":0.0496031746031746},"thickness":0.004054054054054054,"color":[20,20,20],"style":"solid","second":null,"period":null,"angle":null,"zone":null},{"kind":"rule","bbox":{"left":0.3324324324324324,"top":0.04365079365079365,"right":0.9675675675675676,"bottom":0.04563492063492063},"thickness":0.0013513513513513514,"color":[20,20,20],"style":"solid","second":null,"period":null,"angle":null,"zone":null}]}</script>
+</body>
+</html>

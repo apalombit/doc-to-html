@@ -1,0 +1,1418 @@
+[
+ {
+  "index": 0,
+  "label": "header",
+  "content": "```markdown\n\n```",
+  "bbox_2d": [
+   23,
+   27,
+   72,
+   83
+  ],
+  "polygon": [
+   [
+    23,
+    27
+   ],
+   [
+    23,
+    82
+   ],
+   [
+    71,
+    82
+   ],
+   [
+    71,
+    27
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "header",
+  "content": "Meridian Energía",
+  "bbox_2d": [
+   86,
+   34,
+   307,
+   63
+  ],
+  "polygon": [
+   [
+    86,
+    39
+   ],
+   [
+    86,
+    57
+   ],
+   [
+    91,
+    62
+   ],
+   [
+    306,
+    62
+   ],
+   [
+    306,
+    34
+   ],
+   [
+    91,
+    34
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "header",
+  "content": "Meridian Acorn Comercializadora S.L. • CIF B-31245987 • Pamplona",
+  "bbox_2d": [
+   86,
+   65,
+   445,
+   82
+  ],
+  "polygon": [
+   [
+    86,
+    65
+   ],
+   [
+    86,
+    80
+   ],
+   [
+    444,
+    80
+   ],
+   [
+    444,
+    65
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "header",
+  "content": "Factura de electricidad N.º F-2022-0207731",
+  "bbox_2d": [
+   758,
+   38,
+   976,
+   75
+  ],
+  "polygon": [
+   [
+    758,
+    38
+   ],
+   [
+    758,
+    74
+   ],
+   [
+    975,
+    74
+   ],
+   [
+    975,
+    38
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "paragraph_title",
+  "content": "TITULAR DEL CONTRATO",
+  "bbox_2d": [
+   35,
+   117,
+   171,
+   135
+  ],
+  "polygon": [
+   [
+    35,
+    117
+   ],
+   [
+    35,
+    133
+   ],
+   [
+    170,
+    133
+   ],
+   [
+    170,
+    117
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "text",
+  "content": "Elena Vega Cabrera",
+  "bbox_2d": [
+   35,
+   142,
+   178,
+   161
+  ],
+  "polygon": [
+   [
+    35,
+    147
+   ],
+   [
+    35,
+    160
+   ],
+   [
+    177,
+    160
+   ],
+   [
+    177,
+    147
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "text",
+  "content": "C/ Estafeta 14, 3. $ ^{\\circ} $ B",
+  "bbox_2d": [
+   35,
+   161,
+   172,
+   179
+  ],
+  "polygon": [
+   [
+    35,
+    161
+   ],
+   [
+    35,
+    178
+   ],
+   [
+    171,
+    178
+   ],
+   [
+    171,
+    161
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "text",
+  "content": "31001 Pamplona (Navarra)",
+  "bbox_2d": [
+   35,
+   179,
+   210,
+   199
+  ],
+  "polygon": [
+   [
+    35,
+    179
+   ],
+   [
+    35,
+    197
+   ],
+   [
+    209,
+    197
+   ],
+   [
+    209,
+    179
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "text",
+  "content": "NIF: 72.418.936-K",
+  "bbox_2d": [
+   34,
+   205,
+   160,
+   226
+  ],
+  "polygon": [
+   [
+    34,
+    205
+   ],
+   [
+    34,
+    225
+   ],
+   [
+    159,
+    225
+   ],
+   [
+    159,
+    205
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "text",
+  "content": "DATOS DEL SUMINISTRO",
+  "bbox_2d": [
+   357,
+   117,
+   496,
+   135
+  ],
+  "polygon": [
+   [
+    357,
+    117
+   ],
+   [
+    357,
+    133
+   ],
+   [
+    495,
+    133
+   ],
+   [
+    495,
+    117
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "text",
+  "content": "Dirección: C/ Estafeta 14, 3.0 B",
+  "bbox_2d": [
+   357,
+   142,
+   563,
+   161
+  ],
+  "polygon": [
+   [
+    357,
+    147
+   ],
+   [
+    357,
+    160
+   ],
+   [
+    562,
+    160
+   ],
+   [
+    562,
+    142
+   ],
+   [
+    544,
+    142
+   ],
+   [
+    538,
+    142
+   ],
+   [
+    534,
+    142
+   ],
+   [
+    528,
+    142
+   ],
+   [
+    480,
+    142
+   ],
+   [
+    475,
+    142
+   ],
+   [
+    460,
+    142
+   ],
+   [
+    455,
+    142
+   ],
+   [
+    362,
+    142
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "text",
+  "content": "CUPS: ES0021 0000 3187 4412 QL",
+  "bbox_2d": [
+   357,
+   160,
+   585,
+   179
+  ],
+  "polygon": [
+   [
+    357,
+    160
+   ],
+   [
+    357,
+    178
+   ],
+   [
+    584,
+    178
+   ],
+   [
+    584,
+    160
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "text",
+  "content": "Tarifa: 2.0TD",
+  "bbox_2d": [
+   358,
+   178,
+   445,
+   197
+  ],
+  "polygon": [
+   [
+    358,
+    178
+   ],
+   [
+    358,
+    196
+   ],
+   [
+    444,
+    196
+   ],
+   [
+    444,
+    178
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "text",
+  "content": "Potencia contratada: 4,6 kW",
+  "bbox_2d": [
+   357,
+   196,
+   542,
+   217
+  ],
+  "polygon": [
+   [
+    541,
+    196
+   ],
+   [
+    498,
+    196
+   ],
+   [
+    493,
+    196
+   ],
+   [
+    489,
+    196
+   ],
+   [
+    357,
+    202
+   ],
+   [
+    357,
+    206
+   ],
+   [
+    357,
+    212
+   ],
+   [
+    357,
+    215
+   ],
+   [
+    541,
+    215
+   ]
+  ]
+ },
+ {
+  "index": 14,
+  "label": "text",
+  "content": "DATOS DE LA FACTURA",
+  "bbox_2d": [
+   679,
+   115,
+   808,
+   135
+  ],
+  "polygon": [
+   [
+    679,
+    115
+   ],
+   [
+    679,
+    133
+   ],
+   [
+    807,
+    133
+   ],
+   [
+    807,
+    115
+   ]
+  ]
+ },
+ {
+  "index": 15,
+  "label": "text",
+  "content": "Fecha de emisión: 06/02/2022",
+  "bbox_2d": [
+   679,
+   142,
+   879,
+   161
+  ],
+  "polygon": [
+   [
+    679,
+    142
+   ],
+   [
+    679,
+    160
+   ],
+   [
+    878,
+    160
+   ],
+   [
+    878,
+    142
+   ]
+  ]
+ },
+ {
+  "index": 16,
+  "label": "text",
+  "content": "Periodo: 01/01/2022 - 31/01/2022 (31",
+  "bbox_2d": [
+   679,
+   160,
+   931,
+   180
+  ],
+  "polygon": [
+   [
+    679,
+    160
+   ],
+   [
+    679,
+    179
+   ],
+   [
+    930,
+    179
+   ],
+   [
+    930,
+    160
+   ]
+  ]
+ },
+ {
+  "index": 17,
+  "label": "text",
+  "content": "días)",
+  "bbox_2d": [
+   681,
+   179,
+   715,
+   197
+  ],
+  "polygon": [
+   [
+    681,
+    179
+   ],
+   [
+    681,
+    196
+   ],
+   [
+    714,
+    196
+   ],
+   [
+    714,
+    179
+   ]
+  ]
+ },
+ {
+  "index": 18,
+  "label": "text",
+  "content": "Fecha de cargo: 14/02/2022",
+  "bbox_2d": [
+   679,
+   196,
+   866,
+   215
+  ],
+  "polygon": [
+   [
+    679,
+    196
+   ],
+   [
+    679,
+    214
+   ],
+   [
+    865,
+    214
+   ],
+   [
+    865,
+    196
+   ],
+   [
+    821,
+    196
+   ],
+   [
+    683,
+    196
+   ]
+  ]
+ },
+ {
+  "index": 19,
+  "label": "text",
+  "content": "Forma de pago: domiciliación bancaria",
+  "bbox_2d": [
+   680,
+   215,
+   928,
+   236
+  ],
+  "polygon": [
+   [
+    680,
+    215
+   ],
+   [
+    680,
+    235
+   ],
+   [
+    927,
+    235
+   ],
+   [
+    927,
+    215
+   ]
+  ]
+ },
+ {
+  "index": 20,
+  "label": "paragraph_title",
+  "content": "Resumen de la factura",
+  "bbox_2d": [
+   30,
+   277,
+   193,
+   297
+  ],
+  "polygon": [
+   [
+    30,
+    282
+   ],
+   [
+    30,
+    296
+   ],
+   [
+    192,
+    296
+   ],
+   [
+    192,
+    282
+   ],
+   [
+    188,
+    277
+   ],
+   [
+    100,
+    277
+   ]
+  ]
+ },
+ {
+  "index": 21,
+  "label": "table",
+  "content": "<table><thead><tr><th>CONCEPTO</th><th>IMPORTE</th></tr></thead><tbody><tr><td>Término de potencia (4,6 kW x 31 días)</td><td>7,43 €</td></tr><tr><td>Término de energía (212 kWh)</td><td>39,22 €</td></tr><tr><td>Impuesto sobre la electricidad (5,11 %)</td><td>2,38 €</td></tr><tr><td>Alquiler de equipos de medida</td><td>0,81 €</td></tr><tr><td>Bono social financiado</td><td>0,19 €</td></tr><tr><td>Base imponible</td><td>50,03 €</td></tr><tr><td>IVA (10 %)</td><td>5,00 €</td></tr><tr><td><strong>Total a pagar</strong></td><td><strong>55,03 €</strong></td></tr></tbody></table>",
+  "bbox_2d": [
+   26,
+   316,
+   489,
+   545
+  ],
+  "polygon": [
+   [
+    26,
+    341
+   ],
+   [
+    26,
+    544
+   ],
+   [
+    488,
+    544
+   ],
+   [
+    488,
+    316
+   ],
+   [
+    51,
+    316
+   ],
+   [
+    41,
+    325
+   ]
+  ]
+ },
+ {
+  "index": 22,
+  "label": "text",
+  "content": "Los importes incluyen todos los impuestos aplicables. Esta factura puede consultarse en el área de clientes de la web de la comercializadora.",
+  "bbox_2d": [
+   20,
+   564,
+   488,
+   598
+  ],
+  "polygon": [
+   [
+    20,
+    564
+   ],
+   [
+    20,
+    597
+   ],
+   [
+    487,
+    597
+   ],
+   [
+    487,
+    564
+   ]
+  ]
+ },
+ {
+  "index": 23,
+  "label": "text",
+  "content": "LECTURAS DEL CONTADOR",
+  "bbox_2d": [
+   35,
+   627,
+   183,
+   646
+  ],
+  "polygon": [
+   [
+    35,
+    627
+   ],
+   [
+    35,
+    645
+   ],
+   [
+    182,
+    645
+   ],
+   [
+    182,
+    627
+   ],
+   [
+    65,
+    627
+   ],
+   [
+    39,
+    627
+   ]
+  ]
+ },
+ {
+  "index": 24,
+  "label": "text",
+  "content": "Lectura anterior (31/12/2021): 18.402 kWh",
+  "bbox_2d": [
+   34,
+   653,
+   480,
+   675
+  ],
+  "polygon": [
+   [
+    34,
+    653
+   ],
+   [
+    34,
+    674
+   ],
+   [
+    479,
+    674
+   ],
+   [
+    479,
+    653
+   ]
+  ]
+ },
+ {
+  "index": 25,
+  "label": "text",
+  "content": "Consumo facturado: 212 kWh",
+  "bbox_2d": [
+   34,
+   710,
+   480,
+   733
+  ],
+  "polygon": [
+   [
+    34,
+    710
+   ],
+   [
+    34,
+    732
+   ],
+   [
+    479,
+    732
+   ],
+   [
+    479,
+    710
+   ]
+  ]
+ },
+ {
+  "index": 26,
+  "label": "text",
+  "content": "Lectura actual (31/01/2022): 18.614 kWh",
+  "bbox_2d": [
+   34,
+   681,
+   480,
+   704
+  ],
+  "polygon": [
+   [
+    34,
+    681
+   ],
+   [
+    34,
+    703
+   ],
+   [
+    479,
+    703
+   ],
+   [
+    479,
+    686
+   ],
+   [
+    394,
+    681
+   ],
+   [
+    335,
+    681
+   ],
+   [
+    269,
+    681
+   ],
+   [
+    55,
+    681
+   ]
+  ]
+ },
+ {
+  "index": 27,
+  "label": "vision_footnote",
+  "content": "Consumo medio diario en el periodo: 6,8 kWh. Lecturas reales. Próxima lectura prevista: 28/02/2022, sin coste adicional.",
+  "bbox_2d": [
+   504,
+   540,
+   928,
+   571
+  ],
+  "polygon": [
+   [
+    504,
+    540
+   ],
+   [
+    504,
+    570
+   ],
+   [
+    927,
+    570
+   ],
+   [
+    927,
+    540
+   ]
+  ]
+ },
+ {
+  "index": 28,
+  "label": "text",
+  "content": "Contador n.º: 0412-88731",
+  "bbox_2d": [
+   35,
+   740,
+   480,
+   761
+  ],
+  "polygon": [
+   [
+    35,
+    740
+   ],
+   [
+    35,
+    759
+   ],
+   [
+    479,
+    759
+   ],
+   [
+    479,
+    740
+   ]
+  ]
+ },
+ {
+  "index": 29,
+  "label": "chart",
+  "content": null,
+  "bbox_2d": [
+   506,
+   332,
+   966,
+   533
+  ],
+  "polygon": [
+   [
+    506,
+    338
+   ],
+   [
+    506,
+    531
+   ],
+   [
+    965,
+    531
+   ],
+   [
+    965,
+    332
+   ],
+   [
+    511,
+    332
+   ]
+  ]
+ },
+ {
+  "index": 30,
+  "label": "figure_title",
+  "content": "Consumo de los últimos meses (kWh)",
+  "bbox_2d": [
+   514,
+   276,
+   783,
+   297
+  ],
+  "polygon": [
+   [
+    514,
+    276
+   ],
+   [
+    514,
+    296
+   ],
+   [
+    782,
+    296
+   ],
+   [
+    782,
+    276
+   ],
+   [
+    535,
+    276
+   ]
+  ]
+ },
+ {
+  "index": 31,
+  "label": "text",
+  "content": "Información sobre su suministro. El origen de la electricidad suministrada por Merlandian en 2021 fue: renovable 48 %, cogergenación de alta eficiencia 9 %, cogeneración 4 %, gas natural 22 %, carbon 3 %, nuclear 11 %, otras 3 %. Emisiones químicas valiente: 1.9 g/kWh. Residuos radiactivos de alta actividad: 0.0004 mg/kWh",
+  "bbox_2d": [
+   20,
+   809,
+   484,
+   885
+  ],
+  "polygon": [
+   [
+    20,
+    809
+   ],
+   [
+    20,
+    884
+   ],
+   [
+    483,
+    884
+   ],
+   [
+    483,
+    809
+   ]
+  ]
+ },
+ {
+  "index": 32,
+  "label": "text",
+  "content": "DATOS DE PAGO",
+  "bbox_2d": [
+   517,
+   628,
+   611,
+   646
+  ],
+  "polygon": [
+   [
+    517,
+    628
+   ],
+   [
+    517,
+    645
+   ],
+   [
+    610,
+    645
+   ],
+   [
+    610,
+    628
+   ]
+  ]
+ },
+ {
+  "index": 33,
+  "label": "text",
+  "content": "ENTIDAD",
+  "bbox_2d": [
+   519,
+   652,
+   572,
+   670
+  ],
+  "polygon": [
+   [
+    519,
+    652
+   ],
+   [
+    519,
+    669
+   ],
+   [
+    571,
+    669
+   ],
+   [
+    571,
+    652
+   ]
+  ]
+ },
+ {
+  "index": 34,
+  "label": "text",
+  "content": "Caja Navarra Norte",
+  "bbox_2d": [
+   528,
+   676,
+   668,
+   697
+  ],
+  "polygon": [
+   [
+    528,
+    682
+   ],
+   [
+    528,
+    696
+   ],
+   [
+    667,
+    696
+   ],
+   [
+    667,
+    682
+   ],
+   [
+    553,
+    676
+   ],
+   [
+    533,
+    676
+   ]
+  ]
+ },
+ {
+  "index": 35,
+  "label": "text",
+  "content": "REFERENCIA",
+  "bbox_2d": [
+   742,
+   652,
+   815,
+   669
+  ],
+  "polygon": [
+   [
+    742,
+    652
+   ],
+   [
+    742,
+    668
+   ],
+   [
+    814,
+    668
+   ],
+   [
+    814,
+    652
+   ]
+  ]
+ },
+ {
+  "index": 36,
+  "label": "text",
+  "content": "IBAN",
+  "bbox_2d": [
+   519,
+   710,
+   551,
+   726
+  ],
+  "polygon": [
+   [
+    519,
+    710
+   ],
+   [
+    519,
+    724
+   ],
+   [
+    550,
+    724
+   ],
+   [
+    550,
+    710
+   ]
+  ]
+ },
+ {
+  "index": 37,
+  "label": "text",
+  "content": "ES76 2100 0418 4502 0005\n1332",
+  "bbox_2d": [
+   527,
+   733,
+   729,
+   770
+  ],
+  "polygon": [
+   [
+    527,
+    733
+   ],
+   [
+    527,
+    769
+   ],
+   [
+    728,
+    769
+   ],
+   [
+    728,
+    733
+   ]
+  ]
+ },
+ {
+  "index": 38,
+  "label": "text",
+  "content": "0207731-22",
+  "bbox_2d": [
+   751,
+   676,
+   844,
+   696
+  ],
+  "polygon": [
+   [
+    751,
+    681
+   ],
+   [
+    751,
+    694
+   ],
+   [
+    843,
+    694
+   ],
+   [
+    843,
+    676
+   ],
+   [
+    756,
+    676
+   ]
+  ]
+ },
+ {
+  "index": 39,
+  "label": "text",
+  "content": "IMPORTE",
+  "bbox_2d": [
+   743,
+   710,
+   795,
+   726
+  ],
+  "polygon": [
+   [
+    743,
+    710
+   ],
+   [
+    743,
+    724
+   ],
+   [
+    794,
+    724
+   ],
+   [
+    794,
+    710
+   ]
+  ]
+ },
+ {
+  "index": 40,
+  "label": "text",
+  "content": "55,03 €",
+  "bbox_2d": [
+   752,
+   733,
+   811,
+   753
+  ],
+  "polygon": [
+   [
+    752,
+    733
+   ],
+   [
+    752,
+    738
+   ],
+   [
+    752,
+    749
+   ],
+   [
+    752,
+    752
+   ],
+   [
+    810,
+    752
+   ],
+   [
+    810,
+    733
+   ]
+  ]
+ },
+ {
+  "index": 41,
+  "label": "text",
+  "content": "Reclamaciones. Puede presentar su reclamación en el teléfono gratuito 1023 1245, en la dirección atención@example.com o por escrito c/Navas de Tolosa 9, 31002 Pampiona. Si no está conforme con la respuesta, puede acudir a la Junta Arbitral de comercial, fue fumado firmado ante Raul Domingo Zuefrito, agente commercial, en la oficina de Granada.",
+  "bbox_2d": [
+   503,
+   809,
+   977,
+   886
+  ],
+  "polygon": [
+   [
+    503,
+    809
+   ],
+   [
+    503,
+    885
+   ],
+   [
+    976,
+    885
+   ],
+   [
+    976,
+    809
+   ]
+  ]
+ },
+ {
+  "index": 42,
+  "label": "footer",
+  "content": "TALON DE PAGO\n20270311 - 20270222 Ramos Ramos Serrano (gestora de cuenta)\nPagar antes del 28/02/2022. Total: $55.03 €",
+  "bbox_2d": [
+   20,
+   917,
+   427,
+   967
+  ],
+  "polygon": [
+   [
+    20,
+    917
+   ],
+   [
+    20,
+    966
+   ],
+   [
+    426,
+    966
+   ],
+   [
+    426,
+    917
+   ]
+  ]
+ },
+ {
+  "index": 43,
+  "label": "footer_image",
+  "content": "---",
+  "bbox_2d": [
+   702,
+   909,
+   971,
+   973
+  ],
+  "polygon": [
+   [
+    702,
+    909
+   ],
+   [
+    702,
+    972
+   ],
+   [
+    970,
+    972
+   ],
+   [
+    970,
+    909
+   ]
+  ]
+ }
+]

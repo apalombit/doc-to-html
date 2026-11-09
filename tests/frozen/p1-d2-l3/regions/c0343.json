@@ -1,0 +1,685 @@
+[
+ {
+  "index": 0,
+  "label": "header",
+  "content": "Osprey Lettings PROPERTY MANAGEMENT",
+  "bbox_2d": [
+   73,
+   40,
+   323,
+   73
+  ],
+  "polygon": [
+   [
+    73,
+    40
+   ],
+   [
+    73,
+    72
+   ],
+   [
+    322,
+    72
+   ],
+   [
+    322,
+    40
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "header",
+  "content": "14 Widemarsh Street, Hereford HR4 9HE\n01432 555 0128 | letters@sppy-lettings.example.com",
+  "bbox_2d": [
+   484,
+   41,
+   925,
+   71
+  ],
+  "polygon": [
+   [
+    484,
+    41
+   ],
+   [
+    484,
+    70
+   ],
+   [
+    923,
+    70
+   ],
+   [
+    923,
+    41
+   ],
+   [
+    740,
+    41
+   ],
+   [
+    673,
+    41
+   ],
+   [
+    665,
+    41
+   ],
+   [
+    538,
+    41
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "paragraph_title",
+  "content": "Notice of rent increase",
+  "bbox_2d": [
+   73,
+   121,
+   506,
+   144
+  ],
+  "polygon": [
+   [
+    73,
+    121
+   ],
+   [
+    73,
+    143
+   ],
+   [
+    505,
+    143
+   ],
+   [
+    505,
+    126
+   ],
+   [
+    465,
+    121
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "text",
+  "content": "Please keep this notice with your tenancy papers.",
+  "bbox_2d": [
+   73,
+   153,
+   525,
+   170
+  ],
+  "polygon": [
+   [
+    73,
+    153
+   ],
+   [
+    73,
+    169
+   ],
+   [
+    523,
+    169
+   ],
+   [
+    523,
+    153
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "table",
+  "content": "<table border=\"1\"><tr><td>Tenant:</td><td>Harry Rees</td></tr><tr><td>Property:</td><td>Flat 6, Vale Court, Bridge Street, Hereford HR4 9DQ</td></tr><tr><td>Date of notice:</td><td>28 November 2023</td></tr><tr><td>Current rent:</td><td>£725.00 per month</td></tr><tr><td>New rent:</td><td>£760.00 per month</td></tr><tr><td>New rent starts:</td><td>1 February 2024</td></tr></table>",
+  "bbox_2d": [
+   81,
+   191,
+   912,
+   370
+  ],
+  "polygon": [
+   [
+    81,
+    191
+   ],
+   [
+    81,
+    369
+   ],
+   [
+    911,
+    369
+   ],
+   [
+    911,
+    191
+   ],
+   [
+    306,
+    191
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "paragraph_title",
+  "content": "1. ABOUT THIS NOTICE",
+  "bbox_2d": [
+   73,
+   406,
+   304,
+   420
+  ],
+  "polygon": [
+   [
+    73,
+    406
+   ],
+   [
+    73,
+    420
+   ],
+   [
+    302,
+    420
+   ],
+   [
+    302,
+    406
+   ],
+   [
+    84,
+    406
+   ],
+   [
+    77,
+    406
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "text",
+  "content": "1.1 This notice tells you that the rent for the property named above will rise by £35.00 a month from the date shown.",
+  "bbox_2d": [
+   73,
+   428,
+   893,
+   461
+  ],
+  "polygon": [
+   [
+    73,
+    428
+   ],
+   [
+    73,
+    460
+   ],
+   [
+    891,
+    460
+   ],
+   [
+    891,
+    428
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "text",
+  "content": "1.2 We reviewed the rents of comparable flats in Hereford in October 2023, and the new figure is in line with them.",
+  "bbox_2d": [
+   73,
+   469,
+   901,
+   503
+  ],
+  "polygon": [
+   [
+    73,
+    469
+   ],
+   [
+    73,
+    502
+   ],
+   [
+    784,
+    502
+   ],
+   [
+    809,
+    502
+   ],
+   [
+    900,
+    497
+   ],
+   [
+    900,
+    469
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "paragraph_title",
+  "content": "2. WHAT YOU NEED TO DO",
+  "bbox_2d": [
+   72,
+   538,
+   337,
+   552
+  ],
+  "polygon": [
+   [
+    72,
+    548
+   ],
+   [
+    72,
+    552
+   ],
+   [
+    336,
+    552
+   ],
+   [
+    336,
+    538
+   ],
+   [
+    77,
+    538
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "text",
+  "content": "2.1 You do not have to sign or return anything. Your tenancy carries on under its present terms, apart from the rent.",
+  "bbox_2d": [
+   72,
+   560,
+   905,
+   593
+  ],
+  "polygon": [
+   [
+    72,
+    593
+   ],
+   [
+    904,
+    593
+   ],
+   [
+    904,
+    560
+   ],
+   [
+    77,
+    560
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "text",
+  "content": "2.2 Please change your standing order to £760.00 so that it applies from the payment due on 1 February 2024.",
+  "bbox_2d": [
+   72,
+   601,
+   916,
+   634
+  ],
+  "polygon": [
+   [
+    72,
+    633
+   ],
+   [
+    915,
+    633
+   ],
+   [
+    915,
+    606
+   ],
+   [
+    886,
+    601
+   ],
+   [
+    806,
+    601
+   ],
+   [
+    795,
+    601
+   ],
+   [
+    752,
+    601
+   ],
+   [
+    711,
+    601
+   ],
+   [
+    652,
+    601
+   ],
+   [
+    641,
+    601
+   ],
+   [
+    568,
+    601
+   ],
+   [
+    561,
+    601
+   ],
+   [
+    337,
+    601
+   ],
+   [
+    77,
+    601
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "text",
+  "content": "2.3 If you do not agree with the new rent, write to us before 29 December 2023 and we will arrange a meeting.",
+  "bbox_2d": [
+   72,
+   642,
+   923,
+   675
+  ],
+  "polygon": [
+   [
+    72,
+    642
+   ],
+   [
+    72,
+    674
+   ],
+   [
+    922,
+    674
+   ],
+   [
+    922,
+    642
+   ],
+   [
+    815,
+    642
+   ],
+   [
+    788,
+    642
+   ],
+   [
+    754,
+    642
+   ],
+   [
+    715,
+    642
+   ],
+   [
+    688,
+    642
+   ],
+   [
+    570,
+    642
+   ],
+   [
+    102,
+    642
+   ],
+   [
+    95,
+    642
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "paragraph_title",
+  "content": "3. HELP AND ADVICE",
+  "bbox_2d": [
+   72,
+   711,
+   281,
+   725
+  ],
+  "polygon": [
+   [
+    72,
+    720
+   ],
+   [
+    72,
+    724
+   ],
+   [
+    280,
+    724
+   ],
+   [
+    280,
+    711
+   ],
+   [
+    77,
+    711
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "text",
+  "content": "3.1 If the increase will make payment difficult, speak to Aisha Stirling, our tenancy support officer, on 01432 555 0139. Your call is confidential.",
+  "bbox_2d": [
+   72,
+   733,
+   916,
+   766
+  ],
+  "polygon": [
+   [
+    72,
+    733
+   ],
+   [
+    72,
+    765
+   ],
+   [
+    915,
+    765
+   ],
+   [
+    915,
+    733
+   ]
+  ]
+ },
+ {
+  "index": 14,
+  "label": "text",
+  "content": "Yours sincerely,",
+  "bbox_2d": [
+   72,
+   796,
+   220,
+   811
+  ],
+  "polygon": [
+   [
+    72,
+    796
+   ],
+   [
+    72,
+    801
+   ],
+   [
+    77,
+    810
+   ],
+   [
+    219,
+    810
+   ],
+   [
+    219,
+    796
+   ]
+  ]
+ },
+ {
+  "index": 15,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   75,
+   821,
+   331,
+   852
+  ],
+  "polygon": [
+   [
+    75,
+    821
+   ],
+   [
+    75,
+    851
+   ],
+   [
+    330,
+    851
+   ],
+   [
+    330,
+    821
+   ],
+   [
+    277,
+    821
+   ],
+   [
+    220,
+    821
+   ]
+  ]
+ },
+ {
+  "index": 16,
+  "label": "text",
+  "content": "Kwame Nwosu",
+  "bbox_2d": [
+   73,
+   864,
+   205,
+   876
+  ],
+  "polygon": [
+   [
+    73,
+    864
+   ],
+   [
+    73,
+    875
+   ],
+   [
+    204,
+    875
+   ],
+   [
+    204,
+    864
+   ]
+  ]
+ },
+ {
+  "index": 17,
+  "label": "text",
+  "content": "Lettings Manager, Osprey Lettings",
+  "bbox_2d": [
+   73,
+   878,
+   345,
+   893
+  ],
+  "polygon": [
+   [
+    73,
+    878
+   ],
+   [
+    73,
+    892
+   ],
+   [
+    344,
+    892
+   ],
+   [
+    344,
+    878
+   ]
+  ]
+ },
+ {
+  "index": 18,
+  "label": "footer",
+  "content": "Osprey Lettings Ltd · registered office: Unit 3, Merchants Quay, Newry · this notice was posted on 28 November 2023.",
+  "bbox_2d": [
+   73,
+   927,
+   904,
+   954
+  ],
+  "polygon": [
+   [
+    73,
+    927
+   ],
+   [
+    73,
+    953
+   ],
+   [
+    902,
+    953
+   ],
+   [
+    902,
+    927
+   ]
+  ]
+ }
+]

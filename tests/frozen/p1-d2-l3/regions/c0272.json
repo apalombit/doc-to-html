@@ -1,0 +1,420 @@
+[
+ {
+  "index": 0,
+  "label": "header_image",
+  "content": "UNITED STATES\nTREASURY DEPARTMENT",
+  "bbox_2d": [
+   153,
+   52,
+   231,
+   109
+  ],
+  "polygon": [
+   [
+    153,
+    52
+   ],
+   [
+    153,
+    108
+   ],
+   [
+    230,
+    108
+   ],
+   [
+    230,
+    52
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "doc_title",
+  "content": "Minutes of the Federal Open Market Committee",
+  "bbox_2d": [
+   144,
+   146,
+   754,
+   210
+  ],
+  "polygon": [
+   [
+    144,
+    146
+   ],
+   [
+    144,
+    210
+   ],
+   [
+    753,
+    210
+   ],
+   [
+    753,
+    146
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "text",
+  "content": "January 28-29, 2025",
+  "bbox_2d": [
+   142,
+   221,
+   332,
+   240
+  ],
+  "polygon": [
+   [
+    142,
+    235
+   ],
+   [
+    142,
+    239
+   ],
+   [
+    331,
+    239
+   ],
+   [
+    331,
+    221
+   ],
+   [
+    182,
+    221
+   ],
+   [
+    171,
+    221
+   ],
+   [
+    147,
+    221
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "text",
+  "content": "A joint meeting of the Federal Open Market Committee and the Board of Governors of the Federal Reserve System was held in the offices of the Board of Governors on January 28, 2025, at 8:30 a.m. and continued on Wednesday, January 29, 2025, at 9:00 a.m. $ ^{1} $",
+  "bbox_2d": [
+   140,
+   255,
+   841,
+   316
+  ],
+  "polygon": [
+   [
+    140,
+    255
+   ],
+   [
+    140,
+    315
+   ],
+   [
+    840,
+    315
+   ],
+   [
+    840,
+    255
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "paragraph_title",
+  "content": "Annual Organizational Matters $ ^{2} $",
+  "bbox_2d": [
+   142,
+   330,
+   452,
+   350
+  ],
+  "polygon": [
+   [
+    142,
+    330
+   ],
+   [
+    142,
+    349
+   ],
+   [
+    451,
+    349
+   ],
+   [
+    451,
+    330
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "text",
+  "content": "The agenda for this meeting reported that advices of the election of the following members and alternate members of the Federal Open Market Committee for a term beginning January 28, 2025 were received and that these individuals executed their oaths of office.",
+  "bbox_2d": [
+   141,
+   368,
+   830,
+   428
+  ],
+  "polygon": [
+   [
+    141,
+    368
+   ],
+   [
+    141,
+    427
+   ],
+   [
+    829,
+    427
+   ],
+   [
+    829,
+    368
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "text",
+  "content": "The elected members and alternate members were as follows:",
+  "bbox_2d": [
+   142,
+   441,
+   581,
+   457
+  ],
+  "polygon": [
+   [
+    142,
+    441
+   ],
+   [
+    147,
+    457
+   ],
+   [
+    580,
+    457
+   ],
+   [
+    580,
+    441
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "text",
+  "content": "John C. Williams, President of the Federal Reserve Bank of New York, with Sushmita Shukla, First Vice President of the Federal Reserve Bank of New York, as alternate;",
+  "bbox_2d": [
+   141,
+   471,
+   850,
+   510
+  ],
+  "polygon": [
+   [
+    141,
+    509
+   ],
+   [
+    849,
+    509
+   ],
+   [
+    849,
+    471
+   ],
+   [
+    146,
+    471
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "text",
+  "content": "Susan M. Collins, President of the Federal Reserve Bank of Boston, with Patrick Harker, President of the Federal Reserve Bank of Philadelphia, as alternate;",
+  "bbox_2d": [
+   141,
+   522,
+   840,
+   561
+  ],
+  "polygon": [
+   [
+    141,
+    522
+   ],
+   [
+    141,
+    560
+   ],
+   [
+    839,
+    560
+   ],
+   [
+    839,
+    522
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "text",
+  "content": "Austan D. Goolsbee, President of the Federal Reserve Bank of Chicago, with Beth M. Hammack, President of the Federal Reserve Bank of Cleveland, as alternate;",
+  "bbox_2d": [
+   141,
+   575,
+   808,
+   613
+  ],
+  "polygon": [
+   [
+    141,
+    575
+   ],
+   [
+    141,
+    613
+   ],
+   [
+    807,
+    613
+   ],
+   [
+    807,
+    575
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "text",
+  "content": "Alberto G. Musalem, President of the Federal Reserve Bank of St. Louis, with Lorie K. Logan, President of the Federal Reserve Bank of Dallas, as alternate;",
+  "bbox_2d": [
+   141,
+   627,
+   853,
+   664
+  ],
+  "polygon": [
+   [
+    141,
+    627
+   ],
+   [
+    141,
+    664
+   ],
+   [
+    852,
+    664
+   ],
+   [
+    852,
+    627
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "text",
+  "content": "Jeffrey R. Schmid, President of the Federal Reserve Bank of Kansas City, with Neel Kashkari, President of the Federal Reserve Bank of Minneapolis, as alternate;",
+  "bbox_2d": [
+   141,
+   679,
+   856,
+   716
+  ],
+  "polygon": [
+   [
+    141,
+    679
+   ],
+   [
+    141,
+    715
+   ],
+   [
+    855,
+    715
+   ],
+   [
+    855,
+    679
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "footnote",
+  "content": "$ ^{1} $ The Federal Open Market Committee is referenced as the \"FOMC\" and the \"Committee\" in these minutes; the Board of Governors of the Federal Reserve System is referenced as the \"Board\" in these minutes.",
+  "bbox_2d": [
+   143,
+   850,
+   814,
+   874
+  ],
+  "polygon": [
+   [
+    143,
+    850
+   ],
+   [
+    143,
+    874
+   ],
+   [
+    813,
+    874
+   ],
+   [
+    813,
+    850
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "footnote",
+  "content": "$ ^{2} $ Committee organizational documents are available at www.federalreserve.gov/monetarypolicy/rules_authorizations.htm.",
+  "bbox_2d": [
+   143,
+   874,
+   823,
+   888
+  ],
+  "polygon": [
+   [
+    143,
+    874
+   ],
+   [
+    143,
+    887
+   ],
+   [
+    822,
+    887
+   ],
+   [
+    822,
+    874
+   ]
+  ]
+ }
+]

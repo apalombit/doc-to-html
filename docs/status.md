@@ -1,4 +1,4 @@
-# Status — 2026-11-09 (**the baseline is `tests/frozen/s14-result/`; the corpus is built (spec 0020); L2 is done (spec 0021); L3, the honest baseline, is done (spec 0022, issue #45 closed): every one of 37 unseen pages has a major fault; next is P1, the GLM-OCR parser-first PoC, spec 0023**)
+# Status — 2026-11-09 (**the corpus is built (spec 0020); L2 is done (spec 0021); L3, the honest baseline, is done (spec 0022); P1, the GLM-OCR parser-first PoC, is done (spec 0023, issue #46 closed), and P2 is decided: take D2. Next is L5 on D2, our side's faults first**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Last rewritten 2026-10-23,
@@ -8,7 +8,8 @@ Updated 2026-10-24, when he decided the level-up plan
 ([`level-up.md`](level-up.md) §8), 2026-10-30, when spec 0020 built
 the corpus (issue #43 closed), 2026-11-07, when spec 0021 closed L2
 (issue #44 closed), and 2026-11-09, when spec 0022 closed L3 (issue #45
-closed).
+closed) and spec 0023 closed P1 (issue #46 closed), and Alessandro
+decided P2: take D2.
 
 Reading order for a fresh session:
 1. `CLAUDE.md`'s **READ THIS FIRST**;
@@ -17,9 +18,11 @@ Reading order for a fresh session:
 3. this file;
 4. [`level-up.md`](level-up.md)'s Gist, §6 and §8: the plan from
    2026-10-24, and what comes next;
-5. [`specs/0022-the-honest-baseline.md`](specs/0022-the-honest-baseline.md)'s
-   "Outcome", the ranked fault classes P2 decides against and the prompt
-   that starts P1; [`specs/0021-measurement-and-the-judge.md`](specs/0021-measurement-and-the-judge.md)'s
+5. [`specs/0023-parser-first.md`](specs/0023-parser-first.md)'s
+   outcomes: what D2 is, D2 against L3-baseline class by class, what our
+   side gets wrong on D2's blocks, and P2's decision;
+   [`specs/0022-the-honest-baseline.md`](specs/0022-the-honest-baseline.md)'s
+   "Outcome", the L3 reference; [`specs/0021-measurement-and-the-judge.md`](specs/0021-measurement-and-the-judge.md)'s
    "Where L2 stands", what the checks and the judge are; and
    [`agents/review-criteria.md`](agents/review-criteria.md), the
    criteria every review is judged by;
@@ -31,14 +34,17 @@ If you are going to look at output — and you should — use the
 **`visual-review` skill**.
 
 Branches `main`, `develop` and `level-up`, all on the remote since
-2026-10-24; work continues on `level-up`, and `scaffold` is retired into
-`develop`. **1702 tests pass (1 skipped), `mypy src/` clean**: measured
-2026-11-09 on `level-up`, at the end of spec 0022. The conversion code
-is still `a0d73c9`'s in what it answers: spec 0020 added the corpus
-factory, and spec 0021 the batch runner and a 3-minute limit on each
-model call; `tools/replay_run.py` reproduces `s14-result/` 21 of 21 byte
-for byte on 2026-11-09, at the end of spec 0022, which changed the
-checks and not the conversion.
+2026-10-24, and `poc-parser-first`, cut from `level-up` for P1 and four
+commits ahead of it, which holds arm D2; `scaffold` is retired into
+`develop`. **1721 tests pass (1 skipped), `mypy src/` clean**: measured
+2026-11-09 on `poc-parser-first`, at the end of spec 0023. Today's
+conversion code is still `a0d73c9`'s in what it answers: spec 0020 added
+the corpus factory, spec 0021 the batch runner and a 3-minute limit on
+each model call, and spec 0023 arm D2 beside it;
+`tools/replay_run.py` reproduces `s14-result/` 21 of 21 byte for byte
+and `tools/rederive.py` 21 of 21 on 2026-11-09, at the end of spec
+0023. D2's run is frozen in `tests/frozen/p1-d2-l3/`, its regions
+re-drawing all 41 renders byte for byte.
 
 **How work is judged — Alessandro, 2026-10-12, for spec 0011; carried
 over by specs 0012 to 0019.**
@@ -148,7 +154,14 @@ Spec 0022   The honest baseline, L3 — issue #45: L3-baseline over 41
               every page reviewed: a major fault on 37 of 37, three
               in four made reading the page; round 7, 15 of 15
               agreed; six check issues fixed      DONE 2026-11-09
-              P1 the GLM-OCR parser-first PoC, spec 0023 NEXT
+Spec 0023   Parser first, P1 — issue #46, branch poc-parser-first:
+              arm D2 (GLM-OCR's pipeline, the adapter, our looks);
+              P1-D2-L3 over the 41 in 18 min, 41 converted; every
+              page reviewed: 13 better than L3, 7 worse, 17 same,
+              4 only D2; round 9, 12 of 12 agreed; the look-alike
+              check fixed                               DONE 2026-11-09
+P2          DECIDED 2026-11-09, Alessandro: take D2
+              L5 on D2, our side's faults first          NEXT
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -241,6 +254,32 @@ Means over `S14-sweep`, against `s13-result/scores.json`:
 ---
 
 ## What the last work shipped
+
+### Spec 0023 — parser first, P1, and P2's decision, 2026-11-09
+
+On `poc-parser-first`, cut from `level-up`'s head. Today's pipeline is
+unchanged (the replay of `s14-result/` is 21 of 21 byte-identical).
+
+- **Arm D2**: `tools/glmocr_parse.py` (GLM-OCR's SDK, self-hosted
+  through Ollama, `glm-ocr:latest`, in `~/.venvs/glmocr`) writes the
+  reader's raw regions; `adapter.py` maps them to the IR;
+  `parser_first.py` runs today's measuring passes and the renderer;
+  `tools/batch.py --arm d2`, `tools/d2.py` the offline loop.
+- **`P1-D2-L3`**: the 41 L3 pages in 18 minutes (26 s a page), none
+  timed out. Every page reviewed (`agents/review-calls/P1-D2-L3.json`):
+  a major on 41 of 41; on the 37 both arms converted, majors per page
+  17.6 (L3) → 17.8 (D2), the parser making 413 against L3's reading side
+  495, our side 247 against 156.
+- **By eye against L3**: 13 pages better, 7 worse, 17 the same, and the
+  four L3 lost to the limit converted.
+- **Round 9**, 12 of 12 agreed; the look-alike marks fixed in the
+  checks (`checks.ALIKE`), pinned on c0068.
+- **P2: take D2** (Alessandro, 2026-11-09).
+- Found on our side, not fixed (spec 0023, "Found on our side"):
+  `locate` leaves the adapter's tables unmeasured (366 of 869 Cells);
+  `$` amounts read as maths; the reader's broken table HTML; LaTeX and
+  bold markers drawn as written; a column's second Zone banded after
+  the tall one beside it.
 
 ### Spec 0022 — the honest baseline, L3, 2026-11-08 to 2026-11-09
 
@@ -380,13 +419,19 @@ In order (`level-up.md` §6):
      (24 pages each), side by side drawn as a stack (13), fills split per
      Zone (12), numbers as bullets, ticks lost, misreads, bold and sizes.
    - Six check issues the review found are fixed and pinned on dev.
-5. **P1 — the parser-first PoC, next: spec 0023**, from spec 0022's
-   last prompt, on its own branch: GLM-OCR's latest, whole pipeline (its
-   layout model and its reader), then an adapter into the IR, then our
-   looks and renderer, against L3-baseline class by class. **Local
-   models only.**
-6. **P2 — the decision**, then **L5 — fit what is left** instead of
-   setting it by hand.
+5. **P1 — the parser-first PoC, done 2026-11-09**
+   ([spec 0023](specs/0023-parser-first.md), issue #46 closed), on
+   `poc-parser-first`: arm D2, GLM-OCR's whole pipeline, an adapter into
+   the IR, our looks and renderer. Over the 41 in 18 minutes against
+   L3's 6.6 hours; 13 pages better by eye, 7 worse, 17 the same, and the
+   four L3 lost converted. Majors per page level; the parser makes fewer
+   than today's reading side, our side more on its blocks.
+6. **P2 — decided 2026-11-09, Alessandro: take D2.**
+7. **L5 on D2 — next.** Our side's faults on D2's blocks first (the
+   adapter, `locate` on its tables, the looks), each reproduced on a dev
+   page before it is changed; the parser's weights, prompts and
+   thresholds untouched; then fit what is left instead of setting it by
+   hand (`level-up.md` §6). **Local models only.**
 
 Each step gets its spec and issue when it starts. Pick up nothing outside
 this plan unless he names it.

@@ -1,0 +1,852 @@
+[
+ {
+  "index": 0,
+  "label": "header",
+  "content": "Form 8822\n(Rev. February 2021)\nDepartment of the Treasury\nInternal Revenue Service",
+  "bbox_2d": [
+   53,
+   44,
+   191,
+   118
+  ],
+  "polygon": [
+   [
+    53,
+    44
+   ],
+   [
+    53,
+    117
+   ],
+   [
+    190,
+    117
+   ],
+   [
+    190,
+    74
+   ],
+   [
+    185,
+    69
+   ],
+   [
+    180,
+    49
+   ],
+   [
+    180,
+    44
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "header",
+  "content": "Change of Address",
+  "bbox_2d": [
+   386,
+   44,
+   613,
+   65
+  ],
+  "polygon": [
+   [
+    386,
+    44
+   ],
+   [
+    386,
+    64
+   ],
+   [
+    612,
+    64
+   ],
+   [
+    612,
+    44
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "header",
+  "content": "(For Individual, Gift, Estate, or Generation-Skipping Transfer Tax Returns)",
+  "bbox_2d": [
+   226,
+   69,
+   771,
+   85
+  ],
+  "polygon": [
+   [
+    226,
+    69
+   ],
+   [
+    226,
+    84
+   ],
+   [
+    770,
+    84
+   ],
+   [
+    770,
+    69
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "header",
+  "content": "OMB No. 1545-1163",
+  "bbox_2d": [
+   815,
+   74,
+   925,
+   88
+  ],
+  "polygon": [
+   [
+    815,
+    74
+   ],
+   [
+    815,
+    87
+   ],
+   [
+    924,
+    87
+   ],
+   [
+    924,
+    74
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "header",
+  "content": "▶ Please type or print. ▶ See instructions on back. ▶ Do not attach this form to your return.\n▶ Information about Form 8822 is available at www.irs.gov/form8822.",
+  "bbox_2d": [
+   209,
+   87,
+   788,
+   116
+  ],
+  "polygon": [
+   [
+    209,
+    92
+   ],
+   [
+    209,
+    115
+   ],
+   [
+    787,
+    115
+   ],
+   [
+    787,
+    92
+   ],
+   [
+    743,
+    87
+   ],
+   [
+    649,
+    87
+   ],
+   [
+    638,
+    87
+   ],
+   [
+    548,
+    87
+   ],
+   [
+    539,
+    87
+   ],
+   [
+    533,
+    87
+   ],
+   [
+    368,
+    87
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "paragraph_title",
+  "content": "Part I Complete This Part To Change Your Home Mailing Address",
+  "bbox_2d": [
+   63,
+   121,
+   604,
+   135
+  ],
+  "polygon": [
+   [
+    63,
+    121
+   ],
+   [
+    63,
+    135
+   ],
+   [
+    603,
+    135
+   ],
+   [
+    603,
+    121
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "text",
+  "content": "Check all boxes this change affects:",
+  "bbox_2d": [
+   55,
+   142,
+   300,
+   156
+  ],
+  "polygon": [
+   [
+    55,
+    142
+   ],
+   [
+    55,
+    155
+   ],
+   [
+    299,
+    155
+   ],
+   [
+    299,
+    142
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "text",
+  "content": "1 □ Individual income tax returns (Forms 1040, 1040-SR, 1040-NR, etc.)",
+  "bbox_2d": [
+   70,
+   166,
+   565,
+   181
+  ],
+  "polygon": [
+   [
+    70,
+    166
+   ],
+   [
+    70,
+    180
+   ],
+   [
+    564,
+    180
+   ],
+   [
+    564,
+    166
+   ],
+   [
+    225,
+    166
+   ],
+   [
+    204,
+    166
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "text",
+  "content": "▶ If your last return was a joint return and you are now establishing a residence separate from the spouse with whom you filed that return, check here [ ]",
+  "bbox_2d": [
+   109,
+   181,
+   927,
+   210
+  ],
+  "polygon": [
+   [
+    109,
+    181
+   ],
+   [
+    109,
+    210
+   ],
+   [
+    926,
+    210
+   ],
+   [
+    926,
+    196
+   ],
+   [
+    921,
+    186
+   ],
+   [
+    911,
+    181
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "text",
+  "content": "2 Gift, estate, or generation-skipping transfer tax returns (Forms 706, 709, etc.)",
+  "bbox_2d": [
+   70,
+   227,
+   626,
+   241
+  ],
+  "polygon": [
+   [
+    70,
+    227
+   ],
+   [
+    70,
+    240
+   ],
+   [
+    625,
+    240
+   ],
+   [
+    625,
+    232
+   ],
+   [
+    570,
+    227
+   ],
+   [
+    560,
+    227
+   ],
+   [
+    550,
+    227
+   ],
+   [
+    536,
+    227
+   ],
+   [
+    200,
+    227
+   ],
+   [
+    185,
+    227
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "text",
+  "content": "For Forms 706 and 706-NA, enter the decedent's name and social security number below.",
+  "bbox_2d": [
+   100,
+   243,
+   727,
+   257
+  ],
+  "polygon": [
+   [
+    100,
+    243
+   ],
+   [
+    100,
+    256
+   ],
+   [
+    726,
+    256
+   ],
+   [
+    726,
+    243
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "table",
+  "content": "<table border=\"1\"><tr><td>3a Your name(first name,initial,and last name)</td><td>3b Your social security number</td></tr><tr><td>4a Spouse&#x27;s name(first name,initial,and last name)</td><td>4b Spouse&#x27;s social security number</td></tr></table>",
+  "bbox_2d": [
+   57,
+   284,
+   943,
+   375
+  ],
+  "polygon": [
+   [
+    57,
+    315
+   ],
+   [
+    67,
+    374
+   ],
+   [
+    942,
+    374
+   ],
+   [
+    942,
+    284
+   ],
+   [
+    67,
+    284
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "text",
+  "content": "5a Your prior name(s). See instructions.",
+  "bbox_2d": [
+   70,
+   380,
+   300,
+   394
+  ],
+  "polygon": [
+   [
+    70,
+    380
+   ],
+   [
+    70,
+    393
+   ],
+   [
+    299,
+    393
+   ],
+   [
+    299,
+    380
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "text",
+  "content": "5b Spouse's prior name(s). See instructions.",
+  "bbox_2d": [
+   70,
+   426,
+   325,
+   439
+  ],
+  "polygon": [
+   [
+    70,
+    426
+   ],
+   [
+    70,
+    438
+   ],
+   [
+    324,
+    438
+   ],
+   [
+    324,
+    426
+   ]
+  ]
+ },
+ {
+  "index": 14,
+  "label": "text",
+  "content": "6a Your old address (no., street, apt. no., city or town, state, and ZIP code). If a P.O. box, see instructions. If foreign address, also complete spaces below, see instructions.",
+  "bbox_2d": [
+   69,
+   470,
+   888,
+   492
+  ],
+  "polygon": [
+   [
+    69,
+    470
+   ],
+   [
+    69,
+    491
+   ],
+   [
+    887,
+    491
+   ],
+   [
+    887,
+    470
+   ]
+  ]
+ },
+ {
+  "index": 15,
+  "label": "table",
+  "content": "<table><tr><td>Foreign country name</td><td>Foreign province/county</td><td>Foreign postal code</td></tr></table>",
+  "bbox_2d": [
+   55,
+   513,
+   942,
+   545
+  ],
+  "polygon": [
+   [
+    55,
+    513
+   ],
+   [
+    55,
+    544
+   ],
+   [
+    941,
+    544
+   ],
+   [
+    941,
+    513
+   ]
+  ]
+ },
+ {
+  "index": 16,
+  "label": "text",
+  "content": "6b Spouse's old address, if different from line 64 (no., street, apt. no., city or town, state, and ZIP code). If a P.O. box, see instructions. If foreign address, also complete spaces below, see instructions.",
+  "bbox_2d": [
+   67,
+   545,
+   936,
+   568
+  ],
+  "polygon": [
+   [
+    67,
+    567
+   ],
+   [
+    906,
+    567
+   ],
+   [
+    935,
+    554
+   ],
+   [
+    935,
+    545
+   ],
+   [
+    72,
+    545
+   ]
+  ]
+ },
+ {
+  "index": 17,
+  "label": "table",
+  "content": "<table><tr><td>Foreign country name</td><td>Foreign province/county</td><td>Foreign postal code</td></tr></table>",
+  "bbox_2d": [
+   56,
+   589,
+   941,
+   620
+  ],
+  "polygon": [
+   [
+    56,
+    589
+   ],
+   [
+    56,
+    620
+   ],
+   [
+    940,
+    620
+   ],
+   [
+    940,
+    589
+   ]
+  ]
+ },
+ {
+  "index": 18,
+  "label": "text",
+  "content": "7 New address (no., street, apt. no., city or town, state, and ZIP code). If a P.O. box, see instructions. If foreign address, also complete spaces below, see instructions.",
+  "bbox_2d": [
+   65,
+   622,
+   887,
+   642
+  ],
+  "polygon": [
+   [
+    65,
+    627
+   ],
+   [
+    65,
+    641
+   ],
+   [
+    886,
+    641
+   ],
+   [
+    886,
+    627
+   ],
+   [
+    846,
+    622
+   ]
+  ]
+ },
+ {
+  "index": 19,
+  "label": "table",
+  "content": "<table border=\"1\"><tr><td>Foreign country name</td><td>Foreign province/county</td><td>Foreign postal code</td></tr></table>",
+  "bbox_2d": [
+   56,
+   664,
+   942,
+   696
+  ],
+  "polygon": [
+   [
+    56,
+    664
+   ],
+   [
+    56,
+    695
+   ],
+   [
+    941,
+    695
+   ],
+   [
+    941,
+    664
+   ]
+  ]
+ },
+ {
+  "index": 20,
+  "label": "text",
+  "content": "Daytime telephone number of person to contact (optional)",
+  "bbox_2d": [
+   56,
+   719,
+   441,
+   735
+  ],
+  "polygon": [
+   [
+    56,
+    719
+   ],
+   [
+    56,
+    735
+   ],
+   [
+    440,
+    735
+   ],
+   [
+    440,
+    719
+   ]
+  ]
+ },
+ {
+  "index": 21,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   443,
+   720,
+   461,
+   734
+  ],
+  "polygon": [
+   [
+    443,
+    720
+   ],
+   [
+    443,
+    733
+   ],
+   [
+    460,
+    733
+   ],
+   [
+    460,
+    720
+   ]
+  ]
+ },
+ {
+  "index": 22,
+  "label": "table",
+  "content": "<table border=\"1\"><tr><td rowspan=\"3\">Sign Here</td><td></td><td></td><td></td></tr><tr><td>Your signature</td><td>Date</td><td>Signature of representative, executor, administrator/if applicable Date</td></tr><tr><td>If joint return, spouse&#x27;s signature</td><td>Date</td><td>Title</td></tr></table>",
+  "bbox_2d": [
+   55,
+   766,
+   943,
+   832
+  ],
+  "polygon": [
+   [
+    55,
+    766
+   ],
+   [
+    55,
+    831
+   ],
+   [
+    942,
+    827
+   ],
+   [
+    942,
+    771
+   ],
+   [
+    928,
+    766
+   ]
+  ]
+ },
+ {
+  "index": 23,
+  "label": "vision_footnote",
+  "content": "For Privacy Act and Paperwork Reduction Act Notice, see back of form.",
+  "bbox_2d": [
+   55,
+   835,
+   507,
+   848
+  ],
+  "polygon": [
+   [
+    55,
+    835
+   ],
+   [
+    55,
+    847
+   ],
+   [
+    506,
+    847
+   ],
+   [
+    506,
+    835
+   ]
+  ]
+ },
+ {
+  "index": 24,
+  "label": "vision_footnote",
+  "content": "Cat. No. 12081V",
+  "bbox_2d": [
+   596,
+   836,
+   686,
+   848
+  ],
+  "polygon": [
+   [
+    596,
+    836
+   ],
+   [
+    596,
+    847
+   ],
+   [
+    685,
+    847
+   ],
+   [
+    685,
+    836
+   ]
+  ]
+ },
+ {
+  "index": 25,
+  "label": "vision_footnote",
+  "content": "Form 8822 (Rev. 2-2021)",
+  "bbox_2d": [
+   792,
+   833,
+   942,
+   847
+  ],
+  "polygon": [
+   [
+    792,
+    833
+   ],
+   [
+    792,
+    847
+   ],
+   [
+    941,
+    847
+   ],
+   [
+    941,
+    833
+   ]
+  ]
+ }
+]

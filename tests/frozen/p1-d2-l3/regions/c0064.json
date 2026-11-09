@@ -1,0 +1,122 @@
+[
+ {
+  "index": 0,
+  "label": "paragraph_title",
+  "content": "RENDIMENTOS TRIBUTÀVEIS RECEBIDOS DE PESSOAS JURÍDICAS",
+  "bbox_2d": [
+   140,
+   29,
+   850,
+   116
+  ],
+  "polygon": [
+   [
+    140,
+    34
+   ],
+   [
+    140,
+    113
+   ],
+   [
+    848,
+    113
+   ],
+   [
+    848,
+    29
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "text",
+  "content": "Declaração anual de rendimentos, exercício 2023, ano-calendário 2022 · Coordenadoria da Receita de Linda Renda",
+  "bbox_2d": [
+   140,
+   124,
+   948,
+   197
+  ],
+  "polygon": [
+   [
+    140,
+    129
+   ],
+   [
+    140,
+    195
+   ],
+   [
+    946,
+    187
+   ],
+   [
+    946,
+    124
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "table",
+  "content": "<table><tr><td colspan=\"5\">01 CPF: 214.708.935-60</td></tr><tr><td colspan=\"5\">02 Nome: Leticia Costa Nogueira</td></tr><tr><td colspan=\"5\">03 Conjuge: Rodrigo Lopes Bezerra</td></tr><tr><td colspan=\"5\">04 Municipio: Londrina UF: PR</td></tr><tr><td>N°</td><td>FONTE PAGADORA</td><td>CNPJ</td><td>RENDEMOS RECEBIDOS (RS)</td><td>IMPOSTO RETIDO (RS)</td></tr><tr><td>1</td><td>Paragon Engenharia Lida. Londrina, PR</td><td>41.220.376/0001-58</td><td>62.340,80</td><td>4.215,30</td></tr><tr><td>2</td><td>Tidewater Logistica S.A. Manaus, AM</td><td>09.884.512/0001-07</td><td>24.079,70</td><td>1.082,15</td></tr><tr><td colspan=\"3\">Total dos rendimentos tributáveis</td><td>86.420,50</td><td>5.297,45</td></tr><tr><td colspan=\"5\">Declara, sob as pensas da lei, que as informações prestadas neste quadro são verdadeiras e que os valores correspondem aos comprovantes de rendimentos recebidos das fontes pagadoras acima.</td></tr><tr><td colspan=\"5\">Londrina, 23/08/2023\nContadora: Camila Teixeira Brandão\nCRC-PR 048215/O-7</td></tr></table>",
+  "bbox_2d": [
+   11,
+   213,
+   983,
+   955
+  ],
+  "polygon": [
+   [
+    16,
+    213
+   ],
+   [
+    16,
+    952
+   ],
+   [
+    981,
+    952
+   ],
+   [
+    981,
+    213
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   620,
+   794,
+   962,
+   912
+  ],
+  "polygon": [
+   [
+    620,
+    794
+   ],
+   [
+    620,
+    910
+   ],
+   [
+    961,
+    910
+   ],
+   [
+    961,
+    799
+   ],
+   [
+    957,
+    794
+   ]
+  ]
+ }
+]

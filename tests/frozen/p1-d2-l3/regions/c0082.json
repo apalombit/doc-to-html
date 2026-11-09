@@ -1,0 +1,374 @@
+[
+ {
+  "index": 0,
+  "label": "header",
+  "content": "Section 2 - for information about your GB driver record, please provide the following details",
+  "bbox_2d": [
+   76,
+   50,
+   914,
+   93
+  ],
+  "polygon": [
+   [
+    76,
+    50
+   ],
+   [
+    76,
+    92
+   ],
+   [
+    913,
+    92
+   ],
+   [
+    913,
+    50
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "text",
+  "content": "Your full name, as shown on your GB driving licence",
+  "bbox_2d": [
+   53,
+   120,
+   543,
+   139
+  ],
+  "polygon": [
+   [
+    53,
+    120
+   ],
+   [
+    53,
+    138
+   ],
+   [
+    542,
+    138
+   ],
+   [
+    542,
+    120
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "figure_title",
+  "content": "GB driving licence number (16 characters)",
+  "bbox_2d": [
+   54,
+   193,
+   441,
+   212
+  ],
+  "polygon": [
+   [
+    54,
+    193
+   ],
+   [
+    54,
+    211
+   ],
+   [
+    440,
+    211
+   ],
+   [
+    440,
+    193
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "text",
+  "content": "Date of birth",
+  "bbox_2d": [
+   54,
+   256,
+   175,
+   274
+  ],
+  "polygon": [
+   [
+    54,
+    256
+   ],
+   [
+    54,
+    273
+   ],
+   [
+    174,
+    273
+   ],
+   [
+    174,
+    256
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "text",
+  "content": "DDMMYYYY",
+  "bbox_2d": [
+   55,
+   279,
+   197,
+   296
+  ],
+  "polygon": [
+   [
+    55,
+    279
+   ],
+   [
+    55,
+    296
+   ],
+   [
+    196,
+    296
+   ],
+   [
+    196,
+    279
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "figure_title",
+  "content": "Your current address",
+  "bbox_2d": [
+   53,
+   359,
+   253,
+   377
+  ],
+  "polygon": [
+   [
+    53,
+    359
+   ],
+   [
+    53,
+    376
+   ],
+   [
+    252,
+    376
+   ],
+   [
+    252,
+    359
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "vision_footnote",
+  "content": "Address shown on your GB driving licence (if different)",
+  "bbox_2d": [
+   509,
+   341,
+   912,
+   377
+  ],
+  "polygon": [
+   [
+    509,
+    341
+   ],
+   [
+    509,
+    376
+   ],
+   [
+    911,
+    376
+   ],
+   [
+    911,
+    341
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "paragraph_title",
+  "content": "Tell us what specific information you need about your driver record",
+  "bbox_2d": [
+   53,
+   517,
+   681,
+   534
+  ],
+  "polygon": [
+   [
+    53,
+    517
+   ],
+   [
+    53,
+    533
+   ],
+   [
+    680,
+    533
+   ],
+   [
+    680,
+    517
+   ],
+   [
+    546,
+    517
+   ],
+   [
+    520,
+    517
+   ],
+   [
+    510,
+    517
+   ],
+   [
+    491,
+    517
+   ],
+   [
+    469,
+    517
+   ],
+   [
+    114,
+    517
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "text",
+  "content": "(if you require specific information from your driver record, for example, medical information held on our records about your fitness to drive, please provide as much detail as possible for us to locate the information)",
+  "bbox_2d": [
+   51,
+   533,
+   925,
+   585
+  ],
+  "polygon": [
+   [
+    51,
+    533
+   ],
+   [
+    51,
+    584
+   ],
+   [
+    924,
+    584
+   ],
+   [
+    924,
+    533
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   56,
+   603,
+   940,
+   926
+  ],
+  "polygon": [
+   [
+    56,
+    603
+   ],
+   [
+    56,
+    925
+   ],
+   [
+    939,
+    925
+   ],
+   [
+    939,
+    603
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "number",
+  "content": "3 of 6",
+  "bbox_2d": [
+   475,
+   946,
+   523,
+   961
+  ],
+  "polygon": [
+   [
+    475,
+    946
+   ],
+   [
+    475,
+    960
+   ],
+   [
+    522,
+    960
+   ],
+   [
+    522,
+    946
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "number",
+  "content": "SAR",
+  "bbox_2d": [
+   907,
+   946,
+   945,
+   959
+  ],
+  "polygon": [
+   [
+    907,
+    946
+   ],
+   [
+    907,
+    959
+   ],
+   [
+    944,
+    959
+   ],
+   [
+    944,
+    946
+   ]
+  ]
+ }
+]

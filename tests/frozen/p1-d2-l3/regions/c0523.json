@@ -1,0 +1,356 @@
+[
+ {
+  "index": 0,
+  "label": "header_image",
+  "content": "Curlew Coaches\nBooking confirmation and passenger ticket",
+  "bbox_2d": [
+   32,
+   59,
+   412,
+   161
+  ],
+  "polygon": [
+   [
+    32,
+    64
+   ],
+   [
+    32,
+    158
+   ],
+   [
+    411,
+    158
+   ],
+   [
+    411,
+    64
+   ],
+   [
+    407,
+    59
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "header",
+  "content": "Ref: CC-4817-LD",
+  "bbox_2d": [
+   792,
+   87,
+   967,
+   129
+  ],
+  "polygon": [
+   [
+    792,
+    87
+   ],
+   [
+    792,
+    127
+   ],
+   [
+    965,
+    127
+   ],
+   [
+    965,
+    87
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "paragraph_title",
+  "content": "Outward journey — Date: 09/12/2024",
+  "bbox_2d": [
+   35,
+   228,
+   424,
+   274
+  ],
+  "polygon": [
+   [
+    35,
+    228
+   ],
+   [
+    35,
+    271
+   ],
+   [
+    422,
+    271
+   ],
+   [
+    422,
+    228
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "paragraph_title",
+  "content": "Lancaster",
+  "bbox_2d": [
+   40,
+   344,
+   217,
+   403
+  ],
+  "polygon": [
+   [
+    40,
+    344
+   ],
+   [
+    40,
+    401
+   ],
+   [
+    215,
+    401
+   ],
+   [
+    215,
+    344
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "text",
+  "content": "Bus Station, Stand 6\nDeparts: 08:15",
+  "bbox_2d": [
+   37,
+   409,
+   222,
+   500
+  ],
+  "polygon": [
+   [
+    37,
+    415
+   ],
+   [
+    37,
+    483
+   ],
+   [
+    37,
+    491
+   ],
+   [
+    37,
+    497
+   ],
+   [
+    221,
+    494
+   ],
+   [
+    221,
+    409
+   ],
+   [
+    42,
+    409
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   447,
+   336,
+   547,
+   381
+  ],
+  "polygon": [
+   [
+    447,
+    347
+   ],
+   [
+    447,
+    355
+   ],
+   [
+    447,
+    372
+   ],
+   [
+    447,
+    375
+   ],
+   [
+    452,
+    378
+   ],
+   [
+    545,
+    378
+   ],
+   [
+    545,
+    336
+   ],
+   [
+    452,
+    336
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "paragraph_title",
+  "content": "Derby",
+  "bbox_2d": [
+   594,
+   338,
+   704,
+   406
+  ],
+  "polygon": [
+   [
+    594,
+    344
+   ],
+   [
+    594,
+    403
+   ],
+   [
+    702,
+    403
+   ],
+   [
+    702,
+    338
+   ],
+   [
+    600,
+    338
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "text",
+  "content": "Bus Station, Bay 11 Arrives: 12:05",
+  "bbox_2d": [
+   591,
+   409,
+   770,
+   497
+  ],
+  "polygon": [
+   [
+    591,
+    415
+   ],
+   [
+    591,
+    437
+   ],
+   [
+    591,
+    451
+   ],
+   [
+    591,
+    494
+   ],
+   [
+    768,
+    494
+   ],
+   [
+    768,
+    409
+   ],
+   [
+    755,
+    409
+   ],
+   [
+    750,
+    409
+   ],
+   [
+    597,
+    409
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   47,
+   562,
+   72,
+   618
+  ],
+  "polygon": [
+   [
+    47,
+    567
+   ],
+   [
+    47,
+    615
+   ],
+   [
+    71,
+    615
+   ],
+   [
+    71,
+    567
+   ],
+   [
+    67,
+    562
+   ],
+   [
+    51,
+    562
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "table",
+  "content": "<table border=\"1\"><tr><td>Passenger:Imogen Gallagher</td><td>Seat:14A</td><td>Bags:1 hold,1 hand</td></tr><tr><td>Companion:Yusuf Bryce</td><td>Seat:14B</td><td>Fare paid:£24.50</td></tr><tr><td colspan=\"3\">Have a pleasant journey Issued by H. Stirling, Lancaster office Show this ticket to the driver</td></tr><tr><td colspan=\"3\">Keep this section until you reach Derby. Changes up to 24 hours before departure.</td></tr></table>",
+  "bbox_2d": [
+   11,
+   550,
+   975,
+   963
+  ],
+  "polygon": [
+   [
+    21,
+    550
+   ],
+   [
+    17,
+    960
+   ],
+   [
+    974,
+    960
+   ],
+   [
+    965,
+    550
+   ]
+  ]
+ }
+]

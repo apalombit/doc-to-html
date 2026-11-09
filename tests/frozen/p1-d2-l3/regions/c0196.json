@@ -1,0 +1,93 @@
+[
+ {
+  "index": 0,
+  "label": "table",
+  "content": "<table><thead><tr><th rowspan=\"4\">U.S. DEPARTMENT, BUREAU, OR ESTABLISHMENT AND LOCATION</th><th colspan=\"5\">DATE VOUCHER PREPARED</th></tr><tr><th colspan=\"5\">CONTRACT NUMBER AND DATE</td></tr><tr><th colspan=\"5\">REQUISITION NUMBER AND DATE</td></tr><tr><th colspan=\"5\"></th></tr></thead><tbody><tr><td rowspan=\"4\" colspan=\"7\">PAYEE&#x27;S NAME AND ADDRESS</td></tr><tr><td colspan=\"5\"></td></tr><tr><td colspan=\"5\"></td></tr><tr><td colspan=\"5\"></td></tr><tr><td colspan=\"7\">SHIPPED FROM TO WEIGHT</td></tr><tr><td rowspan=\"2\">NUMBER AND DATE OF ORDER</td><td rowspan=\"2\">DATE OF DELIVERY OR SERVICE</td><td rowspan=\"2\" colspan=\"2\">ARTICLES OR SERVICES (Enter description, item number of contract or Federal supply schedule, and other information deemed necessary)</td><td rowspan=\"2\">QUAN-TITY</td><td colspan=\"2\">UNIT PRICE</td><td>AMOUNT</td></tr><tr><td>COST</td><td>PER</td><td>(1)</td></tr><tr><td></td><td></td><td colspan=\"2\"></td><td></td><td></td><td></td><td></td></tr></tbody></table>",
+  "bbox_2d": [
+   74,
+   53,
+   913,
+   890
+  ],
+  "polygon": [
+   [
+    74,
+    53
+   ],
+   [
+    74,
+    880
+   ],
+   [
+    912,
+    880
+   ],
+   [
+    912,
+    53
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "paragraph_title",
+  "content": "PRIVACY ACT STATEMENT",
+  "bbox_2d": [
+   412,
+   893,
+   580,
+   904
+  ],
+  "polygon": [
+   [
+    412,
+    898
+   ],
+   [
+    412,
+    903
+   ],
+   [
+    579,
+    903
+   ],
+   [
+    579,
+    893
+   ],
+   [
+    417,
+    893
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "vision_footnote",
+  "content": "The information requested on this form is required under the provisions of 31 U.S.C. 822 and 826; for the purpose of disburring this information will determine the particular credit and the amounts to be paid. Failure to furnish this information will hinder discharge of the payment obligation.",
+  "bbox_2d": [
+   184,
+   903,
+   779,
+   931
+  ],
+  "polygon": [
+   [
+    184,
+    903
+   ],
+   [
+    184,
+    931
+   ],
+   [
+    778,
+    931
+   ],
+   [
+    778,
+    903
+   ]
+  ]
+ }
+]

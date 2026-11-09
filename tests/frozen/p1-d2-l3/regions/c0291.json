@@ -1,0 +1,89 @@
+[
+ {
+  "index": 0,
+  "label": "table",
+  "content": "<table border=\"1\"><tr><td colspan=\"5\">WORKSTREAM STATUS Sandpiper Road Corridor Resurfacing·Duluth,MN</td></tr><tr><td colspan=\"5\">Marks:√done·open×blocked</td></tr><tr><td>CONTRACTOR Umber Paving Co.,Lexington,KY</td><td colspan=\"2\">REPORTING PERIOD08/01/2025 to 08/31/2025</td><td>REPORT DATE09/05/2025</td><td>PREPARED BYBrooke Hendricks</td></tr><tr><td>B-1 Roadway resurfacingLead:Travis Ramirez,field engineer</td><td colspan=\"4\">ON TRACK</td></tr><tr><td colspan=\"5\">√Segment 1,Superior St to 4th Ave√Milling complete,08/06√Base course placed,08/14√Segment 2,4th Ave to Lake Ave√Milling complete,08/27√Final lift,scheduled 09/18√Striping and markings</td></tr><tr><td>B-2 Utility relocationLead:Jasmine Le,utilities coordinator</td><td colspan=\"4\">AT RISK□Water main crossing at 12th Ave√Permit received08/22×Crew release not yet confirmed√Gas service lines moved,Segment 1□Signal cabinet relocation□Utility board approval,due09/12Delay of 9 working days expected if the crew release slips past09/10.</td></tr><tr><td>B-3 Public noticeLead:Brooke Hendricks</td><td colspan=\"4\">ON TRACK</td></tr><tr><td colspan=\"5\">√Door hangers delivered,412 addresses√Business meeting held08/20√Eleven owners attended√Minutes posted to the project page□Detour signs for the Lake Ave closure</td></tr><tr><td>B-4 Budget and paymentsContract value$2,480,000.00</td><td colspan=\"4\">65% SPENT√Pay applications approved√No.6for$214,880.00√No.7for$302,415.00□Pay application no.8□Quantities check,due09/09Paid to date$1,612,000.00.Remaining$868,000.00.</td></tr></table>",
+  "bbox_2d": [
+   11,
+   21,
+   988,
+   941
+  ],
+  "polygon": [
+   [
+    16,
+    27
+   ],
+   [
+    16,
+    939
+   ],
+   [
+    983,
+    939
+   ],
+   [
+    978,
+    21
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "footer",
+  "content": "Project file SRC-25-014",
+  "bbox_2d": [
+   15,
+   948,
+   140,
+   972
+  ],
+  "polygon": [
+   [
+    15,
+    948
+   ],
+   [
+    15,
+    970
+   ],
+   [
+    138,
+    970
+   ],
+   [
+    138,
+    948
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "footer",
+  "content": "Continued in Section C, schedule outlook",
+  "bbox_2d": [
+   765,
+   950,
+   983,
+   972
+  ],
+  "polygon": [
+   [
+    765,
+    950
+   ],
+   [
+    765,
+    970
+   ],
+   [
+    982,
+    970
+   ],
+   [
+    982,
+    950
+   ]
+  ]
+ }
+]

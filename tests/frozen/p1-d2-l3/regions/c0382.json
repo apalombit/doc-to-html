@@ -1,0 +1,672 @@
+[
+ {
+  "index": 0,
+  "label": "header",
+  "content": "OLIVER CALDWELL & ARJUN FAIRCLOUGH",
+  "bbox_2d": [
+   38,
+   17,
+   331,
+   33
+  ],
+  "polygon": [
+   [
+    38,
+    17
+   ],
+   [
+    38,
+    32
+   ],
+   [
+    330,
+    32
+   ],
+   [
+    330,
+    17
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "header",
+  "content": "HEAT AND CHANGE",
+  "bbox_2d": [
+   820,
+   17,
+   957,
+   33
+  ],
+  "polygon": [
+   [
+    820,
+    17
+   ],
+   [
+    820,
+    32
+   ],
+   [
+    956,
+    32
+   ],
+   [
+    956,
+    17
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "header",
+  "content": "CHAPTER 7",
+  "bbox_2d": [
+   39,
+   74,
+   139,
+   92
+  ],
+  "polygon": [
+   [
+    39,
+    74
+   ],
+   [
+    39,
+    91
+   ],
+   [
+    138,
+    91
+   ],
+   [
+    138,
+    74
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "paragraph_title",
+  "content": "How Things Cool Down",
+  "bbox_2d": [
+   38,
+   106,
+   434,
+   148
+  ],
+  "polygon": [
+   [
+    38,
+    106
+   ],
+   [
+    38,
+    147
+   ],
+   [
+    432,
+    143
+   ],
+   [
+    432,
+    111
+   ],
+   [
+    388,
+    106
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "header_image",
+  "content": "INDIGO TOPAZ PRESS",
+  "bbox_2d": [
+   777,
+   94,
+   958,
+   136
+  ],
+  "polygon": [
+   [
+    777,
+    94
+   ],
+   [
+    777,
+    135
+   ],
+   [
+    957,
+    135
+   ],
+   [
+    957,
+    94
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "text",
+  "content": "A cup of tea left on the desk loses heat quickly at first, then ever more slowly. This page sets out the pattern, gives the law behind it and shows how each quantity enters. Revised 11 March 2023 for the Taunton and Stockport editions.",
+  "bbox_2d": [
+   36,
+   209,
+   815,
+   292
+  ],
+  "polygon": [
+   [
+    36,
+    209
+   ],
+   [
+    41,
+    291
+   ],
+   [
+    814,
+    286
+   ],
+   [
+    814,
+    209
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "paragraph_title",
+  "content": "The law",
+  "bbox_2d": [
+   65,
+   330,
+   177,
+   365
+  ],
+  "polygon": [
+   [
+    65,
+    330
+   ],
+   [
+    65,
+    364
+   ],
+   [
+    176,
+    364
+   ],
+   [
+    176,
+    336
+   ],
+   [
+    172,
+    330
+   ],
+   [
+    163,
+    330
+   ],
+   [
+    128,
+    330
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "text",
+  "content": "The rate of cooling is proportional to the gap between the body and its surroundings.",
+  "bbox_2d": [
+   55,
+   375,
+   448,
+   425
+  ],
+  "polygon": [
+   [
+    55,
+    375
+   ],
+   [
+    55,
+    424
+   ],
+   [
+    447,
+    424
+   ],
+   [
+    447,
+    375
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "display_formula",
+  "content": "$$\nT (t) = T _ {e} + \\left(T _ {0} - T _ {e}\\right) e ^ {- k t}\n$$",
+  "bbox_2d": [
+   138,
+   450,
+   393,
+   486
+  ],
+  "polygon": [
+   [
+    138,
+    450
+   ],
+   [
+    138,
+    485
+   ],
+   [
+    392,
+    485
+   ],
+   [
+    392,
+    450
+   ],
+   [
+    184,
+    450
+   ],
+   [
+    153,
+    450
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "text",
+  "content": "Here $ T_{\\mathrm{e}} $ is room temperature and k the cooling constant.",
+  "bbox_2d": [
+   55,
+   514,
+   441,
+   538
+  ],
+  "polygon": [
+   [
+    55,
+    514
+   ],
+   [
+    55,
+    537
+   ],
+   [
+    440,
+    537
+   ],
+   [
+    440,
+    514
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "chart",
+  "content": null,
+  "bbox_2d": [
+   530,
+   333,
+   920,
+   594
+  ],
+  "polygon": [
+   [
+    530,
+    333
+   ],
+   [
+    536,
+    593
+   ],
+   [
+    919,
+    588
+   ],
+   [
+    919,
+    333
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "figure_title",
+  "content": "Figure 7.1 Temperature ( $^{\\circ} \\mathrm{C}$ ) of a cup of tea against time",
+  "bbox_2d": [
+   565,
+   607,
+   898,
+   629
+  ],
+  "polygon": [
+   [
+    565,
+    607
+   ],
+   [
+    565,
+    628
+   ],
+   [
+    897,
+    628
+   ],
+   [
+    897,
+    607
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "paragraph_title",
+  "content": "Half-life of the gap",
+  "bbox_2d": [
+   59,
+   689,
+   273,
+   721
+  ],
+  "polygon": [
+   [
+    59,
+    689
+   ],
+   [
+    59,
+    720
+   ],
+   [
+    272,
+    720
+   ],
+   [
+    272,
+    689
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "text",
+  "content": "The gap halves every 0.69/k minutes, whatever its starting size.",
+  "bbox_2d": [
+   55,
+   731,
+   454,
+   779
+  ],
+  "polygon": [
+   [
+    55,
+    731
+   ],
+   [
+    55,
+    778
+   ],
+   [
+    453,
+    778
+   ],
+   [
+    453,
+    731
+   ]
+  ]
+ },
+ {
+  "index": 14,
+  "label": "display_formula",
+  "content": "$$\nt _ {1 / 2} = \\ln 2 / k\n$$",
+  "bbox_2d": [
+   201,
+   805,
+   330,
+   838
+  ],
+  "polygon": [
+   [
+    201,
+    805
+   ],
+   [
+    201,
+    836
+   ],
+   [
+    329,
+    836
+   ],
+   [
+    329,
+    805
+   ]
+  ]
+ },
+ {
+  "index": 15,
+  "label": "text",
+  "content": "For $ \\mathrm{k}=0. 0 5 $ per minute, $ t_{v / 2} $ is about 14 minutes.",
+  "bbox_2d": [
+   56,
+   864,
+   387,
+   888
+  ],
+  "polygon": [
+   [
+    56,
+    864
+   ],
+   [
+    56,
+    887
+   ],
+   [
+    386,
+    887
+   ],
+   [
+    386,
+    864
+   ]
+  ]
+ },
+ {
+  "index": 16,
+  "label": "image",
+  "content": null,
+  "bbox_2d": [
+   529,
+   690,
+   556,
+   720
+  ],
+  "polygon": [
+   [
+    529,
+    690
+   ],
+   [
+    529,
+    719
+   ],
+   [
+    555,
+    719
+   ],
+   [
+    555,
+    690
+   ]
+  ]
+ },
+ {
+  "index": 17,
+  "label": "paragraph_title",
+  "content": "Try it",
+  "bbox_2d": [
+   529,
+   689,
+   623,
+   721
+  ],
+  "polygon": [
+   [
+    529,
+    689
+   ],
+   [
+    529,
+    720
+   ],
+   [
+    622,
+    720
+   ],
+   [
+    622,
+    689
+   ]
+  ]
+ },
+ {
+  "index": 18,
+  "label": "text",
+  "content": "A mug starts at $ 90^{\\circ} \\mathrm{C} $ in a $ 20^{\\circ} \\mathrm{C} $ room. Using k = 0.05, find its temperature after 30 minutes.",
+  "bbox_2d": [
+   522,
+   731,
+   936,
+   781
+  ],
+  "polygon": [
+   [
+    522,
+    737
+   ],
+   [
+    522,
+    751
+   ],
+   [
+    522,
+    780
+   ],
+   [
+    935,
+    780
+   ],
+   [
+    935,
+    731
+   ],
+   [
+    527,
+    731
+   ]
+  ]
+ },
+ {
+  "index": 19,
+  "label": "text",
+  "content": "Leah Pritchard's worked answer is on page 212.",
+  "bbox_2d": [
+   523,
+   788,
+   850,
+   812
+  ],
+  "polygon": [
+   [
+    523,
+    788
+   ],
+   [
+    523,
+    811
+   ],
+   [
+    848,
+    811
+   ],
+   [
+    848,
+    788
+   ]
+  ]
+ },
+ {
+  "index": 20,
+  "label": "display_formula",
+  "content": "$$\nh i n t: e ^ {- 1. 5} \\approx 0. 2 2\n$$",
+  "bbox_2d": [
+   521,
+   838,
+   686,
+   871
+  ],
+  "polygon": [
+   [
+    521,
+    838
+   ],
+   [
+    521,
+    870
+   ],
+   [
+    685,
+    870
+   ],
+   [
+    685,
+    838
+   ]
+  ]
+ },
+ {
+  "index": 21,
+  "label": "number",
+  "content": "148",
+  "bbox_2d": [
+   487,
+   944,
+   512,
+   960
+  ],
+  "polygon": [
+   [
+    487,
+    944
+   ],
+   [
+    487,
+    959
+   ],
+   [
+    511,
+    959
+   ],
+   [
+    511,
+    944
+   ]
+  ]
+ }
+]

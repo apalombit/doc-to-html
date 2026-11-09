@@ -1,0 +1,606 @@
+[
+ {
+  "index": 0,
+  "label": "doc_title",
+  "content": "BARNSLEY METROPOLITAN BOROUGH COUNCIL",
+  "bbox_2d": [
+   154,
+   74,
+   844,
+   115
+  ],
+  "polygon": [
+   [
+    154,
+    74
+   ],
+   [
+    154,
+    114
+   ],
+   [
+    843,
+    114
+   ],
+   [
+    843,
+    74
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "doc_title",
+  "content": "NOTICE OF PROPOSED CHANGES TO WASTE COLLECTION",
+  "bbox_2d": [
+   301,
+   122,
+   695,
+   146
+  ],
+  "polygon": [
+   [
+    301,
+    122
+   ],
+   [
+    301,
+    145
+   ],
+   [
+    694,
+    145
+   ],
+   [
+    694,
+    122
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "text",
+  "content": "ISSUED 6 SEPTEMBER 2025",
+  "bbox_2d": [
+   46,
+   204,
+   229,
+   230
+  ],
+  "polygon": [
+   [
+    46,
+    204
+   ],
+   [
+    46,
+    228
+   ],
+   [
+    228,
+    228
+   ],
+   [
+    228,
+    204
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "text",
+  "content": "Notice No. W/25/0418",
+  "bbox_2d": [
+   390,
+   204,
+   572,
+   230
+  ],
+  "polygon": [
+   [
+    390,
+    204
+   ],
+   [
+    390,
+    228
+   ],
+   [
+    571,
+    228
+   ],
+   [
+    571,
+    204
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "text",
+  "content": "BARNSLEY AND LINCOLN DEPOTS",
+  "bbox_2d": [
+   734,
+   204,
+   951,
+   230
+  ],
+  "polygon": [
+   [
+    734,
+    204
+   ],
+   [
+    734,
+    228
+   ],
+   [
+    950,
+    228
+   ],
+   [
+    950,
+    204
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "text",
+  "content": "Notice is hereby given that, from Monday 3 November 2025, the Council will change the days on which household refuse and garden waste are collected in the Umber Cormorant district. The change follows the review of rounds approved by the Environment Committee and applies to every household named in the schedule held at the Town Hall.",
+  "bbox_2d": [
+   44,
+   268,
+   484,
+   487
+  ],
+  "polygon": [
+   [
+    44,
+    268
+   ],
+   [
+    44,
+    485
+   ],
+   [
+    482,
+    485
+   ],
+   [
+    482,
+    268
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "text",
+  "content": "Residents are asked to put out containers by 7.00 am on the new collection day. Containers left out after 6.00 pm on the day of collection may be removed by the Council at the owner's expense.",
+  "bbox_2d": [
+   43,
+   505,
+   484,
+   627
+  ],
+  "polygon": [
+   [
+    43,
+    505
+   ],
+   [
+    43,
+    625
+   ],
+   [
+    482,
+    625
+   ],
+   [
+    482,
+    505
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "paragraph_title",
+  "content": "WHAT IS CHANGING",
+  "bbox_2d": [
+   45,
+   645,
+   195,
+   669
+  ],
+  "polygon": [
+   [
+    45,
+    645
+   ],
+   [
+    45,
+    668
+   ],
+   [
+    194,
+    668
+   ],
+   [
+    194,
+    645
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "text",
+  "content": "✓ General refuse moves from Tuesday to Thursday.",
+  "bbox_2d": [
+   44,
+   685,
+   405,
+   711
+  ],
+  "polygon": [
+   [
+    44,
+    685
+   ],
+   [
+    44,
+    710
+   ],
+   [
+    404,
+    710
+   ],
+   [
+    404,
+    685
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "text",
+  "content": "✓ Garden waste moves from alternate Fridays to alternate Mondays.",
+  "bbox_2d": [
+   45,
+   723,
+   450,
+   779
+  ],
+  "polygon": [
+   [
+    45,
+    723
+   ],
+   [
+    45,
+    778
+   ],
+   [
+    448,
+    778
+   ],
+   [
+    448,
+    723
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "text",
+  "content": "No change to recycling, collected every second Wednesday.",
+  "bbox_2d": [
+   44,
+   789,
+   467,
+   819
+  ],
+  "polygon": [
+   [
+    44,
+    789
+   ],
+   [
+    44,
+    817
+   ],
+   [
+    465,
+    817
+   ],
+   [
+    465,
+    789
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "text",
+  "content": "No change to bulky-waste bookings.",
+  "bbox_2d": [
+   44,
+   829,
+   311,
+   857
+  ],
+  "polygon": [
+   [
+    44,
+    829
+   ],
+   [
+    44,
+    855
+   ],
+   [
+    310,
+    855
+   ],
+   [
+    310,
+    829
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "paragraph_title",
+  "content": "CHARGES",
+  "bbox_2d": [
+   514,
+   274,
+   590,
+   298
+  ],
+  "polygon": [
+   [
+    514,
+    274
+   ],
+   [
+    514,
+    296
+   ],
+   [
+    589,
+    296
+   ],
+   [
+    589,
+    274
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "text",
+  "content": "The annual garden waste permit remains £48.00 for the first bin and £32.50 for each further bin. Households that renew before 30 September 2025 pay £44.00 for the first bin. Replacement bins cost £27.00, and a missed-collection report is free.",
+  "bbox_2d": [
+   511,
+   310,
+   953,
+   463
+  ],
+  "polygon": [
+   [
+    511,
+    310
+   ],
+   [
+    511,
+    437
+   ],
+   [
+    511,
+    461
+   ],
+   [
+    952,
+    461
+   ],
+   [
+    952,
+    310
+   ]
+  ]
+ },
+ {
+  "index": 14,
+  "label": "text",
+  "content": "Late renewals after 3 November 2025 carry an administration charge of £6.50.",
+  "bbox_2d": [
+   528,
+   492,
+   931,
+   545
+  ],
+  "polygon": [
+   [
+    528,
+    492
+   ],
+   [
+    528,
+    543
+   ],
+   [
+    930,
+    543
+   ],
+   [
+    930,
+    492
+   ]
+  ]
+ },
+ {
+  "index": 15,
+  "label": "paragraph_title",
+  "content": "OBJECTIONS AND ENQUIRIES",
+  "bbox_2d": [
+   514,
+   562,
+   725,
+   586
+  ],
+  "polygon": [
+   [
+    514,
+    562
+   ],
+   [
+    514,
+    584
+   ],
+   [
+    723,
+    584
+   ],
+   [
+    723,
+    567
+   ],
+   [
+    569,
+    562
+   ]
+  ]
+ },
+ {
+  "index": 16,
+  "label": "text",
+  "content": "Any person who wishes to comment on these proposals may write to the Head of Waste Services, Zara Patel, at the Town Hall, Barnsley, within twenty-eight days of the date of this notice, or telephone the customer line on 01226 555 0142. Comments are considered by Priya Caldwell on behalf of the Committee.",
+  "bbox_2d": [
+   511,
+   597,
+   953,
+   783
+  ],
+  "polygon": [
+   [
+    952,
+    603
+   ],
+   [
+    517,
+    603
+   ],
+   [
+    511,
+    652
+   ],
+   [
+    511,
+    662
+   ],
+   [
+    511,
+    765
+   ],
+   [
+    511,
+    782
+   ],
+   [
+    952,
+    782
+   ]
+  ]
+ },
+ {
+  "index": 17,
+  "label": "text",
+  "content": "Copies of the full schedule may be inspected at libraries in Barnsley and Lincoln during opening hours.",
+  "bbox_2d": [
+   512,
+   800,
+   952,
+   861
+  ],
+  "polygon": [
+   [
+    512,
+    806
+   ],
+   [
+    512,
+    860
+   ],
+   [
+    951,
+    860
+   ],
+   [
+    951,
+    800
+   ],
+   [
+    518,
+    800
+   ]
+  ]
+ },
+ {
+  "index": 18,
+  "label": "footer",
+  "content": "Gareth Gallagher, Director of Environment",
+  "bbox_2d": [
+   46,
+   920,
+   312,
+   944
+  ],
+  "polygon": [
+   [
+    46,
+    920
+   ],
+   [
+    46,
+    943
+   ],
+   [
+    311,
+    943
+   ],
+   [
+    311,
+    920
+   ]
+  ]
+ },
+ {
+  "index": 19,
+  "label": "footer",
+  "content": "Dated 6 September 2025",
+  "bbox_2d": [
+   796,
+   920,
+   951,
+   944
+  ],
+  "polygon": [
+   [
+    796,
+    920
+   ],
+   [
+    796,
+    943
+   ],
+   [
+    950,
+    943
+   ],
+   [
+    950,
+    920
+   ]
+  ]
+ }
+]

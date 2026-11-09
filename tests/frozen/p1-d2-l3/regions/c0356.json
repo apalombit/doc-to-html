@@ -1,0 +1,542 @@
+[
+ {
+  "index": 0,
+  "label": "paragraph_title",
+  "content": "Sycamore Conveyancing",
+  "bbox_2d": [
+   28,
+   67,
+   270,
+   107
+  ],
+  "polygon": [
+   [
+    268,
+    73
+   ],
+   [
+    244,
+    67
+   ],
+   [
+    231,
+    67
+   ],
+   [
+    28,
+    73
+   ],
+   [
+    28,
+    105
+   ],
+   [
+    268,
+    105
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "text",
+  "content": "12 Heaton Row Stockport SK1 4AX",
+  "bbox_2d": [
+   28,
+   123,
+   163,
+   188
+  ],
+  "polygon": [
+   [
+    28,
+    123
+   ],
+   [
+    28,
+    186
+   ],
+   [
+    162,
+    186
+   ],
+   [
+    162,
+    123
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "text",
+  "content": "CONVEYANCING TEAM\nPriya Kaur, solicitor\nHannah Begum, case handler",
+  "bbox_2d": [
+   28,
+   216,
+   232,
+   313
+  ],
+  "polygon": [
+   [
+    28,
+    216
+   ],
+   [
+    28,
+    311
+   ],
+   [
+    231,
+    311
+   ],
+   [
+    231,
+    216
+   ],
+   [
+    191,
+    216
+   ],
+   [
+    175,
+    216
+   ],
+   [
+    171,
+    216
+   ],
+   [
+    155,
+    216
+   ],
+   [
+    100,
+    216
+   ],
+   [
+    58,
+    216
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "text",
+  "content": "OFFICE HOURS Monday to Friday 9:00 to 17:30",
+  "bbox_2d": [
+   28,
+   345,
+   151,
+   438
+  ],
+  "polygon": [
+   [
+    28,
+    345
+   ],
+   [
+    28,
+    436
+   ],
+   [
+    150,
+    436
+   ],
+   [
+    150,
+    345
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "text",
+  "content": "REGULATED Authorised and regulated in England and Wales",
+  "bbox_2d": [
+   27,
+   466,
+   277,
+   561
+  ],
+  "polygon": [
+   [
+    27,
+    482
+   ],
+   [
+    27,
+    501
+   ],
+   [
+    27,
+    559
+   ],
+   [
+    275,
+    559
+   ],
+   [
+    275,
+    466
+   ],
+   [
+    58,
+    466
+   ],
+   [
+    32,
+    472
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "text",
+  "content": "OUR REF PK/2023/0206\n\nDIRECT LINE 0161 555 0148",
+  "bbox_2d": [
+   328,
+   65,
+   539,
+   142
+  ],
+  "polygon": [
+   [
+    328,
+    65
+   ],
+   [
+    328,
+    140
+   ],
+   [
+    537,
+    140
+   ],
+   [
+    537,
+    71
+   ],
+   [
+    533,
+    65
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "text",
+  "content": "DATE 6 February 2023\nEMAIL priya@example.com",
+  "bbox_2d": [
+   658,
+   65,
+   862,
+   144
+  ],
+  "polygon": [
+   [
+    658,
+    65
+   ],
+   [
+    658,
+    142
+   ],
+   [
+    860,
+    142
+   ],
+   [
+    860,
+    65
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "text",
+  "content": "Mr Finlay Sinclair\nFlat 2, Boscawen House\nTruro TR1 2LD",
+  "bbox_2d": [
+   328,
+   192,
+   520,
+   303
+  ],
+  "polygon": [
+   [
+    328,
+    198
+   ],
+   [
+    328,
+    301
+   ],
+   [
+    518,
+    301
+   ],
+   [
+    518,
+    198
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "text",
+  "content": "Your purchase of 14 Trelawney Mews, Truro: what we need from you",
+  "bbox_2d": [
+   325,
+   345,
+   950,
+   384
+  ],
+  "polygon": [
+   [
+    325,
+    345
+   ],
+   [
+    331,
+    382
+   ],
+   [
+    948,
+    382
+   ],
+   [
+    948,
+    345
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "text",
+  "content": "Dear Mr Sinclair,",
+  "bbox_2d": [
+   328,
+   410,
+   459,
+   444
+  ],
+  "polygon": [
+   [
+    328,
+    410
+   ],
+   [
+    328,
+    442
+   ],
+   [
+    458,
+    442
+   ],
+   [
+    458,
+    410
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "text",
+  "content": "Thank you for instructing us. We have opened your file and this morning received the draft contract from the seller's solicitors. Before we can go further we need the following from you:",
+  "bbox_2d": [
+   327,
+   470,
+   968,
+   583
+  ],
+  "polygon": [
+   [
+    327,
+    476
+   ],
+   [
+    332,
+    581
+   ],
+   [
+    967,
+    577
+   ],
+   [
+    967,
+    470
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "text",
+  "content": "- certified copies of two forms of photo identity, such as your passport and driving licence;",
+  "bbox_2d": [
+   333,
+   607,
+   959,
+   680
+  ],
+  "polygon": [
+   [
+    958,
+    613
+   ],
+   [
+    333,
+    613
+   ],
+   [
+    333,
+    678
+   ],
+   [
+    958,
+    678
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "text",
+  "content": "- proof of address dated within the last three months;",
+  "bbox_2d": [
+   333,
+   692,
+   750,
+   726
+  ],
+  "polygon": [
+   [
+    333,
+    698
+   ],
+   [
+    333,
+    724
+   ],
+   [
+    748,
+    724
+   ],
+   [
+    748,
+    692
+   ],
+   [
+    625,
+    692
+   ],
+   [
+    598,
+    692
+   ],
+   [
+    544,
+    692
+   ],
+   [
+    539,
+    692
+   ],
+   [
+    424,
+    692
+   ],
+   [
+    359,
+    692
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "text",
+  "content": "- a bank statement showing where your deposit of £28,500 has come from;",
+  "bbox_2d": [
+   333,
+   740,
+   914,
+   775
+  ],
+  "polygon": [
+   [
+    333,
+    740
+   ],
+   [
+    333,
+    773
+   ],
+   [
+    913,
+    773
+   ],
+   [
+    913,
+    740
+   ]
+  ]
+ },
+ {
+  "index": 14,
+  "label": "text",
+  "content": "- your mortgage offer, as soon as your lender issues it.",
+  "bbox_2d": [
+   333,
+   785,
+   762,
+   821
+  ],
+  "polygon": [
+   [
+    333,
+    791
+   ],
+   [
+    333,
+    819
+   ],
+   [
+    760,
+    819
+   ],
+   [
+    760,
+    785
+   ],
+   [
+    364,
+    785
+   ]
+  ]
+ },
+ {
+  "index": 15,
+  "label": "text",
+  "content": "Our fee quotation is enclosed. Please sign and return it by Friday 17 February 2023 so that Hannah can order the local authority and drainage searches without delay.",
+  "bbox_2d": [
+   327,
+   845,
+   956,
+   922
+  ],
+  "polygon": [
+   [
+    327,
+    851
+   ],
+   [
+    332,
+    920
+   ],
+   [
+    955,
+    920
+   ],
+   [
+    955,
+    845
+   ]
+  ]
+ }
+]

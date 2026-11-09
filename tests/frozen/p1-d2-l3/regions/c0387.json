@@ -1,0 +1,601 @@
+[
+ {
+  "index": 0,
+  "label": "header_image",
+  "content": "Juniper COUNTRY & GARDEN",
+  "bbox_2d": [
+   42,
+   39,
+   367,
+   81
+  ],
+  "polygon": [
+   [
+    42,
+    39
+   ],
+   [
+    42,
+    79
+   ],
+   [
+    365,
+    79
+   ],
+   [
+    365,
+    45
+   ],
+   [
+    340,
+    39
+   ],
+   [
+    322,
+    39
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "header",
+  "content": "APRIL 2019",
+  "bbox_2d": [
+   860,
+   49,
+   954,
+   69
+  ],
+  "polygon": [
+   [
+    860,
+    49
+   ],
+   [
+    860,
+    67
+   ],
+   [
+    953,
+    67
+   ],
+   [
+    953,
+    49
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "doc_title",
+  "content": "What a Rooftop in Ayr Taught Me About Bees",
+  "bbox_2d": [
+   39,
+   115,
+   957,
+   234
+  ],
+  "polygon": [
+   [
+    39,
+    115
+   ],
+   [
+    39,
+    233
+   ],
+   [
+    947,
+    233
+   ],
+   [
+    956,
+    214
+   ],
+   [
+    952,
+    115
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "text",
+  "content": "Two hives, one flat roof and a first winter that nearly ended it all WORDS BY IMOGEN NWOSU · PHOTOGRAPHS BY YUSUF FAIRCLOUGH",
+  "bbox_2d": [
+   39,
+   246,
+   612,
+   310
+  ],
+  "polygon": [
+   [
+    39,
+    246
+   ],
+   [
+    39,
+    308
+   ],
+   [
+    611,
+    308
+   ],
+   [
+    611,
+    246
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "text",
+  "content": "When I carried the first hive up four flights of stairs in a Salisbury removals box, I assumed the hard part was over. It was not. The roof above our flat in Ayr is exposed to every wind the Firth can send, and for the first month the colony hummed in a way that suggested it agreed.",
+  "bbox_2d": [
+   39,
+   331,
+   476,
+   467
+  ],
+  "polygon": [
+   [
+    39,
+    331
+   ],
+   [
+    39,
+    466
+   ],
+   [
+    475,
+    466
+   ],
+   [
+    470,
+    331
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "text",
+  "content": "Arjun Patel, who has kept bees on the Ayrshire coast for thirty years, came round with a flask of tea and a plain verdict. \"You have put them where you would like to sit,\" he said, \"not where they would like to live.\"",
+  "bbox_2d": [
+   38,
+   478,
+   484,
+   585
+  ],
+  "polygon": [
+   [
+    38,
+    478
+   ],
+   [
+    38,
+    584
+   ],
+   [
+    482,
+    584
+   ],
+   [
+    482,
+    478
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "paragraph_title",
+  "content": "\"You have put them where you would like to sit, not where they would like to live.\"",
+  "bbox_2d": [
+   40,
+   620,
+   463,
+   725
+  ],
+  "polygon": [
+   [
+    40,
+    620
+   ],
+   [
+    40,
+    724
+   ],
+   [
+    462,
+    724
+   ],
+   [
+    462,
+    620
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "text",
+  "content": "ARJUN PATEL, BEEKEEPER",
+  "bbox_2d": [
+   40,
+   731,
+   247,
+   756
+  ],
+  "polygon": [
+   [
+    40,
+    731
+   ],
+   [
+    40,
+    754
+   ],
+   [
+    246,
+    754
+   ],
+   [
+    246,
+    731
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "text",
+  "content": "He was right, and moving the hives by two metres behind a low screen of willow hurdles changed the whole mood of the roof. Foragers stopped fighting the gusts and started flying a clear line over the chimney pots.",
+  "bbox_2d": [
+   39,
+   786,
+   477,
+   896
+  ],
+  "polygon": [
+   [
+    39,
+    792
+   ],
+   [
+    39,
+    894
+   ],
+   [
+    476,
+    894
+   ],
+   [
+    476,
+    786
+   ],
+   [
+    65,
+    786
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "text",
+  "content": "1. Shelter first. A windbreak matters more than a south-facing aspect on an exposed roof.",
+  "bbox_2d": [
+   512,
+   386,
+   921,
+   439
+  ],
+  "polygon": [
+   [
+    512,
+    391
+   ],
+   [
+    512,
+    438
+   ],
+   [
+    920,
+    438
+   ],
+   [
+    920,
+    386
+   ],
+   [
+    752,
+    386
+   ],
+   [
+    626,
+    386
+   ],
+   [
+    617,
+    386
+   ],
+   [
+    572,
+    386
+   ],
+   [
+    557,
+    386
+   ],
+   [
+    543,
+    386
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "paragraph_title",
+  "content": "Five lessons for a first year",
+  "bbox_2d": [
+   511,
+   343,
+   834,
+   379
+  ],
+  "polygon": [
+   [
+    511,
+    343
+   ],
+   [
+    511,
+    359
+   ],
+   [
+    511,
+    378
+   ],
+   [
+    832,
+    378
+   ],
+   [
+    832,
+    343
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "text",
+  "content": "2. Water nearby. A shallow tray with pebbles keeps bees off the neighbours' washing.",
+  "bbox_2d": [
+   511,
+   447,
+   948,
+   500
+  ],
+  "polygon": [
+   [
+    511,
+    452
+   ],
+   [
+    511,
+    499
+   ],
+   [
+    947,
+    499
+   ],
+   [
+    947,
+    452
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "text",
+  "content": "3. Inspect weekly from April to July, and no more often than that.",
+  "bbox_2d": [
+   511,
+   507,
+   953,
+   559
+  ],
+  "polygon": [
+   [
+    511,
+    512
+   ],
+   [
+    511,
+    557
+   ],
+   [
+    952,
+    557
+   ],
+   [
+    952,
+    512
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "text",
+  "content": "4. Feed in September, whatever the autumn looks like.",
+  "bbox_2d": [
+   511,
+   569,
+   913,
+   595
+  ],
+  "polygon": [
+   [
+    511,
+    569
+   ],
+   [
+    511,
+    593
+   ],
+   [
+    912,
+    593
+   ],
+   [
+    912,
+    569
+   ]
+  ]
+ },
+ {
+  "index": 14,
+  "label": "text",
+  "content": "5. Join a local association; ours meets on the second Tuesday of each month.",
+  "bbox_2d": [
+   511,
+   605,
+   954,
+   655
+  ],
+  "polygon": [
+   [
+    511,
+    605
+   ],
+   [
+    511,
+    653
+   ],
+   [
+    953,
+    653
+   ],
+   [
+    953,
+    605
+   ]
+  ]
+ },
+ {
+  "index": 15,
+  "label": "text",
+  "content": "Our first honey, 14 kg from two hives, was thin, floral and gone by Christmas. The colonies came through the winter at full strength, and Arjun has promised to send over a spare queen in May.",
+  "bbox_2d": [
+   510,
+   672,
+   944,
+   780
+  ],
+  "polygon": [
+   [
+    510,
+    672
+   ],
+   [
+    510,
+    778
+   ],
+   [
+    943,
+    778
+   ],
+   [
+    943,
+    672
+   ]
+  ]
+ },
+ {
+  "index": 16,
+  "label": "text",
+  "content": "Would I do it again? I already am. The third hive arrives next week.",
+  "bbox_2d": [
+   510,
+   792,
+   948,
+   844
+  ],
+  "polygon": [
+   [
+    510,
+    797
+   ],
+   [
+    510,
+    842
+   ],
+   [
+    947,
+    842
+   ],
+   [
+    947,
+    797
+   ],
+   [
+    539,
+    792
+   ]
+  ]
+ },
+ {
+  "index": 17,
+  "label": "footer",
+  "content": "Juniper Country & Garden",
+  "bbox_2d": [
+   40,
+   934,
+   200,
+   954
+  ],
+  "polygon": [
+   [
+    40,
+    934
+   ],
+   [
+    40,
+    953
+   ],
+   [
+    198,
+    953
+   ],
+   [
+    198,
+    934
+   ]
+  ]
+ },
+ {
+  "index": 18,
+  "label": "number",
+  "content": "46",
+  "bbox_2d": [
+   938,
+   934,
+   956,
+   952
+  ],
+  "polygon": [
+   [
+    938,
+    934
+   ],
+   [
+    938,
+    950
+   ],
+   [
+    955,
+    950
+   ],
+   [
+    955,
+    934
+   ]
+  ]
+ }
+]

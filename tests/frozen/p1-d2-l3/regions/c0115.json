@@ -1,0 +1,583 @@
+[
+ {
+  "index": 0,
+  "label": "header_image",
+  "content": "Mountain",
+  "bbox_2d": [
+   453,
+   43,
+   544,
+   75
+  ],
+  "polygon": [
+   [
+    453,
+    43
+   ],
+   [
+    453,
+    74
+   ],
+   [
+    542,
+    74
+   ],
+   [
+    542,
+    43
+   ]
+  ]
+ },
+ {
+  "index": 1,
+  "label": "doc_title",
+  "content": "PLOVER QUARRY",
+  "bbox_2d": [
+   319,
+   89,
+   673,
+   109
+  ],
+  "polygon": [
+   [
+    319,
+    89
+   ],
+   [
+    319,
+    108
+   ],
+   [
+    671,
+    108
+   ],
+   [
+    671,
+    89
+   ]
+  ]
+ },
+ {
+  "index": 2,
+  "label": "text",
+  "content": "Outfitters & Supply Co.",
+  "bbox_2d": [
+   321,
+   115,
+   673,
+   130
+  ],
+  "polygon": [
+   [
+    321,
+    115
+   ],
+   [
+    321,
+    120
+   ],
+   [
+    321,
+    129
+   ],
+   [
+    671,
+    129
+   ],
+   [
+    671,
+    115
+   ]
+  ]
+ },
+ {
+  "index": 3,
+  "label": "text",
+  "content": "2210 Cotton Ave, Macon, GA 31201",
+  "bbox_2d": [
+   253,
+   131,
+   740,
+   145
+  ],
+  "polygon": [
+   [
+    253,
+    131
+   ],
+   [
+    253,
+    145
+   ],
+   [
+    738,
+    145
+   ],
+   [
+    738,
+    131
+   ]
+  ]
+ },
+ {
+  "index": 4,
+  "label": "text",
+  "content": "Tel (478) 555-0143 · Store #0417",
+  "bbox_2d": [
+   253,
+   147,
+   742,
+   163
+  ],
+  "polygon": [
+   [
+    253,
+    147
+   ],
+   [
+    253,
+    162
+   ],
+   [
+    740,
+    162
+   ],
+   [
+    740,
+    147
+   ]
+  ]
+ },
+ {
+  "index": 5,
+  "label": "table",
+  "content": "<table><thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Amount</th></tr></thead><tbody><tr><td>Canvas tent stakes 12pk</td><td>2</td><td>8.49</td><td>16.98</td></tr><tr><td>Trail mix 16oz</td><td>3</td><td>5.25</td><td>15.75</td></tr><tr><td>Wool socks, grey L</td><td>1</td><td>14.99</td><td>14.99</td></tr><tr><td>Water filter cartridge</td><td>1</td><td>22.00</td><td>22.00</td></tr><tr><td>Headlamp AAA batteries</td><td>2</td><td>6.50</td><td>13.00</td></tr><tr><td>Fire starter cubes</td><td>1</td><td>4.75</td><td>4.75</td></tr><tr><td>Enamel mug, blue</td><td>2</td><td>9.00</td><td>18.00</td></tr><tr><td>Paracord 50ft</td><td>1</td><td>7.99</td><td>7.99</td></tr><tr><td>Member discount 10%</td><td></td><td></td><td>-11.35</td></tr></tbody><thead><tr><th colspan=\"4\">Subtotal</th></tr><tr><th colspan=\"4\">GA sales tax 8.00%</th></tr></thead><tbody><tr><td colspan=\"4\"><strong>TOTAL</strong></td><td><strong>$110.28</strong></td></tr><tr><td colspan=\"3\">Visa **** 4417</td><td>110.28</td></tr><tr><td colspan=\"3\">Change due</td><td>0.00</td></tr></tbody><thead><tr><th colspan=\"4\">Auth code: 83Q2A1</th><td>Ref: 0048812</td></tr><tr><td colspan=\"3\">Items sold: 13</td><td>Savings: $11.35</td></tr></thead></tbody></table>",
+  "bbox_2d": [
+   105,
+   181,
+   894,
+   635
+  ],
+  "polygon": [
+   [
+    111,
+    181
+   ],
+   [
+    105,
+    634
+   ],
+   [
+    888,
+    634
+   ],
+   [
+    888,
+    187
+   ]
+  ]
+ },
+ {
+  "index": 6,
+  "label": "paragraph_title",
+  "content": "Returns policy",
+  "bbox_2d": [
+   107,
+   649,
+   328,
+   665
+  ],
+  "polygon": [
+   [
+    107,
+    649
+   ],
+   [
+    107,
+    664
+   ],
+   [
+    326,
+    664
+   ],
+   [
+    326,
+    649
+   ]
+  ]
+ },
+ {
+  "index": 7,
+  "label": "text",
+  "content": "- Unused items may be returned within 30 days.",
+  "bbox_2d": [
+   117,
+   668,
+   761,
+   684
+  ],
+  "polygon": [
+   [
+    117,
+    668
+   ],
+   [
+    123,
+    683
+   ],
+   [
+    759,
+    683
+   ],
+   [
+    759,
+    668
+   ]
+  ]
+ },
+ {
+  "index": 8,
+  "label": "text",
+  "content": "- Bring this receipt and the card used.",
+  "bbox_2d": [
+   119,
+   685,
+   667,
+   699
+  ],
+  "polygon": [
+   [
+    119,
+    685
+   ],
+   [
+    119,
+    698
+   ],
+   [
+    665,
+    698
+   ],
+   [
+    665,
+    685
+   ]
+  ]
+ },
+ {
+  "index": 9,
+  "label": "text",
+  "content": "- Opened batteries and fuel are final sale.",
+  "bbox_2d": [
+   119,
+   701,
+   721,
+   715
+  ],
+  "polygon": [
+   [
+    119,
+    701
+   ],
+   [
+    119,
+    714
+   ],
+   [
+    719,
+    714
+   ],
+   [
+    719,
+    701
+   ]
+  ]
+ },
+ {
+  "index": 10,
+  "label": "paragraph_title",
+  "content": "How did we do?",
+  "bbox_2d": [
+   109,
+   720,
+   328,
+   734
+  ],
+  "polygon": [
+   [
+    109,
+    720
+   ],
+   [
+    109,
+    733
+   ],
+   [
+    326,
+    733
+   ],
+   [
+    326,
+    720
+   ]
+  ]
+ },
+ {
+  "index": 11,
+  "label": "text",
+  "content": "1. Visit plover-quarry.example.com/survey",
+  "bbox_2d": [
+   109,
+   739,
+   686,
+   754
+  ],
+  "polygon": [
+   [
+    109,
+    739
+   ],
+   [
+    109,
+    753
+   ],
+   [
+    684,
+    753
+   ],
+   [
+    684,
+    739
+   ]
+  ]
+ },
+ {
+  "index": 12,
+  "label": "text",
+  "content": "2. Enter code 4817-2290-1356",
+  "bbox_2d": [
+   109,
+   755,
+   509,
+   770
+  ],
+  "polygon": [
+   [
+    109,
+    755
+   ],
+   [
+    109,
+    770
+   ],
+   [
+    507,
+    770
+   ],
+   [
+    507,
+    755
+   ]
+  ]
+ },
+ {
+  "index": 13,
+  "label": "text",
+  "content": "3. Win a $100 gift card, drawn monthly",
+  "bbox_2d": [
+   111,
+   771,
+   646,
+   786
+  ],
+  "polygon": [
+   [
+    111,
+    776
+   ],
+   [
+    111,
+    785
+   ],
+   [
+    644,
+    785
+   ],
+   [
+    644,
+    776
+   ],
+   [
+    625,
+    771
+   ],
+   [
+    617,
+    771
+   ],
+   [
+    590,
+    771
+   ],
+   [
+    580,
+    771
+   ],
+   [
+    501,
+    771
+   ],
+   [
+    496,
+    771
+   ],
+   [
+    117,
+    771
+   ]
+  ]
+ },
+ {
+  "index": 14,
+  "label": "text",
+  "content": "Customer signature",
+  "bbox_2d": [
+   109,
+   807,
+   346,
+   820
+  ],
+  "polygon": [
+   [
+    109,
+    807
+   ],
+   [
+    109,
+    819
+   ],
+   [
+    344,
+    819
+   ],
+   [
+    344,
+    807
+   ],
+   [
+    292,
+    807
+   ],
+   [
+    275,
+    807
+   ],
+   [
+    261,
+    807
+   ],
+   [
+    253,
+    807
+   ],
+   [
+    225,
+    807
+   ],
+   [
+    180,
+    807
+   ],
+   [
+    175,
+    807
+   ],
+   [
+    171,
+    807
+   ],
+   [
+    163,
+    807
+   ],
+   [
+    150,
+    807
+   ],
+   [
+    144,
+    807
+   ],
+   [
+    140,
+    807
+   ],
+   [
+    113,
+    807
+   ]
+  ]
+ },
+ {
+  "index": 15,
+  "label": "text",
+  "content": "Carlos Delgado",
+  "bbox_2d": [
+   403,
+   870,
+   592,
+   884
+  ],
+  "polygon": [
+   [
+    403,
+    870
+   ],
+   [
+    403,
+    883
+   ],
+   [
+    590,
+    883
+   ],
+   [
+    590,
+    870
+   ]
+  ]
+ },
+ {
+  "index": 16,
+  "label": "footer",
+  "content": "THANK YOU FOR SHOPPING WITH US\nFounded 1987, Macon, GA · Eugene, OR\nPrinted 05/21/2024 14:33",
+  "bbox_2d": [
+   265,
+   906,
+   732,
+   951
+  ],
+  "polygon": [
+   [
+    265,
+    921
+   ],
+   [
+    265,
+    950
+   ],
+   [
+    730,
+    950
+   ],
+   [
+    726,
+    906
+   ],
+   [
+    271,
+    906
+   ]
+  ]
+ }
+]
