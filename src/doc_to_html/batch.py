@@ -355,6 +355,25 @@ def convert_page(model: str, name: str, png: Path) -> Attempt:
     return ollama_converter(model)(name, png)
 
 
+def d2_page(name: str, png: Path) -> Attempt:
+    """One page through arm D2 (spec 0023), in whichever process calls it."""
+    from .parser_first import attempt
+    result: Attempt = attempt(name, png)
+    return result
+
+
+def bounded_d2(page_minutes: float | None) -> Converter:
+    """Arm D2's converter, each page in a child process stopped at the limit."""
+    if not page_minutes:
+        return d2_page
+
+    def convert(name: str, png: Path) -> Attempt:
+        result: Attempt = bounded(d2_page, (name, png), page_minutes * 60)
+        return result
+
+    return convert
+
+
 def bounded_converter(model: str, page_minutes: float | None) -> Converter:
     """The real converter, each page in a child process stopped at the limit
     (`PAGE_MINUTES`); with no limit, in this process."""
@@ -442,7 +461,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--page-minutes", type=float, default=PAGE_MINUTES,
                         help="stop a page after this long and record it as timed out; 0 for no limit")
     parser.add_argument("--status", action="store_true", help="say where the run is and stop")
+    parser.add_argument("--arm", choices=("today", "d2"), default="today",
+                        help="today's pipeline, or D2: GLM-OCR's pipeline, the adapter, our "
+                             "looks (spec 0023); D2 reads with glm-ocr:latest")
     args = parser.parse_args(argv)
+    if args.arm == "d2":
+        from .parser_first import MODEL
+        args.model = MODEL
 
     run = REPO / "debug" / "runs" / args.label
     if args.status:
@@ -457,9 +482,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         run.mkdir(parents=True, exist_ok=True)
         if fresh:
             (run / "host.txt").write_text(host + "\n")
+            (run / "arm.txt").write_text(args.arm + "\n")
             (run / "ollama_ps_before.txt").write_text(resident_split(host))
         result = run_batch(run, wanted, model=args.model,
-                           convert=bounded_converter(args.model, args.page_minutes),
+                           convert=(bounded_d2(args.page_minutes) if args.arm == "d2"
+                                    else bounded_converter(args.model, args.page_minutes)),
                            say=lambda line: print(line, flush=True),
                            page_minutes=args.page_minutes)
         (run / "ollama_ps_after.txt").write_text(resident_split(host))
