@@ -2582,7 +2582,718 @@
      }
     }
    ]
+  },
+  {
+   "name": "Round 7",
+   "date": "2026-11-09",
+   "title": "Round 7: the L3 review, fifteen spot checks",
+   "intro": "Round 6 is recorded: the L3 set took the panel's five PDF pages that are not dense (41 pages), and every page was opened. Claude has now reviewed all 37 converted pages; four timed out. Issues 1 to 9 are every check fault Claude rejected, on 10 pages. Issues 10 to 13 are new kinds of fault Claude added, which no check raises. Issues 14 and 15 are two of Claude's confirmed majors, drawn at random. Click a decision: it saves and the next issue opens.",
+   "about": "Round 7: spec 0022's spot checks of Claude's review of L3-baseline (37 pages opened). 1-9 cover every rejected check fault (27 faults on 10 pages); 10-13 are one example of each kind of added major not shown before; 14-15 are confirmed check majors drawn at random (seed 7) on pages not otherwise in this round.",
+   "issues": [
+    {
+     "key": "l3-ligature",
+     "kind": "false",
+     "page": "c0082",
+     "run": "L3-baseline",
+     "title": "A ligature read as a spelling mistake",
+     "what": "This PDF page prints “specific” and “fitness” with an fi ligature (fi joined into one glyph). Our render draws both words as printed.",
+     "checks": "Major, three times: “specifc → specific”, “ftness → fitness”.",
+     "claude": "A false alarm. The PDF's text layer drops the ligature, and this check compares that raw text without the page's spelling map. The words check already uses the map.",
+     "often": "3 majors on 1 page; PDF pages only.",
+     "proposes": "Fix the check: map each source word through the page's spelling map before comparing. Pinned by a unit test with its own map, no panel page.",
+     "source_crop": [
+      60,
+      715,
+      700,
+      815
+     ],
+     "render_crop": [
+      60,
+      615,
+      700,
+      735
+     ],
+     "source_marks": [
+      [
+       176,
+       732,
+       246,
+       756
+      ],
+      [
+       174,
+       755,
+       235,
+       779
+      ],
+      [
+       281,
+       778,
+       331,
+       802
+      ]
+     ],
+     "render_marks": [
+      [
+       165,
+       630,
+       233,
+       653
+      ],
+      [
+       183,
+       671,
+       251,
+       694
+      ],
+      [
+       289,
+       701,
+       347,
+       724
+      ]
+     ]
+    },
+    {
+     "key": "l3-copies",
+     "kind": "false",
+     "page": "c0476",
+     "run": "L3-baseline",
+     "title": "Repeated words paired with the wrong card",
+     "what": "Six dish cards each print “Serves 2” and a price. Our render draws the cards one under another (a real fault, counted on its own), but each card's words stay together, 01 to 06 in order.",
+     "checks": "Major, four times: two cards' words “alternate in the output's reading order”, card 1 against card 6 among them.",
+     "claude": "A false alarm. The check pairs the six copies of “Serves 2” by where their neighbours moved. On a page whose grid became one column, that sends card 6's copy to card 1's.",
+     "often": "4 majors on 1 page.",
+     "proposes": "Fix the check: re-pair copies of a word only where their neighbours moved together; otherwise keep the pairing in reading order.",
+     "source_crop": [
+      10,
+      130,
+      770,
+      495
+     ],
+     "render_crop": [
+      10,
+      135,
+      770,
+      810
+     ],
+     "source_marks": [
+      [
+       22,
+       277,
+       70,
+       291
+      ],
+      [
+       527,
+       467,
+       575,
+       481
+      ]
+     ],
+     "render_marks": [
+      [
+       29,
+       219,
+       78,
+       234
+      ],
+      [
+       29,
+       781,
+       78,
+       796
+      ]
+     ]
+    },
+    {
+     "key": "l3-hours",
+     "kind": "false",
+     "page": "c0476",
+     "run": "L3-baseline",
+     "title": "A line beside a heading counted inside its section",
+     "what": "“Tuesday to Saturday 5:00 to 9:00 pm” is printed top right, beside the heading “Small plates”. Our render draws it there too.",
+     "checks": "Major, five times: “Small plates” and each card “alternate in the output's reading order”.",
+     "claude": "A false alarm. The check takes everything right of the heading into its section, the hours included. The HTML writes the hours after the table, but the eye reads them where they are drawn.",
+     "often": "5 majors on 1 page.",
+     "proposes": "Fix the check: a heading's section leaves out what is printed beside the heading.",
+     "source_crop": [
+      0,
+      15,
+      780,
+      135
+     ],
+     "render_crop": [
+      0,
+      15,
+      780,
+      135
+     ],
+     "source_marks": [
+      [
+       657,
+       39,
+       758,
+       52
+      ],
+      [
+       22,
+       38,
+       187,
+       73
+      ]
+     ],
+     "render_marks": [
+      [
+       635,
+       46,
+       758,
+       61
+      ],
+      [
+       29,
+       48,
+       101,
+       63
+      ]
+     ]
+    },
+    {
+     "key": "l3-columns",
+     "kind": "false",
+     "page": "c0431",
+     "run": "L3-baseline",
+     "title": "A table in the right column called “under another heading”",
+     "what": "Section 1's price table sits in the right column under “Section 1 — Fasteners”, on the page and in our render. “Your account rep” heads the left sidebar.",
+     "checks": "Major: “printed under ‘Section 1 — Fasteners’, drawn under ‘Your account rep’”.",
+     "claude": "A false alarm. The check reads the HTML top to bottom; the eye reads each column. Same on c0334, where “Residents are asked…” is called under “Charges”.",
+     "often": "2 majors on 2 pages.",
+     "proposes": "Fix the check: judge which heading a block is under column by column, as the order check already does.",
+     "source_crop": [
+      0,
+      90,
+      980,
+      600
+     ],
+     "render_crop": [
+      0,
+      145,
+      980,
+      800
+     ],
+     "source_marks": [
+      [
+       287,
+       102,
+       346,
+       120
+      ],
+      [
+       801,
+       136,
+       853,
+       151
+      ],
+      [
+       20,
+       565,
+       160,
+       581
+      ]
+     ],
+     "render_marks": [
+      [
+       284,
+       159,
+       342,
+       175
+      ],
+      [
+       796,
+       223,
+       853,
+       238
+      ],
+      [
+       20,
+       772,
+       145,
+       787
+      ]
+     ]
+    },
+    {
+     "key": "l3-dropcap",
+     "kind": "false",
+     "page": "c0334",
+     "run": "L3-baseline",
+     "title": "A drop cap called a merged word",
+     "what": "The notice opens with a large drop cap “N” followed by “otice”: the reader reads “Notice”. Our render draws “Notice” as one word in body type.",
+     "checks": "Major: “n otice → notice”, two words merged into one.",
+     "claude": "A false alarm on the word: “Notice” is what the page says. The lost drop cap is real, and is added as a minor.",
+     "often": "1 major on 1 page.",
+     "proposes": "Fix the check: a drop cap joined to the rest of its word is that word, not a merge.",
+     "source_crop": [
+      30,
+      170,
+      460,
+      270
+     ],
+     "render_crop": [
+      0,
+      220,
+      460,
+      300
+     ],
+     "source_marks": [
+      [
+       44,
+       184,
+       129,
+       257
+      ]
+     ],
+     "render_marks": [
+      [
+       0,
+       236,
+       40,
+       251
+      ]
+     ]
+    },
+    {
+     "key": "l3-ground",
+     "kind": "false",
+     "page": "c0074",
+     "run": "L3-baseline",
+     "title": "Words on a dark tab, called “drawn on dark”",
+     "what": "On this PDF page, “Part II” is white on a black tab, and “Signature” beside it is on white. Our render draws the same.",
+     "checks": "Major: “printed on light, drawn on dark”.",
+     "claude": "A false alarm: the check takes one ground for the whole line, but this line sits on two. A similar case on c0082: a green band drawn green, where only its heading's colour changed (a minor).",
+     "often": "2 majors on 2 pages.",
+     "proposes": "No fix yet: both cases are lines that sit on two grounds. Fix it if more cases turn up.",
+     "source_crop": [
+      40,
+      880,
+      700,
+      940
+     ],
+     "render_crop": [
+      40,
+      995,
+      700,
+      1050
+     ],
+     "source_marks": [
+      [
+       65,
+       903,
+       215,
+       921
+      ]
+     ],
+     "render_marks": [
+      [
+       65,
+       1015,
+       202,
+       1033
+      ]
+     ]
+    },
+    {
+     "key": "l3-rules",
+     "kind": "false",
+     "page": "c0523",
+     "run": "L3-baseline",
+     "title": "A table with every rule drawn, called merged",
+     "what": "The passenger table has two rules between its columns and one between its rows. Our render draws all three.",
+     "checks": "Major: “1 of the 7 rules the page draws between cells are not drawn”.",
+     "claude": "A false alarm by eye: every rule between two cells is drawn. Claude cannot find the rule the check counts as missing.",
+     "often": "1 major on 1 page.",
+     "proposes": "Look into the check's rule count on this table before changing anything.",
+     "source_crop": [
+      10,
+      180,
+      690,
+      265
+     ],
+     "render_crop": [
+      0,
+      300,
+      700,
+      390
+     ],
+     "source_marks": [
+      [
+       26,
+       193,
+       674,
+       254
+      ]
+     ],
+     "render_marks": [
+      [
+       18,
+       310,
+       608,
+       375
+      ]
+     ]
+    },
+    {
+     "key": "l3-align",
+     "kind": "false",
+     "page": "c0575",
+     "run": "L3-baseline",
+     "title": "A line where the page puts it, called moved",
+     "what": "“Spring offer ends 30 June 2024” sits at the right end of the green bar, on the page and in our render.",
+     "checks": "Minor: “printed right, drawn left”.",
+     "claude": "A false alarm: the line is where the page puts it. The same on c0070: the date sits flush left under its label “DATE” in both; the whole field moved right, which is spacing.",
+     "often": "2 minors on 2 pages.",
+     "proposes": "No alignment fault. Your round 3 line holds: raise alignment only when the line itself moves.",
+     "source_crop": [
+      40,
+      650,
+      840,
+      712
+     ],
+     "render_crop": [
+      0,
+      830,
+      860,
+      885
+     ],
+     "source_marks": [
+      [
+       559,
+       670,
+       790,
+       690
+      ]
+     ],
+     "render_marks": [
+      [
+       587,
+       848,
+       790,
+       866
+      ]
+     ]
+    },
+    {
+     "key": "l3-moot",
+     "kind": "false",
+     "page": "c0300",
+     "run": "L3-baseline",
+     "title": "A heading judged though it is not drawn at all",
+     "what": "This PDF page's whole PG7.2026 table, heading included, is not drawn: the straightening step crops it away, and those lost words are confirmed. Our render opens with PG8.2026 (marked). The checks still judge PG7's heading for structure, size and weight, from a few of its words matched to other lines.",
+     "checks": "Five faults on PG7's heading: “table not kept”, “heading not kept”, two “sizes out of proportion”, “bold lost”.",
+     "claude": "Rejected: there is nothing drawn to judge, and the loss is already counted word by word. Similar on c0382: “Try it” is called bold lost, but it is drawn bold; its fault, the line split in two, is counted already.",
+     "often": "6 faults on 2 pages.",
+     "proposes": "Fix the check: skip the structure and type checks for a block mostly not drawn, as the order check already does.",
+     "source_crop": [
+      90,
+      100,
+      930,
+      200
+     ],
+     "render_crop": [
+      0,
+      0,
+      1000,
+      600
+     ],
+     "source_marks": [
+      [
+       108,
+       119,
+       887,
+       175
+      ]
+     ],
+     "render_marks": [
+      [
+       107,
+       536,
+       195,
+       558
+      ]
+     ]
+    },
+    {
+     "key": "l3-unreadable",
+     "kind": "added",
+     "page": "c0555",
+     "run": "L3-baseline",
+     "title": "A card drawn in a sliver: its words cannot be read",
+     "what": "The fourth step, “4 Roll out everywhere / Zara Burrows updates the till, the website and the shelf labels in one weekend.”, cannot be seen in our render. Its Zone is drawn as a white column a pixel or two wide (marked), and its dark words fall one per line down the dark ground beside it.",
+     "checks": "Nothing for these words: they are all in the HTML. The checks see the page's height (1.75) and some words drawn twice.",
+     "claude": "Major: the step cannot be read. A small figure Zone over its “4” takes the card's place in the row.",
+     "often": "2 pages: this one, and c0596, where “at” is drawn at 0.30 of the body and “Meet at:” reads “Meet.:”.",
+     "proposes": "Major. A new check: a line drawn narrower than its longest word, or smaller than a third of the body, is unreadable.",
+     "source_crop": [
+      600,
+      440,
+      1160,
+      560
+     ],
+     "render_crop": [
+      600,
+      440,
+      1160,
+      1100
+     ],
+     "source_marks": [
+      [
+       630,
+       455,
+       1140,
+       548
+      ]
+     ],
+     "render_marks": [
+      [
+       626,
+       465,
+       654,
+       990
+      ]
+     ]
+    },
+    {
+     "key": "l3-link",
+     "kind": "added",
+     "page": "c0547",
+     "run": "L3-baseline",
+     "title": "An accent word drawn as a link",
+     "what": "The slide's headline prints “beacon” in orange. Our render draws it blue and underlined, like a link.",
+     "checks": "Nothing: the checks compare colours only within a colour family, and none looks for an underline.",
+     "claude": "Major: it changes what the word seems to be (a link the page does not have). Round 5 made a heading's accent drawn black a minor; this is a different case, because a new meaning is added.",
+     "often": "2 pages: here (major), and an email address drawn as a link on c0555 (minor).",
+     "proposes": "Major when an accent word is drawn as a link; minor for an address the page prints plain.",
+     "source_crop": [
+      40,
+      110,
+      700,
+      270
+     ],
+     "render_crop": [
+      0,
+      260,
+      800,
+      510
+     ],
+     "source_marks": [
+      [
+       196,
+       123,
+       412,
+       196
+      ]
+     ],
+     "render_marks": [
+      [
+       175,
+       273,
+       460,
+       370
+      ]
+     ]
+    },
+    {
+     "key": "l3-chart",
+     "kind": "added",
+     "page": "c0467",
+     "run": "L3-baseline",
+     "title": "A bar chart drawn as loose numbers",
+     "what": "The page draws a bar chart of costs by quarter. Our render has no chart: its axis becomes table rows ($120 … $0), and the bar values a column of loose numbers.",
+     "checks": "They see words moved, the height and the legend's order. None says the chart is gone.",
+     "claude": "Major: no value can be tied to its quarter or its farm any more. The chart's Zone is classed as a table.",
+     "often": "1 page.",
+     "proposes": "Major. A chart is drawn as a figure (its pixels) unless its data can be read whole.",
+     "source_crop": [
+      10,
+      25,
+      630,
+      320
+     ],
+     "render_crop": [
+      10,
+      25,
+      630,
+      420
+     ],
+     "source_marks": [
+      [
+       44,
+       37,
+       608,
+       308
+      ]
+     ],
+     "render_marks": [
+      [
+       44,
+       40,
+       608,
+       410
+      ]
+     ]
+    },
+    {
+     "key": "l3-cardfill",
+     "kind": "added",
+     "page": "c0575",
+     "run": "L3-baseline",
+     "title": "Each card drawn as two boxes: the icon apart from its text",
+     "what": "Each of the four pale cards holds an icon and two lines. Our render draws the icon in a small box of its own, and the text in a second box beside it.",
+     "checks": "Nothing about the cards: the fill check compares the ground under each line, and the text is on pale green in both.",
+     "claude": "Major, a fill drawn another shape: it no longer reads as one card. The card fills are found, then given to no Zone.",
+     "often": "Added on 11 pages: cards, bands and headers split into one box per Zone.",
+     "proposes": "Major. The fill check should also compare each fill's outline with what is drawn.",
+     "source_crop": [
+      30,
+      245,
+      830,
+      465
+     ],
+     "render_crop": [
+      0,
+      330,
+      860,
+      620
+     ],
+     "source_marks": [
+      [
+       48,
+       256,
+       422,
+       356
+      ],
+      [
+       48,
+       372,
+       422,
+       453
+      ]
+     ],
+     "render_marks": [
+      [
+       0,
+       340,
+       430,
+       440
+      ],
+      [
+       0,
+       505,
+       430,
+       605
+      ]
+     ]
+    },
+    {
+     "key": "l3-spot-cells",
+     "kind": "spot",
+     "page": "c0243",
+     "run": "L3-baseline",
+     "title": "A BMI range drawn under “Measure”",
+     "what": "The table's last row prints “BMI” under Measure and “18.5 to 24.9 kg/m2” under Range. Our table ends at “Peak flow”, and “BMI” and its range come back as two loose lines under it.",
+     "checks": "Major: “drawn under ‘Measure’, printed under ‘Range’”.",
+     "claude": "Agree, major: the table answer stopped one row short, and that row's two cells were read again as loose lines.",
+     "often": "Cells in the wrong column: 5 pages.",
+     "proposes": "Keep major.",
+     "source_crop": [
+      380,
+      195,
+      780,
+      270
+     ],
+     "render_crop": [
+      380,
+      210,
+      780,
+      300
+     ],
+     "source_marks": [
+      [
+       401,
+       241,
+       422,
+       254
+      ],
+      [
+       586,
+       237,
+       761,
+       261
+      ]
+     ],
+     "render_marks": [
+      [
+       417,
+       253,
+       436,
+       265
+      ],
+      [
+       417,
+       271,
+       509,
+       285
+      ]
+     ]
+    },
+    {
+     "key": "l3-spot-twice",
+     "kind": "spot",
+     "page": "c0097",
+     "run": "L3-baseline",
+     "title": "A line drawn twice: as a title and as its own first line",
+     "what": "“A calculator may be used.” is printed once. Our render draws it twice: as the section's title, then again as its first line.",
+     "checks": "Major: its words are “drawn 1 more time than printed”.",
+     "claude": "Agree, major: the caption pass took the line as the Zone's title, and the body kept it too.",
+     "often": "Words invented: 24 pages; a title repeated in its body: 4 pages.",
+     "proposes": "Keep major.",
+     "source_crop": [
+      0,
+      290,
+      360,
+      330
+     ],
+     "render_crop": [
+      0,
+      440,
+      360,
+      490
+     ],
+     "source_marks": [
+      [
+       20,
+       306,
+       178,
+       318
+      ]
+     ],
+     "render_marks": [
+      [
+       10,
+       451,
+       149,
+       462
+      ],
+      [
+       10,
+       470,
+       153,
+       481
+      ]
+     ]
+    }
+   ]
   }
  ],
- "page_stamp": "Spec 0022 · L3 · the review's questions"
+ "page_stamp": "Spec 0022 · L3 · round 7: the review's spot checks"
 }

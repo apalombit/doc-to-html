@@ -1,6 +1,6 @@
 # The honest baseline: today's pipeline on panel pages nobody has tuned on
 
-**Status: decided 2026-11-08, issue #45; the conversion running.** The decisions are at the end.
+**Status: decided 2026-11-08, issue #45; converted 2026-11-09 (41 pages, 4 timed out), reviewed (37 opened, every one called), round 7 asked.** The decisions are at the end.
 - **This is step L3** of the level-up plan
   ([`../level-up.md`](../level-up.md) §6, decision 1 of §8), on branch
   `level-up`. Its outline is spec 0020's "L3 — the honest baseline"; its
