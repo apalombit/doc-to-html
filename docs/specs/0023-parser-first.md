@@ -603,9 +603,11 @@ recorded; each rests on one page.
 >    one-issue-at-a-time page (round 10; load the `artifact-capabilities`
 >    skill first; never re-show an issue he has decided,
 >    `docs/agents/review-issues.json`): the branch (D2 is on
->    `poc-parser-first`, ahead of `level-up`; Claude's
->    recommendation: fast-forward `level-up` to it and work there, today's
->    pipeline kept in the tree as it is); a D2 run over the dev pool to
+>    `poc-parser-first`, which `main` was fast-forwarded to on
+>    2026-11-10; `level-up` is behind both; Claude's recommendation: work
+>    on `poc-parser-first`, or a branch cut from it, and fast-forward
+>    `main` at each close; today's pipeline kept in the tree as it is);
+>    a D2 run over the dev pool to
 >    find our side's faults on pages that may be opened (231 pages, at
 >    P1's 26 s a page about 1 h 40); the order of the faults; and whether
 >    L5 ends with a second D2 run over the L3 set (18 minutes), compared
