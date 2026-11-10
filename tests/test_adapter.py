@@ -134,6 +134,33 @@ class TestGroups:
             region(6, "text", (420, 110, 600, 135))), [card, panel])
         assert sorted([r.index for r in g] for g in found) == [[0, 1, 2, 3], [4, 6], [5]]
 
+    def test_an_indented_line_continues_its_stack(self) -> None:
+        # c0573's sub-items, which the parser cuts from their items.
+        found = groups_of(regions(
+            region(0, "text", (100, 100, 450, 125)), region(1, "text", (130, 130, 450, 155)),
+            region(2, "text", (100, 160, 450, 185))), [])
+        assert [[r.index for r in g] for g in found] == [[0, 1, 2]]
+
+    def test_a_line_set_further_in_than_an_indent_does_not(self) -> None:
+        found = groups_of(regions(region(0, "text", (100, 100, 450, 125)),
+                                  region(1, "text", (200, 130, 450, 155))), [])
+        assert len(found) == 2
+
+    def test_an_indented_chip_in_a_row_of_chips_does_not_join(self) -> None:
+        # c0257's `9 URGENT` beside `27 ROUTINE`, under the headline.
+        found = groups_of(regions(
+            region(0, "text", (40, 70, 700, 120)), region(1, "text", (40, 130, 800, 155)),
+            region(2, "text", (65, 175, 180, 197)), region(3, "text", (220, 175, 360, 197))), [])
+        assert sorted([r.index for r in g] for g in found) == [[0, 1], [2], [3]]
+
+    def test_a_join_that_would_reach_over_the_next_column_is_refused(self) -> None:
+        # c0402's table caption, wider than its column, under column 1.
+        found = groups_of(regions(
+            region(0, "text", (100, 100, 450, 125)), region(1, "text", (100, 130, 450, 155)),
+            region(2, "text", (100, 160, 450, 185)), region(3, "text", (520, 100, 900, 180)),
+            region(4, "text", (100, 190, 700, 215))), [])
+        assert sorted([r.index for r in g] for g in found) == [[0, 1, 2], [3], [4]]
+
     def test_a_region_alone_in_a_box_joins_no_stack(self) -> None:
         chip = box(95, 155, 310, 200)
         found = groups_of(regions(region(0, "text", (100, 100, 300, 140)),

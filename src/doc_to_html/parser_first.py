@@ -41,7 +41,8 @@ from .preprocess import (Rectified, _cv2, caption_band, equalise, figure_pixels,
                          zone_pixels, TARGET_LONG_EDGE)
 from .ir import Source
 from .render import render
-from .structure import separators, structure
+from .structure import _independent, _marked, _strips, separators, structure
+from .style import CONTAINED
 
 REPO = Path(__file__).resolve().parent.parent.parent
 
@@ -111,6 +112,77 @@ def uncut(region: Region, zones: Sequence[Zone]) -> Region:
     return region
 
 
+def parted(region: Region, zones: Sequence[Zone],
+           containers: Sequence[BBox] = ()) -> list[Region]:
+    """A one-flow region cut into its stretches, each stretch a gutter
+    parts into lanes that do not line up drawn as a `columns` region —
+    spec 0024, B. `structure` finds lanes at a drawn divider only; the
+    detector read a column as one block, the parser reads one block a
+    paragraph, so a column of the parser's Zones banded with the tall
+    Zone beside it and its second Zone was drawn under it: c0011's
+    questions under the travel diary.
+
+    A stretch is a run of Zones down the page, each starting above where
+    one before it ends; a gutter is an x none of its Zones reaches
+    across; it parts lanes when a Zone on one side stands beside two
+    stacked on the other (`structure._independent`), so two rows of
+    pairs that line up stay rows. **The split is where the lane's own
+    blocks begin**, not the gutter's middle: a lane is drawn from its
+    left edge, and invoice_0002's logo, set far right of the title,
+    stood at the left of a lane painted with its black. No constant.
+
+    **A Zone inside a drawn container is the container**, as in
+    `structure._columns`, and so is one inside a fill or frame the
+    page draws (`furniture`): c0112's header is one filled strip, and a
+    gutter between its fields parted it into lanes, each painted with
+    the strip's padding. c0011's two parts are two frames, and the
+    gutter between them stands."""
+    if region.flow is not Flow.SINGLE:
+        return [region]
+    boxes = sorted((zone.bbox for zone in zones
+                    if zone.bbox is not None and region.holds(zone.bbox)),
+                   key=lambda box: box.top)
+    stretches: list[list[BBox]] = []
+    for box in boxes:
+        if stretches and box.top < max(b.bottom for b in stretches[-1]):
+            stretches[-1].append(box)
+        else:
+            stretches.append([box])
+    found: list[Region] = []
+    for stretch in stretches:
+        splits: list[float] = []
+        held = [c for c in containers
+                if any(box.overlap_ratio(c) >= CONTAINED for box in stretch)]
+        blocks = [box for box in stretch
+                  if not any(box.overlap_ratio(c) >= CONTAINED for c in held)] + held
+        spans = sorted((box.left, box.right) for box in blocks)
+        reach = spans[0][1]
+        for left, right in spans[1:]:
+            if left > reach:
+                x = left
+                one = [box for box in stretch if box.right < x]
+                other = [box for box in stretch if box.left >= x]
+                if _independent(one, other) or _independent(other, one):
+                    splits.append(x)
+            reach = max(reach, right)
+        if splits:
+            found.append(Region(top=min(box.top for box in stretch),
+                                bottom=max(box.bottom for box in stretch),
+                                flow=Flow.COLUMNS, splits=tuple(splits)))
+    if not found:
+        return [region]
+    out: list[Region] = []
+    cursor = region.top
+    for lanes in found:
+        if lanes.top > cursor:
+            out.append(Region(top=cursor, bottom=lanes.top))
+        out.append(lanes)
+        cursor = lanes.bottom
+    if cursor < region.bottom:
+        out.append(Region(top=cursor, bottom=region.bottom))
+    return out
+
+
 def measure(document: Document, rectified: Rectified) -> None:
     """Today's measuring passes over the adapter's IR, in a Conversion's
     order, on the flat picture: the furniture, the palette and the ink;
@@ -124,12 +196,17 @@ def measure(document: Document, rectified: Rectified) -> None:
     document.furniture = furniture.find(plain, inverted=rectified.inverted, read=rectified.image)
     document.style = style_module.measure(plain, inverted=rectified.inverted, read=rectified.image,
                                           without=furniture.mask(document.furniture, plain.shape))
-    document.regions = [uncut(region, document.zones) for region in structure(
-        plain, [z.bbox for z in document.zones if z.bbox is not None],
-        ground=document.style.page_bg, inverted=rectified.inverted,
-        furniture=document.furniture)]
+    boxes = [z.bbox for z in document.zones if z.bbox is not None]
     drawn = style_module.rectangles(plain, ground=document.style.page_bg,
                                     inverted=rectified.inverted)
+    containers = (list(drawn) + _strips(_marked(plain, document.style.page_bg,
+                                                rectified.inverted), boxes)
+                  + [item.bbox for item in document.furniture
+                     if item.kind in ("fill", "frame")])
+    document.regions = [lanes for region in structure(
+        plain, boxes, ground=document.style.page_bg, inverted=rectified.inverted,
+        furniture=document.furniture)
+        for lanes in parted(uncut(region, document.zones), document.zones, containers)]
     own = style_module.boxes_for([z.bbox for z in document.zones], drawn)
     framed = rhythm.frames(document.zones, drawn, document.regions)
     ink = furniture.grounded(rectified.image, plain, document.furniture,

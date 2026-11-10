@@ -77,6 +77,11 @@ LINE = 0.025
 """A line's height as a share of the page's, where the page has no region of
 one line to measure it by."""
 
+INDENT = 0.05
+"""How far in from its column's left edge a block may start, as a share of
+the page's width, and still be the column's next block: c0573's sub-items,
+0.02 in, each a region of its own. Spec 0024, B."""
+
 _SYMBOLS = {"circ": "°", "times": "×", "div": "÷", "pm": "±", "mp": "∓", "cdot": "·",
             "approx": "≈", "le": "≤", "leq": "≤", "ge": "≥", "geq": "≥", "neq": "≠",
             "ne": "≠", "rightarrow": "→", "to": "→", "leftarrow": "←", "infty": "∞",
@@ -555,6 +560,52 @@ def _between(upper: BBox, lower: BBox, others: Sequence[Region]) -> bool:
     return False
 
 
+def _follows(stack: Sequence[Region], region: Region,
+             others: Sequence[Region] = ()) -> bool:
+    """Whether a region continues a stack's column: it starts or centres
+    where a block of the stack does (`_aligned`), or it sits inside the
+    stack's width, indented no more than `INDENT` (c0573's sub-items, which
+    the parser cuts from their items; spec 0024, B).
+
+    **An indented line stands alone on its line in the column.** One
+    sharing its line with another region inside the stack's width is the
+    first of a row of chips or tabs, not a sub-item: c0257's `9 URGENT`
+    beside `27 ROUTINE`, taken into the headline, and the headline drawn
+    a word a line beside the chip left over. Over the dev pages' indent
+    joins, 6 share their line so and all 6 are chip or tab rows; the 35
+    alone on theirs are sub-items, continuations and values."""
+    span = _union([r.box for r in stack])
+    if any(_aligned(r.box, region.box) for r in stack):
+        return True
+    return (span.left - ALIGNED <= region.box.left <= span.left + INDENT
+            and region.box.right <= span.right + ALIGNED
+            and not any(_one_line(region.box, o.box) and o.box.left < span.right
+                        and o.box.right > span.left
+                        for o in others if o is not region and o not in stack))
+
+
+def _crosses(stack: Sequence[Region], region: Region, others: Sequence[Region],
+             line: float) -> bool:
+    """Whether joining a region to a stack would draw the stack over a
+    region beside it: c0402's table caption, wider than its column, set
+    column 1 across column 2, and the page's gutters were lost. A region
+    inside the column's own width is not beside it (c0011's chip rows,
+    between its questions), and an overlap the parser's own boxes already
+    make is not the join's."""
+    before = _union([r.box for r in stack])
+    after = _union([before, region.box])
+
+    def over(a: BBox, b: BBox) -> bool:
+        return (min(a.bottom, b.bottom) - max(a.top, b.top) > 0.5 * line
+                and min(a.right, b.right) - max(a.left, b.left) > ALIGNED)
+
+    def inside(b: BBox) -> bool:
+        return b.left >= before.left - ALIGNED and b.right <= before.right + ALIGNED
+    return any(over(after, o.box) and not inside(o.box) and not over(before, o.box)
+               and not over(region.box, o.box)
+               for o in others if o is not region and o not in stack)
+
+
 def groups_of(regions: Sequence[Region], boxes: Sequence[BBox]) -> list[list[Region]]:
     """The regions grouped into what becomes one Zone each, in the
     parser's order of each group's first region. See the module's
@@ -583,9 +634,10 @@ def groups_of(regions: Sequence[Region], boxes: Sequence[BBox]) -> list[list[Reg
             gap = region.box.top - last.box.bottom
             reach = HEADING_GAP if last.label in TITLES and len(stack) == 1 else STACK_GAP
             if (last.role is region.role and -0.5 * line <= gap <= reach * line
-                    and _aligned(last.box, region.box)
+                    and _follows(stack, region, regions)
                     and not _between(last.box, region.box,
-                                     [r for r in regions if r is not last and r is not region])):
+                                     [r for r in regions if r is not last and r is not region])
+                    and not _crosses(stack, region, regions, line)):
                 if best is None or gap < best[0]:
                     best = (gap, stack)
         if best is not None:
