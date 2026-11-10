@@ -145,6 +145,25 @@ def inked(*rects: tuple[int, int, int, int]) -> np.ndarray:
     return image
 
 
+class TestBuilt:
+    """Spec 0024, C: a table counts as `spans.read`'s only once it is boxed."""
+
+    def test_a_spanned_table_with_its_boxes_keeps_them(self) -> None:
+        zone = table((RowRole.HEADER, ["Item", "Price"]), (RowRole.DATA, ["Tea", "2.00"]))
+        zone.rows[0].cells[0].span = 2
+        for row in zone.rows:
+            for c in row.cells:
+                c.bbox = at(0, 0, 10, 10)
+        assert len(locate._built(zone)) == 4
+
+    def test_a_spanned_table_with_no_box_is_placed_like_any_other(self) -> None:
+        # Arm D2's tables: spans and second lines from the parser's HTML.
+        zone = table((RowRole.HEADER, ["Item", "Price"]), (RowRole.DATA, ["Tea", "2.00"]))
+        zone.rows[0].cells[0].span = 2
+        zone.rows[1].cells[0].below = [cell("green")]
+        assert locate._built(zone) == set()
+
+
 class TestFallbacks:
     def test_a_table_cell_comes_from_its_row_and_its_column(self) -> None:
         image = inked((20, 20, 100, 30), (200, 20, 260, 30),

@@ -2505,7 +2505,9 @@ def _table(zone: Zone, document: Document) -> str:
         )
         in_place = places[position]
         hatch = anchors.rows.get((index_of, position)) if anchors else None
-        styled_row = _row_style(row, page, opens=not in_place) if read else ""
+        styled_row = (_row_style(row, page, opens=not in_place,
+                                 ink=document.style.ink if document.style else None)
+                      if read else "")
         if hatch is not None:
             styled_row = _merged(styled_row, _hatching(hatch, page))
         if any(column < len(row.cells) and row.cells[column].text.strip() for column in under):
@@ -2679,11 +2681,19 @@ def _rows_read(zone: Zone) -> bool:
     return any(row.under is not None for row in zone.rows)
 
 
-def _row_style(row: Row, page: _Page, *, opens: bool) -> str:
+def _row_style(row: Row, page: _Page, *, opens: bool,
+               ink: tuple[int, int, int] | None = None) -> str:
     """A row's own line and ground, as the page draws them: spec 0011, step
     4c. A row not read keeps the house rule, and a header that opens the
     table the house shade — one inside it, `menu_0012`'s `PUDDINGS`, never
-    had it."""
+    had it.
+
+    **A filled row's ink is chosen against its fill** where the page's
+    ink would be illegible on it, as `_header_style`'s is — spec 0024, C:
+    c0004's `1. DELEGATE`, white on navy, measured its fill and not its
+    ink, and was drawn dark on dark. Only for a row with a Cell whose
+    colour is not measured: a measured colour is the Cell's own, and
+    states it."""
     parts = []
     if row.under is None:
         parts.append("border-bottom:1px solid var(--rule)")
@@ -2697,6 +2707,11 @@ def _row_style(row: Row, page: _Page, *, opens: bool) -> str:
             parts.append(f"border-bottom:{width}px {row.under.kind} {colour}")
         if row.fill is not None:
             parts.append(f"background:{_rgb(row.fill)}")
+            readable = _readable_on(row.fill, ink) if ink is not None else None
+            if readable is not None and any(
+                    c.text.strip() and (c.look is None or c.look.color is None)
+                    for c in row.cells):
+                parts.append(f"color:{_rgb(readable)}")
     return f' style="{";".join(parts)}"' if parts else ""
 
 

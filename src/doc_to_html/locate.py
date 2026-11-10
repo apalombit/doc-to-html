@@ -418,10 +418,18 @@ def _built(zone: Zone) -> set[int]:
     whose lines it joined or whose cells it spans. Placed on the model's
     rows, each box is the grid's; placed again on the joined rows, the
     repeated subjects of `timetable_0019` find other rows. So once built,
-    the table keeps its boxes and its readings whole."""
+    the table keeps its boxes and its readings whole.
+
+    **Built means boxed** — spec 0024, C. Arm D2's tables come from the
+    parser's HTML with their spans and second lines and no box at all,
+    and taken for built they were never placed: on the dev pages, 3662
+    of their 3746 Cells unplaced, against 77 of 3133 in the other
+    tables. `spans.read` boxes every Cell it builds."""
     cells = [c for row in zone.rows for cell in row.cells for c in (cell, *cell.below)]
     if not any(cell.span is not None or cell.below for row in zone.rows
                for cell in row.cells):
+        return set()
+    if all(c.bbox is None for c in cells):
         return set()
     return {id(c) for c in cells}
 

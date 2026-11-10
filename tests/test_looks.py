@@ -433,6 +433,23 @@ class TestRows:
         # Unread, inside the table: the house rule, and no shade it never had.
         assert '<tr style="border-bottom:1px solid var(--rule)"><th>Auth</th>' in html
 
+    def test_a_dark_row_with_its_ink_unmeasured_is_drawn_light(self) -> None:
+        # Spec 0024, C: c0004's `1. DELEGATE`, white on navy, its fill
+        # measured and its ink not; a measured colour states its own.
+        zone = Zone(kind=Kind.TABLE, complete=True, rows=[
+            Row(cells=[cell("1. DELEGATE")], under=Stroke(kind="none"), fill=(43, 58, 74)),
+            Row(cells=[cell("Name")], under=Stroke(kind="none"), fill=(244, 247, 249))])
+        marked = Row(cells=[cell("Total")], under=Stroke(kind="none"), fill=(43, 58, 74))
+        marked.cells[0].look = Look(color=(255, 255, 255))
+        zone.rows.append(marked)
+        html = render(Document(source=Source(path="x.png", sha256="0", width=WIDTH,
+                                             height=HEIGHT), zones=[zone],
+                               style=Style(ink=(26, 26, 26))))
+        assert '<tr style="background:rgb(43,58,74);color:rgb(232,232,232)">' in html
+        assert '<tr style="background:rgb(244,247,249)">' in html
+        assert html.count("background:rgb(43,58,74)") == 2
+        assert html.count("background:rgb(43,58,74);color") == 1
+
     def test_an_unread_table_keeps_the_house_rules(self) -> None:
         zone = Zone(kind=Kind.TABLE, complete=True, rows=[Row(cells=[cell("a")])])
         html = render(Document(source=Source(path="x.png", sha256="0", width=WIDTH,
