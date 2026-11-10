@@ -30,6 +30,7 @@ Cell each. Everything else keeps the parser's region as its Zone.
 from __future__ import annotations
 
 import re
+import unicodedata
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from html.parser import HTMLParser
@@ -37,7 +38,7 @@ from statistics import median
 from typing import Any
 
 from .ir import (BBox, Block, Cell, Document, Kind, Reading, Role, Row, RowRole,
-                 Source, Zone)
+                 Run, Source, Zone)
 from .wire import bands_from_boxes
 
 ENGINE = "glm-ocr"
@@ -76,56 +77,247 @@ LINE = 0.025
 """A line's height as a share of the page's, where the page has no region of
 one line to measure it by."""
 
-_LATEX = [(r"\^\{\\circ\}", "°"), (r"\\circ", "°"), (r"\\times", "×"), (r"\\pm", "±"),
-          (r"\\mathrm\{([^}]*)\}", r"\1"), (r"\\text\{([^}]*)\}", r"\1"),
-          (r"\\mathbf\{([^}]*)\}", r"\1"), (r"\\%", "%"), (r"\\leq?", "≤"),
-          (r"\\geq?", "≥"), (r"\\cdot", "·"), (r"\\approx", "≈"), (r"\\rightarrow", "→"),
-          (r"\\to\b", "→"), (r"\\mu", "µ"), (r"\\Omega", "Ω"), (r"\\#", "#"),
-          (r"\\&", "&"), (r"\\_", "_")]
+_SYMBOLS = {"circ": "°", "times": "×", "div": "÷", "pm": "±", "mp": "∓", "cdot": "·",
+            "approx": "≈", "le": "≤", "leq": "≤", "ge": "≥", "geq": "≥", "neq": "≠",
+            "ne": "≠", "rightarrow": "→", "to": "→", "leftarrow": "←", "infty": "∞",
+            "alpha": "α", "beta": "β", "gamma": "γ", "delta": "δ", "Delta": "Δ",
+            "epsilon": "ε", "varepsilon": "ε", "eta": "η", "theta": "θ", "lambda": "λ",
+            "mu": "µ", "nu": "ν", "pi": "π", "rho": "ρ", "sigma": "σ", "Sigma": "Σ",
+            "tau": "τ", "phi": "φ", "varphi": "φ", "omega": "ω", "Omega": "Ω",
+            "%": "%", "#": "#", "&": "&", "_": "_", "$": "$", "left": "", "right": "",
+            ",": "", ";": "", "!": "", "quad": "", "qquad": ""}
+"""The commands the reader writes inside maths, as the characters the page
+prints. `\\left(` is the bracket alone."""
+
+_FUNCTIONS = ("sin", "cos", "tan", "log", "ln", "exp", "lim", "max", "min")
+"""Named functions, set as words: c0404's `n₁ sin θ₁`."""
+
+_TEXT_GROUP = re.compile(r"\\(?:text|mathrm|mathbf|textbf|mathit|textit|operatorname)"
+                         r"\s*\{((?:[^{}]|\{[^{}]*\})*)\}")
+"""A run of words inside maths: `\\text {w e i g h t}`, `\\mathrm{kg}`."""
+
 _MARKS = {r"\checkmark": "✓", r"\bigcirc": "○", r"\square": "☐", r"\blacksquare": "■",
           r"\times": "×", r"\cdot": "·", r"\bullet": "•", r"\star": "★"}
 _SUP = str.maketrans("0123456789+-−()n", "⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁻⁽⁾ⁿ")
 _SUB = str.maketrans("0123456789+-()", "₀₁₂₃₄₅₆₇₈₉₊₋₍₎")
 
+_OPEN = {"sup": "\ue000", "strong": "\ue002"}
+_SHUT = "\ue001"
+"""Where a marked run opens and closes inside the text `_marked` returns:
+private-use characters, which no reader writes, read back into Runs by
+`runs_of`. Spec 0024, A."""
 
-def plain(text: str) -> str:
-    """The reader's text as the page prints it.
+_BOLD = re.compile(r"(?<!\*)\*\*(?=[^\s*])(.+?)(?<=[^\s*])\*\*(?!\*)"
+                   r"|<(strong|b)>(.*?)</(?:strong|b)>")
+"""Bold as the reader writes it: Markdown's `**year**` (c0024) and HTML's
+`<strong>` (c0010's section rows). A `**` with a space on its inner side
+is printed, not markup: c0024's Python `2 ** 3 ** 2`; and so is a run of
+three stars or more: c0105's `Card:***********4419`."""
+
+
+def _is_maths(body: str) -> bool:
+    """Whether what stands between two `$` is the reader's inline maths:
+    it holds a LaTeX sign (`\\`, `^`, `_`, braces), or it is letters alone,
+    a variable (paper_0018's `$F$`). Otherwise the two `$` are printed: on
+    dev, nine spans between two dollar amounts on five pages (c0075's
+    `$250 or $500`, c0275, c0345, c0349, c0434), closed up into one word
+    when taken for maths. Spec 0024, A."""
+    return bool(re.search(r"[\\^_{}]", body) or re.fullmatch(r"\s*[A-Za-z]+\s*", body))
+
+
+def _words(group: str, display: bool) -> str:
+    """A text group's words, its spaces kept through maths (`\0`): letters
+    the reader spaced one by one joined (`\\text {w e i g h t}`,
+    `\\mathrm{S p O_{2}}`, c0276's `\\mathrm{kg / m^{3}}`), a space between
+    two words or more kept (c0488's `\\mathbf{Star point chart …}`), one at either end kept (`20\\text{ A}`,
+    `54 \\mathrm{~m}`); in a display formula a word stands apart."""
+    inner = group.replace("~", " ")
+    tokens = inner.split()
+    # The reader spaces a group's every sign; only words make its spaces real.
+    words = [t for t in tokens if len(re.sub(r"[_^](\{[^{}]*\}|\w)|[^A-Za-zÀ-ÿ]", "", t)) >= 2]
+    body = " ".join(tokens) if len(words) >= 2 else "".join(tokens)
+    lead = " " if inner[:1].isspace() or (display and len(body) > 1) else ""
+    trail = " " if inner[-1:].isspace() or (display and len(body) > 1) else ""
+    return (lead + body + trail).replace(" ", "\0")
+
+
+def _maths(body: str, display: bool = False) -> str:
+    """Inline or display maths as the characters the page prints."""
+    # `\x03` ends a command the words follow: `\\mu\\mathrm{mol}` is µmol.
+    body = _TEXT_GROUP.sub(lambda m: "\x03" + _words(m.group(1), display), body)
+    body = body.replace("~", "\0")
+    body = re.sub(r"\^\s*\{?\s*\\circ\s*\}?", "°", body)
+    body = re.sub(r"\\(" + "|".join(_FUNCTIONS) + r")(?![A-Za-z])",
+                  lambda m: "\0" + m.group(1) + "\0", body)
+    body = re.sub(r"\\sqrt\s*\{([^{}]*)\}", lambda m: "\0√" + m.group(1), body)
+    body = re.sub(r"\\frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}", r"\1/\2", body)
+    body = re.sub(r"\\textcircled\s*\{?\s*(\w{1,2})\s*\}?", lambda m: _circled(m.group(1)), body)
+    body = re.sub(r"\\([A-Za-z]+|[%#&_$,;!])(?![A-Za-z])",
+                  lambda m: _SYMBOLS.get(m.group(1), m.group(0)), body)
+    # An unknown command keeps the space that ends it.
+    body = re.sub(r"(\\[A-Za-z]+)\s+(?=[A-Za-z])", "\\1\x01", body)
+    body = re.sub(r"\s+", "", body).replace("\x01", " ")
+    body = re.sub(r"\^\{([^{}]+)\}", lambda m: _raised(m.group(1)), body)
+    body = re.sub(r"\^(\w)", lambda m: _raised(m.group(1)), body)
+    body = re.sub(r"_\{([^{}]+)\}", lambda m: _lowered(m.group(1)), body)
+    body = re.sub(r"_(\w)", lambda m: _lowered(m.group(1)), body)
+    body = body.replace("{", "").replace("}", "").replace("\x03", "")
+    body = _spaced(body, display)
+    # A word's space after it stands after its raised run (`height² (m²)`),
+    # and none before a `/` that joins two units (`kg/m²`).
+    body = re.sub(r"\0+(\ue000[^\ue001]*\ue001)", "\\1\0", body)
+    body = re.sub(r"(?<=[A-Za-z]{2})\0+/", "/", body)
+    body = re.sub(r"\0+", " ", body)
+    body = re.sub(r"(?<=\()\s+|\s+(?=[),.;:\ue000])", "", body)
+    return re.sub(r"\s{2,}", " ", body).strip()
+
+
+def _spaced(body: str, display: bool) -> str:
+    """Maths' relations set apart, as print sets them (`I = 20 A`); in a
+    display formula its operators too (c0298's `(M + S) ÷ N = …`), and a
+    `/` but between a unit and the next (`kg/m²`). Never inside a raised
+    run; an inline `×` or `-` stays where it stands (`×10⁹/L`)."""
+    def outside(part: str) -> str:
+        if not display:
+            return re.sub(r"\s*([=≈≤≥≠])\s*", "\0\\1\0", part)
+        part = re.sub(r"\s*([=+−×÷≈≤≥≠→±]|(?<=[\w)\]])-(?=[\w(]))\s*", "\0\\1\0", part)
+        return re.sub(r"(?<![A-Za-z]{2})(?<![A-Za-z]{2}\0)/", "\0/\0", part)
+    pieces = re.split(r"(\ue000.*?\ue001)", body)
+    return "".join(p if p.startswith("\ue000") else outside(p) for p in pieces)
+
+
+def _glued(before: str, after: str) -> bool:
+    """Whether a raised or lowered run is set against what stands before
+    it, as a page prints it: against a word always (`CO₂`, `parties¹`);
+    against a mark of punctuation unless a sentence follows it, which the
+    run then opens (c0364's `controlo.¹` and c0181's `tax)¹`, but c0457's
+    `month. ¹ Provisional`); against a currency sign never (c0595's
+    `€ HT`). Fitted on dev's sources, 2026-11-10: of 200 raised marks, 113
+    printed against a word and 3 apart; after punctuation, 21 against and
+    the 4 apart each opening a footnote. Spec 0024, A."""
+    if not re.search(r"\S\s+$", before):
+        return False
+    last = before.rstrip()[-1]
+    if last.isalnum():
+        return True
+    if unicodedata.category(last) == "Sc":
+        return False
+    return not re.match(r"\s*[A-ZÀ-Þ]", after)
+
+
+def _dollars(text: str) -> str:
+    """Each `$…$` span of the reader's inline maths set as characters
+    (`_maths`); every other `$` is printed and stays (`_is_maths`)."""
+    out, at = [], 0
+    while True:
+        opened = text.find("$", at)
+        shut = text.find("$", opened + 1) if opened >= 0 else -1
+        if shut < 0:
+            out.append(text[at:])
+            return "".join(out)
+        body = text[opened + 1:shut]
+        if not _is_maths(body):
+            out.append(text[at:opened + 1])
+            at = opened + 1
+            continue
+        before = text[at:opened]
+        if body.lstrip()[:1] in ("_", "^") and _glued(before, text[shut + 1:]):
+            before = before.rstrip()
+        out += [before, _maths(body)]
+        at = shut + 1
+        # Nor is a mark set apart from the punctuation after it.
+        rest = text[at:]
+        if re.match(r"\s+[,.;:]", rest):
+            at += len(rest) - len(rest.lstrip())
+
+
+_UNSHUT = re.compile(r"<(strong|b|sup|sub|em|i|u)\s+(?![\w-]+\s*=)")
+"""An inline tag the reader opened and never closed, its words taken for
+attributes: c0010's `<strong B. Clinic visits</strong>`, two section rows
+lost. Spec 0024, A."""
+
+
+def _tags(text: str) -> str:
+    """The reader's HTML with each unclosed inline tag closed (`_UNSHUT`)."""
+    return _UNSHUT.sub(r"<\1>", text)
+
+
+def _marked(text: str) -> str:
+    """The reader's text as the page prints it, its raised and bold runs
+    marked (`_OPEN`, `_SHUT`).
 
     It writes a mark inside a line as inline LaTeX (`$200^{\\circ}$`), a
-    printed mark it has a name for as a bare command (`\\checkmark`), and a
-    raised or lowered run as `<sup>`/`<sub>`. Each is set back as the
-    characters the page prints: 200°, ✓, H₂. Nothing it read is dropped."""
-    def maths(match: re.Match[str]) -> str:
-        # Spaces mean nothing in maths, except inside `\text{}`.
-        body = re.sub(r"\\text\{([^}]*)\}", lambda m: m.group(1).replace(" ", "\0"),
-                      match.group(1))
-        body = re.sub(r"(\\[A-Za-z]+)\s+(?=[A-Za-z])", "\\1\x01", body)
-        body = re.sub(r"\s+", "", body).replace("\x01", " ").replace("\0", " ")
-        for pattern, repl in _LATEX:
-            body = re.sub(pattern, repl, body)
-        body = re.sub(r"\^\{([^{}]+)\}", lambda m: _raised(m.group(1)), body)
-        body = re.sub(r"\^(\w)", lambda m: _raised(m.group(1)), body)
-        body = re.sub(r"_\{([^{}]+)\}", lambda m: _lowered(m.group(1)), body)
-        body = re.sub(r"_(\w)", lambda m: _lowered(m.group(1)), body)
-        body = re.sub(r"(?<=\d) (?=\d)", "", body)
-        return body.replace("{", "").replace("}", "").strip()
-
-    # A raised or lowered run is set against the word before it: `CO $_2$`.
-    text = re.sub(r"(\w)\s+\$\s*(?=[_^])", r"\1$", text)
-    text = re.sub(r"(\$[^$]+\$)\s+(?=[,.;:])", r"\1", text)
-    text = re.sub(r"\$\s*(.+?)\s*\$", maths, text)
+    printed mark it has a name for as a bare command (`\\checkmark`), a
+    raised or lowered run as `<sup>`/`<sub>`, and bold as `**…**` or
+    `<strong>`. Each is set back as the characters the page prints (200°,
+    ✓, H₂), a raised run and a bold run marked as such. Nothing it read is
+    dropped; an underline it writes (`<u>`, sample_semantic_0005's links)
+    is not drawn."""
+    text = _dollars(_tags(text))
     for command, mark in _MARKS.items():
         text = re.sub(re.escape(command) + r"(?![A-Za-z])\s*", mark + " ", text)
     text = re.sub(r"<sup>(.*?)</sup>", lambda m: _raised(m.group(1)), text)
     text = re.sub(r"(?<=\d)\^(\d{1,3})\b", lambda m: _raised(m.group(1)), text)
     text = re.sub(r"<sub>(.*?)</sub>", lambda m: _lowered(m.group(1)), text)
+    text = re.sub(r"</?u>", "", text)
+    text = _BOLD.sub(lambda m: _OPEN["strong"] + (m.group(1) or m.group(3) or "") + _SHUT,
+                     text)
     text = text.replace("（", "(").replace("）", ")")
     return re.sub(r"[ \t]+", " ", text).strip()
 
 
+def formula(content: str) -> str:
+    """A display formula region as the page prints it: the reader writes it
+    between `$$` lines, as spaced-out LaTeX (c0232's `B M I = \\text {w e i
+    g h t} …`); the page prints `BMI = weight (kg) / …`."""
+    body = " ".join(line for line in content.split("\n") if line.strip() not in ("$$", ""))
+    body = body.strip().removeprefix("$$").removesuffix("$$").strip("$ ")
+    return _maths(body, display=True)
+
+
+def plain(text: str) -> str:
+    """The reader's text as the page prints it (`_marked`), unmarked."""
+    return "".join(run.text for run in runs_of(_marked(text)))
+
+
+def runs_of(marked: str) -> list[Run]:
+    """A marked text's Runs: each marked stretch a `sup` or `strong` Run,
+    the rest `text`; an empty stretch none. The Runs spell the text."""
+    out: list[Run] = []
+    opens = {mark: name for name, mark in _OPEN.items()}
+    kinds: list[str] = []
+    start = 0
+    for at, char in enumerate(marked):
+        if char in opens or char == _SHUT:
+            if marked[start:at]:
+                out.append(Run(text=marked[start:at], kind=kinds[-1] if kinds else "text"))
+            if char in opens:
+                kinds.append(opens[char])
+            elif kinds:
+                kinds.pop()
+            start = at + 1
+    if marked[start:]:
+        out.append(Run(text=marked[start:], kind=kinds[-1] if kinds else "text"))
+    return out
+
+
+def _circled(mark: str) -> str:
+    """`\\textcircled{2}` as ②, `{f}` as ⓕ (c0328): the reader's reading,
+    set as the character it names."""
+    if mark.isdigit() and 1 <= int(mark) <= 20:
+        return chr(0x2460 + int(mark) - 1)
+    if len(mark) == 1 and mark.isascii() and mark.isalpha():
+        return chr((0x24B6 if mark.isupper() else 0x24D0) + ord(mark.lower()) - ord("a"))
+    return mark
+
+
 def _raised(text: str) -> str:
+    """A raised run, marked: as superscript characters where every one has
+    one (the page's `¹` is one character to a reader), else as written."""
     out = text.translate(_SUP)
-    return out if out != text or not text.strip() else "^" + text
+    if not text.strip():
+        return text
+    return _OPEN["sup"] + (out if all(c != o for c, o in zip(text, out)) else text) + _SHUT
 
 
 def _lowered(text: str) -> str:
@@ -152,7 +344,7 @@ class Region:
 
     @property
     def lines(self) -> list[str]:
-        return [line for line in (plain(part) for part in self.content.split("\n")) if line]
+        return [line for line in (_marked(part) for part in self.content.split("\n")) if line]
 
 
 def regions_of(raw: Sequence[Mapping[str, Any]]) -> list[Region]:
@@ -170,7 +362,12 @@ def regions_of(raw: Sequence[Mapping[str, Any]]) -> list[Region]:
 
 
 def _cell(text: str, box: BBox | None = None) -> Cell:
-    return Cell(bbox=box, readings=[Reading(engine=ENGINE, text=text)])
+    """A Cell of a line `_marked` returned: its words, and its Runs where
+    any stretch of it is raised or bold."""
+    runs = runs_of(text)
+    words = "".join(run.text for run in runs)
+    marked = runs if any(run.kind != "text" for run in runs) else []
+    return Cell(bbox=box, readings=[Reading(engine=ENGINE, text=words, runs=marked)])
 
 
 def _union(boxes: Sequence[BBox]) -> BBox:
@@ -209,6 +406,11 @@ def line_height(regions: Sequence[Region]) -> float:
 
 # ---- tables -------------------------------------------------------------------
 
+INLINE_TAGS = ("sup", "sub", "strong", "b")
+"""The tags inside a table cell the reader writes and `_marked` reads:
+raised, lowered and bold runs (c0010's section rows are `<strong>`)."""
+
+
 class _Table(HTMLParser):
     """A table as the reader writes it: rows of cells, each with its spans."""
 
@@ -230,13 +432,13 @@ class _Table(HTMLParser):
             self.th = tag == "th" or self.head
         elif tag == "br" and self.cell is not None:
             self.cell.append("\n")
-        elif tag in ("sup", "sub") and self.cell is not None:
+        elif tag in INLINE_TAGS and self.cell is not None:
             self.cell.append(f"<{tag}>")
 
     def handle_endtag(self, tag: str) -> None:
         if tag == "thead":
             self.head = False
-        elif tag in ("sup", "sub") and self.cell is not None:
+        elif tag in INLINE_TAGS and self.cell is not None:
             self.cell.append(f"</{tag}>")
         elif tag in ("td", "th") and self.cell is not None:
             if not self.rows:
@@ -257,6 +459,23 @@ def _count(value: str | None) -> int:
         return 1
 
 
+def _rejoined(cells: list[tuple[str, int, int, bool]]) -> None:
+    """A maths span the reader split at a cell's edge, put back: the cell
+    ends on its closing `$` with no opening one, and the next starts on an
+    opening `$` with no closing one (c0068's `Lampe L<sub>1}$` beside
+    `$1,5`, c0219's `SpO<sub>2}$` beside `$96 % RA`). Each `$` is dropped,
+    and the raised or lowered run the first left open is closed."""
+    for i in range(len(cells) - 1):
+        left, right = cells[i][0].rstrip(), cells[i + 1][0].lstrip()
+        if (left.endswith("$") and left.count("$") % 2 and right.startswith("$")
+                and right.count("$") % 2):
+            left = re.sub(r"<(sub|sup)>([^<{}]*)\}?$", r"<\1>\2</\1>", left[:-1].rstrip())
+            left = re.sub(r"_\{([^{}]*)\}$", r"<sub>\1</sub>", left)
+            left = re.sub(r"\^\{([^{}]*)\}$", r"<sup>\1</sup>", left)
+            cells[i] = (left, *cells[i][1:])
+            cells[i + 1] = (right[1:].lstrip(), *cells[i + 1][1:])
+
+
 def rows_of(content: str) -> list[Row]:
     """A table's rows on the IR's grid: a cell spanning others stands at its
     first slot with its span, and the slots it covers hold empty Cells
@@ -264,7 +483,9 @@ def rows_of(content: str) -> list[Row]:
     is a header row. A cell's own line ends are kept: each line after its
     first is one of `Cell.below`."""
     parsed = _Table()
-    parsed.feed(content)
+    parsed.feed(_tags(content))
+    for cells in parsed.rows:
+        _rejoined(cells)
     grid: dict[tuple[int, int], Cell] = {}
     heads: dict[int, bool] = {}
     for r, cells in enumerate(parsed.rows):
@@ -272,7 +493,7 @@ def rows_of(content: str) -> list[Row]:
         for text, down, across, th in cells:
             while (r, c) in grid:
                 c += 1
-            lines = [line for line in map(plain, text.split("\n")) if line]
+            lines = [line for line in map(_marked, text.split("\n")) if line]
             cell = _cell(lines[0] if lines else "")
             # A label printed over its value in one cell: the value is a line
             # below it (`Cell.below`), never run on after it.
@@ -423,7 +644,10 @@ def zone_of(group: Sequence[Region]) -> Zone:
     if first.label == "table" and "<t" in first.content:
         return Zone(kind=Kind.TABLE, role=role, bbox=box, complete=True,
                     rows=rows_of(first.content))
-    if first.label in FORMULAS or first.label == "table":
+    if first.label in FORMULAS:
+        return Zone(kind=Kind.PROSE, role=role, bbox=box, complete=True,
+                    blocks=[Block(kind="address", lines=[_cell(formula(first.content))])])
+    if first.label == "table":
         return Zone(kind=Kind.PROSE, role=role, bbox=box, complete=True,
                     blocks=[Block(kind="address", lines=[_cell(t) for t in first.lines])])
     blocks = [block for line in _printed_lines(group) for block in _blocks(line)]

@@ -4,8 +4,8 @@ Every case is built by hand: no dev page's regions are read here, and no
 panel page's ever is."""
 from __future__ import annotations
 
-from doc_to_html.adapter import (Region, document_of, groups_of, plain, regions_of,
-                                 rows_of)
+from doc_to_html.adapter import (Region, document_of, formula, groups_of, plain, regions_of,
+                                 rows_of, runs_of)
 from doc_to_html.ir import BBox, Kind, Role, RowRole, Source
 
 SOURCE = Source(path="page.png", sha256="0" * 64, width=1000, height=1000)
@@ -39,8 +39,43 @@ class TestPlain:
         assert plain("mL/min/1.73m<sup>2</sup>") == "mL/min/1.73m²"
 
     def test_nothing_read_is_dropped(self) -> None:
-        assert plain("<sup>a</sup>") == "^a"
+        assert plain("<sup>a</sup>") == "a"
         assert plain("Total: 12.50") == "Total: 12.50"
+
+
+class TestRuns:
+    """Spec 0024, group A: a raised or bold run the reader writes is a Run
+    of its Cell, never a mark drawn as text (`3^rd`, `**year**`) or a
+    character set against its neighbour as one word."""
+
+    def runs(self, text: str) -> list[tuple[str, str]]:
+        (cell,) = document_of([region(0, "text", (0, 0, 500, 30), text)], SOURCE).zones[0] \
+            .blocks[0].lines
+        return [(run.text, run.kind) for run in cell.runs]
+
+    def test_a_raised_run_is_a_sup_run(self) -> None:
+        assert self.runs("the 3<sup>rd</sup> floor") == [("the 3", "text"), ("rd", "sup"),
+                                                         (" floor", "text")]
+        assert self.runs("handed over $ ^{2} $") == [("handed over", "text"), ("²", "sup")]
+
+    def test_bold_is_a_strong_run(self) -> None:
+        assert self.runs("true only when **year** is a leap year") == [
+            ("true only when ", "text"), ("year", "strong"), (" is a leap year", "text")]
+        assert self.runs("<strong>A. Monitoring at home</strong>") == [
+            ("A. Monitoring at home", "strong")]
+
+    def test_a_printed_double_star_stays(self) -> None:
+        assert self.runs("(c) 2 ** 3 ** 2") == [("(c) 2 ** 3 ** 2", "text")]
+        assert self.runs("Card:***********4419") == [("Card:***********4419", "text")]
+
+    def test_a_circled_number(self) -> None:
+        assert plain("$ \\textcircled{2} $ Tenancy agreement") == "② Tenancy agreement"
+
+    def test_a_table_cell_keeps_its_bold(self) -> None:
+        (row,) = rows_of("<table><tr><td colspan=\"5\"><strong>A. Monitoring at home</strong>"
+                         "</td></tr></table>")
+        assert [(r.text, r.kind) for r in row.cells[0].runs] == [
+            ("A. Monitoring at home", "strong")]
 
 
 class TestTables:
@@ -144,3 +179,73 @@ class TestDocument:
 
     def test_an_empty_region_is_dropped(self) -> None:
         assert regions_of([region(0, "text", (1, 1, 2, 2), "  ")]) == []
+
+
+class TestMaths:
+    """Spec 0024, group A: what the reader writes as LaTeX set as the page
+    prints it; a `$` that opens no maths is printed."""
+
+    def test_dollar_amounts_are_not_maths(self) -> None:
+        assert plain("deemed income of $250 or $500 a month") == \
+            "deemed income of $250 or $500 a month"
+        assert plain("read $450, not $540.") == "read $450, not $540."
+        assert plain("$0-15,000.35 $25,000-27,000.29") == "$0-15,000.35 $25,000-27,000.29"
+
+    def test_a_variable_is_maths(self) -> None:
+        assert plain("the index $F$ was") == "the index F was"
+
+    def test_words_in_maths_keep_their_spaces(self) -> None:
+        assert plain("$ \\mathbf{Star point chart : cycle racks} $") == \
+            "Star point chart: cycle racks"
+        assert plain("area is $ 54 \\mathrm{~m}^{2} $ , giving") == "area is 54 m², giving"
+        assert plain("Output $I = 20\\text{ A}$") == "Output I = 20 A"
+
+    def test_a_display_formula_is_set_as_printed(self) -> None:
+        def formula_text(content: str) -> str:
+            return "".join(run.text for run in runs_of(formula(content)))
+
+        assert formula_text("$$\nB M I = \\text {w e i g h t} (\\mathrm {k g}) / \\text {h e i g h t} "
+                       "^ {2} \\left(\\mathrm {m} ^ {2}\\right) = 9 2. 4 / 3. 1 7 = 2 9. 2 "
+                       "\\mathrm {k g} / \\mathrm {m} ^ {2}\n$$") == \
+            "BMI = weight (kg) / height² (m²) = 92.4 / 3.17 = 29.2 kg/m²"
+        assert formula_text("$$\nC = (M + S) \\div N\n$$") == "C = (M + S) ÷ N"
+        assert formula_text("$$\nn _ {1} \\sin \\theta_ {1} = n _ {2} \\sin \\theta_ {2}\n$$") == \
+            "n₁ sin θ₁ = n₂ sin θ₂"
+        assert formula_text("$$\n\\Delta h = \\alpha \\sqrt {F}\n$$") == "Δh = α √F"
+
+    def test_a_maths_span_split_at_a_cell_edge_is_put_back(self) -> None:
+        rows = rows_of("<table><tr><td>Lampe L<sub>1}$</td><td>$1,5</td></tr>"
+                       "<tr><td>Lampe L_{2}$</td><td>$1,5</td></tr>"
+                       "<tr><td>$0.00</td><td>$\\times$</td><td>$410.00</td></tr></table>")
+        assert [[c.text for c in r.cells] for r in rows] == [
+            ["Lampe L₁", "1,5", ""], ["Lampe L₂", "1,5", ""], ["$0.00", "×", "$410.00"]]
+
+    def test_a_circled_letter(self) -> None:
+        assert plain("$ \\textcircled{f} $") == "ⓕ"
+
+    def test_an_underline_is_not_drawn(self) -> None:
+        assert plain("Tags: <u>html</u>, <u>web</u>") == "Tags: html, web"
+
+    def test_groups_nest_and_end_a_command(self) -> None:
+        assert plain("on air $ \\mathrm{SpO_{2}} $ 90%") == "on air SpO₂ 90%"
+        assert plain("82 $ \\mu\\mathrm{mol} $/L") == "82 µmol/L"
+
+    def test_a_raised_run_joins_what_it_marks(self) -> None:
+        assert plain("concern $^{1}$: recurring") == "concern¹: recurring"
+        assert plain("ligação e controlo. $ ^{1} $") == "ligação e controlo.¹"
+        assert plain("(monthly, before tax) $ ^{1} $") == "(monthly, before tax)¹"
+        assert plain("encomenda n. $ ^{o} $ 2103-118") == "encomenda n.o 2103-118"
+
+    def test_a_raised_run_opening_a_note_or_after_a_sign_stands_apart(self) -> None:
+        assert plain("taken that month. $ ^{1} $ Provisional") == "taken that month. ¹ Provisional"
+        assert plain("the original. $ ^{2} $Required") == "the original. ²Required"
+        assert plain("600 € $ ^{\\mathrm{HT}} $") == "600 € HT"
+
+    def test_an_unclosed_tag_keeps_its_words(self) -> None:
+        rows = rows_of("<table><tr><td colspan=\"2\"><strong B. Clinic visits</strong></td></tr>"
+                       "</table>")
+        assert [(r.text, r.kind) for r in rows[0].cells[0].runs] == [("B. Clinic visits", "strong")]
+
+    def test_spaces_in_a_group_are_real_only_between_words(self) -> None:
+        assert plain("breathlessness; $ \\mathrm{S p O_{2}} $ 90%") == "breathlessness; SpO₂ 90%"
+        assert plain("density 2,395 $ \\mathrm{kg / m^{3}} $ , within") == "density 2,395 kg/m³, within"
