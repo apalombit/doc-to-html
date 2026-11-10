@@ -1,5 +1,5 @@
 {
- "stamp": "spec 0021 · step 6; spec 0022 · L3; spec 0023 · P1",
+ "stamp": "spec 0021 · step 6; spec 0022 · L3; spec 0023 · P1; spec 0024 · L5",
  "about": "The review's questions for Alessandro, one issue at a time, in rounds. Built into a page by tools/review_issues.py; his decisions land in the page's `issues` collection, one document per key, and are copied here under each issue's `decided`.",
  "rounds": [
   {
@@ -4137,7 +4137,76 @@
      }
     }
    ]
+  },
+  {
+   "name": "Round 10",
+   "date": "2026-11-10",
+   "title": "Round 10: four questions before L5 on D2",
+   "intro": "Round 9 is recorded: all twelve agreed, and P2 took D2. L5 fixes the faults our own code makes on D2's pages: the adapter that turns GLM-OCR's blocks into our pages, the step that places each line, the looks and the renderer. GLM-OCR itself is not touched. Four questions set the branch, whether D2 first converts the dev pages, the order of the work, and how part A ends. Click a decision: it saves and the next opens.",
+   "about": "Round 10: spec 0024's four questions for L5 on D2, none asked in rounds 1-9: the branch, a D2 run over the 231 dev pages, the order of our side's four fault groups (counted from P1-D2-L3's committed review), and a second D2 run over the L3 set at part A's end. No render: questions for the plan.",
+   "issues": [
+    {
+     "key": "l5-branch",
+     "kind": "plan",
+     "page": "L5's branch",
+     "title": "Work on a branch l5, cut from poc-parser-first?",
+     "what": "D2 lives on poc-parser-first, and main was fast-forwarded to it on 2026-11-10. level-up is 10 commits behind, develop further.",
+     "says": {
+      "checks": "Today",
+      "often": "What it costs"
+     },
+     "checks": "poc-parser-first holds D2 exactly as P2 decided on it. main shows the same code to a visitor. Today's pipeline is in the same tree, unchanged.",
+     "claude": "A branch of its own keeps poc-parser-first as the record of what P2 took, the way a frozen run is kept. Fast-forwarding main at each close keeps the repository's landing page current.",
+     "often": "Nothing: one more branch name. level-up and develop stay where they are.",
+     "proposes": "Cut l5 from poc-parser-first's head and work there; fast-forward main to it at each close. Today's pipeline stays in the tree as it is (the replay of S14 stays 21 of 21). Disagree to keep working on poc-parser-first itself."
+    },
+    {
+     "key": "l5-dev-run",
+     "kind": "plan",
+     "page": "the dev pool",
+     "title": "Convert the 231 dev pages with D2 first, about 1 h 45?",
+     "what": "Every fault our side makes was seen on panel pages, and each must be reproduced on a dev page before anything changes for it. Today only the eleven build pages have D2's blocks.",
+     "says": {
+      "checks": "Today",
+      "often": "What it costs"
+     },
+     "checks": "231 dev pages: 70 sparse, 89 medium, 72 dense. P1's medians: 19, 25 and 38 seconds a page. The 20-minute page limit, as before.",
+     "claude": "With the blocks of all 231 recorded, every change is redrawn over all of them offline in minutes, so no rule is judged on one page, and the checks point to the dev pages that show each fault. Part B's fitting needs the same blocks.",
+     "often": "About 1 h 45 of local model time, under the two-hour line: one conversion, nothing beside it, every Chrome job done first. Then the checks over all 231; Claude opens the pages each fault points to, not all 231.",
+     "proposes": "Run D2 over the dev pool (L5-D2-dev), then measure it with the checks. Disagree to parse only the dev pages picked for each fault by their features."
+    },
+    {
+     "key": "l5-order",
+     "kind": "plan",
+     "page": "our side's faults",
+     "title": "Fix our side's faults in this order: words, side by side, tables, looks?",
+     "what": "On P1-D2-L3 our code made 300 majors over 41 pages. They fall into four groups.",
+     "says": {
+      "checks": "The four groups",
+      "often": "Why this order"
+     },
+     "checks": "A, words the adapter makes (9 pages): $ amounts taken for maths and closed up, raised marks set against the next word, a broken table cut short, a formula drawn as LaTeX, ** drawn. B, side by side drawn under (20 pages): a column's second block drawn after the tall one beside it. C, the adapter's tables never measured (14 pages, 366 of 869 cells): bold, sizes, rules, frames. D, the looks (34 pages): sizes, bold, colour.",
+     "claude": "Words come first by your criteria, and A's fixes are small. B is layout, and the main cause of the height faults. C comes before D because a cell that is never placed keeps default looks: part of D is C's.",
+     "often": "Each group reproduced on dev pages, fixed, pinned by a test and judged by eye on every dev page it moves, one commit a group.",
+     "proposes": "A, then B, then C, then D. Disagree, and give the order you want in the note."
+    },
+    {
+     "key": "l5-l3-run",
+     "kind": "plan",
+     "page": "the L3 set",
+     "title": "End part A by running D2 over the 41 L3 pages again?",
+     "what": "Part A changes only our side. A second D2 run over the L3 set, compared with P1-D2-L3 (frozen as p1-d2-l3/), shows what it gained on pages nobody tuned on.",
+     "says": {
+      "checks": "Today",
+      "often": "What it costs"
+     },
+     "checks": "P1-D2-L3 took 18 minutes for the 41 pages. GLM-OCR returns the same blocks for the same page, byte for byte.",
+     "claude": "The new run's blocks are checked equal to the frozen ones first; then every page that moves moved through our code alone. It is the only time part A draws a panel page.",
+     "often": "18 minutes, then the review as for P1: the checks, every page opened, better, same or worse against p1-d2-l3 by eye; your spot checks on every worse page and two at random.",
+     "proposes": "Yes: part A ends with L5-D2-L3 over the 41, compared with p1-d2-l3. Part B is accepted on the panel by its own run, asked in its own round."
+    }
+   ]
   }
  ],
- "page_stamp": "Spec 0023 · P1 · round 9: the D2 review, then P2"
+ "page_stamp": "Spec 0024 · L5 · round 10: four questions before L5 on D2"
 }
