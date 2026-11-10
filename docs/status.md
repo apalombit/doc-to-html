@@ -35,7 +35,10 @@ If you are going to look at output — and you should — use the
 
 Branches `main`, `develop` and `level-up`, all on the remote since
 2026-10-24, and `poc-parser-first`, cut from `level-up` for P1, which
-holds arm D2; `scaffold` is retired into `develop`. **1721 tests pass (1 skipped), `mypy src/` clean**: measured
+holds arm D2; `scaffold` is retired into `develop`. **`main` was
+fast-forwarded to `poc-parser-first` on 2026-11-10** (Alessandro), so
+the repository's landing page shows the current code and the README
+written for a visitor; `develop` and `level-up` stay where they were. **1721 tests pass (1 skipped), `mypy src/` clean**: measured
 2026-11-09 on `poc-parser-first`, at the end of spec 0023. Today's
 conversion code is still `a0d73c9`'s in what it answers: spec 0020 added
 the corpus factory, spec 0021 the batch runner and a 3-minute limit on
