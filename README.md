@@ -1,185 +1,176 @@
 # doc-to-html
 
-Takes a photograph or scan of a text-bearing document and produces an HTML file
-that carries the same content and the same structure. An invoice and an
-inventory sheet are the same kind of input: the system never classifies
-documents.
+**A photo of a document in. Faithful, editable HTML out. Small models, all local.**
 
-**Status: working proof of concept, being rebuilt against a new measure.** A
-Source Image is rectified, laid out, classified and extracted Zone by Zone from
-full-resolution crops, checked by Probes and rendered. Photographs distorted by
-known amounts come back straight.
+![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB)
+![Models: local only](https://img.shields.io/badge/models-local%20only-2ea44f)
+![Largest model: 4B](https://img.shields.io/badge/largest%20model-4B%20params-8250df)
+![Code: AI-assisted](https://img.shields.io/badge/code-AI--assisted-d97757)
+![Validation: human-driven](https://img.shields.io/badge/validation-human--driven-0969da)
+![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)
 
-**The target changed on 2026-09-17, and the reason is worth a paragraph.** The
-project used to be scored on whether the IR agreed with a hand-typed reference
-IR. That measure saturated and then inverted: it scored `sample_table_0003` a
-**full match** while that document had deleted every column header of its only
-table, because it compared row *roles* and never compared cell *content*. Over
-the same stretch of runs the total improved 23 → 10 while duplicated titles
-appeared in three of five documents. Nobody had opened a rendered page beside
-its source in eighty runs.
+> **A toy-scale experiment, on purpose.** Can **very small models**, wrapped
+> in a **carefully engineered harness**, turn any document picture into
+> **valid** HTML **entirely on a laptop**? The code is written **with AI
+> coding tools**. What counts as *valid* is decided **by a human**.
 
-**So the project is now measured on whether the rendered output looks and reads
-like the source document**, compared against `example/*.html` and `example/*.png`
-directly. See
-**[docs/specs/0007-look-like-the-document.md](docs/specs/0007-look-like-the-document.md)**
-— it defines the target and the measure. The work plan it carried finished on
-2026-10-10 (issue #30, closed); the work in flight is
-[spec 0008](docs/specs/0008-page-structure.md), page structure.
+![A payslip: the picture the converter is given, and the HTML it writes](docs/img/payslip-in-out.png)
 
-## What it aims at
+<sub>A payslip from the development corpus, converted on an 8 GB M1 by the
+current pipeline (2026-11-09). Both tables are real `<table>`s, and the
+colours, rules and type sizes are measured from the pixels. **It is not
+perfect, and the project says so:** the summary box's labels and amounts run
+together, and the tax-code block has lost its right-aligned values.</sub>
 
-Structural fidelity **and** measured style — not a pixel clone, and no longer
-structure alone. A `<table>` is a real `<table>` and Zone ordering is preserved;
-palette, type scale, borders and column proportion are measured from the Source
-Image's pixels rather than invented by a stylesheet. Absolute-positioned
-facsimile stays rejected: it is brittle under skew and semantically inert. See
-[ADR 0005](docs/adr/0005-style-is-measured-from-the-pixels.md), which supersedes
-part of [ADR 0002](docs/adr/0002-structural-over-pixel-fidelity.md).
+---
 
-Output is one self-contained HTML file with the IR embedded in it as JSON.
-
-## How it is measured
-
-Six axes, scored source-image against rendered-output by
-`doc_to_html.scoring`:
-
-| # | axis | asks |
-|---|---|---|
-| 1 | **Completeness** | Is every printed string present, exactly once? Nothing invented? |
-| 2 | **Order & grouping** | Right reading order; things that belong together are together |
-| 3 | **Layout skeleton** | What sits beside what; column proportions; height ratio at matched width |
-| 4 | **Typographic weight** | Heading hierarchy; emphasis; alignment |
-| 5 | **Palette & texture** | Background, ink, accent, shaded bands, borders, cards |
-| 6 | **Inline detail** | Links, code spans, badges, marks |
-
-**Axes 1-3 are a hard tier**: a regression on any of them fails a phase
-regardless of what improved elsewhere. **Completeness is a ratchet** — it may
-never decrease between phases, for any reason.
-
-**Ground truth is derived, not typed.** `example/invoice.png` is a screenshot of
-`example/invoice.html`, so the expected answer is already on disk. One
-`project()` function runs over the source page and the rendered output alike —
-returning text in reading order, a role per block, and rectangles from the
-browser's own client rects — and the two projections are diffed. It never
-compares markup: demanding that the output reproduce the source's `div` nesting
-would be a worse overfit than the one being escaped.
-
-Adding a document is therefore writing an HTML file and running
-`tools/shoot_corpus.py`. That is what let the corpus leave five.
-
-## Reading order
-
-- **[CONTEXT.md](CONTEXT.md)** — the vocabulary. Zone, Band, Kind, Role, Probe,
-  Ladder, Correction. Worth reading first; the code assumes these words.
-- **[docs/status.md](docs/status.md)** — where the project is: the ratchet's
-  floor, what shipped last, what is closed with evidence, and what is queued.
-- **[docs/specs/](docs/specs/)** — one spec per piece of work, each with its
-  measured numbers. 0007 defines the target; 0008 is the one open piece of
-  work.
-- **[docs/adr/](docs/adr/)** — five decisions that look arbitrary without their
-  reasons:
-  - [0001](docs/adr/0001-no-document-types.md) — no document types
-  - [0002](docs/adr/0002-structural-over-pixel-fidelity.md) — structural, not pixel, fidelity
-  - [0003](docs/adr/0003-synthetic-first-evaluation.md) — synthetic-first evaluation
-  - [0004](docs/adr/0004-probes-never-supply-expected-values.md) — Probes never supply expected values
-  - [0005](docs/adr/0005-style-is-measured-from-the-pixels.md) — style is measured from the pixels
-
-## Shape
-
-```
-Source Image
-  │  rectify: page quad → perspective warp → orientation → equalise
-  ▼
-Rectified Image ──────────────────────────────── all coordinates live here
-  │  layout: a trained ONNX detector finds the Zones — no model call
-  │  classification (per-Zone full-res crop): Kind, Title
-  │  per-Zone extraction from full-res crops, sliced with overlap if dense
-  │  style record, no model: palette, fills, borders, heading sizes
-  │  coverage audit, no model: ink no Zone covers gets a Zone or a Gap
-  ▼
-IR ── Probes: does a column of data rows sum to a summary row?
-  │    Ladder: read → upscale → other engine → ask human
-  ▼
-one self-contained HTML file, IR embedded
-  │
-  ▼
-project() over the output and over example/foo.html ── six axes ── report.html
-```
-
-Layout: `src/doc_to_html/`
+## The manifesto
 
 | | |
 |---|---|
-| `ir.py` | the IR. Everything else reads or writes this |
-| `preprocess.py` | Source Image → Rectified Image; slice planning |
-| `engines/` | sources of readings from pixels — Ollama, tesseract |
-| `extractors.py` | one per Kind. No autonomy, no retries |
-| `orchestrator.py` | sequences Extractors, routes Engines, owns the Ladder |
-| `probes.py` | arithmetic checks, type-agnostic |
-| `render.py` | IR → HTML. Tolerates a partial IR |
-| `checkpoints.py` | where a human is asked; `NullHandler` for unattended runs |
-| `wire.py` | what a model is asked for, and how it becomes IR |
-| `corpus.py` | what the corpus is — fifteen documents, *iterate* and *sweep* |
-| `projection.py` | `project()` — one page as a reader sees it, off the browser |
-| `scoring.py` | the six axes, between two projections |
-| `report.py` | `report.html` — source vs render, every document, one page |
-| `bakeoff.py` | opt-in conversion of the corpus with real models |
-| `cli.py` | thin wrapper over the library |
+| 🧠 **Very small models** | A 0.9B-parameter OCR parser ([GLM-OCR](https://github.com/zai-org/GLM-OCR)), a 4B vision-language model (`qwen3-vl:4b`) and an ONNX layout detector. All run locally through [Ollama](https://ollama.com) on an 8 GB laptop, and nothing leaves the machine. |
+| 🛠️ **The harness does the heavy lifting** | It straightens the photo, finds the regions and asks each model one narrow question about one crop. It checks the arithmetic, measures colours, rules and type sizes from the pixels (no model), and writes real HTML. |
+| 🤖 **AI-assisted code** | The code, the corpus and the reviews are written with an AI coding agent ([Claude Code](https://claude.com/claude-code)). It works from one spec per piece of work, and its standing instructions are [`CLAUDE.md`](CLAUDE.md). |
+| 👤 **Human-driven validation** | A human sets the target and judges by eye. **Nine review rounds and 91 decisions** have become the [criteria](docs/agents/review-criteria.md) that the automatic checks enforce. |
+
+**"Valid" means three things, in this order:**
+1. **every word and number as printed**, none lost and none invented;
+2. **the structure kept**: a table is a `<table>`, and side by side stays side by side;
+3. **it looks like the page**: the ground, the colours, the type sizes and the rules.
+
+It does not mean a pixel copy: the output is semantic HTML that you can edit.
+
+---
+
+## How it works
+
+```mermaid
+flowchart LR
+    A["📷 photo or scan"] --> B["straighten<br/><i>OpenCV</i>"]
+    B --> C["cut and read<br/><i>GLM-OCR · 0.9B</i>"]
+    C --> D["adapter<br/><i>regions → document model</i>"]
+    D --> E["measure the looks<br/><i>palette · type · rules · fills</i><br/>pixels only, no model"]
+    E --> F["render"]
+    F --> G["📄 one self-contained HTML file<br/>with its document model inside"]
+```
+
+**Two pipelines, measured against each other** on 41 pages that neither had
+ever seen:
+
+| | **v1: a VLM per region** (Jul–Oct) | **v2: parser first** (Nov, adopted) |
+|---|---|---|
+| finds the regions | Docling's Heron detector (ONNX) | GLM-OCR's layout model |
+| reads them | `qwen3-vl:4b`, asked about one crop at a time | GLM-OCR, 0.9B |
+| draws them | measured looks, then the renderer | the same, shared |
+| **time for the 41 pages** | **6.6 h**, and 4 pages over the 20-min limit | **18 min**, none over the limit |
+| judged by eye, page by page | — | **13 better · 7 worse · 17 the same**, and the 4 v1 lost converted |
+| major faults per page (the 37 both converted) | 17.6 | 17.8 |
+
+**An honest status:** both pipelines still make at least one major fault on
+every unseen page. v2 was adopted on 2026-11-09 because it reads more of
+these pages correctly, about 22× faster. The faults it leaves are mostly
+the harness's own, which is where the work goes next.
+
+---
+
+## How "valid" is measured
+
+```mermaid
+flowchart LR
+    S["corpus page<br/>HTML + its screenshot"] -->|"screenshot only"| CV["converter"]
+    CV --> R["output HTML"]
+    S -->|"HTML: ground truth for free"| K["automatic checks<br/><i>words · cells · order · side by side ·<br/>line breaks · type · looks</i>"]
+    R --> K
+    K --> J["🤖 AI review<br/>every page, every fault"]
+    J --> H["👤 human calls<br/>one issue per screen"]
+    H -->|"new rule"| CR["criteria"]
+    CR --> K
+```
+
+- **The ground truth costs nothing to make.** Every corpus page is an HTML
+  file plus its screenshot. The converter sees only the screenshot, and
+  the checks compare the two HTMLs as headless Chrome lays them out.
+- **The corpus is built by variability, not by convenience.** 631 pages
+  in eight families of documents (forms, receipts, reports, letters…)
+  plus fragments, mostly in Latin-script languages:
+  - 573 written by AI agents from randomly drawn spec cards;
+  - 27 real PDF pages, each with an HTML twin that a gate admits;
+  - 31 written by hand.
+- **The corpus is split for honest evaluation.** *dev* (231) is for
+  development, *panel* (200) for measurement, and the *vault* (200) is
+  sealed in code and opened only at milestones.
+- **Every number can be reproduced.** The models run at temperature 0,
+  every model answer is recorded, and replaying the answers rebuilds a
+  frozen baseline byte for byte.
+- **The human decides, and the AI does the legwork.** Claude reviews
+  every page against the agreed criteria. The human spot-checks the
+  calls and settles every disagreement, one issue per screen. Each
+  decision becomes a rule and a test.
+
+---
+
+## What to look at as an engineer
+
+| | |
+|---|---|
+| **One spec per piece of work** | 23 so far ([`docs/specs/`](docs/specs/)). Each holds its question, its measurements, what was tried and rejected, and the decision. |
+| **Decision records** | Five ADRs ([`docs/adr/`](docs/adr/)), such as [no document types](docs/adr/0001-no-document-types.md) and [style is measured from the pixels](docs/adr/0005-style-is-measured-from-the-pixels.md). |
+| **Lessons that generalise** | In [`CLAUDE.md`](CLAUDE.md): a metric that saturated and then inverted, a flag that never reached its code, a guard that created the fault it looked like. |
+| **Tests** | 1721, with `mypy` clean. Recorded model answers let the suite run with no model at all. |
+| **The live state** | [`docs/status.md`](docs/status.md), and the plan in [`docs/level-up.md`](docs/level-up.md). |
+
+### Repository map
+
+| path | what |
+|---|---|
+| [`src/doc_to_html/`](src/doc_to_html/) | the converter: `ir.py` (the document model), `preprocess.py` (straightening), `adapter.py` + `parser_first.py` (v2), `orchestrator.py` (v1), `style.py` and `looks.py` (measured looks), `render.py`, `checks.py` (the validity checks) |
+| [`tools/`](tools/) | command-line tools: batch runs, measurement, review sheets, replay |
+| [`corpus/`](corpus/) | the 631-page corpus: cards, the manifest and the checks |
+| [`tests/`](tests/) | the suite, and `tests/frozen/`: frozen baselines with the answers that made them |
+| [`docs/`](docs/) | specs, ADRs, the status, the review criteria. [`docs/README.md`](docs/README.md) is the map. |
+| [`CONTEXT.md`](CONTEXT.md) | the vocabulary the code uses: Zone, Band, Kind, Probe… |
+
+---
 
 ## Try it
 
-The suite replaces exactly one thing — the call to Ollama — with responses
-recorded in `tests/responses/`. Everything else is the code that ships:
-
 ```bash
-uv venv && uv pip install -e '.[dev]'
-pytest                        # no model, no Ollama, no network
+uv venv && uv pip install -e '.[dev,detector,tesseract]'
+pytest                    # no model needed; headless Chrome for the projection tests
 ```
 
-The scorer's own tests need headless Chrome and nothing else — they run over
-`tests/frozen/run84/`, five output documents kept from the run that prompted
-spec 0007, and they check that the scorer finds that run's known faults without
-being told where to look.
-
-With Ollama running and a model pulled, the front half works too:
+With [Ollama](https://ollama.com) running and `qwen3-vl:4b` pulled, run v1:
 
 ```bash
-doc-to-html config                                  # what resolved, and from where
-doc-to-html convert example/invoice.png -o out.html
-tools/iterate.sh my-label                           # one document, end to end
-FIXTURE=sweep tools/iterate.sh my-gate              # all fifteen
+python tools/fetch_layout_models.py     # the ONNX layout detector
+doc-to-html convert example/invoice.png -o invoice.html
 ```
 
-Either way, open `debug/runs/<label>/report.html`.
+v2 runs the parser in its own environment (`~/.venvs/glmocr` with
+`glmocr[selfhosted]`, and `glm-ocr` on Ollama). The setup is in
+[spec 0023](docs/specs/0023-parser-first.md). Then:
 
-Fifteen documents live in [`example/`](example/), each an HTML file and a
-screenshot of it: two invoices, a statistics table, a card layout, an article, a
-bank statement, an application form, a newspaper page, a dark report, a thermal
-receipt, a corporate report, a restaurant menu, a CV, a Greek invoice and a
-product grid. Each carries one awkward feature the others do not —
-`doc_to_html.corpus` names it.
+```bash
+python tools/d2.py demo --pages probe_payslip --parse --sheets
+```
 
-[`docs/status.md`](docs/status.md) is the live state.
+---
 
-## Constraints worth knowing
+## The story so far, month by month
 
-Development targets an 8 GB M1, which caps local vision models at roughly 4 GB —
-`qwen3-vl:2b`, `qwen3-vl:4b` and `granite3.2-vision` are in range; `deepseek-ocr`
-at 6.7 GB is not. Two vision models cannot stay resident simultaneously, so the
-Orchestrator batches work by model rather than alternating.
+| month | milestone | takeaway |
+|---|---|---|
+| **Jul 2026** | **The skeleton.** The document model, arithmetic checks ("does this column sum to its total?"), a renderer, one extractor per kind of content, straightening of photographs, a bake-off of local models. | Ask a small model about **one region's own crop**, never the whole page shrunk down: it reads what it can see. One 4B model serves every step. |
+| **Aug 2026** | **Geometry.** Boxes snapped to their ink. Then the VLM's layout pass was replaced by a trained ONNX detector. | A change can **pass its own gate and still cost the document**. Judge the whole page, not only the fields a change was meant to move. |
+| **Sep 2026** | **The metric that lied.** The score against hand-typed references reported a *full match* for a table that had lost all five column headers. It improved 23 → 10 while duplicated titles appeared in three of five documents. On 2026-09-17 the target became *the render looks and reads like the page*, and the ground truth became the HTML and its screenshot. | **Look at the artefact, not only the number.** A metric can saturate, then invert, and nothing inside it will tell you. |
+| **Oct 2026** | **By eye, then a step back.** Twelve specs, each closed by a full sweep of the corpus (15 documents, then 21) and judged by eye from mid-month. Each baseline is frozen and replayable byte for byte. Then a probe on ten pages it had never seen found a structural fault on 9 of 10, against 0 of 6 tuned pages. A new plan followed: a 631-page corpus built by variability, with sealed held-out pools. | **Pages you tuned on cannot tell you about the next one.** Generalisation has to be measured on pages nobody has looked at. |
+| **Nov 2026** | **Honest numbers and a pivot.** Automatic checks plus an AI reviewer, held to criteria the human set in nine rounds. The honest baseline found a major fault on every one of 37 unseen pages, in 6.6 h. A parser-first proof of concept with a 0.9B OCR model took 18 min, was better on 13 pages and worse on 7, and was **adopted** on 2026-11-09. | **A small specialised parser beat the hand-assembled reading pipeline** on unseen pages. The harness's value moves to what the parser cannot do: measuring the looks, checking, rendering. |
 
-Ollama Cloud is a configuration change rather than an architectural one — but it
-is a different *host*, not a different trust boundary. Images do leave the machine.
+**Next:** fix the harness's own faults on the parser's output, each one
+reproduced on a development page first. Then fit the remaining hand-set
+constants from data rather than tuning them by hand.
 
-## Deliberately not decided
+---
 
-- **Whether tesseract earns a place.** The first end-to-end slice runs
-  vision-only and is therefore the control condition that answers it.
-- **Multi-page.** A Conversion is strictly one image. Admitting page 2 means
-  growing the IR a `pages` array and revising every fixture — a known cost,
-  accepted for now.
-- **Free-text feedback interpreted by an LLM.** Checkpoints take structured
-  answers plus a note passed verbatim into the next prompt. When interpretation
-  arrives, its job is to map prose onto the structured answers, not to edit the
-  IR directly.
+<sub>MIT licensed. Every model runs locally, and no document leaves the
+machine.</sub>

@@ -1,10 +1,12 @@
 # Future ideas — a judge-led loop for growing the converter
 
-**Status: ideas, not queued, not open work.** This is the direction agreed
-in discussion on 2026-10-18, to weigh when the next generation of the
-tool is planned. Spec 0016 is the only open work, and nothing here
-changes it. This file records the ideas, the choice, the evidence and
-the related records. It does not record implementation.
+**Status: record, 2026-10-18; taken up by the level-up plan.** This is
+the direction agreed in discussion on 2026-10-18. Its judge was built as
+the level-up's L2 ([spec 0021](specs/0021-measurement-and-the-judge.md)):
+checks from the HTML and an AI reviewer held to criteria the human
+agreed. Nothing here is open work. This file records the ideas, the
+choice, the evidence and the related records. It does not record
+implementation.
 
 ---
 
