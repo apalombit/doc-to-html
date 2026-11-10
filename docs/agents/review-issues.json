@@ -4226,7 +4226,333 @@
      }
     }
    ]
+  },
+  {
+   "name": "Round 11",
+   "date": "2026-11-10",
+   "title": "Round 11: L5's part A on the L3 pages, eight spot checks, then what comes next",
+   "intro": "Round 10 is recorded: all four agreed. Part A ran on the dev pages, then D2 converted the 41 L3 pages again (L5-D2-L3) and Claude compared every page with the run P2 took (P1-D2-L3). Issues 1 to 4 are every page Claude judged worse. Issues 5 and 6 are pages where the checks count more majors and Claude sees better. Issues 7 and 8 are drawn at random. Issue 9 asks what comes next. Each picture is the page beside L5's render. Click a decision: it saves and the next opens.",
+   "about": "Round 11: spec 0024 step 3. L5-D2-L3 against P1-D2-L3 on the 41 L3 panel pages: the 4 judged worse, the 2 where Claude's call and the checks part, 2 at random, and the next step. None asked in rounds 1 to 10.",
+   "issues": [
+    {
+     "key": "l5-cut-rows",
+     "kind": "missed",
+     "page": "c0128",
+     "run": "L5-D2-L3",
+     "title": "Two receipt lines cut in half by the row below",
+     "what": "L5 sets each row as tight as the page does and paints the row stripes. But “Ground coffee 227g” (1) and “Dishwasher tabs x20” (2) have their top half hidden by the next row. P1 drew every row whole, further apart.",
+     "checks": "12 majors on P1, 10 on L5. No check sees a line cut by the row below it.",
+     "claude": "Worse: two lines cannot be read whole, and content comes first. The tighter rows and the stripes are real gains, and they do not outweigh it.",
+     "often": "2 of the 41 pages (this one and c0523, next). Not yet looked for on the dev pages.",
+     "proposes": "Call it worse, next in line: find the cause on a dev page first, then add a check for a line drawn partly hidden.",
+     "source_crop": [
+      0,
+      520,
+      520,
+      840
+     ],
+     "render_crop": [
+      0,
+      520,
+      520,
+      840
+     ],
+     "source_marks": [
+      [
+       58,
+       578,
+       240,
+       596
+      ],
+      [
+       58,
+       799,
+       240,
+       817
+      ]
+     ],
+     "render_marks": [
+      [
+       60,
+       588,
+       240,
+       606
+      ],
+      [
+       60,
+       800,
+       240,
+       818
+      ]
+     ],
+     "labels": [
+      "1",
+      "2"
+     ]
+    },
+    {
+     "key": "l5-cut-line",
+     "kind": "missed",
+     "page": "c0523",
+     "run": "L5-D2-L3",
+     "title": "“Have a pleasant journey” cut in half",
+     "what": "The ticket's passenger rows are now a grid with their rules, as printed. Under them, the line “Have a pleasant journey · Issued by H. Stirling” (1) shows only its lower half. P1 drew it whole.",
+     "checks": "11 majors on P1, 10 on L5. No check sees the cut line.",
+     "claude": "Worse, for the same reason as the receipt: a printed line no longer reads whole.",
+     "often": "2 of 41 (c0128 above).",
+     "proposes": "Worse, next in line with c0128.",
+     "source_crop": [
+      0,
+      0,
+      700,
+      354
+     ],
+     "render_crop": [
+      0,
+      0,
+      700,
+      580
+     ],
+     "source_marks": [
+      [
+       18,
+       272,
+       680,
+       310
+      ]
+     ],
+     "render_marks": [
+      [
+       26,
+       448,
+       290,
+       470
+      ]
+     ],
+     "labels": [
+      "1"
+     ]
+    },
+    {
+     "key": "l5-small-rows",
+     "kind": "spot",
+     "page": "c0441",
+     "run": "L5-D2-L3",
+     "title": "Two timetable rows drawn too small to read",
+     "what": "L5 draws the yellow section rows and the dark header as printed. But “Bologna Centrale” and “Firenze S.M.N.” (1) are drawn at about half and a third of their size. P1 drew them full size.",
+     "checks": "They see it: “sizes out of proportion” on those rows. They also count the fills gained, so 24 majors on P1, 23 on L5.",
+     "claude": "Worse: two rows nobody can read outweigh the colours. Its size was measured from a box that does not fit its text, the fault already named on three dev pages (c0072, c0075, timetable_0019).",
+     "often": "3 of the 4 worse pages (with c0069 next); 3 dev pages.",
+     "proposes": "Worse, next in line: a Cell sized from a box that does not fit its text.",
+     "source_crop": [
+      0,
+      120,
+      920,
+      420
+     ],
+     "render_crop": [
+      0,
+      120,
+      920,
+      420
+     ],
+     "source_marks": [
+      [
+       22,
+       258,
+       896,
+       308
+      ]
+     ],
+     "render_marks": [
+      [
+       18,
+       258,
+       850,
+       293
+      ]
+     ],
+     "labels": [
+      "1"
+     ]
+    },
+    {
+     "key": "l5-small-cell",
+     "kind": "spot",
+     "page": "c0069",
+     "run": "L5-D2-L3",
+     "title": "“Dental laboratory technician” drawn tiny, a label overprinted",
+     "what": "Both sections now carry their values in bold, as printed. But the job title (2) is drawn at about a third of its size, and “Date of birth *” (1) is half hidden behind the field under it. P1 drew both whole.",
+     "checks": "17 majors on both. They flag the small job title; they do not see the hidden label.",
+     "claude": "Worse: one value too small to read, one label hidden.",
+     "often": "The same fault as c0441.",
+     "proposes": "Worse, next in line with c0441.",
+     "source_crop": [
+      0,
+      0,
+      800,
+      330
+     ],
+     "render_crop": [
+      0,
+      0,
+      800,
+      600
+     ],
+     "source_marks": [
+      [
+       22,
+       160,
+       104,
+       180
+      ],
+      [
+       516,
+       160,
+       684,
+       182
+      ]
+     ],
+     "render_marks": [
+      [
+       24,
+       172,
+       110,
+       194
+      ],
+      [
+       242,
+       442,
+       362,
+       460
+      ]
+     ],
+     "labels": [
+      "1",
+      "2"
+     ]
+    },
+    {
+     "key": "l5-mark-joined",
+     "kind": "false",
+     "page": "c0032",
+     "run": "L5-D2-L3",
+     "title": "A footnote mark against its word, called “merged”",
+     "what": "L5 keeps “How to read it” and the highlights in the left column, as printed (P1 drew the highlights under the chart), and raises the footnote marks. The page prints “redemptions.ᵃ”. GLM-OCR dropped the full stop, and we draw “redemptionsᵃ”.",
+     "checks": "12 majors on P1, 13 on L5. The one more is “redemptions a → redemptionsa, merged”: the raised mark read as part of its word.",
+     "claude": "Better. The merged word is a false alarm as a major: the mark is raised and set against its word, as printed. The lost full stop is the parser's, a minor.",
+     "often": "Any page whose raised mark follows a word with no punctuation between.",
+     "proposes": "Better. Fix the check: a raised mark set against its word is not a merge. Pin it on a dev page.",
+     "source_crop": [
+      0,
+      0,
+      900,
+      721
+     ],
+     "render_crop": [
+      0,
+      0,
+      900,
+      727
+     ],
+     "source_marks": [],
+     "render_marks": []
+    },
+    {
+     "key": "l5-spot-c0064",
+     "kind": "spot",
+     "page": "c0064",
+     "run": "L5-D2-L3",
+     "title": "Fields and table framed, two field sizes apart",
+     "what": "L5 draws the payers' table with its frame and header fill, and the CPF and name larger and bold, as printed. But “03 Cônjuge” and “04 Município”, printed the same size as 01 and 02, are drawn at the body's size. The page is also a fifth taller.",
+     "checks": "27 majors on P1, 29 on L5: frames and merged cells moved from one field to another, plus that size and the height.",
+     "claude": "Better on balance: the table now reads as the page's table. The two field sizes are a real major, from the sizes part B fits.",
+     "often": "Sizes drawn at the body's size: 255 dev blocks (group D).",
+     "proposes": "Better; the field sizes go to part B.",
+     "source_crop": [
+      0,
+      0,
+      540,
+      379
+     ],
+     "render_crop": [
+      0,
+      0,
+      540,
+      454
+     ],
+     "source_marks": [],
+     "render_marks": []
+    },
+    {
+     "key": "l5-spot-c0356",
+     "kind": "spot",
+     "page": "c0356",
+     "run": "L5-D2-L3",
+     "title": "Random pick: the conveyancing letter",
+     "what": "P1 drew the letter's body under the sidebar (team, hours, regulation). L5 draws it beside the sidebar, as printed, from the addressee down.",
+     "checks": "Fewer majors on L5.",
+     "claude": "Better: the page's two columns are back.",
+     "often": "Drawn at random from the 25 better or same.",
+     "proposes": "Better.",
+     "source_crop": [
+      0,
+      0,
+      740,
+      504
+     ],
+     "render_crop": [
+      0,
+      0,
+      740,
+      522
+     ],
+     "source_marks": [],
+     "render_marks": []
+    },
+    {
+     "key": "l5-spot-c0431",
+     "kind": "spot",
+     "page": "c0431",
+     "run": "L5-D2-L3",
+     "title": "Random pick: the trade catalogue",
+     "what": "Very close to P1: the sidebar and three tables. L5 sets the rows a little tighter, and draws two pack quantities in bold where the page prints them regular.",
+     "checks": "About the same count on both.",
+     "claude": "The same: the bold quantities are a minor (weight added), and the tighter rows are closer to the page.",
+     "often": "Drawn at random from the 25 better or same.",
+     "proposes": "The same.",
+     "source_crop": [
+      0,
+      0,
+      980,
+      824
+     ],
+     "render_crop": [
+      0,
+      0,
+      980,
+      814
+     ],
+     "source_marks": [],
+     "render_marks": []
+    },
+    {
+     "key": "l5-next",
+     "kind": "plan",
+     "page": "after part A",
+     "title": "Next: the worse pages' cause, then part B's round?",
+     "what": "Part A is done: A, B and C shipped, D measured with nothing shipped. On the L3 pages: 17 better, 8 the same, 4 worse, 12 unchanged; 889 majors to 851; the parser's blocks byte for byte P1's.",
+     "says": {
+      "checks": "Measured",
+      "often": "What it costs"
+     },
+     "checks": "The 4 worse pages have two causes. A row or Cell sized from a box that does not fit its text: c0441, c0069, and on dev c0072, c0075, timetable_0019. A line cut by the row below: c0128, c0523; not yet looked for on dev.",
+     "claude": "Both are our side's, and both lose content, so they come before fitting constants. Part B then fits what D2 decides by constant (the adapter's grouping, SIZE_STEP, BOLD, COLOUR_APART), with its plan as its own round.",
+     "often": "About a session for the two causes, offline on the dev regions; no conversion. Part B's round comes after.",
+     "proposes": "Fix the two causes next, reproduced on dev first, judged on every dev page they move. Then bring part B's plan as round 12. Disagree to go to part B now and leave the worse pages named."
+    }
+   ]
   }
  ],
- "page_stamp": "Spec 0024 · L5 · round 10: four questions before L5 on D2"
+ "page_stamp": "Spec 0024 · L5 · round 11: part A on the L3 pages"
 }
