@@ -31,7 +31,7 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
-from . import checkboxes, furniture, locate, looks, rhythm
+from . import checkboxes, furniture, linebreaks, locate, looks, rhythm
 from . import style as style_module
 from .adapter import document_of
 from .ir import BBox, Document, Flow, Kind, Region, RowRole, Zone
@@ -188,7 +188,8 @@ def measure(document: Document, rectified: Rectified) -> None:
     order, on the flat picture: the furniture, the palette and the ink;
     each Zone's chrome; the type's sizes; the regions and the rules
     between them; where each Cell sits (`locate.locate`, tesseract as a
-    locator only, its words never printed); which Zone holds each rule;
+    locator only, its words never printed), and a reader's line cut where
+    the page breaks it (`linebreaks`); which Zone holds each rule;
     how the lines sit; how each entry is printed; each figure's
     pixels; and the tick boxes the reader does not read (`checkboxes`)."""
     plain = rectified.plain if rectified.plain is not None else rectified.image
@@ -240,10 +241,12 @@ def measure(document: Document, rectified: Rectified) -> None:
     document.separators = separators(plain, document.zones, ground=document.style.page_bg,
                                      inverted=rectified.inverted)
     locate.locate(plain, document)
+    cuts = linebreaks.restore(plain, document)
     furniture.place(document.furniture, document.zones)
     rhythm.read(plain, document)
     looks.read(plain, document, photographed=False, inverted=rectified.inverted)
     checkboxes.restore(plain, document)
+    linebreaks.apart(document, cuts)
 
 
 def from_regions(raw: Sequence[dict[str, Any]], png: Path) -> Document:
