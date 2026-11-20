@@ -2506,7 +2506,8 @@ def _table(zone: Zone, document: Document) -> str:
         in_place = places[position]
         hatch = anchors.rows.get((index_of, position)) if anchors else None
         styled_row = (_row_style(row, page, opens=not in_place,
-                                 ink=document.style.ink if document.style else None)
+                                 ink=document.style.ink if document.style else None,
+                                 shaded=zone.header_fill is not None)
                       if read else "")
         if hatch is not None:
             styled_row = _merged(styled_row, _hatching(hatch, page))
@@ -2682,7 +2683,7 @@ def _rows_read(zone: Zone) -> bool:
 
 
 def _row_style(row: Row, page: _Page, *, opens: bool,
-               ink: tuple[int, int, int] | None = None) -> str:
+               ink: tuple[int, int, int] | None = None, shaded: bool = False) -> str:
     """A row's own line and ground, as the page draws them: spec 0011, step
     4c. A row not read keeps the house rule, and a header that opens the
     table the house shade — one inside it, `menu_0012`'s `PUDDINGS`, never
@@ -2693,25 +2694,37 @@ def _row_style(row: Row, page: _Page, *, opens: bool,
     c0004's `1. DELEGATE`, white on navy, measured its fill and not its
     ink, and was drawn dark on dark. Only for a row with a Cell whose
     colour is not measured: a measured colour is the Cell's own, and
-    states it."""
+    states it.
+
+    **A fill measured on a row whose line is not is still the row's** —
+    spec 0024, C2: `looks` measures a row's ground over its own span and
+    its line in the gap below it, and a row with no gap below — c0010's
+    teal header, set flush on its first row — has the one and not the
+    other. Its fill is drawn, and the house rule stays. A header row's
+    fill is also its `--shade`, which its header cells paint over the
+    row's own background — unless the Zone has a measured `header_fill`
+    (`shaded`), which `_header_style` already paints: `timetable_0019`'s
+    dark header."""
     parts = []
     if row.under is None:
         parts.append("border-bottom:1px solid var(--rule)")
-        if row.role is RowRole.HEADER and opens:
+    elif row.under.kind != "none":
+        least = 3 if row.under.kind == "double" else 1
+        width = max(least, round(row.under.width * page.y))
+        colour = _rgb(row.under.color) if row.under.color else "var(--ink)"
+        parts.append(f"border-bottom:{width}px {row.under.kind} {colour}")
+    if row.fill is None or (row.under is None and row.role is RowRole.HEADER and shaded):
+        if row.under is None and row.role is RowRole.HEADER and opens:
             parts.append("background:var(--shade)")
     else:
-        if row.under.kind != "none":
-            least = 3 if row.under.kind == "double" else 1
-            width = max(least, round(row.under.width * page.y))
-            colour = _rgb(row.under.color) if row.under.color else "var(--ink)"
-            parts.append(f"border-bottom:{width}px {row.under.kind} {colour}")
-        if row.fill is not None:
-            parts.append(f"background:{_rgb(row.fill)}")
-            readable = _readable_on(row.fill, ink) if ink is not None else None
-            if readable is not None and any(
-                    c.text.strip() and (c.look is None or c.look.color is None)
-                    for c in row.cells):
-                parts.append(f"color:{_rgb(readable)}")
+        if row.under is None and row.role is RowRole.HEADER:
+            parts.append(f"--shade:{_rgb(row.fill)}")
+        parts.append(f"background:{_rgb(row.fill)}")
+        readable = _readable_on(row.fill, ink) if ink is not None else None
+        if readable is not None and any(
+                c.text.strip() and (c.look is None or c.look.color is None)
+                for c in row.cells):
+            parts.append(f"color:{_rgb(readable)}")
     return f' style="{";".join(parts)}"' if parts else ""
 
 

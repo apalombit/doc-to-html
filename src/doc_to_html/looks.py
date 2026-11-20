@@ -445,7 +445,7 @@ def _lines(ink: ImageArray) -> list[tuple[int, int]]:
     return out
 
 
-def _glyph(ink: ImageArray, text: str) -> float | None:
+def _glyph(ink: ImageArray, text: str, body: float | None = None) -> float | None:
     """The Cell's glyph height in pixels: line by line, from its baseline to
     the top of the letters standing on it, and only where the model's text
     says a letter reaches the cap height.
@@ -469,16 +469,78 @@ def _glyph(ink: ImageArray, text: str) -> float | None:
         glyphs = [(int(y), int(y + h), int(w)) for _, y, w, h, area in stats
                   if h >= 2 and w <= 4 * h
                   and not (area > 0.85 * w * h and h > 6 and 2 * w >= h)]
+        # A hairline standing twice the line's other components is a rule
+        # the box takes in, not a stem — spec 0024, C3: a table's borders
+        # inside c0072's `3a`, a box the row's width, stood the line 40px
+        # where its letters are 14, and c0075's `(e) Amount paid` 18 for 9.
+        # `Invoice`'s `I` stands as tall as its neighbours.
+        broad = [g for g in glyphs if 4 * g[2] > g[1] - g[0]]
+        if broad:
+            middle = float(np.median([end - start for start, end, _ in broad]))
+            glyphs = [g for g in glyphs if 4 * g[2] > g[1] - g[0]
+                      or g[1] - g[0] < OVER_MARKS * middle]
         if not glyphs:
             continue
         # Most glyphs end on the baseline; counted, not weighted by width,
         # since the widest component is the likeliest to be letters run
         # together with a tail.
-        baseline = int(np.argmax(np.bincount([end for _, end, _ in glyphs])))
-        standing = [start for start, end, _ in glyphs if abs(end - baseline) <= 1]
-        if standing:
-            heights.append(float(baseline - min(standing)))
+        found = _stood(glyphs)
+        taller = [g for g in glyphs if found is not None and g[1] - g[0] >= OVER_MARKS * found
+                  and 4 * g[2] > g[1] - g[0]]
+        if (body is not None and found is not None and found < LEAST * body
+                and len(taller) >= LETTERS_OVER):
+            # Under half the page's body, with several components standing
+            # twice that: the line was stood up by marks, and is asked again
+            # of the letters alone — spec 0024, C3. A leader's dots outnumber
+            # the letters of `Logo design ..... £850.00` (c0425) and, ending
+            # a pixel off their baseline, took it: the line measured 2px.
+            # Hairlines are not letters: a cell's borders, in a box a cell
+            # tall, stand twice its type (c0010's `Frequency`). A measure at
+            # the body's size stands, whatever stands twice it beside: c0197's
+            # checkboxes, c0011's pills.
+            found = _stood(taller) or found
+        if found is not None:
+            heights.append(found)
     return float(np.median(heights)) if heights else None
+
+
+def _stood(glyphs: list[tuple[int, int, int]]) -> float | None:
+    """The height a line's letters stand to over its baseline, the end most
+    of its components share; None for no component."""
+    if not glyphs:
+        return None
+    baseline = int(np.argmax(np.bincount([end for _, end, _ in glyphs])))
+    standing = [start for start, end, _ in glyphs if abs(end - baseline) <= 1]
+    return float(baseline - min(standing)) if standing else None
+
+
+OVER_MARKS = 2.0
+"""How many times the height a line measured its letters at a component
+must stand to be a letter over marks (`_glyph`) — spec 0024, C3. Over every
+line `_glyph` measured on 120 dev pages, 144,585 components over their line's
+height: stops, commas and leader dots at 0.05 to 0.30, x-height letters from
+0.45, caps and ascenders from 0.65."""
+
+LETTERS_OVER = 3
+"""How many such components a line must hold to be measured again: more than
+the one bar `form_0007`'s barred titles draw beside their words."""
+
+LEAST = 0.5
+"""Under how many of the page's body glyphs a line's measure must come out to
+be asked again of its letters (`_glyph`) — spec 0024, C3. A leader's dots
+measure 0.20 to 0.22 of the body on c0246, c0254 and c0425. The smallest
+type the dev pages print, read right, stands at and over it: kickers in
+spaced capitals at 0.50 (c0407's `REPORTAGEM · INDÚSTRIA`, c0536's), small
+capital labels at 0.6 to 0.7 (c0039's, c0181's)."""
+
+TINY = 3
+"""The glyph height in pixels, and under, that no type the parser read
+stands at: a measure that small was taken off a box that does not hold the
+line — spec 0024, C3. On the dev pages every Cell measured at 2 or 3px is
+one: a box on a rule (c0461's `Qty`), a box 1 to 3px tall (c0198's,
+`timetable_0019`'s), a box beside its two lines of white type (c0287's
+`CONSUNTIVO AL 31/12/2024`). Nothing is read off such a box, as off an
+empty one, and the Cell is drawn at its Block's size."""
 
 
 TWO_SIZES = 2.0
@@ -952,6 +1014,25 @@ def _titles(rgb: ImageArray, document: Document, style: Style) -> None:
             zone.title_color = _ink(line, ground)
 
 
+SPAN = 0.9
+"""How much of a Cell's box one inked shape must run across to be a ground
+and not type (`_spanned`) — spec 0024, C3."""
+
+
+def _spanned(zoned: ImageArray) -> bool:
+    """Whether one shape of the mask runs across the Cell's box: a fill, a
+    band or a chip the mask took for ink, its type the holes. c0424's `Prix
+    unitaire HT`, white on its navy header row: the box a row tall, the fill
+    short of its top and bottom edges so `_framed` fails, it measured the
+    fill's rims at 2px where the type is 8. c0221's black `5 STATO DI
+    AVANZAMENTO` band and c0551's red `Small groups of 8` pill, neither a
+    fill `furniture` found, likewise. A line of type is many shapes, none
+    that wide: c0177's heavy `Fattura`, as much ink, is seven letters."""
+    cv2 = _cv2()
+    stats = cv2.connectedComponentsWithStats(zoned.astype(np.uint8), connectivity=8)[2][1:]
+    return bool(len(stats)) and int(stats[:, 2].max()) >= SPAN * zoned.shape[1]
+
+
 def _drawn_ground(zone: Zone, row: int | None, style: Style, box: BBox,
                   fills: list[Furniture]) -> tuple[int, int, int]:
     """The ground the render draws under one of the Zone's Cells.
@@ -975,6 +1056,45 @@ def _drawn_ground(zone: Zone, row: int | None, style: Style, box: BBox,
                 and fill.bbox.top <= middle_y <= fill.bbox.bottom):
             return fill.color
     return zone.fill or style.page_bg
+
+
+def _painted(ground: tuple[int, int, int], chip: BBox, zone: Zone, row: int | None,
+             style: Style, fills: list[Furniture]) -> bool:
+    """Whether a chip's ground is one the render already paints under its
+    Cell — spec 0024, C2: its row's measured fill, its header's fill, its
+    Zone's fill, or a drawn fill holding the whole Zone, which the render
+    paints round it; else the page's ground. Such a chip cannot be seen,
+    and its padding, drawn on an inline run, reaches over the line above:
+    c0128's grey row stripe read as a chip round `Orange juice 1L` hid
+    half of `Ground coffee 227g`, and c0523's cream ticket round a
+    sentence of two lines hid half of the first. On the dev pages, 61 of
+    146 chips. **A fill inside the Zone is not painted**: `pricing_0017`'s
+    `Annual` pill is a fill of its own, and the chip that draws it. **Nor
+    is a fill that is the chip** — its box the chip's, within `CHIP_SLACK`:
+    c0355's red `PRIORIDADE ALTA` pill holds the snapped Zone of its own
+    words, and dropping it left white type on the page. The Cell keeps the
+    ink measured on that ground, as `spans.off_chips` leaves a joined
+    line's (`timetable_0019`'s grey `B04 · Ms Ilves`)."""
+    measured = zone.rows[row].fill if row is not None else None
+    grounds = [measured] if measured is not None else []
+    holding = [fill.color for fill in fills if zone.bbox is not None
+               and fill.bbox.left <= zone.bbox.left and fill.bbox.right >= zone.bbox.right
+               and fill.bbox.top <= zone.bbox.top and fill.bbox.bottom >= zone.bbox.bottom
+               and not _is_the_chip(fill.bbox, chip)]
+    grounds.append(zone.fill or (holding[0] if holding else style.page_bg))
+    return any(_apart(ground, colour) <= GROUND_SAME for colour in grounds)
+
+
+CHIP_SLACK = 0.01
+"""How near, in shares of the page, a drawn fill's every edge comes to a
+chip's for the fill to be the chip (`_painted`): both are measured on the
+same anti-aliased edge. `render.SLACK`'s value, for the same reason."""
+
+
+def _is_the_chip(fill: BBox, chip: BBox) -> bool:
+    return (abs(fill.left - chip.left) <= CHIP_SLACK and abs(fill.right - chip.right) <= CHIP_SLACK
+            and abs(fill.top - chip.top) <= CHIP_SLACK
+            and abs(fill.bottom - chip.bottom) <= CHIP_SLACK)
 
 
 def _highlighted(rgb: ImageArray, box: BBox) -> bool:
@@ -1106,7 +1226,9 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
                 if pixels.size >= 60:
                     ground = dominant(pixels)
                     chip = _chip(rgb, spot, ground, body)
-                    if chip is not None:
+                    if chip is not None and _painted(ground, chip[0], zone, row, style, fills):
+                        colours[id(cell)] = (_ink(pixels, ground), None, None)
+                    elif chip is not None:
                         colours[id(cell)] = (_ink(pixels, ground), ground, chip)
                     elif _apart(ground, _drawn_ground(zone, row, style, box,
                                                       fills)) <= GROUND_SAME:
@@ -1124,15 +1246,27 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
                 continue
             patch = grey[y0 + top:y0 + bottom, x0 + left:x0 + right]
             patch = 255 - patch if turned else patch
-            if float(zoned.mean()) > CHIP and _framed(zoned):
+            if not turned and (~zoned).any() and patch[zoned].mean() > patch[~zoned].mean():
+                # Light type the mask marks on a ground darker than it, in a
+                # Zone not turned — spec 0024, C3: c0419's white `INSCRIPTIONS
+                # OUVERTES` on its orange band was taken at its own dark side,
+                # the orange between the letters, and measured 5px for 11.
+                patch = 255 - patch
+            if float(zoned.mean()) > CHIP and (_framed(zoned) or _spanned(zoned)):
                 # Type knocked out of a chip — spec 0019, C1: its letters are
                 # the chip's holes, measured turned over like any other ink.
+                # Or out of a ground the box overshoots — spec 0024, C3.
                 patch, zoned = 255 - patch, ~zoned
                 if not zoned.any():
                     measured.append((cell, None, None, None))
                     continue
             ink = _own_ink(patch, zoned)
-            glyph = _glyph(ink, cell.text)
+            glyph = _glyph(ink, cell.text, body)
+            if glyph is not None and glyph <= TINY:
+                # A box that does not hold its line: nothing read off it is
+                # the line's — spec 0024, C3.
+                measured.append((cell, None, None, None))
+                continue
             if glyph and (parts := _two_sizes(ink, cell.text, body)) is not None:
                 parted[id(cell)] = parts
             cover = _cover(patch.astype(float), ink)

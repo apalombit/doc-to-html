@@ -228,6 +228,123 @@ class TestRead:
         assert loose.look is None
 
 
+def banded(page: Page, text: str, *, over: int,
+           ground: tuple[int, int, int] = (82, 52, 31)) -> tuple[Cell, BBox]:
+    """White type on a band the page's width, navy unless `ground` (BGR) says,
+    its box `over` pixels past the band at the top and the bottom; the Cell
+    and the band's box."""
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    (wide, tall), base = cv2.getTextSize(text, font, 0.6, 1)
+    page.y += tall + 12
+    y = page.y
+    top, bottom = y - tall - 5, y + base + 3
+    cv2.rectangle(page.image, (0, top), (WIDTH, bottom), ground, -1)
+    cv2.putText(page.image, text, (20, y), font, 0.6, (255, 255, 255), 1, cv2.LINE_AA)
+    entry = cell(text)
+    entry.bbox = BBox(18 / WIDTH, (top - over) / HEIGHT, (wide + 22) / WIDTH,
+                      (bottom + over) / HEIGHT)
+    page.y += base + 20
+    return entry, BBox(0.0, top / HEIGHT, 1.0, bottom / HEIGHT)
+
+
+class TestKnockedOut:
+    """Spec 0024, C3: light type on a dark ground, measured at its own size
+    however the Zone's mask took it."""
+
+    def test_type_on_a_band_its_box_overshoots_reads_its_size(self) -> None:
+        # c0424's `Prix unitaire HT`: the box a row tall, the navy fill
+        # short of its top and bottom, so its frame is not inked; it
+        # measured the fill's rims at 2px where the type is 8.
+        page = body_page()
+        head, _ = banded(page, "Prix unitaire HT", over=6)
+        page.cells.append(head)
+        looks.read(page.image, page.document())
+        sizes = [c.look.size for c in page.cells[:3] if c.look is not None]
+        assert head.look is not None and head.look.size is not None and sizes
+        assert abs(head.look.size - float(np.median([s for s in sizes if s]))) <= 0.25
+
+    def test_light_type_its_zones_mask_marks_reads_its_size(self) -> None:
+        # c0419's white `INSCRIPTIONS OUVERTES` on its own orange Zone: the
+        # mask marks the type, and the Cell's own threshold took the orange
+        # between its letters, 5px where the type is 11.
+        page = body_page()
+        body = page.document()
+        foot, band = banded(page, "Inscriptions ouvertes", over=0, ground=(31, 90, 255))
+        zone = Zone(kind=Kind.PROSE, complete=True, bbox=band,
+                    blocks=[Block(kind="paragraph", lines=[foot])])
+        document = Document(source=body.source, zones=[body.zones[0], zone],
+                            style=Style(ink=(0, 0, 0)))
+        looks.read(page.image, document)
+        sizes = [c.look.size for c in page.cells if c.look is not None and c.look.size]
+        assert foot.look is not None and foot.look.size is not None and sizes
+        assert abs(foot.look.size - float(np.median(sizes))) <= 0.25
+
+
+def leader_line(boxes: bool = False) -> tuple[np.ndarray, int]:
+    """One line's ink, as `_glyph` takes it: `Logo design`, a leader of dots
+    ending three pixels over the letters' baseline, `850.00`; or, `boxes`,
+    five checkboxes twice the letters' height in place of the dots. With the
+    letters' cap height."""
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    ink = np.zeros((48, 460), np.uint8)
+    cv2.putText(ink, "Logo design", (4, 34), font, 0.6, 255, 1)
+    cv2.putText(ink, "850.00", (370, 34), font, 0.6, 255, 1)
+    if boxes:
+        for x in range(130, 330, 40):
+            cv2.rectangle(ink, (x, 6), (x + 22, 40), 255, 1)
+    else:
+        for x in range(130, 360, 5):
+            ink[30:32, x:x + 2] = 255
+    return ink > 0, cv2.getTextSize("L", font, 0.6, 1)[0][1]
+
+
+class TestTheLineMeasured:
+    """Spec 0024, C3: a line is measured by its letters — not by a leader's
+    dots, a table's borders or checkboxes in its box — and a box that does
+    not hold its line is not measured at all."""
+
+    def test_a_leaders_dots_measure_their_letters_not_themselves(self) -> None:
+        ink, cap = leader_line()
+        text = "Logo design ..... £850.00"
+        assert looks._glyph(ink, text) is not None and looks._glyph(ink, text) <= 3
+        measured = looks._glyph(ink, text, body=float(cap))
+        assert measured is not None and abs(measured - cap) <= 2
+
+    def test_a_tables_borders_in_the_box_are_not_its_letters(self) -> None:
+        # c0072's `3a`: a box the row's width takes in the table's borders,
+        # each a hairline three times the letters' height standing on their
+        # baseline; it measured 40px where its letters are 14.
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        ink = np.zeros((48, 460), np.uint8)
+        cv2.putText(ink, "3a Check the box", (20, 38), font, 0.6, 255, 1)
+        baseline = int(np.nonzero(ink[:, 20:60].any(axis=1))[0].max())
+        ink[0:baseline + 1, 6:8] = 255
+        ink[0:baseline + 1, 440:441] = 255
+        cap = cv2.getTextSize("L", font, 0.6, 1)[0][1]
+        measured = looks._glyph(ink > 0, "3a Check the box")
+        assert measured is not None and abs(measured - cap) <= 2
+
+    def test_a_box_that_does_not_hold_its_line_reads_nothing(self) -> None:
+        # c0198's boxes 3px tall across a struck-through row: the line
+        # measured 2px where its type is 8. Nothing is read off it.
+        page = body_page()
+        line = page.cells[1]
+        assert line.bbox is not None
+        sliver = cell("EW-305")
+        sliver.bbox = BBox(line.bbox.left, line.bbox.bottom - 5 / HEIGHT,
+                           line.bbox.right, line.bbox.bottom)
+        page.cells.append(sliver)
+        looks.read(page.image, page.document())
+        assert sliver.look is not None
+        assert sliver.look.size is None and sliver.look.bold is None
+
+    def test_a_measure_at_the_bodys_size_stands_beside_taller_boxes(self) -> None:
+        # c0197's checkboxes stand twice its letters; the letters measured.
+        ink, cap = leader_line(boxes=True)
+        measured = looks._glyph(ink, "□ Logo design □ □ □ □ 850.00", body=float(cap))
+        assert measured is not None and abs(measured - cap) <= 2
+
+
 def paragraph(*lined: Look | None) -> Document:
     lines = []
     for number, look in enumerate(lined):
@@ -455,6 +572,72 @@ class TestRows:
         html = render(Document(source=Source(path="x.png", sha256="0", width=WIDTH,
                                              height=HEIGHT), zones=[zone]))
         assert "<table>" in html and "table.read" not in html
+
+    def test_a_fill_measured_with_no_line_under_it_is_drawn(self) -> None:
+        # Spec 0024, C2: c0010's teal header, set flush on its first row,
+        # has a fill and no line measured; it was drawn on the house shade
+        # and its white type was lost. A header cell paints `--shade`.
+        zone = Zone(kind=Kind.TABLE, complete=True, rows=[
+            Row(cells=[cell("Frequency")], role=RowRole.HEADER, fill=(11, 110, 110)),
+            Row(cells=[cell("Nightly")], under=Stroke(kind="none")),
+            Row(cells=[cell("A PREENCHER")], fill=(15, 118, 110))])
+        html = render(Document(source=Source(path="x.png", sha256="0", width=WIDTH,
+                                             height=HEIGHT), zones=[zone],
+                               style=Style(ink=(26, 26, 26))))
+        assert ('<tr style="border-bottom:1px solid var(--rule);--shade:rgb(11,110,110);'
+                'background:rgb(11,110,110);color:rgb(232,232,232)">') in html
+        assert ('<tr style="border-bottom:1px solid var(--rule);'
+                'background:rgb(15,118,110);color:rgb(232,232,232)">') in html
+
+    def test_a_measured_header_fill_paints_the_header_row(self) -> None:
+        # `timetable_0019`: the Zone's `header_fill` is the header's, and
+        # `_header_style` paints it; its row keeps the house shade.
+        zone = Zone(kind=Kind.TABLE, complete=True, header_fill=(32, 38, 46), rows=[
+            Row(cells=[cell("Monday")], role=RowRole.HEADER, fill=(32, 38, 46)),
+            Row(cells=[cell("Maths")], under=Stroke(kind="none"))])
+        html = render(Document(source=Source(path="x.png", sha256="0", width=WIDTH,
+                                             height=HEIGHT), zones=[zone],
+                               style=Style(ink=(26, 26, 26))))
+        assert '<tr style="border-bottom:1px solid var(--rule);background:var(--shade)">' in html
+
+
+class TestPaintedChips:
+    """Spec 0024, C2: a chip whose ground the render already paints under
+    its Cell is not drawn — its padding, on an inline run, reaches over the
+    line above — and one the render does not paint is."""
+
+    CHIP = BBox(0.60, 0.10, 0.80, 0.14)
+
+    def zone(self, fill: tuple[int, int, int] | None = None,
+             header_fill: tuple[int, int, int] | None = None) -> Zone:
+        return Zone(kind=Kind.TABLE, complete=True, bbox=BBox(0.55, 0.08, 0.85, 0.40),
+                    header_fill=header_fill, rows=[
+                        Row(cells=[cell("Orange juice 1L")], role=RowRole.HEADER, fill=fill)])
+
+    def test_a_chip_on_its_rows_fill_is_painted(self) -> None:
+        # c0128: the grey stripe under `Orange juice 1L`.
+        assert looks._painted((236, 235, 228), self.CHIP, self.zone(fill=(236, 235, 228)),
+                              0, Style(), [])
+
+    def test_a_chip_on_a_fill_holding_its_zone_is_painted(self) -> None:
+        # c0523: the cream ticket round a sentence of two lines.
+        ticket = Furniture(kind="fill", color=(255, 255, 238), bbox=BBox(0.05, 0.05, 0.95, 0.9))
+        assert looks._painted((255, 255, 238), self.CHIP, self.zone(), 0, Style(), [ticket])
+
+    def test_a_fill_that_is_the_chip_is_not_painted(self) -> None:
+        # c0355: the red `PRIORIDADE ALTA` pill holds its own words' Zone.
+        pill = Furniture(kind="fill", color=(166, 29, 36), bbox=BBox(0.595, 0.098, 0.805, 0.143))
+        zone = Zone(kind=Kind.PROSE, complete=True, bbox=BBox(0.61, 0.11, 0.79, 0.13))
+        assert not looks._painted((166, 29, 36), self.CHIP, zone, None, Style(), [pill])
+
+    def test_a_header_fill_is_not_a_painted_ground(self) -> None:
+        # c0008: `9` in its black box, the header fill measured off the box.
+        assert not looks._painted((0, 0, 0), self.CHIP, self.zone(header_fill=(0, 0, 0)),
+                                  0, Style(), [])
+
+    def test_a_chip_on_the_pages_ground_is_painted_and_one_off_it_is_not(self) -> None:
+        assert looks._painted((254, 254, 254), self.CHIP, self.zone(), 0, Style(), [])
+        assert not looks._painted((11, 110, 110), self.CHIP, self.zone(), 0, Style(), [])
 
 
 def dish_row(dots: bool, note: str = "") -> tuple[np.ndarray, Document]:
