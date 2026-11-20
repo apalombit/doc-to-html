@@ -4552,7 +4552,61 @@
      "proposes": "Fix the two causes next, reproduced on dev first, judged on every dev page they move. Then bring part B's plan as round 12. Disagree to go to part B now and leave the worse pages named."
     }
    ]
+  },
+  {
+   "name": "Round 12",
+   "date": "2026-11-20",
+   "title": "Round 12: part two, every major on the dev pages by cause — three questions",
+   "intro": "The worse pages' two causes are mended on dev (47 pages moved: 36 better, 9 the same, 2 worse, named in the spec). Then every major on the 231 dev pages was put at its stage: the parser's reading, or our side. Issue 1 asks the order to fix them in, issue 2 whether we may probe the parser itself, issue 3 one guardrail on its output. Round 11's eight spot checks are still open above. Click a decision: it saves and the next opens.",
+   "about": "Round 12: spec 0024, part two. L5-F13's checks on the 231 dev pages, each major class at its stage. None asked in rounds 1 to 11.",
+   "issues": [
+    {
+     "key": "l5-part2-order",
+     "kind": "plan",
+     "page": "part two",
+     "title": "Part two: fix the dev pages' majors in this order?",
+     "what": "Every major on the 231 dev pages (229 have one), put at its stage. The parser returns text and boxes only, so sizes, bold, colour, frames, rules and heights are ours; the words are split by the parser's raw text.",
+     "says": {
+      "checks": "Measured",
+      "often": "What it costs"
+     },
+     "checks": "Pages with each major: sizes out of proportion 210; the reader's words 174; bold lost 164; line breaks 97; height 84; frames and fills 81; colour 72; rules between cells 51; side by side 32; face 27; cells 20; order 12. Our own word faults: at most 30 pages.",
+     "claude": "Fit the looks first: one offline session reaches the three biggest classes on our side. Then the reader's words, if issue 2 is agreed; then the rest by pages hurt, height last because it moves with everything above it.",
+     "often": "1: about a session, offline. 2: three probes of 10 to 15 minutes' model time, then one dev re-parse of about 1 h 45. 3 to 7: a session or two each, offline.",
+     "proposes": "In this order: 1 the looks' constants fitted on dev labels (SIZE_STEP, BOLD, COLOUR_APART first, then the adapter's grouping); 2 the reader's words (issue 2); 3 line breaks; 4 tables and boxes; 5 side by side, face, cells, order; 6 height re-measured; 7 our own words and the checkbox marks (issue 3). Each judged by eye on every dev page it moves. Disagree to name another order."
+    },
+    {
+     "key": "l5-reader-probes",
+     "kind": "rule",
+     "page": "the parser",
+     "title": "May we probe the parser's reading: a bigger image, two of its settings?",
+     "what": "The parser's reading faults words on 174 dev pages: 315 words lost where its layout found no region (41 pages), 398 lost inside a region it read (79 pages), 408 changed (115 pages), mostly small type misread: perjury → piracy, clicks → clocks. The rules keep its weights, prompts and thresholds untouched.",
+     "says": {
+      "checks": "Measured",
+      "often": "What it costs"
+     },
+     "checks": "Its prompts are fixed task tags (Text Recognition:), so rewording is no lever. Three things are: the layout threshold, 0.3; repetition_penalty, 1.1, which weighs against repeating a token as a table's digits do (178 of the 743 lost words are numbers); and the image it is shown, the page at screen size.",
+     "claude": "Probe before changing anything: each probe on the 20 dev pages with the most reader word faults, judged by eye and by the words check, never on a panel page. Keep only what helps.",
+     "often": "Each probe 10 to 15 minutes of model time. One dev re-parse of about 1 h 45 for what is kept; the doubled image costs more, measured on its probe first, and asked again if over two hours.",
+     "proposes": "Agree to three probes: a. the page enlarged twice before parsing; b. the layout threshold 0.3 to 0.2; c. repetition_penalty 1.1 to 1.0. b and c lift the rule 'the parser's thresholds untouched' for the probes and, if they help, for D2. Disagree to keep the parser exactly as it is and work on our side only."
+    },
+    {
+     "key": "l5-marks",
+     "kind": "plan",
+     "page": "checkbox marks",
+     "title": "Put back the checkboxes the parser does not read?",
+     "what": "The parser reads no ☐ or ☑ on 35 dev pages, 59 marks: the box is printed and the render draws nothing. On a form, a ticked box is the answer.",
+     "says": {
+      "checks": "Measured",
+      "often": "What it costs"
+     },
+     "checks": "The words check counts each mark lost; the parser's raw text has none of them.",
+     "claude": "A model-free guardrail on the parser's output: find the small square the page prints at a line's start, empty or ticked, and put its mark in the line. Measured on dev labels before it ships; a square it cannot tell is left out, never guessed.",
+     "often": "Part of a session, offline, in direction 7.",
+     "proposes": "Agree to add it in direction 7. Disagree to leave the marks as the reader's fault, named."
+    }
+   ]
   }
  ],
- "page_stamp": "Spec 0024 · L5 · round 11: part A on the L3 pages"
+ "page_stamp": "Spec 0024 · L5 · round 12: part two, the dev pages' majors by cause"
 }
