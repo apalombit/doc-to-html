@@ -698,6 +698,22 @@ def _pitch(ink: ImageArray) -> float | None:
     return best
 
 
+LEADER = 2.0
+"""How many runs of ink a line holds for each character of its text, at
+most, before it holds a leader: menu_0012's `Lamb cutlets ..... 26.50`
+holds 122 for 21, and its dots stand one pitch apart."""
+
+
+def _led(ink: ImageArray, text: str) -> bool:
+    """Whether a line holds ink its text does not spell, run on at one
+    pitch — a dotted leader — spec 0024, part two, direction 5. Its pitch
+    is the dots', not the face's: menu_0012's fifteen priced lines and
+    c0492's four certificate fields read the page as mono, and a serif
+    menu and a sans certificate were drawn in a typewriter's face."""
+    letters = sum(1 for character in text if not character.isspace())
+    return len(_spans(list(ink.any(axis=0)))) > LEADER * letters
+
+
 def _feet(cover: ImageArray, ink: ImageArray) -> list[float]:
     """For each stem of a Cell's lines, how many times as wide as itself is
     the run of ink it ends in on the baseline. A stem is a run at half the
@@ -1282,7 +1298,8 @@ def read(image: ImageArray, document: Document, *, photographed: bool = False,
                 own_feet = _feet(cover, ink)
                 stems.setdefault(id(zone), []).append((cell, own_feet))
                 if len(cell.text.strip()) >= 8:
-                    if len(_lines(ink)) == 1 and (fit := _pitch(ink)) is not None:
+                    if (len(_lines(ink)) == 1 and not _led(ink, cell.text)
+                            and (fit := _pitch(ink)) is not None):
                         pitches.append(fit)
                     feet.extend(own_feet)
 

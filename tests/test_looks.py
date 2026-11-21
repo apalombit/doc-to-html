@@ -900,3 +900,22 @@ class TestHighlights:
 
         assert looks.unmarked(page.image, document) == 0
         assert [run.kind for run in entry.runs] == ["text", "link", "text"]
+
+
+def ink_of(text: str) -> np.ndarray:
+    """One line of `text` drawn with `cv2.putText`, as a boolean ink mask."""
+    image = np.zeros((40, 900), np.uint8)
+    cv2.putText(image, text, (5, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, 255, 2)
+    return image > 0
+
+
+class TestALeaderIsNotAFace:
+    """Spec 0024, part two, direction 5: menu_0012's dotted leaders read
+    the page as mono."""
+
+    def test_a_line_with_a_dotted_leader_is_led(self) -> None:
+        ink = ink_of("Lamb cutlets" + " ." * 30 + " 26.50")
+        assert looks._led(ink, "Lamb cutlets 26.50")
+
+    def test_a_line_of_words_is_not(self) -> None:
+        assert not looks._led(ink_of("Lamb cutlets 26.50"), "Lamb cutlets 26.50")
