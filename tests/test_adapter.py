@@ -331,3 +331,18 @@ class TestMaths:
     def test_spaces_in_a_group_are_real_only_between_words(self) -> None:
         assert plain("breathlessness; $ \\mathrm{S p O_{2}} $ 90%") == "breathlessness; SpO₂ 90%"
         assert plain("density 2,395 $ \\mathrm{kg / m^{3}} $ , within") == "density 2,395 kg/m³, within"
+
+
+class TestBoxesOneOverTheOther:
+    """Spec 0024, part two, direction 5: two boxes across the page that
+    overlap a little are one over the other."""
+
+    def test_a_form_reaching_into_the_declaration_under_it(self) -> None:
+        """c0095: the form, read as one table, reached 25 pixels into the
+        declaration, and the two were drawn side by side."""
+        document = document_of([
+            region(0, "table", (23, 81, 712, 612), "<table><tr><td>a</td><td>b</td></tr></table>"),
+            region(1, "text", (24, 587, 707, 620), "I certify that the information given")],
+            SOURCE)
+        table, declaration = document.zones
+        assert table.band < declaration.band

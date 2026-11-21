@@ -781,6 +781,25 @@ def _shared(a: BBox, b: BBox) -> float:
             * max(0.0, min(a.bottom, b.bottom) - max(a.top, b.top)))
 
 
+def _stacked(boxes: list[BBox]) -> list[BBox]:
+    """Boxes one over the other across the page, for banding only: where
+    two overlap across most of the narrower one's width and the lower runs
+    on past the upper's foot, the upper ends where the lower begins —
+    spec 0024, part two, direction 5. c0095's form, read as one table,
+    reached 25 pixels into the declaration under it, and the two were
+    drawn side by side, each half the page wide: the table's right column
+    was clipped out of sight. A box wholly inside another (a drop capital
+    in its paragraph) is not one under it, and is left."""
+    out = list(boxes)
+    for i, upper in enumerate(boxes):
+        for lower in boxes:
+            if (lower is upper or not upper.top < lower.top < out[i].bottom < lower.bottom
+                    or _across(upper, lower) < 0.5):
+                continue
+            out[i] = BBox(out[i].left, out[i].top, out[i].right, lower.top)
+    return out
+
+
 def _inset(box: BBox, line: float) -> BBox:
     """A box drawn in by up to half a line top and bottom, for banding only.
     The layout model's boxes are generous, and a sliver of overlap put the
@@ -799,6 +818,6 @@ def document_of(raw: Sequence[Mapping[str, Any]], source: Source,
     zones = _titled([zone_of(group) for group in _unnested(groups_of(regions, containers))],
                     line)
     for zone, (band, column) in zip(zones, bands_from_boxes(
-            [_inset(z.bbox, line) for z in zones if z.bbox is not None])):
+            _stacked([_inset(z.bbox, line) for z in zones if z.bbox is not None]))):
         zone.band, zone.column = band, column
     return Document(source=source, zones=zones)
