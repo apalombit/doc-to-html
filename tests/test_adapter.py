@@ -7,6 +7,7 @@ from __future__ import annotations
 from doc_to_html.adapter import (Region, document_of, formula, groups_of, plain, regions_of,
                                  rows_of, runs_of)
 from doc_to_html.ir import BBox, Kind, Role, RowRole, Source
+from doc_to_html.wire import bands_from_boxes, under_holders
 
 SOURCE = Source(path="page.png", sha256="0" * 64, width=1000, height=1000)
 
@@ -346,3 +347,27 @@ class TestBoxesOneOverTheOther:
             SOURCE)
         table, declaration = document.zones
         assert table.band < declaration.band
+
+
+class TestABoxHeldByAnother:
+    """Spec 0024, part two, direction 6: a box lying inside a larger one is
+    not a column beside it. Banded beside its holder, it squeezed the holder
+    into a column one word wide (c0399's drop cap, c0407's, c0587's icons)."""
+
+    def test_a_drop_cap_inside_its_paragraph_is_banded_under_it(self) -> None:
+        document = document_of([
+            region(0, "text", (50, 100, 950, 300),
+                   "Every business that makes something must answer a plain question"),
+            region(1, "image", (55, 105, 120, 170), "")], SOURCE)
+        paragraph, cap = document.zones
+        assert paragraph.band < cap.band
+
+    def test_a_lane_bands_a_held_box_under_its_holder(self) -> None:
+        """`render._columns` bands each lane's own boxes the same way."""
+        holder, held = BBox(0.35, 0.1, 0.95, 0.4), BBox(0.36, 0.11, 0.42, 0.17)
+        (band, _), (under, _) = bands_from_boxes(under_holders([holder, held]))
+        assert band < under
+
+    def test_boxes_side_by_side_are_left_alone(self) -> None:
+        boxes = [BBox(0.05, 0.1, 0.45, 0.4), BBox(0.55, 0.1, 0.95, 0.4)]
+        assert under_holders(boxes) == boxes

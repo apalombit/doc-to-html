@@ -39,7 +39,7 @@ from typing import Any
 
 from .ir import (BBox, Block, Cell, Document, Kind, Reading, Role, Row, RowRole,
                  Run, Source, Zone)
-from .wire import bands_from_boxes
+from .wire import bands_from_boxes, under_holders
 
 ENGINE = "glm-ocr"
 """The `Reading.engine` of every Cell the adapter writes."""
@@ -788,9 +788,9 @@ def _stacked(boxes: list[BBox]) -> list[BBox]:
     spec 0024, part two, direction 5. c0095's form, read as one table,
     reached 25 pixels into the declaration under it, and the two were
     drawn side by side, each half the page wide: the table's right column
-    was clipped out of sight. A box wholly inside another (a drop capital
-    in its paragraph) is not one under it, and is left."""
-    out = list(boxes)
+    was clipped out of sight. A box inside another is banded under it
+    first (`wire.under_holders`)."""
+    out = under_holders(boxes)
     for i, upper in enumerate(boxes):
         for lower in boxes:
             if (lower is upper or not upper.top < lower.top < out[i].bottom < lower.bottom

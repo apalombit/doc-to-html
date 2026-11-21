@@ -31,7 +31,7 @@ from .looks import TWO_SIZES
 from .ir import (BBox, Block, Cell, CellState, Document, Flow, Furniture, Kind,
                  Look, Pair, Reading, Region, Role, Row, RowRole, Run, Style, Zone)
 from .probes import is_numeric
-from .wire import MARKS, bands_from_boxes
+from .wire import MARKS, bands_from_boxes, under_holders
 
 STYLESHEET = """
 :root { --ink:#1a1a1a; --muted:#666; --rule:#e0e0e0; --shade:#f4f4f4;
@@ -1097,7 +1097,7 @@ def _columns(region: Region, zones: list[Zone], document: Document,
     for lane in lanes:
         units = _units(lane)
         boxes = [_unit_box(unit) for unit in units]
-        placed = bands_from_boxes([box for box in boxes if box is not None])
+        placed = bands_from_boxes(under_holders([box for box in boxes if box is not None]))
         rows: dict[int, list[tuple[int, list[Zone]]]] = {}
         for unit, (band, column) in zip([u for u, b in zip(units, boxes) if b],
                                         placed):
