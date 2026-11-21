@@ -283,6 +283,13 @@ class TestMaths:
         assert plain("area is $ 54 \\mathrm{~m}^{2} $ , giving") == "area is 54 m², giving"
         assert plain("Output $I = 20\\text{ A}$") == "Output I = 20 A"
 
+    def test_a_number_and_its_unit_are_set_apart(self) -> None:
+        """Spec 0024, part two, direction 7: the reader writes `15\\mathrm{mm}`
+        where the page prints `15 mm` (paper_0018, c0391, c0489)."""
+        assert plain("of 8 to $15\\mathrm{mm}$ at") == "of 8 to 15 mm at"
+        assert plain("the same $ 2\\mathrm{km}^{2} $ area") == "the same 2 km² area"
+        assert plain("$5\\times 10^9\\mathrm{/L}$") == "5×10⁹/L"
+
     def test_a_display_formula_is_set_as_printed(self) -> None:
         def formula_text(content: str) -> str:
             return "".join(run.text for run in runs_of(formula(content)))

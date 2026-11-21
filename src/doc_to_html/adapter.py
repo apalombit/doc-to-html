@@ -148,6 +148,9 @@ def _words(group: str, display: bool) -> str:
 
 def _maths(body: str, display: bool = False) -> str:
     """Inline or display maths as the characters the page prints."""
+    # A number's unit is set a space after it, as the page prints it: the
+    # reader writes `15\\mathrm{mm}` for `15 mm` (paper_0018, c0489, c0232).
+    body = re.sub(r"(?<!\^\d)(?<=\d)\s*(?=\\(?:mathrm|text|rm)\s*\{\s*[A-Za-zµ])", "\0", body)
     # `\x03` ends a command the words follow: `\\mu\\mathrm{mol}` is µmol.
     body = _TEXT_GROUP.sub(lambda m: "\x03" + _words(m.group(1), display), body)
     body = body.replace("~", "\0")
