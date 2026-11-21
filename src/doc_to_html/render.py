@@ -2461,6 +2461,9 @@ def _table(zone: Zone, document: Document) -> str:
                 bar = anchors.cell_lefts.get((index_of, position, number))
                 if bar is not None:
                     drawn.append(_line(bar, page, "left"))
+                side = anchors.cell_rights.get((index_of, position, number))
+                if side is not None:
+                    drawn.append(_line(side, page, "right"))
                 rule = anchors.cell_tops.get((index_of, position, number))
                 if rule is not None:
                     drawn.append(_line(rule, page, "top"))

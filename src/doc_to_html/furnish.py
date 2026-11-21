@@ -44,8 +44,10 @@ measured as its fill, Title bar or header bar.
 
 from __future__ import annotations
 
+from collections import Counter
 from dataclasses import dataclass, field, replace
 
+from .adapter import ENGINE
 from .ir import BBox, Document, Flow, Furniture, Kind, Region, Zone
 
 PAGE_FRAME = 0.8
@@ -105,6 +107,7 @@ class Anchors:
     blocks: dict[tuple[int, int], Furniture] = field(default_factory=dict)
     pairs: dict[tuple[int, int], Furniture] = field(default_factory=dict)
     cell_lefts: dict[tuple[int, int, int], Furniture] = field(default_factory=dict)
+    cell_rights: dict[tuple[int, int, int], Furniture] = field(default_factory=dict)
     cell_tops: dict[tuple[int, int, int], Furniture] = field(default_factory=dict)
     hatches: dict[int, Furniture] = field(default_factory=dict)
     bands: dict[int, Furniture] = field(default_factory=dict)
@@ -335,6 +338,7 @@ def _vertical(item: Furniture, document: Document, scale: _Scale,
                       and _overlap(box.top, box.bottom, cell.bbox.top, cell.bbox.bottom) > 0]
             if beside:
                 out.cell_lefts[(index, position, min(beside)[1])] = item
+        _down_a_column(item, index, zone, scale, out)
         return
 
     best: tuple[float, int] | None = None
@@ -360,6 +364,68 @@ def _vertical(item: Furniture, document: Document, scale: _Scale,
         out.title_sides[index] = item
     else:
         out.sides[index] = item
+
+
+LAST = -1
+"""The column a rule down a table's right side stands after: the last."""
+
+
+def _down_a_column(item: Furniture, index: int, zone: Zone, scale: _Scale,
+                   out: Anchors) -> None:
+    """A rule down a table drawn on every row it runs beside, at the column
+    it stands between — spec 0024, part two, direction 4.
+
+    A cell is placed on its words, so a rule is found beside a cell only
+    where the column's words start at its left: c0185's `QUANTITY`,
+    `RATE` and `AMOUNT`, centred and set right, start 43-65 pixels right
+    of the rules before them, and those three rules were drawn on no row.
+    Here each row the rule runs beside votes for the column it stands
+    before — every entry left of it on one side, right of it on the other
+    — and, where most of the votes agree, the rule is drawn there on every
+    row it runs beside; after the last column, it is the table's right side.
+    A row with an entry across the rule, or an empty column at it, does not
+    vote.
+
+    **D2's tables only** — those the parser read (`adapter.ENGINE`): on
+    today's pipeline it would draw `timetable_0019`'s time column a left
+    rule it has never drawn, and today's pipeline stays as it is."""
+    if not any(cell.readings and cell.readings[0].engine == ENGINE
+               for row in zone.rows for cell in row.cells):
+        return
+    box = item.bbox
+    slack = 1 / scale.x
+    votes: Counter[int] = Counter()
+    beside: list[int] = []
+    for position, row in enumerate(zone.rows):
+        boxes = [(number, cell.bbox) for number, cell in enumerate(row.cells)
+                 if cell.bbox is not None and cell.text.strip()]
+        if not boxes:
+            continue
+        top, bottom = min(b.top for _, b in boxes), max(b.bottom for _, b in boxes)
+        if _overlap(box.top, box.bottom, top, bottom) < ALONG * (bottom - top):
+            continue
+        beside.append(position)
+        left = [number for number, b in boxes if b.right <= box.left + slack]
+        right = [number for number, b in boxes if b.left >= box.right - slack]
+        if len(left) + len(right) < len(boxes):
+            continue
+        if right and (max(left) + 1 if left else 0) == min(right):
+            votes[min(right)] += 1
+        elif left and not right and max(left) == len(row.cells) - 1:
+            votes[LAST] += 1
+    if not votes:
+        return
+    column, count = votes.most_common(1)[0]
+    if count * 2 <= sum(votes.values()):
+        return
+    for position in beside:
+        cells = zone.rows[position].cells
+        if not cells:
+            continue
+        if column == LAST:
+            out.cell_rights.setdefault((index, position, len(cells) - 1), item)
+        elif column < len(cells):
+            out.cell_lefts.setdefault((index, position, column), item)
 
 
 def _spans(item: Furniture, zone: Zone, scale: _Scale) -> bool:

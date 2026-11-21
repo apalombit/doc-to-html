@@ -15,8 +15,9 @@ import numpy as np
 import pytest
 
 from doc_to_html import furnish, furniture
+from doc_to_html.adapter import ENGINE
 from doc_to_html.corpus import SOURCES
-from doc_to_html.ir import (BBox, Block, Document, Flow, Furniture, Kind, Mark,
+from doc_to_html.ir import (BBox, Block, Document, Flow, Furniture, Kind, Mark, Row, RowRole,
                             Pair, Region, Role, Source, Style, Zone, cell)
 from doc_to_html.looks import _titles
 from doc_to_html.preprocess import rectify
@@ -271,6 +272,76 @@ class TestTheRenderDrawsThem:
     def test_a_page_with_no_furniture_draws_no_rule(self) -> None:
         html = render(document([zone("x", BBox(0.2, 0.2, 0.8, 0.8))], []))
         assert "separator" not in html[:html.index('id="doc-ir"')]
+
+
+ROWS = ((0.20, 0.22), (0.25, 0.27), (0.30, 0.32))
+
+
+def quotation(*, heading: bool = False, engine: str = ENGINE) -> Zone:
+    """c0185's schedule as the parser reads it, three columns: a description
+    set left, a quantity centred, a rate set right — each placed on its
+    words, the second and third far right of the rules before them."""
+    rows = [Row(cells=[cell("Strip out", engine, BBox(0.10, top, 0.30, bottom)),
+                       cell("1 lot", engine, BBox(0.57, top, 0.61, bottom)),
+                       cell("1,450.00", engine, BBox(0.80, top, 0.88, bottom))])
+            for top, bottom in ROWS]
+    if heading:
+        rows.insert(0, Row(cells=[cell("SCHEDULE OF WORKS", engine, BBox(0.10, 0.15, 0.85, 0.17))],
+                           role=RowRole.HEADER))
+    return Zone(kind=Kind.TABLE, role=Role.BODY, bbox=BBox(0.09, 0.15, 0.92, 0.33),
+                rows=rows, complete=True)
+
+
+class TestARuleDownATablesColumn:
+    """Spec 0024, part two, direction 4: a rule down a table drawn on every
+    row it runs beside, at the column it stands before, wherever the
+    column's words start."""
+
+    def test_a_rule_before_a_centred_column_and_a_right_set_one(self) -> None:
+        downs = [rule(0.50, 0.18, 0.501, 0.33), rule(0.70, 0.18, 0.701, 0.33)]
+        anchors = furnish.anchor(document([quotation()], downs))
+        assert anchors.cell_lefts == {(0, row, column): downs[column - 1]
+                                      for row in range(3) for column in (1, 2)}
+
+    def test_a_rule_down_the_right_side_is_the_last_cells_right(self) -> None:
+        side = rule(0.915, 0.18, 0.916, 0.33)
+        anchors = furnish.anchor(document([quotation()], [side]))
+        assert anchors.cell_rights == {(0, row, 2): side for row in range(3)}
+
+    def test_a_row_with_an_entry_across_the_rule_is_not_drawn_on(self) -> None:
+        down = rule(0.50, 0.14, 0.501, 0.33)
+        anchors = furnish.anchor(document([quotation(heading=True)], [down]))
+        assert sorted(anchors.cell_lefts) == [(0, row, 1) for row in (1, 2, 3)]
+
+    def test_a_row_with_its_entries_out_of_order_does_not_vote(self) -> None:
+        """c0004's sessions: cells placed on the wrong words, one across the
+        rule the others stand either side of."""
+        table = quotation()
+        table.rows = table.rows[:1]
+        table.rows[0].cells[2].bbox = BBox(0.45, 0.20, 0.55, 0.22)
+        anchors = furnish.anchor(document([table], [rule(0.50, 0.18, 0.501, 0.23)]))
+        assert anchors.cell_lefts == {}
+
+    def test_rows_that_disagree_draw_nothing(self) -> None:
+        table = quotation()
+        table.rows = table.rows[:2]
+        table.rows[1].cells[1].bbox = BBox(0.35, 0.25, 0.45, 0.27)
+        anchors = furnish.anchor(document([table], [rule(0.50, 0.18, 0.501, 0.28)]))
+        assert anchors.cell_lefts == {}
+
+    def test_a_table_read_by_todays_pipeline_is_left_as_it_was(self) -> None:
+        downs = [rule(0.50, 0.18, 0.501, 0.33), rule(0.915, 0.18, 0.916, 0.33)]
+        anchors = furnish.anchor(document([quotation(engine="ollama")], downs))
+        assert anchors.cell_lefts == {} and anchors.cell_rights == {}
+
+    def test_a_rule_beside_no_row_is_not_drawn(self) -> None:
+        down = rule(0.50, 0.40, 0.501, 0.60)
+        anchors = furnish.anchor(document([quotation()], [down]))
+        assert anchors.cell_lefts == {} and anchors.cell_rights == {}
+
+    def test_the_render_draws_the_right_side(self) -> None:
+        html = body_of(render(document([quotation()], [rule(0.915, 0.18, 0.916, 0.33)])))
+        assert html.count("border-right:2px solid rgb(20,40,60)") == 3
 
 
 class TestATitlesOwnColour:
