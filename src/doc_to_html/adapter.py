@@ -32,7 +32,7 @@ from __future__ import annotations
 import re
 import unicodedata
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from html.parser import HTMLParser
 from statistics import median
 from typing import Any
@@ -732,6 +732,55 @@ def _titled(zones: list[Zone], line: float) -> list[Zone]:
     return [z for z in zones if id(z) not in taken]
 
 
+NESTED = 0.8
+"""How much of a group's box lies inside another's for it to be inside it."""
+
+
+def _unnested(groups: list[list[Region]]) -> list[list[Region]]:
+    """A text group whose box holds another group, cut at the top of the
+    one inside — spec 0024, part two, direction 5. A drawn card is one
+    Zone and a column stack joins a wide paragraph, so a Zone could hold
+    another the page sets inside it: c0020's title and lead paragraph
+    joined the fields under them, the `DATA` fields beside those fell
+    inside the Zone's box, and the two were drawn as two columns of one
+    Band — the paragraph a word a line; c0219's `OBJECTIVE` card held its
+    heading and the note under its table, and the table was drawn below
+    the card beside it.
+
+    The regions above the one inside stay one group, its Title with
+    them; the rest are a group of their own, beside the one inside or
+    under it. A group is cut only where something stands above the one
+    inside and the rest stands clear of it: a drop capital inside its
+    paragraph, and c0587's card icons on their names' line, are left as
+    they were."""
+    out = list(groups)
+    for inner in groups:
+        held = _union([r.box for r in inner])
+        if _area(held) == 0:
+            continue
+        for outer in list(out):
+            if outer is inner or not all(r.text_like for r in outer):
+                continue
+            span = _union([r.box for r in outer])
+            if _shared(held, span) < NESTED * _area(held):
+                continue
+            above = [r for r in outer if r.box.bottom <= held.top + ALIGNED]
+            rest = [r for r in outer if r not in above]
+            if not above or not rest:
+                continue
+            under = _union([r.box for r in rest])
+            if (under.top >= held.bottom - ALIGNED or under.right <= held.left + ALIGNED
+                    or under.left >= held.right - ALIGNED):
+                at = out.index(outer)
+                out[at:at + 1] = [above, rest]
+    return out
+
+
+def _shared(a: BBox, b: BBox) -> float:
+    return (max(0.0, min(a.right, b.right) - max(a.left, b.left))
+            * max(0.0, min(a.bottom, b.bottom) - max(a.top, b.top)))
+
+
 def _inset(box: BBox, line: float) -> BBox:
     """A box drawn in by up to half a line top and bottom, for banding only.
     The layout model's boxes are generous, and a sliver of overlap put the
@@ -747,7 +796,8 @@ def document_of(raw: Sequence[Mapping[str, Any]], source: Source,
     Bands and columns worked out from the boxes (`wire.bands_from_boxes`)."""
     regions = regions_of(raw)
     line = line_height(regions)
-    zones = _titled([zone_of(group) for group in groups_of(regions, containers)], line)
+    zones = _titled([zone_of(group) for group in _unnested(groups_of(regions, containers))],
+                    line)
     for zone, (band, column) in zip(zones, bands_from_boxes(
             [_inset(z.bbox, line) for z in zones if z.bbox is not None])):
         zone.band, zone.column = band, column

@@ -208,6 +208,61 @@ class TestDocument:
         assert regions_of([region(0, "text", (1, 1, 2, 2), "  ")]) == []
 
 
+def texts_of(zone: object) -> list[str]:
+    return [line.text for block in zone.blocks for line in block.lines]  # type: ignore[attr-defined]
+
+
+class TestAZoneInsideAnother:
+    """Spec 0024, part two, direction 5: a text Zone cut at the top of a
+    Zone its box holds."""
+
+    def test_a_lead_paragraph_over_two_columns_of_fields(self) -> None:
+        """c0020: the title and paragraph joined the left fields, and the
+        `DATA` fields fell inside the Zone's box."""
+        document = document_of([
+            region(0, "paragraph_title", (35, 94, 426, 127), "Verifica di apertura"),
+            region(1, "text", (34, 136, 939, 182), "Sede di Lecce, documento compilato"),
+            region(2, "text", (34, 197, 137, 239), "RESPONSABILE\nGiulia Ricci"),
+            region(3, "text", (35, 252, 197, 295), "CANTIERE\nVia dei Mille 14"),
+            region(4, "text", (503, 197, 583, 239), "DATA\n11/03/2021"),
+            region(5, "text", (505, 253, 607, 296), "COMMESSA N.\nGL-2021-0311")], SOURCE)
+        lead = next(z for z in document.zones if z.title == "Verifica di apertura")
+        left = next(z for z in document.zones if "RESPONSABILE" in texts_of(z))
+        right = next(z for z in document.zones if "DATA" in texts_of(z))
+        assert texts_of(lead) == ["Sede di Lecce, documento compilato"]
+        assert lead.band < left.band == right.band and left.column < right.column
+
+    def test_a_cards_table_between_its_heading_and_its_note(self) -> None:
+        """c0219's `OBJECTIVE` card: one Zone held its heading and the note
+        under its table."""
+        document = document_of([
+            region(0, "paragraph_title", (361, 302, 465, 330), "OBJECTIVE"),
+            region(1, "table", (365, 358, 634, 614), "<table><tr><td>BP</td></tr></table>"),
+            region(2, "text", (361, 631, 621, 716), "Mild bilateral pitting oedema")],
+            SOURCE, containers=[box(355, 290, 640, 730)])
+        table = next(z for z in document.zones if z.kind is Kind.TABLE)
+        note = next(z for z in document.zones if "Mild bilateral pitting oedema" in texts_of(z))
+        assert table.title == "OBJECTIVE" and table.band < note.band
+
+    def test_a_drop_capital_inside_its_paragraph_is_left(self) -> None:
+        """c0399: the paragraph runs on under its drop capital."""
+        document = document_of([
+            region(0, "paragraph_title", (22, 68, 400, 95), "What one batch of bread costs"),
+            region(1, "text", (22, 108, 476, 234), "Every business that makes something"),
+            region(2, "image", (24, 110, 60, 150), "")], SOURCE)
+        assert [z.kind for z in document.zones] == [Kind.PROSE, Kind.FIGURE]
+
+    def test_an_icon_beside_a_cards_name_is_left(self) -> None:
+        """c0587: the icon stands on the name's line, with no room above."""
+        document = document_of([
+            region(0, "paragraph_title", (64, 235, 146, 256), "Reader"),
+            region(1, "image", (41, 237, 62, 256), ""),
+            region(2, "text", (39, 262, 146, 277), "For the curious")],
+            SOURCE, containers=[box(30, 225, 330, 460)])
+        (card,) = [z for z in document.zones if z.kind is not Kind.FIGURE]
+        assert card.title == "Reader" and texts_of(card) == ["For the curious"]
+
+
 class TestMaths:
     """Spec 0024, group A: what the reader writes as LaTeX set as the page
     prints it; a `$` that opens no maths is printed."""
