@@ -26,6 +26,7 @@ from statistics import median
 from typing import Any, Callable, Sequence
 
 from . import furnish
+from .adapter import ENGINE
 from .locate import cells_of
 from .looks import TWO_SIZES
 from .ir import (BBox, Block, Cell, CellState, Document, Flow, Furniture, Kind,
@@ -3952,19 +3953,42 @@ def _common_colour(cells: list[Cell], house: tuple[int, int, int] | None) -> str
     """One colour for a block of lines: the middle of theirs, where most of
     its lines are within `COLOUR_APART` of it and it is that far from the
     house colour."""
+    ink = _common_ink(cells, house)
+    return "" if ink is None else f"color:{_rgb(ink)}"
+
+
+def _common_ink(cells: list[Cell], house: tuple[int, int, int] | None
+                ) -> tuple[int, int, int] | None:
+    """`_common_colour`'s colour, or None where the block takes the house's."""
     if house is None or not cells:
-        return ""
+        return None
     inks = [cell.look.color for cell in cells
             if cell.look is not None and cell.look.color is not None
             and cell.look.fill is None]
     if not inks:
-        return ""
+        return None
     middle = (int(median(i[0] for i in inks)), int(median(i[1] for i in inks)),
               int(median(i[2] for i in inks)))
     near = sum(1 for ink in inks if _apart(ink, middle) <= COLOUR_APART)
     if near * 5 < len(cells) * 3 or _apart(middle, house) <= COLOUR_APART:
-        return ""
-    return f"color:{_rgb(middle)}"
+        return None
+    return middle
+
+
+def _own_inks(block: Block, rendered: list[str], ink: tuple[int, int, int] | None) -> None:
+    """Each kept line of the parser's in its own colour, where it measured
+    `COLOUR_APART` from the colour its block is drawn in — spec 0024, part
+    two, direction 1: c0568's orange `Thursday, November 5` over its grey
+    `7:00 pm, Reading Room`, statement_0006's green and red amounts, one
+    colour for the block drew both in one ink. D2's alone."""
+    if ink is None or not any(line.readings and line.readings[0].engine == ENGINE
+                              for line in block.lines):
+        return
+    for index, line in enumerate(block.lines):
+        look = line.look
+        if (look is not None and look.color is not None and look.fill is None
+                and _apart(look.color, ink) > COLOUR_APART):
+            rendered[index] = f'<span style="color:{_rgb(look.color)}">{rendered[index]}</span>'
 
 
 def _common_look(cells: list[Cell], *, sized: bool = True, bold: bool = False,
@@ -4014,6 +4038,9 @@ def _block(block: Block, document: Document, spacing: str = "",
         style = _styled(";".join(part for part in (
             looked, spacing, _indent(block, _page(document)), cap) if part))
         return f'<p class="cap"{style}>{_lines(block, document, lane)}</p>'
+    if block.kind in KEEPS_ITS_LINES:
+        house = _house(document)
+        return f"<p{style}>{_lines(block, document, lane, _common_ink(block.lines, house) or house)}</p>"
     return f"<p{style}>{_lines(block, document, lane)}</p>"
 
 
@@ -4176,7 +4203,8 @@ disputed cell renders wrapped in a `<span>` and the hyphen is then inside it.
 """
 
 
-def _lines(block: Block, document: Document, lane: _Lane | None = None) -> str:
+def _lines(block: Block, document: Document, lane: _Lane | None = None,
+           ink: tuple[int, int, int] | None = None) -> str:
     """The block's lines, reflowed unless its kind keeps them.
 
     **Reflowing must not delete the per-line Cells** — they are what a
@@ -4200,6 +4228,8 @@ def _lines(block: Block, document: Document, lane: _Lane | None = None) -> str:
             size = look.size
             rendered[index] = f'<span style="font-size:{_calc(size)}">{rendered[index]}</span>'
     if block.kind in KEEPS_ITS_LINES or len(rendered) < 2:
+        if len(rendered) > 1:
+            _own_inks(block, rendered, ink)
         return "<br>".join(rendered)
     breaks, right = (_broken(block, lane, _page(document)) if lane is not None
                      else (set(), set()))

@@ -753,3 +753,28 @@ class TestSpec0017StepTwoOneSizePerRole:
         zone = fields_grid(nl=1.5)
         zone.title, zone.title_size = "FIELDS", 1.0
         assert not _title_as_label(zone)
+
+
+def kept_lines(engine: str) -> Document:
+    """c0568's card head: an orange date over a grey time and room."""
+    date, room = cell("Thursday, November 5", engine), cell("7:00 pm, Reading Room", engine)
+    date.look, room.look = Look(color=(180, 68, 28)), Look(color=(106, 98, 88))
+    zone = Zone(kind=Kind.PROSE, role=Role.BODY, bbox=BBox(0.1, 0.1, 0.4, 0.15), complete=True,
+                blocks=[Block(kind="address", lines=[date, room])])
+    document = page([zone])
+    assert document.style is not None
+    document.style.ink = (34, 32, 28)
+    return document
+
+
+class TestAKeptLineInItsOwnColour:
+    """Spec 0024, part two, direction 1: a line the page prints in its own
+    colour, in a block that keeps its lines, is drawn in it."""
+
+    def test_the_parsers_date_is_drawn_orange(self) -> None:
+        html = body_of(render(kept_lines(furnish.ENGINE)))
+        assert '<span style="color:rgb(180,68,28)">Thursday, November 5</span>' in html
+
+    def test_todays_pipeline_is_left_as_it_was(self) -> None:
+        html = body_of(render(kept_lines("ollama")))
+        assert '<span style="color:rgb(180,68,28)">' not in html
