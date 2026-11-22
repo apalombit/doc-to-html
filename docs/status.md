@@ -1,15 +1,22 @@
-# Status — 2026-11-09 (**the corpus is built (spec 0020); L2 is done (spec 0021); L3, the honest baseline, is done (spec 0022); P1, the GLM-OCR parser-first PoC, is done (spec 0023, issue #46 closed), and P2 is decided: take D2. Next is L5 on D2, our side's faults first**)
+# Status — 2026-11-22 (**the level-up plan's parser-first pipeline, D2, is taken, and its first fix phase is done: spec 0024, issue #47 closed. Next is the milestone: the phase measured on the panel, then the vault opened once, on Alessandro's word**)
 
 **Live document.** This is where the project actually is. When it goes stale,
-rewrite it; do not add a banner and leave it. Last rewritten 2026-10-23,
-when Alessandro took spec 0019's sweep `S14-sweep` as the baseline,
-frozen as `s14-result/` (issue #42 closed), and cleared every open item.
-Updated 2026-10-24, when he decided the level-up plan
-([`level-up.md`](level-up.md) §8), 2026-10-30, when spec 0020 built
-the corpus (issue #43 closed), 2026-11-07, when spec 0021 closed L2
-(issue #44 closed), and 2026-11-09, when spec 0022 closed L3 (issue #45
-closed) and spec 0023 closed P1 (issue #46 closed), and Alessandro
-decided P2: take D2.
+rewrite it; do not add a banner and leave it. Rewritten 2026-11-22, when
+Alessandro closed spec 0024 (L5's first phase on D2, issue #47). Before
+that: 2026-10-23 (`S14-sweep` the baseline, every open item cleared),
+2026-10-24 (the level-up plan, [`level-up.md`](level-up.md) §8),
+2026-10-30 (the corpus, spec 0020), 2026-11-07 (L2, spec 0021) and
+2026-11-09 (L3, spec 0022; P1, spec 0023; P2 decided: take D2).
+
+**In plain words.** A page picture now goes through GLM-OCR, a small
+local document parser, which finds the blocks and reads their text. Our
+code turns that into the IR, measures the looks from the pixels and draws
+the HTML. Spec 0024 mended our side of that: the words the adapter wrote,
+blocks set side by side, tables, rules, tick boxes, line breaks, nested
+boxes, colours. Each fix was judged by eye on random dev pages. What is
+left is mostly the parser's reading (words lost or misread in small
+type) and the looks a line's own measure cannot give (sizes, bold inside
+a line).
 
 Reading order for a fresh session:
 1. `CLAUDE.md`'s **READ THIS FIRST**;
@@ -18,7 +25,10 @@ Reading order for a fresh session:
 3. this file;
 4. [`level-up.md`](level-up.md)'s Gist, §6 and §8: the plan from
    2026-10-24, and what comes next;
-5. [`specs/0023-parser-first.md`](specs/0023-parser-first.md)'s
+5. [`specs/0024-l5-on-d2.md`](specs/0024-l5-on-d2.md)'s "Outcome — the
+   phase": what each fix did, what is left by stage, and the next
+   session's prompt;
+   [`specs/0023-parser-first.md`](specs/0023-parser-first.md)'s
    outcomes: what D2 is, D2 against L3-baseline class by class, what our
    side gets wrong on D2's blocks, and P2's decision;
    [`specs/0022-the-honest-baseline.md`](specs/0022-the-honest-baseline.md)'s
@@ -33,20 +43,21 @@ Reading order for a fresh session:
 If you are going to look at output — and you should — use the
 **`visual-review` skill**.
 
-Branches `main`, `develop` and `level-up`, all on the remote since
-2026-10-24, and `poc-parser-first`, cut from `level-up` for P1, which
-holds arm D2; `scaffold` is retired into `develop`. **`main` was
-fast-forwarded to `poc-parser-first` on 2026-11-10** (Alessandro), so
-the repository's landing page shows the current code and the README
-written for a visitor; `develop` and `level-up` stay where they were. **1721 tests pass (1 skipped), `mypy src/` clean**: measured
-2026-11-09 on `poc-parser-first`, at the end of spec 0023. Today's
-conversion code is still `a0d73c9`'s in what it answers: spec 0020 added
-the corpus factory, spec 0021 the batch runner and a 3-minute limit on
-each model call, and spec 0023 arm D2 beside it;
-`tools/replay_run.py` reproduces `s14-result/` 21 of 21 byte for byte
-and `tools/rederive.py` 21 of 21 on 2026-11-09, at the end of spec
-0023. D2's run is frozen in `tests/frozen/p1-d2-l3/`, its regions
-re-drawing all 41 renders byte for byte.
+**Branches.** `main`, `develop`, `level-up`, `poc-parser-first` and `l5`
+are on the remote. D2 and spec 0024's work live on **`l5`**, cut from
+`poc-parser-first`; **`main` was fast-forwarded to `l5` on 2026-11-22**,
+as at each close (round 10), so the landing page shows the current code.
+`develop` and `level-up` stay where they were; `scaffold` is retired
+into `develop`.
+
+**Proved on 2026-11-22, at the close** (`l5`): 1810 tests pass (1 skipped); `mypy src/`
+clean; `tools/replay_run.py` reproduces `s14-result/` 21 of 21 byte for
+byte, 0 asked differently, and `tools/rederive.py` 21 of 21. **Today's
+pipeline is untouched**: each D2 change sits in D2's own steps or is
+gated on D2's blocks (`adapter.ENGINE`), and the replay proves the old
+pipeline answers and draws as at `a0d73c9`. The dev pool's recorded regions are in `debug/runs/L5-D2-dev/`
+(gitignored, keep it): `tools/d2.py <label> --pages dev --regions
+L5-D2-dev --jobs 4` redraws all 231 dev pages offline, no model.
 
 **How work is judged — Alessandro, 2026-10-12, for spec 0011; carried
 over by specs 0012 to 0019.**
@@ -163,7 +174,19 @@ Spec 0023   Parser first, P1 — issue #46, branch poc-parser-first:
               4 only D2; round 9, 12 of 12 agreed; the look-alike
               check fixed                               DONE 2026-11-09
 P2          DECIDED 2026-11-09, Alessandro: take D2
-              L5 on D2, our side's faults first          NEXT
+Spec 0024   L5 on D2, our side's faults first — issue #47, branch l5:
+              part A, by group: the adapter's words, side by side,
+              the adapter's tables measured; the looks measured,
+              nothing shipped; the L3 set redrawn, 17 better than
+              P1, 8 same, 4 worse; the worse pages' two causes mended
+              part two, every dev major by stage, directions 1-7,
+              each on a random dev sample: tick boxes, line cuts,
+              table rules, a Zone inside another, leaders, boxes one
+              over the other, held boxes, units, a line's own colour
+              shipped; sizes, bold, the reader's settings and the
+              cells probed and dropped           DONE 2026-11-22
+M1          the milestone: the phase on the panel, then the vault
+              once, on Alessandro's word                 NEXT
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -256,6 +279,28 @@ Means over `S14-sweep`, against `s13-result/scores.json`:
 ---
 
 ## What the last work shipped
+
+### Spec 0024 — L5 on D2, our side's faults first, 2026-11-10 to 2026-11-22
+
+On `l5`. Every fix is on our side of D2: the parser's weights, prompts
+and thresholds are as P1 left them. Each was reproduced on dev pages,
+pinned by a test that fails without it, and judged by eye; the spec's
+"Outcome — the phase" has the table, page by page.
+
+| where in the pipeline | what shipped | judged by eye |
+|---|---|---|
+| adapter: words | `$` amounts kept as text, raised marks, the reader's broken table HTML, LaTeX drawn as characters, `**` markers, a number and its unit apart | ~45 better, none worse; units 3 pages |
+| adapter: grouping | side by side as the page sets it; a Zone inside another cut at its top; boxes one over the other stacked; a held box banded under its holder | 40 better, 2 worse; 5; c0095; 7 better, c0493 worse |
+| measuring: tables | the adapter's tables placed and measured (bold, size, rules, fills) | 80 better of 85, 3 worse |
+| measuring: looks | chips on a painted ground dropped, light type on a fill, Cells sized from boxes that do not hold them; dotted leaders not a mono face | 36 better of 47, 2 worse (c0075, c0538); 2 better |
+| measuring: lines and marks | a reader's line over two printed lines cut; tick boxes put back from the pixels | line majors about −30%, c0012 worse; marks lost 250 → 134 |
+| render | rules down a table at their column; a kept line in its own colour | rules missing 492 → 206 and 479 → 193, none worse; 3 better |
+
+**Dropped, measured**: the size threshold (the per-line measure is
+noise), the bold threshold (the lost bold is a lead-in inside a line),
+per-word bold and colour from pixels (68% and 41% against dev labels),
+the reader's settings (×2, threshold 0.2, repetition 1.0), cells in the
+wrong column (the parser's HTML).
 
 ### Spec 0023 — parser first, P1, and P2's decision, 2026-11-09
 
@@ -429,11 +474,18 @@ In order (`level-up.md` §6):
    four L3 lost converted. Majors per page level; the parser makes fewer
    than today's reading side, our side more on its blocks.
 6. **P2 — decided 2026-11-09, Alessandro: take D2.**
-7. **L5 on D2 — next.** Our side's faults on D2's blocks first (the
-   adapter, `locate` on its tables, the looks), each reproduced on a dev
-   page before it is changed; the parser's weights, prompts and
-   thresholds untouched; then fit what is left instead of setting it by
-   hand (`level-up.md` §6). **Local models only.**
+7. **L5 on D2, first phase — done 2026-11-22**
+   ([spec 0024](specs/0024-l5-on-d2.md), issue #47 closed): our side's
+   faults on D2's blocks, above. Fitting the looks' constants did not
+   pay; the fixes went to structure.
+8. **The milestone — next** (`level-up.md` §6, M1). First the phase on
+   the panel: D2 over the L3 set again (18 minutes; the parser
+   reproduces its regions byte for byte), judged by eye against
+   `L5-D2-L3` and `tests/frozen/p1-d2-l3/`. Then, **only on his word**,
+   the vault opened once: D2 over its 200 pages (about 1 h 45), the
+   checks and a review, its rates beside dev's on the same code. It is
+   the first measure on pages nobody has looked at since the probe of
+   2026-10-24. **Local models only.**
 
 Each step gets its spec and issue when it starts. Pick up nothing outside
 this plan unless he names it.
