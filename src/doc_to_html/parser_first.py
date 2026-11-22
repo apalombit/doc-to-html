@@ -44,7 +44,7 @@ from .preprocess import (Rectified, _cv2, caption_band, content_ink, equalise,
                          figure_pixels, ground_is_dark, header_band, resize_long_edge,
                          sha256_of, zone_pixels, TARGET_LONG_EDGE)
 from .ir import Source
-from .render import render
+from .render import SIZE_STEP, render
 from .skeleton import Part, skeleton
 from .structure import _independent, _marked, _strips, separators, structure
 from .style import CONTAINED
@@ -287,10 +287,22 @@ def table_sizes(document: Document) -> None:
     off by three or four is not rare: c0198's backordered row in grey
     italic and its total row at 0.50 among rows at 1.00, its `Ship` header
     at 0.62 among headers at 1.00, c0439's `Hexagon size` at 0.62 in a
-    column at 1.00. The page prints every one at the body's size."""
+    column at 1.00. The page prints every one at the body's size.
+
+    **A row printed larger keeps its size** (spec 0026, part two (b)):
+    where two Cells of a row or more measure `SIZE_STEP` or more above
+    their group's size, the page set them large — c0177's `Totale` and
+    `3.295,22 €` at 1.67 among rows at 1.00 — and each keeps its own; the
+    row's other Cells keep their group's (c0177's `PAGAMENTO` note, which
+    the parser's table puts in the total's row). One Cell above its peers
+    is the measure's: c0112's `Type` header at 1.38, c0489's bold `2,382`
+    at 1.22, each printed at its row's size. Below, a whole row is the
+    measure's too (c0198's)."""
     for zone in document.zones:
         if zone.kind is not Kind.TABLE:
             continue
+        own = {id(cell): cell.look.size for row in zone.rows for cell in row.cells
+               if cell.look is not None and cell.look.size is not None}
         for role in RowRole:
             cells = [(column, cell) for row in zone.rows if row.role is role
                      for column, cell in enumerate(row.cells) if cell.text.strip()]
@@ -310,6 +322,13 @@ def table_sizes(document: Document) -> None:
                 for _, cell in group:
                     cell.look = (Look(size=size) if cell.look is None
                                  else replace(cell.look, size=size))
+        for row in zone.rows:
+            larger = [(cell, look) for cell in row.cells
+                      if id(cell) in own and (look := cell.look) is not None
+                      and look.size is not None and own[id(cell)] >= look.size + SIZE_STEP]
+            if len(larger) >= 2:
+                for cell, look in larger:
+                    cell.look = replace(look, size=own[id(cell)])
 
 
 def skeleton_of(raw: Sequence[dict[str, Any]], rectified: Rectified,

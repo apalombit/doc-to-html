@@ -291,3 +291,14 @@ class TestOneSizePerRoleInATable:
     def test_a_column_keeps_a_size_of_its_own(self) -> None:
         zone = self.table([1.0, 1.0], [[1.0, 1.5], [1.0, 1.5], [1.0, 1.38]])
         assert [row[1] for row in self.sizes(zone)[1:]] == [1.5, 1.5, 1.5]
+
+    def test_a_row_printed_larger_keeps_its_size(self) -> None:
+        # c0177's `Totale 3.295,22 €` at 1.67 among rows at 1.00, beside
+        # the `PAGAMENTO` note the parser's table puts in its row.
+        zone = self.table([1.0, 1.0, 1.0], [[1.0, 1.0, 1.0]] * 3 + [[1.0, 1.67, 1.67]])
+        assert self.sizes(zone)[-1] == [1.0, 1.67, 1.67]
+
+    def test_one_cell_above_its_peers_is_drawn_at_theirs(self) -> None:
+        # c0112's `Type` header at 1.38 among headers at 1.00.
+        zone = self.table([1.0, 1.38, 1.0], [[1.0, 1.0, 1.0]] * 3)
+        assert self.sizes(zone)[0] == [1.0, 1.0, 1.0]

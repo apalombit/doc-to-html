@@ -42,7 +42,7 @@ is never passed), and today's pipeline, which stays as it is.
 | 3 | **judge**: `tools/measure_run.py debug/runs/M1-D2-L3 --previous debug/runs/L5-D2-L3 --model glm-ocr:latest --all`; every moved page's sheet opened against `L5-D2-L3`: better, same or worse, a sentence each naming the element | every moved page called — done 2026-11-22: 41 of 41 (outcome below) |
 | 4 | **his spot checks** on the issue page: every page called worse, two at random; no decided issue re-shown (`../agents/review-issues.json`) | the round published — done 2026-11-22: round 13, 18 issues |
 | 5 | the outcome here; stop for his call | written 2026-11-22; **decided 2026-11-22** (Alessandro, in chat: "Go ahead keep this"): the code kept; part two below |
-| 6 | **part two, (b)**: a row or cell printed larger keeps its size in a table, reproduced on 5 random dev pages first | the 5 drawn nearer the source by eye, none worse |
+| 6 | **part two, (b)**: a row or cell printed larger keeps its size in a table, reproduced on 5 random dev pages first | the 5 drawn nearer the source by eye, none worse — done 2026-11-22: 2 of 10 better, 8 the same (outcome below) |
 | 7 | **part two, (c)**: a cut line's short piece at its line's size, likewise | likewise |
 | 8 | **part two, (a)**: a card grid held by the skeleton, likewise | likewise |
 | 9 | the panel run again, judged against `M1-D2-L3`; stop for his call | every moved page called |
@@ -217,3 +217,40 @@ order and each judged as spec 0025 §5 judged its steps:
 - one commit a step, its outcome written here;
 - then the panel run again (`tools/batch.py M2-D2-L3 --arm d2 --pages
   l3`, about 25 minutes), judged against `M1-D2-L3`, and his call.
+
+## Outcome — part two (b), a row printed larger, 2026-11-22
+
+**The pool**: the 37 dev pages whose table holds a Cell measured 1.2
+times its role's median or more, and 0.15 above it, at `L5-F13` (before
+3e), most of them receipts and invoices with a total set large. Drawn
+at random, seed 260006: c0177, c0008, c0112, c0489, c0004, then c0179,
+c0521, c0175, c0186, c0423. Each first five was checked at today's code:
+3e draws the Cell 0.15 or more smaller than measured on every one.
+
+**What the sample showed**: two kinds of Cell above its peers.
+- **A whole row set large, the page's**: c0177's `Totale` and
+  `3.295,22 €` at 1.67 among rows at 1.00; c0175's `Charged $26.87`
+  at 1.33. 3e drew both at the rows' size.
+- **One Cell, the measure's**: c0112's `Type` header at 1.38, c0489's
+  bold `2,382` at 1.22, c0008's `16` at 1.25, c0004's `1. DELEGATE`.
+  The page prints each at its row's size, and 3e is right to draw it
+  there.
+
+**What shipped** (`parser_first.table_sizes`): where two Cells of a row
+or more measure `render.SIZE_STEP` (0.15) or more above their group's
+size, each keeps its own. The row's other Cells keep their group's: the
+first build drew c0177's whole row at its median and set the
+`PAGAMENTO` note, which the parser's table puts in the total's row, at
+1.67 too.
+
+**By eye**, `tools/d2.py B-2 --previous B-0` and `B-2b --previous B-0b`:
+
+| page | before | after | |
+|---|---|---|---|
+| c0177 | `Totale 3.295,22 €` at the rows' size | set large, as printed; the note beside it at the body's size | **better** |
+| c0175 | `Charged $26.87` at the rows' size | set large, as printed | **better** |
+| c0008, c0112, c0489, c0004, c0179, c0521, c0186, c0423 | one Cell above its peers, drawn at theirs | the same | same |
+
+D2's code only; `tests/test_skeleton.py` has two more tests (a row set
+large, and one Cell above its peers drawn at theirs). The first fails
+without the rule.
