@@ -21,10 +21,11 @@ better, c0198 mixed, none worse. What is left is in spec 0025's
 "Outcome — the spec": a Zone's crop read differently once regrouped,
 sizes in prose, a heading over chips, a few drawing faults.
 
-**Next — Alessandro's call.** The milestone (the panel, then the
-vault), parked for spec 0025, is the natural next step: its prompt is
-[spec 0025](specs/0025-page-skeleton.md)'s "The prompt for the next
-session". The rest of spec 0025's §7 stays parked until he names it.
+**Next — decided 2026-11-22:** the milestone's first half, D2 over
+the 41 panel pages, judged by eye against `L5-D2-L3`; **the vault is
+not for now**. Its prompt is [spec 0025](specs/0025-page-skeleton.md)'s
+"The prompt for the next session". The rest of spec 0025's §7 stays
+parked until he names it.
 
 Reading order for a fresh session:
 1. `CLAUDE.md`'s **READ THIS FIRST**;

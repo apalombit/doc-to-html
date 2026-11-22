@@ -626,44 +626,44 @@ milestone's panel run measures it on the 41 L3 pages against
 
 ## The prompt for the next session
 
-**Alessandro's call.** The milestone, parked for this spec, is the
-natural next step: it is spec 0024's milestone prompt, renumbered and
-cut from `skeleton`.
+**Decided 2026-11-22** (Alessandro): the milestone's first half, the
+panel; **the vault is not for now**.
 
-> Start the level-up plan's milestone on arm D2 (`docs/level-up.md` §6,
-> row M1). Spec 0025, the page's skeleton first, is done: issue #48
-> closed, branch `skeleton`, `main` fast-forwarded to it. Read
-> `CLAUDE.md`'s READ THIS FIRST, `docs/status.md`, `docs/level-up.md`'s
-> Gist and §6, spec 0025's "Outcome — the spec", spec 0024's "Outcome —
-> the phase", and `docs/agents/review-criteria.md`.
+> Run the milestone's panel check on arm D2 (`docs/level-up.md` §6, row
+> M1, its first half only; **the vault is not for now: never pass
+> `unseal=True`**). Spec 0025, the page's skeleton first, is done: issue
+> #48 closed, branch `skeleton`, `main` fast-forwarded to it. Read
+> `CLAUDE.md`'s READ THIS FIRST, `docs/status.md`, spec 0025's "Outcome
+> — the spec", and `docs/agents/review-criteria.md`.
 >
 > 1. **Write spec 0026** and its GitHub issue
 >    (`docs/agents/issue-tracker.md`), on a branch cut from `skeleton`.
-> 2. **The phase on the panel.** Prove first: the replay of
->    `s14-result/` 21 of 21, `mypy src/`. Then, every Chrome job
->    finished, `tools/batch.py M1-D2-L3 --arm d2 --pages l3` (about 18
->    minutes of local model time and a reader call per grid; check the
->    regions against `L5-D2-L3`'s, which the parser has reproduced byte
->    for byte each time). Then `tools/measure_run.py
->    debug/runs/M1-D2-L3 --previous debug/runs/L5-D2-L3 --model
->    glm-ocr:latest --all`, and judge every moved page by eye against
->    `L5-D2-L3`: better, same or worse, each with a sentence naming the
->    element. Put his spot checks and the vault question on the issue
->    page (load the `artifact-capabilities` skill first; never re-show
->    a decided issue, `docs/agents/review-issues.json`).
-> 3. **The vault, only on his word.** It is sealed in
->    `doc_to_html.corpus`; it is opened once, and only when he says so
->    in so many words. D2 over its 200 pages is about 1 h 45: say so,
->    and that it costs local model time only, before starting.
+> 2. **Prove first**: the replay of `s14-result/` 21 of 21 and
+>    `mypy src/`.
+> 3. **The run**: every Chrome job finished first, then `tools/batch.py
+>    M1-D2-L3 --arm d2 --pages l3`, started detached. It takes about 18
+>    minutes of local model time plus one reader call per grid. Check its
+>    regions against `L5-D2-L3`'s: the parser has reproduced them byte
+>    for byte each time.
+> 4. **Judge**: `tools/measure_run.py debug/runs/M1-D2-L3 --previous
+>    debug/runs/L5-D2-L3 --model glm-ocr:latest --all`. Then open every
+>    moved page's sheet against `L5-D2-L3`, the panel before the skeleton:
+>    better, same or worse, each with one sentence naming the element.
+>    Put his spot checks on the issue page (load the
+>    `artifact-capabilities` skill first; never re-show a decided issue,
+>    `docs/agents/review-issues.json`).
+> 5. Write the outcome into the spec, and stop for his call.
 >
-> Rules: local models only. Never pass `unseal=True` unless he has said
-> to open the vault. No panel page in a test or to tune anything, c0001
-> and c0002 above all. Today's pipeline stays as it is: the replay of
-> `s14-result/` stays 21 of 21. One conversion at a time, nothing
-> beside it; every Chrome job finished before a conversion starts. Run
-> nothing he has not asked for. Judge by eye; a number is a pointer to
-> a page. Replies short: what worked or not and why, each change as page
-> / before / after; no process lines.
+> Rules: local models only. No panel page in a test or to tune
+> anything, c0001 and c0002 above all; a fault seen on a panel page is
+> reproduced on a dev page first. Today's pipeline stays as it is: the
+> replay of `s14-result/` stays 21 of 21. One conversion at a time,
+> nothing beside it. Run nothing he has not asked for. Tests minimal:
+> the changed files' tests, the replay when shared code moves, `mypy
+> src/`; never the full suite. Judge by eye; a number is a pointer to a
+> page. Replies concise: what worked or not and why, each change as
+> page / before / after; no process lines (tests passing, seeds,
+> commits) and nothing he already knows.
 
 ---
 
