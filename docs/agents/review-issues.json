@@ -1,5 +1,5 @@
 {
- "stamp": "spec 0021 · step 6; spec 0022 · L3; spec 0023 · P1; spec 0024 · L5",
+ "stamp": "spec 0021 · step 6; spec 0022 · L3; spec 0023 · P1; spec 0024 · L5; spec 0026 · M1",
  "about": "The review's questions for Alessandro, one issue at a time, in rounds. Built into a page by tools/review_issues.py; his decisions land in the page's `issues` collection, one document per key, and are copied here under each issue's `decided`.",
  "rounds": [
   {
@@ -4573,7 +4573,12 @@
      "checks": "Pages with each major: sizes out of proportion 210; the reader's words 174; bold lost 164; line breaks 97; height 84; frames and fills 81; colour 72; rules between cells 51; side by side 32; face 27; cells 20; order 12. Our own word faults: at most 30 pages.",
      "claude": "Fit the looks first: one offline session reaches the three biggest classes on our side. Then the reader's words, if issue 2 is agreed; then the rest by pages hurt, height last because it moves with everything above it.",
      "often": "1: about a session, offline. 2: three probes of 10 to 15 minutes' model time, then one dev re-parse of about 1 h 45. 3 to 7: a session or two each, offline.",
-     "proposes": "In this order: 1 the looks' constants fitted on dev labels (SIZE_STEP, BOLD, COLOUR_APART first, then the adapter's grouping); 2 the reader's words (issue 2); 3 line breaks; 4 tables and boxes; 5 side by side, face, cells, order; 6 height re-measured; 7 our own words and the checkbox marks (issue 3). Each judged by eye on every dev page it moves. Disagree to name another order."
+     "proposes": "In this order: 1 the looks' constants fitted on dev labels (SIZE_STEP, BOLD, COLOUR_APART first, then the adapter's grouping); 2 the reader's words (issue 2); 3 line breaks; 4 tables and boxes; 5 side by side, face, cells, order; 6 height re-measured; 7 our own words and the checkbox marks (issue 3). Each judged by eye on every dev page it moves. Disagree to name another order.",
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-20"
+     }
     },
     {
      "key": "l5-reader-probes",
@@ -4588,7 +4593,12 @@
      "checks": "Its prompts are fixed task tags (Text Recognition:), so rewording is no lever. Three things are: the layout threshold, 0.3; repetition_penalty, 1.1, which weighs against repeating a token as a table's digits do (178 of the 743 lost words are numbers); and the image it is shown, the page at screen size.",
      "claude": "Probe before changing anything: each probe on the 20 dev pages with the most reader word faults, judged by eye and by the words check, never on a panel page. Keep only what helps.",
      "often": "Each probe 10 to 15 minutes of model time. One dev re-parse of about 1 h 45 for what is kept; the doubled image costs more, measured on its probe first, and asked again if over two hours.",
-     "proposes": "Agree to three probes: a. the page enlarged twice before parsing; b. the layout threshold 0.3 to 0.2; c. repetition_penalty 1.1 to 1.0. b and c lift the rule 'the parser's thresholds untouched' for the probes and, if they help, for D2. Disagree to keep the parser exactly as it is and work on our side only."
+     "proposes": "Agree to three probes: a. the page enlarged twice before parsing; b. the layout threshold 0.3 to 0.2; c. repetition_penalty 1.1 to 1.0. b and c lift the rule 'the parser's thresholds untouched' for the probes and, if they help, for D2. Disagree to keep the parser exactly as it is and work on our side only.",
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-21"
+     }
     },
     {
      "key": "l5-marks",
@@ -4603,10 +4613,966 @@
      "checks": "The words check counts each mark lost; the parser's raw text has none of them.",
      "claude": "A model-free guardrail on the parser's output: find the small square the page prints at a line's start, empty or ticked, and put its mark in the line. Measured on dev labels before it ships; a square it cannot tell is left out, never guessed.",
      "often": "Part of a session, offline, in direction 7.",
-     "proposes": "Agree to add it in direction 7. Disagree to leave the marks as the reader's fault, named."
+     "proposes": "Agree to add it in direction 7. Disagree to leave the marks as the reader's fault, named.",
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "name": "Round 13",
+   "date": "2026-11-22",
+   "title": "Round 13: the milestone's panel run, 17 spot checks, then what comes next",
+   "intro": "Round 12 is recorded: all three agreed. D2 converted the 41 L3 panel pages again (M1-D2-L3), now with spec 0024's part two and spec 0025's skeleton, and Claude compared every page with L5-D2-L3, the same pages on 2026-11-10: 17 better, 9 the same, 5 mixed, 10 worse. Issues 1 to 10 are every page called worse, 11 to 15 the mixed ones, 16 and 17 drawn at random. Issue 18 asks what comes next. Each picture is the page beside this run's render. Click a decision: it saves and the next opens.",
+   "about": "Round 13: spec 0026, the milestone's first half. M1-D2-L3 against L5-D2-L3 on the 41 L3 panel pages: the 10 worse, the 5 mixed, 2 at random from the better or same pages not shown before (seed 20261122), and the next step. No page and fault asked in rounds 1 to 12.",
+   "issues": [
+    {
+     "key": "m1-c0456",
+     "kind": "spot",
+     "page": "c0456",
+     "run": "M1-D2-L3",
+     "title": "The price list's cards fall apart",
+     "what": "The page prints eight service cards in two rows of four. L5 drew them so. This run sets them in narrow lanes: “Safety check” (1) runs one word a line, “Full overhaul” (2) is cut at the page's right edge, and the price rows scatter. The page is drawn 2,603 px tall for 978.",
+     "checks": "Seen: 2.66 of the page's height, blocks drawn under, two sections interleaved. Seven majors more than on L5 (23 against 16).",
+     "claude": "Worse, the worst page of the run. The page's skeleton cut the card grid into lanes that do not hold the cards.",
+     "often": "Cards broken, spread or staggered: 4 of the 41 (c0456, c0575, c0476, c0129).",
+     "proposes": "Worse, next in line: the card pages, each fault reproduced on a dev page first.",
+     "source_crop": [
+      0,
+      280,
+      1100,
+      620
+     ],
+     "render_crop": [
+      0,
+      280,
+      1100,
+      1300
+     ],
+     "source_marks": [
+      [
+       46,
+       334,
+       148,
+       360
+      ],
+      [
+       560,
+       334,
+       660,
+       360
+      ]
+     ],
+     "render_marks": [
+      [
+       74,
+       323,
+       132,
+       378
+      ],
+      [
+       1050,
+       421,
+       1100,
+       469
+      ]
+     ],
+     "labels": [
+      "1",
+      "2"
+     ]
+    },
+    {
+     "key": "m1-c0575",
+     "kind": "spot",
+     "page": "c0575",
+     "run": "M1-D2-L3",
+     "title": "The flyer drawn at 1.76 of its height",
+     "what": "The page prints four feature cards, two by two, then three steps. This run spreads the cards apart, draws “Battery ready”'s card (1) tall, with the stray “```markdown” set as a heading, and pushes the steps (2) down: 1,350 px for 766. L5 drew 952. The headline now breaks as printed.",
+     "checks": "Seen: 1.76 of the height, and the invented word. Two majors fewer than on L5: its two size faults on “Battery ready” are gone.",
+     "claude": "Worse: the page no longer looks like the flyer.",
+     "often": "Cards broken, spread or staggered: 4 of the 41 (c0456, c0575, c0476, c0129).",
+     "proposes": "Worse, next in line with the card pages.",
+     "source_crop": [
+      0,
+      0,
+      860,
+      766
+     ],
+     "render_crop": [
+      0,
+      0,
+      860,
+      1350
+     ],
+     "source_marks": [
+      [
+       56,
+       384,
+       440,
+       446
+      ],
+      [
+       46,
+       478,
+       236,
+       516
+      ]
+     ],
+     "render_marks": [
+      [
+       54,
+       636,
+       334,
+       845
+      ],
+      [
+       0,
+       950,
+       160,
+       985
+      ]
+     ],
+     "labels": [
+      "1",
+      "2"
+     ]
+    },
+    {
+     "key": "m1-c0476",
+     "kind": "spot",
+     "page": "c0476",
+     "run": "M1-D2-L3",
+     "title": "The menu's dishes out of their rows",
+     "what": "The page prints six dishes in two level rows of three. L5 kept the rows level. This run staggers them: “Wild mushroom arancini” (2) sits 60 px below “Crispy cauliflower” (3), its neighbour in the row. “Sous chef Hiro Nguyen” (1) drops under the credits' line, and the page is 1.21 of its height.",
+     "checks": "Seen: the height and the line drawn under. The same count as L5 (23).",
+     "claude": "Worse. Part of the grid was read as a table that joins the first dish's text with the fourth and fifth dishes, and each column then stacks on its own.",
+     "often": "Cards broken, spread or staggered: 4 of the 41 (c0456, c0575, c0476, c0129).",
+     "proposes": "Worse, next in line with the card pages.",
+     "source_crop": [
+      0,
+      80,
+      780,
+      440
+     ],
+     "render_crop": [
+      0,
+      100,
+      780,
+      520
+     ],
+     "source_marks": [
+      [
+       150,
+       88,
+       246,
+       108
+      ],
+      [
+       20,
+       338,
+       200,
+       361
+      ],
+      [
+       525,
+       338,
+       660,
+       361
+      ]
+     ],
+     "render_marks": [
+      [
+       190,
+       124,
+       300,
+       147
+      ],
+      [
+       16,
+       405,
+       157,
+       428
+      ],
+      [
+       528,
+       345,
+       633,
+       368
+      ]
+     ],
+     "labels": [
+      "1",
+      "2",
+      "3"
+     ]
+    },
+    {
+     "key": "m1-c0129",
+     "kind": "spot",
+     "page": "c0129",
+     "run": "M1-D2-L3",
+     "title": "The payment card broken into three boxes",
+     "what": "The card “DATOS DE PAGO” prints its labels (1) over their values (2), then the IBAN (3). This run draws the labels with nothing under them, the values in a box 180 px lower, and the IBAN in a third box; the page grows from 829 px to 1,139. L5 kept the values under their labels. The two notes at the foot now sit side by side, as printed.",
+     "checks": "Seen: 1.37 of the page's height. Labels parted from their values: not seen. The same count as L5 (48).",
+     "claude": "Worse: labels parted from their values, and the page a third taller.",
+     "often": "Cards broken, spread or staggered: 4 of the 41 (c0456, c0575, c0476, c0129).",
+     "proposes": "Worse, next in line with the card pages.",
+     "source_crop": [
+      480,
+      505,
+      950,
+      630
+     ],
+     "render_crop": [
+      480,
+      500,
+      950,
+      910
+     ],
+     "source_marks": [
+      [
+       497,
+       540,
+       935,
+       557
+      ],
+      [
+       505,
+       559,
+       935,
+       580
+      ],
+      [
+       497,
+       587,
+       935,
+       620
+      ]
+     ],
+     "render_marks": [
+      [
+       505,
+       532,
+       940,
+       552
+      ],
+      [
+       503,
+       728,
+       940,
+       752
+      ],
+      [
+       507,
+       855,
+       940,
+       900
+      ]
+     ],
+     "labels": [
+      "1",
+      "2",
+      "3"
+     ]
+    },
+    {
+     "key": "m1-c0115",
+     "kind": "spot",
+     "page": "c0115",
+     "run": "M1-D2-L3",
+     "title": "The receipt's total drawn at its rows' size",
+     "what": "The receipt prints “TOTAL  $110.28” (1) larger and bolder than its rows. L5 drew it large. This run draws it bold at the rows' size: since spec 0025, a table's cells take one size per role, and the total row is a row like the others.",
+     "checks": "Seen: printed larger than the body, drawn at the body's size. One major more than on L5.",
+     "claude": "Worse. The rest of the receipt is drawn as on L5.",
+     "often": "A row or cell printed larger, flattened in a table: 3 of the 41 (c0115, c0405, c0128).",
+     "proposes": "Worse, next in line: a row or cell the page prints larger keeps its size inside a table. Reproduced on a dev page first.",
+     "source_crop": [
+      40,
+      480,
+      480,
+      640
+     ],
+     "render_crop": [
+      40,
+      425,
+      480,
+      560
+     ],
+     "source_marks": [
+      [
+       56,
+       542,
+       464,
+       568
+      ]
+     ],
+     "render_marks": [
+      [
+       57,
+       479,
+       463,
+       499
+      ]
+     ],
+     "labels": [
+      "1"
+     ]
+    },
+    {
+     "key": "m1-c0405",
+     "kind": "spot",
+     "page": "c0405",
+     "run": "M1-D2-L3",
+     "title": "The recipe's facts at their labels' size",
+     "what": "The page prints “15 min” (1), “25 min” (2), “2 hours” (3) and “4” large and bold, under small labels, with a rule between each. L5 drew them so. This run draws them smaller than the body and loses the rules: the row is a table, and its cells take one size.",
+     "checks": "Seen: printed larger than the body, drawn smaller. One major more than on L5.",
+     "claude": "Worse.",
+     "often": "A row or cell printed larger, flattened in a table: 3 of the 41 (c0115, c0405, c0128).",
+     "proposes": "Worse, next in line with c0115.",
+     "source_crop": [
+      30,
+      180,
+      590,
+      250
+     ],
+     "render_crop": [
+      30,
+      220,
+      600,
+      275
+     ],
+     "source_marks": [
+      [
+       38,
+       206,
+       102,
+       238
+      ],
+      [
+       188,
+       206,
+       252,
+       238
+      ],
+      [
+       323,
+       206,
+       393,
+       238
+      ]
+     ],
+     "render_marks": [
+      [
+       42,
+       245,
+       87,
+       266
+      ],
+      [
+       168,
+       245,
+       216,
+       266
+      ],
+      [
+       299,
+       245,
+       351,
+       266
+      ]
+     ],
+     "labels": [
+      "1",
+      "2",
+      "3"
+     ]
+    },
+    {
+     "key": "m1-c0334",
+     "kind": "missed",
+     "page": "c0334",
+     "run": "M1-D2-L3",
+     "title": "A one-line title broken in two; a list line's end drawn as a speck",
+     "what": "The banner prints “BARNSLEY METROPOLITAN BOROUGH COUNCIL” on one line (1). This run breaks it onto two, and the banner grows. In the list, “Mondays.” (2), the end of a line the page wraps, is drawn at 0.6 of its line. L5 drew both as printed.",
+     "checks": "Neither seen.",
+     "claude": "Worse. The speck: the reader read the item as one line. Since spec 0024 it is cut where the page breaks it, and the short piece is measured on its own, too small.",
+     "often": "A cut line's short piece drawn small: 3 of the 41 (c0334, c0196, c0343).",
+     "proposes": "Worse, next in line: a cut line's short piece takes its line's size. Reproduced on a dev page first.",
+     "source_crop": [
+      0,
+      30,
+      880,
+      560
+     ],
+     "render_crop": [
+      0,
+      30,
+      880,
+      530
+     ],
+     "source_marks": [
+      [
+       110,
+       45,
+       770,
+       88
+      ],
+      [
+       62,
+       530,
+       130,
+       553
+      ]
+     ],
+     "render_marks": [
+      [
+       170,
+       50,
+       712,
+       122
+      ],
+      [
+       0,
+       506,
+       46,
+       522
+      ]
+     ],
+     "labels": [
+      "1",
+      "2"
+     ]
+    },
+    {
+     "key": "m1-c0196",
+     "kind": "spot",
+     "page": "c0196",
+     "run": "M1-D2-L3",
+     "title": "The privacy statement's first lines at half size",
+     "what": "The form's privacy statement (1) prints its three lines at one small size. This run draws the first two at half the third's size, barely readable; L5 drew them alike. The rest of the form is lost in both runs, as before.",
+     "checks": "Seen: drawn smaller than the body. The same count as L5.",
+     "claude": "Worse, the same cause as c0334: the reader's line cut where the page breaks it, each piece measured on its own.",
+     "often": "A cut line's short piece drawn small: 3 of the 41 (c0334, c0196, c0343).",
+     "proposes": "Worse, next in line with c0334.",
+     "source_crop": [
+      170,
+      1150,
+      830,
+      1210
+     ],
+     "render_crop": [
+      60,
+      700,
+      940,
+      765
+     ],
+     "source_marks": [
+      [
+       186,
+       1167,
+       830,
+       1195
+      ]
+     ],
+     "render_marks": [
+      [
+       78,
+       728,
+       800,
+       742
+      ]
+     ],
+     "labels": [
+      "1"
+     ]
+    },
+    {
+     "key": "m1-c0121",
+     "kind": "spot",
+     "page": "c0121",
+     "run": "M1-D2-L3",
+     "title": "Net pay drawn at the body's size",
+     "what": "The page prints the net pay “$1,783.31” (1) at display size. L5 drew it large; this run draws it at about the body's size, and “64.5 hours” (2) slides right of its label. Both tables above are a touch nearer the page's sizes.",
+     "checks": "Seen: the net pay printed larger than the body, drawn at it; the shift a minor. The same count as L5.",
+     "claude": "Worse. Its box changed with the new grouping, and it is measured at 0.9 of the body where L5 measured 1.6: spec 0025's first named fault, seen on dev on c0198.",
+     "often": "1 of the 41.",
+     "proposes": "Worse, next in line.",
+     "source_crop": [
+      30,
+      390,
+      700,
+      455
+     ],
+     "render_crop": [
+      30,
+      375,
+      720,
+      450
+     ],
+     "source_marks": [
+      [
+       46,
+       412,
+       146,
+       444
+      ],
+      [
+       456,
+       422,
+       522,
+       444
+      ]
+     ],
+     "render_marks": [
+      [
+       40,
+       411,
+       108,
+       433
+      ],
+      [
+       617,
+       421,
+       685,
+       443
+      ]
+     ],
+     "labels": [
+      "1",
+      "2"
+     ]
+    },
+    {
+     "key": "m1-c0074",
+     "kind": "missed",
+     "page": "c0074",
+     "run": "M1-D2-L3",
+     "title": "The form's number torn off the footer line",
+     "what": "The footer prints “Form 8822 (Rev. 2-2021)” (1) at the right of the privacy notice's line. L5 drew it there. This run draws it under the line, split over two lines where it had room. The notice itself now sits on one line, as printed.",
+     "checks": "Not seen; one major fewer than on L5.",
+     "claude": "Worse: a block printed beside another drawn under it, and a line split.",
+     "often": "1 of the 41.",
+     "proposes": "Worse, next in line.",
+     "source_crop": [
+      40,
+      1065,
+      960,
+      1110
+     ],
+     "render_crop": [
+      40,
+      1015,
+      960,
+      1095
+     ],
+     "source_marks": [
+      [
+       785,
+       1076,
+       935,
+       1100
+      ]
+     ],
+     "render_marks": [
+      [
+       758,
+       1040,
+       910,
+       1090
+      ]
+     ],
+     "labels": [
+      "1"
+     ]
+    },
+    {
+     "key": "m1-c0034",
+     "kind": "spot",
+     "page": "c0034",
+     "run": "M1-D2-L3",
+     "title": "The form's title back; a column heading at three times its size",
+     "what": "The title “Individual Income Tax Return, Short Form” (1) and the black “FILER INFORMATION” band are drawn as printed; in L5 the title did not show. But “INSTRUCTIONS BY LINE” (2), printed small, is drawn at about three times the body, over two lines.",
+     "checks": "Seen: the heading printed at the body's size, drawn larger. The title's return is not counted. The same count as L5.",
+     "claude": "Mixed. Content comes first: the title reads again, and the heading still reads, too large.",
+     "often": "1 of the 41.",
+     "proposes": "Better on balance; the heading next in line.",
+     "source_crop": [
+      0,
+      0,
+      920,
+      230
+     ],
+     "render_crop": [
+      0,
+      0,
+      920,
+      320
+     ],
+     "source_marks": [
+      [
+       172,
+       18,
+       418,
+       43
+      ],
+      [
+       620,
+       180,
+       757,
+       198
+      ]
+     ],
+     "render_marks": [
+      [
+       18,
+       47,
+       253,
+       72
+      ],
+      [
+       634,
+       198,
+       886,
+       278
+      ]
+     ],
+     "labels": [
+      "1",
+      "2"
+     ]
+    },
+    {
+     "key": "m1-c0128",
+     "kind": "spot",
+     "page": "c0128",
+     "run": "M1-D2-L3",
+     "title": "Two receipt lines whole again; the total at its rows' size",
+     "what": "In L5, “Ground coffee 227g” (1) and “Dishwasher tabs x20” (2) were cut in half by the row below. They read whole now. But “TOTAL (33 items) 54.44” (3), printed large and bold, is drawn at the rows' size, as on c0115.",
+     "checks": "Seen: the total's size. The cut lines were never seen. One major more than on L5.",
+     "claude": "Mixed, better on balance: two lines read again, and the total still reads, smaller.",
+     "often": "A row or cell printed larger, flattened in a table: 3 of the 41 (c0115, c0405, c0128). The cut lines: both of round 11's pages mended, this and c0523.",
+     "proposes": "Better on balance; the total goes with c0115.",
+     "source_crop": [
+      55,
+      560,
+      475,
+      925
+     ],
+     "render_crop": [
+      55,
+      575,
+      470,
+      920
+     ],
+     "source_marks": [
+      [
+       62,
+       575,
+       200,
+       596
+      ],
+      [
+       62,
+       797,
+       200,
+       818
+      ],
+      [
+       62,
+       874,
+       460,
+       900
+      ]
+     ],
+     "render_marks": [
+      [
+       60,
+       588,
+       160,
+       606
+      ],
+      [
+       60,
+       799,
+       170,
+       817
+      ],
+      [
+       60,
+       877,
+       460,
+       898
+      ]
+     ],
+     "labels": [
+      "1",
+      "2",
+      "3"
+     ]
+    },
+    {
+     "key": "m1-c0343",
+     "kind": "spot",
+     "page": "c0343",
+     "run": "M1-D2-L3",
+     "title": "The wordmark as printed; a paragraph's last line drawn small",
+     "what": "“Osprey Lettings” (1) is drawn large over a small “PROPERTY MANAGEMENT”, as printed; L5 ran them together at one size. But “arrange a meeting.” (2), the last line of 2.3, is drawn at 0.82 of its paragraph: the cut line of c0334.",
+     "checks": "L5's two size majors and its joined line on the masthead are gone; the small line is not seen. Two majors fewer than on L5.",
+     "claude": "Mixed, better on balance: the masthead is right, and the small line still reads.",
+     "often": "A cut line's short piece drawn small: 3 of the 41 (c0334, c0196, c0343).",
+     "proposes": "Better on balance; the small line goes with c0334.",
+     "source_crop": [
+      40,
+      30,
+      680,
+      880
+     ],
+     "render_crop": [
+      40,
+      30,
+      680,
+      820
+     ],
+     "source_marks": [
+      [
+       52,
+       45,
+       236,
+       96
+      ],
+      [
+       92,
+       846,
+       224,
+       872
+      ]
+     ],
+     "render_marks": [
+      [
+       48,
+       46,
+       212,
+       96
+      ],
+      [
+       48,
+       785,
+       162,
+       807
+      ]
+     ],
+     "labels": [
+      "1",
+      "2"
+     ]
+    },
+    {
+     "key": "m1-c0527",
+     "kind": "spot",
+     "page": "c0527",
+     "run": "M1-D2-L3",
+     "title": "The pill reads; a dark fill added behind the photo",
+     "what": "“TEASEL ANNUAL” (1) reads on one line in its pill; L5 cut it. The signer's name and title, and the page's height, are nearer the page's. But the photo (2) now stands on a dark green block the page does not draw.",
+     "checks": "The pill's break is gone; the added fill is not seen. Two majors fewer than on L5.",
+     "claude": "Mixed, better on balance: the pill's words read, against a fill added round a figure.",
+     "often": "1 of the 41.",
+     "proposes": "Better on balance; the fill next in line.",
+     "source_crop": [
+      60,
+      40,
+      700,
+      440
+     ],
+     "render_crop": [
+      60,
+      50,
+      720,
+      470
+     ],
+     "source_marks": [
+      [
+       558,
+       64,
+       674,
+       88
+      ],
+      [
+       76,
+       136,
+       250,
+       348
+      ]
+     ],
+     "render_marks": [
+      [
+       590,
+       81,
+       690,
+       101
+      ],
+      [
+       66,
+       150,
+       290,
+       372
+      ]
+     ],
+     "labels": [
+      "1",
+      "2"
+     ]
+    },
+    {
+     "key": "m1-c0547",
+     "kind": "spot",
+     "page": "c0547",
+     "run": "M1-D2-L3",
+     "title": "The quote's attribution on its own line; the slide a seventh taller",
+     "what": "The quote and its attribution (1) sit on two lines, as printed; L5 joined them. But the slide is drawn 750 px tall for 651, and the headline lost its serif, a minor.",
+     "checks": "Seen: the height, 1.15; the joined line gone. One major fewer than on L5.",
+     "claude": "Mixed: a line no longer joined, against a page height off by more than 10%.",
+     "often": "1 of the 41.",
+     "proposes": "The same on balance.",
+     "source_crop": [
+      0,
+      0,
+      1040,
+      651
+     ],
+     "render_crop": [
+      0,
+      0,
+      1040,
+      750
+     ],
+     "source_marks": [
+      [
+       80,
+       498,
+       525,
+       562
+      ]
+     ],
+     "render_marks": [
+      [
+       18,
+       588,
+       470,
+       646
+      ]
+     ],
+     "labels": [
+      "1"
+     ]
+    },
+    {
+     "key": "m1-spot-c0485",
+     "kind": "spot",
+     "page": "c0485",
+     "run": "M1-D2-L3",
+     "title": "Random pick: the coach ticket",
+     "what": "Drawn at random from the 26 pages called better or the same, among those you have not seen. The ticket's parts are where L5 drew them; “Hereford” is a shade heavier.",
+     "checks": "The same count as L5 (7).",
+     "claude": "The same.",
+     "often": "Drawn at random, seed 20261122.",
+     "proposes": "The same.",
+     "source_crop": [
+      0,
+      0,
+      860,
+      532
+     ],
+     "render_crop": [
+      0,
+      0,
+      860,
+      579
+     ],
+     "source_marks": [],
+     "render_marks": []
+    },
+    {
+     "key": "m1-spot-c0596",
+     "kind": "spot",
+     "page": "c0596",
+     "run": "M1-D2-L3",
+     "title": "Random pick: the boat-trip flyer",
+     "what": "“Meet at” (1) and “Booking line” (2) each have their own line, as printed; L5 joined them. The standfirst is regular, as printed (L5 bold), and “AUTUMN TIMETABLE AND FARES” is centred.",
+     "checks": "Three majors fewer than on L5.",
+     "claude": "Better.",
+     "often": "Drawn at random, seed 20261122.",
+     "proposes": "Better.",
+     "source_crop": [
+      0,
+      290,
+      540,
+      470
+     ],
+     "render_crop": [
+      0,
+      230,
+      540,
+      390
+     ],
+     "source_marks": [
+      [
+       66,
+       328,
+       497,
+       353
+      ],
+      [
+       168,
+       353,
+       396,
+       378
+      ]
+     ],
+     "render_marks": [
+      [
+       74,
+       265,
+       468,
+       287
+      ],
+      [
+       174,
+       286,
+       374,
+       308
+      ]
+     ],
+     "labels": [
+      "1",
+      "2"
+     ]
+    },
+    {
+     "key": "m1-next",
+     "kind": "plan",
+     "page": "the panel",
+     "title": "Keep the code, and mend the worse pages' causes on dev first?",
+     "what": "On the 41 panel pages, against L5: 17 better, 9 the same, 5 mixed, 10 worse. The worse pages have three causes and three one-offs: (a) cards broken, spread or staggered, c0456, c0575, c0476, c0129; (b) a row or cell printed larger, flattened in a table, c0115, c0405; (c) a cut line's short piece drawn small, c0334, c0196; and c0121's net pay, c0074's footer, c0034's heading.",
+     "says": {
+      "checks": "Measured",
+      "often": "What it costs"
+     },
+     "checks": "803 majors against L5's 851: fewer on 23 pages, more on 4, and all four are pages Claude calls worse or mixed. They miss the torn footer, the specks and the labels parted from their values.",
+     "claude": "Net gain ships by the criteria: keep the code. The worse pages go next, each cause reproduced on a dev page first, never tuned on these. (b) and (c) are each one measured rule; (a) is the skeleton's own work and larger, with c0456 the worst page.",
+     "often": "(b) and (c): offline, each on a random dev sample. (a): a step of its own. Then this panel run again, about 25 minutes. The vault stays closed.",
+     "proposes": "Agree: keep the code; mend (b) and (c), then (a); then run the panel again.",
+     "decided": {
+      "verdict": "agree",
+      "note": "In chat: \"Go ahead keep this\"",
+      "on": "2026-11-22"
+     }
     }
    ]
   }
  ],
- "page_stamp": "Spec 0024 · L5 · round 12: part two, the dev pages' majors by cause"
+ "page_stamp": "Spec 0026 · M1 · round 13: the panel run, 17 spot checks"
 }
