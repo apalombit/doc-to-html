@@ -1,5 +1,5 @@
 {
- "stamp": "spec 0021 · step 6; spec 0022 · L3; spec 0023 · P1; spec 0024 · L5; spec 0026 · M1",
+ "stamp": "spec 0021 · step 6; spec 0022 · L3; spec 0023 · P1; spec 0024 · L5; spec 0026 · M1; spec 0026 · M2",
  "about": "The review's questions for Alessandro, one issue at a time, in rounds. Built into a page by tools/review_issues.py; his decisions land in the page's `issues` collection, one document per key, and are copied here under each issue's `decided`.",
  "rounds": [
   {
@@ -5572,7 +5572,186 @@
      }
     }
    ]
+  },
+  {
+   "name": "Round 14",
+   "date": "2026-11-22",
+   "title": "Round 14: part two on the panel, 3 spot checks, then the close",
+   "intro": "Round 13's last issue is recorded: keep the code, mend the causes (you said \"Go ahead keep this\"); its 17 spot checks are still open above. Part two mended three causes on dev pages, then D2 converted the 41 panel pages again (M2-D2-L3), judged against M1-D2-L3: 7 moved, 4 better, 1 mixed, 2 the same, none worse. Issue 1 is the mixed page, 2 and 3 drawn at random, 4 asks what comes next.",
+   "about": "Round 14: spec 0026, part two. M2-D2-L3 against M1-D2-L3 on the 41 L3 panel pages: the one mixed page, 2 at random from the moved better or same pages (seed 20261123), and the next step.",
+   "issues": [
+    {
+     "key": "m2-c0196",
+     "kind": "spot",
+     "page": "c0196",
+     "run": "M2-D2-L3",
+     "title": "The privacy statement: one paragraph, all of it small",
+     "what": "The page prints the privacy statement (1) as one paragraph of small type, under its heading. M1 drew its first two lines at half size and its last at its size. This run keeps it one paragraph, as printed, but draws all of it at half size: its type 7 px tall where the page's is 11.",
+     "checks": "Not seen: the checks count the same faults on this page as on M1.",
+     "claude": "Mixed. The line cut no longer parts the paragraph (part two (c)), but the size it is drawn at is the smaller of the two the parts measured.",
+     "often": "One page of the 41.",
+     "proposes": "Mixed, named and left: the size a cut paragraph is drawn at goes with the next measuring work.",
+     "source_crop": [
+      170,
+      1145,
+      830,
+      1215
+     ],
+     "render_crop": [
+      60,
+      695,
+      940,
+      765
+     ],
+     "source_marks": [
+      [
+       186,
+       1169,
+       812,
+       1205
+      ]
+     ],
+     "render_marks": [
+      [
+       79,
+       730,
+       930,
+       750
+      ]
+     ],
+     "labels": [
+      "1"
+     ]
+    },
+    {
+     "key": "m2-c0405",
+     "kind": "spot",
+     "page": "c0405",
+     "run": "M2-D2-L3",
+     "title": "The recipe's four facts set large again",
+     "what": "The page prints four facts, each a small label over a large value (1, 2). M1 drew the values at their labels' size. This run draws `15 min`, `25 min` and `2 hours` large, as printed. The fourth value is still the reader's `4^{1}$` for `4¹`.",
+     "checks": "Seen: one major fewer than on M1.",
+     "claude": "Better: part two (b), a row printed larger keeps its size in a table.",
+     "often": "Drawn at random, seed 20261123, from the 6 moved pages called better or the same.",
+     "proposes": "Better.",
+     "source_crop": [
+      20,
+      175,
+      600,
+      245
+     ],
+     "render_crop": [
+      20,
+      215,
+      600,
+      285
+     ],
+     "source_marks": [
+      [
+       38,
+       207,
+       102,
+       237
+      ],
+      [
+       323,
+       207,
+       393,
+       237
+      ]
+     ],
+     "render_marks": [
+      [
+       45,
+       248,
+       107,
+       274
+      ],
+      [
+       321,
+       247,
+       396,
+       274
+      ]
+     ],
+     "labels": [
+      "1",
+      "2"
+     ]
+    },
+    {
+     "key": "m2-c0555",
+     "kind": "spot",
+     "page": "c0555",
+     "run": "M2-D2-L3",
+     "title": "The board paper's second row still staggered",
+     "what": "The page prints four step cards, two by two, each row level: “Test with customers” (1) beside “Roll out everywhere” (2). This run draws the first row's two cards at one height, as printed; the second row is still staggered, (2) 46 px below (1), as on M1.",
+     "checks": "Not seen: the same count as M1.",
+     "claude": "The same: the row of cards drawn one height (part two (a)) reaches the first row only.",
+     "often": "Drawn at random, seed 20261123, from the 6 moved pages called better or the same.",
+     "proposes": "The same.",
+     "source_crop": [
+      60,
+      220,
+      1160,
+      680
+     ],
+     "render_crop": [
+      40,
+      300,
+      1180,
+      860
+     ],
+     "source_marks": [
+      [
+       130,
+       460,
+       382,
+       499
+      ],
+      [
+       677,
+       460,
+       936,
+       499
+      ]
+     ],
+     "render_marks": [
+      [
+       110,
+       555,
+       352,
+       590
+      ],
+      [
+       671,
+       601,
+       922,
+       638
+      ]
+     ],
+     "labels": [
+      "1",
+      "2"
+     ]
+    },
+    {
+     "key": "m2-next",
+     "kind": "plan",
+     "page": "the panel",
+     "title": "Close spec 0026 here, and take the undrawn card grid next?",
+     "what": "Part two mended on dev first, then the panel run again (M2) against M1: 7 pages moved, 4 better (c0115's total and c0405's facts set large, c0343's last line at its size, c0382's cards one height a row), c0196 mixed, 2 the same, none worse. Left, each a cause of its own: c0456 (price cards with no drawn box, read column by column, so cut into lanes: c0384's fault on dev), c0476 (a grid part across three dishes, its table joining them), c0334 (a block of its own measured small), c0128 (a total row read as one cell), and the one-offs c0121, c0074, c0034, c0527, c0547, c0129.",
+     "says": {
+      "checks": "Measured",
+      "often": "What it costs"
+     },
+     "checks": "801 majors against M1's 803: one fewer on c0115 and on c0405. They do not see c0343's or c0382's gain, or c0196's change.",
+     "claude": "Close spec 0026: the milestone's panel half is measured and kept, part two shipped, and what is left is a list of separate causes. The next spec takes them ranked, the worst page first: a grid of cards the page draws no box round (c0456, 2.66 of its height), reproduced on c0384. Its fix touches the skeleton's order rule, so it is measured first: how often two columns of text share a gap across by chance.",
+     "often": "The close: status.md, CLAUDE.md, main fast-forwarded, issue #49 closed, a handover prompt. No run. The vault stays closed.",
+     "proposes": "Agree: close spec 0026; next, a spec for the remaining causes, the undrawn card grid first."
+    }
+   ]
   }
  ],
- "page_stamp": "Spec 0026 · M1 · round 13: the panel run, 17 spot checks"
+ "page_stamp": "Spec 0026 · M2 · round 14: part two on the panel"
 }
