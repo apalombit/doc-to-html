@@ -816,6 +816,11 @@ class Region:
     splits: tuple[float, ...] = ()
     rows: int = 1
     """How many rows a `grid` has; 1 for anything else."""
+    banded: bool = False
+    """Whether its lanes' Zones carry their own rows (`Zone.band`,
+    `Zone.column`), read off the page's skeleton — spec 0025, step 3, D2's
+    alone: the renderer takes them instead of re-banding the lane from its
+    Zones' boxes. Written only where it is set."""
 
     @property
     def lanes(self) -> int:
@@ -929,6 +934,10 @@ class Document:
             for block in zone["blocks"] + zone["extra"]:
                 if block.get("read_from") is None:
                     block.pop("read_from", None)
+        # `Region.banded` likewise, only where it is set (spec 0025).
+        for region in data["regions"]:
+            if not region.get("banded"):
+                region.pop("banded", None)
         _without_unset_spans(data)
         return data
 
@@ -1151,7 +1160,8 @@ def _decode_document(data: dict[str, Any]) -> Document:
                    for u in data.get("unclaimed", [])],
         regions=[
             Region(top=r["top"], bottom=r["bottom"], flow=Flow(r["flow"]),
-                   splits=tuple(r.get("splits", ())), rows=r.get("rows", 1))
+                   splits=tuple(r.get("splits", ())), rows=r.get("rows", 1),
+                   banded=bool(r.get("banded", False)))
             for r in data.get("regions", [])
         ],
         separators=[float(y) for y in data.get("separators", [])],

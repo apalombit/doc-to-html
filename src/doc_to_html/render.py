@@ -1064,6 +1064,12 @@ def _cards(region: Region, zones: list[Zone]) -> bool:
     return any(count > 1 for count in lanes.values())
 
 
+SPLIT_SLACK = 0.005
+"""How far, as a share of the page, a frame may reach past a lane's split
+and still be the lane's own: the split is where the next lane's blocks
+begin, and a frame round them stands just outside them."""
+
+
 def _columns(region: Region, zones: list[Zone], document: Document,
              page: _Page, shared: set[BBox], plain: set[int]) -> _Row:
     """One `columns` Region: its lanes side by side, each as wide as the page
@@ -1098,15 +1104,27 @@ def _columns(region: Region, zones: list[Zone], document: Document,
     for lane in lanes:
         units = _units(lane)
         boxes = [_unit_box(unit) for unit in units]
-        placed = bands_from_boxes(under_holders([box for box in boxes if box is not None]))
+        if region.banded:
+            # Spec 0025, step 3: the lane's rows as the page's skeleton read
+            # them, carried on its Zones; not re-banded from their boxes.
+            placed = [(unit[0].band, unit[0].column) for unit, box in zip(units, boxes) if box]
+        else:
+            placed = bands_from_boxes(under_holders([box for box in boxes if box is not None]))
         rows: dict[int, list[tuple[int, list[Zone]]]] = {}
         for unit, (band, column) in zip([u for u, b in zip(units, boxes) if b],
                                         placed):
             rows.setdefault(band, []).append((column, unit))
+        # Spec 0025: a frame across the banded Region's lanes (c0514's
+        # certificate round its signature row, c0511's ticket round stub and
+        # main) is the page rows', drawn once round them; a lane draws only
+        # the frames that cross no split.
+        inside = ({f for f in shared if not any(f.left + SPLIT_SLACK < x < f.right - SPLIT_SLACK
+                                                for x in region.splits)}
+                  if region.banded else shared)
         framed = _framed(
             [_band([u for _, u in sorted(rows[b], key=lambda r: r[0])],
                    document, page, plain, _span(lane)) for b in sorted(rows)],
-            document, page, shared)
+            document, page, inside)
         # Spec 0016, 3a: a lane its fill paints whole is not painted again.
         stacks.append(framed if _lane_fill(lane, document) is not None
                       else _filled(framed, document, page))

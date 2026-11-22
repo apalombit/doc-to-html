@@ -354,18 +354,10 @@ def _today(raw: list[dict[str, Any]], png: Path) -> tuple[list[tuple[str, frozen
 
 
 def _skeleton(raw: list[dict[str, Any]], png: Path) -> Any:
-    from doc_to_html import furniture
-    from doc_to_html.parser_first import containers, flat
-    from doc_to_html.preprocess import content_ink
-    from doc_to_html.skeleton import skeleton
+    from doc_to_html.parser_first import containers, flat, skeleton_of
 
     rectified = flat(png)
-    plain_image = rectified.plain if rectified.plain is not None else rectified.image
-    drawn = furniture.find(plain_image, inverted=rectified.inverted, read=rectified.image)
-    ink = content_ink(furniture.grounded(rectified.image, plain_image, drawn,
-                                         inverted=rectified.inverted))
-    height, width = ink.shape[:2]
-    return skeleton(regions_of(raw), containers(rectified), ink, (width, height))
+    return skeleton_of(raw, rectified, containers(rectified))
 
 
 COLOURS = {"page": (120, 120, 120), "rows": (150, 150, 150), "columns": (30, 90, 220),

@@ -1,4 +1,5 @@
-"""The page's skeleton, top-down — spec 0025, step 2 (`doc_to_html.skeleton`).
+"""The page's skeleton, top-down — spec 0025, step 2 (`doc_to_html.skeleton`),
+and the page laid out from it, step 3 (`adapter.laid_out`).
 
 Each rule on a small page of the parser's blocks, boxes on 0-1 of a
 1000 x 1000 picture, a line 20 px tall; each test fails without its rule.
@@ -6,8 +7,8 @@ Each rule on a small page of the parser's blocks, boxes on 0-1 of a
 
 from __future__ import annotations
 
-from doc_to_html.adapter import Region
-from doc_to_html.ir import BBox
+from doc_to_html.adapter import Region, laid_out, regions_of
+from doc_to_html.ir import BBox, Document, Flow, Region as IRRegion, Source
 from doc_to_html.skeleton import Part, check, skeleton
 
 
@@ -114,3 +115,64 @@ class TestTheCheck:
         root = check(Part("page", rows.box, (0, 1), [rows]), regions, boxes, {})
         assert root.children[0].kind == "flat"
         assert root.children[0].note == "check: two parts overlap"
+
+
+# ---- step 3: laid out from the skeleton (`adapter.laid_out`) ----------------------
+
+def raw(index: int, box: tuple[float, float, float, float], label: str = "text",
+        content: str = "words") -> dict[str, object]:
+    return {"index": index, "label": label, "content": "" if label == "image" else content,
+            "bbox_2d": [round(v * 1000) for v in box]}
+
+
+def laid(entries: list[dict[str, object]], drawn: list[BBox] = ()) -> tuple[Document, list]:
+    regions = regions_of(entries)
+    source = Source(path="page.png", sha256="0", width=1000, height=1000)
+    return laid_out(entries, skeleton(regions, drawn), source, drawn)
+
+
+class TestLaidOutFromTheSkeleton:
+    def test_a_lane_holding_several_zones_is_a_banded_columns_region(self) -> None:
+        entries = [raw(0, (0.05, 0.10, 0.30, 0.12), "paragraph_title", "LEFT"),
+                   raw(1, (0.05, 0.30, 0.30, 0.50), "image"),
+                   raw(2, (0.40, 0.10, 0.95, 0.12), "paragraph_title", "RIGHT"),
+                   raw(3, (0.40, 0.35, 0.95, 0.60), "image")]
+        document, _ = laid(entries)
+        (lanes,) = [r for r in document.regions if r.flow is Flow.COLUMNS]
+        assert lanes.banded and lanes.splits == (0.4,)
+        bands = [(z.band, z.column) for z in document.zones]
+        assert bands == sorted(bands) and len({b for b, _ in bands}) == 4
+
+    def test_a_drawn_box_is_not_one_zone_across_a_picture(self) -> None:
+        # c0511's stub: its card rule joined the times above the barcode to
+        # the number under it, and the Zone was drawn beside the barcode.
+        entries = [raw(0, (0.05, 0.10, 0.25, 0.12), content="Doors open"),
+                   raw(1, (0.05, 0.13, 0.25, 0.15), content="6.30 pm"),
+                   raw(2, (0.05, 0.20, 0.25, 0.30), "image"),
+                   raw(3, (0.05, 0.31, 0.25, 0.33), content="0048213"),
+                   raw(4, (0.40, 0.10, 0.95, 0.12), content="Main")]
+        document, _ = laid(entries, [BBox(0.03, 0.08, 0.30, 0.40)])
+        texts = [" ".join(c.text for b in z.blocks for c in b.lines) for z in document.zones]
+        assert "0048213" in texts and not any("6.30 pm" in t and "0048213" in t for t in texts)
+
+    def test_a_box_round_a_banded_region_frames_every_zone_in_it(self) -> None:
+        entries = [raw(0, (0.10, 0.10, 0.40, 0.12), "paragraph_title", "A"),
+                   raw(1, (0.10, 0.20, 0.40, 0.40), "image"),
+                   raw(2, (0.50, 0.10, 0.90, 0.12), "paragraph_title", "B"),
+                   raw(3, (0.50, 0.20, 0.90, 0.40), "image")]
+        # The left lane's own box is inside the frame: the frame wins, as
+        # c0511's ticket does over its stub.
+        frame = BBox(0.05, 0.05, 0.95, 0.45)
+        document, frames = laid(entries, [frame, BBox(0.08, 0.08, 0.42, 0.42)])
+        assert [r.banded for r in document.regions if r.flow is Flow.COLUMNS] == [True]
+        assert frames == [frame] * len(document.zones)
+
+
+class TestBandedIsWrittenOnlyWhereSet:
+    def test_today_s_regions_are_written_as_before(self) -> None:
+        source = Source(path="page.png", sha256="0", width=1000, height=1000)
+        plain = Document(source=source, regions=[IRRegion(top=0.0, bottom=1.0)])
+        assert "banded" not in plain.to_data()["regions"][0]
+        banded = Document(source=source, regions=[
+            IRRegion(top=0.0, bottom=1.0, flow=Flow.COLUMNS, splits=(0.5,), banded=True)])
+        assert Document.from_json(banded.to_json()).regions[0].banded

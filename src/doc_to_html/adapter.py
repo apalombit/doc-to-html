@@ -35,11 +35,14 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
 from html.parser import HTMLParser
 from statistics import median
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from .ir import (BBox, Block, Cell, Document, Kind, Reading, Role, Row, RowRole,
-                 Run, Source, Zone)
+from .ir import (BBox, Block, Cell, Document, Flow, Kind, Reading, Region as Stretch,
+                 Role, Row, RowRole, Run, Source, Zone)
 from .wire import bands_from_boxes, under_holders
+
+if TYPE_CHECKING:
+    from .skeleton import Part
 
 ENGINE = "glm-ocr"
 """The `Reading.engine` of every Cell the adapter writes."""
@@ -812,10 +815,187 @@ def _inset(box: BBox, line: float) -> BBox:
     return BBox(box.left, box.top + by, box.right, box.bottom - by)
 
 
+# ---- the page's skeleton (spec 0025, step 3) ------------------------------------
+
+PLAIN = frozenset({"block", "flat"})
+"""The parts a run of siblings is grouped across: a heading and the
+paragraphs under it are three parts of the skeleton and one Zone."""
+
+
+def _runs(part: Part) -> list[tuple[bool, list[Part]]]:
+    """A part's children as runs: each run of plain siblings together
+    (True), each other child alone (False)."""
+    out: list[tuple[bool, list[Part]]] = []
+    for child in part.children:
+        if child.kind in PLAIN and out and out[-1][0]:
+            out[-1][1].append(child)
+        else:
+            out.append((child.kind in PLAIN, [child]))
+    return out
+
+
+class _Laid:
+    """The Zones of a page grouped inside its skeleton's parts, and each
+    placed where the skeleton puts it — spec 0025, step 3.
+
+    **Grouping inside the parts** (3b): today's `groups_of`, `zone_of` and
+    `_titled`, run on each run of plain sibling parts, so a group never
+    crosses a drawn box, a lane or a grid's cell.
+
+    **Placed from the tree** (3d), in the render's vocabulary: a part's rows
+    are Bands one under the other; a cut down is one Band, its parts side
+    by side (`Zone.column`), the n-th Zone of each in the Band's n-th row;
+    **a cut down not inside another whose parts hold several Zones is a
+    `columns` Region** (`Region.banded`), each lane its own rows, its
+    split where the lane's blocks begin. A grid is drawn by its rows."""
+
+    def __init__(self, regions: Sequence[Region], containers: Sequence[BBox],
+                 line: float) -> None:
+        self.by_index = {r.index: r for r in regions}
+        self.containers = containers
+        self.line = line
+        self.made: dict[int, list[Zone]] = {}
+        self.runs: dict[tuple[int, int], list[Zone]] = {}
+        self.band = 0
+        self.lanes: list[Stretch] = []
+        self.regioned: set[int] = set()
+
+    def zones_of(self, blocks: Sequence[int]) -> list[Zone]:
+        """Today's grouping over a run of parts. A drawn box holding two of
+        its blocks is the skeleton's part already, and its card rule (one
+        Zone, whatever its gaps) would join across a picture: c0511's stub
+        joined its times to the number under its barcode, and drew them
+        beside it. A box round one block (a chip) still sets it apart."""
+        group = [self.by_index[i] for i in sorted(blocks)]
+        chips = [box for box in self.containers
+                 if sum(1 for r in group if r.text_like and _holds(box, r.box)) < 2]
+        return _titled([zone_of(g) for g in groups_of(group, chips)], self.line)
+
+    def group(self, part: Part) -> list[Zone]:
+        if part.kind in PLAIN:
+            zones = self.zones_of(part.blocks)
+        elif part.kind in ("page", "rows", "box"):
+            zones = []
+            for at, (plain_run, parts) in enumerate(_runs(part)):
+                if plain_run:
+                    found = self.zones_of([i for p in parts for i in p.blocks])
+                    self.runs[(id(part), at)] = found
+                    zones += found
+                else:
+                    zones += self.group(parts[0])
+        elif part.kind == "grid":
+            # Each cell alone: a cell is a field, never grouped with the next.
+            zones = []
+            for run in part.children:
+                self.made[id(run)] = [z for cell in run.children for z in self.group(cell)]
+                zones += self.made[id(run)]
+        else:
+            zones = [z for child in part.children for z in self.group(child)]
+        self.made[id(part)] = zones
+        return zones
+
+    def stack(self, zones: list[Zone]) -> None:
+        """Zones one part holds, banded among themselves from their boxes."""
+        boxes = [_inset(z.bbox, self.line) for z in zones if z.bbox is not None]
+        placed = bands_from_boxes(boxes)
+        for zone, (band, column) in zip([z for z in zones if z.bbox is not None], placed):
+            zone.band, zone.column = self.band + band, column
+        self.band += 1 + max((band for band, _ in placed), default=-1)
+
+    def row(self, cells: list[Part]) -> None:
+        """Parts side by side: one Band, a column each; a part holding
+        several Zones sets its n-th in the Band's n-th row."""
+        depth = 0
+        for column, cell in enumerate(cells):
+            zones = self.made[id(cell)]
+            for n, zone in enumerate(zones):
+                zone.band, zone.column = self.band + n, column
+            depth = max(depth, len(zones))
+        self.band += depth
+
+    def place(self, part: Part, free: bool = True) -> None:
+        if part.kind in PLAIN:
+            self.stack(self.made[id(part)])
+        elif part.kind in ("page", "rows", "box"):
+            for at, (plain_run, parts) in enumerate(_runs(part)):
+                if plain_run:
+                    self.stack(self.runs[(id(part), at)])
+                else:
+                    self.place(parts[0], free)
+        elif part.kind == "grid":
+            if part.children[0].kind == "columns":
+                for child in part.children:
+                    self.row(child.children)
+            else:
+                for n in range(len(part.children[0].children)):
+                    self.row([column.children[n] for column in part.children])
+        elif free and any(len(self.made[id(c)]) > 1 for c in part.children):
+            held = self.made[id(part)]
+            boxes = [part.box] + [z.bbox for z in held if z.bbox is not None]
+            self.lanes.append(Stretch(
+                top=min(b.top for b in boxes), bottom=max(b.bottom for b in boxes),
+                flow=Flow.COLUMNS, splits=tuple(c.box.left for c in part.children[1:]),
+                banded=True))
+            self.regioned.add(id(part))
+            for child in part.children:
+                self.place(child, free=False)
+        else:
+            self.row(part.children)
+
+    def frames(self, root: Part, zones: list[Zone]) -> list[BBox | None]:
+        """Each Zone's frame from the skeleton's drawn boxes: the outermost
+        box holding a `columns` Region, which the page's rows draw round it
+        (c0511's ticket, c0514's certificate); else the innermost box
+        holding it (c0093's fieldsets, each one Zone with its legend). A
+        Zone has one frame: a box inside such a box is not drawn."""
+        out: dict[int, BBox] = {}
+        locked: set[int] = set()
+        for part in root.walk():
+            if part.kind != "box" or part.drawn is None:
+                continue
+            outer = any(id(p) in self.regioned for p in part.walk())
+            for zone in self.made[id(part)]:
+                if id(zone) in locked:
+                    continue
+                out[id(zone)] = part.drawn
+                if outer:
+                    locked.add(id(zone))
+        return [out.get(id(zone)) for zone in zones]
+
+    def stretches(self) -> list[Stretch]:
+        """The page cut into stretches: each banded `columns` Region, and
+        a single flow above, between and below them."""
+        out: list[Stretch] = []
+        cursor = 0.0
+        for lanes in sorted(self.lanes, key=lambda r: r.top):
+            if lanes.top > cursor:
+                out.append(Stretch(top=cursor, bottom=lanes.top))
+            out.append(lanes)
+            cursor = lanes.bottom
+        if cursor < 1.0:
+            out.append(Stretch(top=cursor, bottom=1.0))
+        return out
+
+
+def laid_out(raw: Sequence[Mapping[str, Any]], skeleton: Part, source: Source,
+             containers: Sequence[BBox] = ()) -> tuple[Document, list[BBox | None]]:
+    """The page as the IR, its Zones grouped inside the skeleton's parts and
+    placed where it puts them (`_Laid`); and each Zone's frame from the
+    skeleton's drawn boxes, for the measuring passes to keep."""
+    regions = regions_of(raw)
+    laid = _Laid(regions, containers, line_height(regions))
+    zones = laid.group(skeleton)
+    laid.place(skeleton)
+    return (Document(source=source, zones=zones, regions=laid.stretches()),
+            laid.frames(skeleton, zones))
+
+
 def document_of(raw: Sequence[Mapping[str, Any]], source: Source,
                 containers: Sequence[BBox] = ()) -> Document:
     """The page as the IR: the parser's regions grouped into Zones, their
-    Bands and columns worked out from the boxes (`wire.bands_from_boxes`)."""
+    Bands and columns worked out from the boxes (`wire.bands_from_boxes`).
+    Spec 0025 lays a page out from its skeleton instead (`laid_out`); this
+    is what a page whose skeleton was kept flat whole is drawn by."""
     regions = regions_of(raw)
     line = line_height(regions)
     zones = _titled([zone_of(group) for group in _unnested(groups_of(regions, containers))],

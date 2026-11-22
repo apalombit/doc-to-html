@@ -33,14 +33,15 @@ from typing import Any
 
 from . import checkboxes, furniture, linebreaks, locate, looks, rhythm
 from . import style as style_module
-from .adapter import document_of
+from .adapter import document_of, laid_out, regions_of
 from .ir import BBox, Document, Flow, Kind, Region, RowRole, Zone
 from .orchestrator import body_px
-from .preprocess import (Rectified, _cv2, caption_band, equalise, figure_pixels,
-                         ground_is_dark, header_band, resize_long_edge, sha256_of,
-                         zone_pixels, TARGET_LONG_EDGE)
+from .preprocess import (Rectified, _cv2, caption_band, content_ink, equalise,
+                         figure_pixels, ground_is_dark, header_band, resize_long_edge,
+                         sha256_of, zone_pixels, TARGET_LONG_EDGE)
 from .ir import Source
 from .render import render
+from .skeleton import Part, skeleton
 from .structure import _independent, _marked, _strips, separators, structure
 from .style import CONTAINED
 
@@ -183,7 +184,8 @@ def parted(region: Region, zones: Sequence[Zone],
     return out
 
 
-def measure(document: Document, rectified: Rectified) -> None:
+def measure(document: Document, rectified: Rectified,
+            frames: Sequence[BBox | None] = ()) -> None:
     """Today's measuring passes over the adapter's IR, in a Conversion's
     order, on the flat picture: the furniture, the palette and the ink;
     each Zone's chrome; the type's sizes; the regions and the rules
@@ -191,7 +193,9 @@ def measure(document: Document, rectified: Rectified) -> None:
     locator only, its words never printed), and a reader's line cut where
     the page breaks it (`linebreaks`); which Zone holds each rule;
     how the lines sit; how each entry is printed; each figure's
-    pixels; and the tick boxes the reader does not read (`checkboxes`)."""
+    pixels; and the tick boxes the reader does not read (`checkboxes`).
+    `frames`, for a page laid out from its skeleton, is each Zone's frame
+    from its drawn boxes (spec 0025)."""
     plain = rectified.plain if rectified.plain is not None else rectified.image
     document.page_px = rectified.source.width
     document.furniture = furniture.find(plain, inverted=rectified.inverted, read=rectified.image)
@@ -204,12 +208,22 @@ def measure(document: Document, rectified: Rectified) -> None:
                                                 rectified.inverted), boxes)
                   + [item.bbox for item in document.furniture
                      if item.kind in ("fill", "frame")])
-    document.regions = [lanes for region in structure(
-        plain, boxes, ground=document.style.page_bg, inverted=rectified.inverted,
-        furniture=document.furniture)
-        for lanes in parted(uncut(region, document.zones), document.zones, containers)]
+    # A page laid out from its skeleton keeps the stretches it read there
+    # (spec 0025, step 3); a page kept flat reads them as before.
+    if not document.regions:
+        document.regions = [lanes for region in structure(
+            plain, boxes, ground=document.style.page_bg, inverted=rectified.inverted,
+            furniture=document.furniture)
+            for lanes in parted(uncut(region, document.zones), document.zones, containers)]
     own = style_module.boxes_for([z.bbox for z in document.zones], drawn)
     framed = rhythm.frames(document.zones, drawn, document.regions)
+    # A page laid out from its skeleton takes each Zone's frame from its
+    # drawn boxes (`adapter._Laid.frames`); a box round one Zone is its own.
+    for index, box in enumerate(frames):
+        if box is not None:
+            framed[index] = box
+            if sum(1 for other in frames if other == box) == 1:
+                own[index] = box
     ink = furniture.grounded(rectified.image, plain, document.furniture,
                              inverted=rectified.inverted,
                              held=[z.bbox for z in document.zones if z.bbox is not None])
@@ -249,11 +263,32 @@ def measure(document: Document, rectified: Rectified) -> None:
     linebreaks.apart(document, cuts)
 
 
+def skeleton_of(raw: Sequence[dict[str, Any]], rectified: Rectified,
+                drawn: Sequence[BBox]) -> Part:
+    """The page's skeleton (spec 0025): the parser's regions cut top-down,
+    on the page's content ink, rules removed and fills read against their
+    own ground."""
+    plain = rectified.plain if rectified.plain is not None else rectified.image
+    found = furniture.find(plain, inverted=rectified.inverted, read=rectified.image)
+    ink = content_ink(furniture.grounded(rectified.image, plain, found,
+                                         inverted=rectified.inverted))
+    height, width = ink.shape[:2]
+    return skeleton(regions_of(raw), drawn, ink, (width, height))
+
+
 def from_regions(raw: Sequence[dict[str, Any]], png: Path) -> Document:
-    """The parser's regions for one picture, as a measured IR."""
+    """The parser's regions for one picture, as a measured IR: grouped and
+    placed inside the page's skeleton (spec 0025), or as before where the
+    whole page was kept flat."""
     rectified = flat(png)
-    document = document_of(raw, rectified.source, containers(rectified))
-    measure(document, rectified)
+    drawn = containers(rectified)
+    parts = skeleton_of(raw, rectified, drawn)
+    frames: list[BBox | None] = []
+    if parts.kind == "flat":
+        document = document_of(raw, rectified.source, drawn)
+    else:
+        document, frames = laid_out(raw, parts, rectified.source, drawn)
+    measure(document, rectified, frames)
     return document
 
 

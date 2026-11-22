@@ -187,7 +187,7 @@ or joins two, is a miss. Then by eye, on the same pages.
 | 0 | this spec, `glm-ocr.md`, issue #48, branch `skeleton`; the rest parked | done 2026-11-22 |
 | 1 | **three measurements, offline, before any build** — (a) the parser's order against the source's DOM order (from the HTML files, no Chrome, no model); (b) the source trees of the sampled pages (Chrome, seconds a page), and their depth; (c) optionally, the layout model alone on 5 pages (`glm-ocr.md` §5, way 2): do its raw candidates add anything the order and pixels do not? | the numbers in this spec; **if the order is unreliable, it becomes a tie-break only; if pages rarely nest deeper than two levels, 3d stays in the render's vocabulary** — done 2026-11-22: the order a signal, not a veto; 3d in the vocabulary; way 2 closed (outcome below) |
 | 2 | ③a, the skeleton and its check, D2 only; scored against the source trees and judged by eye on 5 random pages, 5 more if unclear | a net gain in parts found, by eye, and no page worse that is not named — done 2026-11-22: 31 of 32 source parts found against today's 15; 4 pages better by eye, 1 the same (outcome below) |
-| 3 | ③b and 3d: grouping inside the parts, drawn | the 5 pages drawn better by eye |
+| 3 | ③b and 3d: grouping inside the parts, drawn | the 5 pages drawn better by eye — done 2026-11-22: 4 better, c0274 the same, none worse (outcome below) |
 | 4 | 3c: grid parts read as tables, on 5 random form pages | the forms' fields in their grid |
 | 5 | 3e: one size per role | 5 random pages nearer the source's sizes by eye |
 | 6 | close: outcome here, `docs/status.md`, `CLAUDE.md`, the full suite, `main` fast-forwarded, the issue closed, a handover prompt | — |
@@ -363,6 +363,69 @@ No part fell back flat, none was lifted and every drawn container of
 two blocks is a part, on all 5: the check and the lift have run on
 synthetic pages only (`tests/test_skeleton.py`, ten tests, each failing
 without its rule). `mypy src/` clean.
+
+## Outcome — step 3, grouping inside the parts, drawn from the tree, 2026-11-22
+
+D2 now lays every page out from its skeleton (`parser_first.from_regions`
+→ `adapter.laid_out`); a page whose skeleton is kept flat whole is drawn
+by today's `document_of`, unchanged. In the render's vocabulary, as step 1
+found it holds:
+
+- **grouping inside the parts** (3b, `adapter._Laid.group`): `groups_of`,
+  `zone_of` and `_titled` on each run of plain sibling parts (a heading
+  and the paragraphs under it are three parts and one Zone), never across
+  a drawn box, a lane or a grid's cell. A drawn box holding two blocks is
+  the skeleton's part already, so `groups_of`'s card rule is not given it:
+  inside c0511's stub it joined the times to the number under the
+  barcode, and drew them beside the barcode. A box round one block (a
+  chip) still sets it apart;
+- **placed from the tree** (3d, `_Laid.place`): a part's rows are Bands
+  one under the other; a cut down is one Band, a column a part; **a cut
+  down not inside another, its parts holding several Zones, is a
+  `columns` Region** with `Region.banded` set, its splits where each
+  lane's blocks begin; a grid is drawn by its rows. `render._columns`
+  takes a banded Region's lane rows from `Zone.band` and `Zone.column`
+  instead of re-banding the boxes (`bands_from_boxes(under_holders(…))`);
+  `parser_first.measure` keeps a laid-out page's stretches instead of
+  reading them (`structure`, `uncut`, `parted`);
+- **frames from the skeleton's boxes** (`_Laid.frames`): the first
+  redraw lost c0514's certificate frame, c0511's ticket border and c0093's
+  PART 2 and SIGN HERE fieldsets, because `rhythm.frames` shares a frame
+  only among Zones in one lane, and the skeleton's Regions put them in
+  several. A Zone now takes the outermost box holding a banded Region
+  (c0511's ticket, c0514's certificate), else the innermost box holding
+  it; a box round one Zone is its own. A lane draws only the frames that
+  cross none of its Region's splits (`render.SPLIT_SLACK`): otherwise
+  each lane of c0514's signature row drew the certificate again, padded
+  from its top (the page 2.24 times the source's height), and c0511's
+  main lane padded from the ticket's left edge (a word a line, 6.6 times).
+  A box inside such a box is not drawn: c0511's 2×2 field boxes, which
+  today does not draw either.
+
+`Region.banded` is written only where it is set, so today's embedded IR
+is byte for byte as before. **Replay of `s14-result/`: 21 of 21
+byte-identical, 0 asked differently.**
+
+**By eye**, `tools/d2.py SK-3 --previous SK-0 --sheets` (source, today,
+skeleton), the 5 pages of step 2:
+
+| page | before (today) | after | |
+|---|---|---|---|
+| c0511 | stub and main banded across each other: `HOS-0048213` beside the title, the doors-open lines on a fill beside the fields, the programme at the right, the footer full width | the ticket's frame; the stub a lane on its fill, every line and the barcode in it; the main lane: header, title, the four fields in two rows, the programme under them, ADMISSION \| GETTING HERE, the footer | **better** |
+| c0093 | `TAX YEAR ENDED DEC. 31` dropped under the header strip at the right | the header strip three lanes, the line under `2024` in its lane; both columns of fieldsets, each framed with its legend | **better** |
+| c0514 | the seal stacked over the date, the signature at the right, a long rule between | the band; the certificate's frame; date \| seal \| signature side by side | **better** |
+| c0504 | `2015 to 2018` and `2012 to 2015` drawn far below their jobs, gaps in the main column | each job's dates beside its title; the main column and the sidebar as printed | **better** |
+| c0274 | three tables and a heading | the same | same |
+
+Left on these pages, not structure: c0504's name drawn at the right of
+its photo's box (the header's two lanes are right, the photo's box is
+drawn too wide); c0511's stub fill ends above the ticket's foot; type and
+weights.
+
+`tests/test_skeleton.py`, four more tests, each failing without its
+rule (a banded Region, no card rule across a picture, the outer frame,
+`banded` written only where set); the render's two rules are pinned by
+the replay (today's) and by eye (D2's) only. `mypy src/` clean.
 
 ---
 
