@@ -1,4 +1,4 @@
-# Status — 2026-11-22 (**the level-up plan's parser-first pipeline, D2, is taken, and its first fix phase is done: spec 0024, issue #47 closed. Next is the milestone: the phase measured on the panel, then the vault opened once, on Alessandro's word**)
+# Status — 2026-11-22 (**active: spec 0025, the page's skeleton first, step 3 rebuilt top-down (issue #48, branch `skeleton`); everything else parked. Spec 0024, L5's first fix phase on D2, closed the same day (#47)**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Rewritten 2026-11-22, when
@@ -17,6 +17,15 @@ boxes, colours. Each fix was judged by eye on random dev pages. What is
 left is mostly the parser's reading (words lost or misread in small
 type) and the looks a line's own measure cannot give (sizes, bold inside
 a line).
+
+**Active, 2026-11-22: [spec 0025](specs/0025-page-skeleton.md)** (issue
+#48, branch `skeleton`, cut from `l5`): conversion step 3, the adapter,
+rebuilt top-down: the page's skeleton from drawn containers, empty gaps,
+GLM-OCR's reading order and its roles, checked against each other, then
+today's grouping inside each part. [`glm-ocr.md`](glm-ocr.md) holds what
+GLM-OCR gives and does not give. **Everything else is parked** (the
+spec's §7), the level-up milestone included. Start from the spec's last
+prompt.
 
 Reading order for a fresh session:
 1. `CLAUDE.md`'s **READ THIS FIRST**;
@@ -185,8 +194,10 @@ Spec 0024   L5 on D2, our side's faults first — issue #47, branch l5:
               over the other, held boxes, units, a line's own colour
               shipped; sizes, bold, the reader's settings and the
               cells probed and dropped           DONE 2026-11-22
+Spec 0025   The page's skeleton first, step 3 top-down — issue #48,
+              branch skeleton                            ACTIVE
 M1          the milestone: the phase on the panel, then the vault
-              once, on Alessandro's word                 NEXT
+              once, on Alessandro's word                 PARKED 2026-11-22
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -478,7 +489,7 @@ In order (`level-up.md` §6):
    ([spec 0024](specs/0024-l5-on-d2.md), issue #47 closed): our side's
    faults on D2's blocks, above. Fitting the looks' constants did not
    pay; the fixes went to structure.
-8. **The milestone — next** (`level-up.md` §6, M1). First the phase on
+8. **The milestone — parked 2026-11-22** for spec 0025 (`level-up.md` §6, M1). First the phase on
    the panel: D2 over the L3 set again (18 minutes; the parser
    reproduces its regions byte for byte), judged by eye against
    `L5-D2-L3` and `tests/frozen/p1-d2-l3/`. Then, **only on his word**,
