@@ -1,5 +1,6 @@
 """The page's skeleton, top-down — spec 0025, step 2 (`doc_to_html.skeleton`),
-and the page laid out from it, step 3 (`adapter.laid_out`).
+the page laid out from it, step 3 (`adapter.laid_out`), and a grid read
+as a table, step 4 (`parser_first.with_grids`, `readable`).
 
 Each rule on a small page of the parser's blocks, boxes on 0-1 of a
 1000 x 1000 picture, a line 20 px tall; each test fails without its rule.
@@ -9,6 +10,7 @@ from __future__ import annotations
 
 from doc_to_html.adapter import Region, laid_out, regions_of
 from doc_to_html.ir import BBox, Document, Flow, Region as IRRegion, Source
+from doc_to_html.parser_first import readable, with_grids
 from doc_to_html.skeleton import Part, check, skeleton
 
 
@@ -176,3 +178,42 @@ class TestBandedIsWrittenOnlyWhereSet:
         banded = Document(source=source, regions=[
             IRRegion(top=0.0, bottom=1.0, flow=Flow.COLUMNS, splits=(0.5,), banded=True)])
         assert Document.from_json(banded.to_json()).regions[0].banded
+
+
+# ---- step 4: a grid read as a table (`parser_first`, 3c) -------------------------
+
+class TestAGridReadAsATable:
+    fragments = [raw(0, (0.05, 0.10, 0.20, 0.12), content="Name"),
+                 raw(1, (0.30, 0.10, 0.50, 0.12), content="Relationship"),
+                 raw(2, (0.05, 0.13, 0.20, 0.15), content="Peter Whitlock"),
+                 raw(3, (0.30, 0.13, 0.50, 0.15), content="Father"),
+                 raw(4, (0.05, 0.30, 0.95, 0.32), content="Below")]
+
+    def grid(self, content: str) -> dict[str, object]:
+        return {"blocks": [0, 1, 2, 3], "bbox_2d": [50, 100, 500, 150], "content": content}
+
+    def test_its_fragments_give_way_to_the_table_in_their_place(self) -> None:
+        table = ("<table><tr><td>Name</td><td>Relationship</td></tr>"
+                 "<tr><td>Peter Whitlock</td><td>Father</td></tr></table>")
+        out = with_grids(self.fragments, [self.grid(table)])
+        assert [(r["index"], r["label"]) for r in out] == [(4, "text"), (0, "table")]
+
+    def test_a_table_dropping_a_word_keeps_the_fragments(self) -> None:
+        # c0024: the header's exam number, dropped by the table mode.
+        table = "<table><tr><td>Name</td><td>Relationship</td></tr></table>"
+        assert with_grids(self.fragments, [self.grid(table)]) == self.fragments
+
+    def test_a_grid_holding_a_picture_larger_than_a_mark_is_not_read(self) -> None:
+        # c0012's signature beside its date; c0008's tick boxes are marks.
+        regions = {r.index: r for r in regions_of(self.fragments + [
+            raw(5, (0.60, 0.10, 0.62, 0.12), "image"), raw(6, (0.60, 0.20, 0.80, 0.25), "image")])}
+        assert readable([0, 1, 5], regions, (1000, 1000))
+        assert not readable([0, 1, 6], regions, (1000, 1000))
+
+    def test_a_pictures_content_is_not_a_word_the_table_must_hold(self) -> None:
+        fragments = self.fragments[:4] + [{**raw(5, (0.21, 0.10, 0.29, 0.15), "image"),
+                                           "content": "```markdown\n\n```"}]
+        table = ("<table><tr><td>Name</td><td>Relationship</td></tr>"
+                 "<tr><td>Peter Whitlock</td><td>Father</td></tr></table>")
+        grid = {"blocks": [0, 1, 2, 3, 5], "bbox_2d": [50, 100, 500, 150], "content": table}
+        assert [r["label"] for r in with_grids(fragments, [grid])] == ["table"]

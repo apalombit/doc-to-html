@@ -16,6 +16,11 @@ layout `tools/measure_run.py` reads) with the regions beside it.
   of `debug/parsed/`.
 - `--previous <label>` names every page whose HTML differs from that
   label's: the pages a change moved, each to be opened.
+- `--grids` reads each page's grids with the reader in its table mode
+  (spec 0025, 3c; one reader call per grid, no layout model) and records
+  them as `01_grids.json` beside its render, as a batch run does; a page
+  that has them in this label is not read again. A page drawn with
+  recorded grids (this label's, or its regions' run's) is drawn with them.
 - `--sheets` shoots each render at the source's width and writes
   `sheet.png`: the source beside the render, or, with `--previous`, the
   source, the previous render and this one, for the moved pages only.
@@ -36,7 +41,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from doc_to_html.corpus import manifest, names, page  # noqa: E402
-from doc_to_html.parser_first import MODEL, from_regions, parse  # noqa: E402
+from doc_to_html.parser_first import (MODEL, containers, flat, from_regions,  # noqa: E402
+                                      grids_of, parse, read_grids)
 from doc_to_html.render import render  # noqa: E402
 
 REPO = Path(__file__).resolve().parent.parent
@@ -69,8 +75,11 @@ def draw(name: str, source: Path, out: Path) -> tuple[str, int, float]:
     """One page drawn from its regions into `out`; its zones and seconds."""
     png = page(name).png_path(REPO)
     raw = json.loads(source.read_text(encoding="utf-8"))
+    read = next((f for f in (out / "01_grids.json", source.parent / "01_grids.json")
+                 if f.exists()), None)
+    grids = json.loads(read.read_text(encoding="utf-8")) if read is not None else []
     started = time.perf_counter()
-    document = from_regions(raw, png)
+    document = from_regions(raw, png, grids)
     html = render(document)
     seconds = time.perf_counter() - started
     out.mkdir(parents=True, exist_ok=True)
@@ -90,6 +99,8 @@ def main() -> int:
                         help="read the pages with the parser first, even if recorded")
     parser.add_argument("--previous", metavar="LABEL",
                         help="name the pages whose HTML differs from this label's")
+    parser.add_argument("--grids", action="store_true",
+                        help="read each page's grids as tables with the reader first")
     parser.add_argument("--sheets", action="store_true", help="shoot each render, with a sheet")
     parser.add_argument("--jobs", type=int, default=1, help="pages drawn at once")
     args = parser.parse_args()
@@ -121,6 +132,22 @@ def main() -> int:
         wanted = [n for n in wanted if n not in missing]
 
     dump = REPO / "debug" / "runs" / args.label / "dump" / ARM
+    if args.grids:
+        # One page at a time, before any drawing: the reader is the model.
+        for name in wanted:
+            target = dump / name / "01_grids.json"
+            if target.exists():
+                continue
+            png = page(name).png_path(REPO)
+            raw = json.loads(regions_path(name, args.regions).read_text(encoding="utf-8"))
+            rectified = flat(png)
+            grids = read_grids(png, grids_of(raw, rectified, containers(rectified)))
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(json.dumps(grids, ensure_ascii=False, indent=1) + "\n",
+                              encoding="utf-8")
+            print(f"{name}: {len(grids)} grids read, "
+                  f"{sum(g['seconds'] for g in grids):.1f} s, "
+                  f"{sum('<table' in g['content'] for g in grids)} as tables")
     jobs = [(n, regions_path(n, args.regions), dump / n) for n in wanted]
     if args.jobs > 1:
         with ProcessPoolExecutor(args.jobs) as pool:

@@ -188,7 +188,7 @@ or joins two, is a miss. Then by eye, on the same pages.
 | 1 | **three measurements, offline, before any build** — (a) the parser's order against the source's DOM order (from the HTML files, no Chrome, no model); (b) the source trees of the sampled pages (Chrome, seconds a page), and their depth; (c) optionally, the layout model alone on 5 pages (`glm-ocr.md` §5, way 2): do its raw candidates add anything the order and pixels do not? | the numbers in this spec; **if the order is unreliable, it becomes a tie-break only; if pages rarely nest deeper than two levels, 3d stays in the render's vocabulary** — done 2026-11-22: the order a signal, not a veto; 3d in the vocabulary; way 2 closed (outcome below) |
 | 2 | ③a, the skeleton and its check, D2 only; scored against the source trees and judged by eye on 5 random pages, 5 more if unclear | a net gain in parts found, by eye, and no page worse that is not named — done 2026-11-22: 31 of 32 source parts found against today's 15; 4 pages better by eye, 1 the same (outcome below) |
 | 3 | ③b and 3d: grouping inside the parts, drawn | the 5 pages drawn better by eye — done 2026-11-22: 4 better, c0274 the same, none worse (outcome below) |
-| 4 | 3c: grid parts read as tables, on 5 random form pages | the forms' fields in their grid |
+| 4 | 3c: grid parts read as tables, on 5 random form pages | the forms' fields in their grid — done 2026-11-22: 2 better, 3 the same, none worse, after two guards (outcome below) |
 | 5 | 3e: one size per role | 5 random pages nearer the source's sizes by eye |
 | 6 | close: outcome here, `docs/status.md`, `CLAUDE.md`, the full suite, `main` fast-forwarded, the issue closed, a handover prompt | — |
 
@@ -426,6 +426,55 @@ weights.
 rule (a banded Region, no card rule across a picture, the outer frame,
 `banded` written only where set); the render's two rules are pinned by
 the replay (today's) and by eye (D2's) only. `mypy src/` clean.
+
+## Outcome — step 4, a grid part read as a table, 2026-11-22
+
+A part the skeleton calls a grid is cropped whole and read once by
+GLM-OCR's reader in its table mode: `tools/glmocr_read.py`, run by the
+parser's Python, uses the SDK's own crop (`crop_image_region`), request
+(`PageLoader.build_request_from_image`, task `table`) and call
+(`OCRClient.process`). No layout model runs, and the parser's weights,
+prompts and settings are untouched. `parser_first.grids_of` names the grids
+(the part's box joined with its blocks' boxes, on 0–1000).
+`read_grids` reads them, and `with_grids` puts each table in its
+fragments' place in the reading order. `convert` reads the grids after the
+parse, and `attempt` records them (`01_grids.json`, pass `grids`); the
+offline loop reads only grids it has not recorded
+(`tools/d2.py --grids`). Each read took 1.0–2.3 s.
+
+**The sample.** Of the 25 dev pages that draw a form, 6 have a grid
+part. The parser already reads many field grids as tables itself
+(c0093's PART 1). Five were drawn at random, seed 4825: form_0007, c0008,
+c0012, c0096 and c0024.
+
+**The first read lost content on two pages**, and two guards came out of
+it:
+
+- **c0012**: the grid of the date and signature lines held the
+  signature's picture, and the table dropped it. A grid holding a picture
+  larger than a mark (`MARK`, 2 lines either way; `readable`) is not read.
+  c0008's tick boxes are marks and stay in.
+- **c0024**: the header's grid held the barcode, and the table dropped
+  both the barcode and `Exam no. 0482-117-B`. A table that drops a word
+  its text fragments hold keeps the fragments. A picture's content is not
+  a printed word: the barcode reads as an empty code fence.
+
+**By eye**, `tools/d2.py SK-4c --previous SK-4b --sheets`, against step 3:
+
+| page | before (step 3) | after | |
+|---|---|---|---|
+| c0096 | the inspection's header fields, pieced from fragments, drawn as one ragged run | the fields in two aligned columns, as printed | **better** |
+| c0008 | the checklist's items in one column, the tick boxes lost | the checklist's columns, each item with its tick box | **better** |
+| form_0007 | the next-of-kin fields in their grid | the same grid, its value boxes drawn as a table's rule | same |
+| c0012 | — | not read (the picture guard) | same |
+| c0024 | — | not read (both guards) | same |
+
+The three tables read under the guards are the first read's tables byte
+for byte. Step 4 changes D2's code only (`parser_first`, `tools/d2.py`,
+`tools/glmocr_read.py`), so today's pipeline is untouched.
+`tests/test_skeleton.py` has four more tests, and each fails without its
+rule: the table in the fragments' place, a lost word, a picture larger
+than a mark, a picture's content. `mypy src/` is clean.
 
 ---
 

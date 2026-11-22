@@ -25,15 +25,17 @@ adapter and the looks are re-run over them with no model (`tools/d2.py`).
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import time
+from collections import Counter
 from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
 from . import checkboxes, furniture, linebreaks, locate, looks, rhythm
 from . import style as style_module
-from .adapter import document_of, laid_out, regions_of
+from .adapter import FIGURES, document_of, laid_out, line_height, plain, regions_of
 from .ir import BBox, Document, Flow, Kind, Region, RowRole, Zone
 from .orchestrator import body_px
 from .preprocess import (Rectified, _cv2, caption_band, content_ink, equalise,
@@ -56,6 +58,7 @@ PARSER_PYTHON = Path.home() / ".venvs" / "glmocr" / "bin" / "python"
 this project's environment (spec 0023: it needs PyMuPDF, AGPL-3.0)."""
 
 PARSE = REPO / "tools" / "glmocr_parse.py"
+READ = REPO / "tools" / "glmocr_read.py"
 
 
 def flat(path: Path) -> Rectified:
@@ -276,10 +279,104 @@ def skeleton_of(raw: Sequence[dict[str, Any]], rectified: Rectified,
     return skeleton(regions_of(raw), drawn, ink, (width, height))
 
 
-def from_regions(raw: Sequence[dict[str, Any]], png: Path) -> Document:
+MARK = 2.0
+"""The largest picture, in lines either way, a grid may hold and be read as
+a table: a tick box (c0008's, a line square) is a mark the reader's table
+mode drops and `checkboxes` puts back from the pixels; a signature
+(c0012's, nine lines wide) or a barcode (c0024's) is content it drops."""
+
+
+def readable(blocks: Sequence[int], regions: dict[int, Any], size: tuple[int, int]) -> bool:
+    """Whether a grid may be read as a table: it holds no picture larger
+    than a mark (`MARK` lines either way, a line the page's own)."""
+    width, height = size
+    line = line_height(list(regions.values())) * height
+    return not any(regions[i].label in FIGURES
+                   and max((regions[i].box.right - regions[i].box.left) * width,
+                           (regions[i].box.bottom - regions[i].box.top) * height) > MARK * line
+                   for i in blocks)
+
+
+def grids_of(raw: Sequence[dict[str, Any]], rectified: Rectified,
+             drawn: Sequence[BBox]) -> list[dict[str, Any]]:
+    """The page's grids (spec 0025, 3c): each grid part of its skeleton,
+    the parser's indices it holds and the box it is read in, on 0-1000 as
+    the parser's own boxes are: its blocks' boxes and the boxes drawn
+    round its cells. A grid holding a picture larger than a mark (`MARK`)
+    is not read: its fragments stay."""
+    regions = {r.index: r for r in regions_of(raw)}
+    size = (rectified.source.width, rectified.source.height)
+    out = []
+    for part in skeleton_of(raw, rectified, drawn).walk():
+        if part.kind != "grid" or not readable(part.blocks, regions, size):
+            continue
+        boxes = [part.box] + [regions[i].box for i in part.blocks]
+        box = [min(b.left for b in boxes), min(b.top for b in boxes),
+               max(b.right for b in boxes), max(b.bottom for b in boxes)]
+        out.append({"blocks": list(part.blocks),
+                    "bbox_2d": [max(0, min(1000, round(v * 1000))) for v in box]})
+    return out
+
+
+def read_grids(png: Path, grids: Sequence[dict[str, Any]], *,
+               timeout: float | None = None) -> list[dict[str, Any]]:
+    """Each grid read once by the reader in its own table mode, its whole
+    crop (`tools/glmocr_read.py`, in the parser's own Python): its content
+    and seconds added. Its prompt and settings are the parser's own."""
+    import tempfile
+
+    if not grids:
+        return []
+    with tempfile.TemporaryDirectory(prefix="d2-grids-") as scratch:
+        asked = Path(scratch) / "requests.json"
+        asked.write_text(json.dumps([{"picture": str(png), "bbox_2d": g["bbox_2d"],
+                                      "task": "table"} for g in grids]), encoding="utf-8")
+        done = subprocess.run([str(PARSER_PYTHON), str(READ), str(CONFIG), str(asked)],
+                              capture_output=True, text=True, timeout=timeout, cwd=REPO)
+    if done.returncode != 0:
+        raise RuntimeError(f"the reader failed (exit {done.returncode}): "
+                           f"{done.stderr.strip().splitlines()[-1:] or ''}")
+    answers = [json.loads(line) for line in done.stdout.splitlines() if line.startswith("{")]
+    return [dict(grid, content=answer["content"], seconds=answer["seconds"])
+            for grid, answer in zip(grids, answers)]
+
+
+def _words(content: str) -> Counter[str]:
+    return Counter(re.findall(r"\w+", plain(re.sub(r"<[^>]+>", " ", content)).lower()))
+
+
+def with_grids(raw: Sequence[dict[str, Any]], grids: Sequence[dict[str, Any]]
+               ) -> list[dict[str, Any]]:
+    """The parser's regions with each grid read as a table in their place:
+    one `table` region at the first of the grid's places in the reading
+    order. A grid the reader did not read as a table, or whose table drops
+    a word its text fragments hold, keeps its regions: never a word lost to
+    a second reading. A picture's content is not a printed word (c0024's
+    barcode reads as an empty code fence)."""
+    out = list(raw)
+    for grid in grids:
+        content = str(grid.get("content", ""))
+        if "<table" not in content:
+            continue
+        taken = set(grid["blocks"])
+        held = sum((_words(str(r.get("content") or "")) for r in raw
+                    if int(r.get("index", 0)) in taken and r.get("label") not in FIGURES),
+                   Counter())
+        if held - _words(content):
+            continue
+        out = [r for r in out if int(r.get("index", 0)) not in taken]
+        out.append({"index": min(taken), "label": "table", "content": grid["content"],
+                    "bbox_2d": grid["bbox_2d"], "polygon": []})
+    return out
+
+
+def from_regions(raw: Sequence[dict[str, Any]], png: Path,
+                 grids: Sequence[dict[str, Any]] = ()) -> Document:
     """The parser's regions for one picture, as a measured IR: grouped and
     placed inside the page's skeleton (spec 0025), or as before where the
-    whole page was kept flat."""
+    whole page was kept flat. `grids` are its grids as the reader read
+    them (`read_grids`), each in its fragments' place."""
+    raw = with_grids(raw, grids)
     rectified = flat(png)
     drawn = containers(rectified)
     parts = skeleton_of(raw, rectified, drawn)
@@ -316,13 +413,17 @@ def parse(pictures: Sequence[Path], out: Path, *, timeout: float | None = None
 
 
 def convert(name: str, png: Path, scratch: Path) -> tuple[Document, str, dict[str, Any]]:
-    """One page through the whole arm: the parser, the adapter, the
-    measuring passes and the renderer. Returns the IR, the HTML, and the
-    parser's entry (its regions and seconds)."""
+    """One page through the whole arm: the parser, its grids read as tables
+    (spec 0025, 3c), the adapter, the measuring passes and the renderer.
+    Returns the IR, the HTML, and the parser's entry (its regions, grids
+    and seconds)."""
     started = time.perf_counter()
     entry = parse([png], scratch)[png.stem]
+    rectified = flat(png)
+    entry["grids"] = read_grids(png, grids_of(entry["regions"], rectified,
+                                              containers(rectified)))
     parsed = time.perf_counter()
-    document = from_regions(entry["regions"], png)
+    document = from_regions(entry["regions"], png, entry["grids"])
     html = render(document)
     entry["seconds_after"] = round(time.perf_counter() - parsed, 2)
     entry["seconds_total"] = round(time.perf_counter() - started, 2)
@@ -331,8 +432,9 @@ def convert(name: str, png: Path, scratch: Path) -> tuple[Document, str, dict[st
 
 def attempt(name: str, png: Path) -> Any:
     """One page as the batch runner records it (`bakeoff.Attempt`): the
-    parser's regions as its one answer, its seconds as the model's, the
-    render. A temporary folder holds the parser's output."""
+    parser's regions and its grids as read as tables (`00_regions.json`,
+    `01_grids.json`), their seconds as the model's, the render. A temporary
+    folder holds the parser's output."""
     import tempfile
 
     from .bakeoff import Attempt, PassTiming
@@ -343,7 +445,11 @@ def attempt(name: str, png: Path) -> Any:
         except Exception as error:  # noqa: BLE001 — recorded, as a Conversion's is
             return Attempt(fixture=name, model=MODEL, error=f"{type(error).__name__}: {error}")
     regions = json.dumps(entry["regions"], ensure_ascii=False, indent=1)
+    grids = json.dumps(entry["grids"], ensure_ascii=False, indent=1)
     return Attempt(fixture=name, model=MODEL,
-                   timings=[PassTiming("parse", float(entry["seconds"]))],
-                   answers=[("regions", regions, CONFIG.read_text(encoding="utf-8"))],
+                   timings=[PassTiming("parse", float(entry["seconds"])),
+                            PassTiming("grids", sum(float(g["seconds"])
+                                                    for g in entry["grids"]))],
+                   answers=[("regions", regions, CONFIG.read_text(encoding="utf-8")),
+                            ("grids", grids, "Table Recognition: (spec 0025, 3c)")],
                    html=html)
