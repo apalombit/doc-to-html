@@ -787,7 +787,7 @@ def _shared(a: BBox, b: BBox) -> float:
             * max(0.0, min(a.bottom, b.bottom) - max(a.top, b.top)))
 
 
-def _stacked(boxes: list[BBox]) -> list[BBox]:
+def _stacked(boxes: list[BBox], holds: Sequence[bool] | None = None) -> list[BBox]:
     """Boxes one over the other across the page, for banding only: where
     two overlap across most of the narrower one's width and the lower runs
     on past the upper's foot, the upper ends where the lower begins —
@@ -795,8 +795,8 @@ def _stacked(boxes: list[BBox]) -> list[BBox]:
     reached 25 pixels into the declaration under it, and the two were
     drawn side by side, each half the page wide: the table's right column
     was clipped out of sight. A box inside another is banded under it
-    first (`wire.under_holders`)."""
-    out = under_holders(boxes)
+    first (`wire.under_holders`; `holds` says which boxes may hold)."""
+    out = under_holders(boxes, holds)
     for i, upper in enumerate(boxes):
         for lower in boxes:
             if (lower is upper or not upper.top < lower.top < out[i].bottom < lower.bottom
@@ -895,9 +895,16 @@ class _Laid:
         return zones
 
     def stack(self, zones: list[Zone]) -> None:
-        """Zones one part holds, banded among themselves from their boxes."""
+        """Zones one part holds, banded among themselves from their boxes as
+        `document_of` bands a page's (`_stacked`), a box inside text banded
+        under it: c0407's drop capital, banded where it stands inside its
+        paragraph, was drawn as a column beside it and the paragraph a word
+        a line, the page 3.7 times its height. Only text holds: a table's
+        cells hold their own marks, and c0008's number badges, moved under
+        their table, were scattered down the page."""
         boxes = [_inset(z.bbox, self.line) for z in zones if z.bbox is not None]
-        placed = bands_from_boxes(boxes)
+        text = [z.kind in (Kind.PROSE, Kind.LIST) for z in zones if z.bbox is not None]
+        placed = bands_from_boxes(_stacked(boxes, text))
         for zone, (band, column) in zip([z for z in zones if z.bbox is not None], placed):
             zone.band, zone.column = self.band + band, column
         self.band += 1 + max((band for band, _ in placed), default=-1)

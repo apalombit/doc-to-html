@@ -476,6 +476,53 @@ for byte. Step 4 changes D2's code only (`parser_first`, `tools/d2.py`,
 rule: the table in the fragments' place, a lost word, a picture larger
 than a mark, a picture's content. `mypy src/` is clean.
 
+## Outcome — step 3 mended, on a second draw, 2026-11-22
+
+Step 5's sample (seed 250005, the first 5 of the 210 dev pages with
+`sizes out of proportion` at `L5-F13`) was first drawn as it stands and
+against the commit before the skeleton (`fb5be09`, run `SK-5-0`), and
+two of the five were **worse** with the skeleton. Both were mended in the
+drawing, not the skeleton, whose parts were right on both:
+
+- **A fill round a banded row is no lane's own** (`render._across`,
+  `_columns.lane_fill`). probe_datasheet's header strip is one banded
+  Region, [DATASHEET · REV C over the title] | [VERIDIAN]. The VERIDIAN
+  lane took the whole strip as its fill and was inset from the strip's
+  left edge (800 px each side), which pressed the title's lane to one
+  word a line. As frames already did in step 3, a fill that crosses a
+  split is drawn round the row.
+- **A part's Zones are banded as `document_of` bands a page's**
+  (`_Laid.stack` → `_stacked`), and a box inside text goes under it.
+  c0407's drop capital was banded where it stands, inside its paragraph,
+  so it was drawn as a column beside it and the paragraph fell to one
+  word a line. **Only text holds** (`wire.under_holders`' new `holds`,
+  given only by D2): c0008's number badges lie inside the parser's table,
+  which prints their numbers, and moving them under it scattered them
+  down the page.
+
+| page | before the skeleton (`SK-5-0`) | the skeleton, as committed (`SK-5a`) | mended | |
+|---|---|---|---|---|
+| probe_datasheet | header as printed; 0.99 | title one word a line, VERIDIAN off the right; 1.51 | header as printed; 1.03 | **mended** (same as before) |
+| c0407 | the two columns; drop cap a bar under its paragraph; 1.14 | paragraph one word a line beside the drop cap; 3.70 | the two columns as before; 1.41 | **mended** (same as before) |
+| c0439 | the header strip in two pieces, the right one over the right column; `Ordering code` beside its table | the strip whole; the title over its table | the same | **better** |
+| c0246 | the header fill in two pieces; the footer in the left column | the strip and the footer full width, as printed | the same | **better** |
+| c0198 | `PACKING SLIP` above `EMBER LAMP WORKS`; the three address columns as printed | the top row as printed; the address row broken (`SHIP TO` on its own, `ORDERED BY` in the wrong lane) | the same | **mixed** |
+
+c0198's address row is the parser's table either way. Before the
+skeleton, `EMBER LAMP WORKS` was taken as that table's Title (`_titled`).
+Now it is the page's masthead, as printed, and the table's crop starts
+at the table. On that crop `locate` (tesseract) no longer places
+`SHIP TO` and puts `ORDERED BY` a line low, so the render no longer
+joins the two rows. That is a measuring effect, not a skeleton decision;
+it is named, not mended.
+
+Step 3's five pages and step 4's three do not move (`SK-5f` against
+`SK-3` and `SK-4c`), except two small pictures held in a text line on
+c0008 and form_0007 (badge 20, a ☒), now drawn under their line: the
+same structure. **Replay of `s14-result/`: 21 of 21 byte-identical, 0
+asked differently.** `tests/test_skeleton.py` has three more tests, and
+each fails without its rule. `mypy src/` is clean.
+
 ---
 
 ## Decisions — Alessandro

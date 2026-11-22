@@ -302,7 +302,7 @@ HELD = 0.8
 """How much of a box lies inside a larger one for it to be held by it."""
 
 
-def under_holders(boxes: list[BBox]) -> list[BBox]:
+def under_holders(boxes: list[BBox], holds: Sequence[bool] | None = None) -> list[BBox]:
     """The boxes for banding, each box held by a larger one moved to a
     sliver just under its holders — spec 0024, part two. Banded where it
     stands, a box inside another shares its Band and is drawn as a column
@@ -312,13 +312,15 @@ def under_holders(boxes: list[BBox]) -> list[BBox]:
     word a line and the page up to three times its height. Under its
     holder, the holder is drawn whole and the one inside after it. A box
     held by none is returned as it was, so a page with no box inside
-    another bands as before."""
+    another bands as before. `holds`, where given, says which boxes may
+    hold another (spec 0025: text, which flows round what it holds)."""
     out = list(boxes)
+    able = list(holds) if holds is not None else [True] * len(boxes)
     for i, inner in enumerate(boxes):
         area = (inner.right - inner.left) * (inner.bottom - inner.top)
         if area <= 0:
             continue
-        holders = [b for b in boxes if b is not inner
+        holders = [b for b, may in zip(boxes, able) if may and b is not inner
                    and (b.right - b.left) * (b.bottom - b.top) > area
                    and max(0.0, min(inner.right, b.right) - max(inner.left, b.left))
                    * max(0.0, min(inner.bottom, b.bottom) - max(inner.top, b.top))

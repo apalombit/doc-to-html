@@ -1065,9 +1065,16 @@ def _cards(region: Region, zones: list[Zone]) -> bool:
 
 
 SPLIT_SLACK = 0.005
-"""How far, as a share of the page, a frame may reach past a lane's split
-and still be the lane's own: the split is where the next lane's blocks
-begin, and a frame round them stands just outside them."""
+"""How far, as a share of the page, a frame or a fill may reach past a
+lane's split and still be the lane's own: the split is where the next
+lane's blocks begin, and a frame round them stands just outside them."""
+
+
+def _across(box: BBox, region: Region) -> bool:
+    """Whether a box reaches across one of a banded Region's splits: a frame
+    or a fill round the Region's row (spec 0025), not one lane's."""
+    return region.banded and any(box.left + SPLIT_SLACK < x < box.right - SPLIT_SLACK
+                                 for x in region.splits)
 
 
 def _columns(region: Region, zones: list[Zone], document: Document,
@@ -1100,6 +1107,14 @@ def _columns(region: Region, zones: list[Zone], document: Document,
         lanes[region.lane_of(zone.bbox)].append(zone)
     edges = [0.0, *region.splits, 1.0]
 
+    def lane_fill(lane: list[Zone]) -> BBox | None:
+        # Spec 0025: a fill round a banded Region's row is drawn round the
+        # row, and a lane is not inset from its edges: probe_datasheet's
+        # VERIDIAN lane, inset 800px from the header strip's left, pressed
+        # the title's lane to a word a line.
+        box = _lane_fill(lane, document)
+        return None if box is None or _across(box, region) else box
+
     stacks: list[list[_Row]] = []
     for lane in lanes:
         units = _units(lane)
@@ -1118,15 +1133,13 @@ def _columns(region: Region, zones: list[Zone], document: Document,
         # certificate round its signature row, c0511's ticket round stub and
         # main) is the page rows', drawn once round them; a lane draws only
         # the frames that cross no split.
-        inside = ({f for f in shared if not any(f.left + SPLIT_SLACK < x < f.right - SPLIT_SLACK
-                                                for x in region.splits)}
-                  if region.banded else shared)
+        inside = {f for f in shared if not _across(f, region)}
         framed = _framed(
             [_band([u for _, u in sorted(rows[b], key=lambda r: r[0])],
                    document, page, plain, _span(lane)) for b in sorted(rows)],
             document, page, inside)
         # Spec 0016, 3a: a lane its fill paints whole is not painted again.
-        stacks.append(framed if _lane_fill(lane, document) is not None
+        stacks.append(framed if lane_fill(lane) is not None
                       else _filled(framed, document, page))
 
     # Spec 0012, G3a: each lane's own rules, and the rule down its left edge.
@@ -1138,7 +1151,7 @@ def _columns(region: Region, zones: list[Zone], document: Document,
     dividers = {lane: rule for kept, lane, rule in anchors.lanes if kept is region}
     # Spec 0012, G4: a filled lane starts where its fill starts and keeps
     # the inset the page gives its type — `cv_0013`'s sidebar.
-    painted = [_lane_fill(lane, document) for lane in lanes]
+    painted = [lane_fill(lane) for lane in lanes]
     heads: list[float | None] = []
     for stack, rules, ground in zip(stacks, held, painted):
         tops: list[float] = [stack[0].top] if stack and stack[0].top is not None else []

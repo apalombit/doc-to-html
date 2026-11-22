@@ -8,9 +8,12 @@ Each rule on a small page of the parser's blocks, boxes on 0-1 of a
 
 from __future__ import annotations
 
+import re
+
 from doc_to_html.adapter import Region, laid_out, regions_of
-from doc_to_html.ir import BBox, Document, Flow, Region as IRRegion, Source
+from doc_to_html.ir import BBox, Document, Flow, Furniture, Region as IRRegion, Source
 from doc_to_html.parser_first import readable, with_grids
+from doc_to_html.render import render
 from doc_to_html.skeleton import Part, check, skeleton
 
 
@@ -171,6 +174,44 @@ class TestLaidOutFromTheSkeleton:
 
 
 class TestBandedIsWrittenOnlyWhereSet:
+    def held(self, label: str, content: str) -> dict[str, tuple[int, int]]:
+        entries = [raw(0, (0.05, 0.05, 0.95, 0.07), "paragraph_title", "HEAD"),
+                   raw(1, (0.05, 0.10, 0.10, 0.16), "image"),
+                   raw(2, (0.05, 0.10, 0.50, 0.30), label, content),
+                   raw(3, (0.55, 0.10, 0.95, 0.30), "text", "beside")]
+        document, _ = laid(entries)
+        return {z.kind.value: (z.band, z.column) for z in document.zones[1:3]}
+
+    def test_a_picture_inside_text_is_banded_under_it(self) -> None:
+        # c0407's drop capital: banded where it stands, a column beside its
+        # paragraph, the paragraph a word a line.
+        places = self.held("text", "A paragraph round its drop capital")
+        assert places["figure"][0] > places["prose"][0]
+
+    def test_a_picture_inside_a_table_stays_where_it_stands(self) -> None:
+        # c0008's number badges, moved under their table, scattered.
+        places = self.held("table", "<table><tr><td>9</td><td>Total</td></tr></table>")
+        assert places["figure"][0] == places["table"][0]
+
+    def test_a_fill_round_a_banded_row_is_no_lane_s_own(self) -> None:
+        # probe_datasheet: the header strip's VERIDIAN lane, inset from the
+        # strip's left edge, pressed the title's lane to a word a line.
+        entries = [raw(0, (0.05, 0.03, 0.20, 0.05), "header"),
+                   raw(1, (0.05, 0.07, 0.45, 0.11), "paragraph_title"),
+                   raw(2, (0.85, 0.09, 0.95, 0.11), "header"), raw(3, (0.05, 0.30, 0.95, 0.32))]
+        document, _ = laid(entries, [BBox(0.0, 0.0, 1.0, 0.14)])
+        assert any(r.banded for r in document.regions)
+        ink = (11, 58, 91)
+        for zone in document.zones[:3]:
+            zone.fill = ink
+            for line in (cell for b in zone.blocks for cell in b.lines):
+                line.bbox = zone.bbox
+        document.furniture = [Furniture("fill", BBox(0.0, 0.0, 1.0, 0.14), color=ink)]
+        lanes = re.findall(r'class="lane" style="([^"]*)"', render(document))
+        pads = [float(v) for style in lanes for padding in re.findall(r"padding:([^;]*)", style)
+                for v in re.findall(r"(\d+)px", padding)]
+        assert len(lanes) == 2 and max(pads, default=0) < 100
+
     def test_today_s_regions_are_written_as_before(self) -> None:
         source = Source(path="page.png", sha256="0", width=1000, height=1000)
         plain = Document(source=source, regions=[IRRegion(top=0.0, bottom=1.0)])
