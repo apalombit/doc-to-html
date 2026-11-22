@@ -45,7 +45,7 @@ is never passed), and today's pipeline, which stays as it is.
 | 6 | **part two, (b)**: a row or cell printed larger keeps its size in a table, reproduced on 5 random dev pages first | the 5 drawn nearer the source by eye, none worse — done 2026-11-22: 2 of 10 better, 8 the same (outcome below) |
 | 7 | **part two, (c)**: a cut line's short piece at its line's size, likewise | likewise — done 2026-11-22: 3 of 15 better, 12 the same (outcome below) |
 | 8 | **part two, (a)**: a card grid held by the skeleton, likewise | likewise — done 2026-11-22: 3 of 10 better, 7 the same; 1 of 5 more better, none worse (outcome below) |
-| 9 | the panel run again, judged against `M1-D2-L3`; stop for his call | every moved page called |
+| 9 | the panel run again, judged against `M1-D2-L3`; stop for his call | every moved page called — done 2026-11-22: 7 moved, 4 better, 1 mixed, 2 the same, none worse (outcome below); **waiting for his call** |
 
 ## 3. Rules
 
@@ -353,3 +353,45 @@ byte-identical, 0 asked differently.** `tests/test_skeleton.py` has two
 more tests (cards closer than a gutter parted; their outline no box),
 each failing without its rule; the render's rule is pinned by the
 replay (today's) and by eye (D2's), as spec 0025's were.
+
+## Outcome — the panel run again, 2026-11-22
+
+`tools/batch.py M2-D2-L3 --arm d2 --pages l3` on `177c1d6`, nothing
+beside it: **41 of 41 converted**, a mean 34 s a page. The parser's
+regions are `M1-D2-L3`'s byte for byte on all 41, and the grids read
+are its grids (their timings apart). **7 renders moved**; the other 34
+are byte for byte M1's.
+
+**By eye, against `M1-D2-L3`** (`tools/measure_run.py debug/runs/M2-D2-L3
+--previous debug/runs/M1-D2-L3 --model glm-ocr:latest --all`):
+
+| page | M1 | M2 | |
+|---|---|---|---|
+| c0115 | `TOTAL $110.28` at the rows' size | set large, as printed | **better** (M1 worse page) |
+| c0405 | the four facts' values at their labels' size | `15 min`, `25 min`, `2 hours` set large, as printed | **better** (M1 worse page) |
+| c0343 | `arrange a meeting.` drawn at 0.82 | at its paragraph's size | **better** (M1 mixed page) |
+| c0382 | the second row's cards at two heights | each row's cards one height, as printed | **better** |
+| c0196 | the privacy statement's first two lines at half size, the third at its size | one paragraph, as printed, but all of it at half size | mixed (M1 worse page) |
+| c0575 | the feature cards spread, a code fence as a heading | the same; the guarantee card drawn to its row's height | same |
+| c0555 | | the same; the first row's two cards one height | same |
+
+**The M1 worse and mixed pages that did not move**, and why, read from
+the IR (no panel page tuned on):
+- **c0456, c0476** (cards): their cards have no drawn box, so (a)'s
+  rules, which part drawn boxes, do not reach them. c0456 is c0384's
+  fault: the parser reads the price cards column by column, the cut
+  down wins, and its lanes hold cards and lifted blocks. c0476's dish
+  cards are cut into a part the skeleton calls a grid, across three
+  dishes, and the grid read joins them.
+- **c0129**: its three boxes are found; its fault lies lower, not here.
+- **c0334**: `Mondays.` is a block of its own (the parser's), not the
+  tail of a cut line, so (c) does not reach it; it still measures 0.6.
+- **c0128**: the reader returned the total row as one Cell,
+  `TOTAL(33items)54.44`, so the row holds one measured Cell and (b)
+  needs two.
+- c0121, c0074, c0034, c0527, c0547: one-offs, not in part two.
+
+**What part two did, on the panel**: of M1's 10 worse pages, 2 are
+mended (c0115, c0405) and 1 mixed (c0196); of its 5 mixed, 1 mended
+(c0343); 1 page more is better (c0382), and none is worse. Judged
+against M1 only; no page was opened against L5 again.
