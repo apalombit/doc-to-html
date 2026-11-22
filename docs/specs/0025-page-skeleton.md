@@ -185,7 +185,7 @@ or joins two, is a miss. Then by eye, on the same pages.
 | step | what | done when |
 |---|---|---|
 | 0 | this spec, `glm-ocr.md`, issue #48, branch `skeleton`; the rest parked | done 2026-11-22 |
-| 1 | **three measurements, offline, before any build** — (a) the parser's order against the source's DOM order (from the HTML files, no Chrome, no model); (b) the source trees of the sampled pages (Chrome, seconds a page), and their depth; (c) optionally, the layout model alone on 5 pages (`glm-ocr.md` §5, way 2): do its raw candidates add anything the order and pixels do not? | the numbers in this spec; **if the order is unreliable, it becomes a tie-break only; if pages rarely nest deeper than two levels, 3d stays in the render's vocabulary** |
+| 1 | **three measurements, offline, before any build** — (a) the parser's order against the source's DOM order (from the HTML files, no Chrome, no model); (b) the source trees of the sampled pages (Chrome, seconds a page), and their depth; (c) optionally, the layout model alone on 5 pages (`glm-ocr.md` §5, way 2): do its raw candidates add anything the order and pixels do not? | the numbers in this spec; **if the order is unreliable, it becomes a tie-break only; if pages rarely nest deeper than two levels, 3d stays in the render's vocabulary** — done 2026-11-22: the order a signal, not a veto; 3d in the vocabulary; way 2 closed (outcome below) |
 | 2 | ③a, the skeleton and its check, D2 only; scored against the source trees and judged by eye on 5 random pages, 5 more if unclear | a net gain in parts found, by eye, and no page worse that is not named |
 | 3 | ③b and 3d: grouping inside the parts, drawn | the 5 pages drawn better by eye |
 | 4 | 3c: grid parts read as tables, on 5 random form pages | the forms' fields in their grid |
@@ -222,6 +222,94 @@ Not to be picked up while this spec is open:
 - One conversion at a time, nothing beside it; Chrome jobs finished
   before a model call. Never edit `src/` while a batch runs.
 - Judge by eye (`review-criteria.md`); a number is a pointer to a page.
+
+---
+
+## Outcome — step 1, the three measurements, 2026-11-22
+
+All offline but (b)'s Chrome and (c)'s layout model on the CPU; no call
+to the reader. (a) and (b) are `tools/skeleton_check.py order` and
+`trees`; (c) needs the parser's own Python and is described below.
+
+### (a) The parser's order against the source's DOM order: reliable, with local errors
+
+Each of the 231 dev pages' text regions (`L5-D2-dev`) placed in its HTML
+file's word stream by the n-grams of its words that occur once on the
+page (trigrams, else bigrams, else words); 4,555 of 4,889 regions placed
+(93%), 228 pages with two or more. Then Kendall's tau between the
+DOM positions and (1) the parser's `index`, (2) a top-to-bottom,
+left-to-right sort, which is what `groups_of` walks.
+
+| | parser's order | position sort |
+|---|---|---|
+| pages where it is the DOM's order exactly | **137** of 228 | 67 |
+| tau, median | **1.000** | 0.928 |
+| pages with tau under 0.7 | 1 | 34 |
+| adjacent steps backward, all pages | **244** | 870 |
+
+On the 165 pages where the two orders differ, the parser's is nearer
+the DOM on **145**, the sort on 15, 5 tied. The 15 are mostly grids of
+fields (c0020, c0071, c0153, form_0007, c0112): the source writes them
+row by row and the parser reads them column by column, both a right
+reading. **But the parser errs locally**: 244 steps backward on 91
+pages. c0263, a dashboard of nine sections in three rows, is read
+interleaved at the sections' edges (`STOCKPORT SITE` before the last
+milestone); c0541 reads the caption under the chart before the
+sidebar beside it.
+
+**What it changes.** The order stays a signal, not a tie-break only;
+but it cannot veto a cut, because it errs on 91 pages. §3a's rule 3
+becomes:
+- **one cut at a time**, the page first (a recursive cut, not every
+  gap at once), so a gap that lines up across two columns by chance is
+  never taken while the gutter between them stands;
+- each possible cut is scored by the pairs of blocks it sets against
+  the parser's order (a block of the first part read after one of the
+  second); **the fewest wins**, the wider gap on a tie;
+- **a cut down must set no more pairs against the order than reading
+  the part by position does**: rows of label | value read across are
+  never cut into a labels column and a values column;
+- a cut across is taken even against the order when it is the only one
+  (c0541, c0263: the parser's errors, not the page's).
+
+### (b) The source trees of 5 random fault pages: 1 to 5 deep
+
+Drawn from the 93 dev pages with a `height`, `beside, drawn under`,
+`order` or `overprint` major in `L5-F13` (seed **48**, `random.Random(48).sample`):
+c0511, c0274, c0093, c0514, c0504. Each still has its fault at `c2359de`
+(drawn from its recorded regions, checks re-run): height on all five
+(1.13 to 1.44). Their trees, read in Chrome: an element that draws a
+frame on four sides or a fill unlike its ground, or sets two block
+children side by side, and each child of the latter (a lane); a table
+is one leaf unless its cells hold such elements (c0511's ticket is a
+layout table).
+
+| page | nodes | depth | side by side, nested | box in box | what is deepest |
+|---|---|---|---|---|---|
+| c0274 | 3 | 1 | 0 | 0 | three tables |
+| c0514 | 6 | 3 | 1 | 1 | the frame round the date / seal / signature row |
+| c0504 | 27 | 4 | 2 | 1 | the columns; a title and its dates on one line |
+| c0093 | 44 | 5 | 2 | 2 | the columns; a fieldset round rows of field boxes |
+| c0511 | 18 | 5 | 2 | 3 | the stub's fill round four framed fields; a 2×2 field grid |
+
+**What it changes.** The render's vocabulary holds a stretch's lanes,
+Zones side by side in a lane, and a box round one Zone or round a run
+of one lane (`rhythm.frames`). That holds c0274, c0514 and c0504 whole.
+c0093 and c0511 go deeper only in grids of fields (3c: a grid read as a
+table, one Zone in its frame) and in c0511's stub, a fill holding four
+frames: **a box inside a box is the one thing the vocabulary lacks.**
+So **3d stays in the render's vocabulary**, as planned; the nested
+render is not built.
+
+### (c) The layout model alone: nothing the order and the pixels do not give
+
+`glmocr.layout.PPDocLayoutDetector` on the 5 pages, our config as it
+is, `apply_layout_postprocess` wrapped only to record what it is given:
+**159 candidates over the threshold, 140 kept**. The 19 deleted are the
+same block under a second label (10: IoU 0.8 or more with a kept box,
+`doc_title` under `header`, `text` under `footer`) or one line cut from
+a kept block (9). **None holds two kept blocks**: no container. Way 2
+is closed.
 
 ---
 
