@@ -176,6 +176,8 @@ def _containers(regions: Sequence[Region], drawn: Sequence[BBox], boxes: Mapping
         area = (box.right - box.left) * (box.bottom - box.top)
         if held not in sets or area < _area(sets[held]):
             sets[held] = box
+    for held in [h for h in sets if _outline(h, sets)]:
+        del sets[held]
     dropped: list[BBox] = []
     for held in sorted(sets, key=len, reverse=True):
         if held not in sets:
@@ -186,6 +188,28 @@ def _containers(regions: Sequence[Region], drawn: Sequence[BBox], boxes: Mapping
             if mine & theirs and not theirs <= mine:
                 dropped.append(sets.pop(other))
     return sets, dropped
+
+
+OUTLINE = 0.002
+"""How near, as a share of the page, a box's edges stand to the outline of
+the boxes inside it to be that outline: a pixel or two on the dev pages."""
+
+
+def _outline(held: tuple[int, ...], sets: Mapping[tuple[int, ...], BBox]) -> bool:
+    """Whether a drawn box is only the outline of the drawn boxes inside it
+    — spec 0026, part two (a). Every block it holds is in one of two or
+    more boxes inside it, and its edges are theirs: c0427's twelve cards,
+    traced as one box round them all, which the page does not draw, and
+    a box inside a box is not drawn (spec 0025), so no card was. A frame
+    the page draws round a grid stands clear of it."""
+    box, mine = sets[held], set(held)
+    inner = [s for s in sets if set(s) < mine]
+    if len(inner) < 2 or {i for s in inner for i in s} != mine:
+        return False
+    union = _union([sets[s] for s in inner])
+    return all(abs(a - b) <= OUTLINE for a, b in
+               ((box.left, union.left), (box.top, union.top),
+                (box.right, union.right), (box.bottom, union.bottom)))
 
 
 def _area(box: BBox) -> float:
@@ -231,6 +255,17 @@ def _against(first: Sequence[_Unit], second: Sequence[_Unit]) -> int:
     later = [i for u in first for i in u.blocks]
     earlier = [i for u in second for i in u.blocks]
     return sum(1 for a in later for b in earlier if a > b)
+
+
+def _between_drawn(units: Sequence[_Unit], start: float, end: float) -> bool:
+    """Whether a gap down from `start` to `end` lies between drawn boxes:
+    every unit that reaches it from either side is one. A `GUTTER` keeps
+    the words of one printed line together; drawn edges part two boxes
+    however close the page sets them — spec 0026, part two (a): c0427's
+    twelve cards stand 9 pixels apart, under half a line, and each row of
+    four was kept flat, its cards' fields read across the row."""
+    edges = [u for u in units if u.box.right == start or u.box.left == end]
+    return bool(edges) and all(u.drawn is not None for u in edges)
 
 
 def _by_position(units: Sequence[_Unit], boxes: Mapping[int, BBox]) -> int:
@@ -294,7 +329,8 @@ class _Cutter:
             def span(u: _Unit, across: bool = across) -> tuple[float, float]:
                 return (u.box.top, u.box.bottom) if across else (u.box.left, u.box.right)
             for start, end in _gaps([span(u) for u in units]):
-                if not across and (end - start) * scale < GUTTER * self.line:
+                if (not across and (end - start) * scale < GUTTER * self.line
+                        and not _between_drawn(units, start, end)):
                     continue
                 if across and (end - start) * scale < 1:
                     continue

@@ -44,7 +44,7 @@ is never passed), and today's pipeline, which stays as it is.
 | 5 | the outcome here; stop for his call | written 2026-11-22; **decided 2026-11-22** (Alessandro, in chat: "Go ahead keep this"): the code kept; part two below |
 | 6 | **part two, (b)**: a row or cell printed larger keeps its size in a table, reproduced on 5 random dev pages first | the 5 drawn nearer the source by eye, none worse — done 2026-11-22: 2 of 10 better, 8 the same (outcome below) |
 | 7 | **part two, (c)**: a cut line's short piece at its line's size, likewise | likewise — done 2026-11-22: 3 of 15 better, 12 the same (outcome below) |
-| 8 | **part two, (a)**: a card grid held by the skeleton, likewise | likewise |
+| 8 | **part two, (a)**: a card grid held by the skeleton, likewise | likewise — done 2026-11-22: 3 of 10 better, 7 the same; 1 of 5 more better, none worse (outcome below) |
 | 9 | the panel run again, judged against `M1-D2-L3`; stop for his call | every moved page called |
 
 ## 3. Rules
@@ -294,3 +294,62 @@ set apart for its size; for bold it still is.
 D2's code only (`linebreaks` runs in D2 alone);
 `tests/test_linebreaks.py` has two more tests (a sentence going on, a
 label over a value in lower case). The first fails without the rule.
+
+## Outcome — part two (a), a grid of cards, 2026-11-22
+
+**The pool**: the 19 dev pages the corpus labels `arr.cards_grid` (3 of
+the panel's 4 card pages are). Drawn at random, seed 260008: c0568,
+c0384, c0394, darkdeck_0009, c0263, then c0464, c0439, c0587, c0595,
+c0427, each against `L5-F13` (dev before the skeleton), its grids read
+as a batch run reads them.
+
+**What the sample showed**:
+- **c0427** has the panel's worst fault (c0456's, c0129's): twelve
+  product cards lose their frames, and each card's `CODE / SIZE /
+  FINISH` and price fall to rows of their own, away from their card.
+  Three causes, one under the other:
+  1. **The cards stand 9 px apart**, under `GUTTER` (half a line), so
+     no cut down was a candidate and each row of four was kept flat.
+     The gutter keeps the words of one printed line together; two drawn
+     boxes are parted by their edges.
+  2. **A box that is the cards' outline**: the detector traced the
+     twelve as one box round them all, edge for edge. The page draws no
+     such box, and a box inside a box is not drawn, so no card was.
+  3. **Each card drawn to its own height**: the page ends a row's cards
+     at one height; the render ended each frame at its own text.
+- **c0384** (a FAQ, its items under rules, no boxes): the parser reads
+  the items column by column, so the cut down wins and the second row
+  is staggered. Not mended: the order is the skeleton's signal, and a
+  shared gap across is also what two columns of paragraphs can show.
+- **c0568**: the second card inset in a pale fill and wrapped narrower.
+  A drawing fault, not mended.
+- c0394, darkdeck_0009, c0263, c0464, c0439: no card fault.
+
+**What shipped**:
+- `skeleton._between_drawn`: a gap down between drawn boxes is a cut
+  whatever its width;
+- `skeleton._outline`: a box holding only boxes inside it, its edges
+  theirs within `OUTLINE` (0.002 of the page), is not a container;
+- `render._card_row`: a banded Region whose every lane is one frame,
+  the page drawing them from one top to one bottom within
+  `ALIGN_SLACK`, draws each frame to the row's height (only D2 sets
+  `banded`).
+
+**By eye**, `tools/d2.py A-3 --previous A-0` (A-1 and A-2 the steps
+between), then 5 random `arr.panels_side_by_side` dev pages (seed
+260009) before and after, `A-3p --previous A-0p`:
+
+| page | before | after | |
+|---|---|---|---|
+| c0427 | cards unframed in one outer frame; fields and prices in rows of their own below the cards; 1.57 of the height | twelve framed cards in three rows, each holding its fields and price, each row one height; 1.42 (the Secateurs picture is still set under its text) | **better** |
+| c0595 | the six metric cards at six heights | each row's cards one height, as printed | **better** |
+| c0587 | the Household and Library cards at two heights | one height, as printed | **better** |
+| c0568, c0384, c0394, darkdeck_0009, c0263, c0464, c0439 | | the same | same |
+| c0096 | panel B's frame shorter than panel A's | both one height, as printed | **better** |
+| c0011, c0191, c0548, c0600 | | the same | same |
+
+`render.py` is shared code: **the replay of `s14-result/` is 21 of 21
+byte-identical, 0 asked differently.** `tests/test_skeleton.py` has two
+more tests (cards closer than a gutter parted; their outline no box),
+each failing without its rule; the render's rule is pinned by the
+replay (today's) and by eye (D2's), as spec 0025's were.

@@ -81,6 +81,27 @@ class TestDrawnBoxes:
         root = skeleton(regions, [BBox(0.05, 0.05, 0.85, 0.3)])
         assert parts(root, "box") == [(0, 1)]
 
+    def cards(self) -> tuple[list[Region], list[BBox]]:
+        # c0427's cards: three side by side, 9 px apart, under half a line.
+        regions, drawn = [], []
+        for n, left in enumerate((0.05, 0.359, 0.668)):
+            regions += [block(2 * n, (left + 0.02, 0.12, left + 0.25, 0.14)),
+                        block(2 * n + 1, (left + 0.02, 0.18, left + 0.25, 0.22))]
+            drawn.append(BBox(left, 0.1, left + 0.3, 0.3))
+        return regions, drawn
+
+    def test_cards_set_closer_than_a_gutter_are_parted(self) -> None:
+        regions, drawn = self.cards()
+        root = skeleton(regions, drawn)
+        assert parts(root, "box") == [(0, 1), (2, 3), (4, 5)]
+        assert parts(root, "columns") == [(0, 1, 2, 3, 4, 5)]
+
+    def test_the_outline_of_the_cards_is_no_box(self) -> None:
+        # The cards traced as one box round them all: the page draws no such box.
+        regions, drawn = self.cards()
+        root = skeleton(regions, drawn + [BBox(0.05, 0.1, 0.968, 0.3)])
+        assert parts(root, "box") == [(0, 1), (2, 3), (4, 5)]
+
 
 class TestLiftingIsALastResort:
     def test_a_full_width_line_under_a_row_is_its_own_row(self) -> None:

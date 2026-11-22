@@ -1164,9 +1164,13 @@ def _columns(region: Region, zones: list[Zone], document: Document,
         heads.append(min(tops) if tops else None)
     firsts = [head for head in heads if head is not None]
     start = min(firsts) if firsts else None
+    cards = _card_row(region, stacks, page)
     parts = []
     for index, (lane, stack) in enumerate(zip(lanes, stacks)):
         style = f"flex:{(edges[index + 1] - edges[index]) * 100:.1f} 1 0"
+        if cards:
+            style += ";display:flex;flex-direction:column"
+            stack[0].style.append("flex:1 0 auto")
         fills = {zone.fill for zone in lane}
         if (lane and len(fills) == 1 and None not in fills
                 and not all(id(zone) in plain for zone in lane)):
@@ -1193,7 +1197,27 @@ def _columns(region: Region, zones: list[Zone], document: Document,
     lasts = [stack[-1].bottom for stack in stacks
              if stack and stack[-1].bottom is not None]
     return _Row("columns", "".join(parts), list(zones), start,
-                max(lasts) if lasts else None)
+                max(lasts) if lasts else None, ["align-items:stretch"] if cards else [])
+
+
+def _card_row(region: Region, stacks: list[list[_Row]], page: _Page) -> bool:
+    """Whether a banded Region's row is a row of cards: every lane one frame,
+    the page drawing them all from one top to one bottom — spec 0026, part
+    two (a). Each frame is then drawn to the row's height, as a card grid
+    stretches its cards: c0427's four cards a row, each framed round its own
+    text, ended at four heights where the page ends them at one. Spec 0012,
+    G4 draws a grid's copies one height the same way."""
+    if not region.banded or len(stacks) < 2 or any(
+            len(stack) != 1 or stack[0].cls != "frame" for stack in stacks):
+        return False
+    tops = [stack[0].top for stack in stacks]
+    bottoms = [stack[0].bottom for stack in stacks]
+    if any(edge is None for edge in tops + bottoms):
+        return False
+    slack = ALIGN_SLACK * page.body
+    return (max(t for t in tops if t is not None) - min(t for t in tops if t is not None) <= slack
+            and max(b for b in bottoms if b is not None)
+            - min(b for b in bottoms if b is not None) <= slack)
 
 
 def _lane_fill(lane: list[Zone], document: Document) -> BBox | None:
