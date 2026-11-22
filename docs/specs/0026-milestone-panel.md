@@ -43,7 +43,7 @@ is never passed), and today's pipeline, which stays as it is.
 | 4 | **his spot checks** on the issue page: every page called worse, two at random; no decided issue re-shown (`../agents/review-issues.json`) | the round published — done 2026-11-22: round 13, 18 issues |
 | 5 | the outcome here; stop for his call | written 2026-11-22; **decided 2026-11-22** (Alessandro, in chat: "Go ahead keep this"): the code kept; part two below |
 | 6 | **part two, (b)**: a row or cell printed larger keeps its size in a table, reproduced on 5 random dev pages first | the 5 drawn nearer the source by eye, none worse — done 2026-11-22: 2 of 10 better, 8 the same (outcome below) |
-| 7 | **part two, (c)**: a cut line's short piece at its line's size, likewise | likewise |
+| 7 | **part two, (c)**: a cut line's short piece at its line's size, likewise | likewise — done 2026-11-22: 3 of 15 better, 12 the same (outcome below) |
 | 8 | **part two, (a)**: a card grid held by the skeleton, likewise | likewise |
 | 9 | the panel run again, judged against `M1-D2-L3`; stop for his call | every moved page called |
 
@@ -254,3 +254,43 @@ first build drew c0177's whole row at its median and set the
 D2's code only; `tests/test_skeleton.py` has two more tests (a row set
 large, and one Cell above its peers drawn at theirs). The first fails
 without the rule.
+
+## Outcome — part two (c), a sentence going on in one size, 2026-11-22
+
+**The pool**: dev pages drawn at random, seed 260007, each drawn at
+today's code until 15 showed a line `linebreaks.restore` cut whose
+parts measure `SIZE_STEP` or more apart: 64 drawn. First 10: c0085,
+c0514, c0235, c0203, c0434, c0509, c0236, c0544, c0419, c0095; then
+c0504, c0427, c0315, c0023, c0292.
+
+**What the sample showed**: most such parts are the page's own other
+size: a label over its value (c0236's `MRN` over `LHP-0092817`), a
+heading over its subtitle (c0095's `Rental Application`). The fault is
+a sentence the page wrapped, its parts set apart (`apart`) for a size
+measured off few letters: c0434's footnote over its last word
+`quarter.`, measured on its `t` at 0.75, drawn a speck on a line of its
+own; c0419's standfirst, 1.08 over 0.92, broken in two Blocks. Neither
+the render's wrap test (`_broken`'s room for the next word; a value's
+first word fills its box) nor the letters' width (a label's are as wide
+as its value's) tells them apart. The text does: every part that goes
+on with a sentence opens in lower case after a part ending in a
+lower-case letter, and every label, value and heading in the sample
+opens in a capital or a figure, or follows one, as c0504's `E-MAIL`
+over `d.lockhart@example.com`.
+
+**What shipped** (`linebreaks._goes_on`): a part that opens in lower
+case after a part that ends in a lower-case letter or a comma is not
+set apart for its size; for bold it still is.
+
+**By eye**, `tools/d2.py C-1 --previous C-0` and `C-2b --previous C-0b`:
+
+| page | before | after | |
+|---|---|---|---|
+| c0434 | `quarter.` a speck on a line of its own | `previous quarter.` reflowed at the footnote's size | **better** |
+| c0419 | the standfirst broken after `comment réserver` | one paragraph, as printed | **better** |
+| c0023 | `entregue` small on a line of its own | at its item's size | **better** |
+| the other 12 | label over value, heading over subtitle, set apart | the same | same |
+
+D2's code only (`linebreaks` runs in D2 alone);
+`tests/test_linebreaks.py` has two more tests (a sentence going on, a
+label over a value in lower case). The first fails without the rule.

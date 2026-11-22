@@ -141,3 +141,18 @@ class TestPartsInAnotherLook:
         in two looks are `render._common_look`'s to judge."""
         document, parts = cut_block(Look(bold=True, size=1.0), Look(bold=False, size=1.0))
         assert linebreaks.apart(document, []) == 0
+
+    def test_a_sentence_going_on_keeps_its_size(self) -> None:
+        """c0434's footnote over its last word, `quarter.`, measured 0.75 on
+        its `t` alone: the page wrapped the sentence, set in one size."""
+        document, parts = cut_block(Look(bold=False, size=1.0), Look(bold=False, size=0.75))
+        parts[0].readings = [Reading(engine="glm-ocr", text="the move in wheat from the previous")]
+        parts[1].readings = [Reading(engine="glm-ocr", text="quarter.")]
+        assert linebreaks.apart(document, [parts]) == 0
+
+    def test_a_label_over_a_value_in_lower_case_is_set_apart(self) -> None:
+        """c0504's `E-MAIL`, 0.70, over `d.lockhart@example.com`, 1.00."""
+        document, parts = cut_block(Look(bold=False, size=0.7), Look(bold=False, size=1.0))
+        parts[0].readings = [Reading(engine="glm-ocr", text="E-MAIL")]
+        parts[1].readings = [Reading(engine="glm-ocr", text="d.lockhart@example.com")]
+        assert linebreaks.apart(document, [parts]) == 1

@@ -126,7 +126,27 @@ def _other_look(one: Cell, other: Cell) -> bool:
     if first.bold is not None and second.bold is not None and first.bold != second.bold:
         return True
     return (first.size is not None and second.size is not None
-            and abs(first.size - second.size) >= SIZE_STEP)
+            and abs(first.size - second.size) >= SIZE_STEP and not _goes_on(one, other))
+
+
+def _goes_on(before: Cell, part: Cell) -> bool:
+    """Whether a part goes on with the sentence of the part before it: that
+    part ends in a lower-case letter or a comma, and this one opens in lower
+    case. The page wrapped that line, and a sentence is set in one size, so
+    a size the two parts measure apart is the measure's — spec 0026, part
+    two (c). Measured alone, a short part stands on few letters: c0434's
+    `quarter.`, a footnote's last word, stands on its `t` and measured 0.75
+    after its line's 1.00; c0419's standfirst measured 1.08 over `votre
+    place en trois étapes.` at 0.92, and each was set apart in a Block of
+    its own. On the 10 random dev pages whose cut parts measure apart,
+    every part that is the page's own other size opens in a capital or a
+    figure: a label over its value (`MRN` over `LHP-0092817`), a heading
+    over its subtitle. A value may open in lower case, an address: c0504's
+    `E-MAIL` over `d.lockhart@example.com`, and its label ends in a
+    capital."""
+    ends, opens = before.text.rstrip(), part.text.lstrip()
+    return (bool(ends) and bool(opens) and opens[0].islower()
+            and (ends[-1].islower() or ends[-1] == ","))
 
 
 def _tall(cell: Cell, height: int, glyph: float) -> bool:
