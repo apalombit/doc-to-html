@@ -40,14 +40,19 @@ and every call Alessandro has made since is in that file.
 
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
-measured numbers and what has already been tried and rejected. **Nothing
-is active since 2026-11-22.** Spec 0025, `docs/specs/0025-page-skeleton.md`
-(issue #48, closed 2026-11-22, branch `skeleton`), rebuilt conversion
-step 3 top-down: the page's skeleton before grouping, grids read as
-tables, one size per role in a table; `docs/glm-ocr.md` holds what
-GLM-OCR gives and does not give. **The milestone, parked for it, is the
-natural next step and Alessandro's call: its prompt is spec 0025's "The
-prompt for the next session".** The rest of spec 0025's §7 stays parked. Spec 0024, `docs/specs/0024-l5-on-d2.md` (issue #47, closed
+measured numbers and what has already been tried and rejected. **Next,
+decided 2026-11-22: spec 0027, the panel's remaining causes, worst page
+first, each mended on dev first; its prompt is spec 0026's "The prompt
+for the next session".** Spec 0026, `docs/specs/0026-milestone-panel.md`
+(issue #49, closed 2026-11-22, branch `milestone`), ran the milestone's
+first half: D2 on the 41 panel pages, 17 better and 10 worse against
+`L5-D2-L3`, kept. Then three causes were mended on dev, and the panel
+run again was 4 better, 1 mixed, none worse. **The vault is not for
+now.** Spec 0025, `docs/specs/0025-page-skeleton.md` (issue #48,
+closed 2026-11-22, branch `skeleton`), rebuilt conversion step 3
+top-down: the page's skeleton before grouping, grids read as tables,
+one size per role in a table. `docs/glm-ocr.md` holds what GLM-OCR
+gives and does not give. The rest of spec 0025's §7 stays parked. Spec 0024, `docs/specs/0024-l5-on-d2.md` (issue #47, closed
 2026-11-22), ran L5's first phase on arm D2, branch `l5`: our side's
 faults on GLM-OCR's output, part A by group and part two by every dev
 major's stage, each fix judged by eye on a random sample. Its milestone
@@ -102,9 +107,11 @@ baseline, done 2026-11-09), then a
 GLM-OCR parser-first PoC (P1, done 2026-11-09), local models only.
 **P2, decided 2026-11-09: take D2**, the parser-first arm. L5's first
 phase on D2, our side's faults, is done 2026-11-22 (spec 0024), and
-spec 0025, the page's skeleton first, the same day; the milestone is
-next, his call. D2 lives on branch `skeleton`, cut from `l5`, and
-`main` is fast-forwarded to it at each close;
+spec 0025, the page's skeleton first, the same day. The milestone's
+first half, the panel, is done too (spec 0026); the vault is not for
+now. Next is spec 0027, the panel's remaining causes. D2 lives on
+branch `milestone`, cut from `skeleton`, and `main` is fast-forwarded
+to it at each close;
 `scaffold` is retired into `develop`.
 
 ```
@@ -284,7 +291,12 @@ LEVEL-UP    2026-10-24, Alessandro: docs/level-up.md, branch level-up —
                 #48, branch skeleton             DONE 2026-11-22:
                 the skeleton, grids as tables, a table's sizes;
                 20 random dev pages, 8 better, 1 mixed, none worse
-              M1 the milestone: panel, then vault  PARKED 2026-11-22
+              Spec 0026 M1's first half, D2 on the panel, #49,
+                branch milestone                 DONE 2026-11-22:
+                against L5 17 better, 10 worse, kept; part two,
+                three causes mended on dev; run again, 4 better,
+                1 mixed, none worse; the vault not for now
+              Spec 0027 the panel's remaining causes  NEXT
 ```
 
 What each step shipped and measured is in `docs/status.md` and the handover's
@@ -345,8 +357,9 @@ by 2026-10-30; L2, spec 0021, the checks and the judge by 2026-11-07; L3, spec 0
 the honest baseline by 2026-11-09; P1, spec 0023, the parser-first PoC
 the same day, and he decided P2: take D2. L5's first phase, spec 0024,
 mended our side on D2 by 2026-11-22; spec 0025, the page's skeleton
-first, rebuilt step 3 top-down the same day; the milestone is next,
-his call.
+first, rebuilt step 3 top-down the same day; spec 0026 ran the
+milestone's first half on the panel, and spec 0027, the panel's
+remaining causes, is next, his decision.
 `docs/specs/0007-handover.md` holds spec 0007's prompts, as record.
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
@@ -774,7 +787,7 @@ each other — `CellState.DISPUTED` and the Ladder are already the vocabulary fo
 it, and `_climb_ladders` already records that it waits on a second Engine. That
 is model time and Alessandro's decision, not a detector.
 
-**Tracker state, 2026-11-22: nothing open; #48 (spec 0025, the page's skeleton) closed when its work finished; #47 (spec 0024, L5 on D2) closed when its phase closed, #46 (spec 0023, P1) when P2 was decided, #45 (spec 0022, L3) closed when its work finished, #44 (spec 0021, L2) likewise, #43 (spec 0020, the corpus) when the corpus was built.** #31–#42 (specs 0008–0019) are closed, each done and decided. #30 (spec 0007) closed when its
+**Tracker state, 2026-11-22: nothing open, spec 0027's issue opened when it starts; #49 (spec 0026, the milestone's panel half) closed on his word; #48 (spec 0025, the page's skeleton) closed when its work finished; #47 (spec 0024, L5 on D2) closed when its phase closed, #46 (spec 0023, P1) when P2 was decided, #45 (spec 0022, L3) closed when its work finished, #44 (spec 0021, L2) likewise, #43 (spec 0020, the corpus) when the corpus was built.** #31–#42 (specs 0008–0019) are closed, each done and decided. #30 (spec 0007) closed when its
 work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
 #17 (the vision layout prompt) were closed by Thread 0. Every other spec is closed
 history; 0007 still defines the target.

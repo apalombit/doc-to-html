@@ -1,10 +1,14 @@
 # The milestone, its first half: D2 on the panel
 
-**Status: open, 2026-11-22, issue #49, branch `milestone` (cut from
-`skeleton`).** `level-up.md` §6, row M1, its first half only
+**Status: closed 2026-11-22, issue #49, branch `milestone` (cut from
+`skeleton`); `main` fast-forwarded to it.** Closed on Alessandro's
+word (in chat, round 14's last issue: "Ok close here and move on").
+The spec's end is "Outcome — the spec" and "The prompt for the next
+session", below. `level-up.md` §6, row M1, its first half only
 (Alessandro, 2026-11-22: the panel; **the vault is not for now**).
-Nothing in the conversion changes in this spec: it runs arm D2 as it
-stands at `94699c9` over the L3 set and judges it.
+The spec first ran arm D2 as it stood at `94699c9` over the L3 set and
+judged it. Then, on his word, part two mended three causes on dev
+pages and the panel was run again.
 
 **Read first**, in order: `CLAUDE.md`'s READ THIS FIRST;
 [`../status.md`](../status.md); [`0025-page-skeleton.md`](0025-page-skeleton.md)'s
@@ -45,7 +49,8 @@ is never passed), and today's pipeline, which stays as it is.
 | 6 | **part two, (b)**: a row or cell printed larger keeps its size in a table, reproduced on 5 random dev pages first | the 5 drawn nearer the source by eye, none worse — done 2026-11-22: 2 of 10 better, 8 the same (outcome below) |
 | 7 | **part two, (c)**: a cut line's short piece at its line's size, likewise | likewise — done 2026-11-22: 3 of 15 better, 12 the same (outcome below) |
 | 8 | **part two, (a)**: a card grid held by the skeleton, likewise | likewise — done 2026-11-22: 3 of 10 better, 7 the same; 1 of 5 more better, none worse (outcome below) |
-| 9 | the panel run again, judged against `M1-D2-L3`; stop for his call | every moved page called — done 2026-11-22: 7 moved, 4 better, 1 mixed, 2 the same, none worse (outcome below); **waiting for his call** |
+| 9 | the panel run again, judged against `M1-D2-L3`; stop for his call | every moved page called — done 2026-11-22: 7 moved, 4 better, 1 mixed, 2 the same, none worse (outcome below); **decided 2026-11-22** (Alessandro, in chat: "Ok close here and move on"): close; next, a spec for the remaining causes, the undrawn card grid first |
+| 10 | **the close**: `status.md`, `CLAUDE.md`, `level-up.md` §6, `main` fast-forwarded, issue #49 closed, the next prompt | done 2026-11-22 |
 
 ## 3. Rules
 
@@ -395,3 +400,107 @@ the IR (no panel page tuned on):
 mended (c0115, c0405) and 1 mixed (c0196); of its 5 mixed, 1 mended
 (c0343); 1 page more is better (c0382), and none is worse. Judged
 against M1 only; no page was opened against L5 again.
+
+---
+
+## Outcome — the spec, 2026-11-22
+
+**The milestone's first half: D2 on the 41 L3 panel pages**, which no
+one has tuned on. The vault stays closed (his word).
+
+**M1, D2 with spec 0024's part two and spec 0025, against `L5-D2-L3`**:
+17 better, 9 the same, 5 mixed, 10 worse. Net gain, so kept
+(Alessandro, "Go ahead keep this"). The parser's regions were the same
+byte for byte, so every difference is our side's.
+
+**Part two, the worse pages' causes, each reproduced and judged on dev
+first** (no panel page drawn, read or tuned on):
+
+| cause | what shipped | on dev, by eye |
+|---|---|---|
+| (b) a row printed larger, flattened in a table | `parser_first.table_sizes`: a row with two cells or more above their role's size keeps theirs | 2 of 10 better (c0177, c0175), none worse |
+| (c) a cut line's short piece measured small | `linebreaks._goes_on`: a sentence going on keeps its line's size | 3 of 15 better (c0434, c0419, c0023), none worse |
+| (a) a grid of drawn cards broken | `skeleton._between_drawn` (cards parted by their edges), `skeleton._outline` (their outline no box), `render._card_row` (a row of cards one height) | 3 of 10 better (c0427, c0595, c0587), 1 of 5 more (c0096), none worse |
+
+**M2 against M1**: 7 pages moved; 4 better (c0115, c0405, c0343,
+c0382), c0196 mixed, 2 the same, none worse. Of M1's 10 worse pages, 2
+are mended and 1 is mixed. The checks' majors went 803 → 801.
+
+**What is left on the panel**, by cause, the worst page first. None is
+mended on a panel page; each is reproduced on dev first, or recorded as
+not found:
+
+| # | cause | stage | panel | on dev |
+|---|---|---|---|---|
+| 1 | a grid of cards the page draws no box round: the parser reads it column by column, the cut down wins, the lanes hold cards and lifted blocks | ③a, the order rule | c0456 (2.66 of its height) | c0384 |
+| 2 | a grid part across several cards, its table read joining them | ③a, 3c | c0476 | not yet looked for |
+| 3 | cards spread, one tall with a code fence as its heading | not read from the IR | c0575 | — |
+| 4 | a payment card in three boxes, its labels parted from their values; its boxes are found, the fault is lower | not read from the IR | c0129 | — |
+| 5 | sizes in prose: a parser block of its own measured small (`Mondays.` 0.6); a paragraph drawn at half size | ④ | c0334, c0196 | spec 0025's left fault 2 (c0246, c0439, c0407) |
+| 6 | a box regrouped, measured differently: the net pay at 0.9 where L5 measured 1.6 | ④ | c0121 | c0198 (spec 0025's fault 1) |
+| 7 | the reader returns a table row as one cell (`TOTAL(33items)54.44`), so (b) has one cell to keep | the parser's reader | c0128 | — |
+| 8 | one each: a footer's right part torn off (c0074); a one-line banner title broken (c0334); a heading at 2.9 times (c0034); a fill added behind a photo (c0527); a page 1.15 of its height (c0547) | ③, ④, ⑤ | five pages | — |
+
+**What is not known**: the vault, by his word; and whether causes 1
+and 2 are one fault. Both concern a grid of cards with no drawn box.
+
+## Decisions — Alessandro
+
+| # | asked | decided |
+|---|---|---|
+| 1 | the milestone's halves | **Decided** (2026-11-22, the prompt): the panel only; the vault is not for now, `unseal=True` never passed |
+| 2 | round 13's last issue: keep the code, mend (b), (c), then (a) on dev first, run the panel again | **Decided** (2026-11-22, in chat): "Go ahead keep this" |
+| 3 | round 14's last issue: close this spec; next, a spec for the remaining causes, the undrawn card grid first | **Decided** (2026-11-22, in chat): "Ok close here and move on" |
+
+Round 13's 17 spot checks and round 14's other 3 are still open on the
+issue page, as are his own checks of the runs.
+
+## The prompt for the next session
+
+> Start spec 0027 on arm D2: the panel's remaining causes, worst page
+> first, each reproduced and mended on dev pages first. Spec 0026 is
+> closed: issue #49, branch `milestone`, `main` fast-forwarded to it.
+> Read `CLAUDE.md`'s READ THIS FIRST, `docs/status.md`,
+> `docs/glm-ocr.md`, then spec 0026's "Outcome — the spec" and "Outcome
+> — part two (a)", spec 0025's §3a (how the skeleton cuts) and
+> `docs/agents/review-criteria.md`.
+>
+> 1. **Write spec 0027** and its GitHub issue
+>    (`docs/agents/issue-tracker.md`), on a branch cut from `milestone`.
+>    Its causes are spec 0026's "What is left on the panel", in that
+>    order.
+> 2. **Prove first**: the replay of `s14-result/` 21 of 21 and
+>    `mypy src/`.
+> 3. **Cause 1, a grid of cards the page draws no box round** (c0456 on
+>    the panel; c0384 on dev). The parser reads it column by column, so
+>    the skeleton's cut down wins over the gaps across that part its
+>    rows. **Measure first**, offline over the dev pool's recorded
+>    regions (`debug/runs/L5-D2-dev/`, no model). Count the parts
+>    where a gap across runs through every column while the parser's
+>    order goes down a column. Then count how many of those parts are
+>    two columns of running text, which must stay columns. Write both
+>    numbers into the spec, then decide whether the order may lose to
+>    such a gap. Judge it as spec 0026's part two did:
+>    - a pool of dev pages that show it, 5 drawn at random (seed
+>      recorded), 5 more if unclear;
+>    - drawn offline with `tools/d2.py --regions L5-D2-dev --grids`;
+>    - harm drawn from the pages the rule touches;
+>    - none worse.
+> 4. **Then the others, one at a time**, in the spec's order. Each is
+>    reproduced on a dev page first, or recorded as not found. A
+>    direction that does not work is dropped.
+> 5. **Stop for his call before any panel run.** When he names it, the
+>    run is `tools/batch.py M3-D2-L3 --arm d2 --pages l3` (about 25
+>    minutes), judged by eye against `M2-D2-L3`.
+>
+> Rules: local models only; the vault stays closed, never pass
+> `unseal=True`. No panel page in a test or to tune anything, c0001
+> and c0002 above all; a fault seen on a panel page is reproduced on a
+> dev page first. Today's pipeline stays as it is: the replay of
+> `s14-result/` stays 21 of 21. One conversion at a time, nothing
+> beside it. Run nothing he has not asked for. Tests minimal: the
+> changed files' tests, the replay when shared code moves, `mypy
+> src/`; never the full suite. Judge by eye; a number is a pointer to a
+> page. Replies concise: what worked or not and why, each change as
+> page / before / after; no process lines (tests passing, seeds,
+> commits) and nothing he already knows.

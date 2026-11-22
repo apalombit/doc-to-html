@@ -5748,10 +5748,15 @@
      "checks": "801 majors against M1's 803: one fewer on c0115 and on c0405. They do not see c0343's or c0382's gain, or c0196's change.",
      "claude": "Close spec 0026: the milestone's panel half is measured and kept, part two shipped, and what is left is a list of separate causes. The next spec takes them ranked, the worst page first: a grid of cards the page draws no box round (c0456, 2.66 of its height), reproduced on c0384. Its fix touches the skeleton's order rule, so it is measured first: how often two columns of text share a gap across by chance.",
      "often": "The close: status.md, CLAUDE.md, main fast-forwarded, issue #49 closed, a handover prompt. No run. The vault stays closed.",
-     "proposes": "Agree: close spec 0026; next, a spec for the remaining causes, the undrawn card grid first."
+     "proposes": "Agree: close spec 0026; next, a spec for the remaining causes, the undrawn card grid first.",
+     "decided": {
+      "verdict": "agree",
+      "note": "In chat: \"Ok close here and move on\"",
+      "on": "2026-11-22"
+     }
     }
    ]
   }
  ],
- "page_stamp": "Spec 0026 · M2 · round 14: part two on the panel"
+ "page_stamp": "Spec 0026 · closed · round 14: part two on the panel"
 }

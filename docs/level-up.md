@@ -6,9 +6,12 @@ decided, 2026-11-09: take D2**, the parser-first arm. **L5's first
 phase, our side's faults on D2, is done 2026-11-22** (spec 0024, issue
 #47 closed). Spec 0025, the page's skeleton first
 (step 3 of the conversion rebuilt top-down, issue #48), is done the
-same day. The milestone check (§6, M1), parked for it, is next,
-Alessandro's call. D2 lives on `skeleton`, cut from `l5`; `main` is
-fast-forwarded to it at each close.
+same day. **The milestone's first half, D2 on the panel, is done
+2026-11-22** (spec 0026, issue #49 closed). Its second half, the
+vault, is not for now (his word). Next is spec 0027: the panel's
+remaining causes, worst page first, each mended on dev first. D2 lives
+on `milestone`, cut from `skeleton`; `main` is fast-forwarded to it at
+each close.
 
 ## Gist — keep this in mind
 
@@ -769,7 +772,7 @@ In order, as decided 2026-10-24 (§8).
 | **P2** | both | **decision**: the PoC against today's on L3's set, by fault-class rates | **decided 2026-11-09, Alessandro: take D2** (round 9) | no gain → keep today's, go to L5 | one run per arm |
 | **L5** | the winner, D2, on `l5` (cut from `poc-parser-first`) | our side's faults on D2's blocks first (spec 0023, "Found on our side"), each reproduced on a dev page, the parser's weights untouched; then **fit instead of set** for what the winner still decides with constants: labels from dev HTML, accepted on the panel, confirmed on the vault at a milestone | the vault improves | panel up but vault flat → that is fitting the panel; refresh it | days |
 | | | **first phase done 2026-11-22**, [spec 0024](specs/0024-l5-on-d2.md), issue #47: part A (the adapter's words, side by side, tables measured; the L3 set redrawn, 17 pages better than P1, 8 the same, 4 worse) and part two (every dev major by stage, directions 1–7, each on a random sample: tick boxes, line cuts, table rules, nested and held boxes, leaders, units, a line's own colour shipped; the reader's settings, the size and bold constants and the cells probed and dropped). **Fitting the constants did not pay**: size and bold are noisy per line and the lost bold sits inside a line, so fixes went to structure instead | | | |
-| **M1** | `skeleton` | **next, his call**: parked 2026-11-22 for [spec 0025](specs/0025-page-skeleton.md), done the same day (the page's skeleton, grids as tables, a table's sizes; its last prompt starts M1); **the milestone**: (1) the phase on the panel, D2 over the L3 set again (18 min), judged by eye against `L5-D2-L3` and `p1-d2-l3/`; (2) **only on his word**, the vault opened once: D2 over its 200 pages (about 1 h 45), the checks and a review, its fault rates beside dev's on the same code | the vault's rates sit near dev's | the vault much worse than dev → we have fitted the pages we look at; stop and look | 18 min, then about 1 h 45 |
+| **M1** | `milestone` | **first half done 2026-11-22**, [spec 0026](specs/0026-milestone-panel.md), issue #49. D2 on the 41 panel pages against `L5-D2-L3`: 17 better, 9 the same, 5 mixed, 10 worse, and the code was kept. Three of the worse pages' causes were mended on dev first, then the panel was run again: against M1, 4 better, 1 mixed, none worse. The rest of the causes go to spec 0027. **The vault is not for now** (his word). **The milestone**: (1) the phase on the panel, D2 over the L3 set again (18 min), judged by eye against `L5-D2-L3` and `p1-d2-l3/`; (2) **only on his word**, the vault opened once: D2 over its 200 pages (about 1 h 45), the checks and a review, its fault rates beside dev's on the same code | the vault's rates sit near dev's | the vault much worse than dev → we have fitted the pages we look at; stop and look | 18 min, then about 1 h 45 |
 
 L1–L3 change no conversion code, and L3 is the first number on pages
 nobody has tuned on.

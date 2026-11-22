@@ -1,9 +1,9 @@
-# Status — 2026-11-22 (**nothing active: spec 0025, the page's skeleton first, closed (#48, branch `skeleton`); the milestone, parked for it, is the natural next step, Alessandro's call**)
+# Status — 2026-11-22 (**spec 0026, the milestone's first half (D2 on the panel), closed (#49, branch `milestone`); next, spec 0027: the panel's remaining causes, decided by Alessandro**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Rewritten 2026-11-22, when
-spec 0025 closed. Before that: the same day, when spec 0024 (L5's first
-phase on D2, #47) closed; 2026-10-23 (`S14-sweep` the baseline),
+spec 0026 closed. Before that: the same day, when spec 0025 (the page's
+skeleton, #48) and spec 0024 (L5's first phase on D2, #47) closed; 2026-10-23 (`S14-sweep` the baseline),
 2026-10-24 (the level-up plan, [`level-up.md`](level-up.md) §8),
 2026-10-30 (the corpus, spec 0020), 2026-11-07 (L2, spec 0021) and
 2026-11-09 (L3, spec 0022; P1, spec 0023; P2 decided: take D2).
@@ -17,15 +17,36 @@ arranges the blocks, top-down: the page is first cut into its parts
 other), then grouped inside each part and drawn from that tree. Each
 part a grid is read once more by the parser as a table, and a table's
 cells are drawn at one size per role. Judged on 20 random dev pages, 8
-better, c0198 mixed, none worse. What is left is in spec 0025's
-"Outcome — the spec": a Zone's crop read differently once regrouped,
-sizes in prose, a heading over chips, a few drawing faults.
+better, c0198 mixed, none worse.
 
-**Next — decided 2026-11-22:** the milestone's first half, D2 over
-the 41 panel pages, judged by eye against `L5-D2-L3`; **the vault is
-not for now**. Its prompt is [spec 0025](specs/0025-page-skeleton.md)'s
-"The prompt for the next session". The rest of spec 0025's §7 stays
-parked until he names it.
+Spec 0026 then ran D2 over the 41 panel pages, which no one has tuned
+on, against `L5-D2-L3`: 17 better, 9 the same, 5 mixed, 10 worse, and
+the code was kept. Three of the worse pages' causes were mended on dev
+pages first:
+- a row printed larger keeps its size in a table;
+- a sentence going on keeps its line's size;
+- a grid of drawn cards: parted by the cards' edges, their outline no
+  box, a row of cards drawn at one height.
+
+Run again, the panel moved 7 pages: 4 better, 1 mixed, none worse.
+What is left is spec 0026's "What is left on the panel", worst page
+first:
+- a grid of cards with no drawn box, which the parser reads column by
+  column (c0456);
+- a grid read across cards;
+- sizes in prose;
+- a box measured differently once regrouped;
+- the reader's row read as one cell;
+- one-offs.
+
+**Next — decided 2026-11-22** (Alessandro, round 14: "Ok close here
+and move on"): **spec 0027**, the panel's remaining causes, the worst
+page first. The first is the undrawn card grid, measured offline before
+anything changes. Each cause is mended on dev pages first, and nothing
+is run on the panel until he names it. Its prompt is
+[spec 0026](specs/0026-milestone-panel.md)'s "The prompt for the next
+session". **The vault is not for now.** The rest of spec 0025's §7
+stays parked until he names it.
 
 Reading order for a fresh session:
 1. `CLAUDE.md`'s **READ THIS FIRST**;
@@ -34,8 +55,10 @@ Reading order for a fresh session:
 3. this file;
 4. [`level-up.md`](level-up.md)'s Gist, §6 and §8: the plan from
    2026-10-24, and what comes next;
-5. [`specs/0025-page-skeleton.md`](specs/0025-page-skeleton.md)'s
-   "Outcome — the spec": the skeleton, what it fixed, what is left;
+5. [`specs/0026-milestone-panel.md`](specs/0026-milestone-panel.md)'s
+   "Outcome — the spec": D2 on the panel, part two, what is left;
+   [`specs/0025-page-skeleton.md`](specs/0025-page-skeleton.md)'s
+   "Outcome — the spec": the skeleton, what it fixed;
    [`glm-ocr.md`](glm-ocr.md): what GLM-OCR gives and does not give;
    [`specs/0024-l5-on-d2.md`](specs/0024-l5-on-d2.md)'s "Outcome — the
    phase": what each fix did on D2;
@@ -53,24 +76,29 @@ Reading order for a fresh session:
 If you are going to look at output — and you should — use the
 **`visual-review` skill**.
 
-**Branches.** `main`, `develop`, `level-up`, `poc-parser-first`, `l5`
-and `skeleton` are on the remote. D2 lives on **`skeleton`**, cut from
-`l5`; **`main` was fast-forwarded to `skeleton` on 2026-11-22**, as at
-each close (round 10), so the landing page shows the current code.
+**Branches.** `main`, `develop`, `level-up`, `poc-parser-first`, `l5`,
+`skeleton` and `milestone` are on the remote. D2 lives on
+**`milestone`**, cut from `skeleton`; **`main` was fast-forwarded to
+`milestone` on 2026-11-22**, as at each close (round 10), so the
+landing page shows the current code.
 `develop` and `level-up` stay where they were; `scaffold` is retired
 into `develop`.
 
-**Proved on 2026-11-22, at the close** (`skeleton`): the changed
-files' tests and `mypy src/` (the full suite is run only when Alessandro
-asks); `tools/replay_run.py` reproduces `s14-result/` 21 of 21 byte for
-byte, 0 asked differently, and `tools/rederive.py` 21 of 21. **Today's
+**Proved on 2026-11-22, at the close** (`milestone`, its last code
+change `177c1d6`): the changed files' tests and `mypy src/` (the full
+suite is run only when Alessandro asks); `tools/replay_run.py`
+reproduces `s14-result/` 21 of 21 byte for byte, 0 asked differently.
+`tools/rederive.py` was last measured at spec 0025's close, 21 of 21.
+**Today's
 pipeline is untouched**: each D2 change sits in D2's own steps or is
 gated on D2's blocks (`adapter.ENGINE`, `Region.banded`), and the replay
 proves the old pipeline answers and draws as at `a0d73c9`. The dev
 pool's recorded regions are in `debug/runs/L5-D2-dev/` (gitignored,
 keep it): `tools/d2.py <label> --pages dev --regions L5-D2-dev --jobs 4`
 redraws all 231 dev pages offline, no model; `--grids` reads the grids
-too (one reader call each).
+too (one reader call each). The panel's runs, `M1-D2-L3` and
+`M2-D2-L3` (spec 0026), are in `debug/runs/` too: keep them, since the
+next panel run is judged against `M2-D2-L3`.
 
 **How work is judged — Alessandro, 2026-10-12, for spec 0011; carried
 over by specs 0012 to 0019.**
@@ -199,9 +227,16 @@ Spec 0024   L5 on D2, our side's faults first — issue #47, branch l5:
               shipped; sizes, bold, the reader's settings and the
               cells probed and dropped           DONE 2026-11-22
 Spec 0025   The page's skeleton first, step 3 top-down — issue #48,
-              branch skeleton                            ACTIVE
-M1          the milestone: the phase on the panel, then the vault
-              once, on Alessandro's word                 PARKED 2026-11-22
+              branch skeleton: the skeleton, grids read as tables,
+              one size per role in a table; 20 random dev pages,
+              8 better, 1 mixed, none worse        DONE 2026-11-22
+Spec 0026   The milestone's first half, D2 on the panel — issue #49,
+              branch milestone: M1 against L5, 17 better, 10 worse,
+              kept; part two, three causes mended on dev first; M2
+              against M1, 4 better, 1 mixed, none worse
+              DONE 2026-11-22; the vault not for now
+Spec 0027   The panel's remaining causes, worst first, on dev first
+              NEXT, decided 2026-11-22
 ```
 
 Each spec has an "Outcome" per step; Q1-Q4's and N1-N3's result tables are
@@ -294,6 +329,48 @@ Means over `S14-sweep`, against `s13-result/scores.json`:
 ---
 
 ## What the last work shipped
+
+### Spec 0026 — the milestone's first half, D2 on the panel, 2026-11-22
+
+On `milestone`. **The first time D2's work since L5 met pages nobody
+tuned on**, the 41 L3 panel pages. The parser's regions were byte for
+byte the same in every run, so each difference is our side's.
+
+| run | against | by eye |
+|---|---|---|
+| `M1-D2-L3`: spec 0024's part two and spec 0025 | `L5-D2-L3` | 17 better, 9 the same, 5 mixed, 10 worse: **kept** |
+| `M2-D2-L3`: part two below | `M1-D2-L3` | 7 moved: 4 better (c0115, c0405, c0343, c0382), c0196 mixed, 2 the same, none worse |
+
+Part two mended three causes, each reproduced and judged on dev first:
+
+| cause | where | on dev |
+|---|---|---|
+| a row printed larger, flattened in a table | `parser_first.table_sizes` | 2 of 10 better, none worse |
+| a sentence going on, its tail measured small | `linebreaks._goes_on` | 3 of 15 better, none worse |
+| drawn cards: parted by their edges, their outline no box, a row one height | `skeleton._between_drawn`, `skeleton._outline`, `render._card_row` | 4 of 15 better, none worse |
+
+**Left**, worst page first (the spec's "What is left on the panel"):
+- an undrawn card grid that the parser reads column by column (c0456;
+  c0384 on dev);
+- a grid read across cards (c0476);
+- sizes in prose (c0334, c0196);
+- a box measured differently once regrouped (c0121);
+- the reader's row read as one cell (c0128);
+- one-offs.
+
+### Spec 0025 — the page's skeleton first, 2026-11-22
+
+On `skeleton`. Step ③ of the conversion rebuilt top-down:
+- `skeleton.py` cuts the page into its parts: drawn boxes, gaps, and
+  the parser's order and roles, checked against each other;
+- `adapter.laid_out` groups and draws inside each part;
+- a grid part is read once more in the reader's table mode
+  (`parser_first.grids_of`);
+- a table's cells are drawn at one size per role
+  (`parser_first.table_sizes`).
+
+By eye on 20 random dev pages: 8 better, c0198 mixed, none worse. Its
+"Outcome — the spec" has the table.
 
 ### Spec 0024 — L5 on D2, our side's faults first, 2026-11-10 to 2026-11-22
 
@@ -493,14 +570,16 @@ In order (`level-up.md` §6):
    ([spec 0024](specs/0024-l5-on-d2.md), issue #47 closed): our side's
    faults on D2's blocks, above. Fitting the looks' constants did not
    pay; the fixes went to structure.
-8. **The milestone — parked 2026-11-22** for spec 0025 (`level-up.md` §6, M1). First the phase on
-   the panel: D2 over the L3 set again (18 minutes; the parser
-   reproduces its regions byte for byte), judged by eye against
-   `L5-D2-L3` and `tests/frozen/p1-d2-l3/`. Then, **only on his word**,
-   the vault opened once: D2 over its 200 pages (about 1 h 45), the
-   checks and a review, its rates beside dev's on the same code. It is
-   the first measure on pages nobody has looked at since the probe of
-   2026-10-24. **Local models only.**
+8. **Spec 0025, the page's skeleton first — done 2026-11-22**
+   ([spec 0025](specs/0025-page-skeleton.md), issue #48 closed), above.
+9. **The milestone's first half, the panel — done 2026-11-22**
+   ([spec 0026](specs/0026-milestone-panel.md), issue #49 closed),
+   above. Its second half, the vault opened once (D2 over its 200
+   pages, about 1 h 45, its rates beside dev's on the same code), is
+   **not for now**, and only on his word. **Local models only.**
+10. **Spec 0027, the panel's remaining causes — next**, decided
+    2026-11-22. Its prompt is spec 0026's "The prompt for the next
+    session".
 
 Each step gets its spec and issue when it starts. Pick up nothing outside
 this plan unless he names it.
