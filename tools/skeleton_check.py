@@ -6,6 +6,10 @@
     # step 1(b): the source's box tree of some dev pages, read in Chrome
     python tools/skeleton_check.py trees c0511,c0274 [--out trees.json]
 
+    # step 2: the skeleton and today's parts scored against the source trees,
+    # each page's tree printed and an overlay sheet drawn (today | skeleton)
+    python tools/skeleton_check.py score c0511,c0274 --label SK-2 [--regions L5-D2-dev]
+
 Offline: `order` reads the HTML files' text and a run's recorded regions (no
 Chrome, no model); `trees` runs headless Chrome over each page's HTML at its
 picture's width. Dev pages only: a panel page is refused.
@@ -23,6 +27,13 @@ child of the latter, a *lane*. A table is one leaf, a grid, unless its
 cells hold such elements: then it is a layout table and each cell a node.
 A node's region is on 0-1 of the page's picture; its parent is its nearest
 ancestor that is a node.
+
+**The score** (spec 0025 §4). A source node's blocks are the parser's
+regions whose centres fall inside it; a node of two blocks or more is
+*found* when one part of ours holds exactly those blocks. Nodes holding
+the same blocks count once. Today's parts are its Zones, the Zones each
+Band sets side by side, and the measured stretches and their lanes
+(`parser_first.measure`); the skeleton's are every part of its tree.
 """
 
 from __future__ import annotations
@@ -298,6 +309,148 @@ def trees(wanted: list[str], out: Path | None) -> int:
     return 0
 
 
+# ---- step 2: the score ----------------------------------------------------------
+
+def _today(raw: list[dict[str, Any]], png: Path) -> tuple[list[tuple[str, frozenset[int]]], Any]:
+    """Today's parts on a page, each with the parser's indices it holds,
+    and the measured Document: `adapter.document_of`'s steps, each Zone's
+    regions tracked, then `parser_first.measure`."""
+    from doc_to_html import adapter
+    from doc_to_html.ir import Document, Flow
+    from doc_to_html.parser_first import containers, flat, measure
+    from doc_to_html.wire import bands_from_boxes
+
+    rectified = flat(png)
+    regions = regions_of(raw)
+    line = adapter.line_height(regions)
+    groups = adapter._unnested(adapter.groups_of(regions, containers(rectified)))
+    zones = [adapter.zone_of(g) for g in groups]
+    held = {id(z): frozenset(r.index for r in g) for z, g in zip(zones, groups)}
+    kept = adapter._titled(list(zones), line)
+    for zone in zones:
+        if zone not in kept:
+            box = zone.bbox
+            table = next(z for z in kept if z.bbox is not None and box is not None
+                         and z.title is not None and abs(z.bbox.top - box.top) < 1e-9)
+            held[id(table)] = held[id(table)] | held[id(zone)]
+    for zone, (band, column) in zip(kept, bands_from_boxes(adapter._stacked(
+            [adapter._inset(z.bbox, line) for z in kept if z.bbox is not None]))):
+        zone.band, zone.column = band, column
+    document = Document(source=rectified.source, zones=kept)
+    measure(document, rectified)
+    parts: list[tuple[str, frozenset[int]]] = [("zone", held[id(z)]) for z in kept]
+    for band in {z.band for z in kept}:
+        members = [z for z in kept if z.band == band]
+        if len(members) > 1:
+            parts.append(("band", frozenset().union(*(held[id(z)] for z in members))))
+    for region in document.regions:
+        inside = [z for z in kept if z.bbox is not None and region.holds(z.bbox)]
+        parts.append(("stretch", frozenset().union(*(held[id(z)] for z in inside))))
+        if region.flow is not Flow.SINGLE:
+            for lane in range(region.lanes):
+                parts.append(("lane", frozenset().union(
+                    *(held[id(z)] for z in inside if region.lane_of(z.bbox) == lane))))
+    return parts, document
+
+
+def _skeleton(raw: list[dict[str, Any]], png: Path) -> Any:
+    from doc_to_html import furniture
+    from doc_to_html.parser_first import containers, flat
+    from doc_to_html.preprocess import content_ink
+    from doc_to_html.skeleton import skeleton
+
+    rectified = flat(png)
+    plain_image = rectified.plain if rectified.plain is not None else rectified.image
+    drawn = furniture.find(plain_image, inverted=rectified.inverted, read=rectified.image)
+    ink = content_ink(furniture.grounded(rectified.image, plain_image, drawn,
+                                         inverted=rectified.inverted))
+    height, width = ink.shape[:2]
+    return skeleton(regions_of(raw), containers(rectified), ink, (width, height))
+
+
+COLOURS = {"page": (120, 120, 120), "rows": (150, 150, 150), "columns": (30, 90, 220),
+           "grid": (240, 140, 0), "box": (20, 160, 60), "flat": (220, 30, 30),
+           "block": (190, 190, 190), "zone": (190, 190, 190), "band": (30, 90, 220),
+           "stretch": (150, 150, 150), "lane": (20, 160, 60)}
+
+
+def _overlay(png: Path, parts: list[tuple[str, Any, int]], title: str) -> Any:
+    """The page with each part's box drawn, coloured by kind, the outer
+    ones thicker."""
+    from PIL import Image, ImageDraw
+
+    image = Image.open(png).convert("RGB")
+    image = Image.blend(image, Image.new("RGB", image.size, (255, 255, 255)), 0.45)
+    draw = ImageDraw.Draw(image)
+    w, h = image.size
+    for kind, box, depth in sorted(parts, key=lambda p: -p[2]):
+        width = 1 if kind in ("block", "zone") else max(1, 4 - depth)
+        draw.rectangle([box.left * w, box.top * h, box.right * w, box.bottom * h],
+                       outline=COLOURS[kind], width=width)
+        if kind not in ("block", "zone", "rows", "page"):
+            draw.text((box.left * w + 2, box.top * h + 1), kind[0].upper(), fill=COLOURS[kind])
+    draw.text((4, h - 14), title, fill=(0, 0, 0))
+    return image
+
+
+def score(wanted: list[str], run: str, label: str) -> int:
+    from PIL import Image
+
+    from doc_to_html.adapter import _union
+
+    out = REPO / "debug" / "runs" / label / "skeleton"
+    out.mkdir(parents=True, exist_ok=True)
+    totals = {"source": 0, "skeleton": 0, "today": 0}
+    for name in dev_only(wanted):
+        raw = json.loads(regions_file(name, run).read_text())
+        png = page(name).png_path(REPO)
+        regions = regions_of(raw)
+        sk = _skeleton(raw, png)
+        today, document = _today(raw, png)
+        mine = {frozenset(p.blocks) for p in sk.walk()}
+        theirs = {blocks for _, blocks in today}
+        nodes = tree(name)
+        seen: dict[frozenset[int], dict[str, Any]] = {}
+        for node in nodes:
+            l, t, r, b = node["box"]
+            held = frozenset(x.index for x in regions if l <= (x.box.left + x.box.right) / 2 <= r
+                             and t <= (x.box.top + x.box.bottom) / 2 <= b)
+            if len(held) >= 2 and held not in seen:
+                seen[held] = node
+        found_sk = [s for s in seen if s in mine]
+        found_today = [s for s in seen if s in theirs]
+        totals["source"] += len(seen)
+        totals["skeleton"] += len(found_sk)
+        totals["today"] += len(found_today)
+        report = [f"{name}: {len(seen)} source parts; skeleton finds {len(found_sk)}, "
+                  f"today {len(found_today)}", sk.describe()]
+        for held, node in seen.items():
+            mark = ("S" if held in mine else "-") + ("T" if held in theirs else "-")
+            report.append(f"  {mark} {node['tag']}.{node['cls'][:14]} [{node['kind']}] "
+                          f"{sorted(held)} {node['text'][:30]!r}")
+        (out / f"{name}.txt").write_text("\n".join(report) + "\n")
+        print(report[0])
+        def depth_of(part: Any, depth: int = 0) -> list[tuple[str, Any, int]]:
+            got = [(part.kind, part.box, depth)]
+            for child in part.children:
+                got += depth_of(child, depth + 1)
+            return got
+        boxes = {x.index: x.box for x in regions}
+        old = [(kind, _union([boxes[i] for i in blocks]), {"stretch": 0, "lane": 1, "band": 2,
+                                                            "zone": 3}[kind])
+               for kind, blocks in today if blocks]
+        left = _overlay(png, old, f"today: {len(found_today)} of {len(seen)}")
+        right = _overlay(png, depth_of(sk), f"skeleton: {len(found_sk)} of {len(seen)}")
+        sheet = Image.new("RGB", (left.width * 2 + 20, left.height), (136, 136, 136))
+        sheet.paste(left, (0, 0))
+        sheet.paste(right, (left.width + 20, 0))
+        sheet.save(out / f"{name}.png")
+        del document
+    print(f"all: {totals['source']} source parts; skeleton finds {totals['skeleton']}, "
+          f"today {totals['today']}")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -307,9 +460,15 @@ def main() -> int:
     t = sub.add_parser("trees", help="step 1(b): the source's box tree of some dev pages")
     t.add_argument("pages", help="comma list of dev page ids")
     t.add_argument("--out", type=Path)
+    c = sub.add_parser("score", help="step 2: the skeleton and today's parts against the trees")
+    c.add_argument("pages", help="comma list of dev page ids")
+    c.add_argument("--regions", default="L5-D2-dev", metavar="RUN")
+    c.add_argument("--label", required=True, help="writes debug/runs/<label>/skeleton/")
     args = parser.parse_args()
     if args.command == "order":
         return order(args.regions)
+    if args.command == "score":
+        return score([n for n in args.pages.split(",") if n], args.regions, args.label)
     return trees([n for n in args.pages.split(",") if n], args.out)
 
 

@@ -186,7 +186,7 @@ or joins two, is a miss. Then by eye, on the same pages.
 |---|---|---|
 | 0 | this spec, `glm-ocr.md`, issue #48, branch `skeleton`; the rest parked | done 2026-11-22 |
 | 1 | **three measurements, offline, before any build** — (a) the parser's order against the source's DOM order (from the HTML files, no Chrome, no model); (b) the source trees of the sampled pages (Chrome, seconds a page), and their depth; (c) optionally, the layout model alone on 5 pages (`glm-ocr.md` §5, way 2): do its raw candidates add anything the order and pixels do not? | the numbers in this spec; **if the order is unreliable, it becomes a tie-break only; if pages rarely nest deeper than two levels, 3d stays in the render's vocabulary** — done 2026-11-22: the order a signal, not a veto; 3d in the vocabulary; way 2 closed (outcome below) |
-| 2 | ③a, the skeleton and its check, D2 only; scored against the source trees and judged by eye on 5 random pages, 5 more if unclear | a net gain in parts found, by eye, and no page worse that is not named |
+| 2 | ③a, the skeleton and its check, D2 only; scored against the source trees and judged by eye on 5 random pages, 5 more if unclear | a net gain in parts found, by eye, and no page worse that is not named — done 2026-11-22: 31 of 32 source parts found against today's 15; 4 pages better by eye, 1 the same (outcome below) |
 | 3 | ③b and 3d: grouping inside the parts, drawn | the 5 pages drawn better by eye |
 | 4 | 3c: grid parts read as tables, on 5 random form pages | the forms' fields in their grid |
 | 5 | 3e: one size per role | 5 random pages nearer the source's sizes by eye |
@@ -310,6 +310,59 @@ same block under a second label (10: IoU 0.8 or more with a kept box,
 `doc_title` under `header`, `text` under `footer`) or one line cut from
 a kept block (9). **None holds two kept blocks**: no container. Way 2
 is closed.
+
+## Outcome — step 2, the skeleton and its check, 2026-11-22
+
+`src/doc_to_html/skeleton.py`, D2's alone and not yet called by any
+conversion: the replay of `s14-result/` cannot move. As §3a, with step
+1's change: **one cut at a time**, the page first. At each part, the
+drawn boxes holding two blocks or more are units; the candidate cuts
+are the gaps across and the gutters down between the units' ink
+(`snapped`: each block's box drawn in to its ink, rules removed, fills
+read against their own ground); each is scored by the share of block
+pairs it sets against the parser's order, the fewest first, the wider
+gap on a tie; a cut down setting more pairs against the order than
+reading by position is refused; a block lifted across a gutter is a
+last resort. Then the check (§3a), which keeps a failing part flat.
+
+**Mended on the way**, each found on the 5 pages and pinned by a test:
+- a lifted cut beat a clean gap across because its gutter was wider:
+  c0514's certificate number, a full-width line, was put in the
+  signature's column. A lift is now taken only where every clean cut
+  sets blocks against the order;
+- a drawn box holding every block of its part was never used (c0514's
+  header band and its frame); it is now the part's one unit;
+- the header and footer peel took the footer out of the frame that holds
+  it (c0514); a drawn box holding a body block keeps its edge blocks;
+- a fieldset's legend sits on its frame's top rule, its centre just
+  outside (c0093's `PART 1`, `PART 3`, `SIGN HERE`): a block set on a
+  box's top edge, within its width, is held by it;
+- a top `number` (c0093's `2024`) was left out of the header row;
+- a grid: rows each cut into the same columns, or columns each cut into
+  the same rows, every cell three blocks or fewer, each cell's start or
+  end within half a line of its run's (c0511's four fields, `Venue` read
+  with its label and `Date` without: tops apart, feet together). Two
+  bullet lists side by side are not a grid.
+
+**Scored** against the source trees (`tools/skeleton_check.py score
+c0511,c0274,c0093,c0514,c0504 --label SK-2`): a source part of two
+blocks or more is found when one part holds exactly its blocks.
+Today's parts are its Zones, its Bands' Zones side by side, and the
+measured stretches and their lanes.
+
+| page | source parts | today | skeleton | by eye, the skeleton's parts against today's |
+|---|---|---|---|---|
+| c0511 | 5 | 1 | **5** | better: the ticket's frame, the stub's fill \| the main column, the 2×2 fields a grid, ADMISSION \| GETTING HERE; today's Bands cross the stub and the main column (`HOS-0048213` banded with the title) |
+| c0093 | 13 | 10 | **13** | better: the header strip's three lanes, both columns of fieldsets, each fieldset whole with its legend; today misses `2024`'s lane, PART 2 and SIGN HERE |
+| c0514 | 5 | 2 | **5** | better: the band, the frame, the date \| seal \| signature row; today misses the frame and the row |
+| c0504 | 9 | 2 | **8** | better: photo \| name, main column \| sidebar, each job's title \| dates; today's Bands cross the two columns (PROFILE banded with E-MAIL). Missed: SKILLS, a heading over chips with no drawn box: grouping's, inside the part (3b) |
+| c0274 | 0 | 0 | 0 | the same: three tables and a heading, nothing to cut |
+| **all** | **32** | **15** | **31** | **4 better, 1 the same, none worse** |
+
+No part fell back flat, none was lifted and every drawn container of
+two blocks is a part, on all 5: the check and the lift have run on
+synthetic pages only (`tests/test_skeleton.py`, ten tests, each failing
+without its rule). `mypy src/` clean.
 
 ---
 
