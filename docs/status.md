@@ -1,31 +1,30 @@
-# Status — 2026-11-22 (**active: spec 0025, the page's skeleton first, step 3 rebuilt top-down (issue #48, branch `skeleton`); everything else parked. Spec 0024, L5's first fix phase on D2, closed the same day (#47)**)
+# Status — 2026-11-22 (**nothing active: spec 0025, the page's skeleton first, closed (#48, branch `skeleton`); the milestone, parked for it, is the natural next step, Alessandro's call**)
 
 **Live document.** This is where the project actually is. When it goes stale,
 rewrite it; do not add a banner and leave it. Rewritten 2026-11-22, when
-Alessandro closed spec 0024 (L5's first phase on D2, issue #47). Before
-that: 2026-10-23 (`S14-sweep` the baseline, every open item cleared),
+spec 0025 closed. Before that: the same day, when spec 0024 (L5's first
+phase on D2, #47) closed; 2026-10-23 (`S14-sweep` the baseline),
 2026-10-24 (the level-up plan, [`level-up.md`](level-up.md) §8),
 2026-10-30 (the corpus, spec 0020), 2026-11-07 (L2, spec 0021) and
 2026-11-09 (L3, spec 0022; P1, spec 0023; P2 decided: take D2).
 
-**In plain words.** A page picture now goes through GLM-OCR, a small
-local document parser, which finds the blocks and reads their text. Our
-code turns that into the IR, measures the looks from the pixels and draws
-the HTML. Spec 0024 mended our side of that: the words the adapter wrote,
-blocks set side by side, tables, rules, tick boxes, line breaks, nested
-boxes, colours. Each fix was judged by eye on random dev pages. What is
-left is mostly the parser's reading (words lost or misread in small
-type) and the looks a line's own measure cannot give (sizes, bold inside
-a line).
+**In plain words.** A page picture goes through GLM-OCR, a small local
+document parser, which finds the blocks and reads their text. Our code
+turns that into the IR, measures the looks from the pixels and draws the
+HTML. Spec 0024 mended our side of that. Spec 0025 rebuilt the step that
+arranges the blocks, top-down: the page is first cut into its parts
+(drawn boxes, gaps, the parser's order and roles, checked against each
+other), then grouped inside each part and drawn from that tree. Each
+part a grid is read once more by the parser as a table, and a table's
+cells are drawn at one size per role. Judged on 20 random dev pages, 8
+better, c0198 mixed, none worse. What is left is in spec 0025's
+"Outcome — the spec": a Zone's crop read differently once regrouped,
+sizes in prose, a heading over chips, a few drawing faults.
 
-**Active, 2026-11-22: [spec 0025](specs/0025-page-skeleton.md)** (issue
-#48, branch `skeleton`, cut from `l5`): conversion step 3, the adapter,
-rebuilt top-down: the page's skeleton from drawn containers, empty gaps,
-GLM-OCR's reading order and its roles, checked against each other, then
-today's grouping inside each part. [`glm-ocr.md`](glm-ocr.md) holds what
-GLM-OCR gives and does not give. **Everything else is parked** (the
-spec's §7), the level-up milestone included. Start from the spec's last
-prompt.
+**Next — Alessandro's call.** The milestone (the panel, then the
+vault), parked for spec 0025, is the natural next step: its prompt is
+[spec 0025](specs/0025-page-skeleton.md)'s "The prompt for the next
+session". The rest of spec 0025's §7 stays parked until he names it.
 
 Reading order for a fresh session:
 1. `CLAUDE.md`'s **READ THIS FIRST**;
@@ -34,39 +33,43 @@ Reading order for a fresh session:
 3. this file;
 4. [`level-up.md`](level-up.md)'s Gist, §6 and §8: the plan from
    2026-10-24, and what comes next;
-5. [`specs/0024-l5-on-d2.md`](specs/0024-l5-on-d2.md)'s "Outcome — the
-   phase": what each fix did, what is left by stage, and the next
-   session's prompt;
+5. [`specs/0025-page-skeleton.md`](specs/0025-page-skeleton.md)'s
+   "Outcome — the spec": the skeleton, what it fixed, what is left;
+   [`glm-ocr.md`](glm-ocr.md): what GLM-OCR gives and does not give;
+   [`specs/0024-l5-on-d2.md`](specs/0024-l5-on-d2.md)'s "Outcome — the
+   phase": what each fix did on D2;
    [`specs/0023-parser-first.md`](specs/0023-parser-first.md)'s
-   outcomes: what D2 is, D2 against L3-baseline class by class, what our
-   side gets wrong on D2's blocks, and P2's decision;
+   outcomes: what D2 is, and P2's decision;
    [`specs/0022-the-honest-baseline.md`](specs/0022-the-honest-baseline.md)'s
    "Outcome", the L3 reference; [`specs/0021-measurement-and-the-judge.md`](specs/0021-measurement-and-the-judge.md)'s
    "Where L2 stands", what the checks and the judge are; and
    [`agents/review-criteria.md`](agents/review-criteria.md), the
    criteria every review is judged by;
 6. [`specs/0019-steady-checked-structured-styled.md`](specs/0019-steady-checked-structured-styled.md)'s
-   "Outcome — the steps" and "Outcome — the sweep", the last conversion
-   work done.
+   "Outcome — the steps" and "Outcome — the sweep", the last work on
+   today's pipeline.
 
 If you are going to look at output — and you should — use the
 **`visual-review` skill**.
 
-**Branches.** `main`, `develop`, `level-up`, `poc-parser-first` and `l5`
-are on the remote. D2 and spec 0024's work live on **`l5`**, cut from
-`poc-parser-first`; **`main` was fast-forwarded to `l5` on 2026-11-22**,
-as at each close (round 10), so the landing page shows the current code.
+**Branches.** `main`, `develop`, `level-up`, `poc-parser-first`, `l5`
+and `skeleton` are on the remote. D2 lives on **`skeleton`**, cut from
+`l5`; **`main` was fast-forwarded to `skeleton` on 2026-11-22**, as at
+each close (round 10), so the landing page shows the current code.
 `develop` and `level-up` stay where they were; `scaffold` is retired
 into `develop`.
 
-**Proved on 2026-11-22, at the close** (`l5`): 1810 tests pass (1 skipped); `mypy src/`
-clean; `tools/replay_run.py` reproduces `s14-result/` 21 of 21 byte for
+**Proved on 2026-11-22, at the close** (`skeleton`): the changed
+files' tests and `mypy src/` (the full suite is run only when Alessandro
+asks); `tools/replay_run.py` reproduces `s14-result/` 21 of 21 byte for
 byte, 0 asked differently, and `tools/rederive.py` 21 of 21. **Today's
 pipeline is untouched**: each D2 change sits in D2's own steps or is
-gated on D2's blocks (`adapter.ENGINE`), and the replay proves the old
-pipeline answers and draws as at `a0d73c9`. The dev pool's recorded regions are in `debug/runs/L5-D2-dev/`
-(gitignored, keep it): `tools/d2.py <label> --pages dev --regions
-L5-D2-dev --jobs 4` redraws all 231 dev pages offline, no model.
+gated on D2's blocks (`adapter.ENGINE`, `Region.banded`), and the replay
+proves the old pipeline answers and draws as at `a0d73c9`. The dev
+pool's recorded regions are in `debug/runs/L5-D2-dev/` (gitignored,
+keep it): `tools/d2.py <label> --pages dev --regions L5-D2-dev --jobs 4`
+redraws all 231 dev pages offline, no model; `--grids` reads the grids
+too (one reader call each).
 
 **How work is judged — Alessandro, 2026-10-12, for spec 0011; carried
 over by specs 0012 to 0019.**

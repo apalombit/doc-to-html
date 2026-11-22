@@ -190,7 +190,7 @@ or joins two, is a miss. Then by eye, on the same pages.
 | 3 | ③b and 3d: grouping inside the parts, drawn | the 5 pages drawn better by eye — done 2026-11-22: 4 better, c0274 the same, none worse (outcome below) |
 | 4 | 3c: grid parts read as tables, on 5 random form pages | the forms' fields in their grid — done 2026-11-22: 2 better, 3 the same, none worse, after two guards (outcome below) |
 | 5 | 3e: one size per role | 5 random pages nearer the source's sizes by eye — done 2026-11-22, in tables: 2 of 10 nearer, 8 the same, none worse (outcome below) |
-| 6 | close: outcome here, `docs/status.md`, `CLAUDE.md`, the full suite, `main` fast-forwarded, the issue closed, a handover prompt | — |
+| 6 | close: outcome here, `docs/status.md`, `CLAUDE.md`, `main` fast-forwarded, the issue closed, a handover prompt (the full suite dropped, Alessandro: minimal tests only) | done 2026-11-22 (outcome below) |
 
 One commit a step, its outcome written here.
 
@@ -575,6 +575,95 @@ Step 5 changes D2's code only. `tests/test_skeleton.py` has three more
 tests, each failing without its rule (a Cell off its column, a header
 row too short for its columns, a column's own size). `mypy src/` is
 clean.
+
+## Outcome — the spec, 2026-11-22
+
+**What D2's conversion does now**, step ③ and after, D2's alone:
+
+- **③a the skeleton** (`skeleton.py`): the page cut top-down, one cut at
+  a time. Drawn boxes holding two blocks or more are parts. Gaps are
+  measured on the blocks' ink, and the parser's order is a signal, not a
+  veto. Headers, footers and a page number go with the page's edges, a
+  caption stays with its figure, and grids are found both ways. A check
+  keeps a failing part flat. On 5 fault pages it found 31 of the
+  sources' 32 parts, where the old grouping found 15.
+- **③b, 3d grouping inside the parts, drawn from the tree**
+  (`adapter.laid_out`): a lane holding several Zones is a banded columns
+  Region. A frame or a fill round a row is drawn round it, not in each
+  lane, and a box inside text is banded under it.
+- **3c a grid read as a table** (`parser_first.grids_of`, `with_grids`,
+  `tools/glmocr_read.py`): one reader call per grid, in the reader's
+  table mode. Not read where it holds a picture larger than a mark;
+  refused where the table drops a word.
+- **3e one size per role, in tables** (`parser_first.table_sizes`).
+
+**By eye**, each step against the one before it, on 20 random pages:
+
+- the skeleton and its drawing: **6 better** (c0511, c0093, c0514,
+  c0504, c0439, c0246) and **c0198 mixed**; two pages it first made
+  worse were mended (probe_datasheet, c0407);
+- the grids: c0096 and c0008 better;
+- the table sizes: c0198 and c0439 better.
+
+None is worse. Today's pipeline is
+untouched: the replay of `s14-result/` and `tools/rederive.py` over it
+each reproduce it, 21 of 21.
+
+**What is left, by stage**, most pages first as far as these 20 show:
+
+| # | fault | stage | pages |
+|---|---|---|---|
+| 1 | a Zone's crop changes with the grouping, and tesseract reads it differently (`locate`): c0198's `SHIP TO` unplaced, its address row broken | ④ measuring | c0198 |
+| 2 | sizes in prose: under the draw threshold (c0246's drug names at 1.11); one block mis-measured (c0439's white title at 1.00, c0407's line with one tall letter at 0.82); not measured (probe_datasheet's intro) | ④ measuring, ⑤ the threshold | c0246, c0439, c0407, probe_datasheet |
+| 3 | a heading over chips with no drawn box, not a part | ③a | c0504's SKILLS |
+| 4 | drawing: a name right of its photo's box; a stub's fill short of the ticket's foot; a drop cap drawn as a bar; value boxes drawn as a table's rule | ⑤ | c0504, c0511, c0407, form_0007 |
+| 5 | grids read on only 6 of 25 form pages: the parser reads the rest as tables itself | 3c | — |
+
+**What is not known**: the skeleton over the whole dev set and the
+panel. By this spec's rule it was judged on 20 random pages only. The
+milestone's panel run measures it on the 41 L3 pages against
+`L5-D2-L3`, with the grids read (1–2 s a grid).
+
+## The prompt for the next session
+
+**Alessandro's call.** The milestone, parked for this spec, is the
+natural next step: it is spec 0024's milestone prompt, renumbered and
+cut from `skeleton`.
+
+> Start the level-up plan's milestone on arm D2 (`docs/level-up.md` §6,
+> row M1). Spec 0025, the page's skeleton first, is done: issue #48
+> closed, branch `skeleton`, `main` fast-forwarded to it. Read
+> `CLAUDE.md`'s READ THIS FIRST, `docs/status.md`, `docs/level-up.md`'s
+> Gist and §6, spec 0025's "Outcome — the spec", spec 0024's "Outcome —
+> the phase", and `docs/agents/review-criteria.md`.
+>
+> 1. **Write spec 0026** and its GitHub issue
+>    (`docs/agents/issue-tracker.md`), on a branch cut from `skeleton`.
+> 2. **The phase on the panel.** Prove first: the replay of
+>    `s14-result/` 21 of 21, `mypy src/`. Then, every Chrome job
+>    finished, `tools/batch.py M1-D2-L3 --arm d2 --pages l3` (about 18
+>    minutes of local model time and a reader call per grid; check the
+>    regions against `L5-D2-L3`'s, which the parser has reproduced byte
+>    for byte each time). Then `tools/measure_run.py
+>    debug/runs/M1-D2-L3 --previous debug/runs/L5-D2-L3 --model
+>    glm-ocr:latest --all`, and judge every moved page by eye against
+>    `L5-D2-L3`: better, same or worse, each with a sentence naming the
+>    element. Put his spot checks and the vault question on the issue
+>    page (load the `artifact-capabilities` skill first; never re-show
+>    a decided issue, `docs/agents/review-issues.json`).
+> 3. **The vault, only on his word.** It is sealed in
+>    `doc_to_html.corpus`; it is opened once, and only when he says so
+>    in so many words. D2 over its 200 pages is about 1 h 45: say so,
+>    and that it costs local model time only, before starting.
+>
+> Rules: local models only. Never pass `unseal=True` unless he has said
+> to open the vault. No panel page in a test or to tune anything, c0001
+> and c0002 above all. Today's pipeline stays as it is: the replay of
+> `s14-result/` stays 21 of 21. One conversion at a time, nothing
+> beside it; every Chrome job finished before a conversion starts. Run
+> nothing he has not asked for. Judge by eye; a number is a pointer to
+> a page. Replies short: what worked or not and why, each change as page
+> / before / after; no process lines.
 
 ---
 

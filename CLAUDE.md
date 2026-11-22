@@ -40,13 +40,14 @@ and every call Alessandro has made since is in that file.
 
 Each piece of work gets a spec in `docs/specs/`, one file per piece of work, each
 tracked as a GitHub issue. **Read the spec before the code** — it carries the
-measured numbers and what has already been tried and rejected. **Spec
-0025, `docs/specs/0025-page-skeleton.md` (issue #48, branch `skeleton`),
-is the one active piece of work since 2026-11-22: conversion step 3
-rebuilt top-down, the page's skeleton before grouping; `docs/glm-ocr.md`
-holds what GLM-OCR gives and does not give. Everything else is parked
-(the spec's §7), the milestone below included; start from the spec's
-last prompt.** Spec 0024, `docs/specs/0024-l5-on-d2.md` (issue #47, closed
+measured numbers and what has already been tried and rejected. **Nothing
+is active since 2026-11-22.** Spec 0025, `docs/specs/0025-page-skeleton.md`
+(issue #48, closed 2026-11-22, branch `skeleton`), rebuilt conversion
+step 3 top-down: the page's skeleton before grouping, grids read as
+tables, one size per role in a table; `docs/glm-ocr.md` holds what
+GLM-OCR gives and does not give. **The milestone, parked for it, is the
+natural next step and Alessandro's call: its prompt is spec 0025's "The
+prompt for the next session".** The rest of spec 0025's §7 stays parked. Spec 0024, `docs/specs/0024-l5-on-d2.md` (issue #47, closed
 2026-11-22), ran L5's first phase on arm D2, branch `l5`: our side's
 faults on GLM-OCR's output, part A by group and part two by every dev
 major's stage, each fix judged by eye on a random sample. Its milestone
@@ -100,9 +101,10 @@ L2, the checks and the judge, done 2026-11-07; L3, the honest
 baseline, done 2026-11-09), then a
 GLM-OCR parser-first PoC (P1, done 2026-11-09), local models only.
 **P2, decided 2026-11-09: take D2**, the parser-first arm. L5's first
-phase on D2, our side's faults, is done 2026-11-22 (spec 0024); active
-now is spec 0025, the page's skeleton first, and the milestone is parked. D2 lives on branch `l5`, cut from
-`poc-parser-first`, and `main` is fast-forwarded to it at each close;
+phase on D2, our side's faults, is done 2026-11-22 (spec 0024), and
+spec 0025, the page's skeleton first, the same day; the milestone is
+next, his call. D2 lives on branch `skeleton`, cut from `l5`, and
+`main` is fast-forwarded to it at each close;
 `scaffold` is retired into `develop`.
 
 ```
@@ -279,7 +281,9 @@ LEVEL-UP    2026-10-24, Alessandro: docs/level-up.md, branch level-up —
                 set 17 better than P1, 8 same, 4 worse; part two,
                 directions 1-7, each on a random dev sample
               Spec 0025 the page's skeleton first, step 3 top-down,
-                #48, branch skeleton             ACTIVE 2026-11-22
+                #48, branch skeleton             DONE 2026-11-22:
+                the skeleton, grids as tables, a table's sizes;
+                20 random dev pages, 8 better, 1 mixed, none worse
               M1 the milestone: panel, then vault  PARKED 2026-11-22
 ```
 
@@ -341,7 +345,8 @@ by 2026-10-30; L2, spec 0021, the checks and the judge by 2026-11-07; L3, spec 0
 the honest baseline by 2026-11-09; P1, spec 0023, the parser-first PoC
 the same day, and he decided P2: take D2. L5's first phase, spec 0024,
 mended our side on D2 by 2026-11-22; spec 0025, the page's skeleton
-first, is active, and the milestone is parked.
+first, rebuilt step 3 top-down the same day; the milestone is next,
+his call.
 `docs/specs/0007-handover.md` holds spec 0007's prompts, as record.
 
 **[`docs/status.md`](docs/status.md) is the live status — read it second, after
@@ -769,7 +774,7 @@ each other — `CellState.DISPUTED` and the Ladder are already the vocabulary fo
 it, and `_climb_ladders` already records that it waits on a second Engine. That
 is model time and Alessandro's decision, not a detector.
 
-**Tracker state, 2026-11-22: #48 (spec 0025, the page's skeleton) is open; #47 (spec 0024, L5 on D2) closed when its phase closed, #46 (spec 0023, P1) when P2 was decided, #45 (spec 0022, L3) closed when its work finished, #44 (spec 0021, L2) likewise, #43 (spec 0020, the corpus) when the corpus was built.** #31–#42 (specs 0008–0019) are closed, each done and decided. #30 (spec 0007) closed when its
+**Tracker state, 2026-11-22: nothing open; #48 (spec 0025, the page's skeleton) closed when its work finished; #47 (spec 0024, L5 on D2) closed when its phase closed, #46 (spec 0023, P1) when P2 was decided, #45 (spec 0022, L3) closed when its work finished, #44 (spec 0021, L2) likewise, #43 (spec 0020, the corpus) when the corpus was built.** #31–#42 (specs 0008–0019) are closed, each done and decided. #30 (spec 0007) closed when its
 work plan finished; #29 records spec 0006 retrospectively; #28 (spec 0005) and
 #17 (the vision layout prompt) were closed by Thread 0. Every other spec is closed
 history; 0007 still defines the target.
