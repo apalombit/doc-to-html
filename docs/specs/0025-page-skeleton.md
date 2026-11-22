@@ -189,7 +189,7 @@ or joins two, is a miss. Then by eye, on the same pages.
 | 2 | ③a, the skeleton and its check, D2 only; scored against the source trees and judged by eye on 5 random pages, 5 more if unclear | a net gain in parts found, by eye, and no page worse that is not named — done 2026-11-22: 31 of 32 source parts found against today's 15; 4 pages better by eye, 1 the same (outcome below) |
 | 3 | ③b and 3d: grouping inside the parts, drawn | the 5 pages drawn better by eye — done 2026-11-22: 4 better, c0274 the same, none worse (outcome below) |
 | 4 | 3c: grid parts read as tables, on 5 random form pages | the forms' fields in their grid — done 2026-11-22: 2 better, 3 the same, none worse, after two guards (outcome below) |
-| 5 | 3e: one size per role | 5 random pages nearer the source's sizes by eye |
+| 5 | 3e: one size per role | 5 random pages nearer the source's sizes by eye — done 2026-11-22, in tables: 2 of 10 nearer, 8 the same, none worse (outcome below) |
 | 6 | close: outcome here, `docs/status.md`, `CLAUDE.md`, the full suite, `main` fast-forwarded, the issue closed, a handover prompt | — |
 
 One commit a step, its outcome written here.
@@ -522,6 +522,59 @@ c0008 and form_0007 (badge 20, a ☒), now drawn under their line: the
 same structure. **Replay of `s14-result/`: 21 of 21 byte-identical, 0
 asked differently.** `tests/test_skeleton.py` has three more tests, and
 each fails without its rule. `mypy src/` is clean.
+
+## Outcome — step 5, one size per role, in tables, 2026-11-22
+
+The sample is seed 250005: the 210 dev pages with `sizes out of
+proportion` at `L5-F13`, the first 5 (c0246, probe_datasheet, c0407,
+c0198, c0439), then the next 5 (c0589, c0475, c0276, pricing_0017,
+c0518) to look for harm. The "before" is today's code with the mends
+above (`SK-5f`, and `SK-5h0` drawn at `9086e85`).
+
+**What the faults were.** A line's size is measured in whole pixels on a
+body glyph of 8 to 11 px, so one pixel is 0.09 to 0.12 of the body. On
+the first five pages the faults are of two kinds:
+
+- **A table cell 3 or 4 px off its peers**, which the page prints in one
+  size: c0198's backordered row (grey italic) and its total row at 0.50
+  among rows at 1.00, its `Ship` header at 0.62 among headers at 1.00;
+  c0439's `Hexagon size` at 0.62 in a column at 1.00, and its `Range`
+  header at 0.75. This is what a per-role median reaches.
+- **In prose, not a group's outlier**, so a median does not reach it:
+  - c0246's three drug names measure 1.22, 1.11 and 1.11, and those
+    under `render.SIZE_STEP` (0.15) are drawn at the body's size;
+  - probe_datasheet's intro is not measured;
+  - c0439's title, white on its strip, measures 1.00;
+  - c0407's `pequenos e prazos curtos.`, whose only tall letter is a
+    `t`, measures 0.82.
+
+  These are the measure and the draw threshold (spec 0024 §5), named
+  here and not mended.
+
+**What shipped** (`parser_first.table_sizes`, D2 only, right after
+`looks.read`): each table's header, data and summary Cells are drawn at
+the median of their column's Cells of that role, where at least `PEERS`
+(3) are measured, else at the median of the role's. A column keeps a
+size of its own (a price larger than its item); a Cell does not.
+
+**By eye**, `tools/d2.py SK-5g --previous SK-5f` and
+`SK-5h --previous SK-5h0`:
+
+| page | before | after | |
+|---|---|---|---|
+| c0198 | the backordered row and the total row at half the body's size, `Ship` small | each at the body's size, as printed | **better** |
+| c0439 | `Hexagon size` and the `Range` header small | at the body's size, as printed | **better** |
+| c0246, probe_datasheet, c0407 | no table size fault | — | same |
+| c0589, c0475, c0276, pricing_0017, c0518 | their tables at one size | the same (their HTML moved on sizes under the draw threshold) | same |
+
+One more fault is visible now that the backordered row is drawn at full
+size: it draws bold where the page prints grey italic. That weight was
+measured before; it was only too small to see.
+
+Step 5 changes D2's code only. `tests/test_skeleton.py` has three more
+tests, each failing without its rule (a Cell off its column, a header
+row too short for its columns, a column's own size). `mypy src/` is
+clean.
 
 ---
 

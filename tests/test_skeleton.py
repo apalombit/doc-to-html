@@ -1,6 +1,7 @@
 """The page's skeleton, top-down — spec 0025, step 2 (`doc_to_html.skeleton`),
 the page laid out from it, step 3 (`adapter.laid_out`), and a grid read
-as a table, step 4 (`parser_first.with_grids`, `readable`).
+as a table, step 4 (`parser_first.with_grids`, `readable`), and one size
+per role in a table, step 5 (`parser_first.table_sizes`).
 
 Each rule on a small page of the parser's blocks, boxes on 0-1 of a
 1000 x 1000 picture, a line 20 px tall; each test fails without its rule.
@@ -11,8 +12,9 @@ from __future__ import annotations
 import re
 
 from doc_to_html.adapter import Region, laid_out, regions_of
-from doc_to_html.ir import BBox, Document, Flow, Furniture, Region as IRRegion, Source
-from doc_to_html.parser_first import readable, with_grids
+from doc_to_html.ir import (BBox, Cell, Document, Flow, Furniture, Kind, Look, Region as IRRegion,
+                            Reading, Row, RowRole, Source, Zone)
+from doc_to_html.parser_first import readable, table_sizes, with_grids
 from doc_to_html.render import render
 from doc_to_html.skeleton import Part, check, skeleton
 
@@ -258,3 +260,34 @@ class TestAGridReadAsATable:
                  "<tr><td>Peter Whitlock</td><td>Father</td></tr></table>")
         grid = {"blocks": [0, 1, 2, 3, 5], "bbox_2d": [50, 100, 500, 150], "content": table}
         assert [r["label"] for r in with_grids(fragments, [grid])] == ["table"]
+
+
+# ---- step 5: one size per role (`parser_first.table_sizes`, 3e) ------------------
+
+class TestOneSizePerRoleInATable:
+    def table(self, header: list[float | None], rows: list[list[float | None]]) -> Zone:
+        def cells(sizes: list[float | None]) -> list[Cell]:
+            return [Cell(readings=[Reading(engine="glm-ocr", text="x")],
+                         look=None if size is None else Look(size=size))
+                    for size in sizes]
+        return Zone(kind=Kind.TABLE, rows=[Row(role=RowRole.HEADER, cells=cells(header))]
+                    + [Row(role=RowRole.DATA, cells=cells(row)) for row in rows])
+
+    def sizes(self, zone: Zone) -> list[list[float | None]]:
+        table_sizes(Document(source=Source(path="p.png", sha256="0", width=1, height=1),
+                             zones=[zone]))
+        return [[c.look.size if c.look else None for c in row.cells] for row in zone.rows]
+
+    def test_a_cell_off_its_column_is_drawn_at_the_column_s_size(self) -> None:
+        # c0198's backordered row at 0.50 among rows at 1.00.
+        zone = self.table([1.0, 1.0], [[1.0, 1.0], [0.5, 0.5], [1.0, 1.12], [None, 1.0]])
+        assert self.sizes(zone)[1:] == [[1.0, 1.0]] * 4
+
+    def test_a_header_too_short_for_its_columns_takes_the_role_s_size(self) -> None:
+        # c0198's `Ship` at 0.62 among headers at 1.00.
+        zone = self.table([1.0, 1.0, 0.62, 1.0], [[1.0, 1.0, 1.0, 1.0]])
+        assert self.sizes(zone)[0] == [1.0, 1.0, 1.0, 1.0]
+
+    def test_a_column_keeps_a_size_of_its_own(self) -> None:
+        zone = self.table([1.0, 1.0], [[1.0, 1.5], [1.0, 1.5], [1.0, 1.38]])
+        assert [row[1] for row in self.sizes(zone)[1:]] == [1.5, 1.5, 1.5]

@@ -29,6 +29,8 @@ import re
 import subprocess
 import time
 from collections import Counter
+from dataclasses import replace
+from statistics import median
 from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
@@ -36,7 +38,7 @@ from typing import Any
 from . import checkboxes, furniture, linebreaks, locate, looks, rhythm
 from . import style as style_module
 from .adapter import FIGURES, document_of, laid_out, line_height, plain, regions_of
-from .ir import BBox, Document, Flow, Kind, Region, RowRole, Zone
+from .ir import BBox, Cell, Document, Flow, Kind, Look, Region, RowRole, Zone
 from .orchestrator import body_px
 from .preprocess import (Rectified, _cv2, caption_band, content_ink, equalise,
                          figure_pixels, ground_is_dark, header_band, resize_long_edge,
@@ -262,8 +264,52 @@ def measure(document: Document, rectified: Rectified,
     furniture.place(document.furniture, document.zones)
     rhythm.read(plain, document)
     looks.read(plain, document, photographed=False, inverted=rectified.inverted)
+    table_sizes(document)
     checkboxes.restore(plain, document)
     linebreaks.apart(document, cuts)
+
+
+PEERS = 3
+"""How many measured Cells a table's role, or one column of it, holds for
+their median to be the size they are drawn at (`table_sizes`)."""
+
+
+def table_sizes(document: Document) -> None:
+    """One size per role in a table — spec 0025, 3e. A table sets its
+    header in one size, its rows in one, its totals in one; a column may
+    set its own (a price larger than its item). Each Cell of a role is
+    drawn at the median of its column's Cells of that role, where at least
+    `PEERS` are measured, else at the median of the role's, where at least
+    `PEERS` are; a Cell no group reaches keeps its own.
+
+    A Cell's size is measured on its own line at a glyph of 8 to 11 pixels,
+    in whole pixels, so one pixel is 0.09 to 0.12 of the body, and a Cell
+    off by three or four is not rare: c0198's backordered row in grey
+    italic and its total row at 0.50 among rows at 1.00, its `Ship` header
+    at 0.62 among headers at 1.00, c0439's `Hexagon size` at 0.62 in a
+    column at 1.00. The page prints every one at the body's size."""
+    for zone in document.zones:
+        if zone.kind is not Kind.TABLE:
+            continue
+        for role in RowRole:
+            cells = [(column, cell) for row in zone.rows if row.role is role
+                     for column, cell in enumerate(row.cells) if cell.text.strip()]
+
+            def measured(group: Sequence[tuple[int, Cell]]) -> float | None:
+                sizes = [cell.look.size for _, cell in group
+                         if cell.look is not None and cell.look.size is not None]
+                return round(float(median(sizes)), 2) if len(sizes) >= PEERS else None
+
+            whole = measured(cells)
+            for column in {column for column, _ in cells}:
+                group = [(at, cell) for at, cell in cells if at == column]
+                size = measured(group)
+                size = whole if size is None else size
+                if size is None:
+                    continue
+                for _, cell in group:
+                    cell.look = (Look(size=size) if cell.look is None
+                                 else replace(cell.look, size=size))
 
 
 def skeleton_of(raw: Sequence[dict[str, Any]], rectified: Rectified,
