@@ -473,7 +473,7 @@ Round 13's 17 spot checks have no answer saved on the issue page.
 >    `mypy src/`.
 > 3. **Cause 1, a grid of cards the page draws no box round** (c0456 on
 >    the panel; c0384 on dev). The parser reads it column by column, so
->    the skeleton's cut down wins over the gaps across that part its
+>    the skeleton's cut down wins over the gaps across between its
 >    rows. **Measure first**, offline over the dev pool's recorded
 >    regions (`debug/runs/L5-D2-dev/`, no model). Count the parts
 >    where a gap across runs through every column while the parser's
