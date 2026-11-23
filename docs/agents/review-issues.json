@@ -5621,7 +5621,12 @@
      ],
      "labels": [
       "1"
-     ]
+     ],
+     "decided": {
+      "verdict": "disagree",
+      "note": "minor - if text is in this is just font size matter",
+      "on": "2026-11-23"
+     }
     },
     {
      "key": "m2-c0405",
@@ -5677,7 +5682,12 @@
      "labels": [
       "1",
       "2"
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-23"
+     }
     },
     {
      "key": "m2-c0555",
@@ -5733,7 +5743,12 @@
      "labels": [
       "1",
       "2"
-     ]
+     ],
+     "decided": {
+      "verdict": "agree",
+      "note": "",
+      "on": "2026-11-23"
+     }
     },
     {
      "key": "m2-next",

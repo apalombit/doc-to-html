@@ -436,7 +436,7 @@ not found:
 | 2 | a grid part across several cards, its table read joining them | ③a, 3c | c0476 | not yet looked for |
 | 3 | cards spread, one tall with a code fence as its heading | not read from the IR | c0575 | — |
 | 4 | a payment card in three boxes, its labels parted from their values; its boxes are found, the fault is lower | not read from the IR | c0129 | — |
-| 5 | sizes in prose: a parser block of its own measured small (`Mondays.` 0.6); a paragraph drawn at half size | ④ | c0334, c0196 | spec 0025's left fault 2 (c0246, c0439, c0407) |
+| 5 | sizes in prose: a parser block of its own measured small (`Mondays.` 0.6); a paragraph drawn at half size. **Minor**, his call on c0196 (round 14): its words all in, "just font size" | ④ | c0334, c0196 | spec 0025's left fault 2 (c0246, c0439, c0407) |
 | 6 | a box regrouped, measured differently: the net pay at 0.9 where L5 measured 1.6 | ④ | c0121 | c0198 (spec 0025's fault 1) |
 | 7 | the reader returns a table row as one cell (`TOTAL(33items)54.44`), so (b) has one cell to keep | the parser's reader | c0128 | — |
 | 8 | one each: a footer's right part torn off (c0074); a one-line banner title broken (c0334); a heading at 2.9 times (c0034); a fill added behind a photo (c0527); a page 1.15 of its height (c0547) | ③, ④, ⑤ | five pages | — |
@@ -450,10 +450,10 @@ and 2 are one fault. Both concern a grid of cards with no drawn box.
 |---|---|---|
 | 1 | the milestone's halves | **Decided** (2026-11-22, the prompt): the panel only; the vault is not for now, `unseal=True` never passed |
 | 2 | round 13's last issue: keep the code, mend (b), (c), then (a) on dev first, run the panel again | **Decided** (2026-11-22, in chat): "Go ahead keep this" |
-| 3 | round 14's last issue: close this spec; next, a spec for the remaining causes, the undrawn card grid first | **Decided** (2026-11-22, in chat): "Ok close here and move on" |
+| 3 | round 14's last issue: close this spec; next, a spec for the remaining causes, the undrawn card grid first | **Decided** (2026-11-22, in chat): "Ok close here and move on"; agreed on the page 2026-11-23 |
+| 4 | round 14's spot checks: c0196 mixed, c0405 better, c0555 the same | **Decided** (2026-11-23): c0405 and c0555 agreed; c0196 **disagreed**, "minor - if text is in this is just font size matter". A paragraph drawn smaller, its words all in, is minor (`review-criteria.md`, round 14) |
 
-Round 13's 17 spot checks and round 14's other 3 are still open on the
-issue page, as are his own checks of the runs.
+Round 13's 17 spot checks have no answer saved on the issue page.
 
 ## The prompt for the next session
 
@@ -488,7 +488,9 @@ issue page, as are his own checks of the runs.
 >    - none worse.
 > 4. **Then the others, one at a time**, in the spec's order. Each is
 >    reproduced on a dev page first, or recorded as not found. A
->    direction that does not work is dropped.
+>    direction that does not work is dropped. Sizes in prose (cause 5)
+>    are **minor** by his call on c0196 (`review-criteria.md`, round
+>    14): they go last, after structure and words.
 > 5. **Stop for his call before any panel run.** When he names it, the
 >    run is `tools/batch.py M3-D2-L3 --arm d2 --pages l3` (about 25
 >    minutes), judged by eye against `M2-D2-L3`.

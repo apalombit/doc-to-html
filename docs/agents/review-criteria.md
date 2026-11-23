@@ -104,6 +104,14 @@ issues on the calls and P2's question, all agreed):
 - *Kept major on his spot checks*: a form read only to its first header
   rows (c0196); bold header cells drawn regular (c0300).
 
+**Round 14 — Alessandro, 2026-11-23** (spec 0026, D2 on the panel; 4
+issues, 3 agreed):
+
+- *A paragraph drawn smaller than printed, its words all in, is minor*
+  (c0196: the privacy statement drawn at 7 px where the page prints 11;
+  against Claude's "mixed"): "minor - if text is in this is just font
+  size matter". Sizes in prose rank after structure and words.
+
 ## Deciding
 
 - **Net gain ships.** A change that makes more pages better than worse
